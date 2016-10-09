@@ -1,0 +1,63 @@
+---
+layout: post
+title:  "Rover Part 1: Parts List"
+date:   2016-03-09
+categories: rover
+comments: True
+---
+*In my previous post I decided to build a 4-wheeled robotic rover. I chose to use Open Source Hardware components to accelerate my build time, support Open Source Hardware development and to benefit from the build quality of properly manufactured hardware (remember I have no workshop and all my tools are stored in a rather small cardboard box). After my last post a couple people suggested names for the 4-wheeled robotic rover. In lieu of a funny or creative name I will refer to the 4-wheeled robotic rover as 'Rover1'. In this post I am going to create a parts list for Rover1.*
+
+Rover1 is going to be a robot. So what is a robot? Well Wikipedia says... a bunch of stuff. I have been taught to think of a robot (or more formally, a robotic system) as a collection of 3 different types of components working together and sharing data. So what are these 3 different types of components?
+
+
+- **Sensors** gather and encode information about their surrounding environment. Like a camera or a poking stick. Sensors generate data.
+- **Processors** store methods to make decisions based on data collected from Sensors. Processors are usually digital programmable devices that both receive and generate data.
+- **Actuators** affect some sort of change in the environment. Like a motor or a speaker or a light bulb. Actuators receive data and perform a proportional action.
+
+So we have these 3 components and we connect them so they can communicate with each other. The processor monitors sensor data and when the processor notices some change it can react via the actuator which again changes the environment which is measured by the sensor which...
+Anyway, we've made a robot!
+
+Or did we forget something?
+
+The missing part of our robot is the physical structure that holds the various other components together in a particular geometry; the platform or scaffold or piece of wood onto which the sensors, actuators and processors are attached.
+
+But defining a robot by its physical structure is a bit tricky. A modern robot may be made up of more than one physical structure. Networking technologies like WiFi make it possible to offload power-intensive computations to the Cloud (aka someone else's computer) or share sensor data between many robots operating in the same environment. Modular robotics is a field of robotics in which smaller robots can operate individually or join together to create a larger physical structure that appears to operate as a single robot ([eg](https://www.youtube.com/watch?v=OcFOWIq3cIc)). Luckily, Rover1 is to be a 4-wheeled robotic rover. That means a simple rectangular platform with motors mounted near each corner. Easy.
+
+There are many rover development kits available online and most of them include more than just the physical platform. I chose the [Seeed Studios Skeleton Bot Hercules 4WD Mobile Robotic Platform](http://www.seeedstudio.com/wiki/Skeleton_Bot_-_4WD_hercules_mobile_robotic_platform). My choice was influenced by these [two](http://redhunter.com/blog/2015/01/04/seeed-hercules-robot-first-impressions/) [posts](http://redhunter.com/blog/2015/01/06/seeed-hercules-motor-controller-first-impressions/) from the maker blog [thumperthoughts](http://redhunter.com/).
+
+[Seeed Studios](http://www.seeed.cc) are based in China and as a company appear to be quite involved in Open Source development. In addition to producing the physical Hercules rover kit, Seeed Studios provides example source code and software libraries, electrical and hardware schematics, wiki style documentation and even a few tutorials on their website.
+
+The Hercules kit provides a solid aluminum chassis built around a powerful motor controller. Motor controllers act as an intermediary between the low power output of the digital processor and the high power demands of the motors the processor is controlling. Two of the motors included in the Hercules kit have attached [Hall effect](https://en.wikipedia.org/wiki/Hall_effect_sensor) rotary encoders that can be used to determine how fast the motors are spinning.
+
+The Hercules motor controller is capable of controlling the 4 included motors that make up the locomotion system and also includes an [Atmel ATmega328 AVR micro-controller](http://www.atmel.com/devices/atmega328p.aspx) capable of supporting the [Wiring](http://wiring.org.co) library created for Arduino. The Wiring library makes it possible to ignore the peculiarities of a particular micro-controller and write easily portable C++ code for a variety of devices in the 'Arduino family'.
+
+The motors and circuit board are powered by a 2200mAh-7.4V Lithium battery that should last a decent amount of time between charges if treated properly.
+
+And the Hercules kit also comes with wheels. yay!
+
+So we have an Open Source Hardware robot platform that includes a programmable device we can use as the processor. We should probably add some sensors next.
+
+Starting simple, I want to make it so that if I power Rover1 and let it drive freely around my apartment it will not crash into anything. IR (Infra-Red) range sensors are small, cheap, low-power sensors that I can mount on the front and rear of the platform to determine the distance of objects directly in view of the sensor. I can use these sensors to implement a simple anti-collision proximity threshold controller into the motor control software. This will allow me to play around with higher level functionality without worrying about damage to Rover1, my furniture or my shins. I couldn't find any Open Source IR Range Sensors. Sharp (as in the microwave, fridge, television company) manufacture a number of cheap IR Range Sensors. I have chosen a [Sharp IR Range Sensor](http://www.robotshop.com/media/files/pdf2/gp2y0a21yk_e.pdf) designed to accurately measure distances between 10-80 cm.
+
+It would be nice to know about the position of Rover1 as it navigates its surrounds. Maybe I want it to drive South at a particular speed, or stop trying to turn the wheels if it is upside-down or experiencing zero gravity (which means it has either crashed or is in the process of crashing). All these things are possible using an Inertial Measurement Unit, or IMU for short. Seeed Studios makes a 9DOF IMU that includes a gyroscope, accelerometer and magnetometer (compass) on the same board. Again, Seeed Studios provides all electrical schematics, tutorials and design documentation on their [wiki](http://www.seeedstudio.com/wiki/Grove_-_IMU_9DOF_v2.0).
+
+Using the gyroscope I can determine the angular velocity about the x/y/z axes of the robot. I can increase my confidence in the gyro data by using it along with the magnetometer data in a Kalman Filter. I can determine the velocity of Rover1 about the x/y/z axes of the robot by integrating the accelerometer data. IMUs are really useful! I should probably write a post about them...
+
+So far I have described a fairly basic robot design - it's time to have some fun! Modern robotics depends on more advanced sensor technologies and to explore some of these technologies I am going to include a computer vision sensor (which isn't just a fancy word for camera). The [CMUcam5 Pixy Computer Vision Sensor](http://cmucam.org/projects/cmucam5) is a camera with a built in ARM processor that enables the Pixy to learn 7 different color signatures. Pixy has a bunch of other awesome features:
+
+- Pixy can update position information of hundreds of particular colored objects at 50FPS.
+- Pixy can talk to Arduino without a computer via SPI, I2C and a bunch of other protocols.
+- Pixy is Open Source.
+
+Pixy was developed by a team of students and professors at Carnegie Mellon University in Pittsburgh USA, refined by another Open Source tech company [Charmed Labs](http://charmedlabs.com/default/about/) and funded through Kickstarter. The developers of Pixy have promised a firmware update to add face detection to the Pixy sometime later this year. In addition to the PixyCam I will get a Pan and Tilt kit that will allow me to control where Pixy is facing.
+
+Finally, I want to be able to build Rover1 and treat it as a complete physical platform. I don't want to have to flash Rover1 with new code every time I have an idea I want to try out. I don't really want to even have to touch it. I need a small computer I can put Linux on and communicate with over WiFi. The [Raspberry Pi 3](https://www.raspberrypi.org/) was recently announced and features some notable improvements over the Pi 2. A more powerful processor was sort of expected but the addition of an onboard WiFi and BLE module is very exciting. It can even run Windows 10! Using a Pi 3's GPIO pins I can connect with the Arduino Motor Controller and effectively control the robot via SSH over WiFi. This is going to be fun.
+
+## Parts List:
+
+
+- Seeed Studios Skeleton Bit Hercules 4WD Mobile Robotic Platform
+- Sharp IR Range Sensor GP2Y0A21YK0F (x2)
+- Seed Studios 9DOF Grove IMU v2.1
+- Charmed Labs Pixy CMUcam5 Camera with Pan & Tilt kit
+- Raspberry Pi 3

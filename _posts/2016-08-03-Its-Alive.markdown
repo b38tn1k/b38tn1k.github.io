@@ -1,0 +1,17 @@
+---
+layout: post
+title:  "It's Alive!"
+date:   2016-08-03
+categories: rover
+comments: True
+---
+
+Just a quick one as I have been very busy lately! I have had family visit, started a new [band](http://drunkonabike.com/), and continued to mess around with [LÖVE](https://love2d.org/) in a naive and likely doomed attempt at a RTS [Tank](https://github.com/b38tn1k/TankThing) game.
+Also, Cassie and I went hiking in Yosemite and found this bear family! These photos were taken with a zoom lens from a respectful and safe distance.
+![Mother Bear!]({{ site.url }}/images/bear2.jpg)
+![Bears!]({{ site.url }}/images/bear1.jpg)
+I have managed to track down a monitor and install ubuntu on the rover's Raspberry Pi. ROS is installing as I type. I guess the next step is to convert the Python Rover class into a ROS node.
+
+EDIT: (5 hours later) Bricked it. Yet to figure out what happened but will try again tomorrow. fun!
+
+EDIT: (3 days later) I moved back to Raspbian and sucessfully built ROS Indigo! I am currently doing my own tests, but if everything seems fine I will [freeze and upload the SD image.](https://drive.google.com/file/d/0B2zj9XM3RvbjZWJuZEowSkNRWEk/view?usp=sharing)

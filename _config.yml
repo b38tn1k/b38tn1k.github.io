@@ -1,0 +1,33 @@
+# Permalinks
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+
+# Setup
+title:               B38TN1K
+tagline:             aka James
+url:                 http://b38tn1k.com/
+paginate:            1
+baseurl:             ""
+
+# Assets
+#
+# We specify the directory for Jekyll so we can use @imports.
+sass:
+  sass_dir:          _sass
+  style:            :compressed
+
+# About/contact
+author:
+  name:              James Carthew
+  url:               http://b38tn1k.com/
+  email:             b38tn1k@gmail.com
+
+# Custom vars
+github: https://github.com/b38tn1k
+
+gems: [jekyll-paginate]
+
+pages_list:
+  Hello!: '/about'
+  Archive: '/archive'

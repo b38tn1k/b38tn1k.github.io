@@ -1,0 +1,21 @@
+---
+layout: post
+title:  "Rover Part 2: Parts List Update"
+date:   2016-03-20
+categories: rover
+comments: True
+---
+
+*In my last post I talked about robots and made a parts list for Rover1. I wasn't fast enough on the Raspberry Pi 3 preorder and thus my order has been delayed, but everything else has turned up!*
+![It looks more complicated than it is]({{ site.url }}/images/rover1inpieces.jpg)
+I don't want to spend too much time reviewing components as it is more fun playing with them! The Pixy Camera is great fun and works in lower light than I expected. The Pan and Tilt kit is a little delicate during construction but works very well once it is all together. If you are looking for a review of the Hercules platform [thumperthoughts](http://redhunter.com/blog/2015/01/04/seeed-hercules-robot-first-impressions/), has written a great article. I should note I did not encounter the faulty Hall sensor issue mentioned in the thumperthoughts article and my battery charger came with a US plug. Build quality of all components has been acceptable and I have not encountered any manufacturing issues. I made a rookie error and ordered the wrong size of screws. The Hercules platform uses M3 screws for its construction and thus I assumed the additional mounting holes on the chassis would be M3. Alas, they are M2 which means I ended up using cable ties to mount the Pixy camera. The Pixy mounting options are imperial anyway.
+![Pixy on Rover1]({{ site.url }}/images/pixyrover.jpg)
+Working with the Hercules Motor Controller is essentially the same as working with an Arduino and thus connecting and reading from the sensors was a painless affair. All sensors came with suggested software libraries and example code. I created a c++ [sensors class](https://github.com/b38tn1k/rover/blob/master/rover/Sensors.h) to read from all sensors and store all data in the same format. I created my own simple [3D vector data type](https://github.com/b38tn1k/rover/blob/master/rover/Vector3D.h) for the sensor data. This data type simplifies a lot of the maths and allows me to treat the x/y/z data as a single entity. It also provides methods to communicate this data via USB. A python class handles communication on the Raspberry Pi side. My code is nowhere near complete but you can have a look at the [source code over here](https://github.com/b38tn1k/rover). Suggestions are always appreciated!
+
+Below you can see some test runs of the rover. I tested the IR sensors with a simple random obstacle avoidance program and had fun using the Pixy camera to make the rover chase a bright pink paper clip around.
+![IR test]({{ site.url }}/images/cockroaching.gif)
+I didn't save the IR navigation source code but I can summarize it: 'drive forwards until you think you are going to bump into something then choose a random direction and turn that way for a random amount of time before driving forwards again'
+![Pixy test]({{ site.url }}/images/pixy.gif)
+The Pixy camera with the Pan and Tilt kit is really cool. I am pretty sure it was designed for Tony Stark.
+![Rover1 chasing the Pink Paper Clip Thing]({{ site.url }}/images/chasingpinkclip.gif)
+Source code for the object chasing/tracking function was taken from a great  [adafruit tutorial](https://learn.adafruit.com/pixy-pet-robot-color-vision-follower-using-pixycam/overview) and quickly hacked to work with the Hercules platform (they say it shouldn't work with Atmega 328-based processors but I had no issues).

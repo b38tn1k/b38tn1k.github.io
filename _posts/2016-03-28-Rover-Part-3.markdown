@@ -1,0 +1,164 @@
+---
+layout: post
+title:  "Rover Part 3: a simple protocol for serial communication between Python and Arduino (Talking with Rover1 over USB)"
+date:   2016-03-28
+categories: rover
+comments: True
+---
+
+*I am still waiting on that Raspberry Pi 3 but that doesn't mean I can't write code for it! In order to control Rover1 using the RPi3 I am going to need a method for communication between the Arduino-based motor controller and the RPi3. The motor controller is to be connected to the RPi3 via USB.*
+
+The Raspberry Pi will support a number of scripts written in Python that will allow for data logging, control and eventually some autonomous behaviours. The ability to use Python and its immense collection of community contributed Open Source libraries is the main reason I have decided to add the Pi to Rover1.
+
+# PySerial and Arduino
+[PySerial](https://pypi.python.org/pypi/pyserial) is a Python library that simplifies interacting with serial devices such as USB in Python. It is available through the pip package manager:
+```
+pip install pyserial
+```
+. PySerial allows us to create a serial interface object using the address of the serial port we wish to read from and the baud rate at which the serial device is operating. The baud rate is the rate of data transmission measured in bits per second, and must be common to all devices involved in communication.
+To find the serial address of an Arduino on \*nix systems you can list all connected USB devices like so:
+```
+ls /dev/*tty*
+```
+A Python script to read from serial looks like this:
+{% highlight python %}
+# Python serial.readline() Example
+import serial
+
+baud_rate = 9600
+serial_address = '/dev/tty.myUSBdevice'
+serial = serial.Serial(serial_address, baud_rate)
+while True:
+    print serial.readline()
+{% endhighlight %}
+
+On the Arduino side we use the [Serial](https://www.arduino.cc/en/Reference/Serial) object in a similar fashion however we only need to set a baud rate. A simple Arduino sketch to write to the Serial port looks like this:
+
+{% highlight c %}
+// C++ Arduino Serial.println() Example
+int baudRate = 9600; // typical baud rates include  300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, or 115200
+
+void setup() {
+  Serial.begin(baudRate);
+}
+
+void loop() {
+  Serial.println("Hello, World!");
+}
+{% endhighlight %}
+
+Both Serial and PySerial provide read and write methods so it would not be difficult to modify this code to make the Arduino echo strings from Python or make a Arduino based magic 8-ball. To best understand the full capabilities of [PySerial](https://pypi.python.org/pypi/pyserial) and [Serial](https://www.arduino.cc/en/Reference/Serial) I recommend checking out their documentation.
+
+# More Than Words
+Now we have established a means of communication between Python and Arduino we may want to use it to facilitate control messages. We may want to pass data generated in Python to functions that exist on the Arduino, or retrieve data from sensors connected to the Arduino. To achieve these goals we are going to need to create a communication protocol. Designing a communication protocol requires us to consider methods to structure our data such that meaningful information can be reliably transmitted and interpreted by all communication devices involved. Communication protocol design is application specific however there are general concepts that require consideration:
+
+
+- Message Format: When does one message end and the next message begin? Is the data we are to be sending always going to be the same length?
+- Required Level of Robustness: What happens if the message gets garbled in transit? How can we indicate if a message has been received correctly?
+- Direction of Communication: What is the relationship between the devices communicating? Is one device mainly receiving commands from the other or do they operate more cooperatively?
+
+It is unavoidable that our message will contain more than one piece of information and therefore we need to be able to separate this information. This allows a received message to be deconstructed and interpreted. For design purposes I am going to indicate each chunk of information in a message as a cell in a table.
+{% highlight c %}
++--+--+--+--+--+
+|  |  |  |  |  |
++--+--+--+--+--+
+{% endhighlight %}
+
+When designing a communication protocol we can utilize a number of different specialized data chunks:
+
+
+- Headers and Footers can be an easy way to indicate the beginning and end of a message. But what happens if Header or Footer accidentally turns up in the data component of the message? Headers and Footers must be represented in such a way that they are guaranteed to be unique within a message or additional methods must be utilized to prevent the message interpreting function from, for example, confusing the '10' that ends the message with the '10' that occasionally occurs in the reported sensor data.
+- Message Length is useful to indicate how many chunks a message consists of. Comparing the Message Length information with the received message length is a simple indicator that a message is complete.
+- Checksums operate by creating a representation of the entire message as a single chunk. A checksum function will provide a unique (or at least nominally unique) value for each possible message configuration. By appending a Checksum Value to the message and comparing the Checksum Value with the checksum of the received message we can be confident that each chunk of information in our message was received correctly, or quickly realize that some part of the message was corrupted.
+- Message Receipt Numbers provide a means of referring to a particular message. In the event of a communication error, the Message Receipt can be used to request a particular message be repeated from the originator.
+- Data Identification allows us to indicate the type of data contained within the message and therefore what action must be taken with the subsequent data.
+- Data. The information the devices are to communicate. Data can take up more than one chunk of information.
+
+Using these building blocks I decided on a simple message structure that looks like this:
+{% highlight c %}
++--------+----------------+---------+------>
+| Header | Message Length | Data ID | Data
++--------+----------------+---------+------>
+{% endhighlight %}
+
+In the case of Rover1 serial data is transferred via a very short USB cable that is held within the Aluminium chassis. I am doubtful it is necessary to implement any error checking. This may change in the future but I think adding a checksum and message number receipt number system would unnecessarily complicate the code. I decided to use the message length to indicate the end of the message. This allows me to send variable length messages without including any sort of footer symbol in the message.
+
+# Give me the code!
+Implementing this format looks something like this:
+{% highlight python %}
+# Python Serial Communication Example
+import serial
+from time import sleep
+
+def write(serial, msg):
+    # +--------+----------------+---------+------>
+    # | Header | Message Length | Data ID | Data
+    # +--------+----------------+---------+------>
+    msg_length = chr(len(msg))
+    s = bytearray('~')
+    s.append(msg_length)
+    s = s + msg
+    for c in s:
+        serial.write(chr(c))
+
+baud_rate = 38400
+serial_address = '/dev/tty.myUSBdevice'
+serial = serial.Serial(serial_address, baud_rate)
+sleep(5)
+msg = bytearray(b'Hello World')
+write(serial, msg) # Message Length: 11, Data ID: 'H', Data: 'e', 'l', 'l' ,'o' ,' ' ,'W', 'o', 'r', 'l', 'd'
+while True:
+    print serial.readline()
+{% endhighlight %}
+
+{% highlight c %}
+// C++ Arduino Serial Communication Example
+char message[64]; // 64 bytes - Header Byte and Message Length Byte
+char header = ' ';
+int messageLength = 0;
+bool incoming = false;
+
+void logMessage(char msg[], int msgLength) {
+  Serial.print("Message Length: ");
+  Serial.println(msgLength);
+  Serial.print("Data ID: ");
+  Serial.println(msg[0]);
+  for (int i = 1; i < msgLength; i++) {
+    Serial.print("Data ");
+    Serial.print(i);
+    Serial.print(':');
+    Serial.println(msg[i]);
+  }
+}
+
+void setup() {
+  Serial.begin(38400);
+}
+
+void loop()
+{
+  // Is there a new message?
+  if (Serial.available() > 2 && Serial.peek() == '~') {
+    header = Serial.read();
+    messageLength = Serial.read();
+    incoming = true;
+  }
+  // Remove and junk from the Serial buffer
+  if (Serial.available() > 0 && Serial.peek() != '~' && !incoming) {
+    Serial.read();
+  }
+  // Read the new message!
+  if (Serial.available() >= messageLength && incoming) {
+    for (int n = 0; n < messageLength; n++) {
+      message[n] = Serial.read();
+    }
+    logMessage(message, messageLength);
+    // my_awesome_parser_function(message)
+    incoming = false;
+  }
+}
+{% endhighlight %}
+
+Messages are kept in the Arduino's serial buffer and retrieved in the order they are sent. Incorrectly formatted messages are removed from the buffer and ignored. Each message is parsed before the next message is read. If you send too many messages at once you may risk overflowing the serial buffer. The serial buffer is 64 bytes. This buffer limitation also effects the maximum length of a message (including the header and message length data).
+
+If you want to have a look at this protocol in action, head over to the [repository](https://github.com/b38tn1k/rover) and hit me up if you have any questions!

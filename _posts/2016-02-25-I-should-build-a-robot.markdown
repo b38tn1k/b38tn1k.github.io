@@ -47,7 +47,7 @@ Which brings us to 2016. It has never been a better time to build a hobby robot.
 But what sort of robot kit should I get?
 
 
-- I have spent enough time with UAVs to be properly scared of them. I don't really have anywhere to test a UAV anyway.
+- I don't really have anywhere to test a UAV.
 - I have spent enough time with drawing robots. They draw. cool.
 - Robot arms are awesome but expensive.
 - Hexapods are creepy and appear delicate.

@@ -4,17 +4,9 @@ comments: False
 title: James Carthew
 permalink: /cv/
 ---
-
-*1724, 35th Avenue, Apt 204, Oakland*
-*[jamesrobertcarthew@gmail.com](mailto:jamesrobertcarthew@gmail.com)*
-*(510)631-8371*
-
-## PROFILE
-
 I recently graduated from the University of New South Wales, Sydney, Australia with a Bachelor in Mechatronic Engineering. I have 7 years experience working at various technical levels in engineering companies including 2 years experience working in research and development for the creative industry. This involved electronic, mechanical, and software design.
 
 ## EXPERIENCE
-
 **Applied Technologist, Finch Company**
 
 *Sydney, Australia — November 2013 to December 2015*
@@ -34,7 +26,6 @@ Focusing on the development of a digital sampling musical instrument, the Fairli
 Working with the same engineering team across two companies, I performed thermodynamic analysis of fibre optic server cabinets and assisted in the construction of said cabinets. My thermodynamic analysis culminated in a report I authored on passive cooling, which was provided to clients and potential customers.
 
 ## SKILLS
-
 Working in applied technology required me to understand and apply new concepts quickly to meet strict deadlines. My strong relationship with many non-technical clients and creatives was determined by my communication skills and ability to clearly explain the research, feasibility, design, and manufacturing processes for each project.
 
 Projects I have worked on have covered various areas of technology, including:
@@ -82,3 +73,6 @@ I contributed research on IoT and provided argument for the inclusion of Cloud R
 Prior to moving to Sydney to study I worked as a checkout operator in rural Australia. During my time at university, I supported myself by working at a nightclub and a men’s wear store. I believe these early work experiences provided me with a strong work ethic.
 As a musician, I have organized and performed on national tours of Australia and the United States with my group Royal Chant. Since moving to Oakland, I have been lucky enough to meet some inspiring musicians and have already started a new band.
 Photography, hiking, rock climbing and camping keep me in touch with nature and provide a necessary balance to my life.
+
+[jamesrobertcarthew@gmail.com](mailto:jamesrobertcarthew@gmail.com)
+(510)631-8371

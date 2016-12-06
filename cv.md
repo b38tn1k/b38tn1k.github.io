@@ -1,5 +1,6 @@
 ---
-layout: null
+layout: default
+comments: False
 title: Resume of James Robert Carthew
-permalink: /resume/
+permalink: /cv/
 ---

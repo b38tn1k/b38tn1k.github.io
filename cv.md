@@ -6,7 +6,9 @@ permalink: /cv/
 ---
 
 1724, 35th Avenue, Apt 204, Oakland
+
 jamesrobertcarthew@gmail.com
+
 (510)631-8371
 
 ## PROFILE

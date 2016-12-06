@@ -25,4 +25,4 @@ with Cassie at San Francisco Golden Gate Park, 2015
 
 
 
-<sub><sub>b38tn1k? my highschool nickname was beatnik due to my choice in music and literature... when i started putting music on myspace i used the l33t spelling cause it was c00l at the t1m3</sub></sub>
+<sub><sub><sub>b38tn1k? my highschool nickname was beatnik due to my choice in music and literature... when i started putting music on myspace i used the l33t spelling cause it was c00l at the t1m3</sub></sub></sub>

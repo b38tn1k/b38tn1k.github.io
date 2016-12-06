@@ -55,7 +55,7 @@ I created a 'manual mode' that allowed me to drive the rover around using WASD k
 The Sensor data is displayed on the screen. These values fluctuate rapidly making it difficult to understand how Rover1's motion is represented by the sensor data. It would be much easier to graphically plot the sensor data over time but Rover1 does not have a screen.
 
 ![Rover1 GUI]({{ site.url }}/images/rovercurses1.png)
-*I use [iTerm](https://www.iterm2.com/), but [Cathode](http://www.secretgeometry.com/apps/cathode/) is much prettier (and less readable) for screenshots.*
+*I use [iTerm](https://www.iterm2.com/) with zsh, but [Cathode](http://www.secretgeometry.com/apps/cathode/) (above) is so pretty*
 
 # Plotting data from a mobile, screen-less Raspberry Pi.
 [Plot.ly](https://plot.ly/) is a graphing service that provides API and libraries for Python, MATLAB, R and Javascript. Using the Plot.ly python library it was possible to create a number of web hosted scatter graphs that would receive streamed data in near real time. I could watch the sensor data in my browser!

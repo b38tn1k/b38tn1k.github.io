@@ -75,4 +75,5 @@ As a musician, I have organized and performed on national tours of Australia and
 Photography, hiking, rock climbing and camping keep me in touch with nature and provide a necessary balance to my life.
 
 [jamesrobertcarthew@gmail.com](mailto:jamesrobertcarthew@gmail.com)
+
 (510)631-8371

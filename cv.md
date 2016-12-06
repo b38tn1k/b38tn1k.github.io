@@ -7,13 +7,13 @@ permalink: /cv/
 *I recently graduated from the University of New South Wales, Sydney, Australia with a Bachelor in Mechatronic Engineering. I have 7 years experience working at various technical levels in engineering companies including 2 years experience working in research and development for the creative industry. This involved electronic, mechanical, and software design.*
 
 ## Work Experience
-**Applied Technologist, Finch Company**
+**Applied Technologist, [Finch Company](https://www.finchcompany.com/)**
 
 *Sydney, Australia — November 2013 to December 2015*
 
-I was responsible for research, development, and technical management of numerous projects spanning electronic, mechanical, and software engineering within small (2-4 person) development teams. In addition to my involvement in prototype development, I corresponded with large scale manufacturers in Australia and China to fulfill the mass-production requirements of projects. All projects required communication and collaboration with non-technical clientele. During my time at Finch, I provided IT support for the Sydney office and maintained hardware within the workshop.
+I was responsible for research, development, and technical management of numerous projects spanning electronic, mechanical, and software engineering within small (2-4 person) development teams. In addition to my involvement in prototype development, I corresponded with large scale manufacturers in Australia and China to fulfill the mass-production requirements of projects. All projects required communication and collaboration with non-technical clientele. During my time at Finch, I provided IT support for the Sydney office and maintained hardware within the workshop. You can see some of my work [here.](https://www.finchcompany.com/technology/)
 
-**Junior Researcher and Developer, Peter Vogel Instruments / Fairlight**
+**Junior Researcher and Developer, [Peter Vogel Instruments / Fairlight](http://petervogelinstruments.com.au/)**
 
 *Sydney, Australia — April 2012 to November 2013*
 

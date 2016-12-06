@@ -22,4 +22,7 @@ In previous day jobs I have done thermal analysis on fibre optic network nodes f
 ![photo]({{ site.url }}/images/goldengatepark1.JPG)
 with Cassie at San Francisco Golden Gate Park, 2015
 
-<sup>b38tn1k? my highschool nickname was beatnik due to my choice in music and literature... when i started putting music on myspace i just the l33t spelling cause it was c00l at the t1m3 </sup>
+
+
+
+<sub>b38tn1k? my highschool nickname was beatnik due to my choice in music and literature... when i started putting music on myspace i just the l33t spelling cause it was c00l at the t1m3 </sub>

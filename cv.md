@@ -67,7 +67,7 @@ Final Year Thesis Project: PID Control over the Internet (Cloud Robotics)
 
 
 ## Publications
-Kieren Lim, James Robert Carthew, Luke Richard Savy, Jayantha Katupitiya, Ka Ching Chan, and Mary Martin *Development of a Cloud Robotic Testbed for IT Capstone Projects* 05 July 2014 [http://www.icita.org/2014/papers/au-chan.pdf](http://www.icita.org/2014/papers/au-chan.pdf)
+Kieren Lim, **James Robert Carthew**, Luke Richard Savy, Jayantha Katupitiya, Ka Ching Chan, and Mary Martin *Development of a Cloud Robotic Testbed for IT Capstone Projects* 05 July 2014 [http://www.icita.org/2014/papers/au-chan.pdf](http://www.icita.org/2014/papers/au-chan.pdf)
 
 I contributed research on IoT and provided argument for the inclusion of Cloud Robotics in the IoT family (Sections II and III)
 

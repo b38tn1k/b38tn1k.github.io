@@ -15,7 +15,9 @@ I recently graduated from the University of New South Wales, Sydney, Australia w
 
 ## EXPERIENCE
 
-**Applied Technologist, Finch Company, Sydney, Australia — November 2013 to December 2015**
+**Applied Technologist, Finch Company**
+
+*Sydney, Australia — November 2013 to December 2015*
 
 I was responsible for research, development, and technical management of numerous projects spanning electronic, mechanical, and software engineering within small (2-4 person) development teams. In addition to my involvement in prototype development, I corresponded with large scale manufacturers in Australia and China to fulfill the mass-production requirements of projects. All projects required communication and collaboration with non-technical clientele. During my time at Finch, I provided IT support for the Sydney office and maintained hardware within the workshop.
 

@@ -6,7 +6,7 @@ permalink: /cv/
 ---
 *I recently graduated from the University of New South Wales, Sydney, Australia with a Bachelor in Mechatronic Engineering. I have 7 years experience working at various technical levels in engineering companies including 2 years experience working in research and development for the creative industry. This involved electronic, mechanical, and software design.*
 
-## Work Experience
+### Work Experience
 **Applied Technologist, [Finch Company](https://www.finchcompany.com/)**
 
 *Sydney, Australia — November 2013 to December 2015*

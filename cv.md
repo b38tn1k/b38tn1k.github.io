@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: resume
 comments: False
 title: James Carthew
 permalink: /cv/

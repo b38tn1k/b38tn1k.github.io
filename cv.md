@@ -6,7 +6,7 @@ permalink: /cv/
 ---
 *I recently graduated from the University of New South Wales, Sydney, Australia with a Bachelor in Mechatronic Engineering. I have 7 years experience working at various technical levels in engineering companies including 2 years experience working in research and development for the creative industry. This involved electronic, mechanical, and software design.*
 
-## EXPERIENCE
+## Work Experience
 **Applied Technologist, Finch Company**
 
 *Sydney, Australia — November 2013 to December 2015*
@@ -25,7 +25,7 @@ Focusing on the development of a digital sampling musical instrument, the Fairli
 
 Working with the same engineering team across two companies, I performed thermodynamic analysis of fibre optic server cabinets and assisted in the construction of said cabinets. My thermodynamic analysis culminated in a report I authored on passive cooling, which was provided to clients and potential customers.
 
-## SKILLS
+## Skills
 Working in applied technology required me to understand and apply new concepts quickly to meet strict deadlines. My strong relationship with many non-technical clients and creatives was determined by my communication skills and ability to clearly explain the research, feasibility, design, and manufacturing processes for each project.
 
 Projects I have worked on have covered various areas of technology, including:
@@ -44,7 +44,7 @@ During my time at university, I undertook robotics and control theory courses in
 
 My project driven experience, coupled with my studies, has provided me with a strong fundamental understanding of mechanical, electrical, manufacturing, and software engineering. I believe communication and organization to be important factors in ensuring a project is completed successfully within the required timeframe.
 
-## SOFTWARE SKILLS
+## Software
 I am a proficient Python programmer and regularly program in Lua. I have academic and project-focused experience using C++, Matlab, RobotStudio, Java, C#, Verilog, objC, and Swift. 
 
 
@@ -59,19 +59,19 @@ I have experience with VMware and vSphere, having provided IT support to an offi
 
 I am comfortable on all major operating systems and office suites.
 
-## EDUCATION
+## Education
 University of New South Wales, Sydney, Australia - Bachelor of Mechatronic Engineering, 2016.
 
 
 Final Year Thesis Project: PID Control over the Internet (Cloud Robotics)
 
 
-## PUBLICATIONS
+## Publications
 Kieren Lim, James Robert Carthew, Luke Richard Savy, Jayantha Katupitiya, Ka Ching Chan, and Mary Martin *Development of a Cloud Robotic Testbed for IT Capstone Projects* 05 July 2014 [http://www.icita.org/2014/papers/au-chan.pdf](http://www.icita.org/2014/papers/au-chan.pdf)
 
 I contributed research on IoT and provided argument for the inclusion of Cloud Robotics in the IoT family (Sections II and III)
 
-## PERSONAL INFORMATION
+## Personal Information
 Prior to moving to Sydney to study I worked as a checkout operator in rural Australia. During my time at university, I supported myself by working at a nightclub and a men’s wear store. I believe these early work experiences provided me with a strong work ethic.
 As a musician, I have organized and performed on national tours of Australia and the United States with my group Royal Chant. Since moving to Oakland, I have been lucky enough to meet some inspiring musicians and have already started a new band.
 Photography, hiking, rock climbing and camping keep me in touch with nature and provide a necessary balance to my life.

@@ -17,7 +17,7 @@ I was responsible for research, development, and technical management of numerou
 
 *Sydney, Australia — April 2012 to November 2013*
 
-Focusing on the development of a digital sampling musical instrument, the Fairlight CMI30A, I performed digital circuit design for the user interface, circuit translation for FPGA development, and creative development of the default sound library. This project was very special to me as it combined my passions for both engineering and music. In 2015, the sounds of the Fairlight CMI were added to the Australian National Film and Sound Archive.
+Focusing on the development of a digital sampling musical instrument, the [Fairlight CMI30A](https://en.wikipedia.org/wiki/Fairlight_CMI), I performed digital circuit design for the user interface, circuit translation for FPGA development, and creative development of the default sound library. This project was very special to me as it combined my passions for both engineering and music. In 2015, the sounds of the Fairlight CMI were added to the Australian National Film and Sound Archive.
 
 **Intern, Cetnaj Pty Ltd & Just Technology Pty Ltd**
 

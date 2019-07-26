@@ -154,7 +154,7 @@ function touchStarted(){
 }
 
 function touchMoved(){
-  // return false;
+  return false;
 }
 function touchEnded(){
   // return false;

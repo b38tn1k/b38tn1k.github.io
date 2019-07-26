@@ -131,7 +131,8 @@ function setup() {
 }
 
 function mouseClicked() {
- invader(mouseX, mouseY, 10, 6.0, 8.0);
+  generate();
+ // invader(mouseX, mouseY, 10, 6.0, 8.0);
 }
 
 function draw() {
@@ -147,3 +148,14 @@ window.onresize = function() {
   height = h;
   generate();
 };
+function touchStarted(){
+  return false;
+}
+
+function touchMoved(){
+  return false;
+}
+function touchEnded(){
+  generate();
+  return false;
+}

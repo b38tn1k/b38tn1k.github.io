@@ -38,7 +38,7 @@ function generate() {
   for (var j = 0; j < vert; j++) {
     for (var i = 0; i < 25; i++) {
       fill(rcol());
-      invader(i*(width/hor) + width/(2*hor), j*(height/vert) + height/(2*vert), 10, random(5.0, 7.0), 8.0);
+      invader(i*(width/hor) + width/(2*hor), j*(height/vert) + height/(2*vert), 5, random(5.0, 7.0), 8.0);
     }
   }
 }

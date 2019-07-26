@@ -14,37 +14,36 @@
 
   <style>
   /* Place the navbar at the bottom of the page, and make it stick */
-.navbar {
-  font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
-  background-color: (0, 0, 0, 0);
-  overflow: hidden;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
+    .navbar {
+      font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+      background-color: (0, 0, 0, 0);
+      overflow: hidden;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
 
-/* Style the links inside the navigation bar */
-.navbar a {
-  float: left;
-  display: block;
-  color: #808080;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-  @media only screen
-  and (min-device-width : 320px)
-  and (max-device-width : 480px){  .mobileHide { display: none;}}
-}
+    /* Style the links inside the navigation bar */
+    .navbar a {
+      float: left;
+      display: block;
+      color: #808080;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
 
-/* Add a color to the active/current link */
-.navbar a.active {
-  color: #A9A9A9;
-  @media only screen
-  and (min-device-width : 320px)
-  and (max-device-width : 480px){  .mobileHide { display: none;}}
+    /* Add a color to the active/current link */
+    .navbar a.active {
+      color: #A9A9A9;
+    }
 
-}
+    @media (max-width: 767px) {
+        .navbar{
+            display:none;
+        }
+    }
 
   </style>
 

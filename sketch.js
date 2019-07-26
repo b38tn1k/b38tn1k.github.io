@@ -119,8 +119,10 @@ function invader(x, y, pixelSize, invLength, invHeight) {
   pop();
 }
 
+var canvas;
+
 function setup() {
-  createCanvas(displayWidth, displayHeight);
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
   smooth(8);
   pixelDensity(2);
   background(0);
@@ -135,3 +137,12 @@ function mouseClicked() {
 function draw() {
   //generate();
 }
+
+window.onresize = function() {
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+  canvas.size(w,h);
+  width = w;
+  height = h;
+  generate();
+};

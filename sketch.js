@@ -32,8 +32,8 @@ function saveImage() {
 function generate() {
   background(0);
   noStroke();
-  var vert = 5;
-  var hor = 5;
+  var vert = int(height/150);
+  var hor = int(width / 150);
 
   for (var j = 0; j < vert; j++) {
     for (var i = 0; i < 25; i++) {
@@ -141,6 +141,7 @@ function draw() {
 window.onresize = function() {
   var w = window.innerWidth;
   var h = window.innerHeight;
+  console.log(w, ' ', h)
   canvas.size(w,h);
   width = w;
   height = h;

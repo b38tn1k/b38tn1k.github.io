@@ -159,3 +159,6 @@ function touchEnded(){
   generate();
   return false;
 }
+function deviceTurned() {
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
+}

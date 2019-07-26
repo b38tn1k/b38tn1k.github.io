@@ -149,14 +149,14 @@ window.onresize = function() {
   generate();
 };
 function touchStarted(){
-  return false;
+  generate();
+  // return false;
 }
 
 function touchMoved(){
-  return false;
+  // return false;
 }
 function touchEnded(){
-  generate();
   // return false;
 }
 function deviceTurned() {

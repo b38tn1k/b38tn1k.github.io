@@ -29,7 +29,7 @@
       display: block;
       color: #808080;
       text-align: center;
-      padding: 14px 16px;
+      padding: 2em;
       text-decoration: none;
       font-size: 17px;
     }
@@ -39,8 +39,39 @@
       color: #A9A9A9;
     }
 
+    .mobar {
+      font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+      background-color: (0, 0, 0, 0);
+      overflow: hidden;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+
+    /* Style the links inside the navigation bar */
+    .mobar a {
+      float: left;
+      display: block;
+      color: #808080;
+      text-align: center;
+      padding: 2em;
+      text-decoration: none;
+      font-size: 10px;
+    }
+
+    /* Add a color to the active/current link */
+    .mobar a.active {
+      color: #A9A9A9;
+    }
+
     @media (max-width: 769px) { /* and ipads */
         .navbar{
+            display:none;
+        }
+    }
+
+    @media (min-width: 769px) { /* and ipads */
+        .mobar{
             display:none;
         }
     }
@@ -49,6 +80,12 @@
 
   <div class="navbar">
     <a class="active" href="">Personal Space Invaders: press 's' to save</a>
+    <a href="http://b38tn1k.com/archive/">blog</a>
+    <a href="https://soundcloud.com/b38tn1k/">music</a>
+  </div>
+
+  <div class="mobar">
+    <a class="active" href="">Personal Space Invaders</a>
     <a href="http://b38tn1k.com/archive/">blog</a>
     <a href="https://soundcloud.com/b38tn1k/">music</a>
   </div>

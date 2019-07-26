@@ -32,12 +32,20 @@
   padding: 14px 16px;
   text-decoration: none;
   font-size: 17px;
+  @media only screen
+  and (min-device-width : 320px)
+  and (max-device-width : 480px){  .mobileHide { display: none;}}
 }
 
 /* Add a color to the active/current link */
 .navbar a.active {
   color: #A9A9A9;
+  @media only screen
+  and (min-device-width : 320px)
+  and (max-device-width : 480px){  .mobileHide { display: none;}}
+
 }
+
   </style>
 
   <div class="navbar">

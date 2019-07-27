@@ -29,5 +29,5 @@ github: https://github.com/b38tn1k
 gems: [jekyll-paginate]
 
 pages_list:
-  Hello!: '/about'
+  # Hello!: '/about'
   Archive: '/archive'

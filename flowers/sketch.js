@@ -1,11 +1,10 @@
 var colors = ['#0f0', '#ff0', '#0ff', '#f0f'];
 function rcol() {
   return colors[(int(random(colors.length)))];
-  return('#0f0');
 };
 
-function rcolsub(colors,len) {
-  return colors[(random(len))];
+function rcolsub(thecolors) {
+  return thecolors[int(random(thecolors.length))];
 };
 
 function coin() {
@@ -32,91 +31,92 @@ function saveImage() {
 function generate() {
   background(0);
   noStroke();
-  var vert = 5;
-  var hor = 5;
+  //flower(width/4, height/2);
+  flower(width/2, height/3);
+  //flower(3*width/4, height/2);
 
-  for (var j = 0; j < vert; j++) {
-    for (var i = 0; i < 25; i++) {
-      fill(rcol());
-      invader(i*(width/hor) + width/(2*hor), j*(height/vert) + height/(2*vert), 10, random(5.0, 7.0), 8.0);
-    }
-  }
+
 }
 
-function invader(x, y, pixelSize, invLength, invHeight) {
-  invLength = float(int(invLength));
-  invHeight = float(int(invHeight));
-  //crab 8 x 11
-  //squid 8 x 8
-  //octopus 8 x 12
-  //float invLength = 4.0; // use these to calculate translation later
-  //float invLength = 6.0; // use these to calculate translation later
-  //float invHeight = 8.0;
-  var grid = new Array();
-  var max = 0.0;
-  //generate
-  for (var i = 0; i < invLength; i++) {
-    grid[i] = new Array();
-    for (var j = 0; j < invHeight; j++) {
-      // probability of pixel decreases radiating from grid[6][4]
-      // random component
-      //grid[i][j] = 0;
-      grid[i][j] = random(2);
-      // increase density towards horizontal center
-      grid[i][j] = grid[i][j] + sin(radians(90*i/invLength));
-      // increase density towards vertical center
-      grid[i][j] = grid[i][j] + sin(radians(180*(j/invHeight)));
-      // reduce density near eye areas
+function flower(x, y) {
+  var radius = int(random(80, 400));
+  var centerbit = random(0.2, 0.8);
 
-      // end of generating
-      if (grid[i][j] > max) {
-        max = grid[i][j];
-      }
+  //leafs
+  for (var i = 0; i < random(5); i++) {
+
+    ellipseMode(CORNER);
+    var angle = randint(-30);
+    var tip = int(random(radius/5, radius/3));
+    var leafw = random(0.3, 0.5);
+    var leafy = int(random((y + radius/2), height - radius));
+    //right
+    if (coin()) {
+      push();
+      translate(x, leafy);
+      rotate(radians(angle));
+      fill('#0f0');
+      ellipse(0, 0, tip, leafw*tip);
+      fill('#0f7');
+      ellipse(0, 0, tip, leafw*tip*centerbit);
+      pop();
+    }
+
+    if (coin()) {
+      //left
+      angle = randint(30) + 180;
+      tip = tip = int(random(radius/5, radius/3));
+      leafy = int(random((y + radius/2), height - radius));
+      leafw = random(0.3, 0.5);
+      push();
+      translate(x, leafy);
+      rotate(radians(angle));
+      fill('#0f0');
+      ellipse(0, 0, tip, leafw*tip);
+      fill(255, 255, 255, 40);
+      ellipse(0, 0, tip, leafw*tip*centerbit);
+      pop();
     }
   }
-  //scale and prepare for threshold
-  var sum = 0;
-  var count = 0;
-  for (var i = 0; i < invLength; i++) {
-    for (var j = 0; j < invHeight; j++) {
-      grid[i][j] = grid[i][j]/max;
-      sum += grid[i][j];
-      count++;
-      //print(nf(grid[i][j], 1, 2));
-      //print(" ");
-    }
-    //print("\n");
+
+  // the stem
+  var stemwidth = int(random(4, 10));
+  fill('#0f0');
+  rect(x, y, stemwidth, height);
+
+  // petals
+  ellipseMode(CENTER);
+  var petalCount = int(random(4, 20));
+  var petalAngle = 180/petalCount;
+  var colorcount = int(random(1, 4));
+  var thisFlower = [rcol(), rcol(), rcol(), rcol(), rcol()];
+  for (var i = 180; i >= 0; i-=petalAngle) {
+    fill(rcolsub(thisFlower, colorcount));
+    push();
+    translate(x, y);
+    rotate(radians(i));
+    ellipse(0, 0, radius, radius/petalCount);
+    ellipse(0, 0, radius/petalCount, radius);
+    fill(255, 255, 255, 40);
+    ellipse(0, 0, radius, centerbit*(radius/petalCount));
+    ellipse(0, 0, centerbit*(radius/petalCount), radius);
+    pop();
   }
-  var average = sum/count;
-  var threshhold = average;
-  var xpos = 0;
-  var ypos = 0;
-  push();
-  translate(x - pixelSize*int(invLength), y - pixelSize*int(invHeight/2));
-  //translate(x, y);
-  //translate etc
-  for (var i = 0; i < invLength; i++) {
-    for (var j = 0; j < invHeight; j++) {
-      if (grid[i][j] > threshhold) {
-        rect(xpos, ypos, pixelSize, pixelSize);
-      }
-      ypos += pixelSize;
-    }
-    ypos = 0;
-    xpos += pixelSize;
+  // the pollen bit
+  var pollen = int(random(1.2*radius/petalCount, radius/2));
+  fill(rcol());
+  ellipse(x, y, pollen, pollen);
+  fill(255, 255, 255, 40);
+  var pollenCount = int(random(5, 40));
+  var px;
+  var py;
+  for (var i = 0; i < pollenCount; i++) {
+    px = random(x - pollen/3, x + pollen/3);
+    py = random(y - pollen/3, y + pollen/3);
+    //if ((sqrt(px-x)*(px-x) + (py-y)*(py-y)) < pollen) {
+      ellipse(px, py, 5, 5);
+    //}
   }
-  var invlen = int(invLength) - 1;
-  for (var i = 0; i < invLength; i++) {
-    for (var j = 0; j < invHeight; j++) {
-      if (grid[invlen- i][j] > threshhold) {
-        rect(xpos, ypos, pixelSize, pixelSize);
-      }
-      ypos += pixelSize;
-    }
-    ypos = 0;
-    xpos += pixelSize;
-  }
-  pop();
 }
 
 var canvas;
@@ -126,12 +126,14 @@ function setup() {
   smooth(8);
   pixelDensity(2);
   background(0);
-  generate();
+  // generate();
   noStroke();
+  console.log('hi');
 }
 
 function mouseClicked() {
- invader(mouseX, mouseY, 10, 6.0, 8.0);
+  flower(mouseX, mouseY);
+ // invader(mouseX, mouseY, 10, 6.0, 8.0);
 }
 
 function draw() {
@@ -141,8 +143,23 @@ function draw() {
 window.onresize = function() {
   var w = window.innerWidth;
   var h = window.innerHeight;
+  console.log(w, ' ', h)
   canvas.size(w,h);
   width = w;
   height = h;
   generate();
 };
+function touchStarted(){
+  // generate();
+  // return false;
+}
+
+function touchMoved(){
+  return false;
+}
+function touchEnded(){
+  // return false;
+}
+function deviceTurned() {
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
+}

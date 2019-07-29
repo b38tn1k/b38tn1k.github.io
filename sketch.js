@@ -1,7 +1,6 @@
 var colors = ['#0f0', '#ff0', '#0ff', '#f0f'];
 function rcol() {
   return colors[(int(random(colors.length)))];
-  return('#0f0');
 };
 
 function rcolsub(colors,len) {

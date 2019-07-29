@@ -126,13 +126,13 @@ function setup() {
   smooth(8);
   pixelDensity(2);
   background(0);
-  // generate();
+  generate();
   noStroke();
   console.log('hi');
 }
 
 function mouseClicked() {
-  flower(mouseX, mouseY);
+  // flower(mouseX, mouseY);
  // invader(mouseX, mouseY, 10, 6.0, 8.0);
 }
 
@@ -150,6 +150,7 @@ window.onresize = function() {
   generate();
 };
 function touchStarted(){
+  flower(mouseX, mouseY);
   // generate();
   // return false;
 }

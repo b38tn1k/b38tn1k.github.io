@@ -1,135 +1,153 @@
-//int colors[] = {#EBB858, #EEA8C1, #D0CBC3, #87B6C4, #EA4140, #5A5787, #D0CBC3, #87B6C4, #EA4140, #5A5787};
-//int colors[] = {#F6511D, #FFB400, #00A6ED, #7FB800, #E56399};
-//int colors[] = {#845EC2, #D65DB1, #FF6F91, #FF9671, #FFC75F, #F9F871};
-//int colors[] = {#A534C9, #F327A2, #FF5478, #FF8F58, #FFC650, #F9F871};
-//int colors[] = {#E9E4CF, #EBD662, #CB4B86, #D8B4A4, #C89741, #A29282, #913439, #A1C8C0, #5F9AAA, #5A6062};
-int colors[] = {#00ff00, #ffff00, #00ffff, #ff00ff};
-//int colors[] = {#FFFFFF, #1F4979, #AAC4CE, #D1D4D4, #919091, #F2822C, #F1F2F3}; //ford
-//https://palettegenerator.com/
-
-int rcol() {
-  return colors[int(random(colors.length))];
+var colors = ['#0f0', '#ff0', '#0ff', '#f0f'];
+function rcol() {
+  return colors[(int(random(colors.length)))];
 };
 
-boolean coin() {
+function rcolsub(colors,len) {
+  return colors[(random(len))];
+};
+
+function coin() {
   return random(1) > .5;
 }
 
-int randint(int x) {
-  return int(random(x));
+function randint(x) {
+  return (random(x));
 }
 
-void keyPressed() {
+function keyPressed() {
   if (key == 's') {
     saveImage();
-  } else if (key == 'b') {
-   background(rcol());
   } else {
     generate();
   }
 }
 
-float[] compass(float xf, float yf, float radius, float angle) {
-  float x = xf + (radius * sin(angle));
-  float y = yf + (radius * cos(angle));
-  float forReturn[] = {x, y};
+function compass(xf, yf, radius, angle) {
+  var x = xf + (radius * sin(angle));
+  var y = yf + (radius * cos(angle));
+  var forReturn = [x, y];
   return forReturn;
 }
 
-void saveImage() {
-  String timestamp = year() + nf(month(), 2) + nf(day(), 2) + "-"  + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2);
-  println(timestamp);
-  saveFrame(timestamp+".png");
+function saveImage() {
+  var timestamp = year() + nf(month(), 2) + nf(day(), 2) + "-"  + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2);
+  save(timestamp+".png");
 }
 
-void generate() {
+
+function generate() {
   clear();
-  int mybg = rcol();
+  var mybg = rcol();
   background(mybg);
-  int c1 = rcol();
-  int c2 = rcol();
+  var c1 = rcol();
+  var c2 = rcol();
   while (c1 == mybg) {
     c1 = rcol();
   }
   while (c2 == c1) {
     c2 = rcol();
   }
-  for (int i = 0; i < 1; i++) {
-    spiro(100, 100, c1, c2);
+  for (var i = 0; i < 1; i++) {
+    spiro(min(window.innerWidth, window.innerHeight), min(window.innerWidth, window.innerHeight), c1, c2);
   }
 }
 
-void spiro(float r1, float r2, int c1, int c2) {
+function spiro(r1, r2, c1, c2) {
 
-  pushMatrix();
+  push();
   translate(width/2, height/2);
-  float thickness = 1;
-  float rad1 = random(r1);
-  float rad2 = random(r2);
-  float twopi = 2*PI;
-  int per = randint(10);
+  var thickness = 1;
+  var rad1 = random(r1);
+  var rad2 = random(r2);
+  var twopi = 2*PI;
+  var per = randint(10);
   noStroke();
   //int c1 = rcol();
   //int c2 = rcol();
   //float normRad = sqrt(width*width + height*height);
-  float normRad = rad1 + rad2;
-  float j = 0;
-  for (float i = 0; i < twopi; i+=0.0001) {
+  var normRad = rad1 + rad2;
+  var j = 0;
+  for (var i = 0; i < twopi; i+=0.0001) {
       normRad = rad1 + rad2;
       j+= random(0.001, 0.008);
-      float coords1[] = compass(0, 0, rad1 + rad2*sin(per*i), i);
-      float coords2[] = compass(coords1[0], coords1[1], rad2, j);
-      float dist = sqrt(coords2[0]*coords2[0] + coords2[1]*coords2[1]);
-      float lerper = (dist/normRad);
+      var coords1 = compass(0, 0, rad1 + rad2*sin(per*i), i);
+      var coords2 = compass(coords1[0], coords1[1], rad2, j);
+      var dist = sqrt(coords2[0]*coords2[0] + coords2[1]*coords2[1]);
+      var lerper = (dist/normRad);
       thickness = lerp(-10, 10, lerper);
-      fill(lerpColor(c1, c2, lerper*0.5));
+      fill(lerpColor(color(c1), color(c2), lerper*0.5));
       ellipse(coords2[0], coords2[1], thickness, thickness);
     }
-  popMatrix();
-
+  pop();
 }
 
-void spirally() {
-  float count1 = 4;
-  float count2 = 500;
+function spirally() {
+  var count1 = 4;
+  var count2 = 500;
   noStroke();
   while (count2 >=100) {
-    int c1 = rcol();
-    int c2 = rcol();
-    float twopi = 2*PI;
-    for (float k = 0; k < twopi; k+= PI/count1) {
+    var c1 = rcol();
+    var c2 = rcol();
+    var twopi = 2*PI;
+    for (var k = 0; k < twopi; k+= PI/count1) {
       println(k);
-      pushMatrix();
+      push();
       translate(width/2, height/2);
       rotate(k);
 
 
-      float orad = count2;
-      float rad = orad;
-      float erad = 5;
+      var orad = count2;
+      var rad = orad;
+      var erad = 5;
 
-      for (float i = 0; i < twopi; i+=(PI/rad)) {
-        fill (lerpColor(c1, c2, (rad/orad)));
-        float coords[] = compass(0, 0, rad, i);
+      for (var i = 0; i < twopi; i+=(PI/rad)) {
+        fill (lerpColor(color(c1), color(c2), (rad/orad)));
+        var coords = compass(0, 0, rad, i);
         ellipse(coords[0], coords[1], erad, erad);
         rad --;
         erad += 0.1;
       }
-      popMatrix();
+      pop();
     }
     count1*=1.2;
     count2-=50;
   }
 }
 
-void setup() {
-  size(512, 512, P3D);
+function setup() {
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
   smooth(8);
-  //pixelDensity(2);
-  background(rcol());
+  pixelDensity(2);
+  background(0);
   generate();
+  noStroke();
 }
 
-void draw() {
+function draw() {
   //generate();
+}
+
+window.onresize = function() {
+  var w = window.innerWidth;
+  var h = window.innerHeight;
+  console.log(w, ' ', h)
+  canvas.size(w,h);
+  width = w;
+  height = h;
+  generate();
+};
+function touchStarted(){
+  generate();
+  // return false;
+}
+
+function touchMoved(){
+  return false;
+}
+function touchEnded(){
+  // return false;
+}
+function deviceTurned() {
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
 }

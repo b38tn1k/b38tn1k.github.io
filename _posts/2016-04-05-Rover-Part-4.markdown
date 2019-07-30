@@ -16,7 +16,7 @@ I expanded upon the communication functions I wrote in my last post and have cre
 Curses is old. Ncurses, as in 'new curses', came out in 1993. If you want to build pretty graphical user interfaces, there are many tools better suited for this task (for Python, for example [Kivy](https://kivy.org) or [tkinter](https://wiki.python.org/moin/TkInter)). If you want to build a text based UI for use in the command line, you want [curses](https://docs.python.org/2/library/curses.html?highlight=curses#module-curses). A wrapper for curses is included in the Python standard library and should operate on all \*nix systems (and maybe [Windows?](https://blogs.windows.com/buildingapps/2016/03/30/run-bash-on-ubuntu-on-windows/)). Curses provides methods to read from the keyboard and mouse in addition to the ability to draw text to a 'screen' that is displayed in the host terminal program.
 
 The anatomy of a Python and curses user interface looks something like this:
-{% highlight python %}
+{% highlight null %}
 # Python curses example
 import curses
 import datetime
@@ -65,7 +65,7 @@ The Sensor data is displayed on the screen. These values fluctuate rapidly makin
 
 To simplify the process of creating multiple time series graphs I created a class that handles the streaming API authorization, graph creation and subsequent data streaming. I store my Plot.ly API keys in a separate file named 'stream_tokens.secret' and added '\*.secret' to my .gitignore file.
 
-{% highlight python %}
+{% highlight null %}
 # Plot.ly x/y/z time series plot constructor
 import plotly.plotly as py
 from plotly.graph_objs import Scatter, Layout, Figure, Data, Stream, YAxis

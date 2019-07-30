@@ -21,7 +21,7 @@ To find the serial address of an Arduino on \*nix systems you can list all conne
 ls /dev/*tty*
 ```
 A Python script to read from serial looks like this:
-{% highlight python %}
+{% highlight null %}
 # Python serial.readline() Example
 import serial
 
@@ -34,7 +34,7 @@ while True:
 
 On the Arduino side we use the [Serial](https://www.arduino.cc/en/Reference/Serial) object in a similar fashion however we only need to set a baud rate. A simple Arduino sketch to write to the Serial port looks like this:
 
-{% highlight c %}
+{% highlight null %}
 // C++ Arduino Serial.println() Example
 int baudRate = 9600; // typical baud rates include  300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, or 115200
 
@@ -58,7 +58,7 @@ Now we have established a means of communication between Python and Arduino we m
 - Direction of Communication: What is the relationship between the devices communicating? Is one device mainly receiving commands from the other or do they operate more cooperatively?
 
 It is unavoidable that our message will contain more than one piece of information and therefore we need to be able to separate this information. This allows a received message to be deconstructed and interpreted. For design purposes I am going to indicate each chunk of information in a message as a cell in a table.
-{% highlight c %}
+{% highlight null %}
 +--+--+--+--+--+
 |  |  |  |  |  |
 +--+--+--+--+--+
@@ -75,7 +75,7 @@ When designing a communication protocol we can utilize a number of different spe
 - Data. The information the devices are to communicate. Data can take up more than one chunk of information.
 
 Using these building blocks I decided on a simple message structure that looks like this:
-{% highlight c %}
+{% highlight null %}
 +--------+----------------+---------+------>
 | Header | Message Length | Data ID | Data
 +--------+----------------+---------+------>
@@ -85,7 +85,7 @@ In the case of Rover1 serial data is transferred via a very short USB cable that
 
 # Give me the code!
 Implementing this format looks something like this:
-{% highlight python %}
+{% highlight null %}
 # Python Serial Communication Example
 import serial
 from time import sleep
@@ -111,7 +111,7 @@ while True:
     print serial.readline()
 {% endhighlight %}
 
-{% highlight c %}
+{% highlight null %}
 // C++ Arduino Serial Communication Example
 char message[64]; // 64 bytes - Header Byte and Message Length Byte
 char header = ' ';

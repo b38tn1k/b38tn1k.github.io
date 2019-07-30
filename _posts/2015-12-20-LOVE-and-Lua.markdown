@@ -16,7 +16,7 @@ I already had Lua so I thought I would give it a go...
 
 After messing around with it for a couple weeks I have to agree it is an awesome little framework. It looks after all the boring parts of game coding and lets you jump right into the fun. LÖVE's game loop structure would be familiar to anyone who has worked in Processing or Arduino, or any game framework:
 
-{% highlight lua %}
+{% highlight null %}
 function love.load()
   -- initialize your game objects
 end

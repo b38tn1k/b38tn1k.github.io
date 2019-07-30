@@ -4,6 +4,8 @@ title: Hello!
 permalink: /about/
 ---
 
+<meta name="robots" content="noindex">
+
 My name is James and this is my website. I am an Aussie engineer/hacker/maker/nerd who studied Mechatronic Engineering at UNSW, Sydney. I now live in in Oakland, California.
 
 

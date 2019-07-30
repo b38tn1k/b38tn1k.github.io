@@ -18,7 +18,7 @@ Considering the availability of excellent recordings and videos online, we are s
 
 A notation method for mpc performance could be implemented taking inspiration from guitar and drum tablature, and the dual stave of piano notation. A stave would provide a 'sample scale' indicating fingers across both hands with an alphanumeric Cartesian coordinate system allowing for identification of particular pads. This notation allows for the same notation method to be applied across a range of pad controller products without requiring anything more than extra coordinates. The notation reference system could also be accompanied with suggested sample types, which could be illustrated in a variety of formats:
 
-{% highlight python %}
+{% highlight null %}
 +---------------------------------------------------+
 |                       PUSH                        |
 +---------------------------------------------------+

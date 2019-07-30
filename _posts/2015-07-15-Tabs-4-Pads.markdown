@@ -18,7 +18,7 @@ Considering the availability of excellent recordings and videos online, we are s
 
 A notation method for mpc performance could be implemented taking inspiration from guitar and drum tablature, and the dual stave of piano notation. A stave would provide a 'sample scale' indicating fingers across both hands with an alphanumeric Cartesian coordinate system allowing for identification of particular pads. This notation allows for the same notation method to be applied across a range of pad controller products without requiring anything more than extra coordinates. The notation reference system could also be accompanied with suggested sample types, which could be illustrated in a variety of formats:
 
-{% highlight ruby %}
+{% highlight python %}
 +---------------------------------------------------+
 |                       PUSH                        |
 +---------------------------------------------------+
@@ -83,7 +83,7 @@ Whilst the extended scale of the larger products increases the amount of samples
 +---+----------+
 {% endhighlight %}
 and for the LaunchPad and Push:
-{% highlight ruby %}
+{% highlight python %}
 +-----+-----+-----+-----+-----+
 | a1  | c3  | d3  | e2  | e3  |
 +-----+-----+-----+-----+-----+
@@ -106,7 +106,7 @@ Providing a scale/map such as this in addition to notation communicates preferen
 
 Using a left hand / right hand tabulature stave with sample names as the event indicator provides a method to notate sample pad based performance:
 
-{% highlight ruby %}
+{% highlight python %}
 Right Hand        1    &    2    &    3    &    4    &
 Ring Finger:    |---------------------SN1-----------------|
 Middle Finger:  |------HH2-----------------HH2-------HH2--|
@@ -121,7 +121,7 @@ Ring Finger:    |-----------------------------------------|
 The above notation represents a simple 4/4 shuffle/hip hop beat using only the right hand. The notation should look familiar for anyone who has ever read music notation, tablature or piano roll. This particular beat could be performed many other ways, using both hands or different fingers on the right hand. This example is just the way that I play that beat. I decided to keep the thumbs towards the centre of the stave to assist with sight reading as I utilize the thumb and inner fingers more often compared with the outer fingers. The majority of notes in a notated piece should primarily exist closer the the centre of the stave. It is very easy to extend the stave to account for the pinky finger although, through practice I have found my usage of the pinky to be minimal (I will use my pinky if I can't reach a pad as quick with my ring finger).
 
 Alternatively, a coordinate notation of the above beat could look like this:
-{% highlight ruby %}
+{% highlight python %}
 Right Hand        1    &    2    &    3    &    4    &
 Ring Finger:    |---------------------c1------------------|
 Middle Finger:  |------b2------------------b2--------b2---|
@@ -136,7 +136,7 @@ Ring Finger:    |-----------------------------------------|
 The coordinate based notation method reduces the flexibility of the notation system but may prove useful for instruction purposes or any scenario in which the sample layout is predetermined.
 
 The above notation techniques indicate purely performance preferences in terms of sample placement and finger utilization. The notation system could be extended to include additional stylistic details such as velocity (low -, mid +, high *), crabbing (^) and (if available) aftertouch (~ for pulse, = for hold, / for increase pressure, \ for decrease pressure). A more expressive two bar sequence may look something like this:
-{% highlight ruby %}
+{% highlight python %}
 +---+---------------------+
 | a |    BD1, 4: CHORD1   |
 +---+---------------------+

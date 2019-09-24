@@ -1,0 +1,8 @@
+---
+layout: post
+title:  "DOAB: Oakland One"
+date:   2018-01-08
+categories: music
+comments: True
+---
+<iframe style="border: 0; width: 350px; height: 470px;" src="https://bandcamp.com/EmbeddedPlayer/album=2394845611/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/transparent=true/" seamless><a href="http://doab.bandcamp.com/album/oakland-one">Oakland One by drunk on a bike</a></iframe>

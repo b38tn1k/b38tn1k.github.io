@@ -1,0 +1,43 @@
+---
+layout: post
+title:  "B38TN1K: w01f [my first solo EP!!]"
+date:   2018-12-31
+categories: music
+comments: True
+---
+<iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/676526232&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+
+# Nine Months Later
+I haven't listened back to this stuff in a minute and thought it would be good to revisit.
+
+## Gear:
+ - Akai Rhythm Wolf (w01f, get it? a lot of criticism of this drum machine online, i just think it's neat)
+ - Yamaha DX
+ - Korg Monologue
+ - Casio PT-40
+ - Casio VL-1
+ - An acoustic guitar I found on the street
+ - NI Massive
+ - Ableton
+
+## Harps/Break
+
+I was listening to a lot of Bjork (honestly, I am always listening to a lot of Bjork). Mainly Vespertine and Homogenic at the time. I wanted to pay tribute to her use of delicate 'plucky' sounds - harpsichord, celeste, etc and the contrast she creates with more brutal electronic sounds (think Pluto). As an afterthought I brought the melody from Dorian & Kepler back during the DNB section. The birds you hear at the start were recording while camping somewhere in Iceland.
+
+<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/552789117&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+
+## gh057 w01f
+
+This is a weird wonky one. 95% of it was created the morning of the ghost ship fire, trying to process what happened just up the road.
+
+<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/552789093&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+
+## Dorian And Kepler
+
+I used a pretty cool NASA sample in this one (below). The melody was written using some rules to map a MIDI note sequence to the dorian mode. I can't remember all the rules but there were points where the sequence would be reversed and transposed, the result is the song is sort of palindromic, with the bass and the treble switching parts (does that make sense?? idk).
+
+Tony C provided some deep mindfullness to this one
+
+<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/552789078&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+
+<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/172375333&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>

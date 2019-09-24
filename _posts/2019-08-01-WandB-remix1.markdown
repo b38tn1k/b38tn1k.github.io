@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Water and Bridges vs B38TN1k: Free (Baja All Terrain Remix)"
+title:  "Water and Bridges vs B38TN1K: Free (Baja All Terrain Remix)"
 date:   2019-08-01
 categories: music
 comments: True

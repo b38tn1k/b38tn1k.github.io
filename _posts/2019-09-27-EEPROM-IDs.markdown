@@ -50,6 +50,8 @@ void hat() {
 
 I wanted to make a bassline play with a drum track. Due to the single timer available on the Arduino Uno this is not possible. I found 3 more Arduinos and decided to make an 'orchestra'.
 
+![arduino orchestra]({{ site.url }}/images/4arduinos.jpg)
+
 I implemented a basic sequencer using a 16 int array and the timer method from BlinkWithoutDelay.ino and started making beepy noises using 2 Arduinos. I wrote a beat, uploaded it to Arduino1, sequenced some frequencies and uploaded them to Arduino2 from the same (now edited) sketch. Commenting code in and out for the difference sequences was not really ideal, nor was the idea of 4 separate sketches.
 
 Using [Arduino EEPROM library](https://www.arduino.cc/en/Reference/EEPROM) I figured out how to get each individual Arduino to do different things when programmed from the same sketch. This works well in this case as a lot of the code is shared, it is just the musical sequence that changes from Arduino1..4.

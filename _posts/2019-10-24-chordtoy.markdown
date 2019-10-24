@@ -1,0 +1,38 @@
+---
+layout: post
+title:  "chordtoy: MIDI Chord Generator Arduino Hardware Thing"
+date:   2019-10-24
+categories: arduino
+comments: True
+---
+
+Everyone loves DAW-less synth jams.
+
+...
+
+well I do.
+
+The Arturia BeatStep Pro sequencer is really cool, it is the center of my no-computer synth jam station. It syncs drum machines and noise makers and sends MIDI to my FM synth... but it cannot sequence chords. and I wanna use chords! big techno and electro house stabs, ambient washes, jazzy triphop organ things. all that stuff!
+
+so I made this chordthing.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XsruSs-3y8w" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+chordtoy is a MIDI chord generating arduino device that sits in the MIDI chain between the sequencer and the synth and uses the incoming MIDI note to stack a chord. Like an old Akai or Oberheim MIDI hardware box that you can't find or afford on eBay.
+
+chordtoy has 1 switch and 3 pots. you also need some 10K and 220 ohm resistors and some LEDs.
+
+1 Switch: Choose between Major and Minor modes. Major mode has a dominant 7th rather than major 7th chord, I haven't used it much cause major scales are basic.
+
+3 Pots:
+
+Chord Selector: Starting with the root note, add more notes to create a more complex sound. I tried to group the less complex sounds at low values and the more extreme sounds at high values. So, in Minor mode you can turn up to go from one note to a power chord to a minor chord to a minor 7, 9th, 11th, 13th.. with a couple more variations.
+
+Inversion Mode: at zero the root note is at the bottom. At 100% the root note is at the top of the chord. Variations exist in between.
+
+Strum Rate: When I first made this I just wanted to play simple block chords for techno-y sounding stabs on the DX. By accident I realized that the strummed chord can sound really nice and give some movement to a beat. Rhythms like like Legowelt or Flying Lotus... so at one extreme the chord plays all at once. At the other extreme the notes are plucked out one at a time slowly. Yes, like an arpeggiator. but no repeating or syncing cause I have a BeatStep that can keep time and play arpeggios :-)
+
+[Code and Build deets here](https://github.com/b38tn1k/chordtoy)
+
+Here is my prototype using a Pro Trinket (and Kapustka the little cabbage cat). I should put it in an box or something I guess:
+![cabbage cat]({{ site.url }}/images/cabbagecat.jpg)

@@ -1,9 +1,14 @@
 ---
 layout: post
 title:  "chordtoy: Diatonic Mode"
-date:   2019-10-24
+date:   2019-10-28
 categories: arduino
 comments: True
+sitemap:
+  lastmod: 2014-01-23
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
 ---
 
 I added diatonic mode to the chordtoy project (the idea came from reddit user ddk4x5). You can now use a 4th pot to select a key, and the chords played will be based on the diatonic triads of that key. 
@@ -17,3 +22,5 @@ If the note is not in the scale, it will play it as the same tonality as the roo
 Quick Demo:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W6AAWXIQn-M" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+[Code and Build deets here](https://github.com/b38tn1k/chordtoy)

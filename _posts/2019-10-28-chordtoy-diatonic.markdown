@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "chordtoy: Diatonic Mode"
-date:   2019-10-24
+date:   2019-10-28
 categories: arduino
 comments: True
 ---

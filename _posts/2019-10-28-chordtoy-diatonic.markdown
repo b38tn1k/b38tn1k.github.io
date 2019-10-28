@@ -4,6 +4,11 @@ title:  "chordtoy: Diatonic Mode"
 date:   2019-10-28
 categories: arduino
 comments: True
+sitemap:
+  lastmod: 2014-01-23
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
 ---
 
 I added diatonic mode to the chordtoy project (the idea came from reddit user ddk4x5). You can now use a 4th pot to select a key, and the chords played will be based on the diatonic triads of that key. 

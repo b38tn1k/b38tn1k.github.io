@@ -17,3 +17,5 @@ If the note is not in the scale, it will play it as the same tonality as the roo
 Quick Demo:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W6AAWXIQn-M" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+[Code and Build deets here](https://github.com/b38tn1k/chordtoy)

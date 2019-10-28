@@ -31,6 +31,3 @@ gems: [jekyll-paginate]
 pages_list:
   # Hello!: '/about'
   Archive: '/archive'
-  
-plugins:
-  - jekyll-sitemap

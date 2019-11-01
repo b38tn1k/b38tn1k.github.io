@@ -25,4 +25,6 @@ This Arduino based synth uses a granular synthesis sketch by [Peter Knight](http
 
 It sounds cooler than the sampler, is still a bit of a one trick horse but I will probably use this more.
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/DoemHqam6Oo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 [Code and build deets here](https://github.com/b38tn1k/DOABBeep)

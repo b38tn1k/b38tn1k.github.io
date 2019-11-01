@@ -1,0 +1,28 @@
+---
+layout: post
+title:  "Beep: Arduino monosynth"
+date:   2019-11-01
+categories: arduino
+comments: True
+sitemap:
+  lastmod: 2019-11-01
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
+---
+
+I wasn't that happy with the usefulness of the [PCM MIDI Sample Player](https://b38tn1k.com/arduino/2019/10/31/PCM-sampler/) so I started looking for other projects I could use the circuit and case for.
+
+Ended up with a bass-y acidic monosynth.
+
+![case]({{ site.url }}/images/beep.jpg)
+
+This Arduino based synth uses a granular synthesis sketch by [Peter Knight](https://code.google.com/archive/p/tinkerit/wikis/Auduino.wiki). I made a couple minor changes:
+
+- MIDI in
+- The case I wanted to use from the PCM Sample Player had only 3 pots so I messed with the code to make them useful
+- the switch turns on a glide mode
+
+It sounds cooler than the sampler, is still a bit of a one trick horse but I will probably use this more.
+
+[Code and build deets here](https://github.com/b38tn1k/DOABBeep)

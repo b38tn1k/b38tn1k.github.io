@@ -201,6 +201,7 @@ class Frenemy {
   constructor() {
     this.x = int(random(10, mapWidth-10));
     this.y = int(random(10, mapHeight-10));
+    this.alive = true;
     while (gameMap[this.x][this.y] > obstacle) {
       this.x = int(random(10, mapWidth-10));
       this.y = int(random(10, mapHeight-10));
@@ -211,6 +212,14 @@ class Frenemy {
     this.yrand = int(random(-2, 2));
   }
 
+  checkShot(x, y) {
+    if ((x > this.x) && (x < (this.x + 5))){
+      if ((y > this.y) && (y < (this.y + 6))){
+        this.alive = false;
+      }
+    }
+  }
+
   update() {
     //start with a random random walk
     if (this.counter%int(random(3, 5)) == 0) {
@@ -218,12 +227,18 @@ class Frenemy {
       this.yrand = int(random(-2, 2));
     }
     this.counter ++;
+    let prevx = this.x;
+    let prevy = this.y;
     this.x += this.xrand;
     this.y += this.yrand;
     if (this.x < 0) {this.x = 0;}
     if (this.x > mapWidth-spriteWidth) {this.x = mapWidth-spriteWidth;}
     if (this.y < 0) {this.y = 0;}
     if (this.y > mapHeight - 1.5*spriteHeight) {this.y = mapHeight - 1.5*spriteHeight;}
+    if ((gameMap[this.x][this.y] > obstacle)||(gameMap[this.x+5][this.y+6] > obstacle)||(gameMap[this.x+5][this.y] > obstacle)||(gameMap[this.x][this.y+6] > obstacle)) {
+      this.x = prevx;
+      this.y = prevy;
+    }
   }
 
   draw() {
@@ -345,6 +360,9 @@ function draw() {
   if (playerY > mapHeight - 1.5*spriteHeight) {playerY = mapHeight - 1.5*spriteHeight;}
   if (bullets.length > 0) {
     for (var i = 0; i < bullets.length; i++){
+      for (var k = 0; k < frenemyCount; k++) {
+        frenemies[k].checkShot(bullets[i].x, bullets[i].y)
+      }
       bullets[i].update();
     }
     let tempBullets = [];
@@ -361,6 +379,9 @@ function draw() {
     }
   }
   for (var i = 0; i < frenemyCount; i++) {
+    if (frenemies[i].alive == false) {
+      frenemies[i] = new Frenemy();
+    }
     frenemies[i].update();
   }
   //draw

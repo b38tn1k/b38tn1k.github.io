@@ -27,7 +27,7 @@ so instead of this project, I made a MIDI trigger footswitch for Ableton.
 
 It has some status LEDs and a second reset button for kicking. It just sends some different MIDI note messages on channel 15 (i think). With Ableton MIDI map I can attach it to anything.
 
-![case]({{ site.url }}/images/midi_pedal.jpg)
+![case]({{ site.url }}/images/midipedal.jpg)
 
 The only really interesting thing about it is that I used a 3.3V Pro Mini for the MIDI and logic. [This link helped me figure that out](https://www.midi.org/forum/346-3-3v-vs-5v-and-what-resistors-to-use)
 

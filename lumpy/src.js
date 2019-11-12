@@ -19,22 +19,6 @@ function keyPressed() {
   if (key == 'i') {
     saveImage();
   }
-  if (key == 'w') {
-    playerY--;
-    generate();
-  }
-  if (key == 's') {
-    playerY++;
-    generate();
-  }
-  if (key == 'a') {
-    playerX--;
-    generate();
-  }
-  if (key == 'd') {
-    playerX++;
-    generate();
-  }
 }
 
 function saveImage() {
@@ -61,24 +45,27 @@ function newMap() {
     }
   }
   console.log('yay');
-  drawMap();
+  drawMap(newColor=true);
+  placePlayer();
 }
 
 let mapCanvas;
 let bg;
 let fg;
+let obstacle = 0.6;
 
-function drawMap() {
+function shuffleColors() {
   bg = rcol();
   fg = rcol();
-  noStroke();
-  mapCanvas = createGraphics(window.innerWidth, window.innerHeight);
-
-  mapCanvas.background(bg);
-
   while (fg==bg){
     fg = rcol();
   }
+}
+function drawMap(newColor=false) {
+  if (newColor == true) {shuffleColors();}
+  noStroke();
+  mapCanvas = createGraphics(window.innerWidth, window.innerHeight);
+  mapCanvas.background(bg);
   mapCanvas.fill(fg);
   mapCanvas.stroke(fg);
   for (var i = 0; i < mapWidth; i++) {
@@ -93,6 +80,8 @@ function drawMap() {
 }
 
 let sprite;
+let spriteWidth = 8.0;
+let spriteHeight = 5.0;
 function makeSprite() {
   sprite = createGraphics(window.innerWidth, window.innerHeight);
   sprite.background = bg;
@@ -104,8 +93,8 @@ function makeSprite() {
   sprite.stroke(sc);
   let x = 0;
   let y = 0;
-  let invLength = 5.0;
-  let invHeight = 8.0;
+  let invLength = spriteHeight;
+  let invHeight = spriteWidth;
   var grid = new Array();
   var max = 0.0;
   //generate
@@ -167,10 +156,19 @@ function makeSprite() {
 
 let playerX= 10;
 let playerY = 10;
-function generate() {
-  image(mapCanvas, 0, 0);
-  image (sprite, playerX*pixelSize, playerY*pixelSize);
+
+function placePlayer() {
+  playerX = int(random(10, mapWidth-10));
+  playerY = int(random(10, mapHeight-10));
+  while (gameMap[playerX][playerY] > obstacle) {
+    playerX = int(random(10, mapWidth-10));
+    playerY = int(random(10, mapHeight-10));
+    console.log(playerX);
+    console.log(playerY);
+  }
+  console.log(gameMap[playerX][playerY]);
 }
+
 
 
 var canvas;
@@ -182,7 +180,6 @@ function setup() {
   background(rcol());
   newMap();
   makeSprite();
-  generate();
   console.log('hi');
 }
 
@@ -190,6 +187,50 @@ function mouseClicked() {
 }
 
 function draw() {
+  frameRate(10);
+  //update
+  let prevX = playerX;
+  let prevY = playerY;
+  if ((keyIsDown(UP_ARROW)) || (keyIsDown(87))) {
+    playerY--;
+  }
+  if ((keyIsDown(DOWN_ARROW)) || (keyIsDown(83))) {
+    playerY++;
+  }
+  if ((keyIsDown(LEFT_ARROW)) || (keyIsDown(65))) {
+    playerX--;
+  }
+  if ((keyIsDown(RIGHT_ARROW)) || (keyIsDown(68))) {
+    playerX++;
+  }
+  if (keyIsDown(32)) {
+    //shoot
+  }
+  if (keyIsDown(82)) {
+    makeSprite();
+  }
+
+  //figure out center of sprite and stop it from escaping
+  let spriteCenterX = playerX + spriteWidth/2+1;
+  let spriteCenterY = playerY + spriteHeight-1;
+  if (gameMap[spriteCenterX][spriteCenterY] > obstacle) {
+    playerX = prevX;
+    playerY = prevY;
+  }
+  if (keyIsDown(16)) {
+    gameMap[spriteCenterX][spriteCenterY] = 1;
+    drawMap();
+  }
+  if (playerX < 0) {playerX = 0;}
+  if (playerX > mapWidth-spriteWidth) {playerX = mapWidth-spriteWidth;}
+  if (playerY < 0) {playerY = 0;}
+  if (playerY > mapHeight - 1.5*spriteHeight) {playerY = mapHeight - 1.5*spriteHeight;}
+
+
+
+  //draw
+  image(mapCanvas, 0, 0);
+  image (sprite, playerX*pixelSize, playerY*pixelSize);
 }
 
 window.onresize = function() {
@@ -200,7 +241,7 @@ window.onresize = function() {
   width = w;
   height = h;
   newMap();
-  generate();
+  placePlayer();
 };
 
 function touchStarted(){

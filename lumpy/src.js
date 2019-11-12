@@ -16,6 +16,7 @@ function randint(x) {
 }
 var shootNow = false;
 function keyPressed() {
+  showtext = false;
   if (key == 'i') {
     saveImage();
   }
@@ -82,7 +83,7 @@ function drawMap(newColor=false) {
   image(mapCanvas, 0, 0);
 
 }
-
+var showtext = true;
 let my_sprite;
 let spriteWidth = 8.0;
 let spriteHeight = 5.0;
@@ -182,6 +183,7 @@ function placePlayer() {
 
 
 var canvas;
+let tc;
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
@@ -191,6 +193,10 @@ function setup() {
   newMap();
   makeSprite();
   makeFrenemies();
+  tc = rcol();
+  while ((tc == bg) || (tc == fg)) {
+    tc = rcol();
+  }
   // console.log('hi');
 }
 
@@ -259,6 +265,7 @@ class Bullet {
     }
   }
   update() {
+
     this.y = this.y + this.direction[0];
     this.y = this.y - this.direction[1];
     this.x = this.x + this.direction[2];
@@ -394,6 +401,12 @@ function draw() {
     for (var i = 0; i < bullets.length; i++){
       bullets[i].draw();
     }
+  }
+  if (showtext == true) {
+    fill(tc);
+    let s = 'WASD to move\nLEFT SHIFT to build\nSPACE to shoot\nR for a new sprite\nRefresh to see this again...\nPress the any key';
+    textSize(50);
+    text(s, 50, 50);
   }
 }
 

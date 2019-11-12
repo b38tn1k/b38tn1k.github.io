@@ -83,11 +83,16 @@ function drawMap(newColor=false) {
 
 }
 
-let sprite;
+let my_sprite;
 let spriteWidth = 8.0;
 let spriteHeight = 5.0;
-function makeSprite() {
-  sprite = createGraphics(window.innerWidth, window.innerHeight);
+function makeSprite(){
+  my_sprite = genSprite(spriteWidth, spriteHeight);
+}
+function genSprite(spriteWidth, spriteHeight) {
+  // let spriteWidth = 8.0;
+  // let spriteHeight = 5.0;
+  let sprite = createGraphics(window.innerWidth, window.innerHeight);
   sprite.background = bg;
   let sc = rcol();
   while (sc==bg){
@@ -156,6 +161,7 @@ function makeSprite() {
     ypos = 0;
     xpos += pixelSize;
   }
+  return sprite;
 }
 
 let playerX= 10;
@@ -184,10 +190,45 @@ function setup() {
   background(rcol());
   newMap();
   makeSprite();
+  makeFrenemies();
   // console.log('hi');
 }
 
 function mouseClicked() {
+}
+
+class Frenemy {
+  constructor() {
+    this.x = int(random(10, mapWidth-10));
+    this.y = int(random(10, mapHeight-10));
+    while (gameMap[this.x][this.y] > obstacle) {
+      this.x = int(random(10, mapWidth-10));
+      this.y = int(random(10, mapHeight-10));
+    }
+    this.counter = 0;
+    this.sprite = genSprite(5.0, 3.0);
+    this.xrand = int(random(-2, 2));
+    this.yrand = int(random(-2, 2));
+  }
+
+  update() {
+    //start with a random random walk
+    if (this.counter%int(random(3, 5)) == 0) {
+      this.xrand = int(random(-2, 2));
+      this.yrand = int(random(-2, 2));
+    }
+    this.counter ++;
+    this.x += this.xrand;
+    this.y += this.yrand;
+    if (this.x < 0) {this.x = 0;}
+    if (this.x > mapWidth-spriteWidth) {this.x = mapWidth-spriteWidth;}
+    if (this.y < 0) {this.y = 0;}
+    if (this.y > mapHeight - 1.5*spriteHeight) {this.y = mapHeight - 1.5*spriteHeight;}
+  }
+
+  draw() {
+    image(this.sprite, this.x*pixelSize, this.y*pixelSize);
+  }
 }
 
 class Bullet {
@@ -241,8 +282,16 @@ class Bullet {
   }
 }
 
+function makeFrenemies() {
+  frenemies = [];
+  for (var i = 0; i < frenemyCount; i++) {
+    frenemies.push(new Frenemy())
+  }
+}
+
 let bullets = [];
-bulletCount = 0;
+let frenemies = [];
+let frenemyCount = 5;
 let direction = [1, 0, 0, 0];
 function draw() {
   frameRate(10);
@@ -285,7 +334,6 @@ function draw() {
   if (keyIsDown(32)) {
     //shoot
     if (shootNow == true) {
-      new Bullet(spriteCenterX, spriteCenterY, direction);
       bullets.push(new Bullet(spriteCenterX, spriteCenterY, direction));
       shootNow = false;
     }
@@ -301,7 +349,7 @@ function draw() {
     }
     let tempBullets = [];
     for (var i = 0; i < bullets.length; i++){
-      console.log(bullets[i].alive);
+      // console.log(bullets[i].alive);
       if (bullets[i].alive == true){
         tempBullets.push(bullets[i]);
       }
@@ -312,9 +360,15 @@ function draw() {
       bullets[i] = tempBullets[i];
     }
   }
+  for (var i = 0; i < frenemyCount; i++) {
+    frenemies[i].update();
+  }
   //draw
   image(mapCanvas, 0, 0);
-  image (sprite, playerX*pixelSize, playerY*pixelSize);
+  image (my_sprite, playerX*pixelSize, playerY*pixelSize);
+  for (var i = 0; i < frenemyCount; i++) {
+    frenemies[i].draw();
+  }
   if (bullets.length > 0) {
     for (var i = 0; i < bullets.length; i++){
       bullets[i].draw();
@@ -332,6 +386,7 @@ window.onresize = function() {
   newMap();
   makeSprite();
   placePlayer();
+  makeFrenemies();
 };
 
 function touchStarted(){

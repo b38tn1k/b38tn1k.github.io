@@ -1,0 +1,34 @@
+---
+layout: post
+title:  "More MIDI stuff"
+date:   2019-11-12
+categories: arduino
+comments: True
+sitemap:
+  lastmod: 2019-11-12
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
+---
+
+I amazon'd some plastic boxes and quickly cased a couple of the MIDI toys I have been building lately. The [Chordtoy](https://github.com/b38tn1k/chordtoy) is the most useful. I have it between the Beatstep and the DX for chord stabs and arpeggios.
+
+I like the Post-It Note on black plastic aesthetic I accidentally created.
+![case]({{ site.url }}/images/toys.jpg)
+
+Another idea I had been sitting on for a minute concerns the syncing of a BOSS RC20XL to the CV output of the beatstep. The motivation being my lack of timing when it comes to this pedal and my wish to jam on some bass guitar loops a la The Chemical Brothers.
+
+So the plan was to have a footswitch and a tempo-synced gate trigger signal coming into an Arduino that controlled a relay. The relay was connected to the RC20XL record footswitch. I wanted to make this mechanism in a separate case with an aux cable connecting the RC20XL and the relay. When you press the footswitch the relay is armed. At the next trigger pulse, the relay is switched.
+![case]({{ site.url }}/images/roland_looper.jpg)
+
+I wrote the code and verified it all worked. I was hesitant when it came to drilling the RC20XL for an extra plug. Which made me think a bit. Ableton has a built-in looper, and it has more capability that the BOSS pedal...
+
+so instead of this project, I made a MIDI trigger footswitch for Ableton.
+
+It has some status LEDs and a second reset button for kicking. It just sends some different MIDI note messages on channel 15 (i think). With Ableton MIDI map I can attach it to anything.
+
+![case]({{ site.url }}/images/midi_pedal.jpg)
+
+The only really interesting thing about it is that I used a 3.3V Pro Mini for the MIDI and logic. [This link helped me figure that out](https://www.midi.org/forum/346-3-3v-vs-5v-and-what-resistors-to-use)
+
+[Code here](https://github.com/b38tn1k/MIDI_PEDAL)

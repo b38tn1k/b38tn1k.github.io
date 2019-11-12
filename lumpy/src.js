@@ -14,10 +14,14 @@ function coin() {
 function randint(x) {
   return (random(x));
 }
-
+var shootNow = false;
 function keyPressed() {
   if (key == 'i') {
     saveImage();
+  }
+  if (key == ' ') {
+    // console.log('shoot');
+    shootNow = true;
   }
 }
 
@@ -44,7 +48,7 @@ function newMap() {
       gameMap[i][j] = (noiseVal);
     }
   }
-  console.log('yay');
+  // console.log('yay');
   drawMap(newColor=true);
   placePlayer();
 }
@@ -163,10 +167,10 @@ function placePlayer() {
   while (gameMap[playerX][playerY] > obstacle) {
     playerX = int(random(10, mapWidth-10));
     playerY = int(random(10, mapHeight-10));
-    console.log(playerX);
-    console.log(playerY);
+    // console.log(playerX);
+    // console.log(playerY);
   }
-  console.log(gameMap[playerX][playerY]);
+  // console.log(gameMap[playerX][playerY]);
 }
 
 
@@ -180,32 +184,89 @@ function setup() {
   background(rcol());
   newMap();
   makeSprite();
-  console.log('hi');
+  // console.log('hi');
 }
 
 function mouseClicked() {
 }
 
+class Bullet {
+  constructor(x, y, dir) {
+    this.x = x;
+    this.y = y;
+    this.direction = dir;
+    this.alive = true;
+    this.health = 5;
+    this.col = rcol();
+    while (this.col== bg){
+      this.col = rcol();
+    }
+  }
+  update() {
+    this.y = this.y + this.direction[0];
+    this.y = this.y - this.direction[1];
+    this.x = this.x + this.direction[2];
+    this.x = this.x - this.direction[3];
+    // console.log(this.x, this.y);
+    if (this.x < 0 || this.y < 0 || this.x >= mapWidth || this.y >= mapHeight) {
+      this.alive = false
+      // console.log('bye');
+    }
+    if (this.health == 0) {
+      this.alive = false;
+    }
+    if (this.alive == true){
+      if (gameMap[this.x][this.y]>obstacle) {
+        gameMap[this.x][this.y] = 0;
+
+        this.health--;
+        if (this.health == 0) {
+          gameMap[this.x+1][this.y-1] = 0;
+          gameMap[this.x-1][this.y+1] = 0;
+          gameMap[this.x+1][this.y+1] = 0;
+          gameMap[this.x-1][this.y-1] = 0;
+          gameMap[this.x][this.y-1] = 0;
+          gameMap[this.x-1][this.y] = 0;
+          gameMap[this.x][this.y+1] = 0;
+          gameMap[this.x+1][this.y] = 0;
+        }
+        drawMap();
+      }
+    }
+  }
+  draw() {
+    fill(this.col);
+    stroke(this.col);
+    square(this.x*pixelSize, this.y*pixelSize, pixelSize);
+  }
+}
+
+let bullets = [];
+bulletCount = 0;
+let direction = [1, 0, 0, 0];
 function draw() {
   frameRate(10);
   //update
   let prevX = playerX;
   let prevY = playerY;
+
   if ((keyIsDown(UP_ARROW)) || (keyIsDown(87))) {
     playerY--;
+    direction = [1, 0, 0, 0];
   }
   if ((keyIsDown(DOWN_ARROW)) || (keyIsDown(83))) {
     playerY++;
+    direction = [0, 1, 0, 0];
   }
   if ((keyIsDown(LEFT_ARROW)) || (keyIsDown(65))) {
     playerX--;
+    direction = [0, 0, 1, 0];
   }
   if ((keyIsDown(RIGHT_ARROW)) || (keyIsDown(68))) {
     playerX++;
+    direction = [0, 0, 0, 1];
   }
-  if (keyIsDown(32)) {
-    //shoot
-  }
+
   if (keyIsDown(82)) {
     makeSprite();
   }
@@ -221,26 +282,55 @@ function draw() {
     gameMap[spriteCenterX][spriteCenterY] = 1;
     drawMap();
   }
+  if (keyIsDown(32)) {
+    //shoot
+    if (shootNow == true) {
+      new Bullet(spriteCenterX, spriteCenterY, direction);
+      bullets.push(new Bullet(spriteCenterX, spriteCenterY, direction));
+      shootNow = false;
+    }
+  }
+
   if (playerX < 0) {playerX = 0;}
   if (playerX > mapWidth-spriteWidth) {playerX = mapWidth-spriteWidth;}
   if (playerY < 0) {playerY = 0;}
   if (playerY > mapHeight - 1.5*spriteHeight) {playerY = mapHeight - 1.5*spriteHeight;}
-
-
-
+  if (bullets.length > 0) {
+    for (var i = 0; i < bullets.length; i++){
+      bullets[i].update();
+    }
+    let tempBullets = [];
+    for (var i = 0; i < bullets.length; i++){
+      console.log(bullets[i].alive);
+      if (bullets[i].alive == true){
+        tempBullets.push(bullets[i]);
+      }
+        // and javacript deals with the rest??
+    }
+    bullets = [];
+    for (var i = 0; i < tempBullets.length; i++){
+      bullets[i] = tempBullets[i];
+    }
+  }
   //draw
   image(mapCanvas, 0, 0);
   image (sprite, playerX*pixelSize, playerY*pixelSize);
+  if (bullets.length > 0) {
+    for (var i = 0; i < bullets.length; i++){
+      bullets[i].draw();
+    }
+  }
 }
 
 window.onresize = function() {
   var w = window.innerWidth;
   var h = window.innerHeight;
-  console.log(w, ' ', h)
+  // console.log(w, ' ', h)
   canvas.size(w,h);
   width = w;
   height = h;
   newMap();
+  makeSprite();
   placePlayer();
 };
 

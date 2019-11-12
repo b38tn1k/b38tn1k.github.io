@@ -24,6 +24,9 @@ function keyPressed() {
     // console.log('shoot');
     shootNow = true;
   }
+  if (key == 'c') {
+    rearCannon = !rearCannon;
+  }
 }
 
 function saveImage() {
@@ -67,6 +70,7 @@ function shuffleColors() {
   }
 }
 function drawMap(newColor=false) {
+  mapCanvas = null;
   if (newColor == true) {shuffleColors();}
   noStroke();
   mapCanvas = createGraphics(window.innerWidth, window.innerHeight);
@@ -226,6 +230,16 @@ class Frenemy {
     }
   }
 
+  checkTouch(x, y) {
+    if ((x > this.x-spriteWidth) && (x < (this.x + spriteWidth))){
+      if ((y > this.y - spriteHeight) && (y < (this.y + spriteHeight))){
+        this.alive = false;
+        return true;
+      }
+    }
+    return false;
+  }
+
   update() {
     //start with a random random walk
     if (this.counter%int(random(3, 5)) == 0) {
@@ -265,7 +279,6 @@ class Bullet {
     }
   }
   update() {
-
     this.y = this.y + this.direction[0];
     this.y = this.y - this.direction[1];
     this.x = this.x + this.direction[2];
@@ -315,7 +328,9 @@ let bullets = [];
 let frenemies = [];
 let frenemyCount = 5;
 let direction = [1, 0, 0, 0];
+let rearCannon = true;
 function draw() {
+  clear();
   frameRate(10);
   //update
   let prevX = playerX;
@@ -323,21 +338,36 @@ function draw() {
 
   if ((keyIsDown(UP_ARROW)) || (keyIsDown(87))) {
     playerY--;
-    direction = [1, 0, 0, 0];
+    if (rearCannon == true) {
+      direction = [1, 0, 0, 0];
+    } else {
+      direction = [0, 1, 0, 0];
+    }
   }
   if ((keyIsDown(DOWN_ARROW)) || (keyIsDown(83))) {
     playerY++;
-    direction = [0, 1, 0, 0];
+    if (rearCannon == true) {
+      direction = [0, 1, 0, 0];
+    } else {
+      direction = [1, 0, 0, 0];
+    }
   }
   if ((keyIsDown(LEFT_ARROW)) || (keyIsDown(65))) {
     playerX--;
-    direction = [0, 0, 1, 0];
+    if (rearCannon == true) {
+      direction = [0, 0, 1, 0];
+    } else {
+      direction = [0, 0, 0, 1];
+    }
   }
   if ((keyIsDown(RIGHT_ARROW)) || (keyIsDown(68))) {
     playerX++;
-    direction = [0, 0, 0, 1];
+    if (rearCannon == true) {
+      direction = [0, 0, 0, 1];
+    } else {
+      direction = [0, 0, 1, 0];
+    }
   }
-
   if (keyIsDown(82)) {
     makeSprite();
   }
@@ -390,6 +420,9 @@ function draw() {
       frenemies[i] = new Frenemy();
     }
     frenemies[i].update();
+    if (frenemies[i].checkTouch(spriteCenterX, spriteCenterY) == true) {
+      makeSprite();
+    }
   }
   //draw
   image(mapCanvas, 0, 0);
@@ -404,8 +437,8 @@ function draw() {
   }
   if (showtext == true) {
     fill(tc);
-    let s = 'WASD to move\nLEFT SHIFT to build\nSPACE to shoot\nR for a new sprite\nRefresh to see this again...\nPress the any key';
-    textSize(50);
+    let s = 'WASD to move\n\nLEFT SHIFT to build\n\nSPACE to shoot\n\nC to switch cannon direction\n\nR for a new sprite\n\nRefresh to see this again...\n\nPress any key';
+    textSize(30);
     text(s, 50, 50);
   }
 }

@@ -59,7 +59,7 @@ function newMap() {
 let mapCanvas;
 let bg;
 let fg;
-let obstacle = 0.6;
+let obstacle = 0.5;
 
 function shuffleColors() {
   bg = rcol();

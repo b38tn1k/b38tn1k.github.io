@@ -1,4 +1,28 @@
-var colors = ['#0f0', '#ff0', '#0ff', '#f0f', '#fff', '#f00', '#00f', '#0f0'];
+let colors = ['#0f0', '#ff0', '#0ff', '#f0f', '#fff', '#f00', '#00f', '#0f0'];
+let gameMap = [];
+let mapWidth = 200;
+let mapHeight;
+let pixelSize = 5;
+let shootNow = false;
+let mapCanvas = null;
+let bg;
+let fg;
+let obstacle = 0.55;
+let showtext = true;
+let my_sprite;
+let spriteWidth = 8.0;
+let spriteHeight = 5.0;
+let playerX= 10;
+let playerY = 10;
+let canvas;
+let tc;
+let bullets = [];
+let frenemies = [];
+let frenemyCount = 10;
+let direction = [1, 0, 0, 0];
+let rearCannon = true;
+let herd;
+
 function rcol() {
   return colors[(int(random(colors.length)))];
 };
@@ -14,9 +38,17 @@ function coin() {
 function randint(x) {
   return (random(x));
 }
-var shootNow = false;
+
 function keyPressed() {
-  showtext = false;
+  if (key == 'h') {
+    tc = rcol();
+    while ((tc == bg) || (tc == fg)) {
+      tc = rcol();
+    }
+    showtext = true;
+  } else {
+    showtext = false;
+  }
   if (key == 'i') {
     saveImage();
   }
@@ -33,12 +65,6 @@ function saveImage() {
   var timestamp = year() + nf(month(), 2) + nf(day(), 2) + "-"  + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2);
   save(timestamp+".png");
 }
-
-let gameMap = [];
-var mapWidth = 200;
-var mapHeight;
-var pixelSize = 5;
-
 
 function newMap() {
   let noiseScale = 0.03;
@@ -57,11 +83,6 @@ function newMap() {
   placePlayer();
 }
 
-let mapCanvas = null;
-let bg;
-let fg;
-let obstacle = 0.55;
-
 function shuffleColors() {
   bg = rcol();
   fg = rcol();
@@ -69,6 +90,7 @@ function shuffleColors() {
     fg = rcol();
   }
 }
+
 function drawMap(newColor=false) {
   if (newColor == true) {shuffleColors();} else {mapCanvas.remove();}
   noStroke();
@@ -84,23 +106,21 @@ function drawMap(newColor=false) {
     }
   }
 }
-var showtext = true;
-let my_sprite;
-let spriteWidth = 8.0;
-let spriteHeight = 5.0;
+
 function makeSprite(){
   my_sprite = null;
-  my_sprite = genSprite(spriteWidth, spriteHeight);
-}
-function genSprite(spriteWidth, spriteHeight) {
-  // let spriteWidth = 8.0;
-  // let spriteHeight = 5.0;
-  let sprite = createGraphics((spriteWidth+2)*pixelSize, spriteHeight*2*pixelSize);
-  sprite.background = bg;
   let sc = rcol();
   while (sc==bg){
     sc = rcol();
   }
+  my_sprite = genSprite(spriteWidth, spriteHeight, sc);
+}
+
+function genSprite(spriteWidth, spriteHeight, sc) {
+  // let spriteWidth = 8.0;
+  // let spriteHeight = 5.0;
+  let sprite = createGraphics((spriteWidth+2)*pixelSize, spriteHeight*2*pixelSize);
+  sprite.background = bg;
   sprite.fill(sc);
   sprite.stroke(sc);
   let x = 0;
@@ -167,9 +187,6 @@ function genSprite(spriteWidth, spriteHeight) {
   return sprite;
 }
 
-let playerX= 10;
-let playerY = 10;
-
 function placePlayer() {
   playerX = int(random(10, mapWidth-10));
   playerY = int(random(10, mapHeight-10));
@@ -182,10 +199,27 @@ function placePlayer() {
   // console.log(gameMap[playerX][playerY]);
 }
 
+window.onresize = function() {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  mapCanvas.remove();
+  my_sprite.remove();
+  for (var i = 0; i < frenemyCount; i++) {
+    frenemies[i].clean();
+  }
+  canvas = null;
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
+  newMap();
+  makeSprite();
+  placePlayer();
+  herd = new Herd(10);
+  frenemies = herd.herd;
+};
 
-
-var canvas;
-let tc;
+function deviceTurned() {
+  canvas = null;
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
+}
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
@@ -194,7 +228,8 @@ function setup() {
   background(rcol());
   newMap();
   makeSprite();
-  makeFrenemies();
+  herd = new Herd(10);
+  frenemies = herd.herd;
   tc = rcol();
   while ((tc == bg) || (tc == fg)) {
     tc = rcol();
@@ -202,143 +237,6 @@ function setup() {
   // console.log('hi');
 }
 
-function mouseClicked() {
-}
-
-class Frenemy {
-  constructor() {
-    this.x = int(random(10, mapWidth-10));
-    this.y = int(random(10, mapHeight-10));
-    this.alive = true;
-    while (gameMap[this.x][this.y] > obstacle) {
-      this.x = int(random(10, mapWidth-10));
-      this.y = int(random(10, mapHeight-10));
-    }
-    this.counter = 0;
-    this.sprite = genSprite(5.0, 3.0);
-    this.xrand = int(random(-2, 2));
-    this.yrand = int(random(-2, 2));
-  }
-
-  clean() {
-    this.sprite.remove();
-    this.sprite = null;
-  }
-
-  checkShot(x, y) {
-    if ((x > this.x) && (x < (this.x + 5))){
-      if ((y > this.y) && (y < (this.y + 6))){
-        this.alive = false;
-      }
-    }
-  }
-
-  checkTouch(x, y) {
-    if ((x > this.x-spriteWidth) && (x < (this.x + spriteWidth))){
-      if ((y > this.y - spriteHeight) && (y < (this.y + spriteHeight))){
-        this.alive = false;
-        return true;
-      }
-    }
-    return false;
-  }
-
-  randomWalk() {
-    if (this.counter%int(random(3, 5)) == 0) {
-      this.xrand = int(random(-2, 2));
-      this.yrand = int(random(-2, 2));
-    }
-    this.counter ++;
-    this.x += this.xrand;
-    this.y += this.yrand;
-  }
-
-  update() {
-    let prevx = this.x;
-    let prevy = this.y;
-    //start with a random random walk
-    this.randomWalk();
-    if (this.x < 0) {this.x = 0;}
-    if (this.x > mapWidth-spriteWidth) {this.x = mapWidth-spriteWidth;}
-    if (this.y < 0) {this.y = 0;}
-    if (this.y > mapHeight - 1.5*spriteHeight) {this.y = mapHeight - 1.5*spriteHeight;}
-    if ((gameMap[this.x][this.y] > obstacle)||(gameMap[this.x+5][this.y+6] > obstacle)||(gameMap[this.x+5][this.y] > obstacle)||(gameMap[this.x][this.y+6] > obstacle)||(gameMap[this.x+2][this.y+3] > obstacle)||(gameMap[this.x+2][this.y] > obstacle)) {
-      this.x = prevx;
-      this.y = prevy;
-    }
-  }
-
-  draw() {
-    image(this.sprite, this.x*pixelSize, this.y*pixelSize);
-  }
-}
-
-class Bullet {
-  constructor(x, y, dir) {
-    this.x = x;
-    this.y = y;
-    this.direction = dir;
-    this.alive = true;
-    this.health = 5;
-    this.col = rcol();
-    while (this.col== bg){
-      this.col = rcol();
-    }
-  }
-  update() {
-    this.y = this.y + this.direction[0];
-    this.y = this.y - this.direction[1];
-    this.x = this.x + this.direction[2];
-    this.x = this.x - this.direction[3];
-    // console.log(this.x, this.y);
-    if (this.x < 0 || this.y < 0 || this.x >= mapWidth || this.y >= mapHeight) {
-      this.alive = false
-      // console.log('bye');
-    }
-    if (this.health == 0) {
-      this.alive = false;
-    }
-    if (this.alive == true){
-      if (gameMap[this.x][this.y]>obstacle) {
-        gameMap[this.x][this.y] = 0;
-
-        this.health--;
-        if (this.health == 0) {
-          if ((this.x > 2) && (this.x < mapWidth-2) && (this.y > 2) && (this.y < mapHeight-2)){
-            gameMap[this.x+1][this.y-1] = 0;
-            gameMap[this.x-1][this.y-1] = 0;
-            gameMap[this.x-1][this.y+1] = 0;
-            gameMap[this.x-1][this.y] = 0;
-            gameMap[this.x][this.y-1] = 0;
-
-            gameMap[this.x+1][this.y+1] = 0;
-            gameMap[this.x][this.y+1] = 0;
-            gameMap[this.x+1][this.y] = 0;
-          }
-        }
-        drawMap();
-      }
-    }
-  }
-  draw() {
-    fill(this.col);
-    stroke(this.col);
-    square(this.x*pixelSize, this.y*pixelSize, pixelSize);
-  }
-}
-
-// function makeFrenemies() {
-//   frenemies = [];
-//   for (var i = 0; i < frenemyCount; i++) {
-//     frenemies.push(new Frenemy())
-//   }
-// }
-
-let bullets = [];
-// let frenemies = [];
-// let frenemyCount = 10;
-let direction = [1, 0, 0, 0];
-let rearCannon = true;
 function draw() {
   clear();
   frameRate(10);
@@ -406,16 +304,14 @@ function draw() {
   if (playerX > mapWidth-spriteWidth) {playerX = mapWidth-spriteWidth;}
   if (playerY < 0) {playerY = 0;}
   if (playerY > mapHeight - 1.5*spriteHeight) {playerY = mapHeight - 1.5*spriteHeight;}
+
   if (bullets.length > 0) {
     for (var i = 0; i < bullets.length; i++){
-      for (var k = 0; k < frenemyCount; k++) {
-        frenemies[k].checkShot(bullets[i].x, bullets[i].y)
-      }
+      herd.checkShot(bullets[i].x, bullets[i].y);
       bullets[i].update();
     }
     let tempBullets = [];
     for (var i = 0; i < bullets.length; i++){
-      // console.log(bullets[i].alive);
       if (bullets[i].alive == true){
         tempBullets.push(bullets[i]);
       }
@@ -426,23 +322,11 @@ function draw() {
       bullets[i] = tempBullets[i];
     }
   }
-  for (var i = 0; i < frenemyCount; i++) {
-    if (frenemies[i].alive == false) {
-      frenemies[i].clean();
-      frenemies[i] = new Frenemy();
-    }
-    frenemies[i].update();
-    if (frenemies[i].checkTouch(spriteCenterX, spriteCenterY) == true) {
-      my_sprite.remove();
-      makeSprite();
-    }
-  }
+  herd.update(spriteCenterX, spriteCenterY);
   //draw
   image(mapCanvas, 0, 0);
   image (my_sprite, playerX*pixelSize, playerY*pixelSize);
-  for (var i = 0; i < frenemyCount; i++) {
-    frenemies[i].draw();
-  }
+  herd.draw();
   if (bullets.length > 0) {
     for (var i = 0; i < bullets.length; i++){
       bullets[i].draw();
@@ -450,38 +334,198 @@ function draw() {
   }
   if (showtext == true) {
     fill(tc);
-    let s = 'WASD to move\n\nLEFT SHIFT to build\n\nSPACE to shoot\n\nC to switch cannon direction\n\nR for a new sprite\n\nRefresh to see this again...\n\nPress any key';
-    textSize(30);
-    text(s, 50, 50);
+    let s = '[WASD] to move\n[LEFT SHIFT] to build\n[SPACE] to shoot\n[C] to switch cannon direction\n[R] for a new sprite\n[H] to see this again\nPress any key to play';
+    let t = 'YOU ARE THE BIG ONE\nYOU FLOAT IN LUMPY SPACE WITH THE LITTLE ONES\nWHEN A LITTLE ONE DIES,\nTHE TWO OLDEST HAVE A BABY\nSOMETIMES THEY MUTATE';
+    textSize(50);
+    text(t, 50, 50);
+    textSize(20);
+    text(s, 50, 350);
   }
 }
 
-window.onresize = function() {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  mapCanvas.remove();
-  my_sprite.remove();
-  for (var i = 0; i < frenemyCount; i++) {
-    frenemies[i].clean();
+class Frenemy {
+  constructor() {
+    this.color = rcol();
+    while (this.color==bg){
+      this.color = rcol();
+    }
+    this.x = int(random(10, mapWidth-10));
+    this.y = int(random(10, mapHeight-10));
+    this.alive = true;
+    while (gameMap[this.x][this.y] > obstacle) {
+      this.x = int(random(10, mapWidth-10));
+      this.y = int(random(10, mapHeight-10));
+    }
+    this.counter = 0;
+    this.sprite = genSprite(5.0, 3.0, this.color);
+    this.xrand = int(random(-2, 2));
+    this.yrand = int(random(-2, 2));
+    this.builder = random(); // liklihood to make walls vs liklihood to shoot and destroy
+    this.escaper = random(); //liklihood to move towards player/ away
+    this.seeker = random(); //likleihood to cling to edges / float in empty space
   }
-  canvas = null;
-  canvas = createCanvas(window.innerWidth, window.innerHeight);
-  newMap();
-  makeSprite();
-  placePlayer();
-  makeFrenemies();
-};
 
-function touchStarted(){
+  inherit(builder, escaper,seeker, color) {
+    this.sprite.remove();
+    this.color = color
+    this.sprite = genSprite(5.0, 3.0, this.color);
+  }
+
+  clean() {
+    this.sprite.remove();
+    this.sprite = null;
+  }
+
+  checkShot(x, y) {
+    if ((x > this.x) && (x < (this.x + 5))){
+      if ((y > this.y) && (y < (this.y + 6))){
+        this.alive = false;
+      }
+    }
+  }
+
+  checkTouch(x, y) {
+    if ((x > this.x-spriteWidth) && (x < (this.x + spriteWidth))){
+      if ((y > this.y - spriteHeight) && (y < (this.y + spriteHeight))){
+        this.alive = false;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  randomWalk() {
+    if (this.counter%int(random(3, 5)) == 0) {
+      this.xrand = int(random(-2, 2));
+      this.yrand = int(random(-2, 2));
+    }
+    this.counter ++;
+    this.x += this.xrand;
+    this.y += this.yrand;
+  }
+
+  update() {
+    let prevx = this.x;
+    let prevy = this.y;
+    //start with a random random walk
+    this.randomWalk();
+    if (this.x < 0) {this.x = 0;}
+    if (this.x > mapWidth-spriteWidth) {this.x = mapWidth-spriteWidth;}
+    if (this.y < 0) {this.y = 0;}
+    if (this.y > mapHeight - 1.5*spriteHeight) {this.y = mapHeight - 1.5*spriteHeight;}
+    if ((gameMap[this.x][this.y] > obstacle)||(gameMap[this.x+5][this.y+6] > obstacle)||(gameMap[this.x+5][this.y] > obstacle)||(gameMap[this.x][this.y+6] > obstacle)||(gameMap[this.x+2][this.y+3] > obstacle)||(gameMap[this.x+2][this.y] > obstacle)) {
+      this.x = prevx;
+      this.y = prevy;
+    }
+  }
+
+  draw() {
+    image(this.sprite, this.x*pixelSize, this.y*pixelSize);
+  }
 }
 
-function touchMoved(){
-  return false;
+class Bullet {
+  constructor(x, y, dir) {
+    this.x = x;
+    this.y = y;
+    this.direction = dir;
+    this.alive = true;
+    this.health = 5;
+    this.col = rcol();
+    this.counter = 0;
+    while (this.col== bg){
+      this.col = rcol();
+    }
+  }
+  update() {
+    this.counter++;
+    this.y = this.y + this.direction[0];
+    this.y = this.y - this.direction[1];
+    this.x = this.x + this.direction[2];
+    this.x = this.x - this.direction[3];
+    // console.log(this.x, this.y);
+    if (this.x < 0 || this.y < 0 || this.x >= mapWidth || this.y >= mapHeight) {
+      this.alive = false
+      // console.log('bye');
+    }
+    if (this.health == 0) {
+      this.alive = false;
+    }
+    if (this.alive == true){
+      if (gameMap[this.x][this.y]>obstacle) {
+        gameMap[this.x][this.y] = 0;
+
+        this.health--;
+        if (this.health == 0) {
+          if ((this.x > 2) && (this.x < mapWidth-2) && (this.y > 2) && (this.y < mapHeight-2)){
+            gameMap[this.x+1][this.y-1] = 0;
+            gameMap[this.x-1][this.y-1] = 0;
+            gameMap[this.x-1][this.y+1] = 0;
+            gameMap[this.x-1][this.y] = 0;
+            gameMap[this.x][this.y-1] = 0;
+
+            gameMap[this.x+1][this.y+1] = 0;
+            gameMap[this.x][this.y+1] = 0;
+            gameMap[this.x+1][this.y] = 0;
+          }
+        }
+        drawMap();
+      }
+    }
+  }
+  draw() {
+    fill(this.col);
+    stroke(this.col);
+    square(this.x*pixelSize, this.y*pixelSize, pixelSize);
+  }
 }
-function touchEnded(){
-  // return false;
-}
-function deviceTurned() {
-  canvas = null;
-  canvas = createCanvas(window.innerWidth, window.innerHeight);
+
+class Herd {
+  constructor(count) {
+    this.mutation_liklihood = 0.3;
+    this.count = count
+    this.herd = [];
+    for (var i = 0; i < count; i++) {
+      this.herd.push(new Frenemy())
+    }
+  }
+  checkShot(x, y) {
+    for (var k = 0; k < this.count; k++) {
+      this.herd[k].checkShot(x, y)
+    }
+  }
+  update(x, y) {
+    for (var i = 0; i < this.count; i++) {
+      if (this.herd[i].alive == false) {
+        this.herd[i].clean();
+        this.herd[i] = new Frenemy();
+        let mum = this.herd[0];
+        let mum2 = this.herd[1];
+        for (var t = 0; t < this.count; t++) {
+          if (this.herd[t].counter > mum.counter) {
+            mum = this.herd[t];
+          } else if (this.herd[t].counter > mum2.counter) {
+            mum2 = this.herd[t];
+          }
+        }
+        let newColor = lerpColor(color(mum.color), color(mum2.color), 0.5);
+        if (random() > this.mutation_liklihood) {
+          newColor = lerpColor(color(newColor), color(rcol()), 0.5);
+        }
+        this.herd[i].inherit(0, 0, 0, newColor);
+      }
+      this.herd[i].update();
+      //player is global
+      if (this.herd[i].checkTouch(x, y) == true) {
+        my_sprite.remove();
+        makeSprite();
+      }
+    }
+  }
+  draw() {
+    for (var i = 0; i < this.count; i++) {
+      this.herd[i].draw();
+    }
+  }
+
 }

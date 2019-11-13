@@ -78,7 +78,7 @@ function drawMap(newColor=false) {
   mapCanvas.stroke(fg);
   for (var i = 0; i < mapWidth; i++) {
     for (var j = 0; j < mapHeight; j++) {
-      if (gameMap[i][j] > 0.6) {
+      if (gameMap[i][j] > obstacle) {
         mapCanvas.square(i*pixelSize, j*pixelSize, pixelSize);
       }
     }

@@ -35,7 +35,7 @@ function saveImage() {
 }
 
 let gameMap = [];
-var mapWidth = 100;
+var mapWidth = 150;
 var mapHeight;
 var pixelSize;
 

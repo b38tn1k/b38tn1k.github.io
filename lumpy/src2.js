@@ -22,6 +22,7 @@ let frenemyCount = 10;
 let direction = [1, 0, 0, 0];
 let rearCannon = true;
 let herd;
+let showScores = false;
 
 function rcol() {
   return colors[(int(random(colors.length)))];
@@ -41,6 +42,7 @@ function randint(x) {
 
 function keyPressed() {
   if (key == 'h') {
+    showScores = false;
     tc = rcol();
     while ((tc == bg) || (tc == fg)) {
       tc = rcol();
@@ -58,6 +60,14 @@ function keyPressed() {
   }
   if (key == 'c') {
     rearCannon = !rearCannon;
+  }
+  if (key == 'l') {
+    showtext = false;
+    tc = rcol();
+    while ((tc == bg) || (tc == fg)) {
+      tc = rcol();
+    }
+    showScores = !showScores;
   }
 }
 
@@ -307,7 +317,7 @@ function draw() {
 
   if (bullets.length > 0) {
     for (var i = 0; i < bullets.length; i++){
-      herd.checkShot(bullets[i].x, bullets[i].y);
+      herd.checkShot(bullets[i].x, bullets[i].y, bullets[i].counter);
       bullets[i].update();
     }
     let tempBullets = [];
@@ -332,9 +342,12 @@ function draw() {
       bullets[i].draw();
     }
   }
+  if (showScores == true) {
+    herd.showLog();
+  }
   if (showtext == true) {
     fill(tc);
-    let s = '[WASD] to move\n[LEFT SHIFT] to build\n[SPACE] to shoot\n[C] to switch cannon direction\n[R] for a new sprite\n[H] to see this again\nPress any key to play';
+    let s = '[WASD] to move\n[LEFT SHIFT] to build\n[SPACE] to shoot\n[C] to switch cannon direction\n[R] for a new sprite\n[L] for logging\n[H] to see this again\nPress any key to play';
     let t = 'YOU ARE THE BIG ONE\nYOU FLOAT IN LUMPY SPACE WITH THE LITTLE ONES\nWHEN A LITTLE ONE DIES,\nTHE TWO OLDEST HAVE A BABY\nSOMETIMES THEY MUTATE';
     textSize(50);
     text(t, 50, 50);
@@ -349,6 +362,7 @@ class Frenemy {
     while (this.color==bg){
       this.color = rcol();
     }
+    this.behaviourThresh = 0.98; // just to slow everyone down
     this.x = int(random(10, mapWidth-10));
     this.y = int(random(10, mapHeight-10));
     this.alive = true;
@@ -360,15 +374,35 @@ class Frenemy {
     this.sprite = genSprite(5.0, 3.0, this.color);
     this.xrand = int(random(-2, 2));
     this.yrand = int(random(-2, 2));
-    this.builder = random(); // liklihood to make walls vs liklihood to shoot and destroy
-    this.escaper = random(); //liklihood to move towards player/ away
-    this.seeker = random(); //likleihood to cling to edges / float in empty space
+    this.builder = random(-1, 1); // liklihood to make walls vs liklihood to shoot and destroy
+    this.evader = random(-1, 1); //liklihood to move towards player/ away
+    this.seeker = random(-1, 1); //likleihood to cling to edges / float in empty space
+    this.purpose = random(2) + 1; // the uppoer bound on how far they might travel
+    this.direction = [0, 0, 0, 0];
   }
 
-  inherit(builder, escaper,seeker, color) {
+  inherit(builder, evader,seeker,purpose, color) {
     this.sprite.remove();
     this.color = color
     this.sprite = genSprite(5.0, 3.0, this.color);
+    this.builder = builder;
+    this.purpose = purpose;
+  }
+
+  builderBehaviour(){
+    if ((this.direction[0] == 0) && (this.direction[1] == 0) && (this.direction[2] == 0) && (this.direction[3] == 0)) {
+      if (random() > 0.5) {
+        this.direction = [1, 0, 0, 0]
+      } else {
+        this.direction = [0, 1, 0, 0]
+      }
+    }
+    if ((-1.0 * random()) > this.builder) {
+      bullets.push(new Bullet(this.x, this.y, this.direction));
+    }
+    if (random() < this.builder) {
+      gameMap[this.x][this.y] = 1;
+    }
   }
 
   clean() {
@@ -377,11 +411,11 @@ class Frenemy {
   }
 
   checkShot(x, y) {
-    if ((x > this.x) && (x < (this.x + 5))){
-      if ((y > this.y) && (y < (this.y + 6))){
-        this.alive = false;
+      if ((x > this.x) && (x < (this.x + 5))){
+        if ((y > this.y) && (y < (this.y + 6))){
+          this.alive = false;
+        }
       }
-    }
   }
 
   checkTouch(x, y) {
@@ -395,9 +429,14 @@ class Frenemy {
   }
 
   randomWalk() {
-    if (this.counter%int(random(3, 5)) == 0) {
+    if (this.counter%int(random(3, (5*this.purpose))) == 0) {
+      this.direction = [0, 0, 0, 0];
       this.xrand = int(random(-2, 2));
       this.yrand = int(random(-2, 2));
+      if (this.yrand > 0) {this.direction[0] = 1}
+      if (this.yrand < 0) {this.direction[1] = 1}
+      if (this.xrand > 0) {this.direction[2] = 1}
+      if (this.xrand < 0) {this.direction[3] = 1}
     }
     this.counter ++;
     this.x += this.xrand;
@@ -405,19 +444,25 @@ class Frenemy {
   }
 
   update() {
+    this.x = int(this.x);
+    this.y = int(this.y);
     let prevx = this.x;
     let prevy = this.y;
-    //start with a random random walk
+    //start motion with a random random walk
     this.randomWalk();
-    if (this.x < 0) {this.x = 0;}
-    if (this.x > mapWidth-spriteWidth) {this.x = mapWidth-spriteWidth;}
-    if (this.y < 0) {this.y = 0;}
-    if (this.y > mapHeight - 1.5*spriteHeight) {this.y = mapHeight - 1.5*spriteHeight;}
+    if (random() > this.behaviourThresh){
+      this.builderBehaviour();
+    }
+    if (this.x < 6) {this.x = 6;}
+    if (this.x > mapWidth-3*spriteWidth) {this.x = mapWidth-3*spriteWidth;}
+    if (this.y < 6) {this.y = 6;}
+    if (this.y > mapHeight - 3*spriteHeight) {this.y = mapHeight - 3*spriteHeight;}
     if ((gameMap[this.x][this.y] > obstacle)||(gameMap[this.x+5][this.y+6] > obstacle)||(gameMap[this.x+5][this.y] > obstacle)||(gameMap[this.x][this.y+6] > obstacle)||(gameMap[this.x+2][this.y+3] > obstacle)||(gameMap[this.x+2][this.y] > obstacle)) {
       this.x = prevx;
       this.y = prevy;
     }
   }
+
 
   draw() {
     image(this.sprite, this.x*pixelSize, this.y*pixelSize);
@@ -489,9 +534,24 @@ class Herd {
       this.herd.push(new Frenemy())
     }
   }
-  checkShot(x, y) {
-    for (var k = 0; k < this.count; k++) {
-      this.herd[k].checkShot(x, y)
+  showLog() {
+    fill(tc);
+    textSize(20);
+    let t = "Lump\tPurpose\tDestroyOrBuild\tEvader\tSeeker"
+    text(t, 50, 50);
+    for (var i = 0; i < this.count; i++) {
+      fill(color(this.herd[i].color));
+      t =  i + "\t\t\t\t\t" + nf(this.herd[i].purpose, 2, 2) + '\t\t\t\t\t' + nf(this.herd[i].builder, 2, 2)+ '\t\t\t\t' + nf(this.herd[i].evader, 2, 2)+ '\t\t\t\t\t' + nf(this.herd[i].seeker, 2, 2);
+      text(t, 50, 50 + (i + 1) * 30);
+    }
+
+
+  }
+  checkShot(x, y, armed) {
+    if (armed > 3) {
+      for (var k = 0; k < this.count; k++) {
+        this.herd[k].checkShot(x, y)
+      }
     }
   }
   update(x, y) {
@@ -509,10 +569,18 @@ class Herd {
           }
         }
         let newColor = lerpColor(color(mum.color), color(mum2.color), 0.5);
+        // mutations are similarily weighted but not codependant
         if (random() > this.mutation_liklihood) {
           newColor = lerpColor(color(newColor), color(rcol()), 0.5);
         }
-        this.herd[i].inherit(0, 0, 0, newColor);
+        if (random() > this.mutation_liklihood) {
+          mum.builder = random(-1, 1);
+        }
+        let purpose = (mum.purpose + mum2.purpose)/2.0;
+        if (random() > this.mutation_liklihood) {
+          purpose = this.purpose = random(2) + 1;
+        }
+        this.herd[i].inherit(mum.builder, 0, 0,purpose, newColor);
       }
       this.herd[i].update();
       //player is global

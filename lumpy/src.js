@@ -35,16 +35,15 @@ function saveImage() {
 }
 
 let gameMap = [];
-var mapWidth = 200;
+var mapWidth = 100;
 var mapHeight;
 var pixelSize;
 
 
 function newMap() {
   let noiseScale = 0.02;
-  mapWidth = 200
-  pixelSize = window.innerWidth / mapWidth
-  mapHeight = (window.innerHeight / pixelSize) + 2
+  pixelSize = width / mapWidth;
+  mapHeight = (height / pixelSize) + 2
   for (var i = 0; i < mapWidth; i++) {
     gameMap[i] = []
     for (var j = 0; j < mapHeight; j++) {

@@ -91,6 +91,7 @@ let my_sprite;
 let spriteWidth = 8.0;
 let spriteHeight = 5.0;
 function makeSprite(){
+  my_sprite = null;
   my_sprite = genSprite(spriteWidth, spriteHeight);
 }
 function genSprite(spriteWidth, spriteHeight) {
@@ -254,7 +255,7 @@ class Frenemy {
     if (this.x > mapWidth-spriteWidth) {this.x = mapWidth-spriteWidth;}
     if (this.y < 0) {this.y = 0;}
     if (this.y > mapHeight - 1.5*spriteHeight) {this.y = mapHeight - 1.5*spriteHeight;}
-    if ((gameMap[this.x][this.y] > obstacle)||(gameMap[this.x+5][this.y+6] > obstacle)||(gameMap[this.x+5][this.y] > obstacle)||(gameMap[this.x][this.y+6] > obstacle)) {
+    if ((gameMap[this.x][this.y] > obstacle)||(gameMap[this.x+5][this.y+6] > obstacle)||(gameMap[this.x+5][this.y] > obstacle)||(gameMap[this.x][this.y+6] > obstacle)||(gameMap[this.x+2][this.y+3] > obstacle)||(gameMap[this.x+2][this.y] > obstacle)) {
       this.x = prevx;
       this.y = prevy;
     }
@@ -325,7 +326,7 @@ function makeFrenemies() {
 
 let bullets = [];
 let frenemies = [];
-let frenemyCount = 5;
+let frenemyCount = 3;
 let direction = [1, 0, 0, 0];
 let rearCannon = true;
 function draw() {

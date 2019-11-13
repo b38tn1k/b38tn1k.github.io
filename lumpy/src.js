@@ -37,12 +37,13 @@ function saveImage() {
 let gameMap = [];
 var mapWidth = 200;
 var mapHeight;
-var pixelSize;
+var pixelSize = 5;
 
 
 function newMap() {
-  let noiseScale = 0.02;
-  pixelSize = width / mapWidth;
+  let noiseScale = 0.03;
+  mapWidth = width / pixelSize;
+  // pixelSize = width / mapWidth;
   mapHeight = (height / pixelSize) + 2
   for (var i = 0; i < mapWidth; i++) {
     gameMap[i] = []
@@ -56,10 +57,10 @@ function newMap() {
   placePlayer();
 }
 
-let mapCanvas;
+let mapCanvas = null;
 let bg;
 let fg;
-let obstacle = 0.5;
+let obstacle = 0.55;
 
 function shuffleColors() {
   bg = rcol();
@@ -69,8 +70,7 @@ function shuffleColors() {
   }
 }
 function drawMap(newColor=false) {
-  mapCanvas = null;
-  if (newColor == true) {shuffleColors();}
+  if (newColor == true) {shuffleColors();} else {mapCanvas.remove();}
   noStroke();
   mapCanvas = createGraphics(window.innerWidth, window.innerHeight);
   mapCanvas.background(bg);
@@ -83,8 +83,6 @@ function drawMap(newColor=false) {
       }
     }
   }
-  image(mapCanvas, 0, 0);
-
 }
 var showtext = true;
 let my_sprite;
@@ -97,7 +95,7 @@ function makeSprite(){
 function genSprite(spriteWidth, spriteHeight) {
   // let spriteWidth = 8.0;
   // let spriteHeight = 5.0;
-  let sprite = createGraphics(window.innerWidth, window.innerHeight);
+  let sprite = createGraphics((spriteWidth+2)*pixelSize, spriteHeight*2*pixelSize);
   sprite.background = bg;
   let sc = rcol();
   while (sc==bg){
@@ -222,6 +220,11 @@ class Frenemy {
     this.yrand = int(random(-2, 2));
   }
 
+  clean() {
+    this.sprite.remove();
+    this.sprite = null;
+  }
+
   checkShot(x, y) {
     if ((x > this.x) && (x < (this.x + 5))){
       if ((y > this.y) && (y < (this.y + 6))){
@@ -297,14 +300,17 @@ class Bullet {
 
         this.health--;
         if (this.health == 0) {
-          gameMap[this.x+1][this.y-1] = 0;
-          gameMap[this.x-1][this.y+1] = 0;
-          gameMap[this.x+1][this.y+1] = 0;
-          gameMap[this.x-1][this.y-1] = 0;
-          gameMap[this.x][this.y-1] = 0;
-          gameMap[this.x-1][this.y] = 0;
-          gameMap[this.x][this.y+1] = 0;
-          gameMap[this.x+1][this.y] = 0;
+          if ((this.x > 2) && (this.x < mapWidth-2) && (this.y > 2) && (this.y < mapHeight-2)){
+            gameMap[this.x+1][this.y-1] = 0;
+            gameMap[this.x-1][this.y-1] = 0;
+            gameMap[this.x-1][this.y+1] = 0;
+            gameMap[this.x-1][this.y] = 0;
+            gameMap[this.x][this.y-1] = 0;
+
+            gameMap[this.x+1][this.y+1] = 0;
+            gameMap[this.x][this.y+1] = 0;
+            gameMap[this.x+1][this.y] = 0;
+          }
         }
         drawMap();
       }
@@ -326,7 +332,7 @@ function makeFrenemies() {
 
 let bullets = [];
 let frenemies = [];
-let frenemyCount = 3;
+let frenemyCount = 10;
 let direction = [1, 0, 0, 0];
 let rearCannon = true;
 function draw() {
@@ -369,6 +375,7 @@ function draw() {
     }
   }
   if (keyIsDown(82)) {
+    my_sprite.remove();
     makeSprite();
   }
 
@@ -417,10 +424,12 @@ function draw() {
   }
   for (var i = 0; i < frenemyCount; i++) {
     if (frenemies[i].alive == false) {
+      frenemies[i].clean();
       frenemies[i] = new Frenemy();
     }
     frenemies[i].update();
     if (frenemies[i].checkTouch(spriteCenterX, spriteCenterY) == true) {
+      my_sprite.remove();
       makeSprite();
     }
   }
@@ -444,12 +453,15 @@ function draw() {
 }
 
 window.onresize = function() {
-  var w = window.innerWidth;
-  var h = window.innerHeight;
-  // console.log(w, ' ', h)
-  canvas.size(w,h);
-  width = w;
-  height = h;
+  width = window.innerWidth;
+  height = window.innerHeight;
+  mapCanvas.remove();
+  my_sprite.remove();
+  for (var i = 0; i < frenemyCount; i++) {
+    frenemies[i].clean();
+  }
+  canvas = null;
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
   newMap();
   makeSprite();
   placePlayer();
@@ -466,5 +478,6 @@ function touchEnded(){
   // return false;
 }
 function deviceTurned() {
+  canvas = null;
   canvas = createCanvas(window.innerWidth, window.innerHeight);
 }

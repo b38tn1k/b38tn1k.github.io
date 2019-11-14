@@ -477,7 +477,8 @@ class Frenemy {
     this.purpose = random(2) + 1; // the uppoer bound on how far they might travel
     this.direction = [0, 0, 0, 0];
     this.bulldozer = false;
-    this.dozer_count = 0;
+    this.builddozer = false;
+    this.builder_count = 0;
   }
 
   inherit(builder, evader,seeker,purpose, color) {
@@ -500,7 +501,7 @@ class Frenemy {
       //either shoot or bulldozer?
       // if (coin() == true) {
       this.bulldozer = true;
-      this.dozer_count = 2;
+      this.builder_count = 2;
       // } else {
       bullets.push(new Bullet(this.x, this.y, this.direction));
       // }
@@ -509,16 +510,18 @@ class Frenemy {
       // gameMap[this.x][this.y] = 1;
       let centerx = this.x + this.width;
       let centery = this.y + int(this.height/2);
-      gameMap[centerx][centery] = 1;
-      gameMap[centerx+1][centery+1] += random(0.0, 0.3);
-      gameMap[centerx-1][centery-1] += random(0.0, 0.3);
-      gameMap[centerx+1][centery-1] += random(0.0, 0.3);
-      gameMap[centerx-1][centery+1] += random(0.0, 0.3);
-      gameMap[centerx][centery+1] += random(0.0, 0.3);
-      gameMap[centerx][centery-1] += random(0.0, 0.3);
-      gameMap[centerx+1][centery] += random(0.0, 0.3);
-      gameMap[centerx-1][centery] += random(0.0, 0.3);
+      gameMap[centerx+1][centery+1] += random(0.0, gameMap[centerx][centery]);
+      gameMap[centerx-1][centery-1] += random(0.0, gameMap[centerx][centery]);
+      gameMap[centerx+1][centery-1] += random(0.0, gameMap[centerx][centery]);
+      gameMap[centerx-1][centery+1] += random(0.0, gameMap[centerx][centery]);
+      gameMap[centerx][centery+1] += random(0.0, gameMap[centerx][centery]);
+      gameMap[centerx][centery-1] += random(0.0, gameMap[centerx][centery]);
+      gameMap[centerx+1][centery] += random(0.0, gameMap[centerx][centery]);
+      gameMap[centerx-1][centery] += random(0.0, gameMap[centerx][centery]);
+      gameMap[centerx][centery] += random();
       setDrawFlag();
+      this.builder_count = 2;
+      this.builddozer = true;
     }
   }
 
@@ -547,10 +550,11 @@ class Frenemy {
 
   randomWalk() {
     if (this.counter%int(random(3, (5*this.purpose))) == 0) {
-      if (this.dozer_count <= 0) {
+      if (this.builder_count <= 0) {
         this.bulldozer = false;
+        this.builddozer = false;
       } else {
-        this.dozer_count--;
+        this.builder_count--;
       }
       this.direction = [0, 0, 0, 0];
       this.xrand = int(random(-2, 2));
@@ -610,9 +614,22 @@ class Frenemy {
         gameMap[centerx][centery-1] = 0;
         gameMap[centerx+1][centery] = 0;
         gameMap[centerx-1][centery] = 0;
+
         // drawMap;
       }
     }
+    if (this.builddozer == true) {
+      gameMap[centerx][centery] += 0.2;
+      gameMap[centerx+1][centery+1] += 0.2;
+      gameMap[centerx-1][centery-1] += 0.2;
+      gameMap[centerx+1][centery-1] += 0.2;
+      gameMap[centerx-1][centery+1] += 0.2;
+      gameMap[centerx][centery+1] += 0.2;
+      gameMap[centerx][centery-1] += 0.2;
+      gameMap[centerx+1][centery] += 0.2;
+      gameMap[centerx-1][centery] += 0.2;
+    }
+    setDrawFlag();
     if ((this.x != prevx) && (this.y !=prevy) ) {this.stuck = 0;}
   }
 
@@ -689,7 +706,7 @@ class Herd {
   }
   showLog() {
     noStroke();
-    fill(color('#666'));
+    fill(color('#000'));
     rect(0, 0, 500, 22 * this.count);
     rect(0, 22 * this.count, 500, 100);
     fill(color('#fff'));
@@ -699,7 +716,7 @@ class Herd {
     let f = 0;
     for (var i = 0; i < this.count; i++) {
       fill(color(this.herd[i].color));
-      t =  " " +nf(i, 2) + "\t\t\t\t\t" + nfp(this.herd[i].purpose, 2, 2) + '\t\t\t\t\t' + nfp(this.herd[i].builder, 2, 2)+ '\t\t\t\t' + nfp(this.herd[i].evader, 2, 2)+ '\t\t\t\t\t' + nfp(this.herd[i].seeker, 2, 2)+ '\t\t\t' + this.herd[i].bulldozer+ '\t\t\t' + this.herd[i].counter;
+      t =  " " +nf(i, 2) + "\t\t\t\t\t" + nfp(this.herd[i].purpose, 2, 2) + '\t\t\t\t\t' + nfp(this.herd[i].builder, 2, 2)+ '\t\t\t\t' + nfp(this.herd[i].evader, 2, 2)+ '\t\t\t\t\t' + nfp(this.herd[i].seeker, 2, 2)+ '\t\t\t' + (this.herd[i].bulldozer ||this.herd[i].builddozer )+ '\t\t\t' + this.herd[i].counter;
       f = 20 + (i + 1) * 20;
       text(t, 10, f);
     }

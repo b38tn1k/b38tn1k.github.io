@@ -24,6 +24,11 @@ let rearCannon = true;
 let herd;
 let showScores = false;
 let bulldozer = false;
+let drawFlag = false;
+
+function setDrawFlag() {
+  drawFlag = true;
+}
 
 function rcol() {
   return colors[(int(random(colors.length)))];
@@ -106,7 +111,7 @@ function shuffleColors() {
 }
 
 function drawMap(newColor=false) {
-  if (newColor == true) {shuffleColors();} else {mapCanvas.remove();}
+  if (newColor == true) {shuffleColors();}
   noStroke();
   mapCanvas = createGraphics(window.innerWidth, window.innerHeight);
   mapCanvas.background(bg);
@@ -119,6 +124,7 @@ function drawMap(newColor=false) {
       }
     }
   }
+  noStroke();
 }
 
 function makeSprite(){
@@ -253,7 +259,7 @@ function setup() {
 
 function draw() {
   clear();
-  frameRate(10);
+  frameRate(8);
   //update
   let prevX = playerX;
   let prevY = playerY;
@@ -312,12 +318,12 @@ function draw() {
       gameMap[spriteCenterX-1][spriteCenterY] = 0;
       gameMap[spriteCenterX][spriteCenterY+1] = 0;
       gameMap[spriteCenterX][spriteCenterY-1] = 0;
-      drawMap();
+      setDrawFlag();
     }
   }
   if (keyIsDown(16)) {
     gameMap[spriteCenterX][spriteCenterY] = 1;
-    drawMap();
+    setDrawFlag();
   }
   if (keyIsDown(32)) {
     //shoot
@@ -351,7 +357,10 @@ function draw() {
   }
   herd.update(spriteCenterX, spriteCenterY);
   //draw
+  mapCanvas.remove();
+  if (drawFlag == true) {drawMap();}
   image(mapCanvas, 0, 0);
+  drawFlag = false;
   image (my_sprite, playerX*pixelSize, playerY*pixelSize);
   herd.draw();
   if (bullets.length > 0) {
@@ -416,7 +425,7 @@ class Frenemy {
   }
 
   inherit(builder, evader,seeker,purpose, color) {
-    this.sprite.remove();
+    this.clean();
     this.color = color
     this.sprite = genSprite(5.0, 3.0, this.color);
     this.builder = builder;
@@ -442,7 +451,7 @@ class Frenemy {
     }
     if (random() < this.builder) {
       gameMap[this.x][this.y] = 1;
-      drawMap();
+      setDrawFlag();
     }
   }
 
@@ -521,7 +530,7 @@ class Frenemy {
         this.y = prevy;
       } else {
         gameMap[centerx][centery] = 0;
-        drawMap;
+        // drawMap;
       }
     }
   }
@@ -577,7 +586,7 @@ class Bullet {
             gameMap[this.x+1][this.y] = 0;
           }
         }
-        drawMap();
+        setDrawFlag();
       }
     }
   }

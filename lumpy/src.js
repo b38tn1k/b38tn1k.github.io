@@ -8,7 +8,7 @@ let mapCanvas = null;
 let bg;
 let fg;
 let obstacle = 0.55;
-let showtext = true;
+let showHelp = true;
 let my_sprite;
 let spriteWidth = 8.0;
 let spriteHeight = 5.0;
@@ -28,6 +28,7 @@ let drawFlag = false;
 let timelapse = false;
 let timer = 0;
 let timeInterval = 100; //every 10 seconds :-)
+let spriteIndicator = 10;
 
 
 function setDrawFlag() {
@@ -56,14 +57,15 @@ function keyPressed() {
     print("hey");
   }
   if (key == 'h') {
+    spriteIndicator = 8;
     showScores = false;
     tc = rcol();
     while ((tc == bg) || (tc == fg)) {
       tc = rcol();
     }
-    showtext = true;
+    showHelp = true;
   } else {
-    showtext = false;
+    showHelp = false;
   }
   if (key == 'i') {
     saveImage();
@@ -79,7 +81,7 @@ function keyPressed() {
     rearCannon = !rearCannon;
   }
   if (key == 'l') {
-    showtext = false;
+    showHelp = false;
     tc = rcol();
     while ((tc == bg) || (tc == fg)) {
       tc = rcol();
@@ -100,9 +102,29 @@ function newMap() {
   mapHeight = (height / pixelSize) + 2
   for (var i = 0; i < mapWidth; i++) {
     gameMap[i] = []
+    let iVal = 0
+    let border = 0.1;
+    if (i < border*mapWidth) {
+      iVal = (1.0 - i/(border*mapWidth));
+      iVal = iVal/3;
+    }
+    if (i > (1.0 - border)*mapWidth) {
+      iVal = (1.0 - (mapWidth - i)/(mapWidth/(100*border)));
+      iVal = iVal/3;
+    }
+
     for (var j = 0; j < mapHeight; j++) {
       let noiseVal = noise(i*noiseScale, j*noiseScale);
-      gameMap[i][j] = (noiseVal);
+      let jVal = 0
+      if (j < border*mapHeight) {
+        jVal = (1.0 - j/(border*mapHeight));
+        jVal = jVal/3;
+      }
+      if (j > (1.0 - border)*mapHeight) {
+        jVal = (1.0 - (mapHeight - j)/(mapHeight/(100*border)));
+        jVal = jVal/3;
+      }
+      gameMap[i][j] = ((noiseVal) + iVal + jVal);
     }
   }
   // console.log('yay');
@@ -127,6 +149,11 @@ function drawMap(newColor=false) {
   mapCanvas.stroke(fg);
   for (var i = 0; i < mapWidth; i++) {
     for (var j = 0; j < mapHeight; j++) {
+      // test
+      // mapCanvas.fill(lerpColor(color("#fff"), color("#000"), gameMap[i][j]))
+      // mapCanvas.stroke(lerpColor(color("#fff"), color("#000"), gameMap[i][j]))
+      // mapCanvas.square(i*pixelSize, j*pixelSize, pixelSize);
+      // test
       if (gameMap[i][j] > obstacle) {
         mapCanvas.square(i*pixelSize, j*pixelSize, pixelSize);
       }
@@ -218,7 +245,7 @@ function genSprite(spriteWidth, spriteHeight, sc) {
 function placePlayer() {
   playerX = int(random(10, mapWidth-10));
   playerY = int(random(10, mapHeight-10));
-  while (gameMap[playerX][playerY] > obstacle+0.1) {
+  while (gameMap[playerX][playerY] > obstacle/2) {
     playerX = int(random(10, mapWidth-10));
     playerY = int(random(10, mapHeight-10));
     // console.log(playerX);
@@ -340,6 +367,11 @@ function draw() {
       shootNow = false;
     }
   }
+  if (showHelp == false && spriteIndicator >=0) {
+    spriteIndicator--;
+    my_sprite.remove();
+    makeSprite();
+  }
 
   if (playerX < 0) {playerX = 0;}
   if (playerX > mapWidth-spriteWidth) {playerX = mapWidth-spriteWidth;}
@@ -397,10 +429,10 @@ function draw() {
   if (keyIsDown(86)) {
     fill(rcol());
     textSize(200);
-    text("VERSION\nYES", 50, 250);
+    text("VERSION\nB33P", 50, 250);
   }
   timer++;
-  if (showtext == true) {
+  if (showHelp == true) {
     strokeWeight(5);
     stroke(fg);
     fill(tc);
@@ -419,7 +451,7 @@ function draw() {
 }
 
 class Frenemy {
-  constructor() {
+  constructor(offset) {
     this.color = rcol();
     this.stuck = 0;
     while (this.color==bg){
@@ -433,7 +465,7 @@ class Frenemy {
       this.x = int(random(10, mapWidth-10));
       this.y = int(random(10, mapHeight-10));
     }
-    this.counter = 0;
+    this.counter = offset;
     this.width = 5.0;
     this.height = 3.0;
     this.sprite = genSprite(this.width, this.height, this.color);
@@ -474,7 +506,18 @@ class Frenemy {
       // }
     }
     if (random() < this.builder) {
-      gameMap[this.x][this.y] = 1;
+      // gameMap[this.x][this.y] = 1;
+      let centerx = this.x + this.width;
+      let centery = this.y + int(this.height/2);
+      gameMap[centerx][centery] = 1;
+      gameMap[centerx+1][centery+1] += random(0.0, 0.3);
+      gameMap[centerx-1][centery-1] += random(0.0, 0.3);
+      gameMap[centerx+1][centery-1] += random(0.0, 0.3);
+      gameMap[centerx-1][centery+1] += random(0.0, 0.3);
+      gameMap[centerx][centery+1] += random(0.0, 0.3);
+      gameMap[centerx][centery-1] += random(0.0, 0.3);
+      gameMap[centerx+1][centery] += random(0.0, 0.3);
+      gameMap[centerx-1][centery] += random(0.0, 0.3);
       setDrawFlag();
     }
   }
@@ -523,14 +566,19 @@ class Frenemy {
   }
 
   update() {
-    if (this.stuck >=300){
-      this.x = int(random(10, mapWidth-10));
-      this.y = int(random(10, mapHeight-10));
-      while (gameMap[this.x][this.y] > obstacle+0.1) {
-        this.x = int(random(10, mapWidth-10));
-        this.y = int(random(10, mapHeight-10));
-      }
-      this.stuck = 0;
+    if (this.counter > 5000) {this.alive=false;} //die of old age eventually
+    if (this.stuck >=100){
+      this.bulldozer = true;
+      // this.x = int(random(10, mapWidth-10));
+      // this.y = int(random(10, mapHeight-10));
+      // while (gameMap[this.x][this.y] > obstacle+0.1) {
+      //   this.x = int(random(10, mapWidth-10));
+      //   this.y = int(random(10, mapHeight-10));
+      // }
+      // is this cheating?
+      // if(this.builder >= -1.0) {
+      //   this.builder -= 0.001;
+      // }
     }
     this.x = int(this.x);
     this.y = int(this.y);
@@ -565,6 +613,7 @@ class Frenemy {
         // drawMap;
       }
     }
+    if ((this.x != prevx) && (this.y !=prevy) ) {this.stuck = 0;}
   }
 
 
@@ -635,7 +684,7 @@ class Herd {
     this.count = count
     this.herd = [];
     for (var i = 0; i < count; i++) {
-      this.herd.push(new Frenemy())
+      this.herd.push(new Frenemy(i))
     }
   }
   showLog() {
@@ -672,7 +721,7 @@ class Herd {
     for (var i = 0; i < this.count; i++) {
       if (this.herd[i].alive == false) {
         this.herd[i].clean();
-        this.herd[i] = new Frenemy();
+        this.herd[i] = new Frenemy(i);
         let mum = this.herd[0];
         let mum2 = this.herd[1];
         for (var t = 0; t < this.count; t++) {

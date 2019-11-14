@@ -537,12 +537,12 @@ class Frenemy {
       this.builderBehaviour();
     }
     if (this.x < this.width) {this.x = this.width;}
-    if (this.x > mapWidth-2*this.width) {this.x = mapWidth-2*this.width;}
+    if (this.x > mapWidth-3*this.width) {this.x = mapWidth-3*this.width;}
     if (this.y < this.width) {this.y = this.width;}
-    if (this.y > mapHeight - 2*this.width) {this.y = mapHeight - 2*this.width;}
+    if (this.y > mapHeight - 3*this.width) {this.y = mapHeight - 3*this.width;}
     let centerx = this.x + this.width;
     let centery = this.y + int(this.height/2);
-    if ((gameMap[centerx][centery] > obstacle)||(gameMap[this.x][this.y] > obstacle)) {
+     if ((gameMap[centerx][centery] > obstacle)||(gameMap[this.x][this.y] > obstacle)) {
       if (this.bulldozer == false){
         this.stuck++;
         this.x = prevx;

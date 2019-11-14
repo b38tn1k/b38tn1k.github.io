@@ -530,6 +530,14 @@ class Frenemy {
         this.y = prevy;
       } else {
         gameMap[centerx][centery] = 0;
+        gameMap[centerx+1][centery+1] = 0;
+        gameMap[centerx-1][centery-1] = 0;
+        gameMap[centerx+1][centery-1] = 0;
+        gameMap[centerx-1][centery+1] = 0;
+        gameMap[centerx][centery+1] = 0;
+        gameMap[centerx][centery-1] = 0;
+        gameMap[centerx+1][centery] = 0;
+        gameMap[centerx-1][centery] = 0;
         // drawMap;
       }
     }
@@ -624,7 +632,7 @@ class Herd {
     }
     f += 30;
     fill(color('#fff'));
-    t = "Intent is how confident a little one moves in a direction\nCreativity can also be destructive\nStrong Evaders will move away from the big one when the weak gravitate\nSeekers will find shelter near structures\nDozer Mode is Dozer Mode"
+    t = "Intent is how confident a little one moves in a direction\nCreativity can also be destructive\nStrong Evaders will move away from the big one as the weak approach\nSeekers will find shelter near structures\nDozer Mode is Dozer Mode"
     text(t, 10, f);
 
 

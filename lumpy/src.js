@@ -312,6 +312,11 @@ function draw() {
     my_sprite.remove();
     makeSprite();
   }
+  IF (keyIsDown(86)) {
+    fill(tc);
+    textSize(200);
+    text("YES", 100, 50);
+  }
 
   //figure out center of sprite and stop it from escaping
   let spriteCenterX = playerX + spriteWidth/2+1;

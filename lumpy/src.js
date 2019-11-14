@@ -576,9 +576,9 @@ class Frenemy {
       //   this.y = int(random(10, mapHeight-10));
       // }
       // is this cheating?
-      // if(this.builder >= -1.0) {
-      //   this.builder -= 0.001;
-      // }
+      if(this.builder >= -1.0) {
+        this.builder -= 0.1;
+      }
     }
     this.x = int(this.x);
     this.y = int(this.y);

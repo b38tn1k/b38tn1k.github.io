@@ -429,7 +429,7 @@ function draw() {
   if (keyIsDown(86)) {
     fill(rcol());
     textSize(200);
-    text("VERSION\nB33P", 50, 250);
+    text("VERSION\nFKA TWIGS", 50, 250);
   }
   timer++;
   if (showHelp == true) {
@@ -510,6 +510,10 @@ class Frenemy {
       // gameMap[this.x][this.y] = 1;
       let centerx = this.x + this.width;
       let centery = this.y + int(this.height/2);
+      if (centerx < 0) {centerx = 0;}
+      if (centerx > mapWidth-2) {centerx = mapWidth-2;}
+      if (centery < 2) {centery = 2;}
+      if (centery > mapHeight-2) {centery = mapHeight-2;}
       gameMap[centerx+1][centery+1] += random(0.0, gameMap[centerx][centery]);
       gameMap[centerx-1][centery-1] += random(0.0, gameMap[centerx][centery]);
       gameMap[centerx+1][centery-1] += random(0.0, gameMap[centerx][centery]);
@@ -599,6 +603,10 @@ class Frenemy {
     if (this.y > mapHeight - 3*this.width) {this.y = mapHeight - 3*this.width;}
     let centerx = this.x + this.width;
     let centery = this.y + int(this.height/2);
+    if (centerx < 0) {centerx = 0;}
+    if (centerx > mapWidth-2) {centerx = mapWidth-2;}
+    if (centery < 2) {centery = 2;}
+    if (centery > mapHeight-2) {centery = mapHeight-2;}
      if ((gameMap[centerx][centery] > obstacle)||(gameMap[this.x][this.y] > obstacle)) {
       if (this.bulldozer == false){
         this.stuck++;
@@ -619,15 +627,15 @@ class Frenemy {
       }
     }
     if (this.builddozer == true) {
-      gameMap[centerx][centery] += 0.2;
-      gameMap[centerx+1][centery+1] += 0.2;
-      gameMap[centerx-1][centery-1] += 0.2;
-      gameMap[centerx+1][centery-1] += 0.2;
-      gameMap[centerx-1][centery+1] += 0.2;
-      gameMap[centerx][centery+1] += 0.2;
-      gameMap[centerx][centery-1] += 0.2;
-      gameMap[centerx+1][centery] += 0.2;
-      gameMap[centerx-1][centery] += 0.2;
+      gameMap[centerx][centery] += 0.3;
+      gameMap[centerx+1][centery+1] += 0.3;
+      gameMap[centerx-1][centery-1] += 0.3;
+      gameMap[centerx+1][centery-1] += 0.3;
+      gameMap[centerx-1][centery+1] += 0.3;
+      gameMap[centerx][centery+1] += 0.3;
+      gameMap[centerx][centery-1] += 0.3;
+      gameMap[centerx+1][centery] += 0.3;
+      gameMap[centerx-1][centery] += 0.3;
     }
     setDrawFlag();
     if ((this.x != prevx) && (this.y !=prevy) ) {this.stuck = 0;}

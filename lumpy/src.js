@@ -96,7 +96,7 @@ function saveImage() {
 }
 
 function newMap() {
-  let noiseScale = 0.03;
+  let noiseScale = 0.05;
   mapWidth = width / pixelSize;
   // pixelSize = width / mapWidth;
   mapHeight = (height / pixelSize) + 2
@@ -429,7 +429,7 @@ function draw() {
   if (keyIsDown(86)) {
     fill(rcol());
     textSize(200);
-    text("VERSION\nFKA TWIGS", 50, 250);
+    text("VERSION\nBJORK", 50, 250);
   }
   timer++;
   if (showHelp == true) {
@@ -499,11 +499,13 @@ class Frenemy {
     }
     if ((-1.0 * random()) > this.builder) {
       //either shoot or bulldozer?
-      // if (coin() == true) {
+
       this.bulldozer = true;
       this.builder_count = 2;
       // } else {
-      bullets.push(new Bullet(this.x, this.y, this.direction));
+      if (coin() == true) {
+        bullets.push(new Bullet(this.x, this.y, this.direction));
+      }
       // }
     }
     if (random() < this.builder) {
@@ -514,15 +516,15 @@ class Frenemy {
       if (centerx > mapWidth-2) {centerx = mapWidth-2;}
       if (centery < 2) {centery = 2;}
       if (centery > mapHeight-2) {centery = mapHeight-2;}
-      gameMap[centerx+1][centery+1] += random(0.0, gameMap[centerx][centery]);
-      gameMap[centerx-1][centery-1] += random(0.0, gameMap[centerx][centery]);
-      gameMap[centerx+1][centery-1] += random(0.0, gameMap[centerx][centery]);
-      gameMap[centerx-1][centery+1] += random(0.0, gameMap[centerx][centery]);
-      gameMap[centerx][centery+1] += random(0.0, gameMap[centerx][centery]);
-      gameMap[centerx][centery-1] += random(0.0, gameMap[centerx][centery]);
-      gameMap[centerx+1][centery] += random(0.0, gameMap[centerx][centery]);
-      gameMap[centerx-1][centery] += random(0.0, gameMap[centerx][centery]);
-      gameMap[centerx][centery] += random();
+      gameMap[centerx+1][centery+1] += 0.3;
+      gameMap[centerx-1][centery-1] += 0.3;
+      gameMap[centerx+1][centery-1] += 0.3;
+      gameMap[centerx-1][centery+1] += 0.3;
+      gameMap[centerx][centery+1] += 0.3;
+      gameMap[centerx][centery-1] += 0.3;
+      gameMap[centerx+1][centery] += 0.3;
+      gameMap[centerx-1][centery] += 0.3;
+      gameMap[centerx][centery] += 1;
       setDrawFlag();
       this.builder_count = 2;
       this.builddozer = true;
@@ -613,29 +615,29 @@ class Frenemy {
         this.x = prevx;
         this.y = prevy;
       } else {
-        gameMap[centerx][centery] = 0;
-        gameMap[centerx+1][centery+1] = 0;
-        gameMap[centerx-1][centery-1] = 0;
-        gameMap[centerx+1][centery-1] = 0;
-        gameMap[centerx-1][centery+1] = 0;
-        gameMap[centerx][centery+1] = 0;
-        gameMap[centerx][centery-1] = 0;
-        gameMap[centerx+1][centery] = 0;
-        gameMap[centerx-1][centery] = 0;
+        gameMap[centerx][centery] -=0.3;
+        gameMap[centerx+1][centery+1] -=0.3;
+        gameMap[centerx-1][centery-1] -=0.3;
+        gameMap[centerx+1][centery-1] -=0.3;
+        gameMap[centerx-1][centery+1] -=0.3;
+        gameMap[centerx][centery+1] -=0.3;
+        gameMap[centerx][centery-1] -=0.3;
+        gameMap[centerx+1][centery] -=0.3;
+        gameMap[centerx-1][centery] -=0.3;
 
         // drawMap;
       }
     }
     if (this.builddozer == true) {
-      gameMap[centerx][centery] += 0.3;
-      gameMap[centerx+1][centery+1] += 0.3;
-      gameMap[centerx-1][centery-1] += 0.3;
-      gameMap[centerx+1][centery-1] += 0.3;
-      gameMap[centerx-1][centery+1] += 0.3;
-      gameMap[centerx][centery+1] += 0.3;
-      gameMap[centerx][centery-1] += 0.3;
-      gameMap[centerx+1][centery] += 0.3;
-      gameMap[centerx-1][centery] += 0.3;
+      gameMap[centerx][centery] *= 1.5;
+      gameMap[centerx+1][centery+1] *= 1.5;
+      gameMap[centerx-1][centery-1] *= 1.5;
+      gameMap[centerx+1][centery-1] *= 1.5;
+      gameMap[centerx-1][centery+1] *= 1.5;
+      gameMap[centerx][centery+1] *= 1.5;
+      gameMap[centerx][centery-1] *= 1.5;
+      gameMap[centerx+1][centery] *= 1.5;
+      gameMap[centerx-1][centery] *= 1.5;
     }
     setDrawFlag();
     if ((this.x != prevx) && (this.y !=prevy) ) {this.stuck = 0;}
@@ -676,20 +678,20 @@ class Bullet {
     }
     if (this.alive == true){
       if (gameMap[this.x][this.y]>obstacle) {
-        gameMap[this.x][this.y] = 0;
+        gameMap[this.x][this.y] -=0.2;
 
         this.health--;
         if (this.health == 0) {
           if ((this.x > 2) && (this.x < mapWidth-2) && (this.y > 2) && (this.y < mapHeight-2)){
-            gameMap[this.x+1][this.y-1] = 0;
-            gameMap[this.x-1][this.y-1] = 0;
-            gameMap[this.x-1][this.y+1] = 0;
-            gameMap[this.x-1][this.y] = 0;
-            gameMap[this.x][this.y-1] = 0;
+            gameMap[this.x+1][this.y-1] -= 0.2;
+            gameMap[this.x-1][this.y-1] -= 0.2;
+            gameMap[this.x-1][this.y+1] -= 0.2;
+            gameMap[this.x-1][this.y] -= 0.2;
+            gameMap[this.x][this.y-1] -= 0.2;
 
-            gameMap[this.x+1][this.y+1] = 0;
-            gameMap[this.x][this.y+1] = 0;
-            gameMap[this.x+1][this.y] = 0;
+            gameMap[this.x+1][this.y+1] -= 0.2;
+            gameMap[this.x][this.y+1] -= 0.2;
+            gameMap[this.x+1][this.y] -= 0.2;
           }
         }
         setDrawFlag();

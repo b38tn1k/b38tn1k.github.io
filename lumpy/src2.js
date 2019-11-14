@@ -23,6 +23,7 @@ let direction = [1, 0, 0, 0];
 let rearCannon = true;
 let herd;
 let showScores = false;
+let bulldozer = false;
 
 function rcol() {
   return colors[(int(random(colors.length)))];
@@ -53,6 +54,9 @@ function keyPressed() {
   }
   if (key == 'i') {
     saveImage();
+  }
+  if (key == 'b') {
+    bulldozer = !bulldozer;
   }
   if (key == ' ') {
     // console.log('shoot');
@@ -200,7 +204,7 @@ function genSprite(spriteWidth, spriteHeight, sc) {
 function placePlayer() {
   playerX = int(random(10, mapWidth-10));
   playerY = int(random(10, mapHeight-10));
-  while (gameMap[playerX][playerY] > obstacle) {
+  while (gameMap[playerX][playerY] > obstacle+0.1) {
     playerX = int(random(10, mapWidth-10));
     playerY = int(random(10, mapHeight-10));
     // console.log(playerX);
@@ -222,7 +226,7 @@ window.onresize = function() {
   newMap();
   makeSprite();
   placePlayer();
-  herd = new Herd(10);
+  herd = new Herd(20);
   frenemies = herd.herd;
 };
 
@@ -238,7 +242,7 @@ function setup() {
   background(rcol());
   newMap();
   makeSprite();
-  herd = new Herd(10);
+  herd = new Herd(20);
   frenemies = herd.herd;
   tc = rcol();
   while ((tc == bg) || (tc == fg)) {
@@ -253,9 +257,13 @@ function draw() {
   //update
   let prevX = playerX;
   let prevY = playerY;
+  let one = 1;
+  if (keyIsDown(17)){
+    one = 2; //ehhh
+  }
 
   if ((keyIsDown(UP_ARROW)) || (keyIsDown(87))) {
-    playerY--;
+    playerY-=one;
     if (rearCannon == true) {
       direction = [1, 0, 0, 0];
     } else {
@@ -263,7 +271,7 @@ function draw() {
     }
   }
   if ((keyIsDown(DOWN_ARROW)) || (keyIsDown(83))) {
-    playerY++;
+    playerY+=one;
     if (rearCannon == true) {
       direction = [0, 1, 0, 0];
     } else {
@@ -271,7 +279,7 @@ function draw() {
     }
   }
   if ((keyIsDown(LEFT_ARROW)) || (keyIsDown(65))) {
-    playerX--;
+    playerX-=one;
     if (rearCannon == true) {
       direction = [0, 0, 1, 0];
     } else {
@@ -279,7 +287,7 @@ function draw() {
     }
   }
   if ((keyIsDown(RIGHT_ARROW)) || (keyIsDown(68))) {
-    playerX++;
+    playerX+=one;
     if (rearCannon == true) {
       direction = [0, 0, 0, 1];
     } else {
@@ -295,8 +303,17 @@ function draw() {
   let spriteCenterX = playerX + spriteWidth/2+1;
   let spriteCenterY = playerY + spriteHeight-1;
   if (gameMap[spriteCenterX][spriteCenterY] > obstacle) {
-    playerX = prevX;
-    playerY = prevY;
+    if (bulldozer == false) {
+      playerX = prevX;
+      playerY = prevY;
+    } else {
+      gameMap[spriteCenterX][spriteCenterY] = 0;
+      gameMap[spriteCenterX+1][spriteCenterY] = 0;
+      gameMap[spriteCenterX-1][spriteCenterY] = 0;
+      gameMap[spriteCenterX][spriteCenterY+1] = 0;
+      gameMap[spriteCenterX][spriteCenterY-1] = 0;
+      drawMap();
+    }
   }
   if (keyIsDown(16)) {
     gameMap[spriteCenterX][spriteCenterY] = 1;
@@ -345,12 +362,24 @@ function draw() {
   if (showScores == true) {
     herd.showLog();
   }
-  if (showtext == true) {
+  if (bulldozer == true) {
     fill(tc);
-    let s = '[WASD] to move\n[LEFT SHIFT] to build\n[SPACE] to shoot\n[C] to switch cannon direction\n[R] for a new sprite\n[L] for logging\n[H] to see this again\nPress any key to play';
+    textSize(20);
+    text("BULLDOZER", width - 200, 50);
+  }
+  if (showtext == true) {
+    strokeWeight(5);
+    stroke(fg);
+    fill(tc);
+    rect(45, 5, 1320, 300);
+    fill(bg);
+    rect(45, 320, 350, 280);
+    noStroke();
+    let s = '[WASD] to move\nHold [LEFT CONTROL] to go faster\n[LEFT SHIFT] to build\n[SPACE] to shoot\n[B] for Bulldozer Mode\n[C] to switch cannon direction\n[R] for a new sprite\n[L] for logging\n[H] to see this again\nPress any key to play';
     let t = 'YOU ARE THE BIG ONE\nYOU FLOAT IN LUMPY SPACE WITH THE LITTLE ONES\nWHEN A LITTLE ONE DIES,\nTHE TWO OLDEST HAVE A BABY\nSOMETIMES THEY MUTATE';
     textSize(50);
     text(t, 50, 50);
+    fill(tc);
     textSize(20);
     text(s, 50, 350);
   }
@@ -359,6 +388,7 @@ function draw() {
 class Frenemy {
   constructor() {
     this.color = rcol();
+    this.stuck = 0;
     while (this.color==bg){
       this.color = rcol();
     }
@@ -371,7 +401,9 @@ class Frenemy {
       this.y = int(random(10, mapHeight-10));
     }
     this.counter = 0;
-    this.sprite = genSprite(5.0, 3.0, this.color);
+    this.width = 5.0;
+    this.height = 3.0;
+    this.sprite = genSprite(this.width, this.height, this.color);
     this.xrand = int(random(-2, 2));
     this.yrand = int(random(-2, 2));
     this.builder = random(-1, 1); // liklihood to make walls vs liklihood to shoot and destroy
@@ -379,6 +411,8 @@ class Frenemy {
     this.seeker = random(-1, 1); //likleihood to cling to edges / float in empty space
     this.purpose = random(2) + 1; // the uppoer bound on how far they might travel
     this.direction = [0, 0, 0, 0];
+    this.bulldozer = false;
+    this.dozer_count = 0;
   }
 
   inherit(builder, evader,seeker,purpose, color) {
@@ -398,10 +432,17 @@ class Frenemy {
       }
     }
     if ((-1.0 * random()) > this.builder) {
+      //either shoot or bulldozer?
+      // if (coin() == true) {
+      this.bulldozer = true;
+      this.dozer_count = 2;
+      // } else {
       bullets.push(new Bullet(this.x, this.y, this.direction));
+      // }
     }
     if (random() < this.builder) {
       gameMap[this.x][this.y] = 1;
+      drawMap();
     }
   }
 
@@ -430,6 +471,11 @@ class Frenemy {
 
   randomWalk() {
     if (this.counter%int(random(3, (5*this.purpose))) == 0) {
+      if (this.dozer_count <= 0) {
+        this.bulldozer = false;
+      } else {
+        this.dozer_count--;
+      }
       this.direction = [0, 0, 0, 0];
       this.xrand = int(random(-2, 2));
       this.yrand = int(random(-2, 2));
@@ -444,6 +490,15 @@ class Frenemy {
   }
 
   update() {
+    if (this.stuck >=300){
+      this.x = int(random(10, mapWidth-10));
+      this.y = int(random(10, mapHeight-10));
+      while (gameMap[this.x][this.y] > obstacle+0.1) {
+        this.x = int(random(10, mapWidth-10));
+        this.y = int(random(10, mapHeight-10));
+      }
+      this.stuck = 0;
+    }
     this.x = int(this.x);
     this.y = int(this.y);
     let prevx = this.x;
@@ -453,13 +508,21 @@ class Frenemy {
     if (random() > this.behaviourThresh){
       this.builderBehaviour();
     }
-    if (this.x < 6) {this.x = 6;}
-    if (this.x > mapWidth-3*spriteWidth) {this.x = mapWidth-3*spriteWidth;}
-    if (this.y < 6) {this.y = 6;}
-    if (this.y > mapHeight - 3*spriteHeight) {this.y = mapHeight - 3*spriteHeight;}
-    if ((gameMap[this.x][this.y] > obstacle)||(gameMap[this.x+5][this.y+6] > obstacle)||(gameMap[this.x+5][this.y] > obstacle)||(gameMap[this.x][this.y+6] > obstacle)||(gameMap[this.x+2][this.y+3] > obstacle)||(gameMap[this.x+2][this.y] > obstacle)) {
-      this.x = prevx;
-      this.y = prevy;
+    if (this.x < this.width) {this.x = this.width;}
+    if (this.x > mapWidth-3*this.width) {this.x = mapWidth-3*this.width;}
+    if (this.y < this.width) {this.y = this.width;}
+    if (this.y > mapHeight - 3*this.width) {this.y = mapHeight - 3*this.width;}
+    let centerx = this.x + this.width;
+    let centery = this.y + int(this.height/2);
+    if ((gameMap[centerx][centery] > obstacle)||(gameMap[this.x][this.y] > obstacle)) {
+      if (this.bulldozer == false){
+        this.stuck++;
+        this.x = prevx;
+        this.y = prevy;
+      } else {
+        gameMap[centerx][centery] = 0;
+        drawMap;
+      }
     }
   }
 
@@ -535,20 +598,30 @@ class Herd {
     }
   }
   showLog() {
-    fill(tc);
-    textSize(20);
-    let t = "Lump\tPurpose\tDestroyOrBuild\tEvader\tSeeker"
-    text(t, 50, 50);
+    noStroke();
+    fill(color('#666'));
+    rect(0, 0, 500, 22 * this.count);
+    rect(0, 22 * this.count, 500, 100);
+    fill(color('#fff'));
+    textSize(15);
+    let t = "Lump\t\t\tIntent\t\t\t\t\tCreativity\t\tEvader\t\t\t\t\t\tSeeker\t\tDozer\t\t\tAge"
+    text(t, 10, 20);
+    let f = 0;
     for (var i = 0; i < this.count; i++) {
       fill(color(this.herd[i].color));
-      t =  i + "\t\t\t\t\t" + nf(this.herd[i].purpose, 2, 2) + '\t\t\t\t\t' + nf(this.herd[i].builder, 2, 2)+ '\t\t\t\t' + nf(this.herd[i].evader, 2, 2)+ '\t\t\t\t\t' + nf(this.herd[i].seeker, 2, 2);
-      text(t, 50, 50 + (i + 1) * 30);
+      t =  " " +nf(i, 2) + "\t\t\t\t\t" + nfp(this.herd[i].purpose, 2, 2) + '\t\t\t\t\t' + nfp(this.herd[i].builder, 2, 2)+ '\t\t\t\t' + nfp(this.herd[i].evader, 2, 2)+ '\t\t\t\t\t' + nfp(this.herd[i].seeker, 2, 2)+ '\t\t\t' + this.herd[i].bulldozer+ '\t\t\t' + this.herd[i].counter;
+      f = 20 + (i + 1) * 20;
+      text(t, 10, f);
     }
+    f += 30;
+    fill(color('#fff'));
+    t = "Intent is how confident a little one moves in a direction\nCreativity can also be destructive\nStrong Evaders will move away from the big one when the weak gravitate\nSeekers will find shelter near structures\nDozer Mode is Dozer Mode"
+    text(t, 10, f);
 
 
   }
   checkShot(x, y, armed) {
-    if (armed > 3) {
+    if (armed > 5) {
       for (var k = 0; k < this.count; k++) {
         this.herd[k].checkShot(x, y)
       }

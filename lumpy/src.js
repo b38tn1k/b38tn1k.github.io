@@ -450,7 +450,7 @@ function draw() {
     if (keyIsDown(86)) {
       fill(rcol());
       textSize(200);
-      text("VERSION\nBJORK", 50, 250);
+      text("VERSION\nDT", 50, 250);
     }
     timer++;
     if (showHelp == true) {

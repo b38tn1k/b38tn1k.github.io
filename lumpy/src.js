@@ -456,7 +456,7 @@ function draw() {
     if (keyIsDown(86)) {
       fill(rcol());
       textSize(200);
-      text("VERSION\nSUMMERS", 50, 250);
+      text("VERSION\nDISCO", 50, 250);
     }
     timer++;
     if (showHelp == true) {
@@ -793,8 +793,8 @@ class Bullet {
       //   return;
       // }
       if (typeof gameMap != "undefined") {
-              if (typeof gameMap[this.x][this.y] != "undefined") {
-                posVal = gameMap[this.x][this.y];
+              if (typeof gameMap[int(this.x)][int(this.y)] != "undefined") {
+                posVal = gameMap[int(this.x)][int(this.y)];
               }          
       }
       if (typeof gameMap != "undefined") {

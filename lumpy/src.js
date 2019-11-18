@@ -456,7 +456,7 @@ function draw() {
     if (keyIsDown(86)) {
       fill(rcol());
       textSize(200);
-      text("VERSION\nDONNA", 50, 250);
+      text("VERSION\nSUMMERS", 50, 250);
     }
     timer++;
     if (showHelp == true) {
@@ -793,7 +793,9 @@ class Bullet {
       //   return;
       // }
       if (typeof gameMap != "undefined") {
-        posVal = gameMap[this.x][this.y] || 0;
+              if (typeof gameMap[this.x][this.y] != "undefined") {
+                posVal = gameMap[this.x][this.y];
+              }          
       }
       if (typeof gameMap != "undefined") {
         if (gameMap[this.x][this.y]>obstacle) {

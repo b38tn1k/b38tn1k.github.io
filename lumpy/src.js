@@ -348,25 +348,31 @@ function draw() {
     //figure out center of sprite and stop it from escaping
     let spriteCenterX = playerX + spriteWidth/2+1;
     let spriteCenterY = playerY + spriteHeight-1;
-    if (gameMap[spriteCenterX][spriteCenterY] > obstacle) {
-      if (bulldozer == false) {
-        playerX = prevX;
-        playerY = prevY;
-      } else {
-        try {
-          gameMap[spriteCenterX][spriteCenterY] = 0;
-          gameMap[spriteCenterX+1][spriteCenterY] = 0;
-          gameMap[spriteCenterX-1][spriteCenterY] = 0;
-          gameMap[spriteCenterX][spriteCenterY+1] = 0;
-          gameMap[spriteCenterX][spriteCenterY-1] = 0;
-        } catch(err) {
-          console.log(err);
+    if (typeof gameMap != "undefined") {
+      if (gameMap[spriteCenterX][spriteCenterY] > obstacle) {
+        if (bulldozer == false) {
+          playerX = prevX;
+          playerY = prevY;
+        } else {
+          try {
+            if (typeof gameMap != "undefined") {
+              gameMap[spriteCenterX][spriteCenterY] = 0;
+              gameMap[spriteCenterX+1][spriteCenterY] = 0;
+              gameMap[spriteCenterX-1][spriteCenterY] = 0;
+              gameMap[spriteCenterX][spriteCenterY+1] = 0;
+              gameMap[spriteCenterX][spriteCenterY-1] = 0;
+            }
+          } catch(err) {
+            console.log(err);
+          }
+          setDrawFlag();
         }
-        setDrawFlag();
       }
     }
     if (keyIsDown(16)) {
-      gameMap[spriteCenterX][spriteCenterY] = 1;
+      if (typeof gameMap != "undefined") {
+        gameMap[spriteCenterX][spriteCenterY] = 1;
+      }
       setDrawFlag();
     }
     if (keyIsDown(32)) {
@@ -450,7 +456,7 @@ function draw() {
     if (keyIsDown(86)) {
       fill(rcol());
       textSize(200);
-      text("VERSION\nDT", 50, 250);
+      text("VERSION\nDONNA", 50, 250);
     }
     timer++;
     if (showHelp == true) {
@@ -486,9 +492,11 @@ class Frenemy {
     this.x = int(random(10, mapWidth-10));
     this.y = int(random(10, mapHeight-10));
     this.alive = true;
-    while (gameMap[this.x][this.y] > obstacle) {
-      this.x = int(random(10, mapWidth-10));
-      this.y = int(random(10, mapHeight-10));
+    if (typeof gameMap != "undefined") {
+      while (gameMap[this.x][this.y] > obstacle) {
+        this.x = int(random(10, mapWidth-10));
+        this.y = int(random(10, mapHeight-10));
+      }
     }
     this.counter = offset;
     this.width = 5.0;
@@ -542,15 +550,17 @@ class Frenemy {
       if (centery < 2) {centery = 2;}
       if (centery > mapHeight-2) {centery = mapHeight-2;}
       try{
-        gameMap[centerx+1][centery+1] += 0.3;
-        gameMap[centerx-1][centery-1] += 0.3;
-        gameMap[centerx+1][centery-1] += 0.3;
-        gameMap[centerx-1][centery+1] += 0.3;
-        gameMap[centerx][centery+1] += 0.3;
-        gameMap[centerx][centery-1] += 0.3;
-        gameMap[centerx+1][centery] += 0.3;
-        gameMap[centerx-1][centery] += 0.3;
-        gameMap[centerx][centery] += 1;
+        if (typeof gameMap != "undefined") {
+          gameMap[centerx+1][centery+1] += 0.3;
+          gameMap[centerx-1][centery-1] += 0.3;
+          gameMap[centerx+1][centery-1] += 0.3;
+          gameMap[centerx-1][centery+1] += 0.3;
+          gameMap[centerx][centery+1] += 0.3;
+          gameMap[centerx][centery-1] += 0.3;
+          gameMap[centerx+1][centery] += 0.3;
+          gameMap[centerx-1][centery] += 0.3;
+          gameMap[centerx][centery] += 1;
+        }
       } catch(err) {
         console.log(err);
       }
@@ -618,31 +628,33 @@ class Frenemy {
             let countXneg = 0;
             let countYpos = 0;
             let countYneg = 0;
-            for (let i = this.x; i < mapWidth-10; i+=2) {
-              if (gameMap[i][this.y] > obstacle) {
-                break;
+            if (typeof gameMap != "undefined") {
+              for (let i = this.x; i < mapWidth-10; i+=2) {
+                if (gameMap[i][this.y] > obstacle) {
+                  break;
+                }
+                countXpos++;
               }
-              countXpos++;
-            }
-            for (let i = this.x; i > 10; i-=2) {
-              if (gameMap[i][this.y] > obstacle) {
-                break;
+              for (let i = this.x; i > 10; i-=2) {
+                if (gameMap[i][this.y] > obstacle) {
+                  break;
+                }
+                countXneg++;
+                if (countXneg > countXpos) {break;}
               }
-              countXneg++;
-              if (countXneg > countXpos) {break;}
-            }
-            for (let i = this.y; i < mapHeight-10; i+=2) {
-              if (gameMap[this.x][i] > obstacle) {
-                break;
+              for (let i = this.y; i < mapHeight-10; i+=2) {
+                if (gameMap[this.x][i] > obstacle) {
+                  break;
+                }
+                countYpos++;
               }
-              countYpos++;
-            }
-            for (let i = this.y; i > 10; i-=2) {
-              if (gameMap[this.x][i] > obstacle) {
-                break;
+              for (let i = this.y; i > 10; i-=2) {
+                if (gameMap[this.x][i] > obstacle) {
+                  break;
+                }
+                countYneg++;
+                if (countYneg > countYpos) {break;}
               }
-              countYneg++;
-              if (countYneg > countYpos) {break;}
             }
             if (this.seeker > 0) {
               this.xrand = (countXpos - countXneg) / abs((countXpos - countXneg));
@@ -703,33 +715,35 @@ class Frenemy {
       // console.log(gameMap[centerx][centery]);
       // console.log(gameMap[this.x][this.y]);
       // console.log(this.x, this.y, centerx, centery);
-      if ((gameMap[centerx][centery] > obstacle)||(gameMap[this.x][this.y] > obstacle)) {
-        if (this.bulldozer == false){
-          this.stuck++;
-          this.x = prevx;
-          this.y = prevy;
-        } else {
-          gameMap[centerx][centery] -=0.3;
-          gameMap[centerx+1][centery+1] -=0.3;
-          gameMap[centerx-1][centery-1] -=0.3;
-          gameMap[centerx+1][centery-1] -=0.3;
-          gameMap[centerx-1][centery+1] -=0.3;
-          gameMap[centerx][centery+1] -=0.3;
-          gameMap[centerx][centery-1] -=0.3;
-          gameMap[centerx+1][centery] -=0.3;
-          gameMap[centerx-1][centery] -=0.3;
+      if (typeof gameMap != "undefined") {
+        if ((gameMap[centerx][centery] > obstacle)||(gameMap[this.x][this.y] > obstacle)) {
+          if (this.bulldozer == false){
+            this.stuck++;
+            this.x = prevx;
+            this.y = prevy;
+          } else {
+            gameMap[centerx][centery] -=0.3;
+            gameMap[centerx+1][centery+1] -=0.3;
+            gameMap[centerx-1][centery-1] -=0.3;
+            gameMap[centerx+1][centery-1] -=0.3;
+            gameMap[centerx-1][centery+1] -=0.3;
+            gameMap[centerx][centery+1] -=0.3;
+            gameMap[centerx][centery-1] -=0.3;
+            gameMap[centerx+1][centery] -=0.3;
+            gameMap[centerx-1][centery] -=0.3;
+          }
         }
-      }
-      if (this.builddozer == true) {
-        gameMap[centerx][centery] *= 1.5;
-        gameMap[centerx+1][centery+1] *= 1.5;
-        gameMap[centerx-1][centery-1] *= 1.5;
-        gameMap[centerx+1][centery-1] *= 1.5;
-        gameMap[centerx-1][centery+1] *= 1.5;
-        gameMap[centerx][centery+1] *= 1.5;
-        gameMap[centerx][centery-1] *= 1.5;
-        gameMap[centerx+1][centery] *= 1.5;
-        gameMap[centerx-1][centery] *= 1.5;
+        if (this.builddozer == true) {
+          gameMap[centerx][centery] *= 1.5;
+          gameMap[centerx+1][centery+1] *= 1.5;
+          gameMap[centerx-1][centery-1] *= 1.5;
+          gameMap[centerx+1][centery-1] *= 1.5;
+          gameMap[centerx-1][centery+1] *= 1.5;
+          gameMap[centerx][centery+1] *= 1.5;
+          gameMap[centerx][centery-1] *= 1.5;
+          gameMap[centerx+1][centery] *= 1.5;
+          gameMap[centerx-1][centery] *= 1.5;
+        }
       }
       setDrawFlag();
       if ((this.x != prevx) && (this.y !=prevy) ) {this.stuck = 0;}
@@ -778,24 +792,28 @@ class Bullet {
       //   console.log('gameMap error');
       //   return;
       // }
-      posVal = gameMap[this.x][this.y] || 0;
-      if (gameMap[this.x][this.y]>obstacle) {
-        gameMap[this.x][this.y] -=0.2;
+      if (typeof gameMap != "undefined") {
+        posVal = gameMap[this.x][this.y] || 0;
+      }
+      if (typeof gameMap != "undefined") {
+        if (gameMap[this.x][this.y]>obstacle) {
+          gameMap[this.x][this.y] -=0.2;
 
-        this.health--;
-        if (this.health == 0) {
-          if ((this.x > 2) && (this.x < mapWidth-2) && (this.y > 2) && (this.y < mapHeight-2)){
-            try {
-              gameMap[this.x+1][this.y-1] -= 0.2;
-              gameMap[this.x-1][this.y-1] -= 0.2;
-              gameMap[this.x-1][this.y+1] -= 0.2;
-              gameMap[this.x-1][this.y] -= 0.2;
-              gameMap[this.x][this.y-1] -= 0.2;
-              gameMap[this.x+1][this.y+1] -= 0.2;
-              gameMap[this.x][this.y+1] -= 0.2;
-              gameMap[this.x+1][this.y] -= 0.2;
-            } catch(err) {
-              console.log(err);
+          this.health--;
+          if (this.health == 0) {
+            if ((this.x > 2) && (this.x < mapWidth-2) && (this.y > 2) && (this.y < mapHeight-2)){
+              try {
+                gameMap[this.x+1][this.y-1] -= 0.2;
+                gameMap[this.x-1][this.y-1] -= 0.2;
+                gameMap[this.x-1][this.y+1] -= 0.2;
+                gameMap[this.x-1][this.y] -= 0.2;
+                gameMap[this.x][this.y-1] -= 0.2;
+                gameMap[this.x+1][this.y+1] -= 0.2;
+                gameMap[this.x][this.y+1] -= 0.2;
+                gameMap[this.x+1][this.y] -= 0.2;
+              } catch(err) {
+                console.log(err);
+              }
             }
           }
         }

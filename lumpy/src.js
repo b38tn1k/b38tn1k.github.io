@@ -769,6 +769,8 @@ class Bullet {
       this.alive = false;
     }
     if (this.alive == true){
+      let posVal = 0;
+      posVal = gameMap[this.x][this.y] || 0;
       if (gameMap[this.x][this.y]>obstacle) {
         gameMap[this.x][this.y] -=0.2;
 

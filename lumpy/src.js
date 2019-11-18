@@ -682,10 +682,10 @@ class Frenemy {
     let centerx = 10;
     let centery = 10;
     try {
-      if (typeof(gameMap[this.x][this.y]) == 'undefined') {
-        console.log('gameMap error');
-        return;
-      }
+      // if (typeof(gameMap[this.x][this.y]) == 'undefined') {
+      //   console.log('gameMap error');
+      //   return;
+      // }
       if (this.x < 2*this.width) {this.x = 2*this.width;}
       if (this.x > mapWidth-3*this.width) {this.x = mapWidth-3*this.width;}
       if (this.y < 2*this.width) {this.y = 2*this.width;}
@@ -774,10 +774,10 @@ class Bullet {
     }
     if (this.alive == true){
       let posVal = 0;
-      if (typeof(gameMap[this.x][this.y]) == 'undefined') {
-        console.log('gameMap error');
-        return;
-      }
+      // if (typeof(gameMap[this.x][this.y]) == 'undefined') {
+      //   console.log('gameMap error');
+      //   return;
+      // }
       posVal = gameMap[this.x][this.y] || 0;
       if (gameMap[this.x][this.y]>obstacle) {
         gameMap[this.x][this.y] -=0.2;

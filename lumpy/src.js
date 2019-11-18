@@ -1,6 +1,6 @@
 let colors = ['#0f0', '#ff0', '#0ff', '#f0f', '#fff', '#f00', '#00f', '#0f0'];
 let gameMap = [];
-let mapWidth = 200;
+let mapWidth = 195;
 let mapHeight;
 let pixelSize = 5;
 let shootNow = false;
@@ -21,7 +21,10 @@ let frenemies = [];
 let frenemyCount = 10;
 let direction = [1, 0, 0, 0];
 let rearCannon = true;
-let herd;
+let herd1;
+let herd2;
+let herd3;
+let herd4;
 let showScores = false;
 let bulldozer = false;
 let drawFlag = false;
@@ -259,16 +262,15 @@ window.onresize = function() {
   height = window.innerHeight;
   mapCanvas.remove();
   my_sprite.remove();
-  for (var i = 0; i < frenemyCount; i++) {
-    frenemies[i].clean();
-  }
   canvas = null;
   canvas = createCanvas(window.innerWidth, window.innerHeight);
   newMap();
   makeSprite();
   placePlayer();
-  herd = new Herd(20);
-  frenemies = herd.herd;
+  herd1 = new Herd(5);
+  herd2 = new Herd(5);
+  herd3 = new Herd(5);
+  herd4 = new Herd(5);
 };
 
 function deviceTurned() {
@@ -283,8 +285,10 @@ function setup() {
   background(rcol());
   newMap();
   makeSprite();
-  herd = new Herd(20);
-  frenemies = herd.herd;
+  herd1 = new Herd(5);
+  herd2 = new Herd(5);
+  herd3 = new Herd(5);
+  herd4 = new Herd(5);
   tc = rcol();
   while ((tc == bg) || (tc == fg)) {
     tc = rcol();
@@ -293,160 +297,181 @@ function setup() {
 }
 
 function draw() {
-  clear();
-  frameRate(8);
-  //update
-  let prevX = playerX;
-  let prevY = playerY;
-  let one = 1;
-  if (keyIsDown(17)){
-    one = 2; //ehhh
-  }
+  try {
+    clear();
+    frameRate(8);
+    //update
+    let prevX = playerX;
+    let prevY = playerY;
+    let one = 1;
+    if (keyIsDown(17)){
+      one = 2; //ehhh
+    }
 
-  if ((keyIsDown(UP_ARROW)) || (keyIsDown(87))) {
-    playerY-=one;
-    if (rearCannon == true) {
-      direction = [1, 0, 0, 0];
-    } else {
-      direction = [0, 1, 0, 0];
+    if ((keyIsDown(UP_ARROW)) || (keyIsDown(87))) {
+      playerY-=one;
+      if (rearCannon == true) {
+        direction = [1, 0, 0, 0];
+      } else {
+        direction = [0, 1, 0, 0];
+      }
     }
-  }
-  if ((keyIsDown(DOWN_ARROW)) || (keyIsDown(83))) {
-    playerY+=one;
-    if (rearCannon == true) {
-      direction = [0, 1, 0, 0];
-    } else {
-      direction = [1, 0, 0, 0];
+    if ((keyIsDown(DOWN_ARROW)) || (keyIsDown(83))) {
+      playerY+=one;
+      if (rearCannon == true) {
+        direction = [0, 1, 0, 0];
+      } else {
+        direction = [1, 0, 0, 0];
+      }
     }
-  }
-  if ((keyIsDown(LEFT_ARROW)) || (keyIsDown(65))) {
-    playerX-=one;
-    if (rearCannon == true) {
-      direction = [0, 0, 1, 0];
-    } else {
-      direction = [0, 0, 0, 1];
+    if ((keyIsDown(LEFT_ARROW)) || (keyIsDown(65))) {
+      playerX-=one;
+      if (rearCannon == true) {
+        direction = [0, 0, 1, 0];
+      } else {
+        direction = [0, 0, 0, 1];
+      }
     }
-  }
-  if ((keyIsDown(RIGHT_ARROW)) || (keyIsDown(68))) {
-    playerX+=one;
-    if (rearCannon == true) {
-      direction = [0, 0, 0, 1];
-    } else {
-      direction = [0, 0, 1, 0];
+    if ((keyIsDown(RIGHT_ARROW)) || (keyIsDown(68))) {
+      playerX+=one;
+      if (rearCannon == true) {
+        direction = [0, 0, 0, 1];
+      } else {
+        direction = [0, 0, 1, 0];
+      }
     }
-  }
-  if (keyIsDown(82)) {
-    my_sprite.remove();
-    makeSprite();
-  }
+    if (keyIsDown(82)) {
+      my_sprite.remove();
+      makeSprite();
+    }
 
-  //figure out center of sprite and stop it from escaping
-  let spriteCenterX = playerX + spriteWidth/2+1;
-  let spriteCenterY = playerY + spriteHeight-1;
-  if (gameMap[spriteCenterX][spriteCenterY] > obstacle) {
-    if (bulldozer == false) {
-      playerX = prevX;
-      playerY = prevY;
-    } else {
-      gameMap[spriteCenterX][spriteCenterY] = 0;
-      gameMap[spriteCenterX+1][spriteCenterY] = 0;
-      gameMap[spriteCenterX-1][spriteCenterY] = 0;
-      gameMap[spriteCenterX][spriteCenterY+1] = 0;
-      gameMap[spriteCenterX][spriteCenterY-1] = 0;
+    //figure out center of sprite and stop it from escaping
+    let spriteCenterX = playerX + spriteWidth/2+1;
+    let spriteCenterY = playerY + spriteHeight-1;
+    if (gameMap[spriteCenterX][spriteCenterY] > obstacle) {
+      if (bulldozer == false) {
+        playerX = prevX;
+        playerY = prevY;
+      } else {
+        try {
+          gameMap[spriteCenterX][spriteCenterY] = 0;
+          gameMap[spriteCenterX+1][spriteCenterY] = 0;
+          gameMap[spriteCenterX-1][spriteCenterY] = 0;
+          gameMap[spriteCenterX][spriteCenterY+1] = 0;
+          gameMap[spriteCenterX][spriteCenterY-1] = 0;
+        } catch(err) {
+          console.log(err);
+        }
+        setDrawFlag();
+      }
+    }
+    if (keyIsDown(16)) {
+      gameMap[spriteCenterX][spriteCenterY] = 1;
       setDrawFlag();
     }
-  }
-  if (keyIsDown(16)) {
-    gameMap[spriteCenterX][spriteCenterY] = 1;
-    setDrawFlag();
-  }
-  if (keyIsDown(32)) {
-    //shoot
-    if (shootNow == true) {
-      bullets.push(new Bullet(spriteCenterX, spriteCenterY, direction));
-      shootNow = false;
-    }
-  }
-  if (showHelp == false && spriteIndicator >=0) {
-    spriteIndicator--;
-    my_sprite.remove();
-    makeSprite();
-  }
-
-  if (playerX < 0) {playerX = 0;}
-  if (playerX > mapWidth-spriteWidth) {playerX = mapWidth-spriteWidth;}
-  if (playerY < 0) {playerY = 0;}
-  if (playerY > mapHeight - 1.5*spriteHeight) {playerY = mapHeight - 1.5*spriteHeight;}
-
-  if (bullets.length > 0) {
-    for (var i = 0; i < bullets.length; i++){
-      herd.checkShot(bullets[i].x, bullets[i].y, bullets[i].counter);
-      bullets[i].update();
-    }
-    let tempBullets = [];
-    for (var i = 0; i < bullets.length; i++){
-      if (bullets[i].alive == true){
-        tempBullets.push(bullets[i]);
+    if (keyIsDown(32)) {
+      //shoot
+      if (shootNow == true) {
+        bullets.push(new Bullet(spriteCenterX, spriteCenterY, direction));
+        shootNow = false;
       }
-        // and javacript deals with the rest??
     }
-    bullets = [];
-    for (var i = 0; i < tempBullets.length; i++){
-      bullets[i] = tempBullets[i];
+    if (showHelp == false && spriteIndicator >=0) {
+      spriteIndicator--;
+      my_sprite.remove();
+      makeSprite();
     }
-  }
-  herd.update(spriteCenterX, spriteCenterY);
-  //draw
-  mapCanvas.remove();
-  if (drawFlag == true) {drawMap();}
-  image(mapCanvas, 0, 0);
-  drawFlag = false;
-  image (my_sprite, playerX*pixelSize, playerY*pixelSize);
-  herd.draw();
-  if (bullets.length > 0) {
-    for (var i = 0; i < bullets.length; i++){
-      bullets[i].draw();
+
+    if (playerX < 0) {playerX = 0;}
+    if (playerX > mapWidth-spriteWidth) {playerX = mapWidth-spriteWidth;}
+    if (playerY < 0) {playerY = 0;}
+    if (playerY > mapHeight - 1.5*spriteHeight) {playerY = mapHeight - 1.5*spriteHeight;}
+
+    if (bullets.length > 0) {
+      for (var i = 0; i < bullets.length; i++){
+        herd1.checkShot(bullets[i].x, bullets[i].y, bullets[i].counter);
+        herd2.checkShot(bullets[i].x, bullets[i].y, bullets[i].counter);
+        herd3.checkShot(bullets[i].x, bullets[i].y, bullets[i].counter);
+        herd4.checkShot(bullets[i].x, bullets[i].y, bullets[i].counter);
+        bullets[i].update();
+      }
+      let tempBullets = [];
+      for (var i = 0; i < bullets.length; i++){
+        if (bullets[i].alive == true){
+          tempBullets.push(bullets[i]);
+        }
+          // and javacript deals with the rest??
+      }
+      bullets = [];
+      for (var i = 0; i < tempBullets.length; i++){
+        bullets[i] = tempBullets[i];
+      }
     }
-  }
-  if (showScores == true) {
-    herd.showLog();
-  }
-  noStroke();
-  if (bulldozer == true) {
-    fill(tc);
-    textSize(20);
-    text("BULLDOZER", width - 200, 50);
-  }
-  if (timelapse == true) {
-    if (timer % timeInterval == 0) {
-      saveImage();
-    } else {
+    herd1.update(spriteCenterX, spriteCenterY);
+    herd2.update(spriteCenterX, spriteCenterY);
+    herd3.update(spriteCenterX, spriteCenterY);
+    herd4.update(spriteCenterX, spriteCenterY);
+    //draw
+    mapCanvas.remove();
+    if (drawFlag == true) {drawMap();}
+    image(mapCanvas, 0, 0);
+    drawFlag = false;
+    image (my_sprite, playerX*pixelSize, playerY*pixelSize);
+    herd1.draw();
+    herd2.draw();
+    herd3.draw();
+    herd4.draw();
+    if (bullets.length > 0) {
+      for (var i = 0; i < bullets.length; i++){
+        bullets[i].draw();
+      }
+    }
+    if (showScores == true) {
+      let start = herd1.showLog();
+      start = herd2.showLog(start);
+      start = herd3.showLog(start);
+      start = herd4.showLog(start);
+    }
+    noStroke();
+    if (bulldozer == true) {
       fill(tc);
       textSize(20);
-      text("TIMELAPSING", width - 200, 100);
+      text("BULLDOZER", width - 200, 50);
     }
-  }
-  if (keyIsDown(86)) {
-    fill(rcol());
-    textSize(200);
-    text("VERSION\nBJORK", 50, 250);
-  }
-  timer++;
-  if (showHelp == true) {
-    strokeWeight(5);
-    stroke(fg);
-    fill(tc);
-    rect(45, 5, 1320, 300);
-    fill(bg);
-    rect(45, 320, 350, 280);
-    noStroke();
-    let s = '[WASD] to move\nHold [LEFT CONTROL] to go faster\n[LEFT SHIFT] to build\n[SPACE] to shoot\n[B] for Bulldozer Mode\n[C] to switch cannon direction\n[R] for a new sprite\n[L] for logging\n[H] to see this again\nPress any key to play';
-    let t = 'YOU ARE THE BIG ONE\nYOU FLOAT IN LUMPY SPACE WITH THE LITTLE ONES\nWHEN A LITTLE ONE DIES,\nTHE TWO OLDEST HAVE A BABY\nSOMETIMES THEY MUTATE';
-    textSize(50);
-    text(t, 50, 50);
-    fill(tc);
-    textSize(20);
-    text(s, 50, 350);
+    if (timelapse == true) {
+      if (timer % timeInterval == 0) {
+        saveImage();
+      } else {
+        fill(tc);
+        textSize(20);
+        text("TIMELAPSING", width - 200, 100);
+      }
+    }
+    if (keyIsDown(86)) {
+      fill(rcol());
+      textSize(200);
+      text("VERSION\nBJORK", 50, 250);
+    }
+    timer++;
+    if (showHelp == true) {
+      strokeWeight(5);
+      stroke(fg);
+      fill(tc);
+      rect(45, 5, 1320, 300);
+      fill(bg);
+      rect(45, 320, 350, 280);
+      noStroke();
+      let s = '[WASD] to move\nHold [LEFT CONTROL] to go faster\n[LEFT SHIFT] to build\n[SPACE] to shoot\n[B] for Bulldozer Mode\n[C] to switch cannon direction\n[R] for a new sprite\n[L] for logging\n[H] to see this again\nPress any key to play';
+      let t = 'YOU ARE THE BIG ONE\nYOU FLOAT IN LUMPY SPACE WITH THE LITTLE ONES\nWHEN A LITTLE ONE DIES,\nTHE TRIBE ELDERS HAVE A BABY\nSOMETIMES THEY MUTATE';
+      textSize(50);
+      text(t, 50, 50);
+      fill(tc);
+      textSize(20);
+      text(s, 50, 350);
+    }
+  } catch(err) {
+    console.log(err);
+    console.log(":-p");
   }
 }
 
@@ -457,7 +482,7 @@ class Frenemy {
     while (this.color==bg){
       this.color = rcol();
     }
-    this.behaviourThresh = 0.98; // just to slow everyone down
+    this.behaviourThresh = 0.95; // just to slow everyone down
     this.x = int(random(10, mapWidth-10));
     this.y = int(random(10, mapHeight-10));
     this.alive = true;
@@ -511,20 +536,24 @@ class Frenemy {
     if (random() < this.builder) {
       // gameMap[this.x][this.y] = 1;
       let centerx = this.x + this.width;
-      let centery = this.y + int(this.height/2);
+      let centery = this.y + int(this.height * 0.5);
       if (centerx < 0) {centerx = 0;}
       if (centerx > mapWidth-2) {centerx = mapWidth-2;}
       if (centery < 2) {centery = 2;}
       if (centery > mapHeight-2) {centery = mapHeight-2;}
-      gameMap[centerx+1][centery+1] += 0.3;
-      gameMap[centerx-1][centery-1] += 0.3;
-      gameMap[centerx+1][centery-1] += 0.3;
-      gameMap[centerx-1][centery+1] += 0.3;
-      gameMap[centerx][centery+1] += 0.3;
-      gameMap[centerx][centery-1] += 0.3;
-      gameMap[centerx+1][centery] += 0.3;
-      gameMap[centerx-1][centery] += 0.3;
-      gameMap[centerx][centery] += 1;
+      try{
+        gameMap[centerx+1][centery+1] += 0.3;
+        gameMap[centerx-1][centery-1] += 0.3;
+        gameMap[centerx+1][centery-1] += 0.3;
+        gameMap[centerx-1][centery+1] += 0.3;
+        gameMap[centerx][centery+1] += 0.3;
+        gameMap[centerx][centery-1] += 0.3;
+        gameMap[centerx+1][centery] += 0.3;
+        gameMap[centerx-1][centery] += 0.3;
+        gameMap[centerx][centery] += 1;
+      } catch(err) {
+        console.log(err);
+      }
       setDrawFlag();
       this.builder_count = 2;
       this.builddozer = true;
@@ -555,43 +584,94 @@ class Frenemy {
   }
 
   randomWalk() {
-    if (this.counter%int(random(3, (5*this.purpose))) == 0) {
-      if (this.builder_count <= 0) {
-        this.bulldozer = false;
-        this.builddozer = false;
-      } else {
-        this.builder_count--;
+      if (this.counter%int(random(3, (5*this.purpose))) == 0) {
+        if (this.builder_count <= 0) {
+          this.bulldozer = false;
+          this.builddozer = false;
+        } else {
+          this.builder_count--;
+        }
+        this.direction = [0, 0, 0, 0];
+        this.xrand = int(random(-2, 2));
+        this.yrand = int(random(-2, 2));
+        if (this.yrand > 0) {this.direction[0] = 1}
+        if (this.yrand < 0) {this.direction[1] = 1}
+        if (this.xrand > 0) {this.direction[2] = 1}
+        if (this.xrand < 0) {this.direction[3] = 1}
+        if (this.behaviourThresh < random()){
+          if (coin() == true) {
+            // Evader Behavior
+            if (this.evader > 0) {
+              this.xrand = (this.x - playerX)/abs((this.x - playerX));
+              this.yrand = (this.y - playerY)/abs((this.y - playerY));
+            } else {
+              this.xrand = -1.0*(this.x - playerX)/abs((this.x - playerX));
+              this.yrand = -1.0*(this.y - playerY)/abs((this.y - playerY));
+            }
+          } else {
+            // Seeker Behavior
+            let posX;
+            let negX;
+            let posY;
+            let negY;
+            let countXpos = 0;
+            let countXneg = 0;
+            let countYpos = 0;
+            let countYneg = 0;
+            for (let i = this.x; i < mapWidth-10; i+=2) {
+              if (gameMap[i][this.y] > obstacle) {
+                break;
+              }
+              countXpos++;
+            }
+            for (let i = this.x; i > 10; i-=2) {
+              if (gameMap[i][this.y] > obstacle) {
+                break;
+              }
+              countXneg++;
+              if (countXneg > countXpos) {break;}
+            }
+            for (let i = this.y; i < mapHeight-10; i+=2) {
+              if (gameMap[this.x][i] > obstacle) {
+                break;
+              }
+              countYpos++;
+            }
+            for (let i = this.y; i > 10; i-=2) {
+              if (gameMap[this.x][i] > obstacle) {
+                break;
+              }
+              countYneg++;
+              if (countYneg > countYpos) {break;}
+            }
+            if (this.seeker > 0) {
+              this.xrand = (countXpos - countXneg) / abs((countXpos - countXneg));
+              this.yrand = (countYpos - countYneg) / abs((countYpos - countYneg));
+            } else {
+              this.xrand = -1 * (countXpos - countXneg) / abs((countXpos - countXneg));
+              this.yrand = -1 * (countYpos - countYneg) / abs((countYpos - countYneg));
+            }
+            // walk to walls / away
+
+          }
+        }
       }
-      this.direction = [0, 0, 0, 0];
-      this.xrand = int(random(-2, 2));
-      this.yrand = int(random(-2, 2));
-      if (this.yrand > 0) {this.direction[0] = 1}
-      if (this.yrand < 0) {this.direction[1] = 1}
-      if (this.xrand > 0) {this.direction[2] = 1}
-      if (this.xrand < 0) {this.direction[3] = 1}
-    }
-    this.counter ++;
-    this.x += this.xrand;
-    this.y += this.yrand;
+      this.counter ++;
+      this.x += this.xrand;
+      this.y += this.yrand;
   }
 
   update() {
     if (this.counter > 5000) {this.alive=false;} //die of old age eventually
     if (this.stuck >=100){
       this.bulldozer = true;
-      // this.x = int(random(10, mapWidth-10));
-      // this.y = int(random(10, mapHeight-10));
-      // while (gameMap[this.x][this.y] > obstacle+0.1) {
-      //   this.x = int(random(10, mapWidth-10));
-      //   this.y = int(random(10, mapHeight-10));
-      // }
       // is this cheating?
       if(this.builder >= -1.0) {
         this.builder -= 0.1;
       }
     }
-    this.x = int(this.x);
-    this.y = int(this.y);
+    this.x = int(this.x) || 0;
+    this.y = int(this.y) || 0;
     let prevx = this.x;
     let prevy = this.y;
     //start motion with a random random walk
@@ -599,50 +679,62 @@ class Frenemy {
     if (random() > this.behaviourThresh){
       this.builderBehaviour();
     }
-    if (this.x < this.width) {this.x = this.width;}
-    if (this.x > mapWidth-3*this.width) {this.x = mapWidth-3*this.width;}
-    if (this.y < this.width) {this.y = this.width;}
-    if (this.y > mapHeight - 3*this.width) {this.y = mapHeight - 3*this.width;}
-    let centerx = this.x + this.width;
-    let centery = this.y + int(this.height/2);
-    if (centerx < 0) {centerx = 0;}
-    if (centerx > mapWidth-2) {centerx = mapWidth-2;}
-    if (centery < 2) {centery = 2;}
-    if (centery > mapHeight-2) {centery = mapHeight-2;}
-     if ((gameMap[centerx][centery] > obstacle)||(gameMap[this.x][this.y] > obstacle)) {
-      if (this.bulldozer == false){
-        this.stuck++;
-        this.x = prevx;
-        this.y = prevy;
-      } else {
-        gameMap[centerx][centery] -=0.3;
-        gameMap[centerx+1][centery+1] -=0.3;
-        gameMap[centerx-1][centery-1] -=0.3;
-        gameMap[centerx+1][centery-1] -=0.3;
-        gameMap[centerx-1][centery+1] -=0.3;
-        gameMap[centerx][centery+1] -=0.3;
-        gameMap[centerx][centery-1] -=0.3;
-        gameMap[centerx+1][centery] -=0.3;
-        gameMap[centerx-1][centery] -=0.3;
-
-        // drawMap;
+    let centerx = 10;
+    let centery = 10;
+    try {
+      if (this.x < 2*this.width) {this.x = 2*this.width;}
+      if (this.x > mapWidth-3*this.width) {this.x = mapWidth-3*this.width;}
+      if (this.y < 2*this.width) {this.y = 2*this.width;}
+      if (this.y > mapHeight - 3*this.width) {this.y = mapHeight - 3*this.width;}
+      this.x = int(this.x) || 0;
+      this.y = int(this.y) || 0;
+      centerx = int(this.x + this.width);
+      centery = int(this.y + int(this.height/2));
+      centerx = int(centerx) || this.x;
+      centery = int(centery) || this.y;
+      if (centerx < 10) {centerx = 10;}
+      if (centerx > mapWidth-10) {centerx = mapWidth-10;}
+      if (centery < 10) {centery = 10;}
+      if (centery > mapHeight-10) {centery = mapHeight-10;}
+      // console.log(gameMap[centerx][centery]);
+      // console.log(gameMap[this.x][this.y]);
+      // console.log(this.x, this.y, centerx, centery);
+      if ((gameMap[centerx][centery] > obstacle)||(gameMap[this.x][this.y] > obstacle)) {
+        if (this.bulldozer == false){
+          this.stuck++;
+          this.x = prevx;
+          this.y = prevy;
+        } else {
+          gameMap[centerx][centery] -=0.3;
+          gameMap[centerx+1][centery+1] -=0.3;
+          gameMap[centerx-1][centery-1] -=0.3;
+          gameMap[centerx+1][centery-1] -=0.3;
+          gameMap[centerx-1][centery+1] -=0.3;
+          gameMap[centerx][centery+1] -=0.3;
+          gameMap[centerx][centery-1] -=0.3;
+          gameMap[centerx+1][centery] -=0.3;
+          gameMap[centerx-1][centery] -=0.3;
+        }
       }
+      if (this.builddozer == true) {
+        gameMap[centerx][centery] *= 1.5;
+        gameMap[centerx+1][centery+1] *= 1.5;
+        gameMap[centerx-1][centery-1] *= 1.5;
+        gameMap[centerx+1][centery-1] *= 1.5;
+        gameMap[centerx-1][centery+1] *= 1.5;
+        gameMap[centerx][centery+1] *= 1.5;
+        gameMap[centerx][centery-1] *= 1.5;
+        gameMap[centerx+1][centery] *= 1.5;
+        gameMap[centerx-1][centery] *= 1.5;
+      }
+      setDrawFlag();
+      if ((this.x != prevx) && (this.y !=prevy) ) {this.stuck = 0;}
+    } catch(err) {
+      console.log(this.x, this.y); //probably somehow not an object
+      console.log(centerx, centery); //probably somehow not an object
+      console.log(err); //probably somehow not an object
     }
-    if (this.builddozer == true) {
-      gameMap[centerx][centery] *= 1.5;
-      gameMap[centerx+1][centery+1] *= 1.5;
-      gameMap[centerx-1][centery-1] *= 1.5;
-      gameMap[centerx+1][centery-1] *= 1.5;
-      gameMap[centerx-1][centery+1] *= 1.5;
-      gameMap[centerx][centery+1] *= 1.5;
-      gameMap[centerx][centery-1] *= 1.5;
-      gameMap[centerx+1][centery] *= 1.5;
-      gameMap[centerx-1][centery] *= 1.5;
-    }
-    setDrawFlag();
-    if ((this.x != prevx) && (this.y !=prevy) ) {this.stuck = 0;}
   }
-
 
   draw() {
     image(this.sprite, this.x*pixelSize, this.y*pixelSize);
@@ -683,15 +775,18 @@ class Bullet {
         this.health--;
         if (this.health == 0) {
           if ((this.x > 2) && (this.x < mapWidth-2) && (this.y > 2) && (this.y < mapHeight-2)){
-            gameMap[this.x+1][this.y-1] -= 0.2;
-            gameMap[this.x-1][this.y-1] -= 0.2;
-            gameMap[this.x-1][this.y+1] -= 0.2;
-            gameMap[this.x-1][this.y] -= 0.2;
-            gameMap[this.x][this.y-1] -= 0.2;
-
-            gameMap[this.x+1][this.y+1] -= 0.2;
-            gameMap[this.x][this.y+1] -= 0.2;
-            gameMap[this.x+1][this.y] -= 0.2;
+            try {
+              gameMap[this.x+1][this.y-1] -= 0.2;
+              gameMap[this.x-1][this.y-1] -= 0.2;
+              gameMap[this.x-1][this.y+1] -= 0.2;
+              gameMap[this.x-1][this.y] -= 0.2;
+              gameMap[this.x][this.y-1] -= 0.2;
+              gameMap[this.x+1][this.y+1] -= 0.2;
+              gameMap[this.x][this.y+1] -= 0.2;
+              gameMap[this.x+1][this.y] -= 0.2;
+            } catch(err) {
+              console.log(err);
+            }
           }
         }
         setDrawFlag();
@@ -714,28 +809,31 @@ class Herd {
       this.herd.push(new Frenemy(i))
     }
   }
-  showLog() {
+  showLog(start=10) {
     noStroke();
     fill(color('#000'));
-    rect(0, 0, 500, 22 * this.count);
-    rect(0, 22 * this.count, 500, 100);
+    rect(0, start - 10, 500, 22 * (this.count + 1));
+    rect(0, start + (22 * this.count), 500, 120);
     fill(color('#fff'));
     textSize(15);
-    let t = "Lump\t\t\tIntent\t\t\t\t\tCreativity\t\tEvader\t\t\t\t\t\tSeeker\t\tDozer\t\t\tAge"
-    text(t, 10, 20);
+    let t;
+    if (start == 10) {
+      t = "Lump\t\t\tIntent\t\t\t\t\tCreativity\t\tEvader\t\t\t\t\t\tSeeker\t\tDozer\t\t\tAge"
+      text(t, start, 20);
+    }
     let f = 0;
     for (var i = 0; i < this.count; i++) {
       fill(color(this.herd[i].color));
       t =  " " +nf(i, 2) + "\t\t\t\t\t" + nfp(this.herd[i].purpose, 2, 2) + '\t\t\t\t\t' + nfp(this.herd[i].builder, 2, 2)+ '\t\t\t\t' + nfp(this.herd[i].evader, 2, 2)+ '\t\t\t\t\t' + nfp(this.herd[i].seeker, 2, 2)+ '\t\t\t' + (this.herd[i].bulldozer ||this.herd[i].builddozer )+ '\t\t\t' + this.herd[i].counter;
-      f = 20 + (i + 1) * 20;
+      f = start + (20 + (i + 1) * 20);
       text(t, 10, f);
     }
     f += 30;
+    let end = f-5;
     fill(color('#fff'));
     t = "Intent is how confident a little one moves in a direction\nCreativity can also be destructive\nStrong Evaders will move away from the big one as the weak approach\nSeekers will find shelter near structures\nDozer Mode is Dozer Mode"
     text(t, 10, f);
-
-
+    return end
   }
   checkShot(x, y, armed) {
     if (armed > 5) {
@@ -785,5 +883,8 @@ class Herd {
       this.herd[i].draw();
     }
   }
+}
 
+function touchStarted(){
+  showHelp = false;
 }

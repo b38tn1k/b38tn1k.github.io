@@ -1,0 +1,23 @@
+---
+layout: post
+title:  "Very Basic Colorful Mix Comparison Tool"
+date:   2019-11-22
+categories: processing
+comments: True
+sitemap:
+  lastmod: 2019-11-22
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
+---
+I just wanted to compare two mixes (new b38tn1k music coming). But sometimes procrastinating with some technical thinking can help restore the creative decision making bits of the brain, so I made this while waiting for CyberTruck launch (!!!)
+
+load two songs (probably different mixes of the same song) and then you can A/B over and over.. you can scrub and stuff. It is buggy but it works good enough.
+
+![shot1](https://github.com/b38tn1k/MixComp/blob/master/shot1.png)
+
+I like bright colors right now
+
+![shot2](https://github.com/b38tn1k/MixComp/blob/master/shot2.png)
+
+[Code here](https://github.com/b38tn1k/MixComp)

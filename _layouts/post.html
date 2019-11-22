@@ -4,21 +4,23 @@ layout: default
 
 <article class="post">
   <h1 class="post-title">{{ page.title }}</h1>
+  <div class="post-categories">
+    {% if post %}
+      {% assign categories = post.categories %}
+    {% else %}
+      {% assign categories = page.categories %}
+    {% endif %}
+    {% for category in categories %}
+    <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
+    {% unless forloop.last %}&nbsp;{% endunless %}
+    {% endfor %}
+  </div>
   <time datetime="{{ page.date | date_to_xmlschema }}" class="post-date">{{ page.date | date_to_string }}</time>
+
   {{ content }}
 </article>
 
-<div class="post-categories">
-  {% if post %}
-    {% assign categories = post.categories %}
-  {% else %}
-    {% assign categories = page.categories %}
-  {% endif %}
-  {% for category in categories %}
-  <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
-  {% unless forloop.last %}&nbsp;{% endunless %}
-  {% endfor %}
-</div>
+
 
 
 {% if site.related_posts != empty %}

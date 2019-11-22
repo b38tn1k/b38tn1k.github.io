@@ -2,7 +2,7 @@
 layout: post
 title:  "LÖVE and Lua"
 date:   2015-12-20
-categories: [code, LOVe and Lua]
+categories: [code, LÖVE and Lua]
 comments: True
 ---
 

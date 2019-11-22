@@ -2,7 +2,7 @@
 layout: post
 title:  "Space Invader Wars"
 date:   2015-12-05
-categories: [code, LOVE and Lua]
+categories: [code, LÖVE and Lua]
 comments: True
 ---
 

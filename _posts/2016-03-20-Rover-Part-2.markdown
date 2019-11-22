@@ -2,7 +2,7 @@
 layout: post
 title:  "Rover Part 2: Parts List Update"
 date:   2016-03-20
-categories: rover
+categories: [rover, code, arduino]
 comments: True
 ---
 

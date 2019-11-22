@@ -2,7 +2,7 @@
 layout: post
 title:  "Personal Space Invaders"
 date:   2019-04-28
-categories: processing
+categories: [processing, code, art]
 comments: True
 sitemap:
   lastmod: 2019-04-28

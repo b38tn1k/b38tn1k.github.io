@@ -2,7 +2,7 @@
 layout: post
 title:  "Flowers"
 date:   2019-04-24
-categories: processing
+categories: [processing, code, art]
 comments: True
 sitemap:
   lastmod: 2019-04-24

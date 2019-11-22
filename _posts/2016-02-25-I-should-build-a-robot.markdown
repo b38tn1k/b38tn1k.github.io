@@ -2,7 +2,7 @@
 layout: post
 title:  "I should build a robot..."
 date:   2016-02-25
-categories: rover
+categories: [rover, code]
 comments: True
 ---
 The other day I had an idea; *The process of immigration has provided me with an abundance of free time so I'm going to build a robot!!!.*

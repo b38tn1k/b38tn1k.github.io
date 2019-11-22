@@ -2,7 +2,7 @@
 layout: post
 title:  "MIDI triggered PCM Sample Player"
 date:   2019-10-31
-categories: arduino
+categories: [arduino, code, music]
 comments: True
 sitemap:
   lastmod: 2019-10-31

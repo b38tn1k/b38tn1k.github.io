@@ -2,7 +2,7 @@
 layout: post
 title:  "Royal Chant: Hearing Voices Movement"
 date:   2019-10-17
-categories: music
+categories: [music, i made another outsider art filmclip]
 comments: True
 ---
 <iframe width="560" height="315" src="https://www.youtube.com/embed/bPzKx2yjND4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

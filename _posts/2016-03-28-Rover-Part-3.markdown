@@ -2,7 +2,7 @@
 layout: post
 title:  "Rover Part 3: a simple protocol for serial communication between Python and Arduino (Talking with Rover1 over USB)"
 date:   2016-03-28
-categories: rover
+categories: [rover, code, arduino]
 comments: True
 ---
 

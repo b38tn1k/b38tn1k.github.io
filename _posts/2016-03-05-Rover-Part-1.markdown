@@ -2,7 +2,7 @@
 layout: post
 title:  "Rover Part 1: Parts List"
 date:   2016-03-09
-categories: rover
+categories: [rover, code]
 comments: True
 ---
 *In my previous post I decided to build a 4-wheeled robotic rover. I chose to use Open Source Hardware components to accelerate my build time, support Open Source Hardware development and to benefit from the build quality of properly manufactured hardware (remember I have no workshop and all my tools are stored in a rather small cardboard box). After my last post a couple people suggested names for the 4-wheeled robotic rover. In lieu of a funny or creative name I will refer to the 4-wheeled robotic rover as 'Rover1'. In this post I am going to create a parts list for Rover1.*

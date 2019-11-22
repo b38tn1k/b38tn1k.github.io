@@ -2,7 +2,7 @@
 layout: post
 title:  "Rover Part 4: Going Wireless"
 date:   2016-04-05
-categories: rover
+categories: [rover, code, arduino]
 comments: True
 ---
 

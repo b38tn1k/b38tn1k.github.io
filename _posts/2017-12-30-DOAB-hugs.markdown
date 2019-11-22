@@ -2,7 +2,7 @@
 layout: post
 title:  "DOAB: hugs [Film Clip]"
 date:   2017-12-30
-categories: music
+categories: [music, i made another outsider art filmclip]
 comments: True
 ---
 <iframe width="560" height="315" src="https://www.youtube.com/embed/3bx1qfUv7So" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

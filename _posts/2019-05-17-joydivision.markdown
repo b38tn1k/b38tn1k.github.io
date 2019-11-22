@@ -2,7 +2,7 @@
 layout: post
 title:  "Unknown Pleasures"
 date:   2019-05-17
-categories: processing
+categories: [processing, code, art]
 comments: True
 sitemap:
   lastmod: 2019-05-17

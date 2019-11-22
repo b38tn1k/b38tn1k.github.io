@@ -2,7 +2,7 @@
 layout: post
 title:  "Projects with more than one Arduino"
 date:   2019-09-27
-categories: arduino
+categories: [arduino, code, music]
 comments: True
 ---
 The other day I introduced a friend to Arduino. They already have a background in code but hadn't touched anything embedded for a minute. For a starter project we talked about making music with the Arduino using piezeo speakers and the [Arduino tone library](https://www.arduino.cc/reference/en/language/functions/advanced-io/tone/).

@@ -2,7 +2,7 @@
 layout: post
 title:  "Procedural Generation with MIDI"
 date:   2015-02-10
-categories: code
+categories: [code, music]
 comments: True
 ---
 Recently I wrote a [command line tool](https://github.com/b38tn1k/notes) that creates small chord progressions, melodies and beats as MIDI files.

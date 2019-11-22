@@ -2,7 +2,7 @@
 layout: post
 title:  "chordtoy: MIDI Chord Generator Arduino Hardware Thing"
 date:   2019-10-24
-categories: arduino
+categories: [arduino, code, music]
 comments: True
 ---
 

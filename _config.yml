@@ -31,3 +31,4 @@ gems: [jekyll-paginate]
 pages_list:
   # Hello!: '/about'
   Archive: '/archive'
+  Topics: '/categories/'

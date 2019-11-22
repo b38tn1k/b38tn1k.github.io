@@ -1,7 +1,7 @@
 ---
 layout: page
 permalink: /categories/
-title: Categories
+<!-- title: Categories -->
 ---
 
 
@@ -12,7 +12,8 @@ title: Categories
     <div id="#{{ category_name | slugize }}"></div>
     <p></p>
 
-    <h3 class="category-head">{{ category_name }}</h3>
+    <!-- <h3 class="category-head">{{ category_name }}</h3> -->
+     <title>{{ category_name }}</title>
     <a name="{{ category_name | slugize }}"></a>
     {% for post in site.categories[category_name] %}
     <article class="archive-item">

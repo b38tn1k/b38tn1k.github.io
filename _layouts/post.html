@@ -15,6 +15,7 @@ layout: default
     {% unless forloop.last %}&nbsp;{% endunless %}
     {% endfor %}
   </div>
+  
   <time datetime="{{ page.date | date_to_xmlschema }}" class="post-date">{{ page.date | date_to_string }}</time>
 
   {{ content }}

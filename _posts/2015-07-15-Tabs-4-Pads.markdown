@@ -175,4 +175,4 @@ The basic nature of sample pad instruments reduces the requirement for a written
 [madzach]: https://soundcloud.com/ableton/sets/64-pad-lab-by-mad-zach
 [chordfinder]: http://web-development.cc/mpc-chordfinder/
 [tablemaker]: http://www.tablesgenerator.com/
-[tabs4pads]: http://b38tn1k.com/tab4pads/
+[tabs4pads]: https://b38tn1k.com/tab4pads/

@@ -2,7 +2,7 @@
 layout: post
 title:  "YouTube Channel"
 date:   2019-10-25
-categories: [arduino, code, music, fun]
+categories: [arduino, code, music, fun, i made another outsider art filmclip]
 comments: True
 ---
 Yesterday I made a Youtube channel so I could share that [chordtoy]({{ site.url }}/arduino/2019/10/24/chordtoy/) video.

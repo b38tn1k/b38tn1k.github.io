@@ -23,6 +23,7 @@ let offset = 0;
 let yoffset = 0;
 let xoffset;
 let yprev;
+let touchDown = false;
 
 function draw(){
   background(0);
@@ -36,15 +37,23 @@ function draw(){
   for (let i = 0; i < myText.length; i+=1){
     text(myText[(i + int(offset))%myText.length], xoffset, (i + 2)*myTextSize + myTextSize*2)
   }
+  if (touchDown == true){
+    console.log("down");
+    if (mouseY > window.innerHeight/2){
+      yoffset+=5;
+    } else {
+      yoffset-=5;
+    }
+    if (yoffset < 0){yoffset = 0;}
+  }
 }
 
 function touchStarted() {
-  if (mouseY > window.innerHeight/2){
-    yoffset+=30;
-  } else {
-    yoffset-=30;
-  }
-  if (yoffset < 0){yoffset = 0;}
+  touchDown = true;
+}
+
+function touchEnded() {
+  touchDown = false;
 }
 
 // function mouseDragged(event) {

@@ -18,6 +18,7 @@ function setup() {
 let offset = 0;
 let yoffset = 0;
 let xoffset;
+let yprev;
 
 function draw(){
   background(0);
@@ -31,6 +32,17 @@ function draw(){
   for (let i = 0; i < myText.length; i+=1){
     text(myText[(i + int(offset))%myText.length], xoffset, (i + 2)*myTextSize + myTextSize*2)
   }
+}
+
+function mouseDragged(event) {
+  console.log(event);
+  if (event.clientY > yprev){
+    yoffset++;
+  } else {
+    yoffset--;
+  }
+  if (yoffset < 0){yoffset = 0;}
+  yprev = event.clientY;
 }
 
 function mouseWheel(event) {

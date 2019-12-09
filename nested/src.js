@@ -38,15 +38,24 @@ function draw(){
   }
 }
 
-function mouseDragged(event) {
-  if (event.clientY > yprev){
-    yoffset-=10;
+function touchStarted() {
+  if (mouseY > window.innerHeight/2){
+    yoffset+=30;
   } else {
-    yoffset+=15;
+    yoffset-=30;
   }
   if (yoffset < 0){yoffset = 0;}
-  yprev = event.clientY;
 }
+
+// function mouseDragged(event) {
+//   if (event.clientY > yprev){
+//     yoffset-=10;
+//   } else {
+//     yoffset+=15;
+//   }
+//   if (yoffset < 0){yoffset = 0;}
+//   yprev = event.clientY;
+// }
 
 function mouseWheel(event) {
   //move the square according to the vertical scroll amount

@@ -58,9 +58,9 @@ function mouseWheel(event) {
 
 function keyPressed() {
   if (keyCode === UP_ARROW) {
-    yoffset+=30;
+    yoffset-=30;
   } else if (keyCode === DOWN_ARROW) {
-   yoffset-=30;
+   yoffset+=30;
   }
   if (yoffset < 0){yoffset = 0;}
 }

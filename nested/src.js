@@ -40,9 +40,9 @@ function draw(){
 
 function mouseDragged(event) {
   if (event.clientY > yprev){
-    yoffset-=4;
+    yoffset-=15;
   } else {
-    yoffset+=4;
+    yoffset+=15;
   }
   if (yoffset < 0){yoffset = 0;}
   yprev = event.clientY;

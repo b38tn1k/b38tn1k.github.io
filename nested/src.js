@@ -37,9 +37,9 @@ function draw(){
 function mouseDragged(event) {
   console.log(event);
   if (event.clientY > yprev){
-    yoffset++;
+    yoffset-=2;
   } else {
-    yoffset--;
+    yoffset+=2;
   }
   if (yoffset < 0){yoffset = 0;}
   yprev = event.clientY;

@@ -40,7 +40,7 @@ function draw(){
 
 function mouseDragged(event) {
   if (event.clientY > yprev){
-    yoffset-=15;
+    yoffset-=10;
   } else {
     yoffset+=15;
   }

@@ -62,4 +62,5 @@ function keyPressed() {
   } else if (keyCode === DOWN_ARROW) {
    yoffset-=30;
   }
+  if (yoffset < 0){yoffset = 0;}
 }

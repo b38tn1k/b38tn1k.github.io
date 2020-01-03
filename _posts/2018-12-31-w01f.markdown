@@ -1,11 +1,11 @@
 ---
 layout: post
-title:  "B38TN1K: w01f"
+title:  "w01f"
 date:   2018-12-31
 tags: release
 ---
 ![cover]({{ site.url }}/images/covers/wo1f.jpg)
 
 <a href="https://open.spotify.com/album/6KspCXKRkaeouLBRMZCxf4?si=waG-9TyMR6iAe513CmW-qA"> Spotify</a>
-<div></div>
+&emsp;&emsp;
 <a href="https://music.apple.com/us/album/w01f-single/1445297272"> Apple Music</a>

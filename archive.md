@@ -1,6 +1,6 @@
 ---
 layout: page
-<!-- title: Stuff -->
+title: Stuff
 ---
 
 <!-- # Blog Posts -->

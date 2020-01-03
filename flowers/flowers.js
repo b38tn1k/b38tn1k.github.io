@@ -141,14 +141,21 @@ function draw() {
 }
 
 window.onresize = function() {
-  var w = window.innerWidth;
-  var h = window.innerHeight;
-  console.log(w, ' ', h)
-  canvas.size(w,h);
-  width = w;
-  height = h;
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas = createCanvas(window.innerWidth, window.innerHeight);
   generate();
 };
+
+// window.onresize = function() {
+//   var w = window.innerWidth;
+//   var h = window.innerHeight;
+//   console.log(w, ' ', h)
+//   canvas.size(w,h);
+//   width = w;
+//   height = h;
+//   generate();
+// };
 function touchStarted(){
   flower(mouseX, mouseY);
   // generate();

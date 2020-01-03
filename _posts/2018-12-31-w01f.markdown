@@ -1,0 +1,7 @@
+---
+layout: post
+title:  "B38TN1K: w01f [my first solo EP!!]"
+date:   2018-12-31
+tags: release
+---
+![w01f]({{ site.url }}/images/covers/wo1f.jpg)

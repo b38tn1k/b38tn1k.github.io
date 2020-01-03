@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "B38TN1K: w01f [my first solo EP!!]"
+title:  "w01f"
 date:   2018-12-31
 tags: release
 ---

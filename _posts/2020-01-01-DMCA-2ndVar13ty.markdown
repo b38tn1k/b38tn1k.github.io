@@ -6,4 +6,5 @@ tags: release
 ---
 ![cover]({{ site.url }}/images/covers/dmca_2ndvar13ty.jpg)
 
-<a href="https://open.spotify.com/album/185XxaIEIcu0E3zUpwlPfN?si=fNaou0j2Syu2ktIzkrHwgA"> Spotify</a> . <a href="https://music.apple.com/us/album/dmca-2ndvar13ty-single/1493529635"> Apple Music</a>
+<a href="https://open.spotify.com/album/185XxaIEIcu0E3zUpwlPfN?si=fNaou0j2Syu2ktIzkrHwgA"> Spotify</a>
+<a href="https://music.apple.com/us/album/dmca-2ndvar13ty-single/1493529635"> Apple Music</a>

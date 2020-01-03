@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "w01f"
+title:  "B38TN1K: w01f"
 date:   2018-12-31
 tags: release
 ---
-![w01f]({{ site.url }}/images/covers/wo1f.jpg)
+![cover]({{ site.url }}/images/covers/wo1f.jpg)

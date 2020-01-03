@@ -6,7 +6,7 @@ layout: default
 
 <ul>
 {% for post in site.tags[page.tag] %}
-  {{ post.title }}
+  <h3>{{ post.title }}</h3>
   {{ post.date | date: "%B, %Y" }}
   {{post.content}}
 {% endfor %}

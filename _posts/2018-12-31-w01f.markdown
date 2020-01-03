@@ -9,3 +9,5 @@ tags: release
 <a href="https://open.spotify.com/album/6KspCXKRkaeouLBRMZCxf4?si=waG-9TyMR6iAe513CmW-qA"> Spotify</a>
 &emsp;&emsp;
 <a href="https://music.apple.com/us/album/w01f-single/1445297272"> Apple Music</a>
+&emsp;&emsp;
+<a href="https://www.youtube.com/playlist?list=PLZttbibA79ouPyFU8alanJ92uT-CLZE1w"> Youtube</a>

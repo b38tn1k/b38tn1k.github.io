@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "New Desk"
+date:   2020-01-11
+tags: release
+---
+![cover]({{ site.url }}/images/covers/new_desk.jpg)
+
+<a href="https://open.spotify.com/album/1s9ZwZhM4XQvY2dbjQUrda?si=SSlpTWHGTrmjdUmFaPsaLQ"> Spotify</a>
+&emsp;&emsp;
+<a href="https://music.apple.com/us/album/new-desk-ep/1494504498"> Apple Music</a>

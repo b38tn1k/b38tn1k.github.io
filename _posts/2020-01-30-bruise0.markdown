@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "[REMIX] : Bruise Pristine Tired Eyes Single"
+date:   2020-01-30
+tags: release
+---
+![cover]({{ site.url }}/images/covers/bp.jpg)
+
+<a href="https://open.spotify.com/album/4meO8M2scpXxfputSKQQoH?si=Uic6-VsOSEyheHJ0CE66bw"> Spotify</a>
+&emsp;&emsp;
+<a href="https://music.apple.com/us/album/tired-eyes-single/1494849056"> Apple Music</a>

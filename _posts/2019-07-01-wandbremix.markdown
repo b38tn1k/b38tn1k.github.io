@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Free (Baja All Terrain Remix)"
+title:  "[REMIX] : Water and Bridges - Free (Baja All Terrain Remix)"
 date:   2019-07-01
 tags: release
 ---

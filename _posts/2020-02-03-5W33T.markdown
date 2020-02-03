@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "5W33T B8BY J8M35: junk from 2005 - 2009"
+date:   2020-02-03
+tags: release
+---
+![cover]({{ site.url }}/images/covers/sbj.jpg)
+
+<a href="https://open.spotify.com/artist/2MfA7cp7uWZAPpkCTZU3AC?si=fA734EmATrWqpCzBEmUkIw"> Spotify</a>
+&emsp;&emsp;
+<a href="https://music.apple.com/us/album/5w33t-b8by-j8m35-junk-from-2005-2009/1497559694"> Apple Music</a>

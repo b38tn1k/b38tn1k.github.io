@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "Z"
+date:   2020-03-03
+tags: release
+---
+![cover]({{ site.url }}/images/covers/z.png)
+
+<a href="https://open.spotify.com/artist/2MfA7cp7uWZAPpkCTZU3AC?si=fA734EmATrWqpCzBEmUkIw"> Spotify</a>
+&emsp;&emsp;
+<a href="https://music.apple.com/us/artist/b38tn1k/1445297273"> Apple Music</a>

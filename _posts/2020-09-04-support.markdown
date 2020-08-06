@@ -1,0 +1,17 @@
+---
+layout: post
+title:  "FDR​-​001: Support, Vol. I"
+date:   2020-09-04
+tags: release
+---
+![cover]({{ site.url }}/images/covers/support.jpg)
+
+I am really excited to be featured alongside some excellent artists on this compilation from Manchester, UK based label Forbidden Drink Recordings.
+
+Forbidden Drink Recordings:
+
+"Charitable electronic music stuff. Based in Manchester, UK.
+
+Currently donating profits for anti-racism and COVID-19 response causes."
+
+<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1886929106/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/" seamless><a href="http://forbiddendrinkrecordings.bandcamp.com/album/fdr-001-support-vol-i">FDR-001: Support, Vol. I by Forbidden Drink Recordings</a></iframe>

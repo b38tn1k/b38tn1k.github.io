@@ -8,6 +8,7 @@ def main(argv):
     <title>Sprites</title>
     </head>
     <body style="background-color:black;">
+    <p style="color:red">Scroll to bottom for Spritesheets</p>
     '''
     f.write(startString)
     for arg in argv:
@@ -17,7 +18,7 @@ def main(argv):
             print(arg)
     for arg in argv:
         if '.png' in arg:
-            string = '<img src=\"' + arg + '\" alt=\"' + arg + '\"\>'
+            string = '<img src=\"' + arg + '\" alt=\"' + arg + '\"\>\n'
             f.write(string)
             print(arg)
     endString = '''</body>

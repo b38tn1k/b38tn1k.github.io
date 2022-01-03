@@ -1,0 +1,7 @@
+---
+layout: post
+title:  "A2:01"
+date:   2022-02-02
+tags: release
+---
+![cover]({{ site.url }}/images/covers/a201.jpg)

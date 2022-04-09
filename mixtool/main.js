@@ -67,6 +67,11 @@ function setup() {
   llCursor = llHead;
 }
 
+function deviceTurned() {
+  pageSetup();
+  pixelMatchRangers();
+}
+
 function mousePressed() {
   showHelp = false;
   let mx = mouseX;

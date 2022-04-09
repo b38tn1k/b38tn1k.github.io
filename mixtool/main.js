@@ -116,12 +116,17 @@ function mousePressed() {
     return false;
   } else if (buttonPressed(screenShotButton, mx, my)) {
     screenshot = true;
+    return false;
   } else if (buttonPressed(saveButton, mx, my)) {
     saveThing();
+    return false;
   } else if (buttonPressed(loadButton, mx, my)) {
     loadMenuOpen = true;
+    return false;
   } else if (buttonPressed(helpButton, mx, my)) {
     showHelp = true;
+    // console.log(windowWidth);
+    return false;
   }
   if (deleteModeOn) {
     let temp = llHead;
@@ -175,7 +180,7 @@ function draw() {
     gr.textAlign(RIGHT);
     gr.fill(colors[2]);
     if (mouseFreq >= 1000){
-      gr.text((mouseFreq/1000).toFixed(2) + ' kHz', gr.width - 20, gr.height - 12);
+      gr.text((mouseFreq/1000).toFixed(2) + ' kHz', gr.width - 4, gr.height - 12);
     } else {
       gr.text(mouseFreq + ' Hz', gr.width - 20, gr.height - 12);
     }
@@ -252,20 +257,19 @@ function draw() {
     loadInput.position(windowWidth, windowHeight);
     loadInput.value('');
   }
-  if (showHelp) {
-    gr.textAlign(LEFT, TOP);
-    gr.noStroke();
-    gr.fill(colors[4]);
-    gr.rect(0, 0, gr.width, gr.height-28);
-    let y_off = border;
-    gr.fill(colors[2]);
-    gr.text('Mix Planning Tool', border, y_off);
-    y_off += 20;
-    gr.textSize(8);
-    gr.text('A basic tool to figure out where all your sounds sit in the mix\nMix with your ears, yeah, yeah... this might still help?\n\nThink of zones in three parts:\n\t- the highest you can set the LPF without it being noticable in the mix\n\t- the approx freq where the sound is the loudest\n\t- the lowest you can set a LPF without it sounding bad\n\nDon\'t actually do that in your mix, just use that approach, or a spectrum tool, to map the freqs\n\nwhat else what else...\n\nIf you dont get the format right a zone won\'t add\n frequency in Hz (numbers only)\nuse numbers and letters & spaces only for naming tracks\nno weird characters or your saves wont work\n\nDemo sorta stolen from Sweetwater\'s Music Frequency Cheat Sheet \n(google it, idk how to make links)\n\nYou have to open the save file and copy/paste (C-C, C-V) the line of text in to load your project, idk how servers work\n\nClick anywhere to close help', border, y_off);
-    gr.textSize(12);
-
-  }
+  // if (showHelp) {
+  //   gr.textAlign(LEFT, TOP);
+  //   gr.noStroke();
+  //   gr.fill(colors[4]);
+  //   gr.rect(0, 0, gr.width, gr.height-28);
+  //   let y_off = border;
+  //   gr.fill(colors[2]);
+  //   gr.text('Mix Planning Tool', border, y_off);
+  //   y_off += 20;
+  //   gr.textSize(8);
+  //   gr.text('A basic tool to figure out where all your sounds sit in the mix\nMix with your ears, yeah, yeah... this might still help?\n\nThink of zones in three parts:\n\t- the highest you can set the LPF without it being noticable in the mix\n\t- the approx freq where the sound is the loudest\n\t- the lowest you can set a LPF without it sounding bad\n\nDon\'t actually do that in your mix, just use that approach, or a spectrum tool, to map the freqs\n\nwhat else what else...\n\nIf you dont get the format right a zone won\'t add\n frequency in Hz (numbers only)\nuse numbers and letters & spaces only for naming tracks\nno weird characters or your saves wont work\n\nDemo sorta stolen from Sweetwater\'s Music Frequency Cheat Sheet \n(google it, idk how to make links)\n\nYou have to open the save file and copy/paste (C-C, C-V) the line of text in to load your project, idk how servers work\n\nClick anywhere to close help', border, y_off);
+  //   gr.textSize(12);
+  // }
 
   if (screenshot) {
     gr.noStroke();
@@ -383,10 +387,11 @@ function colorSetup() {
 
 function pageSetup() {
   // can I do something hear to determine is screen to small?
-  border = min(0.05*windowWidth, 0.05*windowHeight);
-  let x = (windowWidth - 2*border);
+  wwidth = max(490, windowWidth);
+  border = min(0.05*wwidth, 0.05*windowHeight);
+  let x = (wwidth - 2*border);
   let y = (windowHeight - 2*border);
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(wwidth, windowHeight);
   gr = createGraphics(x, y);
   gr.noStroke();
   grBg = createGraphics(x, y);

@@ -8,9 +8,9 @@
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ site.baseurl }}/public/apple-touch-icon-precomposed.png">
   <link rel="shortcut icon" href="{{ site.baseurl }}/public/favicon.ico">
 
-  <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width">
+  <!-- <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width"> -->
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> -->
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://b38tn1k.com/mixtool/screenshot.png" />
@@ -23,8 +23,8 @@
   <meta http-equiv="Expires" content="0" />
   <style>
     body {
-      padding: 0;
-      margin: 0;
+      padding: 2em 2em 2em 2em;
+      margin: auto;
     }
   </style>
   <meta name="description" content="I AM B38TN1K and i am on the internet (probably right now)! Hello! I like cats, music, robot stuff, circuit bending, generative art...">
@@ -33,7 +33,7 @@
 /* Place the navbar at the bottom of the page, and make it stick */
   .navbar {
     font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
-    background-color: (0, 0, 0, 0);
+    background-color: black;
     overflow: hidden;
     position: fixed;
     bottom: 0;
@@ -58,7 +58,7 @@
 
   .mobar {
     font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
-    background-color: (0, 0, 0, 0);
+    background-color: black;
     overflow: hidden;
     position: fixed;
     bottom: 0;
@@ -96,41 +96,40 @@
 </style>
 
 <div class="navbar">
-  <a class="active" href="">Mix Tool</a>
+  <a class="active" href="https://b38tn1k.com/mixtool/">Mix Tool</a>
   <a href="https://b38tn1k.com/archive/">blog</a>
   <a href="https://b38tn1k.com/stream/">music</a>
   <a href="https://b38tn1k.com/">B38TN1K</a>
 </div>
 
 <div class="mobar">
-  <a class="active" href="">Mix Tool</a>
+  <a class="active" href="https://b38tn1k.com/mixtool/">Mix Tool</a>
   <a href="https://b38tn1k.com/archive/">blog</a>
   <a href="https://b38tn1k.com/stream/">music</a>
   <a href="https://b38tn1k.com/">B38TN1K</a>
 </div>
 
-<body scroll="no" style="overflow: hidden">
+<body>
   <main>
-    <title> Mix Tool Help</title>
-
-    Mix Tool is basic thing to figure out where all your sounds sit in the mix. <br>
-    Mix with your ears, yeah, yeah... this might still help?
-    Think of zones in three parts:
-    - the highest you can set the LPF without it being noticable in the mix
-    - the approx freq where the sound is the loudest
-    - the lowest you can set a LPF without it sounding bad
-    Don\'t actually do that in your mix, just use that approach, or a spectrum tool, to map the freqs
-
-    what else what else...
-    If you dont get the format right a zone won't add
-    Frequency in Hz (numbers only)
-    Use numbers and letters & spaces only for naming tracks
-    no weird characters or your saves wont work
-
-    Demo sorta stolen from Sweetwater\'s Music Frequency Cheat Sheet
-    You have to open the save file and copy/paste (C-C, C-V) the line of text in to load your project,
-    Github hosted = no server / front end code only. but it's free!!
-
+    <h1>Mix Tool Help</h1>
+<p>Mix Tool is a frequency grapher that might help you find where various sounds are clashing in your mix.</p>
+<p>You can add and delete 'zones' of an instrument, mapped across the audible frequency range.</p>
+<p>Create a zone by pressing '+ zone' and entering a string to name the zone. You can group zones by using the first word in the string as a tag, e.g. 'BD thump', 'BD click'.</p>
+<p>Then enter 3 values in Hz:</p>
+<ul>
+<li>The <em>bass extent</em> is the lowest frequency of the sound that makes up it's character. You can find it by sweeping a high pass filter up on the sound. When it starts sounding bad, sweep back a touch and that is your number.</li>
+<li>The <em>center freq</em> is where the sound has most of it's character. The frequency where the sound is most like itself.</li>
+<li>The <em>treble extent&nbsp;</em>is the highest frequency of the sound. You can find it in the way described above. If you have a spectrum analysis tool, you can get just read this info off it.</li>
+</ul>
+<p>The Add button will only work if these values are all completed and in a logical order (low &lt; center &lt; high).</p>
+<p>Add all the sounds of your track. When you see sounds starting to stack ontop of each other, you might want to pay attention to those overlaps as that's where mud and weird things can happen. And that is about the utility of this tool.&nbsp;</p>
+<h2>Saving and Loading</h2>
+<p>This is hosted (for free!) on GitHub Pages. So there is no backend, user profiles, uploading files, etc. So saving is a little bit weird.&nbsp;<br /><br />When you click save, a save file is generated as a '.htm' webpage and downloaded to your computer.</p>
+<p>To reopen that project, click on the '.htm' file and open it in a webbrowser. Copy the text to your clipboard and then paste it in the text input field provided in the load menu. It's a bit wonky but it works. Unless your save file is weird.&nbsp;</p>
+<h2>Notes</h2>
+<p>The demo map was copied from a useful poster over at <a href="https://www.sweetwater.com/insync/music-instrument-frequency-cheatsheet/" target="_blank">Sweetwater.</a></p>
+<p>If you use special characters for your instruments, saving and loading may not work.</p>
+<p>DM me on twitter if you find anything wrong @B38TN1K</p>
   </main>
 </body>
 

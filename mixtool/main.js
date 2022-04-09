@@ -2,6 +2,7 @@
 var versionString = 'version 0.2 - b38tn1k.com - see help for details';
 var colors = []
 var colorfuls = [5, 54];
+var barColor = [];
 var plusTrackButton, exitNewItemMenuButton, addNewItemButton, clearButton, demoButton, deleteButton, screenShotButton, saveButton, loadButton, helpButton;
 var c, gr, grBg, menuBg, border, viewport;
 var barPixelOffset = 30;
@@ -23,6 +24,7 @@ var loadMenuOpen = false;
 var deleteModeOn = false;
 var inputError = false;
 var showHelp = false;
+var clickOnGraphCounter = 0;
 // Data
 var llHead;
 var llCursor; // so it didnt need this in the end but it is here / breaking if removed for now.
@@ -76,16 +78,22 @@ function deviceTurned() {
 }
 
 function mousePressed() {
+  if ((mouseY > 2*border + menuBg.height) && (mouseY < 2*border + menuBg.height + 50)) {
+    clickOnGraphCounter += 1;
+    // console.log(clickOnGraphCounter);
+  }
   showHelp = false;
   let mx = mouseX;
   let my = mouseY;
   if (buttonPressed(plusTrackButton, mx, my)){
       newItemMenuOpen = true;
+      clickOnGraphCounter = 0;
       loadMenuOpen = false;
       return false;
   } else if (buttonPressed(exitNewItemMenuButton, mx, my)) {
     if (newItemMenuOpen === true){
       newItemMenuOpen = false;
+      clickOnGraphCounter = 0;
       clearInput(lowInput);
       clearInput(midInput);
       clearInput(highInput);
@@ -230,6 +238,20 @@ function draw() {
     let x_off = 2*border + menuBg.width/3;
     nameInput.position(x_off - scrollX, y_off);
     gr.noStroke();
+    gr.fill(colors[2]);
+    if ((mouseY > 2*border + menuBg.height) && (mouseY < 2*border + menuBg.height + 50)) {
+      if (clickOnGraphCounter % 4 == 0) {
+        lowInput.value(xToFreq(mouseX));
+      } else if (clickOnGraphCounter % 4 == 1) {
+        midInput.value(xToFreq(mouseX));
+      } else if (clickOnGraphCounter % 4 == 2) {
+        highInput.value(xToFreq(mouseX));
+      } else if (clickOnGraphCounter % 4 == 3) {
+        // highInput.value(xToFreq(mouseX));
+      }
+    }
+    gr.fill(barColor[clickOnGraphCounter % 4]);
+    gr.rect(0, 2*border + menuBg.height, gr.width, 50);
     gr.fill(colors[2]);
     // gr.textAlign(RIGHT, BOTTOM);
     gr.text('name.........................................', int(border) + 4, int(ytoff));
@@ -431,6 +453,19 @@ function pageSetup() {
   menuBg = createGraphics(x, y);
   drawMenuBackground();
   scrollX = 0;
+  let c  = colors[10];
+  c.setAlpha(100);
+  barColor.push(c);
+  c  = colors[15];
+  c.setAlpha(100);
+  barColor.push(c);
+  c  = colors[20];
+  c.setAlpha(100);
+  barColor.push(c);
+  c  = colors[40];
+  c.setAlpha(100);
+  barColor.push(c);
+
 }
 
 function drawMenuBackground() {

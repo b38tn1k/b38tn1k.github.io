@@ -1,5 +1,5 @@
 // Look and Layout
-var versionString = 'version 0.2 - b38tn1k.com - see help for details';
+var versionString = 'TESTING VERSION ';
 var colors = []
 var colorfuls = [5, 54];
 var plusTrackButton, exitNewItemMenuButton, addNewItemButton, clearButton, demoButton, deleteButton, screenShotButton, saveButton, loadButton, helpButton;
@@ -179,7 +179,7 @@ function draw() {
   background(colors[0]);
   noStroke();
   fill(colors[4]);
-  text(versionString, int(border), int(windowHeight - border/2));
+  text(versionString, border, windowHeight - border/2);
   gr.image(grBg, 0, 0);
   // draw the freq at mouse position
   mouseFreq = xToFreq(mouseX);
@@ -214,7 +214,7 @@ function draw() {
         gr.line(temp.pixelM, temp.pixelY - 10, temp.pixelM, temp.pixelY + temp.pixelH + 10);
         gr.fill(colors[0]);
         gr.noStroke();
-        gr.text(temp.name, int(temp.pixelX), int(temp.pixelY + temp.pixelH/2));
+        gr.text(temp.name, temp.pixelX, temp.pixelY + temp.pixelH/2);
       }
     }
     temp = temp.child;
@@ -222,29 +222,29 @@ function draw() {
   gr.noStroke();
 
   if (newItemMenuOpen) {
-    gr.image(menuBg, int(border), int(border));
+    gr.image(menuBg, border, border);
     exitNewItemMenuButton = drawButton(gr, 'exit', border + menuBg.width - 34, border+ 4, 30, 20, border, border);
     addNewItemButton = drawButton(gr, 'add', border + menuBg.width - 34, border + menuBg.height - 24, 30, 20, border, border);
     let y_off = 2*border + menuBg.height/16;
-    let ytoff = int(border) + menuBg.height/6;
+    let ytoff = menuBg.height/6;
     let x_off = 2*border + menuBg.width/3;
-    nameInput.position(x_off - scrollX, y_off);
-    gr.noStroke();
-    gr.fill(colors[2]);
+    nameInput.position(x_off, y_off);
+    menuBg.noStroke();
+    menuBg.fill(colors[2]);
     // gr.textAlign(RIGHT, BOTTOM);
-    gr.text('name.........................................', int(border) + 4, int(ytoff));
+    menuBg.text('name.........................................', 4, ytoff);
     y_off += menuBg.height/4;
     ytoff += menuBg.height/4;
-    lowInput.position(x_off - scrollX, y_off);
-    gr.text('bass extent (hz).........................................', int(border) + 4, int(ytoff));
+    lowInput.position(x_off, y_off);
+    menuBg.text('bass extent (hz).........................................', 4, ytoff);
     y_off += menuBg.height/4;
     ytoff += menuBg.height/4;
-    midInput.position(x_off - scrollX, y_off);
-    gr.text('center freq (hz).........................................', int(border) + 4, int(ytoff));
+    midInput.position(x_off, y_off);
+    menuBg.text('center freq (hz).........................................', 4, ytoff);
     y_off += menuBg.height/4;
     ytoff += menuBg.height/4;
-    highInput.position(x_off - scrollX, y_off);
-    gr.text('treble extent (hz).........................................', int(border) + 4, int(ytoff));
+    highInput.position(x_off, y_off);
+    menuBg.text('treble extent (hz).........................................', 4, ytoff);
     gr.textAlign(LEFT, CENTER);
   } else {
     nameInput.position(windowWidth, windowHeight);
@@ -254,16 +254,16 @@ function draw() {
   }
   if (loadMenuOpen){
     gr.textAlign(LEFT, BOTTOM);
-    gr.image(menuBg, int(border), int(border));
+    gr.image(menuBg, border, border);
     exitNewItemMenuButton = drawButton(gr, 'exit', border + menuBg.width - 34, border+ 4, 30, 20, border, border);
     addNewItemButton = drawButton(gr, 'load', border + menuBg.width - 34, border + menuBg.height - 24, 30, 20, border, border);
     let y_off = 2*border + menuBg.height/16;
     let x_off = 2*border + menuBg.width/3;
-    loadInput.position(x_off - scrollX, y_off);
+    loadInput.position(x_off, y_off);
     // gr.textAlign(RIGHT, BOTTOM);
-    gr.text('Load String.........................................', int(border + 4), int(y_off-6));
+    gr.text('Load String.........................................', border + 4, y_off-6);
     y_off += 100;
-    gr.text('Open your save file in a web browser\nCopy / paste your load string above\nThis website is just hosted on GitHub pages,\n so I don\'t think you can upload or download files. \nand you def can\'t have user profiles :-/', int(border + 4), int(y_off-6));
+    gr.text('Open your save file in a web browser\nCopy / paste your load string above\nThis website is just hosted on GitHub pages,\n so I don\'t think you can upload or download files. \nand you def can\'t have user profiles :-/', border + 4, y_off-6);
 
   } else {
     loadInput.position(windowWidth, windowHeight);
@@ -280,8 +280,8 @@ function draw() {
   if (keyIsDown(RIGHT_ARROW)){
     scrollRight();
   }
-  viewport.image(gr, 0, 0, viewport.width, viewport.height, int(scrollX), 0, viewport.width, viewport.height);
-  image(viewport, int(border), int(border));
+  viewport.image(gr, 0, 0, viewport.width, viewport.height, scrollX, 0, viewport.width, viewport.height);
+  image(viewport, border, border);
   if (screenshot) {
     let timestamp = year() + nf(month(), 2) + nf(day(), 2) + "-"  + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2);
     save(timestamp+".png");
@@ -289,14 +289,11 @@ function draw() {
   }
 }
 function scrollLeft() {
-  if (scrollX > 0){
-    scrollX -= 1;
-    // scrollX = max(0, scrollX-1);
-  }
+  scrollX = max(0, scrollX-1);
 }
 
 function scrollRight() {
-  if (scrollX + viewport.width < freqToX(maxFreq)) {
+  if (scrollX + viewport.width <= freqToX(maxFreq)) {
     scrollX += 1;
   }
 }
@@ -505,7 +502,7 @@ function drawGraphBackground() {
     } else {
       grBg.fill(colors[4]);
     }
-    grBg.text(areas[j][0], int(mid), 12);
+    grBg.text(areas[j][0], mid, 12);
 
   }
   grBg.strokeWeight(1);
@@ -543,7 +540,7 @@ function drawGraphBackground() {
     if (majors.includes(vals[i])) {
       grBg.noStroke();
       grBg.fill(colors[2]);
-      grBg.text(vals[i] + ' Hz', int(x + 2), 32);
+      grBg.text(vals[i] + ' Hz', x + 2, 32);
       // grBg.strokeWeight(3);
       grBg.stroke(colors[2]);
     } else {

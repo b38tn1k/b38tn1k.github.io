@@ -1,4 +1,5 @@
 // Look and Layout
+var versionString = 'version 0.1 - b38tn1k.com - see help for details';
 var colors = []
 var colorfuls = [5, 54];
 var plusTrackButton, exitNewItemMenuButton, addNewItemButton, clearButton, demoButton, deleteButton, screenShotButton, saveButton, loadButton, helpButton;
@@ -55,7 +56,7 @@ function preload() {
 }
 
 function setup() {
-  pixelDensity(5);
+  // pixelDensity(5);
   nameInput = createInput('');
   lowInput = createInput('');
   midInput = createInput('');
@@ -175,6 +176,9 @@ function keyPressed() {
 function draw() {
   gr.textAlign();
   background(colors[0]);
+  noStroke();
+  fill(colors[4]);
+  text(versionString, border, windowHeight - border/2);
   gr.image(grBg, 0, 0);
   // draw the freq at mouse position
   mouseFreq = xToFreq(mouseX);

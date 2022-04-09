@@ -55,6 +55,7 @@ function preload() {
 }
 
 function setup() {
+  pixelDensity(5);
   nameInput = createInput('');
   lowInput = createInput('');
   midInput = createInput('');
@@ -216,24 +217,29 @@ function draw() {
   gr.noStroke();
 
   if (newItemMenuOpen) {
-    gr.textAlign(LEFT, BOTTOM);
     gr.image(menuBg, border, border);
     exitNewItemMenuButton = drawButton(gr, 'exit', border + menuBg.width - 34, border+ 4, 30, 20, border, border);
     addNewItemButton = drawButton(gr, 'add', border + menuBg.width - 34, border + menuBg.height - 24, 30, 20, border, border);
     let y_off = 2*border + menuBg.height/16;
+    let ytoff = menuBg.height/6;
     let x_off = 2*border + menuBg.width/3;
     nameInput.position(x_off, y_off);
+    menuBg.noStroke();
+    menuBg.fill(colors[2]);
     // gr.textAlign(RIGHT, BOTTOM);
-    gr.text('name.........................................', border + 4, y_off-6);
+    menuBg.text('name.........................................', 4, ytoff);
     y_off += menuBg.height/4;
+    ytoff += menuBg.height/4;
     lowInput.position(x_off, y_off);
-    gr.text('bass extent (hz).........................................', border + 4, y_off-6);
+    menuBg.text('bass extent (hz).........................................', 4, ytoff);
     y_off += menuBg.height/4;
+    ytoff += menuBg.height/4;
     midInput.position(x_off, y_off);
-    gr.text('center freq (hz).........................................', border + 4, y_off-6);
+    menuBg.text('center freq (hz).........................................', 4, ytoff);
     y_off += menuBg.height/4;
+    ytoff += menuBg.height/4;
     highInput.position(x_off, y_off);
-    gr.text('treble extent (hz).........................................', border + 4, y_off-6);
+    menuBg.text('treble extent (hz).........................................', 4, ytoff);
     gr.textAlign(LEFT, CENTER);
   } else {
     nameInput.position(windowWidth, windowHeight);

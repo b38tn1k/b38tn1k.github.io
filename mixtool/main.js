@@ -125,6 +125,7 @@ function mousePressed() {
     return false;
   } else if (buttonPressed(helpButton, mx, my)) {
     showHelp = true;
+    window.open("https://b38tn1k.com/mixtool/help");
     // console.log(windowWidth);
     return false;
   }

@@ -1,6 +1,7 @@
 // graphics
 var view, border;
 var centerX, centerY, titleY, buttonY;
+var colors = [0, 255];
 // strings
 var titleStringArr = [];
 var titleString = '';
@@ -11,23 +12,25 @@ var titleWidth;
 
 class myButton {
   constructor(label, x, y) {
+    this.name = label;
     this.label = '|';
-    for (let i = 0; i < label.length + 3; i++) {
+    for (let i = 0; i < label.length + 2; i++) {
       this.label += '-';
     }
-    this.label += '|\n| ' + label + '  |\n|';
-    for (let i = 0; i < label.length + 3; i++) {
+    this.label += '|\n| ' + label + ' |\n|';
+    for (let i = 0; i < label.length + 2; i++) {
       this.label += '-';
     }
     this.label += '|';
     // this.label = label;
     this.x = x;
     this.y = y;
-    this.width;
-    this.x_min;
-    this.x_max;
-    this.y_min;
-    this.y_max;
+    this.width = textWidth('|-' + label + '-|');
+    this.height = 3 * textSize();
+    this.x_min = x - (this.width/2);
+    this.x_max = x + (this.width/2);
+    this.y_min = y - (this.height/2);
+    this.y_max= y + (this.height/2);
   }
 }
 
@@ -70,6 +73,23 @@ function preload() {
 function mousePressed() {
   mx = mouseX;
   my = mouseY;
+  let res = false;
+  for (let i = 0; i < buttons.length; i++) {
+    res = buttonPressed(buttons[i], mx, my);
+    if (res === true) {
+      console.log(buttons[i].name);
+    }
+  }
+}
+
+function buttonPressed(button, mx, my){
+  let pressed = false;
+  if (mx > button.x_min  && mx < button.x_max) {
+    if (my > button.y_min && my < button.y_max){
+      pressed = true;
+    }
+  }
+  return pressed;
 }
 
 function deviceTurned() {
@@ -88,14 +108,10 @@ function setup() {
 }
 
 function draw(){
-
   textAlign(CENTER, CENTER);
   image(view, border, border);
   text(titleString, centerX, titleY)
   for (let i = 0; i < buttons.length; i++){
     text(buttons[i].label, buttons[i].x, buttons[i].y);
   }
-  // stroke(0);
-  // line(width/2, 0, width/2, height);
-  // noStroke();
 }

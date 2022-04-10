@@ -542,8 +542,9 @@ function drawMenuBackground() {
 function xToFreq(x) {
   freq = 0;
   if (x > border && x < grBg.width + border) {
-    pos = int(x - border + scrollX);
-    freq = freqLookup[pos];
+    pos = (x - border + scrollX);
+    pos = min(pos, grBg.width-1)
+    freq = freqLookup[int(pos)];
   }
   return freq;
 }

@@ -1,7 +1,6 @@
 // graphics
 var view, border;
 var centerX, centerY, titleY, buttonY;
-var colors = [0, 255];
 // strings
 var titleStringArr = [];
 var titleString = '';
@@ -31,6 +30,7 @@ class myButton {
     this.x_max = x + (this.width/2);
     this.y_min = y - (this.height/2);
     this.y_max= y + (this.height/2);
+    this.clickCounter = 0;
   }
 }
 
@@ -42,11 +42,12 @@ function setupScreen() {
   let y = (windowHeight - 2*border);
   view = createGraphics(x, y);
   // text setup
+  let tSize = int(0.02 * x);
   centerX = int(width/2);
   centerY = int(height/2);
   titleY = int(height/3);
   buttonY = height - titleY;
-  let tSize = int(0.02 * x);
+  buttonY = titleY + (titleStringArr.length * tSize);
   textSize(tSize);
   textFont('Courier New');
   titleWidth = textWidth(titleStringArr[1]);
@@ -77,7 +78,7 @@ function mousePressed() {
   for (let i = 0; i < buttons.length; i++) {
     res = buttonPressed(buttons[i], mx, my);
     if (res === true) {
-      console.log(buttons[i].name);
+      buttons[i].clickCounter = 2;
     }
   }
 }
@@ -105,13 +106,28 @@ function setup() {
     titleString += titleStringArr[i] + '\n';
   }
   setupScreen();
+  frameRate(24);
 }
 
 function draw(){
   textAlign(CENTER, CENTER);
+  rectMode(CENTER);
   image(view, border, border);
+  fill(0);
   text(titleString, centerX, titleY)
+  noStroke();
   for (let i = 0; i < buttons.length; i++){
-    text(buttons[i].label, buttons[i].x, buttons[i].y);
+    if (buttons[i].clickCounter > 0) {
+      fill(0);
+      rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
+      fill(255);
+      text(buttons[i].label, buttons[i].x, buttons[i].y);
+      buttons[i].clickCounter -= 1;
+    } else {
+      fill(255);
+      rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
+      fill(0);
+      text(buttons[i].label, buttons[i].x, buttons[i].y);
+    }
   }
 }

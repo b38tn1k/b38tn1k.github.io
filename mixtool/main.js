@@ -703,7 +703,7 @@ function loadThing(string) {
     }
   }
   // printList();
-  // pixelMatchRangers();
+  pixelMatchRangers();
   pixelMatchRangers();
 }
 

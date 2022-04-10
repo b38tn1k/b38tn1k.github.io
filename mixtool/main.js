@@ -1,5 +1,5 @@
 // Look and Layout
-var versionString = 'version 0.2 - b38tn1k.com';
+var versionString = 'version 0.3 - b38tn1k.com';
 var versionLink;
 var colors = []
 var colorfuls = [5, 54];

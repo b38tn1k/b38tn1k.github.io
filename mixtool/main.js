@@ -160,6 +160,9 @@ function mousePressed() {
     return false;
   } else if (buttonPressed(clickFreqsButton, mx, my)) {
     clickF = ! clickF;
+    if (clickF === true){
+      resetClickCounter();
+    }
   }
   if (deleteModeOn) {
     let temp = llHead;
@@ -266,6 +269,10 @@ function draw() {
         if (clickOnGraphCounter % 4 == 0) {
           lowInput.value(xToFreq(mouseX));
         } else if (clickOnGraphCounter % 4 == 1) {
+          if (lowInput.value() === ''){
+            console.log('oops!');
+            resetClickCounter();
+          }
           midInput.value(xToFreq(mouseX));
         } else if (clickOnGraphCounter % 4 == 2) {
           highInput.value(xToFreq(mouseX));

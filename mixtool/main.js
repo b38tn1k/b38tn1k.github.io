@@ -1,5 +1,5 @@
 // Look and Layout
-var versionString = 'version 0.2 - b38tn1k.com - see help for details';
+var versionString = 'version 0.2 - b38tn1k.com/mixtool/help/ for details';
 var colors = []
 var colorfuls = [5, 54];
 var barColor = [];

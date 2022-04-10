@@ -165,11 +165,6 @@ function mousePressed() {
     if (clickF === true){
       resetClickCounter();
     }
-  } else if (buttonPressed(leftButton, mx, my)) {
-    scrollLeft(10);
-
-  } else if (buttonPressed(rightButton, mx, my)) {
-    scrollRight(10);
   }
   if (deleteModeOn) {
     let temp = llHead;
@@ -214,6 +209,14 @@ function keyPressed() {
 }
 
 function draw() {
+  if (mouseIsPressed===true){
+    if (buttonPressed(leftButton, mouseX, mouseY)) {
+      scrollLeft(10);
+
+    } else if (buttonPressed(rightButton, mouseX, mouseY)) {
+      scrollRight(10);
+    }
+  }
   gr.textAlign();
   background(colors[0]);
   noStroke();

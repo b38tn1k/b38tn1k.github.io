@@ -75,7 +75,9 @@ function setup() {
 
 function deviceTurned() {
   pageSetup();
+  pageSetup();
   pixelMatchRangers();
+  scrollX = 0;
 }
 
 function mousePressed() {

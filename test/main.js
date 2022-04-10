@@ -6,12 +6,17 @@ var titleStringArr = [];
 var titleString = '';
 var buttons = [];
 var buttonLabels = ['music', 'blog', 'code/art'];
+var buttonLinks = ['https://b38tn1k.com/stream/', null, null];
 var titleWidth, titleHeight;
 
 
 class myButton {
-  constructor(label, x, y) {
+  constructor(label, link, x, y) {
     this.name = label;
+    this.link = link;
+    if (!(link === null)) {
+      // figure out how to handle links that look like buttons here
+    }
     this.label = '|';
     for (let i = 0; i < label.length + 2; i++) {
       this.label += '-';
@@ -59,7 +64,7 @@ function setupScreen() {
   let xInt = int(titleWidth/(buttonLabels.length - 1));
   console.log(xInt);
   for (let i = 0; i < buttonLabels.length; i++){
-    buttons.push(new myButton(buttonLabels[i], buttonX, buttonY));
+    buttons.push(new myButton(buttonLabels[i], buttonLinks[i], buttonX, buttonY));
     // console.log(buttons[i].label, buttons[i].x);
     buttonX += xInt;
   }

@@ -3,13 +3,14 @@ var versionString = 'version 0.2 - b38tn1k.com - see help for details';
 var colors = []
 var colorfuls = [5, 54];
 var barColor = [];
-var plusTrackButton, exitNewItemMenuButton, addNewItemButton, clearButton, demoButton, deleteButton, screenShotButton, saveButton, loadButton, helpButton;
+var plusTrackButton, exitNewItemMenuButton, addNewItemButton, clearButton, demoButton, deleteButton, screenShotButton, saveButton, loadButton, helpButton, clickFreqsButton;
 var c, gr, grBg, menuBg, border, viewport;
 var barPixelOffset = 30;
 var barPixelHeight = 20;
 var barPixelStartY = 40;
 var screenshot = false;
 var scrollX = 0;
+var clickF = false;
 // Audio and Math
 var maxFreq = 22000;
 var majors = [100, 1000, 10000];
@@ -86,12 +87,14 @@ function mousePressed() {
   let mx = mouseX;
   let my = mouseY;
   if (buttonPressed(plusTrackButton, mx, my)){
+      loadMenuOpen = false;
       newItemMenuOpen = true;
       clickOnGraphCounter = 0;
       loadMenuOpen = false;
       return false;
   } else if (buttonPressed(exitNewItemMenuButton, mx, my)) {
     if (newItemMenuOpen === true){
+      clickF = false;
       newItemMenuOpen = false;
       clickOnGraphCounter = 0;
       clearInput(lowInput);
@@ -111,6 +114,7 @@ function mousePressed() {
       mystring = String(loadInput.value());
       loadThing(mystring);
       loadMenuOpen = false;
+      clickF = false;
     }
     return false;
   } else if (buttonPressed(clearButton, mx, my)) {
@@ -127,18 +131,23 @@ function mousePressed() {
     return false;
   } else if (buttonPressed(screenShotButton, mx, my)) {
     screenshot = true;
+    loadMenuOpen = false;
+    newItemMenuOpen = false
     return false;
   } else if (buttonPressed(saveButton, mx, my)) {
     saveThing();
     return false;
   } else if (buttonPressed(loadButton, mx, my)) {
     loadMenuOpen = true;
+    newItemMenuOpen = false;
     return false;
   } else if (buttonPressed(helpButton, mx, my)) {
     showHelp = true;
     window.open("https://b38tn1k.com/mixtool/help");
     // console.log(windowWidth);
     return false;
+  } else if (buttonPressed(clickFreqsButton, mx, my)) {
+    clickF = ! clickF;
   }
   if (deleteModeOn) {
     let temp = llHead;
@@ -232,6 +241,7 @@ function draw() {
   if (newItemMenuOpen) {
     gr.image(menuBg, int(border), int(border));
     exitNewItemMenuButton = drawButton(gr, 'exit', border + menuBg.width - 34, border+ 4, 30, 20, border, border);
+    clickFreqsButton = drawButton(gr, 'click', border + menuBg.width - 34, border+ 48, 30, 20, border, border);
     addNewItemButton = drawButton(gr, 'add', border + menuBg.width - 34, border + menuBg.height - 24, 30, 20, border, border);
     let y_off = 2*border + menuBg.height/16;
     let ytoff = int(border) + menuBg.height/6;
@@ -239,19 +249,22 @@ function draw() {
     nameInput.position(x_off - scrollX, y_off);
     gr.noStroke();
     gr.fill(colors[2]);
-    if ((mouseY > 2*border + menuBg.height) && (mouseY < 2*border + menuBg.height + 50)) {
-      if (clickOnGraphCounter % 4 == 0) {
-        lowInput.value(xToFreq(mouseX));
-      } else if (clickOnGraphCounter % 4 == 1) {
-        midInput.value(xToFreq(mouseX));
-      } else if (clickOnGraphCounter % 4 == 2) {
-        highInput.value(xToFreq(mouseX));
-      } else if (clickOnGraphCounter % 4 == 3) {
-        // highInput.value(xToFreq(mouseX));
+    if (clickF) {
+      if ((mouseY > 2*border + menuBg.height) && (mouseY < 2*border + menuBg.height + 50)) {
+        if (clickOnGraphCounter % 4 == 0) {
+          lowInput.value(xToFreq(mouseX));
+        } else if (clickOnGraphCounter % 4 == 1) {
+          midInput.value(xToFreq(mouseX));
+        } else if (clickOnGraphCounter % 4 == 2) {
+          highInput.value(xToFreq(mouseX));
+        } else if (clickOnGraphCounter % 4 == 3) {
+          // highInput.value(xToFreq(mouseX));
+          clickF = false;
+        }
       }
+      gr.fill(barColor[clickOnGraphCounter % 4]);
+      gr.rect(0, 2*border + menuBg.height-25, gr.width, 50);
     }
-    gr.fill(barColor[clickOnGraphCounter % 4]);
-    gr.rect(0, 2*border + menuBg.height-25, gr.width, 50);
     gr.fill(colors[2]);
     // gr.textAlign(RIGHT, BOTTOM);
     gr.text('name.........................................', int(border) + 4, int(ytoff));
@@ -449,6 +462,7 @@ function pageSetup() {
   saveButton = [[0, 0], [0, 0]];
   loadButton = [[0, 0], [0, 0]];
   helpButton = [[0, 0], [0, 0]];
+  clickFreqsButton = [[0, 0], [0, 0]];
   x = 300
   y = 150;
   menuBg = createGraphics(x, y);

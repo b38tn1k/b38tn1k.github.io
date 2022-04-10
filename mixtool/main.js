@@ -91,6 +91,10 @@ function mousePressed() {
       newItemMenuOpen = true;
       clickOnGraphCounter = 0;
       loadMenuOpen = false;
+      nameInput.show();
+      lowInput.show();
+      highInput.show();
+      midInput.show();
       return false;
   } else if (buttonPressed(exitNewItemMenuButton, mx, my)) {
     if (newItemMenuOpen === true){
@@ -139,6 +143,7 @@ function mousePressed() {
     return false;
   } else if (buttonPressed(loadButton, mx, my)) {
     loadMenuOpen = true;
+    loadInput.show();
     newItemMenuOpen = false;
     return false;
   } else if (buttonPressed(helpButton, mx, my)) {
@@ -282,10 +287,10 @@ function draw() {
     gr.text('treble extent (hz).........................................', int(border) + 4, int(ytoff));
     gr.textAlign(LEFT, CENTER);
   } else {
-    nameInput.position(windowWidth, windowHeight);
-    lowInput.position(windowWidth, windowHeight);
-    highInput.position(windowWidth, windowHeight);
-    midInput.position(windowWidth, windowHeight);
+    nameInput.hide();
+    lowInput.hide();
+    highInput.hide();
+    midInput.hide();
   }
   if (loadMenuOpen){
     gr.textAlign(LEFT, BOTTOM);
@@ -301,8 +306,9 @@ function draw() {
     gr.text('Open your save file in a web browser\nCopy / paste your load string above\nThis website is just hosted on GitHub pages,\n so I don\'t think you can upload or download files. \nand you def can\'t have user profiles :-/', int(border + 4), int(y_off-6));
 
   } else {
-    loadInput.position(windowWidth, windowHeight);
     loadInput.value('');
+    loadInput.hide();
+
   }
   if (screenshot) {
     gr.noStroke();

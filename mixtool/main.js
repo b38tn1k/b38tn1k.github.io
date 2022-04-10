@@ -3,7 +3,7 @@ var versionString = 'version 0.2 - b38tn1k.com - see help for details';
 var colors = []
 var colorfuls = [5, 54];
 var barColor = [];
-var plusTrackButton, exitNewItemMenuButton, addNewItemButton, clearButton, demoButton, deleteButton, screenShotButton, saveButton, loadButton, helpButton, clickFreqsButton;
+var plusTrackButton, exitNewItemMenuButton, addNewItemButton, clearButton, demoButton, deleteButton, screenShotButton, saveButton, loadButton, helpButton, clickFreqsButton, leftButton, rightButton;
 var c, gr, grBg, menuBg, border, viewport;
 var barPixelOffset = 30;
 var barPixelHeight = 20;
@@ -31,6 +31,7 @@ var llHead;
 var llCursor; // so it didnt need this in the end but it is here / breaking if removed for now.
 var nameInput, lowInput, highInput, midInput, loadInput;
 var tempName, tempLow, tempHigh, tempMid;
+var showScrollButtons = false;
 
 class FrequencyRanger {
   constructor(name=null, low=null, mid=null, high=null) {
@@ -164,6 +165,11 @@ function mousePressed() {
     if (clickF === true){
       resetClickCounter();
     }
+  } else if (buttonPressed(leftButton, mx, my)) {
+    scrollLeft(10);
+
+  } else if (buttonPressed(rightButton, mx, my)) {
+    scrollRight(10);
   }
   if (deleteModeOn) {
     let temp = llHead;
@@ -331,10 +337,14 @@ function draw() {
     gr.rect(0, int(gr.height) - 28, int(gr.width), 30);
   }
   if (keyIsDown(LEFT_ARROW)){
-    scrollLeft();
+    scrollLeft(1);
   }
   if (keyIsDown(RIGHT_ARROW)){
-    scrollRight();
+    scrollRight(1);
+  }
+  if (showScrollButtons){
+    leftButton = drawButton(gr, '<', scrollX + 4, gr.height/2 - 20, 20, 40, border, border, true, colors[16]);
+    rightButton = drawButton(gr, '>', scrollX + viewport.width - 24, gr.height/2 - 20, 20, 40, border, border, true, colors[16]);
   }
   viewport.image(gr, 0, 0, viewport.width, viewport.height, int(scrollX), 0, viewport.width, viewport.height);
   image(viewport, int(border), int(border));
@@ -344,16 +354,17 @@ function draw() {
     screenshot = false;
   }
 }
-function scrollLeft() {
+function scrollLeft(x) {
   if (scrollX > 0){
-    scrollX -= 1;
-    // scrollX = max(0, scrollX-1);
+    scrollX -= x;
+    scrollX = max(0, scrollX);
   }
 }
 
-function scrollRight() {
+function scrollRight(x) {
   if (scrollX + viewport.width < freqToX(maxFreq)) {
-    scrollX += 1;
+    scrollX += x;
+    scrollX = min(scrollX, freqToX(maxFreq))
   }
 }
 
@@ -461,6 +472,7 @@ function colorSetup() {
 }
 
 function pageSetup() {
+  showScrollButtons = false;
   // can I do something hear to determine is screen to small?
   border = min(0.05*windowWidth, 0.05*windowHeight);
   let x = (windowWidth - 2*border);
@@ -470,6 +482,9 @@ function pageSetup() {
   x = max(600, x);
   // x = max(1000, x);
   gr = createGraphics(x, y);
+  if (gr.width > viewport.width) {
+    showScrollButtons = true;
+  }
   gr.noStroke();
   grBg = createGraphics(x, y);
   drawGraphBackground();
@@ -484,6 +499,8 @@ function pageSetup() {
   loadButton = [[0, 0], [0, 0]];
   helpButton = [[0, 0], [0, 0]];
   clickFreqsButton = [[0, 0], [0, 0]];
+  leftButton = [[0, 0], [0, 0]];
+  rightButton = [[0, 0], [0, 0]];
   x = 300
   y = 150;
   menuBg = createGraphics(x, y);

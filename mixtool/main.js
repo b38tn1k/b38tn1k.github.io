@@ -1,5 +1,6 @@
 // Look and Layout
-var versionString = 'version 0.2 - b38tn1k.com/mixtool/help/ for details';
+var versionString = 'version 0.2 - b38tn1k.com';
+var versionLink;
 var colors = []
 var colorfuls = [5, 54];
 var barColor = [];
@@ -66,6 +67,7 @@ function preload() {
 
 function setup() {
   // pixelDensity(5);
+  versionLink = createA('https://b38tn1k.com/mixtool/help/', versionString);
   nameInput = createInput('');
   nameInput.input(resetClickCounter);
   lowInput = createInput('');
@@ -77,6 +79,7 @@ function setup() {
   frameRate(24);
   llHead = new FrequencyRanger('root');
   llCursor = llHead;
+
 }
 
 function deviceTurned() {
@@ -221,7 +224,8 @@ function draw() {
   background(colors[0]);
   noStroke();
   fill(colors[4]);
-  text(versionString, int(border), int(windowHeight - border/2));
+
+  versionLink.position(int(border), int(windowHeight - border));
   gr.image(grBg, 0, 0);
   // draw the freq at mouse position
   mouseFreq = xToFreq(mouseX);

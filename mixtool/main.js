@@ -325,6 +325,7 @@ function scrollRight() {
 
 function pixelMatchRangers() {
   sortLL();
+  sortLL();
   for (let dothismultipletimes = 0; dothismultipletimes < 2; dothismultipletimes++) {
     let temp = llHead;
     let n = 'abracadabra'; //magic way to be lazy with string checking, just dont name anything abracadabra I guess.
@@ -633,7 +634,7 @@ function addNewItemCallback() {
 }
 
 function addFR(_name, _low, _mid, _high){
-  let rc = int(random(colorfuls[0], colorfuls[1]));
+  // let rc = int(random(colorfuls[0], colorfuls[1]));
   let newRange = new FrequencyRanger(_name, _low, _mid, _high);
   // let newwidth = _high - _low;
   newRange.pixelY = barPixelStartY;
@@ -643,8 +644,8 @@ function addFR(_name, _low, _mid, _high){
   llCursor.child = newRange;
   llCursor = llCursor.child;
   // balance ?
-  // pixelMatchRangers();
   pixelMatchRangers();
+  // pixelMatchRangers();
   // printList();
 }
 
@@ -681,7 +682,7 @@ function drawDemo() {
   addFR('PIANO overtones', 8000, 13000, 18000);
   // console.log(windowWidth, windowHeight);
   // printList();
-  pixelMatchRangers();
+  // pixelMatchRangers();
 }
 
 function printList() {
@@ -694,17 +695,16 @@ function printList() {
 }
 
 function loadThing(string) {
+  llHead = new FrequencyRanger('root');
+  llCursor = llHead;
   let subStringArray = [];
   let stringArray = string.split('*');
   for (let i = 0; i < stringArray.length; i++){
     subStringArray = stringArray[i].split('|')
     if (subStringArray.length == 4){
-      addFR(subStringArray[0], subStringArray[1], subStringArray[2], subStringArray[3]);
+      addFR(subStringArray[0], parseFloat(subStringArray[1]), parseFloat(subStringArray[2]), parseFloat(subStringArray[3]));
     }
   }
-  // printList();
-  pixelMatchRangers();
-  pixelMatchRangers();
 }
 
 function saveThing() {

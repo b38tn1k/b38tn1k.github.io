@@ -96,6 +96,7 @@ function mousePressed() {
   if (buttonPressed(plusTrackButton, mx, my)){
       loadMenuOpen = false;
       newItemMenuOpen = true;
+      deleteModeOn = false;
       clickOnGraphCounter = 0;
       loadMenuOpen = false;
       nameInput.show();

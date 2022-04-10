@@ -6,7 +6,7 @@ var titleStringArr = [];
 var titleString = '';
 var buttons = [];
 var buttonLabels = ['music', 'blog', 'code/art'];
-var titleWidth;
+var titleWidth, titleHeight;
 
 
 class myButton {
@@ -47,7 +47,8 @@ function setupScreen() {
   centerY = int(height/2);
   titleY = int(height/3);
   buttonY = height - titleY;
-  buttonY = titleY + (titleStringArr.length * tSize);
+  titleHeight = titleStringArr.length * tSize;
+  buttonY = titleY + titleHeight;
   textSize(tSize);
   textFont('Courier New');
   titleWidth = textWidth(titleStringArr[1]);
@@ -102,7 +103,7 @@ function windowResized() {
 }
 
 function setup() {
-  for (let i = 0; i < titleStringArr.length; i++){
+  for (let i = 0; i < titleStringArr.length-1; i++){
     titleString += titleStringArr[i] + '\n';
   }
   setupScreen();
@@ -113,8 +114,10 @@ function draw(){
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   image(view, border, border);
+  fill(255);
+  rect(centerX, titleY, titleWidth, titleHeight);
   fill(0);
-  text(titleString, centerX, titleY)
+  text(titleString, centerX, titleY);
   noStroke();
   for (let i = 0; i < buttons.length; i++){
     if (buttons[i].clickCounter > 0) {

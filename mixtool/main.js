@@ -483,7 +483,7 @@ function colorSetup() {
 function pageSetup() {
   showScrollButtons = false;
   // can I do something hear to determine is screen to small?
-  border = min(0.05*windowWidth, 0.05*windowHeight);
+  border = int(min(0.05*windowWidth, 0.05*windowHeight));
   let x = (windowWidth - 2*border);
   let y = (windowHeight - 2*border);
   createCanvas(windowWidth, windowHeight);

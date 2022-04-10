@@ -366,9 +366,9 @@ function scrollLeft(x) {
 }
 
 function scrollRight(x) {
-  if (scrollX + viewport.width < freqToX(maxFreq)) {
+  if (scrollX + viewport.width < freqToX(maxFreq)-1) {
     scrollX += x;
-    scrollX = min(scrollX, freqToX(maxFreq))
+    scrollX = min(scrollX, freqToX(maxFreq)-1)
   }
 }
 

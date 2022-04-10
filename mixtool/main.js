@@ -73,11 +73,13 @@ function setup() {
   midInput = createInput('');
   highInput = createInput('');
   loadInput = createInput('');
+  versionLink = createA('https://b38tn1k.com/mixtool/help/', versionString);
   colorSetup();
   pageSetup();
   frameRate(24);
   llHead = new FrequencyRanger('root');
   llCursor = llHead;
+
 
 }
 
@@ -224,7 +226,7 @@ function draw() {
   noStroke();
   fill(colors[4]);
 
-  versionLink.position(int(border), int(windowHeight - border));
+  // versionLink.position(int(border), int(windowHeight - border));
   gr.image(grBg, 0, 0);
   // draw the freq at mouse position
   mouseFreq = xToFreq(mouseX);
@@ -479,7 +481,6 @@ function colorSetup() {
 }
 
 function pageSetup() {
-  versionLink = createA('https://b38tn1k.com/mixtool/help/', versionString);
   showScrollButtons = false;
   // can I do something hear to determine is screen to small?
   border = min(0.05*windowWidth, 0.05*windowHeight);
@@ -515,19 +516,19 @@ function pageSetup() {
   drawMenuBackground();
   scrollX = 0;
   // color(c1.levels)
-  let c  = color(colors[10].levels);
-  c.setAlpha(100);
-  barColor.push(c);
-  c  = color(colors[15].levels);
-  c.setAlpha(100);
-  barColor.push(c);
-  c  = color(colors[20].levels);
-  c.setAlpha(100);
-  barColor.push(c);
-  c  = color(colors[40].levels);
-  c.setAlpha(100);
-  barColor.push(c);
-
+  let c1  = color(colors[10].levels);
+  c1.setAlpha(100);
+  barColor.push(c1);
+  c1  = color(colors[15].levels);
+  c1.setAlpha(100);
+  barColor.push(c1);
+  c1  = color(colors[20].levels);
+  c1.setAlpha(100);
+  barColor.push(c1);
+  c1  = color(colors[40].levels);
+  c1.setAlpha(100);
+  barColor.push(c1);
+  versionLink.position(int(border), int(windowHeight - border));
 }
 
 function drawMenuBackground() {

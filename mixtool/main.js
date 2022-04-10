@@ -251,7 +251,7 @@ function draw() {
       }
     }
     gr.fill(barColor[clickOnGraphCounter % 4]);
-    gr.rect(0, 2*border + menuBg.height, gr.width, 50);
+    gr.rect(0, 2*border + menuBg.height-25, gr.width, 50);
     gr.fill(colors[2]);
     // gr.textAlign(RIGHT, BOTTOM);
     gr.text('name.........................................', int(border) + 4, int(ytoff));
@@ -453,16 +453,17 @@ function pageSetup() {
   menuBg = createGraphics(x, y);
   drawMenuBackground();
   scrollX = 0;
-  let c  = colors[10];
+  // color(c1.levels)
+  let c  = color(colors[10].levels);
   c.setAlpha(100);
   barColor.push(c);
-  c  = colors[15];
+  c  = color(colors[15].levels);
   c.setAlpha(100);
   barColor.push(c);
-  c  = colors[20];
+  c  = color(colors[20].levels);
   c.setAlpha(100);
   barColor.push(c);
-  c  = colors[40];
+  c  = color(colors[40].levels);
   c.setAlpha(100);
   barColor.push(c);
 

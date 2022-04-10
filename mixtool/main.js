@@ -67,7 +67,6 @@ function preload() {
 
 function setup() {
   // pixelDensity(5);
-  versionLink = createA('https://b38tn1k.com/mixtool/help/', versionString);
   nameInput = createInput('');
   nameInput.input(resetClickCounter);
   lowInput = createInput('');
@@ -480,6 +479,7 @@ function colorSetup() {
 }
 
 function pageSetup() {
+  versionLink = createA('https://b38tn1k.com/mixtool/help/', versionString);
   showScrollButtons = false;
   // can I do something hear to determine is screen to small?
   border = min(0.05*windowWidth, 0.05*windowHeight);

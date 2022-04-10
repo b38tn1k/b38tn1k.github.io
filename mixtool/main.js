@@ -288,6 +288,7 @@ function draw() {
           highInput.value(xToFreq(mouseX));
         } else if (clickOnGraphCounter % 4 == 3) {
           // highInput.value(xToFreq(mouseX));
+          addNewItemCallback();
           clickF = false;
         }
       }

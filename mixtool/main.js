@@ -55,6 +55,10 @@ class FrequencyRanger {
   }
 }
 
+function resetClickCounter() {
+  clickOnGraphCounter = 0;
+}
+
 function preload() {
   c = loadStrings('nintendo-entertainment-system.hex');
 }
@@ -62,6 +66,7 @@ function preload() {
 function setup() {
   // pixelDensity(5);
   nameInput = createInput('');
+  nameInput.input(resetClickCounter);
   lowInput = createInput('');
   midInput = createInput('');
   highInput = createInput('');

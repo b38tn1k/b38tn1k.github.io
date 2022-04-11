@@ -30,7 +30,7 @@ class myButton {
     this.x = x;
     this.y = y;
     this.width = textWidth('|-' + label + '-|');
-    this.height = 3 * textSize();
+    this.height = 4 * textSize();
     this.x_min = x - (this.width/2);
     this.x_max = x + (this.width/2);
     this.y_min = y - (this.height/2);

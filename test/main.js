@@ -153,7 +153,7 @@ function setupScreen() {
   centerY = int(height/2);
   titleY = int(height/3);
   buttonY = height - titleY;
-  let tSize = int(0.02 * x);
+  let tSize = int(0.015 * x);
   titleHeight = titleStringArr.length * tSize;
   if (titleHeight > centerY/2) {
     tSize = int(0.02 * y);

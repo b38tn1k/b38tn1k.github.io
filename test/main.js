@@ -190,7 +190,7 @@ function setupScreen() {
 
   if (hour() > 7 && hour() <= 17) {
     drawGradient(daytime);
-  } else if (hour() == 6 || hour == 18) {
+  } else if (hour() == 6 || hour() == 18) {
     drawGradient(dawndusk);
   } else {
     drawGradient(nighttime);

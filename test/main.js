@@ -4,7 +4,6 @@ var centerX, centerY, titleY, buttonY;
 var dawndusk = [255, 200, 100];
 var daytime = [100, 200, 255];
 var nighttime = [100, 100, 200];
-var tooBig = false;
 
 // strings
 var titleStringArr = [];
@@ -149,16 +148,15 @@ function setupScreen() {
   view = createGraphics(x, y);
   gradient = createGraphics(x, y);
   // text setup
-  let tSize = int(0.02 * x);
+
   centerX = int(width/2);
   centerY = int(height/2);
   titleY = int(height/3);
   buttonY = height - titleY;
+  let tSize = int(0.02 * x);
   titleHeight = titleStringArr.length * tSize;
-  tooBig = false;
   if (titleHeight > centerY/2) {
     tSize = int(0.02 * y);
-    tooBig = true;
     titleHeight = titleStringArr.length * tSize;
   }
   buttonY = titleY + titleHeight;
@@ -290,5 +288,4 @@ function draw(){
   // text('windowWidth: ' + windowWidth, 150, 10);
   // text('windowHeight: ' + windowHeight, 150, 30);
   // text('tSize: ' + textSize(), 150, 50);
-  text('too big: ' + tooBig, 150, 10);
 }

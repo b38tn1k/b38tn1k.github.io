@@ -8,6 +8,9 @@ var nighttime = [100, 100, 200];
 // strings
 var titleStringArr = [];
 var titleString = '';
+var titleDivStringArr = [];
+var titleDivString = '';
+var titleDiv;
 var buttons = [];
 var buttonLabels = ['music', 'blog', 'code/art'];
 var buttonLinks = ['https://b38tn1k.com/stream/', null, null];
@@ -151,6 +154,8 @@ function setupScreen() {
   textFont('Courier New');
   titleWidth = textWidth(titleStringArr[1]);
   buttons = [];
+  titleDiv.style('font-size', tSize + 'px');
+  titleDiv.position(centerX - int(titleWidth/2) + textWidth(titleStringArr[1][3]), titleY - (titleHeight));
   // button setup
   let buttonX = int(centerX - (titleWidth/2));
   let xInt = int(titleWidth/(buttonLabels.length - 1));
@@ -180,6 +185,7 @@ function setupScreen() {
 
 function preload() {
   titleStringArr = loadStrings('textAssets/title.txt');
+  titleDivStringArr  = loadStrings('textAssets/title.html');
 }
 
 function mousePressed() {
@@ -217,6 +223,10 @@ function setup() {
   for (let i = 0; i < titleStringArr.length-1; i++){
     titleString += titleStringArr[i] + '\n';
   }
+  for (let i = 0; i < titleDivStringArr.length; i++) {
+    titleDivString += titleDivStringArr[i];
+  }
+  titleDiv = createDiv(titleDivString);
   setupScreen();
   frameRate(5);
 }
@@ -243,8 +253,8 @@ function draw(){
   view.noFill();
   view.rect(0, 0, gradient.width, gradient.height);
   image(view, border, border);
-  fill(0);
-  text(titleString, centerX, titleY);
+  // fill(255, 0, 0);
+  // text(titleString, centerX, titleY);
   noStroke();
   for (let i = 0; i < buttons.length; i++){
     if (buttons[i].clickCountDown > 0) {

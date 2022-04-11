@@ -10,7 +10,7 @@ var buttonLinks = ['https://b38tn1k.com/stream/', null, null];
 var titleWidth, titleHeight;
 // some fun
 var sprites = [];
-var spriteCount = 5;
+var spriteCount = 15;
 var frameCount = 0;
 
 
@@ -143,6 +143,7 @@ function setupScreen() {
     buttonX += xInt;
   }
   // invaders guy
+  sprites = [];
   let spritePixelSize = int(max(3, tSize/10));
   for (let i = 0; i < spriteCount; i++){
     sprites.push([genSprite(8, 5, 3), random(view.width), random(view.height), random(-1, 1), random(-1, 1), int(random(50, 100))]);

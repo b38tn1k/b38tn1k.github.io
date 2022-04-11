@@ -4,9 +4,9 @@ title:  "w01f"
 date:   2018-12-31
 tags: release
 spotify: "https://open.spotify.com/album/6KspCXKRkaeouLBRMZCxf4?si=waG-9TyMR6iAe513CmW-qA"
-bandcamp: ""
+bandcamp: "http://b38tn1k.bandcamp.com/album/w01f"
 applemusic: "https://music.apple.com/us/album/w01f-single/1445297272"
-albumcover: "http://b38tn1k.bandcamp.com/album/w01f"
+albumcover: "/images/covers/wo1f.jpg"
 artists: B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/wo1f.jpg)

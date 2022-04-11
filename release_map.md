@@ -2,7 +2,7 @@
 layout: empty
 title: internal_map
 ---
-
+HEAD
 {% for post in site.posts %}
   {% if post.tags contains 'release' %}
     release
@@ -16,3 +16,4 @@ title: internal_map
   {% else %}
   {% endif %}
 {% endfor %}
+END

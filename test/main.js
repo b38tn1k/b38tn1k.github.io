@@ -1,23 +1,39 @@
 // graphics
 var view, border, gradient;
 var centerX, centerY, titleY, buttonY;
-var dawndusk = [255, 200, 100];
-var daytime = [100, 200, 255];
-var nighttime = [100, 100, 200];
-
 // strings
 var titleStringArr = [];
 var titleString = '';
 var titleDivStringArr = [];
 var titleDivString = '';
 var titleDiv;
-var buttons = [];
-var buttonLabels = ['music', 'blog', 'code/art'];
-var buttonLinks = ['https://b38tn1k.com/stream/', null, null];
 var titleWidth, titleHeight;
+// buttons
+var buttons = [];
+var buttonLabels = ['music', 'blog', 'demos'];
+var buttonLinks = [null, null, null];
 // some fun
 var sprites = [];
 var spriteCount = 25;
+var dawndusk = [255, 200, 100];
+var daytime = [100, 200, 255];
+var nighttime = [100, 100, 200];
+// discography
+var discography = []
+var discogStringArr;
+
+class myAlbum {
+  constructor(title, artists, cover, spotify, applemusic, bandcamp, date) {
+    this.title = title;
+    this.artists = artists;
+    this.cover = cover.slice(cover.indexOf('/'));
+    this.albumImage = loadImage('https://b38tn1k.com/' + this.cover);
+    this.spotify = spotify;
+    this.applemusic = applemusic;
+    this.bandcamp = bandcamp;
+    this.date = date;
+  }
+}
 
 
 class myButton {
@@ -202,6 +218,8 @@ function setupScreen() {
 function preload() {
   titleStringArr = loadStrings('textAssets/title.txt');
   titleDivStringArr  = loadStrings('textAssets/title.html');
+  // discogStringArr = loadStrings('https://b38tn1k.com/release_map/');
+  discogStringArr = loadStrings('http://127.0.0.1:4000/release_map/');
 }
 
 function mousePressed() {
@@ -245,6 +263,29 @@ function setup() {
   titleDiv = createDiv(titleDivString);
   setupScreen();
   frameRate(5);
+
+  let tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate;
+  let readingDiscog = false
+  for (let i = 0; i < discogStringArr.length; i++) {
+    if (discogStringArr[i].includes('startrelease')) {
+      readingDiscog = true;
+    } else if (discogStringArr[i].includes('endrelease')) {
+      readingDiscog = false;
+      if (!(tempTitle === null)) {
+        discography.push(new myAlbum(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate))
+      }
+      tempTitle = null;
+    }
+    if (readingDiscog){
+      if (discogStringArr[i].includes('title')){ tempTitle = discogStringArr[i];}
+      if (discogStringArr[i].includes('artists')){ tempArtists = discogStringArr[i];}
+      if (discogStringArr[i].includes('cover')){ tempCover = discogStringArr[i];}
+      if (discogStringArr[i].includes('spoti')){ tempSpot = discogStringArr[i];}
+      if (discogStringArr[i].includes('applem')){ tempApp = discogStringArr[i];}
+      if (discogStringArr[i].includes('bandcam')){ tempBC = discogStringArr[i];}
+      if (discogStringArr[i].includes('date')){ tempDate = discogStringArr[i];}
+    }
+  }
 }
 
 function draw(){
@@ -279,6 +320,7 @@ function draw(){
       fill(255);
       text(buttons[i].label, buttons[i].x, buttons[i].y);
       buttons[i].clickCountDown -= 1;
+      image(discography[int(random(discography.length))].albumImage, 0, 0);
     } else {
       fill(255, 255, 255, 100);
       rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)

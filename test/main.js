@@ -218,8 +218,8 @@ function setupScreen() {
 function preload() {
   titleStringArr = loadStrings('textAssets/title.txt');
   titleDivStringArr  = loadStrings('textAssets/title.html');
-  // discogStringArr = loadStrings('https://b38tn1k.com/release_map/');
-  discogStringArr = loadStrings('http://127.0.0.1:4000/release_map/');
+  discogStringArr = loadStrings('https://b38tn1k.com/release_map/');
+  // discogStringArr = loadStrings('http://127.0.0.1:4000/release_map/');
 }
 
 function mousePressed() {

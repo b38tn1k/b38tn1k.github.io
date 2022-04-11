@@ -154,6 +154,10 @@ function setupScreen() {
   titleY = int(height/3);
   buttonY = height - titleY;
   titleHeight = titleStringArr.length * tSize;
+  if (titleHeight > titleY) {
+    tSize = int(0.05 * y);
+    titleHeight = titleStringArr.length * tSize;
+  }
   buttonY = titleY + titleHeight;
   textSize(tSize);
   textFont('Courier New');
@@ -170,7 +174,7 @@ function setupScreen() {
   titleDiv.remove();
   // titleDiv = null;
   titleDiv = createDiv(titleDivString);
-  titleDiv.style('font-size', int(tSize/2) + 'px');
+  titleDiv.style('font-size', tSize + 'px');
   titleDiv.position(centerX - int(titleWidth/2) + textWidth(titleStringArr[1][3]), titleY - (titleHeight));
   // invaders guy
   sprites = [];

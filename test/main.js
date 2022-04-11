@@ -4,6 +4,7 @@ var centerX, centerY, titleY, buttonY;
 var dawndusk = [255, 200, 100];
 var daytime = [100, 200, 255];
 var nighttime = [100, 100, 200];
+var tooBig = false;
 
 // strings
 var titleStringArr = [];
@@ -154,8 +155,10 @@ function setupScreen() {
   titleY = int(height/3);
   buttonY = height - titleY;
   titleHeight = titleStringArr.length * tSize;
-  if (titleHeight > titleY) {
+  tooBig = false;
+  if (titleHeight > centerY/2) {
     tSize = int(0.02 * y);
+    tooBig = true;
     titleHeight = titleStringArr.length * tSize;
   }
   buttonY = titleY + titleHeight;
@@ -287,4 +290,5 @@ function draw(){
   // text('windowWidth: ' + windowWidth, 150, 10);
   // text('windowHeight: ' + windowHeight, 150, 30);
   // text('tSize: ' + textSize(), 150, 50);
+  text('too big: ' + tooBig, 150, 10);
 }

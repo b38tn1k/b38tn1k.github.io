@@ -1,6 +1,10 @@
 // graphics
 var view, border, gradient;
 var centerX, centerY, titleY, buttonY;
+var dawndusk = [255, 200, 100];
+var daytime = [100, 200, 255];
+var nighttime = [100, 100, 200];
+
 // strings
 var titleStringArr = [];
 var titleString = '';
@@ -114,6 +118,18 @@ function genSprite(spriteWidth, spriteHeight, pixelSize) {
   return sprite;
 }
 
+function drawGradient(rgb){
+  let c1 = color(255, 255, 255);
+  let c2 = color(rgb[0], rgb[1], rgb[2]);
+  stroke(c1);
+  gradient.background(255);
+  gradient.line(0, 0, view.width, 0);
+  for (let i = 1; i < view.height; i++) {
+    gradient.stroke(lerpColor(c1, c2, i/view.height));
+    gradient.line(0, i, view.width, i);
+  }
+}
+
 function setupScreen() {
   // draw-onables
   createCanvas(windowWidth, windowHeight);
@@ -146,26 +162,26 @@ function setupScreen() {
   sprites = [];
   let spritePixelSize = int(max(3, tSize/12));
   for (let i = 0; i < spriteCount; i++){
-    sprites.push([genSprite(8, 5, spritePixelSize), random(view.width), random(view.height), int(random(-2, 2)), int(random(-2, 2)), int(random(50, 100)), spritePixelSize]);
+    sprites.push([genSprite(8, 5, spritePixelSize), random(view.width), random(view.height), int(random(-2, 2)), int(random(0, 2)), int(random(50, 100)), spritePixelSize]);
   }
   for (let i = 0; i < spriteCount; i++){
     while (sprites[i][3] == 0 && sprites[i][4] == 0) {
-      sprites[i][3] = int(random(-2, 2));
+      sprites[i][3] = int(random(0, 2));
       sprites[i][4] = int(random(-2, 2));
     }
   }
   // prettify
   background(255);
   view.background(255);
-  let c1 = color(255, 255, 255);
-  let c2 = color(255, 200, 100);
-  stroke(c1);
-  gradient.background(255);
-  gradient.line(0, 0, view.width, 0);
-  for (let i = 1; i < view.height; i++) {
-    gradient.stroke(lerpColor(c1, c2, i/view.height));
-    gradient.line(0, i, view.width, i);
+
+  if (hour() > 7 && hour() <= 17) {
+    drawGradient(daytime);
+  } else if (hour() == 6 || hour == 18) {
+    drawGradient(dawndusk);
+  } else {
+    drawGradient(nighttime);
   }
+
 }
 
 function preload() {
@@ -173,6 +189,7 @@ function preload() {
 }
 
 function mousePressed() {
+  drawGradient(random([daytime, dawndusk, nighttime]));
   mx = mouseX;
   my = mouseY;
   let res = false;
@@ -218,20 +235,22 @@ function draw(){
   let threefour = 3 + frameCount%2;
   for (let i = 0; i < sprites.length; i++){
     view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
-    sprites[i][onetwo] += sprites[i][threefour] * sprites[i][6];
-    // sprites[i][2] += sprites[i][4] * sprites[i][6];
+    // sprites[i][onetwo] += sprites[i][threefour] * sprites[i][6];
+    sprites[i][1] += sprites[i][3] * sprites[i][6];
+    sprites[i][2] += sprites[i][4] * sprites[i][6];
     if (frameCount % sprites[i][5] == 0) {
       sprites[i][3] = int(random(-2, 2));
-      sprites[i][4] = int(random(-2, 2));
+      sprites[i][4] = int(random(0, 2));
       while (sprites[i][3] == 0 && sprites[i][4] == 0) {
         sprites[i][3] = int(random(-2, 2));
-        sprites[i][4] = int(random(-2, 2));
+        sprites[i][4] = int(random(0, 2));
       }
     }
-    if (sprites[i][1] < 0 || sprites[i][1] > view.width || sprites[i][2] < 0 || sprites[i][2] > view.height) {
-      sprites[i][1] = centerX;
-      sprites[i][2] = titleY;
-    }
+
+    if (sprites[i][1] < 0) {sprites[i][1] = view.width;}
+    if (sprites[i][1] > view.width) {sprites[i][1] = 0;}
+    if (sprites[i][2] < 0){sprites[i][2] = view.height;}
+    if (sprites[i][2] > view.height) {sprites[i][2] = 0;}
   }
   view.stroke(0);
   view.strokeWeight(2);

@@ -159,7 +159,7 @@ function setupScreen() {
     tSize = int(0.02 * y);
     titleHeight = titleStringArr.length * tSize;
   }
-  buttonY = titleY + titleHeight;
+  buttonY = titleY + 1.5*titleHeight;
   textSize(tSize);
   textFont('Courier New');
   titleWidth = textWidth(titleStringArr[1]);

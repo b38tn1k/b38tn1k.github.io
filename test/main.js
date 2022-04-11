@@ -193,7 +193,7 @@ function setupScreen() {
   } else {
     drawGradient(nighttime);
   }
-  drawGradient(dawndusk);
+  // drawGradient(dawndusk);
 
 }
 

@@ -156,15 +156,9 @@ function setupScreen() {
   titleHeight = titleStringArr.length * tSize;
   buttonY = titleY + titleHeight;
   textSize(tSize);
-  // console.log(tSize);
   textFont('Courier New');
   titleWidth = textWidth(titleStringArr[1]);
   buttons = [];
-  titleDiv.remove();
-  titleDiv = null;
-  titleDiv = createDiv(titleDivString);
-  titleDiv.style('font-size', tSize + 'px');
-  titleDiv.position(centerX - int(titleWidth/2) + textWidth(titleStringArr[1][3]), titleY - (titleHeight));
   // button setup
   let buttonX = int(centerX - (titleWidth/2));
   let xInt = int(titleWidth/(buttonLabels.length - 1));
@@ -172,6 +166,12 @@ function setupScreen() {
     buttons.push(new myButton(buttonLabels[i], buttonLinks[i], buttonX, buttonY));
     buttonX += xInt;
   }
+  // html setup
+  titleDiv.remove();
+  // titleDiv = null;
+  titleDiv = createDiv(titleDivString);
+  titleDiv.style('font-size', tSize + 'px');
+  titleDiv.position(centerX - int(titleWidth/2) + textWidth(titleStringArr[1][3]), titleY - (titleHeight));
   // invaders guy
   sprites = [];
   let spritePixelSize = int(max(3, tSize/12));
@@ -262,8 +262,8 @@ function draw(){
   view.noFill();
   view.rect(0, 0, gradient.width, gradient.height);
   image(view, border, border);
-  fill(255, 255, 0);
-  text(titleString, centerX, titleY);
+  // fill(255, 255, 0);
+  // text(titleString, centerX, titleY);
   noStroke();
   for (let i = 0; i < buttons.length; i++){
     if (buttons[i].clickCountDown > 0) {
@@ -279,7 +279,7 @@ function draw(){
       text(buttons[i].label, buttons[i].x, buttons[i].y);
     }
   }
-  text('windowWidth: ' + windowWidth, 150, 10);
-  text('windowHeight: ' + windowHeight, 150, 30);
-  text('tSize: ' + textSize(), 150, 50);
+  // text('windowWidth: ' + windowWidth, 150, 10);
+  // text('windowHeight: ' + windowHeight, 150, 30);
+  // text('tSize: ' + textSize(), 150, 50);
 }

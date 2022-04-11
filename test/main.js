@@ -259,8 +259,8 @@ function draw(){
   view.noFill();
   view.rect(0, 0, gradient.width, gradient.height);
   image(view, border, border);
-  // fill(255, 0, 0);
-  // text(titleString, centerX, titleY);
+  fill(255, 0, 0);
+  text(titleString, centerX, titleY);
   noStroke();
   for (let i = 0; i < buttons.length; i++){
     if (buttons[i].clickCountDown > 0) {

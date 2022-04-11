@@ -160,7 +160,7 @@ function setupScreen() {
   textFont('Courier New');
   titleWidth = textWidth(titleStringArr[1]);
   buttons = [];
-  titleDiv.style('font-size', textSize() + 'px');
+  titleDiv.removeAttribute('style');
   titleDiv.style('font-size', textSize() + 'px');
   titleDiv.position(centerX - int(titleWidth/2) + textWidth(titleStringArr[1][3]), titleY - (titleHeight));
   // button setup
@@ -260,7 +260,7 @@ function draw(){
   view.noFill();
   view.rect(0, 0, gradient.width, gradient.height);
   image(view, border, border);
-  fill(0, 255, 0);
+  fill(0, 0, 255);
   text(titleString, centerX, titleY);
   noStroke();
   for (let i = 0; i < buttons.length; i++){

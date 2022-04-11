@@ -8,6 +8,10 @@ var buttons = [];
 var buttonLabels = ['music', 'blog', 'code/art'];
 var buttonLinks = ['https://b38tn1k.com/stream/', null, null];
 var titleWidth, titleHeight;
+// some fun
+var sprites = [];
+var spriteCount = 5;
+var frameCount = 0;
 
 
 class myButton {
@@ -35,8 +39,80 @@ class myButton {
     this.x_max = x + (this.width/2);
     this.y_min = y - (this.height/2);
     this.y_max= y + (this.height/2);
-    this.clickCounter = 0;
+    this.clickCountDown = 0;
   }
+}
+
+function genSprite(spriteWidth, spriteHeight, pixelSize) {
+  // let spriteWidth = 8.0;
+  // let spriteHeight = 5.0;
+  let sprite = createGraphics((spriteWidth+2)*pixelSize, spriteHeight*2*pixelSize);
+  sprite.background = 255;
+  sprite.fill(200);
+  // sprite.stroke(0);
+  sprite.noStroke();
+  let x = 0;
+  let y = 0;
+  let invLength = spriteHeight;
+  let invHeight = spriteWidth;
+  let grid = new Array();
+  let max = 0.0;
+  //generate
+  for (let i = 0; i < invLength; i++) {
+    grid[i] = new Array();
+    for (let j = 0; j < invHeight; j++) {
+      // probability of pixel decreases radiating from grid[6][4]
+      // random component
+      //grid[i][j] = 0;
+      grid[i][j] = random(2);
+      // increase density towards horizontal center
+      grid[i][j] = grid[i][j] + sin(radians(90*i/invLength));
+      // increase density towards vertical center
+      grid[i][j] = grid[i][j] + sin(radians(180*(j/invHeight)));
+      // reduce density near eye areas
+
+      // end of generating
+      if (grid[i][j] > max) {
+        max = grid[i][j];
+      }
+    }
+  }
+  //scale and prepare for threshold
+  let sum = 0;
+  let count = 0;
+  for (let i = 0; i < invLength; i++) {
+    for (let j = 0; j < invHeight; j++) {
+      grid[i][j] = grid[i][j]/max;
+      sum += grid[i][j];
+      count++;
+    }
+  }
+  let average = sum/count;
+  let threshhold = average;
+  let xpos = 0;
+  let ypos = 0;
+  for (var i = 0; i < invLength; i++) {
+    for (var j = 0; j < invHeight; j++) {
+      if (grid[i][j] > threshhold) {
+        sprite.rect(xpos, ypos, pixelSize, pixelSize);
+      }
+      ypos += pixelSize;
+    }
+    ypos = 0;
+    xpos += pixelSize;
+  }
+  var invlen = int(invLength) - 1;
+  for (var i = 0; i < invLength; i++) {
+    for (var j = 0; j < invHeight; j++) {
+      if (grid[invlen- i][j] > threshhold) {
+        sprite.rect(xpos, ypos, pixelSize, pixelSize);
+      }
+      ypos += pixelSize;
+    }
+    ypos = 0;
+    xpos += pixelSize;
+  }
+  return sprite;
 }
 
 function setupScreen() {
@@ -55,18 +131,21 @@ function setupScreen() {
   titleHeight = titleStringArr.length * tSize;
   buttonY = titleY + titleHeight;
   textSize(tSize);
+  console.log(tSize);
   textFont('Courier New');
   titleWidth = textWidth(titleStringArr[1]);
   buttons = [];
   // button setup
   let buttonX = int(centerX - (titleWidth/2));
-  console.log(buttonX);
   let xInt = int(titleWidth/(buttonLabels.length - 1));
-  console.log(xInt);
   for (let i = 0; i < buttonLabels.length; i++){
     buttons.push(new myButton(buttonLabels[i], buttonLinks[i], buttonX, buttonY));
-    // console.log(buttons[i].label, buttons[i].x);
     buttonX += xInt;
+  }
+  // invaders guy
+  let spritePixelSize = int(max(3, tSize/10));
+  for (let i = 0; i < spriteCount; i++){
+    sprites.push([genSprite(8, 5, 3), random(view.width), random(view.height), random(-1, 1), random(-1, 1), int(random(50, 100))]);
   }
   // prettify
   background(0);
@@ -84,7 +163,7 @@ function mousePressed() {
   for (let i = 0; i < buttons.length; i++) {
     res = buttonPressed(buttons[i], mx, my);
     if (res === true) {
-      buttons[i].clickCounter = 2;
+      buttons[i].clickCountDown = 2;
     }
   }
 }
@@ -116,8 +195,23 @@ function setup() {
 }
 
 function draw(){
+  frameCount += 1;
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
+  view.background(255);
+  for (let i = 0; i < sprites.length; i++){
+    view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
+    sprites[i][1] += sprites[i][3];
+    sprites[i][2] += sprites[i][4];
+    if (frameCount % sprites[i][5] == 0) {
+      sprites[i][3] = random(-1, 1);
+      sprites[i][4] = random(-1, 1);
+    }
+    if (sprites[i][1] < 0 || sprites[i][1] > view.width || sprites[i][2] < 0 || sprites[i][2] > view.height) {
+      sprites[i][1] = centerX;
+      sprites[i][2] = titleY;
+    }
+  }
   image(view, border, border);
   fill(255);
   rect(centerX, titleY, titleWidth, titleHeight);
@@ -125,12 +219,12 @@ function draw(){
   text(titleString, centerX, titleY);
   noStroke();
   for (let i = 0; i < buttons.length; i++){
-    if (buttons[i].clickCounter > 0) {
+    if (buttons[i].clickCountDown > 0) {
       fill(0);
       rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
       fill(255);
       text(buttons[i].label, buttons[i].x, buttons[i].y);
-      buttons[i].clickCounter -= 1;
+      buttons[i].clickCountDown -= 1;
     } else {
       fill(255);
       rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)

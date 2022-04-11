@@ -125,7 +125,7 @@ function drawGradient(rgb){
   gradient.background(255);
   gradient.line(0, 0, view.width, 0);
   for (let i = 1; i < view.height; i++) {
-    gradient.stroke(lerpColor(c1, c2, i/view.height));
+    gradient.stroke(lerpColor(c1, c2, (i/view.height)*(i/view.height)));
     gradient.line(0, i, view.width, i);
   }
 }

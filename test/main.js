@@ -170,7 +170,7 @@ function setupScreen() {
   titleDiv.remove();
   // titleDiv = null;
   titleDiv = createDiv(titleDivString);
-  titleDiv.style('font-size', tSize + 'px');
+  titleDiv.style('font-size', int(tSize/2) + 'px');
   titleDiv.position(centerX - int(titleWidth/2) + textWidth(titleStringArr[1][3]), titleY - (titleHeight));
   // invaders guy
   sprites = [];

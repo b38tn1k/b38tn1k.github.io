@@ -166,11 +166,6 @@ function setupScreen() {
     gradient.stroke(lerpColor(c1, c2, i/view.height));
     gradient.line(0, i, view.width, i);
   }
-  gradient.stroke(0);
-  gradient.strokeWeight(2);
-  gradient.noFill();
-  gradient.rect(0, 0, gradient.width, gradient.height);
-
 }
 
 function preload() {
@@ -238,6 +233,10 @@ function draw(){
       sprites[i][2] = titleY;
     }
   }
+  view.stroke(0);
+  view.strokeWeight(2);
+  view.noFill();
+  view.rect(0, 0, gradient.width, gradient.height);
   image(view, border, border);
   fill(0);
   text(titleString, centerX, titleY);

@@ -156,7 +156,7 @@ function setupScreen() {
   titleHeight = titleStringArr.length * tSize;
   buttonY = titleY + titleHeight;
   textSize(tSize);
-  console.log(tSize);
+  // console.log(tSize);
   textFont('Courier New');
   titleWidth = textWidth(titleStringArr[1]);
   buttons = [];
@@ -276,4 +276,7 @@ function draw(){
       text(buttons[i].label, buttons[i].x, buttons[i].y);
     }
   }
+  text('windowWidth: ' + windowWidth, 150, 10);
+  text('windowHeight: ' + windowHeight, 150, 30);
+  text('tSize: ' + textSize(), 150, 50);
 }

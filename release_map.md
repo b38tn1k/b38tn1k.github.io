@@ -11,6 +11,7 @@ title: internal_map
     spotify {{ post.spotify}}
     applemusic {{ post.applemusic}}
     bandcamp {{ post.bandcamp}}
+    date {{ post.date}}
     endrelease
   {% else %}
   {% endif %}

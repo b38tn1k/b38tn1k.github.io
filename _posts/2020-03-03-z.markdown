@@ -3,6 +3,11 @@ layout: post
 title:  "Z"
 date:   2020-03-03
 tags: release
+spotify: "https://open.spotify.com/album/7HZPHwc96ePUvg9L3QHCJ9?si=CECGo3SZTeuH2Zu4DxTG_Q"
+bandcamp: "http://b38tn1k.bandcamp.com/album/z"
+applemusic: "https://music.apple.com/us/album/z-ep/1500267627"
+albumcover: "/images/covers/z.png"
+artists: B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/z.png)
 

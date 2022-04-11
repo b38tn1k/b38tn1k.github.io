@@ -3,6 +3,11 @@ layout: post
 title:  "A2:01"
 date:   2022-02-02
 tags: release
+spotify: "https://open.spotify.com/album/7719FNSNVCAVYgwDK5uPWF?si=lw6wFBjpTwKcUQC6t-oaYA"
+bandcamp: "https://b38tn1k.bandcamp.com/album/a2-01"
+applemusic: "https://music.apple.com/us/album/a2-01-ep/1604431085"
+albumcover: "/images/covers/a201.jpg"
+artists: B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/a201.jpg)
 

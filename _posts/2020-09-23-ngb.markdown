@@ -3,6 +3,11 @@ layout: post
 title:  "Not Getting Better"
 date:   2020-09-23
 tags: release
+spotify: "https://open.spotify.com/album/1NwiHHJDH0mSaSh23AdJ5S?si=3UffuxkERvKz2nBdkpIsrw"
+bandcamp: "https://b38tn1k.bandcamp.com/album/not-getting-better"
+applemusic: "https://music.apple.com/us/album/not-getting-better-ep/1528615639"
+albumcover: "/images/covers/ngb2.jpg"
+artists: B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/ngb2.jpg)
 

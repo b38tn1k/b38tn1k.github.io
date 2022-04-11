@@ -3,6 +3,11 @@ layout: post
 title:  "DMCA / 2ndVar13ty"
 date:   2020-01-01
 tags: release
+spotify: "https://open.spotify.com/album/185XxaIEIcu0E3zUpwlPfN?si=fNaou0j2Syu2ktIzkrHwgA"
+bandcamp: "http://b38tn1k.bandcamp.com/album/dmca-2ndvar13ty"
+applemusic: "https://music.apple.com/us/album/dmca-2ndvar13ty-single/1493529635"
+albumcover: "/images/covers/dmca_2ndvar13ty.jpg"
+artists: B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/dmca_2ndvar13ty.jpg)
 

@@ -3,6 +3,11 @@ layout: post
 title:  "FDR​-​001: Support, Vol. I"
 date:   2020-09-04
 tags: release
+spotify: ""
+bandcamp: "http://forbiddendrinkrecordings.bandcamp.com/album/fdr-001-support-vol-i"
+applemusic: ""
+albumcover: "/images/covers/support.jpg"
+artists: B38TN1K others
 ---
 ![cover]({{ site.url }}/images/covers/support.jpg)
 

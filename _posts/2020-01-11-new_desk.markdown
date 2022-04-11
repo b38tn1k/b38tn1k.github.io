@@ -3,6 +3,11 @@ layout: post
 title:  "New Desk"
 date:   2020-01-11
 tags: release
+spotify: "https://open.spotify.com/album/1s9ZwZhM4XQvY2dbjQUrda?si=SSlpTWHGTrmjdUmFaPsaLQ"
+bandcamp: "http://b38tn1k.bandcamp.com/album/new-desk"
+applemusic: "https://music.apple.com/us/album/new-desk-ep/1494504498"
+albumcover: "/images/covers/new_desk.jpg"
+artists: B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/new_desk.jpg)
 

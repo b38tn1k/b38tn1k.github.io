@@ -3,6 +3,11 @@ layout: post
 title:  "A2:00"
 date:   2021-07-01
 tags: release
+spotify: "https://open.spotify.com/album/7dpcRWOQ11l0QPyhVUne9s?si=1YWnyhaEQSyR7WmEFyGcvQ"
+bandcamp: "https://b38tn1k.bandcamp.com/album/a2-00"
+applemusic: "https://music.apple.com/us/album/a2-00-ep/1573960618"
+albumcover: "/images/covers/a200.jpg"
+artists: B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/a200.jpg)
 

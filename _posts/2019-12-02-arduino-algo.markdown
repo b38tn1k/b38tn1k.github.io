@@ -3,6 +3,11 @@ layout: post
 title:  "Music For Arduino : Algorithmic Suite For Uno Quartet"
 date:   2019-12-02
 tags: release
+spotify: "https://open.spotify.com/album/0ajGh2w62VtXm3t6qhMuqe?si=W8jUmuB6QBu3I8IayHOu7w"
+bandcamp: "http://b38tn1k.bandcamp.com/album/algorithmic-suite-for-arduino-quartet"
+applemusic: "https://music.apple.com/us/album/music-for-arduino-algorithmic-suite-for-uno-quartet-ep/1489987231"
+albumcover: "/images/covers/arduino_algo.jpg"
+artists: B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/arduino_algo.jpg)
 

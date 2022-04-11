@@ -3,6 +3,11 @@ layout: post
 title:  "5W33T B8BY J8M35: junk from 2005 - 2009"
 date:   2020-02-03
 tags: release
+spotify: "https://open.spotify.com/album/6TPyfhDO7ugzlGFSN3AqZV?si=MzhIwd22ScqFRWThsAwZyQ"
+bandcamp: "http://b38tn1k.bandcamp.com/album/5w33t-b8by-j8m35-junk-from-2005-2009"
+applemusic: "https://music.apple.com/us/album/5w33t-b8by-j8m35-junk-from-2005-2009/1497559694"
+albumcover: "/images/covers/sbj.jpg"
+artists: B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/sbj.jpg)
 

@@ -69,6 +69,15 @@ function setupScreen() {
   // prettify
   background(0);
   view.background(255);
+
+  let c1 = color(255, 255, 255);
+  let c2 = color(255, 200, 100);
+  stroke(c1);
+  line(0, 0, view.width, 0);
+  for (let i = 1; i < view.height; i++) {
+    view.stroke(lerpColor(c1, c2, i/view.height));
+    view.line(0, i, view.width, i);
+  }
 }
 
 function preload() {
@@ -117,8 +126,8 @@ function draw(){
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   image(view, border, border);
-  fill(255);
-  rect(centerX, titleY, titleWidth, titleHeight);
+  // fill(255);
+  // rect(centerX, titleY, titleWidth, titleHeight);
   fill(0);
   text(titleString, centerX, titleY);
   noStroke();

@@ -155,7 +155,7 @@ function setupScreen() {
   buttonY = height - titleY;
   titleHeight = titleStringArr.length * tSize;
   if (titleHeight > titleY) {
-    tSize = int(0.05 * y);
+    tSize = int(0.02 * y);
     titleHeight = titleStringArr.length * tSize;
   }
   buttonY = titleY + titleHeight;
@@ -193,6 +193,7 @@ function setupScreen() {
   } else {
     drawGradient(nighttime);
   }
+  drawGradient(dawndusk);
 
 }
 

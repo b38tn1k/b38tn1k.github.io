@@ -162,13 +162,7 @@ function setupScreen() {
   sprites = [];
   let spritePixelSize = int(max(3, tSize/12));
   for (let i = 0; i < spriteCount; i++){
-    sprites.push([genSprite(8, 5, spritePixelSize), random(view.width), random(view.height), int(random(-2, 2)), int(random(0, 2)), int(random(50, 100)), spritePixelSize]);
-  }
-  for (let i = 0; i < spriteCount; i++){
-    while (sprites[i][3] == 0 && sprites[i][4] == 0) {
-      sprites[i][3] = int(random(0, 2));
-      sprites[i][4] = int(random(-2, 2));
-    }
+    sprites.push([genSprite(8, 5, spritePixelSize), random(view.width), random(view.height), int(random(-2, 2)), 1, int(random(50, 100)), spritePixelSize]);
   }
   // prettify
   background(255);
@@ -231,20 +225,12 @@ function draw(){
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   view.image(gradient, 0, 0);
-  let onetwo = 1 + frameCount%2;
-  let threefour = 3 + frameCount%2;
   for (let i = 0; i < sprites.length; i++){
     view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
-    // sprites[i][onetwo] += sprites[i][threefour] * sprites[i][6];
     sprites[i][1] += sprites[i][3] * sprites[i][6];
     sprites[i][2] += sprites[i][4] * sprites[i][6];
     if (frameCount % sprites[i][5] == 0) {
       sprites[i][3] = int(random(-2, 2));
-      sprites[i][4] = int(random(0, 2));
-      while (sprites[i][3] == 0 && sprites[i][4] == 0) {
-        sprites[i][3] = int(random(-2, 2));
-        sprites[i][4] = int(random(0, 2));
-      }
     }
 
     if (sprites[i][1] < 0) {sprites[i][1] = view.width;}

@@ -2,10 +2,9 @@
 layout: empty
 title: internal_map
 ---
-HEAD
 {% for post in site.posts %}
   {% if post.tags contains 'release' %}
-    release
+    startrelease
     title {{ post.title}}
     artists {{ post.artists}}
     cover {{ post.albumcover}}
@@ -16,4 +15,3 @@ HEAD
   {% else %}
   {% endif %}
 {% endfor %}
-END

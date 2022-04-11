@@ -131,11 +131,11 @@ function drawGradient(rgb){
     gradient.stroke(lerpColor(c1, c2, (i/view.height)**2));
     gradient.line(0, i, view.width, i);
   }
-  gradient.strokeWeight(1);
-  for (let i = 0; i < view.height - 10; i+=5) {
-    gradient.stroke(gradient.get(1, i + 30));
-    gradient.line(0, i, view.width, i);
-  }
+  // gradient.strokeWeight(1);
+  // for (let i = 0; i < view.height - 10; i+=5) {
+  //   gradient.stroke(gradient.get(1, i + 30));
+  //   gradient.line(0, i, view.width, i);
+  // }
 
 }
 

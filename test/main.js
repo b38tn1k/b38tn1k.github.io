@@ -131,20 +131,17 @@ function drawGradient(rgb){
     gradient.stroke(lerpColor(c1, c2, (i/view.height)**2));
     gradient.line(0, i, view.width, i);
   }
-  let ditherer = createGraphics(gradient.width, gradient.height);
-  let dithererDensity = int((gradient.width) / 100);
-  let ditherOffset = 10;
-  ditherer.strokeWeight(10);
-  for (let i = view.height-10; i > 0 ; i--) {
-    ditherer.stroke(gradient.get(5, i));
-    for (let j = 0; j < dithererDensity; j++) {
-      ditherer.point(random(ditherer.width), random(i+ditherOffset, i-ditherOffset));
-    }
-  }
-  // gradient.background(0);
-
-
-  gradient.image(ditherer, 0, 0);
+  // let ditherer = createGraphics(gradient.width, gradient.height);
+  // let dithererDensity = int((gradient.width) / 100);
+  // let ditherOffset = 10;
+  // ditherer.strokeWeight(10);
+  // for (let i = view.height-10; i > 0 ; i--) {
+  //   ditherer.stroke(gradient.get(5, i));
+  //   for (let j = 0; j < dithererDensity; j++) {
+  //     ditherer.point(random(ditherer.width), random(i+ditherOffset, i-ditherOffset));
+  //   }
+  // }
+  // gradient.image(ditherer, 0, 0);
 
 }
 

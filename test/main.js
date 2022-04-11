@@ -1,5 +1,5 @@
 // graphics
-var view, border;
+var view, border, gradient;
 var centerX, centerY, titleY, buttonY;
 // strings
 var titleStringArr = [];
@@ -10,8 +10,7 @@ var buttonLinks = ['https://b38tn1k.com/stream/', null, null];
 var titleWidth, titleHeight;
 // some fun
 var sprites = [];
-var spriteCount = 15;
-var frameCount = 0;
+var spriteCount = 25;
 
 
 class myButton {
@@ -34,7 +33,7 @@ class myButton {
     this.x = x;
     this.y = y;
     this.width = textWidth('|-' + label + '-|');
-    this.height = 3 * textSize();
+    this.height = int(3.5 * textSize());
     this.x_min = x - (this.width/2);
     this.x_max = x + (this.width/2);
     this.y_min = y - (this.height/2);
@@ -48,7 +47,7 @@ function genSprite(spriteWidth, spriteHeight, pixelSize) {
   // let spriteHeight = 5.0;
   let sprite = createGraphics((spriteWidth+2)*pixelSize, spriteHeight*2*pixelSize);
   sprite.background = 255;
-  sprite.fill(200);
+  sprite.fill(255);
   // sprite.stroke(0);
   sprite.noStroke();
   let x = 0;
@@ -122,6 +121,7 @@ function setupScreen() {
   let x = (windowWidth - 2*border);
   let y = (windowHeight - 2*border);
   view = createGraphics(x, y);
+  gradient = createGraphics(x, y);
   // text setup
   let tSize = int(0.02 * x);
   centerX = int(width/2);
@@ -144,13 +144,33 @@ function setupScreen() {
   }
   // invaders guy
   sprites = [];
-  let spritePixelSize = int(max(2, tSize/12));
+  let spritePixelSize = int(max(3, tSize/12));
   for (let i = 0; i < spriteCount; i++){
-    sprites.push([genSprite(8, 5, 3), random(view.width), random(view.height), random(-1, 1), random(-1, 1), int(random(50, 100))]);
+    sprites.push([genSprite(8, 5, spritePixelSize), random(view.width), random(view.height), int(random(-2, 2)), int(random(-2, 2)), int(random(50, 100)), spritePixelSize]);
+  }
+  for (let i = 0; i < spriteCount; i++){
+    while (sprites[i][3] == 0 && sprites[i][4] == 0) {
+      sprites[i][3] = int(random(-2, 2));
+      sprites[i][4] = int(random(-2, 2));
+    }
   }
   // prettify
-  background(0);
+  background(255);
   view.background(255);
+  let c1 = color(255, 255, 255);
+  let c2 = color(255, 200, 100);
+  stroke(c1);
+  gradient.background(255);
+  gradient.line(0, 0, view.width, 0);
+  for (let i = 1; i < view.height; i++) {
+    gradient.stroke(lerpColor(c1, c2, i/view.height));
+    gradient.line(0, i, view.width, i);
+  }
+  gradient.stroke(0);
+  gradient.strokeWeight(2);
+  gradient.noFill();
+  gradient.rect(0, 0, gradient.width, gradient.height);
+
 }
 
 function preload() {
@@ -192,21 +212,26 @@ function setup() {
     titleString += titleStringArr[i] + '\n';
   }
   setupScreen();
-  frameRate(24);
+  frameRate(5);
 }
 
 function draw(){
-  frameCount += 1;
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
-  view.background(255);
+  view.image(gradient, 0, 0);
+  let onetwo = 1 + frameCount%2;
+  let threefour = 3 + frameCount%2;
   for (let i = 0; i < sprites.length; i++){
     view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
-    sprites[i][1] += sprites[i][3];
-    sprites[i][2] += sprites[i][4];
+    sprites[i][onetwo] += sprites[i][threefour] * sprites[i][6];
+    // sprites[i][2] += sprites[i][4] * sprites[i][6];
     if (frameCount % sprites[i][5] == 0) {
-      sprites[i][3] = random(-1, 1);
-      sprites[i][4] = random(-1, 1);
+      sprites[i][3] = int(random(-2, 2));
+      sprites[i][4] = int(random(-2, 2));
+      while (sprites[i][3] == 0 && sprites[i][4] == 0) {
+        sprites[i][3] = int(random(-2, 2));
+        sprites[i][4] = int(random(-2, 2));
+      }
     }
     if (sprites[i][1] < 0 || sprites[i][1] > view.width || sprites[i][2] < 0 || sprites[i][2] > view.height) {
       sprites[i][1] = centerX;
@@ -214,8 +239,6 @@ function draw(){
     }
   }
   image(view, border, border);
-  fill(255);
-  rect(centerX, titleY, titleWidth, titleHeight);
   fill(0);
   text(titleString, centerX, titleY);
   noStroke();
@@ -227,7 +250,7 @@ function draw(){
       text(buttons[i].label, buttons[i].x, buttons[i].y);
       buttons[i].clickCountDown -= 1;
     } else {
-      fill(255);
+      fill(255, 255, 255, 100);
       rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
       fill(0);
       text(buttons[i].label, buttons[i].x, buttons[i].y);

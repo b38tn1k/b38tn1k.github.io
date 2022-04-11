@@ -155,7 +155,9 @@ function setupScreen() {
   buttonY = height - titleY;
   let tSize = int(0.02 * x);
   titleHeight = titleStringArr.length * tSize;
+  let tooBig = false;
   if (titleHeight > centerY/2) {
+    tooBig = true;
     tSize = int(0.02 * y);
     titleHeight = titleStringArr.length * tSize;
   }
@@ -173,13 +175,17 @@ function setupScreen() {
   }
   // html setup
   titleDiv.remove();
-  // titleDiv = null;
   titleDiv = createDiv(titleDivString);
   titleDiv.style('font-size', tSize + 'px');
-  titleDiv.position(centerX - int(titleWidth/2) + textWidth(titleStringArr[1][3]), titleY - (titleHeight));
+  if (tooBig){
+    titleDiv.position(centerX - int(titleWidth/2), titleY - (titleHeight));
+  } else {
+    titleDiv.position(centerX - int(titleWidth/2) + textWidth(titleStringArr[1][3]), titleY - (titleHeight));
+  }
+
   // invaders guy
   sprites = [];
-  let spritePixelSize = int(max(3, tSize/12));
+  let spritePixelSize = int(max(2, tSize/12));
   for (let i = 0; i < spriteCount; i++){
     sprites.push([genSprite(8, 5, spritePixelSize), random(view.width), random(view.height), int(random(-2, 2)), 1, int(random(50, 100)), spritePixelSize]);
   }
@@ -194,7 +200,7 @@ function setupScreen() {
   } else {
     drawGradient(nighttime);
   }
-  // drawGradient(dawndusk);
+  drawGradient(dawndusk);
 
 }
 

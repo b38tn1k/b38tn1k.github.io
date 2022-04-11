@@ -161,6 +161,7 @@ function setupScreen() {
   titleWidth = textWidth(titleStringArr[1]);
   buttons = [];
   titleDiv.style('font-size', tSize + 'px');
+  titleDiv.style('font-size', tSize + 'px');
   titleDiv.position(centerX - int(titleWidth/2) + textWidth(titleStringArr[1][3]), titleY - (titleHeight));
   // button setup
   let buttonX = int(centerX - (titleWidth/2));

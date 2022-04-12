@@ -1,13 +1,13 @@
 ---
 layout: post
-title:  "[REMIX] : Bruise Pristine Tired Eyes Single"
+title:  "[REMIX]: Bruise Pristine Tired Eyes Single"
 date:   2020-01-30
 tags: release
 spotify: "https://open.spotify.com/album/4meO8M2scpXxfputSKQQoH?si=Uic6-VsOSEyheHJ0CE66bw"
 bandcamp: ""
 applemusic: "https://music.apple.com/us/album/tired-eyes-single/1494849056"
 albumcover: "/images/covers/bp.jpg"
-artists: Bruise Pristine, B38TN1K 
+artists: Bruise Pristine, B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/bp.jpg)
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Music For Arduino : Escape From Dinosaur Island"
+title:  "Music For Arduino: Escape From Dinosaur Island"
 date:   2019-12-02
 tags: release
 spotify: "https://open.spotify.com/album/6CH1TuhEesRlc01AGGA5bh?si=wn0S2uHuQy-15r_n52coVw"

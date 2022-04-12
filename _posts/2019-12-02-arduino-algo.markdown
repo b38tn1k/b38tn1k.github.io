@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Music For Arduino : Algorithmic Suite For Uno Quartet"
+title:  "Music For Arduino: Algorithmic Suite For Uno Quartet"
 date:   2019-12-02
 tags: release
 spotify: "https://open.spotify.com/album/0ajGh2w62VtXm3t6qhMuqe?si=W8jUmuB6QBu3I8IayHOu7w"

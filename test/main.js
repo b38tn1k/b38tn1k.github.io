@@ -25,6 +25,9 @@ var nighttime = [100, 100, 200];
 var discography = []
 var discogStringArr;
 var coverWidth = 200;
+var albumDiv;
+var albumPointer = 0;
+var nextAlbum, previousAlbum;
 
 class myAlbum {
   constructor(title, artists, cover, spotify, applemusic, bandcamp, date) {
@@ -171,6 +174,15 @@ function drawGradient(rgb){
   }
 }
 
+function updateAlbumDiv() {
+  albumDiv.remove();
+  albumDiv = createDiv(discography[albumPointer].divString);
+  albumDiv.style('font-size', textSize() + 'px');
+  albumDiv.style('font-family', "'courier new', courier");
+  albumDiv.position(0, titleY - (titleHeight));
+  albumDiv.center('horizontal');
+}
+
 function setupScreen() {
   let colorOfTheTime;
   if (hour() > 7 && hour() <= 17) {
@@ -211,14 +223,18 @@ function setupScreen() {
     buttons.push(new myButton(buttonLabels[i], buttonLinks[i], buttonX, buttonY));
     buttonX += xInt;
   }
-  exitButton = new myButton('exit', null, int(width - 2.5*border), 2*border)
+  exitButton = new myButton('exit', null, int(width - 2.5*border), 2*border);
+  nextAlbum = new myButton('next', null, int(width - 4*border), buttonY);
+  previousAlbum = new myButton('prev', null, int(4*border), buttonY);
   // html setup
   titleDiv.remove();
   titleDiv = createDiv(titleDivString);
   titleDiv.style('font-size', tSize + 'px');
   titleDiv.position(0, titleY - (titleHeight));
   titleDiv.center('horizontal');
-
+  // album div setup
+  updateAlbumDiv();
+  albumDiv.hide();
   // invaders guy
   sprites = [];
   let spritePixelSize = int(max(3, tSize/12));
@@ -248,13 +264,30 @@ function mousePressed() {
     if (res === true) {
       itemToShow = i;
       showItem = true;
-      buttons[i].clickCountDown = 0;
+      buttons[i].clickCountDown = 1;
       return false;
     }
   }
   if (buttonPressed(exitButton, mx, my)){
     showItem = false;
     return false;
+  }
+  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextAlbum, mx, my)) {
+    nextAlbum.clickCountDown = 2;
+    albumPointer += 1;
+    if (albumPointer >= discography.length) {
+      albumPointer = 0;
+    }
+    updateAlbumDiv();
+
+  }
+  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(previousAlbum, mx, my)) {
+    previousAlbum.clickCountDown = 2;
+    albumPointer -= 1;
+    if (albumPointer == -1) {
+      albumPointer = discography.length-1;
+    }
+    updateAlbumDiv();
   }
 }
 
@@ -314,7 +347,7 @@ function drawButton(button) {
     rect(button.x, button.y, button.width, button.height)
     fill(255);
     text(button.label, button.x, button.y);
-    buttons.clickCountDown -= 1;
+    button.clickCountDown -= 1;
   } else {
     fill(255, 255, 255, 100);
     rect(button.x, button.y, button.width, button.height)
@@ -364,9 +397,15 @@ function setup() {
   titleString = unpackStringArray(titleStringArr, '\n');
   titleDivString = unpackStringArray(titleDivStringArr);
   titleDiv = createDiv(titleDivString);
+  setupDiscog();
+  for (let i = 0; i < discography.length; i++) {
+    console.log(discography[i].title);
+  }
+  albumDiv = createDiv(discography[0].divString);
+  albumDiv.hide();
   setupScreen();
   frameRate(5);
-  setupDiscog();
+
 }
 
 function draw(){
@@ -391,7 +430,15 @@ function draw(){
   if (showItem) {
     titleDiv.hide();
     drawButton(exitButton);
+    if (buttonLabels[itemToShow] == 'music'){
+      albumDiv.show();
+      drawButton(nextAlbum);
+      drawButton(previousAlbum);
+    } else {
+      albumDiv.hide();
+    }
   } else {
+    albumDiv.hide();
     titleDiv.show();
     drawButtons();
   }

@@ -7,7 +7,7 @@ spotify: "https://open.spotify.com/album/5KhiOMtjUj8ohiQOqXXd54?si=Mo6c-2deQiaqs
 bandcamp: ""
 applemusic: "https://music.apple.com/us/album/free-baja-all-terrain-remix-single/1474152900"
 albumcover: "/images/covers/wandb_remix.jpg"
-artists: Water_and_Bridges B38TN1K
+artists: Water and Bridges, B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/wandb_remix.jpg)
 

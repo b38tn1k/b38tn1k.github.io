@@ -7,7 +7,7 @@ spotify: "https://open.spotify.com/album/4meO8M2scpXxfputSKQQoH?si=Uic6-VsOSEyhe
 bandcamp: ""
 applemusic: "https://music.apple.com/us/album/tired-eyes-single/1494849056"
 albumcover: "/images/covers/bp.jpg"
-artists: B38TN1K Bruise_Pristine
+artists: Bruise Pristine, B38TN1K 
 ---
 ![cover]({{ site.url }}/images/covers/bp.jpg)
 

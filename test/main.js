@@ -24,17 +24,35 @@ var nighttime = [100, 100, 200];
 // discography
 var discography = []
 var discogStringArr;
+var coverWidth = 200;
 
 class myAlbum {
   constructor(title, artists, cover, spotify, applemusic, bandcamp, date) {
-    this.title = title;
-    this.artists = artists;
+    this.title = title.slice('title '.length);
+    this.artists = artists.slice('artists '.length);
     this.cover = cover.slice(cover.indexOf('/'));
-    this.albumImage = loadImage('https://b38tn1k.com/' + this.cover);
-    this.spotify = spotify;
-    this.applemusic = applemusic;
-    this.bandcamp = bandcamp;
-    this.date = date;
+    this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + coverWidth + '">';
+    // this.albumImage = loadImage('https://b38tn1k.com/' + this.cover);
+    this.spotify = spotify.slice(spotify.indexOf('h'));
+    this.spotifyHTML = '<a href="' + this.spotify + '">Spotify</a>';
+    this.applemusic = applemusic.slice(applemusic.indexOf('h'));
+    this.applemusicHTML = '<a href="' + this.applemusic + '">Apple Music</a>';
+    this.bandcamp = bandcamp.slice(bandcamp.indexOf('h'));
+    this.bandcampHTML = '<a href="' + this.bandcamp + '">bandcamp</a>';
+    if (this.spotify.length < 2) {
+      this.spotifyHTML = ""
+      this.spotify = ""
+    }
+    if (this.applemusic.length < 2) {
+      this.applemusic = "";
+      this.applemusicHTML = "";
+    }
+    if (this.bandcamp.length < 2) {
+      this.bandcamp = "";
+      this.bandcampHTML = "";
+    }
+    this.date = date.split(' ')[1];
+    this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + ' ' + this.spotifyHTML + ' ' + this.applemusicHTML;
   }
 }
 
@@ -249,8 +267,11 @@ function setupDiscog() {
       } else if (discogStringArr[i].includes('endrelease')) {
         readingDiscog = false;
         if (!(tempTitle === null)) {
-          discography.push(new myAlbum(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate))
+          discography.push(new myAlbum(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate));
         }
+        tempSpot = null;
+        tempApp = null;
+        tempBC = null;
         tempTitle = null;
       }
       if (readingDiscog){
@@ -355,6 +376,10 @@ function draw(){
   rectMode(CENTER);
   view.image(gradient, 0, 0);
   drawSprites();
+  if (showItem) {
+    view.fill(255, 255, 255, 100);
+    view.rect(0, 0, view.width, view.height);
+  }
   drawBorder(view);
   image(view, centerX, centerY);
 

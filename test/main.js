@@ -36,9 +36,9 @@ class myAlbum {
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + coverWidth + '">';
     // this.albumImage = loadImage('https://b38tn1k.com/' + this.cover);
     this.spotify = spotify.slice(spotify.indexOf('h'));
-    this.spotifyHTML = '<a href="' + this.spotify + '">Spotify</a>';
+    this.spotifyHTML = '<a href="' + this.spotify + '">spotify</a>';
     this.applemusic = applemusic.slice(applemusic.indexOf('h'));
-    this.applemusicHTML = '<a href="' + this.applemusic + '">Apple Music</a>';
+    this.applemusicHTML = '<a href="' + this.applemusic + '">spple music</a>';
     this.bandcamp = bandcamp.slice(bandcamp.indexOf('h'));
     this.bandcampHTML = '<a href="' + this.bandcamp + '">bandcamp</a>';
     if (this.spotify.length < 2) {
@@ -54,14 +54,14 @@ class myAlbum {
       this.bandcampHTML = "";
     }
     this.date = date.slice('date '.length);
-    this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + ' ' + this.spotifyHTML + ' ' + this.applemusicHTML;
+    this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
     this.div = createDiv(this.divString);
     this.div.hide();
   }
 
   updateDiv() {
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + coverWidth + '">';
-    this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + ' ' + this.spotifyHTML + ' ' + this.applemusicHTML;
+    this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
     this.div.remove();
     this.div = createDiv(this.divString);
     this.div.style('font-size', textSize() + 'px');
@@ -261,9 +261,29 @@ function preload() {
 }
 
 function mousePressed() {
-  // drawGradient(random([daytime, dawndusk, nighttime]));
   mx = mouseX;
   my = mouseY;
+  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextAlbum, mx, my)) {
+    nextAlbum.clickCountDown = 2;
+    discography[albumPointer].div.hide();
+    albumPointer += 1;
+    if (albumPointer >= discography.length) {
+      albumPointer = 0;
+    }
+    discography[albumPointer].div.show();
+    return false;
+
+  }
+  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(previousAlbum, mx, my)) {
+    previousAlbum.clickCountDown = 2;
+    discography[albumPointer].div.hide();
+    albumPointer -= 1;
+    if (albumPointer == -1) {
+      albumPointer = discography.length-1;
+    }
+    discography[albumPointer].div.show();
+    return false;
+  }
   let res = false;
   for (let i = 0; i < buttons.length; i++) {
     res = buttonPressed(buttons[i], mx, my);
@@ -278,27 +298,7 @@ function mousePressed() {
     showItem = false;
     return false;
   }
-  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextAlbum, mx, my)) {
-    nextAlbum.clickCountDown = 2;
-    discography[albumPointer].div.hide();
-    albumPointer += 1;
-    if (albumPointer >= discography.length) {
-      albumPointer = 0;
-    }
-    discography[albumPointer].div.show();
-    // updateAlbumDiv();
 
-  }
-  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(previousAlbum, mx, my)) {
-    previousAlbum.clickCountDown = 2;
-    discography[albumPointer].div.hide();
-    albumPointer -= 1;
-    if (albumPointer == -1) {
-      albumPointer = discography.length-1;
-    }
-    discography[albumPointer].div.show();
-    // updateAlbumDiv();
-  }
 }
 
 function setupDiscog() {

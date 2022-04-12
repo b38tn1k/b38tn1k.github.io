@@ -54,7 +54,12 @@ class myAlbum {
       this.bandcamp = "";
       this.bandcampHTML = "";
     }
-    this.date = date.slice('date ');
+    this.date = date.slice('date '.length);
+    this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + ' ' + this.spotifyHTML + ' ' + this.applemusicHTML;
+  }
+
+  updateDivString () {
+    this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + coverWidth + '">';
     this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + ' ' + this.spotifyHTML + ' ' + this.applemusicHTML;
   }
 }

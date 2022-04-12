@@ -54,7 +54,7 @@ class myAlbum {
       this.bandcamp = "";
       this.bandcampHTML = "";
     }
-    this.date = date.split(' ')[1];
+    this.date = date.slice('date ');
     this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + ' ' + this.spotifyHTML + ' ' + this.applemusicHTML;
   }
 }

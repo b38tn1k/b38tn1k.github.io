@@ -11,7 +11,10 @@ var titleWidth, titleHeight;
 // buttons
 var buttons = [];
 var buttonLabels = ['music', 'blog', 'demos'];
+var exitButton;
 var buttonLinks = [null, null, null];
+var showItem = false;
+var itemToShow;
 // some fun
 var sprites = [];
 var spriteCount = 25;
@@ -123,6 +126,14 @@ function genSprite(spriteWidth, spriteHeight, pixelSize, color) {
   return sprite;
 }
 
+function clearItemBG() {
+  tempBG = createGraphics(itemBG.width, itemBG.height);
+  tempBG.background(255, 255, 255, 100);
+  drawBorder(tempBG);
+  delete(itemBG);
+  itemBG = tempBG;
+}
+
 function drawGradient(rgb){
   let c1 = color(255, 255, 255);
   let c2 = color(rgb[0], rgb[1], rgb[2]);
@@ -159,7 +170,6 @@ function setupScreen() {
   view = createGraphics(x, y);
   gradient = createGraphics(x, y);
   // text setup
-
   centerX = int(width/2);
   centerY = int(height/2);
   titleY = int(height/3);
@@ -173,6 +183,7 @@ function setupScreen() {
   buttonY = titleY + 1.5*titleHeight;
   textSize(tSize);
   textFont('Courier New');
+  view.textFont('Courier New');
   titleWidth = textWidth(titleStringArr[1]);
   buttons = [];
   // button setup
@@ -182,6 +193,7 @@ function setupScreen() {
     buttons.push(new myButton(buttonLabels[i], buttonLinks[i], buttonX, buttonY));
     buttonX += xInt;
   }
+  exitButton = new myButton('exit', null, int(width - 2.5*border), 2*border)
   // html setup
   titleDiv.remove();
   titleDiv = createDiv(titleDivString);
@@ -199,7 +211,6 @@ function setupScreen() {
   background(255);
   view.background(255);
   drawGradient(colorOfTheTime);
-
 }
 
 function preload() {
@@ -217,8 +228,15 @@ function mousePressed() {
   for (let i = 0; i < buttons.length; i++) {
     res = buttonPressed(buttons[i], mx, my);
     if (res === true) {
-      buttons[i].clickCountDown = 2;
+      itemToShow = i;
+      showItem = true;
+      buttons[i].clickCountDown = 0;
+      return false;
     }
+  }
+  if (buttonPressed(exitButton, mx, my)){
+    showItem = false;
+    return false;
   }
 }
 
@@ -265,20 +283,30 @@ function drawSprites() {
 
 function drawButtons() {
   for (let i = 0; i < buttons.length; i++){
-    if (buttons[i].clickCountDown > 0) {
-      fill(0);
-      rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
-      fill(255);
-      text(buttons[i].label, buttons[i].x, buttons[i].y);
-      buttons[i].clickCountDown -= 1;
-      image(discography[int(random(discography.length))].albumImage, 0, 0);
-    } else {
-      fill(255, 255, 255, 100);
-      rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
-      fill(0);
-      text(buttons[i].label, buttons[i].x, buttons[i].y);
-    }
+    drawButton(buttons[i]);
   }
+}
+
+function drawButton(button) {
+  if (button.clickCountDown > 0) {
+    fill(0);
+    rect(button.x, button.y, button.width, button.height)
+    fill(255);
+    text(button.label, button.x, button.y);
+    buttons.clickCountDown -= 1;
+  } else {
+    fill(255, 255, 255, 100);
+    rect(button.x, button.y, button.width, button.height)
+    fill(0);
+    text(button.label, button.x, button.y);
+  }
+}
+
+function drawBorder(g){
+  g.stroke(0);
+  g.strokeWeight(2);
+  g.noFill();
+  g.rect(0, 0, g.width, g.height);
 }
 
 function buttonPressed(button, mx, my){
@@ -321,22 +349,29 @@ function setup() {
 }
 
 function draw(){
+  imageMode(CENTER);
   textAlign(CENTER, CENTER);
   textStyle(NORMAL);
   rectMode(CENTER);
   view.image(gradient, 0, 0);
   drawSprites();
-  view.stroke(0);
-  view.strokeWeight(2);
-  view.noFill();
-  view.rect(0, 0, gradient.width, gradient.height);
-  image(view, border, border);
+  drawBorder(view);
+  image(view, centerX, centerY);
+
   // fill(255, 255, 0);
   // text(titleString, centerX, titleY);
   textStyle(BOLD);
   noStroke();
-  drawButtons();
+
+  if (showItem) {
+    titleDiv.hide();
+    drawButton(exitButton);
+  } else {
+    titleDiv.show();
+    drawButtons();
+  }
   // text('windowWidth: ' + windowWidth, 150, 10);
   // text('windowHeight: ' + windowHeight, 150, 30);
   // text('tSize: ' + textSize(), 150, 50);
+
 }

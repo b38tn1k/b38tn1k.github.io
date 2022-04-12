@@ -65,13 +65,9 @@ class myButton {
   }
 }
 
-function genSprite(spriteWidth, spriteHeight, pixelSize) {
-  // let spriteWidth = 8.0;
-  // let spriteHeight = 5.0;
+function genSprite(spriteWidth, spriteHeight, pixelSize, color) {
   let sprite = createGraphics((spriteWidth+2)*pixelSize, spriteHeight*2*pixelSize);
-  sprite.background = 255;
-  sprite.fill(255);
-  // sprite.stroke(0);
+  sprite.fill(color);
   sprite.noStroke();
   let x = 0;
   let y = 0;
@@ -79,27 +75,17 @@ function genSprite(spriteWidth, spriteHeight, pixelSize) {
   let invHeight = spriteWidth;
   let grid = new Array();
   let max = 0.0;
-  //generate
   for (let i = 0; i < invLength; i++) {
     grid[i] = new Array();
     for (let j = 0; j < invHeight; j++) {
-      // probability of pixel decreases radiating from grid[6][4]
-      // random component
-      //grid[i][j] = 0;
       grid[i][j] = random(2);
-      // increase density towards horizontal center
       grid[i][j] = grid[i][j] + sin(radians(90*i/invLength));
-      // increase density towards vertical center
       grid[i][j] = grid[i][j] + sin(radians(180*(j/invHeight)));
-      // reduce density near eye areas
-
-      // end of generating
       if (grid[i][j] > max) {
         max = grid[i][j];
       }
     }
   }
-  //scale and prepare for threshold
   let sum = 0;
   let count = 0;
   for (let i = 0; i < invLength; i++) {
@@ -141,21 +127,30 @@ function drawGradient(rgb){
   let c1 = color(255, 255, 255);
   let c2 = color(rgb[0], rgb[1], rgb[2]);
   stroke(c1);
-  gradient.background(255);
+  gradient.background(c1);
   gradient.line(0, 0, view.width, 0);
-  for (let i = 1; i < view.height; i++) {
-    gradient.stroke(lerpColor(c1, c2, (i/view.height)**2));
+  gradient.strokeWeight(2);
+  let gradStart = int(view.height/2);
+  let bump = 3 * textSize(); // prop to invader height
+  for (let i = 0; i < gradStart; i++) {
+    gradient.stroke(lerpColor(c1, c2, (i/gradStart)));
+    gradient.line(0, i + gradStart - bump, view.width, i + gradStart - bump);
+  }
+  // gradient.stroke(c2);
+  for (let i = view.height - bump; i < view.height; i++) {
     gradient.line(0, i, view.width, i);
   }
-  // gradient.strokeWeight(1);
-  // for (let i = 0; i < view.height - 10; i+=5) {
-  //   gradient.stroke(gradient.get(1, i + 30));
-  //   gradient.line(0, i, view.width, i);
-  // }
-
 }
 
 function setupScreen() {
+  let colorOfTheTime;
+  if (hour() > 7 && hour() <= 17) {
+    colorOfTheTime = daytime;
+  } else if (hour() == 6 || hour() == 18) {
+    colorOfTheTime = dawndusk;
+  } else {
+    colorOfTheTime = nighttime;
+  }
   // draw-onables
   createCanvas(windowWidth, windowHeight);
   border = int(min(0.05*windowWidth, 0.05*windowHeight));
@@ -196,22 +191,14 @@ function setupScreen() {
 
   // invaders guy
   sprites = [];
-  let spritePixelSize = int(max(2, tSize/12));
+  let spritePixelSize = int(max(3, tSize/12));
   for (let i = 0; i < spriteCount; i++){
-    sprites.push([genSprite(8, 5, spritePixelSize), random(view.width), random(view.height), int(random(-2, 2)), 1, int(random(50, 100)), spritePixelSize]);
+    sprites.push([genSprite(8, 5, spritePixelSize, colorOfTheTime), random(view.width), random(view.height), int(random(-2, 2)), 1, int(random(50, 100)), spritePixelSize]);
   }
   // prettify
   background(255);
   view.background(255);
-
-  if (hour() > 7 && hour() <= 17) {
-    drawGradient(daytime);
-  } else if (hour() == 6 || hour() == 18) {
-    drawGradient(dawndusk);
-  } else {
-    drawGradient(nighttime);
-  }
-  // drawGradient(dawndusk);
+  drawGradient(colorOfTheTime);
 
 }
 
@@ -235,6 +222,65 @@ function mousePressed() {
   }
 }
 
+function setupDiscog() {
+    let tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate;
+    let readingDiscog = false
+    for (let i = 0; i < discogStringArr.length; i++) {
+      if (discogStringArr[i].includes('startrelease')) {
+        readingDiscog = true;
+      } else if (discogStringArr[i].includes('endrelease')) {
+        readingDiscog = false;
+        if (!(tempTitle === null)) {
+          discography.push(new myAlbum(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate))
+        }
+        tempTitle = null;
+      }
+      if (readingDiscog){
+        if (discogStringArr[i].includes('title')){ tempTitle = discogStringArr[i];}
+        if (discogStringArr[i].includes('artists')){ tempArtists = discogStringArr[i];}
+        if (discogStringArr[i].includes('cover')){ tempCover = discogStringArr[i];}
+        if (discogStringArr[i].includes('spoti')){ tempSpot = discogStringArr[i];}
+        if (discogStringArr[i].includes('applem')){ tempApp = discogStringArr[i];}
+        if (discogStringArr[i].includes('bandcam')){ tempBC = discogStringArr[i];}
+        if (discogStringArr[i].includes('date')){ tempDate = discogStringArr[i];}
+      }
+    }
+}
+
+function drawSprites() {
+  for (let i = 0; i < sprites.length; i++){
+    view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
+    sprites[i][1] += sprites[i][3] * sprites[i][6];
+    sprites[i][2] += sprites[i][4] * sprites[i][6];
+    if (frameCount % sprites[i][5] == 0) {
+      sprites[i][3] = int(random(-2, 2));
+    }
+
+    if (sprites[i][1] < 0) {sprites[i][1] = view.width;}
+    if (sprites[i][1] > view.width) {sprites[i][1] = 0;}
+    if (sprites[i][2] < 0){sprites[i][2] = view.height;}
+    if (sprites[i][2] > view.height) {sprites[i][2] = 0;}
+  }
+}
+
+function drawButtons() {
+  for (let i = 0; i < buttons.length; i++){
+    if (buttons[i].clickCountDown > 0) {
+      fill(0);
+      rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
+      fill(255);
+      text(buttons[i].label, buttons[i].x, buttons[i].y);
+      buttons[i].clickCountDown -= 1;
+      image(discography[int(random(discography.length))].albumImage, 0, 0);
+    } else {
+      fill(255, 255, 255, 100);
+      rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
+      fill(0);
+      text(buttons[i].label, buttons[i].x, buttons[i].y);
+    }
+  }
+}
+
 function buttonPressed(button, mx, my){
   let pressed = false;
   if (mx > button.x_min  && mx < button.x_max) {
@@ -253,58 +299,33 @@ function windowResized() {
   setupScreen();
 }
 
+function unpackStringArray(myArr, end=null){
+  let myString = ''
+  for (let i = 0; i < myArr.length-1; i++){
+    if (!(end === null)) {
+      myString += myArr[i] + end;
+    } else {
+      myString += myArr[i]
+    }
+  }
+  return myString;
+}
+
 function setup() {
-  for (let i = 0; i < titleStringArr.length-1; i++){
-    titleString += titleStringArr[i] + '\n';
-  }
-  for (let i = 0; i < titleDivStringArr.length; i++) {
-    titleDivString += titleDivStringArr[i];
-  }
+  titleString = unpackStringArray(titleStringArr, '\n');
+  titleDivString = unpackStringArray(titleDivStringArr);
   titleDiv = createDiv(titleDivString);
   setupScreen();
   frameRate(5);
-
-  let tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate;
-  let readingDiscog = false
-  for (let i = 0; i < discogStringArr.length; i++) {
-    if (discogStringArr[i].includes('startrelease')) {
-      readingDiscog = true;
-    } else if (discogStringArr[i].includes('endrelease')) {
-      readingDiscog = false;
-      if (!(tempTitle === null)) {
-        discography.push(new myAlbum(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate))
-      }
-      tempTitle = null;
-    }
-    if (readingDiscog){
-      if (discogStringArr[i].includes('title')){ tempTitle = discogStringArr[i];}
-      if (discogStringArr[i].includes('artists')){ tempArtists = discogStringArr[i];}
-      if (discogStringArr[i].includes('cover')){ tempCover = discogStringArr[i];}
-      if (discogStringArr[i].includes('spoti')){ tempSpot = discogStringArr[i];}
-      if (discogStringArr[i].includes('applem')){ tempApp = discogStringArr[i];}
-      if (discogStringArr[i].includes('bandcam')){ tempBC = discogStringArr[i];}
-      if (discogStringArr[i].includes('date')){ tempDate = discogStringArr[i];}
-    }
-  }
+  setupDiscog();
 }
 
 function draw(){
   textAlign(CENTER, CENTER);
+  textStyle(NORMAL);
   rectMode(CENTER);
   view.image(gradient, 0, 0);
-  for (let i = 0; i < sprites.length; i++){
-    view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
-    sprites[i][1] += sprites[i][3] * sprites[i][6];
-    sprites[i][2] += sprites[i][4] * sprites[i][6];
-    if (frameCount % sprites[i][5] == 0) {
-      sprites[i][3] = int(random(-2, 2));
-    }
-
-    if (sprites[i][1] < 0) {sprites[i][1] = view.width;}
-    if (sprites[i][1] > view.width) {sprites[i][1] = 0;}
-    if (sprites[i][2] < 0){sprites[i][2] = view.height;}
-    if (sprites[i][2] > view.height) {sprites[i][2] = 0;}
-  }
+  drawSprites();
   view.stroke(0);
   view.strokeWeight(2);
   view.noFill();
@@ -312,22 +333,9 @@ function draw(){
   image(view, border, border);
   // fill(255, 255, 0);
   // text(titleString, centerX, titleY);
+  textStyle(BOLD);
   noStroke();
-  for (let i = 0; i < buttons.length; i++){
-    if (buttons[i].clickCountDown > 0) {
-      fill(0);
-      rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
-      fill(255);
-      text(buttons[i].label, buttons[i].x, buttons[i].y);
-      buttons[i].clickCountDown -= 1;
-      image(discography[int(random(discography.length))].albumImage, 0, 0);
-    } else {
-      fill(255, 255, 255, 100);
-      rect(buttons[i].x, buttons[i].y, buttons[i].width, buttons[i].height)
-      fill(0);
-      text(buttons[i].label, buttons[i].x, buttons[i].y);
-    }
-  }
+  drawButtons();
   // text('windowWidth: ' + windowWidth, 150, 10);
   // text('windowHeight: ' + windowHeight, 150, 30);
   // text('tSize: ' + textSize(), 150, 50);

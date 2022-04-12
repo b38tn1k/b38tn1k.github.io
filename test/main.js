@@ -25,7 +25,6 @@ var nighttime = [100, 100, 200];
 var discography = []
 var discogStringArr;
 var coverWidth = 200;
-var albumDiv;
 var albumPointer = 0;
 var nextAlbum, previousAlbum;
 
@@ -56,11 +55,21 @@ class myAlbum {
     }
     this.date = date.slice('date '.length);
     this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + ' ' + this.spotifyHTML + ' ' + this.applemusicHTML;
+    this.div = createDiv(this.divString);
+    this.div.hide();
   }
 
-  updateDivString () {
+  updateDiv() {
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + coverWidth + '">';
     this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + ' ' + this.spotifyHTML + ' ' + this.applemusicHTML;
+    this.div.remove();
+    this.div = createDiv(this.divString);
+    this.div.style('font-size', textSize() + 'px');
+    this.div.style('font-family', "'courier new', courier");
+    this.div.size(coverWidth, AUTO);
+    this.div.position(0, titleY - (titleHeight));
+    this.div.center('horizontal');
+    this.div.hide();
   }
 }
 
@@ -179,15 +188,6 @@ function drawGradient(rgb){
   }
 }
 
-function updateAlbumDiv() {
-  albumDiv.remove();
-  albumDiv = createDiv(discography[albumPointer].divString);
-  albumDiv.style('font-size', textSize() + 'px');
-  albumDiv.style('font-family', "'courier new', courier");
-  albumDiv.position(0, titleY - (titleHeight));
-  albumDiv.center('horizontal');
-}
-
 function setupScreen() {
   let colorOfTheTime;
   if (hour() > 7 && hour() <= 17) {
@@ -237,9 +237,9 @@ function setupScreen() {
   titleDiv.style('font-size', tSize + 'px');
   titleDiv.position(0, titleY - (titleHeight));
   titleDiv.center('horizontal');
-  // album div setup
-  updateAlbumDiv();
-  albumDiv.hide();
+  for (let i = 0; i < discography.length; i++) {
+    discography[i].updateDiv();
+  }
   // invaders guy
   sprites = [];
   let spritePixelSize = int(max(3, tSize/12));
@@ -279,20 +279,24 @@ function mousePressed() {
   }
   if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextAlbum, mx, my)) {
     nextAlbum.clickCountDown = 2;
+    discography[albumPointer].div.hide();
     albumPointer += 1;
     if (albumPointer >= discography.length) {
       albumPointer = 0;
     }
-    updateAlbumDiv();
+    discography[albumPointer].div.show();
+    // updateAlbumDiv();
 
   }
   if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(previousAlbum, mx, my)) {
     previousAlbum.clickCountDown = 2;
+    discography[albumPointer].div.hide();
     albumPointer -= 1;
     if (albumPointer == -1) {
       albumPointer = discography.length-1;
     }
-    updateAlbumDiv();
+    discography[albumPointer].div.show();
+    // updateAlbumDiv();
   }
 }
 
@@ -406,8 +410,6 @@ function setup() {
   for (let i = 0; i < discography.length; i++) {
     console.log(discography[i].title);
   }
-  albumDiv = createDiv(discography[0].divString);
-  albumDiv.hide();
   setupScreen();
   frameRate(5);
 
@@ -436,14 +438,14 @@ function draw(){
     titleDiv.hide();
     drawButton(exitButton);
     if (buttonLabels[itemToShow] == 'music'){
-      albumDiv.show();
+      discography[albumPointer].div.show();
       drawButton(nextAlbum);
       drawButton(previousAlbum);
     } else {
-      albumDiv.hide();
+      // other things
     }
   } else {
-    albumDiv.hide();
+    discography[albumPointer].div.hide();
     titleDiv.show();
     drawButtons();
   }

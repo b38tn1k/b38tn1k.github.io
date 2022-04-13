@@ -3,7 +3,7 @@ layout: empty
 title: internal_map
 ---
 {% for post in site.posts %}
-  {% if post.tags contains 'release' %}
+  {% if post.tags contains 'release' or post.tags contains 'releasehidden' %}
     startrelease
     title {{ post.title}}
     artists {{ post.artists}}

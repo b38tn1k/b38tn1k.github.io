@@ -7,7 +7,7 @@ spotify: ""
 bandcamp: "http://forbiddendrinkrecordings.bandcamp.com/album/fdr-001-support-vol-i"
 applemusic: ""
 albumcover: "/images/covers/support.jpg"
-artists: B38TN1K others
+artists: Various, B38TN1K
 ---
 ![cover]({{ site.url }}/images/covers/support.jpg)
 

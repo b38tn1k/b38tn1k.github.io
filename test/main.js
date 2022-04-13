@@ -31,7 +31,7 @@ var nextAlbum, previousAlbum;
 class myAlbum {
   constructor(title, artists, cover, spotify, applemusic, bandcamp, date) {
     this.title = title.slice('title '.length);
-    this.artists = artists.slice('artists '.length);
+    this.artists = '<em>' + artists.slice('artists '.length) + '</em>';
     this.cover = cover.slice(cover.indexOf('/'));
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + coverWidth + '">';
     // this.albumImage = loadImage('https://b38tn1k.com/' + this.cover);
@@ -54,14 +54,14 @@ class myAlbum {
       this.bandcampHTML = "";
     }
     this.date = date.slice('date '.length);
-    this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
+    this.divString = this.coverHTML + '<br>' + this.title + '<br>' + this.artists + '<br>' + this.date + '<br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
     this.div = createDiv(this.divString);
     this.div.hide();
   }
 
   updateDiv() {
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + coverWidth + '">';
-    this.divString = this.title + '<br>' + this.artists + '<br>' + this.coverHTML + '<br>' + this.date + '<br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
+    this.divString = this.coverHTML + '<br>' + this.title + '<br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
     this.div.remove();
     this.div = createDiv(this.divString);
     this.div.style('font-size', textSize() + 'px');

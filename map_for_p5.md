@@ -14,13 +14,27 @@ title: internal_map
     date {{ post.date | date_to_string }}
     endrelease
   {% else %}
+    {% if post.tags contains 'demo' %}
+
+    startdemo
+    title {{ post.title}}
+    image {{ post.image}}
+    link {{ post.link}}
+    startcontent {{ post.content}} endcontent
+    enddemo
+
+    {% else %}
+
     startpost
     title {{ post.title }}
     date {{ post.date | date_to_string }}
     link {{ post.url }}
+
     {% for cat in post.categories %}
       $ {{ cat }}
     {% endfor %}
     endpost
-  {% endif %}
+
+    {% endif %}
+    {% endif %}
 {% endfor %}

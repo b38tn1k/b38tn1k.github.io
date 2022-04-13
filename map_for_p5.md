@@ -19,8 +19,8 @@ title: internal_map
     date {{ post.date | date_to_string }}
     link {{ post.url }}
     {% for cat in post.categories %}
-      {{cat}}
-      {% endfor %}
+      $ {{ cat }}
+    {% endfor %}
     endpost
   {% endif %}
 {% endfor %}

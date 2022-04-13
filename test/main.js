@@ -27,8 +27,20 @@ var contentStringArr;
 var coverWidth = 200;
 var albumPointer = 0;
 var nextAlbum, previousAlbum;
+// posts
+var posts = [];
+var postDiv;
 
-class myAlbum {
+class myPost {
+  constructor(title, date, link, tags) {
+    this.title = title.slice('title '.length);
+    this.date = date.slice('date '.length);
+    this.date = date.slice('link '.length);
+    this.tags = tags;
+  }
+}
+
+class myDiscogEntry {
   constructor(title, artists, cover, spotify, applemusic, bandcamp, date) {
     this.title = title.slice('title '.length);
     this.artists = '<em>' + artists.slice('artists '.length) + '</em>';
@@ -72,7 +84,6 @@ class myAlbum {
     this.div.hide();
   }
 }
-
 
 class myButton {
   constructor(label, link, x, y) {
@@ -159,14 +170,6 @@ function genSprite(spriteWidth, spriteHeight, pixelSize, color) {
     xpos += pixelSize;
   }
   return sprite;
-}
-
-function clearItemBG() {
-  tempBG = createGraphics(itemBG.width, itemBG.height);
-  tempBG.background(255, 255, 255, 100);
-  drawBorder(tempBG);
-  delete(itemBG);
-  itemBG = tempBG;
 }
 
 function drawGradient(rgb){
@@ -257,8 +260,8 @@ function setupScreen() {
 function preload() {
   titleStringArr = loadStrings('textAssets/title.txt');
   titleDivStringArr  = loadStrings('textAssets/title.html');
-  contentStringArr = loadStrings('https://b38tn1k.com/map_for_p5/');
-  // contentStringArr = loadStrings('http://127.0.0.1:4000/map_for_p5/');
+  // contentStringArr = loadStrings('https://b38tn1k.com/map_for_p5/');
+  contentStringArr = loadStrings('http://127.0.0.1:4000/map_for_p5/');
 }
 
 function mousePressed() {
@@ -302,6 +305,42 @@ function mousePressed() {
 
 }
 
+function setupPosts(){
+  let tempTitle, tempDate, tempLink;
+  let tempTags = [];
+  let readingPosts = false;
+  for (let i = 0; i < contentStringArr.length; i++) {
+    if (contentStringArr[i].includes('startpost')) {
+      readingPosts = true;
+    } else if (contentStringArr[i].includes('endpost')) {
+      readingPosts = false;
+      if (!(tempTitle === null)) {
+        posts.push(new myPost(tempTitle, tempDate, tempLink, tempTags));
+      }
+      tempTitle = null;
+      tempTags = [];
+    }
+    if(readingPosts) {
+      if (contentStringArr[i].includes('title')){ tempTitle = contentStringArr[i];}
+      else if (contentStringArr[i].includes('date')){ tempDate = contentStringArr[i];}
+      else if (contentStringArr[i].includes('link')){ tempLink = contentStringArr[i];}
+      else if (contentStringArr[i].includes('$ ')){
+        let mySliceString = contentStringArr[i];
+        mySliceString = mySliceString.slice(mySliceString.indexOf('$ ') + 2); // removing weird spacing stuff
+        tempTags.push(mySliceString);
+      }
+    }
+  }
+}
+
+function setupPostDiv() {
+  for (let i = 0; i < posts.length; i++) {
+    console.log(posts[i].title);
+    console.log(posts[i].tags);
+    console.log('');
+  }
+}
+
 function setupDiscog() {
     let tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate;
     let readingDiscog = false
@@ -311,7 +350,7 @@ function setupDiscog() {
       } else if (contentStringArr[i].includes('endrelease')) {
         readingDiscog = false;
         if (!(tempTitle === null)) {
-          discography.push(new myAlbum(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate));
+          discography.push(new myDiscogEntry(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate));
         }
         tempSpot = null;
         tempApp = null;
@@ -320,12 +359,12 @@ function setupDiscog() {
       }
       if (readingDiscog){
         if (contentStringArr[i].includes('title')){ tempTitle = contentStringArr[i];}
-        if (contentStringArr[i].includes('artists')){ tempArtists = contentStringArr[i];}
-        if (contentStringArr[i].includes('cover')){ tempCover = contentStringArr[i];}
-        if (contentStringArr[i].includes('spoti')){ tempSpot = contentStringArr[i];}
-        if (contentStringArr[i].includes('applem')){ tempApp = contentStringArr[i];}
-        if (contentStringArr[i].includes('bandcam')){ tempBC = contentStringArr[i];}
-        if (contentStringArr[i].includes('date')){ tempDate = contentStringArr[i];}
+        else if (contentStringArr[i].includes('artists')){ tempArtists = contentStringArr[i];}
+        else if (contentStringArr[i].includes('cover')){ tempCover = contentStringArr[i];}
+        else if (contentStringArr[i].includes('spoti')){ tempSpot = contentStringArr[i];}
+        else if (contentStringArr[i].includes('applem')){ tempApp = contentStringArr[i];}
+        else if (contentStringArr[i].includes('bandcam')){ tempBC = contentStringArr[i];}
+        else if (contentStringArr[i].includes('date')){ tempDate = contentStringArr[i];}
       }
     }
 }
@@ -409,9 +448,15 @@ function setup() {
   titleDivString = unpackStringArray(titleDivStringArr);
   titleDiv = createDiv(titleDivString);
   setupDiscog();
-  for (let i = 0; i < discography.length; i++) {
-    console.log(discography[i].title);
-  }
+  setupPosts();
+  setupPostDiv();
+
+  // for (let i = 0; i < discography.length; i++) {
+  //   console.log(discography[i].title);
+  // }
+  // for (let i = 0; i < posts.length; i++) {
+  //   console.log(posts[i].title);
+  // }
   setupScreen();
   frameRate(5);
 

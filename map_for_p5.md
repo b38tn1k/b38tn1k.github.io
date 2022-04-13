@@ -15,9 +15,12 @@ title: internal_map
     endrelease
   {% else %}
     startpost
-    {{ post.title }}
-    {{ post.url }}
-    {{ post.date | date_to_string }}
+    title {{ post.title }}
+    date {{ post.date | date_to_string }}
+    link {{ post.url }}
+    {% for cat in post.categories %}
+      {{cat}}
+      {% endfor %}
     endpost
   {% endif %}
 {% endfor %}

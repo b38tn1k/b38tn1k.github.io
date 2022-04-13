@@ -1,0 +1,27 @@
+---
+layout: post
+title:  "Did You Pay Cash For That Panic Attack?"
+date:   2013-01-01
+tags: releasehidden
+spotify: "https://open.spotify.com/album/1EyXTkvmnVfh7vCo5wgkva?si=3KLrLagpSxaC0LiiirEdXA"
+bandcamp: "https://royalchant.bandcamp.com/album/did-you-pay-cash-for-that-panic-attack-single"
+applemusic: "https://music.apple.com/us/album/pep-rally/1438573995"
+albumcover: "/img/dypcftpa.jpg"
+artists: ROYAL CHANT
+---
+![cover]({{ site.url }}/img/dypcftpa.jpg)
+<div style = "max-width:500px;">
+<table style="border: 0;">
+  <tbody style="border: 0">
+        <td style="border: 0">
+            <a href="https://royalchant.bandcamp.com/album/did-you-pay-cash-for-that-panic-attack-single" style="text-align:left; display:block;"> bandcamp </a>
+          </td>
+          <td style="border: 0">
+            <a href="https://open.spotify.com/album/1EyXTkvmnVfh7vCo5wgkva?si=3KLrLagpSxaC0LiiirEdXA" style="text-align:left; display:block;"> <img src="{{ site.url }}/img/spotify.png" alt="SPOTIFY" style="height:30px;"> </a>
+          </td>
+          <td style="border: 0">
+            <a href="https://music.apple.com/us/album/pep-rally/1438573995" style="text-align:left; display:block;"> <img src="{{ site.url }}/img/apple.png" alt="APPLE MUSIC" style="height:30px;"> </a>
+          </td>
+        </tbody>
+      </table>
+    </div>

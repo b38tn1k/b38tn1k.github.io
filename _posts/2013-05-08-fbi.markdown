@@ -1,0 +1,26 @@
+---
+layout: post
+title:  "Live on FBi"
+date:   2013-05-08
+tags: releasehidden
+spotify:
+bandcamp: "https://royalchant.bandcamp.com/album/live-on-fbi"
+applemusic:
+albumcover: "/img/lof.jpg"
+artists: ROYAL CHANT
+---
+![cover]({{ site.url }}/img/lof.jpg)
+
+<div style = "max-width:500px;">
+<table style="border: 0;">
+  <tbody style="border: 0">
+        <td style="border: 0">
+            <a href="https://royalchant.bandcamp.com/album/live-on-fbi" style="text-align:left; display:block;"> bandcamp </a>
+          </td>
+          <td style="border: 0">
+          </td>
+          <td style="border: 0">
+          </td>
+        </tbody>
+      </table>
+    </div>

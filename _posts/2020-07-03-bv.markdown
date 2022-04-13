@@ -1,0 +1,27 @@
+---
+layout: post
+title:  "Blank Verse"
+date:   2020-07-03
+tags: releasehidden
+spotify: "https://open.spotify.com/album/4dkQcYKmoJ2XWZtniKUDgz?si=CFIEcOmRQI6sKrKK535Nnw"
+bandcamp: "https://royalchant.bandcamp.com/album/blank-verse"
+applemusic: "https://music.apple.com/us/album/blank-verse/1509177923"
+albumcover: "/img/bv.jpg"
+artists: ROYAL CHANT
+---
+![cover]({{ site.url }}/img/bv.jpg)
+<div style = "max-width:500px;">
+<table style="border: 0;">
+  <tbody style="border: 0">
+        <td style="border: 0">
+            <a href="https://royalchant.bandcamp.com/album/blank-verse" style="text-align:left; display:block;"> bandcamp </a>
+          </td>
+          <td style="border: 0">
+            <a href="https://open.spotify.com/album/4dkQcYKmoJ2XWZtniKUDgz?si=CFIEcOmRQI6sKrKK535Nnw" style="text-align:left; display:block;"> <img src="{{ site.url }}/img/spotify.png" alt="SPOTIFY" style="height:30px;"> </a>
+          </td>
+          <td style="border: 0">
+            <a href="https://music.apple.com/us/album/blank-verse/1509177923" style="text-align:left; display:block;"> <img src="{{ site.url }}/img/apple.png" alt="APPLE MUSIC" style="height:30px;"> </a>
+          </td>
+        </tbody>
+      </table>
+    </div>

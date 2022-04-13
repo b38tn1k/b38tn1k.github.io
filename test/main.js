@@ -21,22 +21,63 @@ var spriteCount = 25;
 var dawndusk = [255, 200, 100];
 var daytime = [100, 200, 255];
 var nighttime = [100, 100, 200];
-// discography
-var discography = []
+// various item menus
 var contentStringArr;
-var coverWidth = 200;
+var squareItemImageWidth = 200;
+var nextItem, previousItem;
+// discography
+var discography = [];
 var albumPointer = 0;
-var nextAlbum, previousAlbum;
 // posts
 var posts = [];
 var postDiv;
+// demos
+var demos = [];
+var demoPointer = 0;
+
+class myDemoItem {
+  constructor(title, image, link, content) {
+    this.content = ' ';
+    if (!(content === null)){
+      this.content = content.slice(content.indexOf("[description]") + "[description]".length);
+      this.content = this.content.slice(0, this.content.indexOf("[description]"));
+      while (this.content.indexOf('&lt;') != -1) {
+        this.content = this.content.replace('&lt;', '<');
+      }
+      while (this.content.indexOf('&gt;') != -1) {
+        this.content = this.content.replace('&gt;', '>');
+      }
+    }
+    this.content += '<br> <br> <em>Some of these demos may not provide the best experience on mobile devices.</em>'
+
+    this.title = title.slice('title '.length);
+    this.image = image.slice('image '.length);
+    this.link = link.slice('link '.length);
+    this.linkHTML = '<a href="' + this.link + '">' + this.title + '</a>';
+    this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
+    this.divString = this.linkHTML;
+    this.div = createDiv(this.divString);
+  }
+  updateDiv() {
+    this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
+    this.divString = this.imageHTML + '<br>' + this.linkHTML + '<br> <br>' + this.content;
+    this.div.remove();
+    this.div = createDiv(this.divString);
+    this.div.style('font-size', textSize() + 'px');
+    this.div.style('font-family', "'courier new', courier");
+    this.div.style('overflow', "auto");
+    this.div.size(squareItemImageWidth, windowHeight - (titleY - (titleHeight) + 2*border));
+    this.div.position(0, titleY - (titleHeight));
+    this.div.center('horizontal');
+    this.div.hide();
+  }
+}
 
 class myPost {
   constructor(title, date, link, tags) {
     this.title = title.slice('title '.length);
     this.date = date.slice('date '.length);
     this.link = link.slice('link '.length);
-    console.log(this.link);
     this.tags = tags;
     this.postHTML = '<a href="' + this.link + '">' + this.title + '</a><br><em>' + this.date;
     if (this.tags.length >= 1) {
@@ -55,12 +96,12 @@ class myDiscogEntry {
     this.title = title.slice('title '.length);
     this.artists = '<em>' + artists.slice('artists '.length) + '</em>';
     this.cover = cover.slice(cover.indexOf('/'));
-    this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + coverWidth + '">';
+    this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     // this.albumImage = loadImage('https://b38tn1k.com/' + this.cover);
     this.spotify = spotify.slice(spotify.indexOf('h'));
     this.spotifyHTML = '<a href="' + this.spotify + '">spotify</a>';
     this.applemusic = applemusic.slice(applemusic.indexOf('h'));
-    this.applemusicHTML = '<a href="' + this.applemusic + '">spple music</a>';
+    this.applemusicHTML = '<a href="' + this.applemusic + '">apple music</a>';
     this.bandcamp = bandcamp.slice(bandcamp.indexOf('h'));
     this.bandcampHTML = '<a href="' + this.bandcamp + '">bandcamp</a>';
     if (this.spotify.length < 2) {
@@ -82,13 +123,14 @@ class myDiscogEntry {
   }
 
   updateDiv() {
-    this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + coverWidth + '">';
+    this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     this.divString = this.coverHTML + '<br>' + this.title + '<br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
     this.div.remove();
     this.div = createDiv(this.divString);
     this.div.style('font-size', textSize() + 'px');
     this.div.style('font-family', "'courier new', courier");
-    this.div.size(coverWidth, AUTO);
+    this.div.style('overflow', "auto");
+    this.div.size(squareItemImageWidth, windowHeight - (titleY - (titleHeight) + 2*border));
     this.div.position(0, titleY - (titleHeight));
     this.div.center('horizontal');
     this.div.hide();
@@ -218,6 +260,7 @@ function setupScreen() {
   let y = (windowHeight - 2*border);
   view = createGraphics(x, y);
   gradient = createGraphics(x, y);
+  squareItemImageWidth = int(min(x, y)/2);
   // text setup
   centerX = int(width/2);
   centerY = int(height/2);
@@ -244,8 +287,8 @@ function setupScreen() {
     buttonX += xInt;
   }
   exitButton = new myButton('exit', null, int(width - 2.5*border), 2*border);
-  nextAlbum = new myButton('next', null, int(width - 4*border), buttonY);
-  previousAlbum = new myButton('prev', null, int(4*border), buttonY);
+  nextItem = new myButton('next', null, int(width - 4*border), buttonY);
+  previousItem = new myButton('prev', null, int(4*border), buttonY);
   // html setup
   titleDiv.remove();
   titleDiv = createDiv(titleDivString);
@@ -254,6 +297,9 @@ function setupScreen() {
   titleDiv.center('horizontal');
   for (let i = 0; i < discography.length; i++) {
     discography[i].updateDiv();
+  }
+  for (let i = 0; i < demos.length; i++) {
+    demos[i].updateDiv();
   }
   setupPostDiv();
   // invaders guy
@@ -271,15 +317,15 @@ function setupScreen() {
 function preload() {
   titleStringArr = loadStrings('textAssets/title.txt');
   titleDivStringArr  = loadStrings('textAssets/title.html');
-  contentStringArr = loadStrings('https://b38tn1k.com/map_for_p5/');
-  // contentStringArr = loadStrings('http://127.0.0.1:4000/map_for_p5/');
+  // contentStringArr = loadStrings('https://b38tn1k.com/map_for_p5/');
+  contentStringArr = loadStrings('http://127.0.0.1:4000/map_for_p5/');
 }
 
 function mousePressed() {
   mx = mouseX;
   my = mouseY;
-  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextAlbum, mx, my)) {
-    nextAlbum.clickCountDown = 2;
+  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextItem, mx, my)) {
+    nextItem.clickCountDown = 2;
     discography[albumPointer].div.hide();
     albumPointer += 1;
     if (albumPointer >= discography.length) {
@@ -289,8 +335,8 @@ function mousePressed() {
     return false;
 
   }
-  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(previousAlbum, mx, my)) {
-    previousAlbum.clickCountDown = 2;
+  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(previousItem, mx, my)) {
+    previousItem.clickCountDown = 2;
     discography[albumPointer].div.hide();
     albumPointer -= 1;
     if (albumPointer == -1) {
@@ -299,14 +345,38 @@ function mousePressed() {
     discography[albumPointer].div.show();
     return false;
   }
-  let res = false;
-  for (let i = 0; i < buttons.length; i++) {
-    res = buttonPressed(buttons[i], mx, my);
-    if (res === true) {
-      itemToShow = i;
-      showItem = true;
-      buttons[i].clickCountDown = 1;
-      return false;
+  if (showItem && buttonLabels[itemToShow] == 'demos' && buttonPressed(nextItem, mx, my)) {
+    nextItem.clickCountDown = 2;
+    demos[demoPointer].div.hide();
+    demoPointer += 1;
+    if (demoPointer >= demos.length) {
+      demoPointer = 0;
+    }
+    demos[demoPointer].div.show();
+    return false;
+
+  }
+  if (showItem && buttonLabels[itemToShow] == 'demos' && buttonPressed(previousItem, mx, my)) {
+    previousItem.clickCountDown = 2;
+    demos[demoPointer].div.hide();
+    demoPointer -= 1;
+    if (demoPointer == -1) {
+      demoPointer = demos.length-1;
+    }
+    demos[demoPointer].div.show();
+    return false;
+  }
+
+  if (!showItem) {
+    let res = false;
+    for (let i = 0; i < buttons.length; i++) {
+      res = buttonPressed(buttons[i], mx, my);
+      if (res === true) {
+        itemToShow = i;
+        showItem = true;
+        buttons[i].clickCountDown = 1;
+        return false;
+      }
     }
   }
   if (buttonPressed(exitButton, mx, my)){
@@ -318,6 +388,9 @@ function mousePressed() {
 
 function setupPosts(){
   let tempTitle, tempDate, tempLink;
+  tempTitle = null;
+  tempDate = null;
+  tempLink = null;
   let tempTags = [];
   let readingPosts = false;
   for (let i = 0; i < contentStringArr.length; i++) {
@@ -329,12 +402,14 @@ function setupPosts(){
         posts.push(new myPost(tempTitle, tempDate, tempLink, tempTags));
       }
       tempTitle = null;
+      tempDate = null;
+      tempLink = null;
       tempTags = [];
     }
     if(readingPosts) {
-      if (contentStringArr[i].includes('title')){ tempTitle = contentStringArr[i];}
-      else if (contentStringArr[i].includes('date')){ tempDate = contentStringArr[i];}
-      else if (contentStringArr[i].includes('link')){ tempLink = contentStringArr[i];}
+      if (contentStringArr[i].includes('title') && tempTitle === null){ tempTitle = contentStringArr[i];}
+      else if (contentStringArr[i].includes('date') && tempDate === null){ tempDate = contentStringArr[i];}
+      else if (contentStringArr[i].includes('link') && tempLink === null){ tempLink = contentStringArr[i];}
       else if (contentStringArr[i].includes('$ ')){
         let mySliceString = contentStringArr[i];
         mySliceString = mySliceString.slice(mySliceString.indexOf('$ ') + 2); // removing weird spacing stuff
@@ -364,6 +439,13 @@ function setupPostDiv() {
 
 function setupDiscog() {
     let tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate;
+    tempTitle = null;
+    tempArtists= null;
+    tempCover= null;
+    tempSpot= null;
+    tempApp= null;
+    tempBC= null;
+    tempDate= null;
     let readingDiscog = false
     for (let i = 0; i < contentStringArr.length; i++) {
       if (contentStringArr[i].includes('startrelease')) {
@@ -373,10 +455,13 @@ function setupDiscog() {
         if (!(tempTitle === null)) {
           discography.push(new myDiscogEntry(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate));
         }
-        tempSpot = null;
-        tempApp = null;
-        tempBC = null;
         tempTitle = null;
+        tempArtists= null;
+        tempCover= null;
+        tempSpot= null;
+        tempApp= null;
+        tempBC= null;
+        tempDate= null;
       }
       if (readingDiscog){
         if (contentStringArr[i].includes('title')){ tempTitle = contentStringArr[i];}
@@ -388,6 +473,38 @@ function setupDiscog() {
         else if (contentStringArr[i].includes('date')){ tempDate = contentStringArr[i];}
       }
     }
+}
+
+function setupDemos() {
+  let tempTitle, tempImage, tempLink, tempContent;
+  tempTitle = null;
+  tempImage = null;
+  tempContent = null;
+  tempLink = null;
+  let readingDemos = false;
+  let readingContent = false;
+  for (let i = 0; i < contentStringArr.length; i++) {
+    if (contentStringArr[i].includes('startdemo')) {
+      readingDemos = true;
+    } else if (contentStringArr[i].includes('enddemo')) {
+      readingDemos = false;
+      if (!(tempTitle === null)) {
+        demos.push(new myDemoItem(tempTitle, tempImage, tempLink, tempContent));
+      }
+      tempTitle = null;
+      tempImage = null;
+      tempContent = null;
+      tempLink = null;
+      readingContent = false;
+    }
+    if (readingDemos){
+      if (readingContent) (tempContent += contentStringArr[i]);
+      if (contentStringArr[i].includes('title')&& tempTitle === null){ tempTitle = contentStringArr[i];}
+      else if (contentStringArr[i].includes('image') && tempImage === null){ tempImage = contentStringArr[i];}
+      else if (contentStringArr[i].includes('link') && tempLink === null){ tempLink = contentStringArr[i];}
+      else if (contentStringArr[i].includes('content')){readingContent = true;}
+    }
+  }
 }
 
 function drawSprites() {
@@ -428,10 +545,15 @@ function drawButton(button) {
 }
 
 function drawBorder(g){
-  g.stroke(0);
-  g.strokeWeight(2);
-  g.noFill();
-  g.rect(0, 0, g.width, g.height);
+  stroke(0);
+  strokeWeight(2);
+  noFill();
+  rect(centerX, centerY, g.width, g.height);
+
+  // g.stroke(0);
+  // g.strokeWeight(1);
+  // g.noFill();
+  // g.rect(1, 1, g.width-1, g.height-1);
 }
 
 function buttonPressed(button, mx, my){
@@ -471,14 +593,8 @@ function setup() {
   postDiv = createDiv('blank');
   setupDiscog();
   setupPosts();
+  setupDemos();
   setupPostDiv();
-
-  // for (let i = 0; i < discography.length; i++) {
-  //   console.log(discography[i].title);
-  // }
-  // for (let i = 0; i < posts.length; i++) {
-  //   console.log(posts[i].title);
-  // }
   setupScreen();
   frameRate(5);
 
@@ -495,8 +611,8 @@ function draw(){
     view.fill(255, 255, 255, 100);
     view.rect(0, 0, view.width, view.height);
   }
-  drawBorder(view);
   image(view, centerX, centerY);
+  drawBorder(view);
 
   // fill(255, 255, 0);
   // text(titleString, centerX, titleY);
@@ -508,14 +624,18 @@ function draw(){
     drawButton(exitButton);
     if (buttonLabels[itemToShow] == 'music'){
       discography[albumPointer].div.show();
-      drawButton(nextAlbum);
-      drawButton(previousAlbum);
+      drawButton(nextItem);
+      drawButton(previousItem);
     } else if (buttonLabels[itemToShow] == 'blog'){
       postDiv.show();
-      // other things
+    } else if (buttonLabels[itemToShow] == 'demos') {
+      drawButton(nextItem);
+      drawButton(previousItem);
+      demos[demoPointer].div.show();
     }
   } else {
     discography[albumPointer].div.hide();
+    demos[demoPointer].div.hide();
     postDiv.hide();
     titleDiv.show();
     drawButtons();

@@ -271,8 +271,8 @@ function setupScreen() {
 function preload() {
   titleStringArr = loadStrings('textAssets/title.txt');
   titleDivStringArr  = loadStrings('textAssets/title.html');
-  // contentStringArr = loadStrings('https://b38tn1k.com/map_for_p5/');
-  contentStringArr = loadStrings('http://127.0.0.1:4000/map_for_p5/');
+  contentStringArr = loadStrings('https://b38tn1k.com/map_for_p5/');
+  // contentStringArr = loadStrings('http://127.0.0.1:4000/map_for_p5/');
 }
 
 function mousePressed() {

@@ -14,5 +14,10 @@ title: internal_map
     date {{ post.date | date_to_string }}
     endrelease
   {% else %}
+    startpost
+    {{ post.title }}
+    {{ post.url }}
+    {{ post.date | date_to_string }}
+    endpost
   {% endif %}
 {% endfor %}

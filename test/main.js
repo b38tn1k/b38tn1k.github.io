@@ -23,7 +23,7 @@ var daytime = [100, 200, 255];
 var nighttime = [100, 100, 200];
 // discography
 var discography = []
-var discogStringArr;
+var contentStringArr;
 var coverWidth = 200;
 var albumPointer = 0;
 var nextAlbum, previousAlbum;
@@ -189,6 +189,7 @@ function drawGradient(rgb){
 }
 
 function setupScreen() {
+  console.log(windowWidth, windowHeight);
   let colorOfTheTime;
   if (hour() > 7 && hour() <= 17) {
     colorOfTheTime = daytime;
@@ -256,8 +257,8 @@ function setupScreen() {
 function preload() {
   titleStringArr = loadStrings('textAssets/title.txt');
   titleDivStringArr  = loadStrings('textAssets/title.html');
-  discogStringArr = loadStrings('https://b38tn1k.com/release_map/');
-  // discogStringArr = loadStrings('http://127.0.0.1:4000/release_map/');
+  contentStringArr = loadStrings('https://b38tn1k.com/map_for_p5/');
+  // contentStringArr = loadStrings('http://127.0.0.1:4000/map_for_p5/');
 }
 
 function mousePressed() {
@@ -304,10 +305,10 @@ function mousePressed() {
 function setupDiscog() {
     let tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate;
     let readingDiscog = false
-    for (let i = 0; i < discogStringArr.length; i++) {
-      if (discogStringArr[i].includes('startrelease')) {
+    for (let i = 0; i < contentStringArr.length; i++) {
+      if (contentStringArr[i].includes('startrelease')) {
         readingDiscog = true;
-      } else if (discogStringArr[i].includes('endrelease')) {
+      } else if (contentStringArr[i].includes('endrelease')) {
         readingDiscog = false;
         if (!(tempTitle === null)) {
           discography.push(new myAlbum(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate));
@@ -318,13 +319,13 @@ function setupDiscog() {
         tempTitle = null;
       }
       if (readingDiscog){
-        if (discogStringArr[i].includes('title')){ tempTitle = discogStringArr[i];}
-        if (discogStringArr[i].includes('artists')){ tempArtists = discogStringArr[i];}
-        if (discogStringArr[i].includes('cover')){ tempCover = discogStringArr[i];}
-        if (discogStringArr[i].includes('spoti')){ tempSpot = discogStringArr[i];}
-        if (discogStringArr[i].includes('applem')){ tempApp = discogStringArr[i];}
-        if (discogStringArr[i].includes('bandcam')){ tempBC = discogStringArr[i];}
-        if (discogStringArr[i].includes('date')){ tempDate = discogStringArr[i];}
+        if (contentStringArr[i].includes('title')){ tempTitle = contentStringArr[i];}
+        if (contentStringArr[i].includes('artists')){ tempArtists = contentStringArr[i];}
+        if (contentStringArr[i].includes('cover')){ tempCover = contentStringArr[i];}
+        if (contentStringArr[i].includes('spoti')){ tempSpot = contentStringArr[i];}
+        if (contentStringArr[i].includes('applem')){ tempApp = contentStringArr[i];}
+        if (contentStringArr[i].includes('bandcam')){ tempBC = contentStringArr[i];}
+        if (contentStringArr[i].includes('date')){ tempDate = contentStringArr[i];}
       }
     }
 }

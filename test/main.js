@@ -35,8 +35,18 @@ class myPost {
   constructor(title, date, link, tags) {
     this.title = title.slice('title '.length);
     this.date = date.slice('date '.length);
-    this.date = date.slice('link '.length);
+    this.link = link.slice('link '.length);
+    console.log(this.link);
     this.tags = tags;
+    this.postHTML = '<a href="' + this.link + '">' + this.title + '</a><br><em>' + this.date;
+    if (this.tags.length >= 1) {
+      this.postHTML+= ' - ';
+      for (let i = 0; i < tags.length-1; i++) {
+        this.postHTML+= this.tags[i] + ', ';
+      }
+      this.postHTML += this.tags[tags.length-1] + '</em><br>';
+    }
+    this.postHTML+= '</em><br>';
   }
 }
 
@@ -245,6 +255,7 @@ function setupScreen() {
   for (let i = 0; i < discography.length; i++) {
     discography[i].updateDiv();
   }
+  setupPostDiv();
   // invaders guy
   sprites = [];
   let spritePixelSize = int(max(3, tSize/12));
@@ -334,11 +345,21 @@ function setupPosts(){
 }
 
 function setupPostDiv() {
+  let divString = '';
   for (let i = 0; i < posts.length; i++) {
-    console.log(posts[i].title);
-    console.log(posts[i].tags);
-    console.log('');
+    divString += posts[i].postHTML;
   }
+  postDiv.remove();
+  postDiv = createDiv(divString);
+  postDiv.style('font-size', textSize() + 'px');
+  postDiv.style('font-family', "'courier new', courier");
+  postDiv.style('font-family', "'courier new', courier");
+  postDiv.style('overflow', "auto");
+  postDiv.size(int(windowWidth / 2), windowHeight - (titleY - (titleHeight) + 2*border));
+  postDiv.position(0, titleY - (titleHeight));
+  postDiv.center('horizontal');
+  postDiv.hide();
+  // console.log(divString);
 }
 
 function setupDiscog() {
@@ -447,6 +468,7 @@ function setup() {
   titleString = unpackStringArray(titleStringArr, '\n');
   titleDivString = unpackStringArray(titleDivStringArr);
   titleDiv = createDiv(titleDivString);
+  postDiv = createDiv('blank');
   setupDiscog();
   setupPosts();
   setupPostDiv();
@@ -488,11 +510,13 @@ function draw(){
       discography[albumPointer].div.show();
       drawButton(nextAlbum);
       drawButton(previousAlbum);
-    } else {
+    } else if (buttonLabels[itemToShow] == 'blog'){
+      postDiv.show();
       // other things
     }
   } else {
     discography[albumPointer].div.hide();
+    postDiv.hide();
     titleDiv.show();
     drawButtons();
   }

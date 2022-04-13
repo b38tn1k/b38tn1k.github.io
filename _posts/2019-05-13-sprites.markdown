@@ -6,4 +6,5 @@ tags: demo
 image: 'https://b38tn1k.com/images/previews/sprites.png'
 link: 'https://b38tn1k.com/sprites/'
 ---
+
 Sprite assets I have made for various games and friends. Updated randomly when I make more. Feel free to use them!

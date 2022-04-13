@@ -20,7 +20,8 @@ title: internal_map
     title {{ post.title}}
     image {{ post.image}}
     link {{ post.link}}
-    startcontent {{ post.content}}
+    startcontent
+    {{ post.content }}
     enddemo
 
     {% else %}

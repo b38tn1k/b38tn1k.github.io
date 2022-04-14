@@ -6,7 +6,7 @@ tags: releasehidden
 spotify:
 bandcamp: "http://doab.bandcamp.com/album/oakland-5"
 applemusic:
-albumcover: "img/doab-5.jpeg"
+albumcover: "/img/doab-5.jpeg"
 artists: drunk on a bike
 ---
 <iframe style="border: 0; width: 350px; height: 470px;" src="https://bandcamp.com/EmbeddedPlayer/album=2591111344/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/transparent=true/" seamless><a href="http://doab.bandcamp.com/album/oakland-5">Oakland 5 by drunk on a bike</a></iframe>

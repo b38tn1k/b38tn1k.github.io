@@ -6,6 +6,6 @@ tags: releasehidden
 spotify:
 bandcamp: "http://doab.bandcamp.com/album/oakland-7"
 applemusic:
-albumcover: "img/doab-7.jpeg"
+albumcover: "/img/doab-7.jpeg"
 artists: drunk on a bike
 ---

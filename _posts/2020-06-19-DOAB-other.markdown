@@ -6,6 +6,6 @@ tags: releasehidden
 spotify:
 bandcamp: "http://doab.bandcamp.com/album/other"
 applemusic:
-albumcover: "img/doab-other.jpeg"
+albumcover: "/img/doab-other.jpeg"
 artists: drunk on a bike
 ---

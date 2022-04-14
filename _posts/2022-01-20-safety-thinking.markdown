@@ -11,7 +11,7 @@ sitemap:
   exclude: 'yes'
 ---
 
-I work in robotics research. My team and I focus on applying emerging robotics tech to IRL applications. The nature of this work requires us to figure out what various robots can do and how that could be useful. This work requires experimenting with robots and occasionally breaking them. Breaking stuff is something that happens in research. Sometimes the best way to learn is to break something (even if you didn't intend to). Breaking robots is expensive, can create project blockers, and, without proper planning, can be dangerous.
+I work in robotics research. My team and I focus on finding real world applications for emerging robotics technologies. The nature of this work requires us to figure out what various robots can do and how that could be useful. This work requires experimenting with robots and occasionally breaking them. Breaking stuff is something that happens in research. Sometimes the best way to learn is to break something (even if you didn't intend to). Breaking robots is expensive, can create project blockers, and, without proper planning, can be dangerous.
 
 The majority of robots my team work on are unstable when they lose power. Remove the compute or power from a hovering drone or standing legged robot and it crashes to the ground. sad face. Different robots have different applications, capabilities, and limitations. Planning a safe experiment should always begin with consideration of the specific characteristics of the robot; determining an operating procedure. But there are also many commonalities between robots.
 

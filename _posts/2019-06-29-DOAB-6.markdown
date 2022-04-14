@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "Oakland 6"
+date:   2019-06-29
+tags: releasehidden
+spotify:
+bandcamp: "http://doab.bandcamp.com/album/oakland-6"
+applemusic:
+albumcover: "img/doab-6.jpeg"
+artists: drunk on a bike
+---

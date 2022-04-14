@@ -1,8 +1,12 @@
 ---
 layout: post
-title:  "DOAB: Oakland Two"
+title:  "Oakland Two"
 date:   2018-04-13
-categories: music
-comments: True
+tags: releasehidden
+spotify:
+bandcamp: "http://doab.bandcamp.com/album/oakland-two"
+applemusic:
+albumcover: "img/doab-2.jpeg"
+artists: drunk on a bike
 ---
 <iframe style="border: 0; width: 350px; height: 470px;" src="https://bandcamp.com/EmbeddedPlayer/album=386704446/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/transparent=true/" seamless><a href="http://doab.bandcamp.com/album/oakland-two">Oakland Two by drunk on a bike</a></iframe>

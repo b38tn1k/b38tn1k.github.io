@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "Oakland 7"
+date:   2020-01-01
+tags: releasehidden
+spotify:
+bandcamp: "http://doab.bandcamp.com/album/oakland-7"
+applemusic:
+albumcover: "img/doab-7.jpeg"
+artists: drunk on a bike
+---

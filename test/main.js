@@ -580,6 +580,17 @@ function setupDemos() {
 
 function drawSprites() {
   for (let i = 0; i < sprites.length; i++){
+    if (showItem) {
+      if ((sprites[i][1] <= width/2) && (sprites[i][1] > width/8)) {
+        sprites[i][3] = -1;
+      } else if ((sprites[i][1] > width/2) && (sprites[i][1] < 2*(width/3))) {
+        sprites[i][3] = 1;
+      } else {
+        if (frameCount % sprites[i][5] == 0) {
+          sprites[i][3] = int(random(-2, 2));
+        }
+      }
+    }
     view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
     sprites[i][1] += sprites[i][3] * sprites[i][6];
     sprites[i][2] += sprites[i][4] * sprites[i][6];
@@ -684,8 +695,6 @@ function draw(){
   if (showBackground) {
     image(view, centerX, centerY);
   }
-
-
   // fill(255, 255, 0);
   // text(titleString, centerX, titleY);
   textStyle(BOLD);

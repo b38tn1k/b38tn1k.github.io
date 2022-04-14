@@ -67,7 +67,7 @@ class myDemoItem {
   }
   updateDiv() {
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
-    this.divString = this.imageHTML + '<br>' + this.linkHTML + '<br> <br>' + this.content;
+    this.divString = this.imageHTML + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content;
     this.div.remove();
     this.div = createDiv(this.divString);
     this.div.style('font-size', textSize() + 'px');
@@ -129,16 +129,17 @@ class myDiscogEntry {
       this.bandcampHTML = "";
     }
     this.date = date.slice('date '.length);
-    this.divString = this.coverHTML + '<br>' + this.title + '<br>' + this.artists + '<br>' + this.date + '<br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
-    this.div = createDiv(this.divString);
+    let divString = this.coverHTML + '<br>' + this.title + '<br>' + this.artists + '<br>' + this.date + '<br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
+    this.div = createDiv(divString);
     this.div.hide();
   }
 
   updateDiv() {
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
-    this.divString = this.coverHTML + '<br>' + this.title + '<br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
+    let divString = this.coverHTML + '<br><strong>' + this.title + '</strong><br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
     this.div.remove();
-    this.div = createDiv(this.divString);
+
+    this.div = createDiv(divString);
     this.div.style('font-size', textSize() + 'px');
     this.div.style('font-family', "'courier new', courier");
     if (invertColors) {
@@ -348,8 +349,9 @@ function setupScreen() {
   setupPostDiv();
   // invaders guy
   // showBackgroundButton = new myButton('background: ON', null, int(height-1.5*border), width - (border + 'background: OFF'.length), true);
-  showBackgroundButton = new myButton('BG: OFF', null, width - (border + textWidth('BG: OFF ')/2 + 1), int(height-border - 2 - textSize()/2), true);
-  invertColorsButton = new myButton('dark ', null, showBackgroundButton.x - (2 * textWidth('light')), int(height-border - 2 - textSize()/2), true);
+  showBackgroundButton = new myButton('BG: OFF', null, width - (border + textWidth('BG: OFF ')/2 + 1), int(height-border - textSize()/2), true);
+  // invertColorsButton = new myButton('dark ', null, showBackgroundButton.x - (2 * textWidth('light')), int(height-border - 2 - textSize()/2), true);
+  invertColorsButton = new myButton('dark ', null, (border + 3 + (textWidth('light')/2)), int(height-border - textSize()/2), true);
   if (invertColors) {
     invertColorsButton.label = 'light';
   } else {
@@ -387,6 +389,7 @@ function mousePressed() {
   }
   if (buttonPressed(invertColorsButton, mx, my)){
     invertColors = !invertColors;
+    if (invertColors) {showBackground = false;}
     setupScreen();
     return false;
   }

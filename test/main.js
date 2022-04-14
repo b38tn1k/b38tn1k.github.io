@@ -430,7 +430,7 @@ function setupPostDiv() {
   postDiv.style('font-family', "'courier new', courier");
   postDiv.style('font-family', "'courier new', courier");
   postDiv.style('overflow', "auto");
-  postDiv.size(int(windowWidth / 2), windowHeight - (titleY - (titleHeight) + 2*border));
+  postDiv.size(int(windowWidth / 2), windowHeight - 4* border);//- (titleY - (titleHeight) + 2*border));
   postDiv.position(0, border*2);//titleY - (titleHeight));
   postDiv.center('horizontal');
   postDiv.hide();

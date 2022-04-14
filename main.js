@@ -187,10 +187,18 @@ class myButton {
       this.height = int(textSize());
       this.width = textWidth(label + ' ');
     }
-    this.x_min = x - (this.width/2);
-    this.x_max = x + (this.width/2);
-    this.y_min = y - (this.height/2);
-    this.y_max= y + (this.height/2);
+    if (! small) {
+      this.x_min = x - (this.width/2);
+      this.x_max = x + (this.width/2);
+      this.y_min = y - (this.height/2);
+      this.y_max= y + (this.height/2);
+    } else {
+      this.x_min = x - (this.width);
+      this.x_max = x + (this.width);
+      this.y_min = y - (this.height);
+      this.y_max= y + (this.height);
+    }
+
     this.clickCountDown = 0;
   }
 }

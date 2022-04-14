@@ -62,18 +62,22 @@ class myDemoItem {
     this.link = link.slice('link '.length);
     this.linkHTML = '<a href="' + this.link + '">' + this.title + '</a>';
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
-    this.divString = this.linkHTML;
-    this.div = createDiv(this.divString);
+    let divString = this.linkHTML;
+    this.div = createDiv(divString);
   }
   updateDiv() {
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
-    this.divString = this.imageHTML + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content;
+    let divString = this.imageHTML + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content;
+    if (invertColors) {
+      divString = '<style> a { color: #AAFFAA; } </style>' + divString;
+    }
     this.div.remove();
-    this.div = createDiv(this.divString);
+    this.div = createDiv(divString);
     this.div.style('font-size', textSize() + 'px');
     this.div.style('font-family', "'courier new', courier");
     this.div.style('overflow', "auto");
     if (invertColors) {
+      this.div.style('background-color', 'rgba(0, 0, 0, 0.3)')
       this.div.style('color', 'white');
     } else {
       this.div.style('color', 'black');
@@ -138,12 +142,16 @@ class myDiscogEntry {
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     let divString = this.coverHTML + '<br><strong>' + this.title + '</strong><br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
     this.div.remove();
+    if (invertColors) {
+      divString = '<style> a { color: #AAFFAA; } </style>' + divString;
+    }
 
     this.div = createDiv(divString);
     this.div.style('font-size', textSize() + 'px');
     this.div.style('font-family', "'courier new', courier");
     if (invertColors) {
       this.div.style('color', 'white');
+      this.div.style('background-color', 'rgba(0, 0, 0, 0.3)')
     } else {
       this.div.style('color', 'black');
     }
@@ -342,6 +350,7 @@ function setupScreen() {
   titleDiv.style('font-size', tSize + 'px');
   if (invertColors) {
     titleDiv.style('color', 'white');
+    titleDiv.style('background-color', 'rgba(0, 0, 0, 0.3)')
   } else {
     titleDiv.style('color', 'black');
   }

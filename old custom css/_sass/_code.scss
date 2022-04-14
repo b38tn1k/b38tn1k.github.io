@@ -11,8 +11,8 @@ pre {
 code {
   padding: .25em .5em;
   font-size: 85%;
-  color: #bf616a;
-  background-color: #f9f9f9;
+  color: #fff;
+  background-color: #515151;
   border-radius: 3px;
 }
 
@@ -34,7 +34,7 @@ pre code {
   margin-bottom: 1rem;
   font-size: .8rem;
   line-height: 1.4;
-  background-color: #f9f9f9;
+  background-color: #515151;
   border-radius: .25rem;
 
   pre {
@@ -46,7 +46,7 @@ pre code {
     display: inline-block; // Ensures the null space also isn't selectable
     padding-right: .75rem;
     padding-left: .25rem;
-    color: #999;
+    color: #f0f;
     // Make sure numbers aren't selectable
     -webkit-user-select: none;
        -moz-user-select: none;

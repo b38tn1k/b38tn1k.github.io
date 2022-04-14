@@ -30,6 +30,6 @@ gems: [jekyll-paginate]
 
 pages_list:
   # Hello!: '/about'
-  Archive: '/archive'
+  # Archive: '/archive'
   # Topics: '/categories/'
-  Music: '/stream/'
+  # Music: '/stream/'

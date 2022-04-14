@@ -1,6 +1,8 @@
 // graphics
 var view, border, gradient;
 var centerX, centerY, titleY, buttonY;
+var bgColor, fgColor, transparent;
+
 // strings
 var titleStringArr = [];
 var titleString = '';
@@ -15,6 +17,11 @@ var exitButton;
 var buttonLinks = [null, null, null];
 var showItem = false;
 var itemToShow;
+//a11y
+var showBackgroundButton;
+var showBackground = true;
+var invertColorsButton;
+var invertColors = false;
 // some fun
 var sprites = [];
 var spriteCount = 25;
@@ -35,6 +42,7 @@ var postDiv;
 var demos = [];
 var demoPointer = 0;
 
+
 class myDemoItem {
   constructor(title, image, link, content) {
     this.content = ' ';
@@ -49,7 +57,6 @@ class myDemoItem {
       }
     }
     this.content += '<br> <br> <em>Some of these demos may not provide the best experience on mobile devices.</em>'
-
     this.title = title.slice('title '.length);
     this.image = image.slice('image '.length);
     this.link = link.slice('link '.length);
@@ -66,6 +73,11 @@ class myDemoItem {
     this.div.style('font-size', textSize() + 'px');
     this.div.style('font-family', "'courier new', courier");
     this.div.style('overflow', "auto");
+    if (invertColors) {
+      this.div.style('color', 'white');
+    } else {
+      this.div.style('color', 'black');
+    }
     this.div.size(squareItemImageWidth, windowHeight - (titleY - (titleHeight) + 2*border));
     this.div.position(0, titleY - (titleHeight));
     this.div.center('horizontal');
@@ -129,6 +141,11 @@ class myDiscogEntry {
     this.div = createDiv(this.divString);
     this.div.style('font-size', textSize() + 'px');
     this.div.style('font-family', "'courier new', courier");
+    if (invertColors) {
+      this.div.style('color', 'white');
+    } else {
+      this.div.style('color', 'black');
+    }
     this.div.style('overflow', "auto");
     this.div.size(squareItemImageWidth, windowHeight - (titleY - (titleHeight) + 2*border));
     this.div.position(0, titleY - (titleHeight));
@@ -138,26 +155,37 @@ class myDiscogEntry {
 }
 
 class myButton {
-  constructor(label, link, x, y) {
+  constructor(label, link, x, y, small = false) {
     this.name = label;
     this.link = link;
+    this.small = small;
     if (!(link === null)) {
       // figure out how to handle links that look like buttons here
     }
-    this.label = '|';
-    for (let i = 0; i < label.length + 2; i++) {
-      this.label += '-';
+    if (small) {
+      this.label = label;
+    } else {
+      this.label = '|';
+      for (let i = 0; i < label.length + 2; i++) {
+        this.label += '-';
+      }
+      this.label += '|\n| ' + label + ' |\n|';
+      for (let i = 0; i < label.length + 2; i++) {
+        this.label += '-';
+      }
+      this.label += '|';
     }
-    this.label += '|\n| ' + label + ' |\n|';
-    for (let i = 0; i < label.length + 2; i++) {
-      this.label += '-';
-    }
-    this.label += '|';
-    // this.label = label;
     this.x = x;
     this.y = y;
-    this.width = textWidth('|-' + label + '-|');
-    this.height = int(3.5 * textSize());
+
+
+    if (! small) {
+      this.height = int(3.5 * textSize());
+      this.width = textWidth('|-' + label + '-|');
+    } else {
+      this.height = int(textSize());
+      this.width = textWidth(label + ' ');
+    }
     this.x_min = x - (this.width/2);
     this.x_max = x + (this.width/2);
     this.y_min = y - (this.height/2);
@@ -225,7 +253,7 @@ function genSprite(spriteWidth, spriteHeight, pixelSize, color) {
 }
 
 function drawGradient(rgb){
-  let c1 = color(255, 255, 255);
+  let c1 = bgColor;
   let c2 = color(rgb[0], rgb[1], rgb[2]);
   stroke(c1);
   gradient.background(c1);
@@ -245,6 +273,16 @@ function drawGradient(rgb){
 
 function setupScreen() {
   console.log(windowWidth, windowHeight);
+  if (!invertColors) {
+    bgColor = color(255);
+    fgColor = color(0);
+    transparent = 100;
+  } else {
+    bgColor = color(0);
+    fgColor = color(255);
+    transparent = 0;
+  }
+
   let colorOfTheTime;
   if (hour() > 7 && hour() <= 17) {
     colorOfTheTime = daytime;
@@ -293,8 +331,14 @@ function setupScreen() {
   titleDiv.remove();
   titleDiv = createDiv(titleDivString);
   titleDiv.style('font-size', tSize + 'px');
+  if (invertColors) {
+    titleDiv.style('color', 'white');
+  } else {
+    titleDiv.style('color', 'black');
+  }
   titleDiv.position(0, titleY - (titleHeight));
   titleDiv.center('horizontal');
+
   for (let i = 0; i < discography.length; i++) {
     discography[i].updateDiv();
   }
@@ -303,14 +347,22 @@ function setupScreen() {
   }
   setupPostDiv();
   // invaders guy
+  // showBackgroundButton = new myButton('background: ON', null, int(height-1.5*border), width - (border + 'background: OFF'.length), true);
+  showBackgroundButton = new myButton('BG: OFF', null, width - (border + textWidth('BG: OFF ')/2 + 1), int(height-border - 2 - textSize()/2), true);
+  invertColorsButton = new myButton('dark ', null, showBackgroundButton.x - (2 * textWidth('light')), int(height-border - 2 - textSize()/2), true);
+  if (invertColors) {
+    invertColorsButton.label = 'light';
+  } else {
+    invertColorsButton.label = 'dark ';
+  }
   sprites = [];
   let spritePixelSize = int(max(3, tSize/12));
   for (let i = 0; i < spriteCount; i++){
     sprites.push([genSprite(8, 5, spritePixelSize, colorOfTheTime), random(view.width), random(view.height), int(random(-2, 2)), 1, int(random(50, 100)), spritePixelSize]);
   }
   // prettify
-  background(255);
-  view.background(255);
+  background(bgColor);
+  view.background(bgColor);
   drawGradient(colorOfTheTime);
 }
 
@@ -324,6 +376,20 @@ function preload() {
 function mousePressed() {
   mx = mouseX;
   my = mouseY;
+  if (buttonPressed(showBackgroundButton, mx, my)){
+    showBackground = !showBackground;
+    if (showBackground) {
+      showBackgroundButton.label = 'BG: OFF ';
+    } else {
+      showBackgroundButton.label = 'BG: ON ';
+    }
+    return false;
+  }
+  if (buttonPressed(invertColorsButton, mx, my)){
+    invertColors = !invertColors;
+    setupScreen();
+    return false;
+  }
   if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextItem, mx, my)) {
     nextItem.clickCountDown = 2;
     discography[albumPointer].div.hide();
@@ -429,6 +495,11 @@ function setupPostDiv() {
   postDiv.style('font-size', textSize() + 'px');
   postDiv.style('font-family', "'courier new', courier");
   postDiv.style('font-family', "'courier new', courier");
+  if (invertColors) {
+    postDiv.style('color', 'white');
+  } else {
+    postDiv.style('color', 'black');
+  }
   postDiv.style('overflow', "auto");
   postDiv.size(int(windowWidth / 2), windowHeight - 4* border);//- (titleY - (titleHeight) + 2*border));
   postDiv.position(0, border*2);//titleY - (titleHeight));
@@ -531,29 +602,24 @@ function drawButtons() {
 
 function drawButton(button) {
   if (button.clickCountDown > 0) {
-    fill(0);
+    fill(fgColor);
     rect(button.x, button.y, button.width, button.height)
-    fill(255);
+    fill(bgColor);
     text(button.label, button.x, button.y);
     button.clickCountDown -= 1;
   } else {
-    fill(255, 255, 255, 100);
+    fill(255, 255, 255, transparent);
     rect(button.x, button.y, button.width, button.height)
-    fill(0);
+    fill(fgColor);
     text(button.label, button.x, button.y);
   }
 }
 
 function drawBorder(g){
-  stroke(0);
+  stroke(fgColor);
   strokeWeight(2);
   noFill();
   rect(centerX, centerY, g.width, g.height);
-
-  // g.stroke(0);
-  // g.strokeWeight(1);
-  // g.noFill();
-  // g.rect(1, 1, g.width-1, g.height-1);
 }
 
 function buttonPressed(button, mx, my){
@@ -597,7 +663,6 @@ function setup() {
   setupPostDiv();
   setupScreen();
   frameRate(5);
-
 }
 
 function draw(){
@@ -605,14 +670,21 @@ function draw(){
   textAlign(CENTER, CENTER);
   textStyle(NORMAL);
   rectMode(CENTER);
-  view.image(gradient, 0, 0);
-  drawSprites();
+  if (showBackground) {
+    view.image(gradient, 0, 0);
+    drawSprites();
+  } else {
+    background(bgColor);
+  }
+
   if (showItem) {
-    view.fill(255, 255, 255, 100);
+    view.fill(255, 255, 255, transparent);
     view.rect(0, 0, view.width, view.height);
   }
-  image(view, centerX, centerY);
-  drawBorder(view);
+  if (showBackground) {
+    image(view, centerX, centerY);
+  }
+
 
   // fill(255, 255, 0);
   // text(titleString, centerX, titleY);
@@ -640,6 +712,10 @@ function draw(){
     titleDiv.show();
     drawButtons();
   }
+  drawButton(showBackgroundButton);
+  drawButton(invertColorsButton);
+  drawBorder(view);
+
   // text('windowWidth: ' + windowWidth, 150, 10);
   // text('windowHeight: ' + windowHeight, 150, 30);
   // text('tSize: ' + textSize(), 150, 50);

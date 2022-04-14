@@ -91,7 +91,7 @@ class myPost {
     this.date = date.slice('date '.length);
     this.link = link.slice('link '.length);
     this.tags = tags;
-    this.postHTML = '<a href="' + this.link + '">' + this.title + '</a><br><em>' + this.date;
+    this.postHTML = '<strong><a href="' + this.link + '">' + this.title + '</a></strong><br><em>' + this.date;
     if (this.tags.length >= 1) {
       this.postHTML+= ' - ';
       for (let i = 0; i < tags.length-1; i++) {

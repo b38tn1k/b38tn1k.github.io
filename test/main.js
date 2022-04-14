@@ -276,7 +276,7 @@ function setupScreen() {
   if (!invertColors) {
     bgColor = color(255);
     fgColor = color(0);
-    transparent = 100;
+    transparent = 200;
   } else {
     bgColor = color(0);
     fgColor = color(255);

@@ -214,13 +214,13 @@ Prior to the group activity, a narrative of the safety event could be constructe
 
 Something like:
 
-'They were operating the robot manually and just drove it into a wall!'
+*'They were operating the robot manually and just drove it into a wall!'*
 
-'I was pressing the e-stop but the robot just kept going! Maybe there was radio interference? I almost wanted to run over and try stop it myself.'
+*'I was pressing the e-stop but the robot just kept going! Maybe there was radio interference? I almost wanted to run over and try stop it myself.'*
 
 Being compiled into:
 
-'The robot was in motion, operated under manual control. At some point, it stopped responding to control inputs, including the e-stop. Eventually, the robot collided with a wall. All present maintained a safe distance during the incident and no one was hurt. The collision cause the case to crack and damaged the mount location of the control computer.'
+*'The robot was in motion, operated under manual control. At some point, it stopped responding to control inputs, including the e-stop. Eventually, the robot collided with a wall. All present maintained a safe distance during the incident and no one was hurt. The collision cause the case to crack and damaged the mount location of the control computer.'*
 
 Using the group-focused Post-It / white-boarding application approach, it should be possible to crowdsource the root cause of a safety event using a prompted Fishbone Analysis of the incident. Something like this that can be covered with stickies:
 
@@ -235,6 +235,11 @@ Using the group-focused Post-It / white-boarding application approach, it should
 / ?        / Software   / Firmware   / Hardware    /               /
 ```
 Including operator(s) in the retro is my main concern here. Stuff like fatigue, distraction, or over-trusting a system, can happen to anyone. Making it the final prompt in the Fishbone may allow all other causes to be fully explored. Once a root cause is determined, jumping into the Kick-Off exercise from prompt 4 can be utilized to fill any gaps in the experiment plan, which can then be updated again by the lead researcher.
+
+So the idea is:
+- understand the sequence of events **without speculating on the cause**
+- find the failure in the experiment plan
+- update the experiment plan
 
 # Conclusions
 It feels like this method is working pretty well right now.

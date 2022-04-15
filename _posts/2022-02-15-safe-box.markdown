@@ -1,0 +1,16 @@
+---
+layout: post
+title:  "Apparatuses for securing drones during transport and methods of use"
+date:   2022-02-15
+categories: [robots, patent]
+comments: True
+sitemap:
+  lastmod: 2022-01-20
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
+---
+
+The trend for lower profile 'belly landing' drones created opportunities to stow them in new locations on the vehicle. Patent coauthor Nelson had the brilliant idea to gaffer-tape a cardboard box to the underside of the moonroof and launch a drone out of it. At the time we were very interested in tethered drones. [Full patent here.](https://patents.google.com/patent/US11247775B2/)
+
+![I love patent drawings]({{ site.url }}/images/patents/pancake.png)

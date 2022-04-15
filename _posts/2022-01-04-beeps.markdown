@@ -1,0 +1,18 @@
+---
+layout: post
+title:  "Systems and methods for secure transportation and safe deployment of unmanned aerial vehicles"
+date:   2022-01-04
+categories: [robots, patent]
+comments: True
+sitemap:
+  lastmod: 2022-01-20
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
+---
+
+There are some drone firmwares that are common (I'm a fan of PX4 and the whole Auterion ecosystem) but there isn't really any 'industry standard', *at least not yet*.
+
+So we made a drone box that could be reconfigured to hold different shapes of multicopters and hold them down until they tried to take off. FFT on an audio stream from a microphone is a super effective way to ID a different drone; they all spin a bit different, have different 'beeps' and prop/motor noises that the code could pick up and differentiate, even in high noise environments! Some really cool prototypes in this project. [Full patent here.](https://patents.google.com/patent/US11214367B2/)
+
+![I love patent drawings]({{ site.url }}/images/patents/beeps.png)

@@ -1,0 +1,16 @@
+---
+layout: post
+title:  "Apparatuses for precision loading of packages for last-mile autonomous delivery"
+date:   2020-11-03
+categories: [robots, patent]
+comments: True
+sitemap:
+  lastmod: 2022-01-20
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
+---
+
+Flipping boxes for easy grabbing. The prototype was much smaller than a typical drone (3D prints + servos). [Full patent here.](https://patents.google.com/patent/US10822184B2/)
+
+![I love patent drawings]({{ site.url }}/images/patents/flipper.png)

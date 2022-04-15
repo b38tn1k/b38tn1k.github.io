@@ -1,0 +1,16 @@
+---
+layout: post
+title:  "Vehicle mounted launcher for fixed-wing unmanned aerial vehicle"
+date:   2021-01-26
+categories: [robots, patent]
+comments: True
+sitemap:
+  lastmod: 2022-01-20
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
+---
+
+When I started at Ford, the lead scientist on my team, Adi, asked me 'what do you think would be more difficult? launching a multi-rotor from a moving vehicle or a fixed wing?' I said fixed wing and he said 'let's figure it out.' Give a new engineer access to a good makerspace and weird stuff gets built. [Full patent here.](https://patents.google.com/patent/US10899472B2/)
+
+![I love patent drawings]({{ site.url }}/images/patents/launcher.png)

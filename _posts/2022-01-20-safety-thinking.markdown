@@ -65,7 +65,7 @@ Typically, design sprints are used to achieve *something* in a predetermined tim
 ```
 
 ## Safety Sprint Kick Off
-Group creation of safe robot operating procedures can be done in-person using Post-Its or, more easily, a white-boarding app like Miro. The idea is to ~~force~~ allow everyone to contribute. A session opens with a 5 min presentation from the lead researcher on the robot hardware and planned application. Then the group works through a series of prompt questions. The answers to a prompt become inputs to the next prompt question (a digital white board with copy/paster is very useful here). A session looks like this:
+Group creation of safe robot operating procedures can be done in-person using Post-Its or, more easily, a white-boarding app like Miro. The idea is to ~~force~~ allow everyone to contribute. A session opens with a 5 min presentation from the lead researcher on the robot hardware and planned application. Then the group works through a series of prompt questions. The answers to a prompt become inputs to the next prompt question (a digital white board with copy/paster is very useful here). It is important that all people who will work on the robot are present for the Kick Off. A session looks like this:
 
 - Introduction by lead researcher
 - Group activity responding to prompts:
@@ -171,6 +171,7 @@ The lazy 'catch all' prompt at the end of the exercise that is preloaded with a 
 - Battery Charging
 - Storage of equipment when not in use
 - Training
+- Software
 - Emergency Contacts
 
 e.g.
@@ -194,6 +195,26 @@ Thank everyone involved in creating the plan and explain the concept of the Safe
 - How to conduct the session.
 - How to end a session and clean up.
 
-Additional approval steps from safety experts and committees can be obtained using the 'cleaned up' experiment plan.
+Additional approval steps from safety experts and committees can be obtained using the 'cleaned up' experiment plan. The cleaned up document should be shared out to everyone who helped create it. At this point, the entire group should feel some ownership of the safe experiment plan, or at least be very familiar with it.
 
-# Doing Research
+## Doing Research
+Doing research provides an opportunity to test the safe experiment plan. Improvements can be made at any point with the lead researcher being responsible for ensuring regular check-ins and conversations occur regarding the efficacy of the plan, and any notable gaps.
+
+### Onboarding
+Adding new members to the experiment team can be done using an abridged version of the Kick Off Session. The lead researcher takes the new team member through the Kick Off session, sharing the group answers after a brief discussion of each prompt.
+
+## Learning Event Retrospective
+The purpose of the Learning Event Retro is to find the gap in the initial plan that allowed a safety incident to occur. Once this gap is identified, the safe experiment plan should be updated. The Learning Event Retro is another group activity that should be scheduled in response to any safety incident that occurs during experimentation (including near misses). At this moment the structure of the Learning Event Retro is untested, so the procedure described may change in the future (I will post an update if so).
+
+Using the group-focused Post-It / white-boarding application approach, it is possible to crowdsource the root cause of a safety event using a prompted Fishbone Analysis of the incident. Something like this:
+
+```
+\ ?        \ Mission    \ Control    \ Comms       \  Environment  \
+ \          \ Parameters \ Device     \ System      \               \
+  \          \            \            \             \               \
+   \__________\____________\____________\_____________\_______________\___ Incident Outcome
+   /          /            /            /             /               /
+  /          /            /            /             /               /
+ /          / Control    / Robot      / Robot       / Operator      /
+/ ?        / Software   / Firmware   / Hardware    /               /
+```

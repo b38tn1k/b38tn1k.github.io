@@ -25,12 +25,7 @@ so.. back to codifying our safety approach. Creating the 'anti-guilt, anti-blame
 
 Providing the new group with a data dump of safety expert contacts, SOPs and root cause analysis reports seemed like assigning homework that probably wouldn't get done. Also, if one team member did their homework, how do they know the other team members did too? Just providing the information doesn't help create the culture. Building 'guilt resilience' into a group from scratch requires building trust; 'I know that you know that I know'.
 
-*so... cover the lab with informational posters!
-ehhh...
-um... group activities?
-maybe? probably?
-Is this, like, a UX problem?
-yeh, I guess*
+*so... cover the lab with informational posters! NO. MAYBE. group activities? maybe? probably? Is this, like, a UX problem?*
 
 **How do you rapidly create a safety-positive culture in a research group of new people?**
 
@@ -55,9 +50,9 @@ Typically, design sprints are used to achieve *something* in a predetermined tim
        │                                  │
        │                                  │
 ┌──────┴──────────┐              ┌────────▼──────┐
-│                 │              │               │────┐
-│  Retrospective  │              │  Do Research  │    │ Regular check-ins with the plan
-│                 │              │               │◄───┘
+│                 │              │               ├────┐  ┌─────────────────────────────────┐
+│  Retrospective  │              │  Do Research  │    │──┤ Regular check-ins with the plan │
+│                 │              │               │◄───┘  └─────────────────────────────────┘
 └─────▲───────────┘              └─────────┬─────┘
       │                                    .
       │                                    .   Unknown amount of time
@@ -176,6 +171,29 @@ The lazy 'catch all' prompt at the end of the exercise that is preloaded with a 
 - Battery Charging
 - Storage of equipment when not in use
 - Training
+- Emergency Contacts
+
+e.g.
+
+```
++-------------------------------------------------------------------+
+| tie up hair and ensure clothing is secure before working on robot |
++-------------------------------------------------------------------+
+| ensure robot is off and battery removed                           |
++-------------------------------------------------------------------+
+| if the robot requires maintenance during a session, stop!         |
++-------------------------------------------------------------------+
+```
 
 ### Conclusion of Kick Off exercise
-Thank all involved in creating the plan and explain the concept of the Safety Sprint. Their involvement in any Learning Event Retrospectives is important! The lead researcher can take the group generated information and clean it up. Prompts 5 & 6 can be organised into a chronological order of operations that are then used as a basis for experiment procedure. Additional approval steps from safety experts and committees can be obtained using the 'cleaned up' experiment plan.
+Thank everyone involved in creating the plan and explain the concept of the Safety Sprint. Their involvement in any Learning Event Retrospectives is important! The lead researcher can take the group generated information and clean it up. Prompts 5 & 6 can be organised into a sequence of actions that are then used as a basis for experiment procedure. The Kick Off exercise usually results in a few similar categories of safety behaviours and actions:
+
+- One-off safety stuff that should be done to the robot (adding extra code, modifying hardware).
+- Stuff to do periodically but not necessarily every session, like checking battery health, tyre pressure...
+- How to prepare for a session.
+- How to conduct the session.
+- How to end a session and clean up.
+
+Additional approval steps from safety experts and committees can be obtained using the 'cleaned up' experiment plan.
+
+# Doing Research

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Safety in Robotics Research is a Long Sprint"
+title:  "Safety in Robotics Research as a Sprint"
 date:   2022-01-20
 categories: [robots, ux, safety]
 comments: True
@@ -204,9 +204,23 @@ Doing research provides an opportunity to test the safe experiment plan. Improve
 Adding new members to the experiment team can be done using an abridged version of the Kick Off Session. The lead researcher takes the new team member through the Kick Off session, sharing the group answers after a brief discussion of each prompt.
 
 ## Learning Event Retrospective
-The purpose of the Learning Event Retro is to find the gap in the initial plan that allowed a safety incident to occur. Once this gap is identified, the safe experiment plan should be updated. The Learning Event Retro is another group activity that should be scheduled in response to any safety incident that occurs during experimentation (including near misses). At this moment the structure of the Learning Event Retro is untested, so the procedure described may change in the future (I will post an update if so).
+The Learning Event Retro is another group activity that should be scheduled in response to any safety incident that occurs during experimentation (including near misses). The purpose of the Learning Event Retro is to find the gap in the initial plan that allowed a safety incident to occur. Once this gap is identified, the safe experiment plan should be updated.  At this moment the structure of the Learning Event Retro is untested, so the procedure described may change in the future (I will post an update if so).
 
-Using the group-focused Post-It / white-boarding application approach, it is possible to crowdsource the root cause of a safety event using a prompted Fishbone Analysis of the incident. Something like this:
+### Planned Session Structure
+
+Prior to the group activity, a narrative of the safety event could be constructed by a person who was not present at the incident. This 'lead investigator' can construct the narrative by talking individually with all involved and checking out any damage. The narrative should be structured to remove any speculation on the cause of the event.
+
+Something like:
+
+'They were operating the robot manually and just drove it into a wall!'
+
+'I was pressing the e-stop but the robot just kept going! Maybe there was radio interference? I almost wanted to run over and try stop it myself.'
+
+Being compiled into:
+
+'The robot was in motion, operated under manual control. At some point it stopped responding to control inputs, including the e-stop. Eventually the robot collided with a wall. All present maintained a safe distance during the incident and no one was hurt. The collision cause the case to crack and damaged the mount location of the control computer.'
+
+Using the group-focused Post-It / white-boarding application approach, it should be possible to crowdsource the root cause of a safety event using a prompted Fishbone Analysis of the incident. Something like this that can be covered with stickies:
 
 ```
 \ ?        \ Mission    \ Control    \ Comms       \  Environment  \
@@ -218,3 +232,4 @@ Using the group-focused Post-It / white-boarding application approach, it is pos
  /          / Control    / Robot      / Robot       / Operator      /
 / ?        / Software   / Firmware   / Hardware    /               /
 ```
+Including operator in the retro is my main concern here. Stuff like fatigue, distraction, or over-trusting a system, can happen to anyone. Making it the final prompt in the Fishbone may allow all other causes to be fully explored. Once a root cause is determined, jumping into the Kick Off exercise from prompt 4 can be utilised to fill any gaps in the experiment plan, which can then be updated again by the lead researcher.

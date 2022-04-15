@@ -68,6 +68,8 @@ class myDemoItem {
   updateDiv() {
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     let divString = this.imageHTML + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content;
+    let divLineHeight = squareItemImageWidth + ( (5 * textSize()) + textSize() * textWidth(this.title + this.content)/squareItemImageWidth);
+
     if (invertColors) {
       divString = '<style> a { color: #AAFFAA; } </style>' + divString;
     }
@@ -76,14 +78,21 @@ class myDemoItem {
     this.div.style('font-size', textSize() + 'px');
     this.div.style('font-family', "'courier new', courier");
     this.div.style('overflow', "auto");
+    let yPos = titleY - (titleHeight);
+    let dheight = windowHeight - (titleY - (titleHeight) + 2*border);
     if (invertColors) {
+      // dheight -= 40;
+      yPos -= 20;
+      dheight = min(divLineHeight, dheight);
+
       this.div.style('background-color', 'rgba(0, 0, 0, 0.3)')
       this.div.style('color', 'white');
+      this.div.style('padding', '20px');
     } else {
       this.div.style('color', 'black');
     }
-    this.div.size(squareItemImageWidth, windowHeight - (titleY - (titleHeight) + 2*border));
-    this.div.position(0, titleY - (titleHeight));
+    this.div.size(squareItemImageWidth, dheight);
+    this.div.position(0, yPos);
     this.div.center('horizontal');
     this.div.hide();
   }
@@ -365,10 +374,13 @@ function setupScreen() {
   }
   setupPostDiv();
   // invaders guy
-  // showBackgroundButton = new myButton('background: ON', null, int(height-1.5*border), width - (border + 'background: OFF'.length), true);
   showBackgroundButton = new myButton('BG: OFF', null, width - (border + textWidth('BG: OFF ')/2 + 1), int(height-border - textSize()/2), true);
-  // invertColorsButton = new myButton('dark ', null, showBackgroundButton.x - (2 * textWidth('light')), int(height-border - 2 - textSize()/2), true);
   invertColorsButton = new myButton('dark ', null, (border + 3 + (textWidth('light')/2)), int(height-border - textSize()/2), true);
+  if (showBackground) {
+    showBackgroundButton.label = 'BG: OFF ';
+  } else {
+    showBackgroundButton.label = 'BG: ON ';
+  }
   if (invertColors) {
     invertColorsButton.label = 'light';
   } else {

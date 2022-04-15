@@ -27,6 +27,8 @@ Providing the new group with a data dump of safety expert contacts, SOPs and roo
 
 *so... cover the lab with informational posters! NO. MAYBE. group activities? maybe? probably? Is this, like, a UX problem?*
 
+I started exploring how research engineers and scientists experience safety. Realising my team was special in our small size (3 engineers, one UX-er) and how gently we had entered the robotic experimentation space (with guidance from many experts), I figured our experience was not baseline. Widening scope, safety is a core and historic value of the org with dedicated experts, skill teams, processes, documentation... The foundation of safety exists, I could lean on that and focus on front loading a new team with a safety culture that integrates into the organisational safety systems. 
+
 **How do you rapidly create a safety-positive culture in a research group of new people?**
 
 - don't make safe experiment planning feel like homework.
@@ -204,7 +206,7 @@ Doing research provides an opportunity to test the safe experiment plan. Improve
 Adding new members to the experiment team can be done using an abridged version of the Kick Off Session. The lead researcher takes the new team member through the Kick Off session, sharing the group answers after a brief discussion of each prompt.
 
 ## Learning Event Retrospective
-The Learning Event Retro is another group activity that should be scheduled in response to any safety incident that occurs during experimentation (including near misses). The purpose of the Learning Event Retro is to find the gap in the initial plan that allowed a safety incident to occur. Once this gap is identified, the safe experiment plan should be updated.  At this moment the structure of the Learning Event Retro is untested, so the procedure described may change in the future (I will post an update if so).
+The Learning Event Retro is another group activity that should be scheduled in response to any safety incident that occurs during experimentation (including near misses). The purpose of the Learning Event Retro is to find the gap in the initial plan that allowed a safety incident to occur. Once this gap is identified, the safe experiment plan should be updated.  At this moment the structure of the Learning Event Retro is relatively untested (attempting to redo a historic root cause analysis in a group format sorta felt redundant as we all already knew what happened). So, the procedure described below may change in the future and I will post an update if so.
 
 ### Planned Session Structure
 
@@ -233,3 +235,8 @@ Using the group-focused Post-It / white-boarding application approach, it should
 / ?        / Software   / Firmware   / Hardware    /               /
 ```
 Including operator in the retro is my main concern here. Stuff like fatigue, distraction, or over-trusting a system, can happen to anyone. Making it the final prompt in the Fishbone may allow all other causes to be fully explored. Once a root cause is determined, jumping into the Kick Off exercise from prompt 4 can be utilised to fill any gaps in the experiment plan, which can then be updated again by the lead researcher.
+
+# Conclusions
+It feels like this method is working pretty well right now.
+
+We tested the process on the new group with some familiar robots that already had standard operating procedures and experiment plan and the resulting safety plans were on par with the existing documentation. Feedback from the group indicated a general feeling that familiarity and retention was improved by the session when compared with just doing the homework and reading the provided docs. The new group has since applied the Safety Sprint approach to creating plans for about 10 new robot platforms. My involvement has reduced from session leader to session participant and 'keeper of the templates'. Watching other people take responsibility for setting up Safety Sprint Kick Offs and using this method feels pretty good :-)

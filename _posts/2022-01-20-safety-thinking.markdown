@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Safety in Robotics Research as a Sprint"
+title:  "Safety in Robotics Research is a Long Sprint"
 date:   2022-01-20
 categories: [robots, ux, safety]
 comments: True

@@ -354,7 +354,11 @@ function setupScreen() {
   if (x/y < 0.8) {tSize *= 1.4;}
   titleHeight = titleStringArr.length * tSize;
   // redo this part for mobile etc
-  if (titleHeight > centerY/2) {
+  // if (titleHeight > centerY/2) {
+  //   tSize = int(0.02 * y);
+  //   titleHeight = titleStringArr.length * tSize;
+  // }
+  if (mobile || halfScreen) {
     tSize = int(0.02 * y);
     titleHeight = titleStringArr.length * tSize;
   }
@@ -365,19 +369,37 @@ function setupScreen() {
   titleWidth = textWidth(titleStringArr[1]);
   buttons = [];
   // button setup
-  let buttonX = int(centerX - (titleWidth/2));
-  let xInt = int(titleWidth/(buttonLabels.length - 1));
-  for (let i = 0; i < buttonLabels.length; i++){
-    buttons.push(new myButton(buttonLabels[i], buttonLinks[i], buttonX, buttonY));
-    buttonX += xInt;
+  if (mobile) {
+    let buttonX = centerX;
+    let yInt = titleY + titleHeight;
+    for (let i = 0; i < buttonLabels.length; i++){
+      buttons.push(new myButton(buttonLabels[i], buttonLinks[i], buttonX, buttonY));
+      buttonY += 2 * buttons[i].height;
+    }
+
+  } else {
+    let buttonX = int(centerX - (titleWidth/2));
+    let xInt = int(titleWidth/(buttonLabels.length - 1));
+    for (let i = 0; i < buttonLabels.length; i++){
+      buttons.push(new myButton(buttonLabels[i], buttonLinks[i], buttonX, buttonY));
+      buttonX += xInt;
+    }
   }
   exitButton = new myButton('exit', null, int(width - 2.5*border), 2*border);
+  if (mobile) {
+    buttonY *= 0.75;
+  }
   nextItem = new myButton('next', null, int(width - 4*border), buttonY);
   previousItem = new myButton('prev', null, int(4*border), buttonY);
   // html setup
   titleDiv.remove();
   titleDiv = createDiv(titleDivString);
-  titleDiv.style('font-size', tSize + 'px');
+  if (mobile) {
+    titleDiv.style('font-size', (0.6*tSize )+ 'px');
+  } else {
+    titleDiv.style('font-size', tSize + 'px');
+  }
+
   if (invertColors) {
     titleDiv.style('color', 'white');
     titleDiv.style('background-color', 'rgba(0, 0, 0, 0.3)')

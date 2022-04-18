@@ -155,22 +155,24 @@ class myDiscogEntry {
   updateDiv() {
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     let divString = this.coverHTML + '<br><strong>' + this.title + '</strong><br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
+    let divLineHeight = squareItemImageWidth + ( (10 * textSize()) + textSize() * textWidth(this.title)/squareItemImageWidth);
     this.div.remove();
     if (invertColors) {
       divString = '<style> a { color: #AAFFAA; } </style>' + divString;
     }
-
+    let dheight = windowHeight - (titleY - (titleHeight) + 2*border);
     this.div = createDiv(divString);
     this.div.style('font-size', textSize() + 'px');
     this.div.style('font-family', "'courier new', courier");
     if (invertColors) {
       this.div.style('color', 'white');
       this.div.style('background-color', 'rgba(0, 0, 0, 0.3)')
+      dheight = min(divLineHeight, dheight);
     } else {
       this.div.style('color', 'black');
     }
     this.div.style('overflow', "auto");
-    this.div.size(squareItemImageWidth, windowHeight - (titleY - (titleHeight) + 2*border));
+    this.div.size(squareItemImageWidth, dheight);
     this.div.position(0, titleY - (titleHeight));
     this.div.center('horizontal');
     this.div.hide();
@@ -385,12 +387,14 @@ function setupScreen() {
       buttonX += xInt;
     }
   }
-  exitButton = new myButton('exit', null, int(width - 2.5*border), 2*border);
+  let buttonNudge = 0;
   if (mobile) {
     buttonY *= 0.75;
+    buttonNudge = 0.5 * border
   }
-  nextItem = new myButton('next', null, int(width - 4*border), buttonY);
-  previousItem = new myButton('prev', null, int(4*border), buttonY);
+  exitButton = new myButton('exit', null, int(width - 2.5*border - buttonNudge), 2*border + buttonNudge);
+  nextItem = new myButton('next', null, int(width - 4*border + buttonNudge), buttonY);
+  previousItem = new myButton('prev', null, int(4*border - buttonNudge), buttonY);
   // html setup
   titleDiv.remove();
   titleDiv = createDiv(titleDivString);

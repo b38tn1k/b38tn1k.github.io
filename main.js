@@ -389,7 +389,7 @@ function setupScreen() {
   }
   let buttonNudge = 0;
   if (mobile) {
-    buttonY *= 0.75;
+    buttonY = titleY;
     buttonNudge = 0.5 * border
   }
   exitButton = new myButton('exit', null, int(width - 2.5*border - buttonNudge), 2*border + buttonNudge);

@@ -425,7 +425,7 @@ function setupScreen() {
   setupPostDiv();
   // invaders guy
   showBackgroundButton = new myButton('BG: OFF', null, width - (border + textWidth('BG: OFF ')/2 + 1), int(height-border - textSize()/2), true);
-  invertColorsButton = new myButton('dark ', null, (border + 3 + (textWidth('light')/2)), int(height-border - textSize()/2), true);
+  invertColorsButton = new myButton('dark ', null, (border + 5 + (textWidth('light')/2)), int(height-border - textSize()/2), true);
   if (showBackground) {
     showBackgroundButton.label = 'BG: OFF ';
   } else {

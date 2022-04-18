@@ -373,7 +373,7 @@ function setupScreen() {
   // button setup
   if (mobile) {
     let buttonX = centerX;
-    let yInt = titleY + titleHeight;
+    buttonY = titleY + 0.5*titleHeight;
     for (let i = 0; i < buttonLabels.length; i++){
       buttons.push(new myButton(buttonLabels[i], buttonLinks[i], buttonX, buttonY));
       buttonY += 2 * buttons[i].height;

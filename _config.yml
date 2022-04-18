@@ -26,7 +26,7 @@ author:
 # Custom vars
 github: https://github.com/b38tn1k
 
-gems: [jekyll-paginate]
+plugins: [jekyll-paginate]
 
 pages_list:
   # Hello!: '/about'

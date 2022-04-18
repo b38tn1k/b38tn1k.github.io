@@ -2,7 +2,7 @@
 var view, border, gradient;
 var centerX, centerY, titleY, buttonY;
 var bgColor, fgColor, transparent;
-
+var fullScreen, halfScreen, mobile;
 // strings
 var titleStringArr = [];
 var titleString = '';
@@ -60,7 +60,7 @@ class myDemoItem {
     this.title = title.slice('title '.length);
     this.image = image.slice('image '.length);
     this.link = link.slice('link '.length);
-    this.linkHTML = '<a href="' + this.link + '">' + this.title + '</a>';
+    this.linkHTML = '<a href="' + this.link + '" target="_blank">' + this.title + '</a>';
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     let divString = this.linkHTML;
     this.div = createDiv(divString);
@@ -104,15 +104,20 @@ class myPost {
     this.date = date.slice('date '.length);
     this.link = link.slice('link '.length);
     this.tags = tags;
-    this.postHTML = '<strong><a href="' + this.link + '">' + this.title + '</a></strong><br><em>' + this.date;
+    this.postHTML = '<strong><a href="' + this.link + '" target="_blank">' + this.title + '</a></strong><br><em>' + this.date;
+    this.postHTMLDark = '<strong><a href="' + this.link + '#darkmode" target="_blank">' + this.title + '</a></strong><br><em>' + this.date;
     if (this.tags.length >= 1) {
+      this.postHTMLDark += ' - ';
       this.postHTML+= ' - ';
       for (let i = 0; i < tags.length-1; i++) {
         this.postHTML+= this.tags[i] + ', ';
+        this.postHTMLDark+= this.tags[i] + ', ';
       }
       this.postHTML += this.tags[tags.length-1] + '</em><br>';
+      this.postHTMLDark += this.tags[tags.length-1] + '</em><br>';
     }
     this.postHTML+= '</em><br>';
+    this.postHTMLDark+= '</em><br>';
   }
 }
 
@@ -299,6 +304,21 @@ function drawGradient(rgb){
 
 function setupScreen() {
   console.log(windowWidth, windowHeight);
+  let screenRatio = windowWidth / windowHeight;
+  fullScreen = false;
+  halfScreen = false;
+  mobile = false;
+  console.log(screenRatio);
+  if (screenRatio > 1.4) {
+    console.log('full screen');
+    fullScreen = true;
+  } else if (screenRatio > 0.9) {
+    console.log('half screen');
+    halfScreen = true;
+  } else {
+    console.log('mobile');
+    mobile = true;
+  }
   if (!invertColors) {
     bgColor = color(255);
     fgColor = color(0);
@@ -306,7 +326,7 @@ function setupScreen() {
   } else {
     bgColor = color(0);
     fgColor = color(255);
-    transparent = 0;
+    transparent = 100;
   }
 
   let colorOfTheTime;
@@ -333,6 +353,7 @@ function setupScreen() {
   let tSize = int(0.015 * x);
   if (x/y < 0.8) {tSize *= 1.4;}
   titleHeight = titleStringArr.length * tSize;
+  // redo this part for mobile etc
   if (titleHeight > centerY/2) {
     tSize = int(0.02 * y);
     titleHeight = titleStringArr.length * tSize;
@@ -418,7 +439,7 @@ function mousePressed() {
   }
   if (buttonPressed(invertColorsButton, mx, my)){
     invertColors = !invertColors;
-    if (invertColors) {showBackground = false;}
+    // if (invertColors) {showBackground = false;}
     setupScreen();
     return false;
   }
@@ -520,7 +541,12 @@ function setupPosts(){
 function setupPostDiv() {
   let divString = '';
   for (let i = 0; i < posts.length; i++) {
-    divString += posts[i].postHTML;
+    if (invertColors) {
+      divString += posts[i].postHTMLDark;
+    } else {
+      divString += posts[i].postHTML;
+    }
+
   }
   postDiv.remove();
   postDiv = createDiv(divString);
@@ -704,8 +730,8 @@ function setup() {
   setupPosts();
   setupDemos();
   setupPostDiv();
-  setupScreen();
   frameRate(5);
+  setupScreen();
 }
 
 function draw(){
@@ -721,7 +747,12 @@ function draw(){
   }
 
   if (showItem) {
-    view.fill(255, 255, 255, transparent);
+    if (invertColors){
+      view.fill(0, 0, 0, 2*transparent);
+    } else {
+      view.fill(255, 255, 255, transparent);
+    }
+
     view.rect(0, 0, view.width, view.height);
   }
   if (showBackground) {

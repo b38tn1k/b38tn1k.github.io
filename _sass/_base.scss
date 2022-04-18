@@ -24,16 +24,49 @@ html {
   }
 }
 
+html, html[data-theme="light"] {
+	--light-text-color: rgb(72, 72, 74);
+  	--link-color: rgb(0, 112, 201);
+  	--main-background-color: rgb(255, 255, 255);
+  	--main-text-color: rgb(51, 51, 51);
+}
+
+html[data-theme="dark"] {
+		--light-text-color: rgb(199, 199, 204);
+  		--link-color: rgb( 100, 210, 255);
+  		--main-background-color: rgb(28, 28, 30);
+  		--main-text-color: rgb(229, 229, 234);
+	}
+
+@media (prefers-color-scheme: dark) {
+	html, html[data-theme="dark"] {
+		--light-text-color: rgb(199, 199, 204);
+  		--link-color: rgb( 100, 210, 255);
+  		--main-background-color: rgb(28, 28, 30);
+  		--main-text-color: rgb(229, 229, 234);
+	}
+
+	html[data-theme="light"] {
+	--light-text-color: rgb(72, 72, 74);
+  	--link-color: rgb(0, 112, 201);
+  	--main-background-color: rgb(255, 255, 255);
+  	--main-text-color: rgb(51, 51, 51);
+	}
+}
+
 body {
-  color: #515151;
-  background-color: #fff;
+  // color: #515151;
+  // background-color: #fff;
+  background-color: var(--main-background-color);
+	color: var(--main-text-color);
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
 
 // No `:visited` state is required by default (browsers will use `a`)
 a {
-  color: #268bd2;
+  // color: #268bd2;
+  color: var(--link-color);
   text-decoration: none;
 
   // `:focus` is linked to `:hover` for basic accessibility

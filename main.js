@@ -393,6 +393,9 @@ function setupScreen() {
     buttonNudge = 0.5 * border
   }
   exitButton = new myButton('exit', null, int(width - 2.5*border - buttonNudge), 2*border + buttonNudge);
+  while ((exitButton.y - (exitButton.height) / 2) < border + 2) {
+    exitButton.y += 1;
+  }
   nextItem = new myButton('next', null, int(width - 4*border + buttonNudge), buttonY);
   previousItem = new myButton('prev', null, int(4*border - buttonNudge), buttonY);
   // html setup

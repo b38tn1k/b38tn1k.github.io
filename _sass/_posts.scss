@@ -12,7 +12,7 @@
 .page-title,
 .post-title,
 .post-title a {
-  color: #303030;
+  color: var(--titles);
 }
 .page-title,
 .post-title {
@@ -41,12 +41,15 @@
 
   h3 {
     margin-top: 0;
+    color: var(--main-text-color);
   }
 
   li {
     small {
       font-size: 75%;
-      color: #999;
+      color: var(--masthead-color);
+      // background-color: var(--main-background-color);
+    	color: var(--main-text-color);
     }
 
     a:hover {

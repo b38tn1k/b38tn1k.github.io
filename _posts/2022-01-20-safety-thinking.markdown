@@ -197,7 +197,7 @@ Thank everyone involved in creating the plan. Explain the concept of the Safety 
 - How to conduct the session.
 - How to end a session and clean up.
 
-Additional approval steps from safety experts and committees can be obtained using the 'cleaned up' experiment plan. The cleaned-up document should be shared with everyone who helped create it. At this point, the entire group should feel some ownership of the safe experiment plan, or at least be very familiar with it.
+Additional approval steps from safety experts and committees can be obtained using the 'cleaned up' experiment plan. The cleaned-up document should be shared with everyone who helped create it. At this point, the entire group should feel some ownership of the safe experiment plan, or at least be familiar with it.
 
 ## Doing Research
 Doing research provides an opportunity to test the safe experiment plan. Improvements can be made at any point with the lead researcher being responsible for ensuring regular check-ins and conversations occur regarding the efficacy of the plan and any notable gaps.

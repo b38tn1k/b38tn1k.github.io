@@ -4,8 +4,10 @@ var allGeneratedIn = [];
 var allGeneratedOut = [];
 var testP = [];
 var numberOfThings = 6;
-var stepCount = 100;
+var stepCount = 10;
 var tempWeights = [];
+var wXmin, wXmax, wYmin, wYmax;
+var dXmin, dXmax, dYmin, dYMax;
 
 var myColors, yesColor, noColor;
 
@@ -162,6 +164,16 @@ class NPattern {
     return false;
   }
 
+  areaClicked(mx, my) {
+    if (mx > this.majorHitBox[0] && mx < this.majorHitBox[1]) {
+      if (my > this.majorHitBox[2] && my < this.majorHitBox[3]) {
+        return true;
+      }
+    }
+    return false;
+
+  }
+
   updateBoxWithClick(mx, my) { //oh man
     if (mx > this.majorHitBox[0] && mx < this.majorHitBox[1]) {
       if (my > this.majorHitBox[2] && my < this.majorHitBox[3]) {
@@ -285,6 +297,10 @@ function doNN() {
 }
 
 function drawWeights(x, y, w) {
+  wXmin = x;
+  wXmax = x + w * trainP[0].cols;
+  wYmin = y;
+  wYmax = y + w * trainP[0].rows;;
   let x2 = x;
   let norm = [];
   if (tempWeights.length > 0) {
@@ -318,6 +334,18 @@ function mousePressed() {
   mx = mouseX;
   my = mouseY;
   let stop = false;
+  if (mx > wXmin && mx < wXmax && my > wYmin && my < wYmax) {
+    setupGenerates();
+    doNN();
+    return false;
+  }
+  // console.log(mx, my, dXmin, dXmax, dYmin, dYmax);
+
+  if (mx > dXmin && mx < dXmax && my > dYmin && my < dYmax) {
+    setupDemo();
+    return false;
+  }
+
   for (let i = 0; i < testP.length; i++){
     stop = testP[i].updateBoxWithClick(mx, my);
     if (stop) {return false;};
@@ -327,6 +355,13 @@ function mousePressed() {
     if (stop) {return false;};
     stop = trainP[i].updateBoxWithClick(mx, my);
     if (stop) {return false;};
+  }
+  for (let i = 0; i < generated.length; i++) {
+    let gen = generated[i].areaClicked(mx, my);
+    if (gen) {
+      setupGenerates();
+      return false;
+    }
   }
 }
 
@@ -394,6 +429,7 @@ function setup() {
   yesColor = color('#FFFFFF');
   noColor = color('#567DA7');
   myColors = [color('#567DA7'), color('#FFFFFF')];
+  textFont('Courier New');
   setupScreen();
   frameRate(10);
   textSize(18);
@@ -401,11 +437,32 @@ function setup() {
 
 function draw() {
   let x = 20;
-  let y = 30;
+  let y = 32;
+  noStroke();
+  fill(myColors[0]);
+  textSize(32);
+  text('Toy Neural Network', x, y);
+  y += 32;
+  textSize(18);
+  text('Draw some patterns and non-patterns using the boxes below.', x, y);
+  y += 18;
+  text('Click the rectangle on the left to label as a pattern or a non-pattern.', x, y);
+  y += 18;
+  text('Or click HERE to load a preset.', x, y);
+  dXmin = x;
+  dXmax = x + textWidth('Or click HERE to load a preset.');
+  dYmin = y - 32;
+  dYmax = y + 32;
+  y += 18;
+  text('Three patterns and Three non-patterns should work best.', x, y);
+  stroke(0);
+  y += 18;
+
+
   let pixelSize = 10;
   noStroke();
   fill(myColors[0]);
-  text('Training Inputs', x, y-10);
+  // text('Training Inputs', x, y-10);
   stroke(0);
   for (let i = 0; i < trainP.length; i++) {
     trainP[i].drawPattern(x, y, pixelSize);
@@ -415,7 +472,9 @@ function draw() {
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
-  text('Generated Inputs', x, y-10);
+  text('The computer generates more patterns by translation.', x, y-10);
+  y += 18;
+  text('Click any box to generate.', x, y-10);
   stroke(0);
   for (let i = 0; i < generated.length; i++) {
     generated[i].drawPattern(x, y, pixelSize);
@@ -426,20 +485,32 @@ function draw() {
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
-  text('Weights', x, y-10);
-  stroke(0);
-  drawWeights(x, y, pixelSize);
-
-  x = 20;
-  y += (trainP[0].rows + 3) * pixelSize;
-  noStroke();
-  fill(myColors[0]);
-  text('Test Inputs', x, y-10);
+  text('You can test the pattern recognition below.', x, y-10);
+  y += 18;
+  text('Add a similar and a very different pattern:', x, y-10);
   stroke(0);
   for (let i = 0; i < testP.length; i++) {
     testP[i].drawPattern(x, y, pixelSize);
     x += (testP[i].cols + 2) * pixelSize;
   }
+
+  x = 20;
+  y += (trainP[0].rows + 3) * pixelSize;
+  noStroke();
+  fill(myColors[0]);
+  // text('Weights', x, y-10);
+  // y += 18;
+  text('Click the WEIGHTS box below to train for ' + stepCount + ' iterations.', x, y-10);
+  stroke(0);
+  drawWeights(x, y, pixelSize);
+  noStroke();
+  fill(myColors[0]);
+  x = 20;
+  y += (trainP[0].rows + 3) * pixelSize;
+  text('Check the labels on your test patterns. Did it work?', x, y-10);
+  y += 18;
+  text('Maybe try clicking the WEIGHTS box again', x, y-10);
+
 
 
 }

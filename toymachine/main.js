@@ -11,7 +11,7 @@ var dXmin, dXmax, dYmin, dYMax;
 var bigText = 32;
 var smallText = 18;
 var pixelSize = 10;
-var startx = startX;
+var startx = 20;
 
 var myColors, yesColor, noColor;
 
@@ -433,30 +433,36 @@ function setupScreen(){
   bigText = 32;
   smallText = 18;
   pixelSize = 10;
-  startx = startX;
+  startx = 20;
   if (windowWidth < 1100){
     bigText = 30;
     smallText = 14;
     pixelSize = 10;
-    startX = 15;
+    startx = 15;
   }
   if (windowWidth < 900){
     bigText = 28;
     smallText = 12;
     pixelSize = 10;
-    startX = 10;
+    startx = 10;
   }
   if (windowWidth < 700) {
     bigText = 24;
     smallText = 10;
     pixelSize = 10;
-    startX = 5;
+    startx = 5;
   }
   if (windowWidth < 500) {
     bigText = 24;
     smallText = 6;
     pixelSize = 7;
-    startX = 5;
+    startx = 5;
+  }
+  if (windowWidth < 300) {
+    bigText = 24;
+    smallText = 6;
+    pixelSize = 5;
+    startx = 5;
   }
   // let ratio = windowWidth / windowHeight;
   trainP = [];
@@ -487,7 +493,7 @@ function setup() {
 }
 
 function draw() {
-  let x = startX;
+  let x = startx;
   let y = bigText;
   noStroke();
   fill(myColors[0]);
@@ -497,11 +503,13 @@ function draw() {
   textSize(smallText);
   text('Draw some patterns and non-patterns using the boxes below.', x, y);
   y += smallText;
-  text('Click the rectangle on the left to label each box as either a pattern (white) or a non-pattern (blue).', x, y);
+  text('Click the rectangle on the left to label each box:', x, y);
+  y += smallText;
+  text('Either a pattern (white) or a non-pattern (blue).', x, y);
   y += smallText;
   text('Or click HERE to load a preset.', x, y);
   dXmin = x;
-  dXmax = x + textWidth('Or click HERE to load a preset.');
+  dXmax = x + textWidth('Or click HERE to load an example.');
   dYmin = y - bigText;
   dYmax = y + bigText;
   y += smallText;
@@ -519,11 +527,13 @@ function draw() {
     trainP[i].drawPattern(x, y, pixelSize);
     x += (trainP[i].cols + 2) * pixelSize;
   }
-  x = startX;
+  x = startx;
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
-  text('The computer generates more patterns by moving the source patterns around and flipping the colors.', x, y-10);
+  text('The computer generates more patterns:', x, y-10);
+  y += smallText;
+  text('Moving the source patterns around and flipping the colors.', x, y-10);
   y += smallText;
   text('Click any box to generate.', x, y-10);
   stroke(0);
@@ -532,37 +542,41 @@ function draw() {
     x += (generated[i].cols + 2) * pixelSize;
   }
 
-  x = startX;
+  x = startx;
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
   text('You can test the pattern recognition below.', x, y-10);
   y += smallText;
-  text('Add a similar (but not identical) pattern and a different pattern:', x, y-10);
+  text('Add a similar (not identical) pattern and a non-pattern:', x, y-10);
   stroke(0);
   for (let i = 0; i < testP.length; i++) {
     testP[i].drawPattern(x, y, pixelSize);
     x += (testP[i].cols + 2) * pixelSize;
   }
 
-  x = startX;
+  x = startx;
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
   // text('Weights', x, y-10);
   // y += 18;
-  text('The WEIGHTS box below shows how important each "pixel" is for recognising the pattern.', x, y-10);
+  text('The WEIGHTS box is shown below.', x, y-10);
   y += smallText;
-  text('Click the WEIGHTS box below to train for ' + stepCount + ' iterations.', x, y-10);
+  text('Each "pixel" in the box helps recognise the pattern.', x, y-10);
+  y += smallText;
+  text('But some pixels are more important than others.', x, y-10);
+  y += smallText;
+  text('Click the WEIGHTS box below to train for ' + stepCount + ' times.', x, y-10);
   stroke(0);
   drawWeights(x, y, pixelSize);
   noStroke();
   fill(myColors[0]);
-  x = startX;
+  x = startx;
   y += (trainP[0].rows + 3) * pixelSize;
   text('Check the label rectangles on your test patterns. Did it work?', x, y-10);
   y += smallText;
-  text('Maybe try clicking the WEIGHTS box again', x, y-10);
+  text('Maybe try clicking the WEIGHTS box again. ', x, y-10);
 
 
 

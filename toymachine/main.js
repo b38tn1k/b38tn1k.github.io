@@ -431,7 +431,7 @@ function setupScreen(){
   createCanvas(windowWidth, windowHeight);
   console.log(windowWidth);
   bigText = 32;
-  smallText = 18;
+  smallText = 16;
   pixelSize = 10;
   startx = 20;
   if (windowWidth < 1100){
@@ -507,13 +507,13 @@ function draw() {
   y += smallText;
   text('Either a pattern (white) or a non-pattern (blue).', x, y);
   y += smallText;
-  text('Or click HERE to load a preset.', x, y);
+  text('Or click HERE to load an example using + symbols.', x, y);
   dXmin = x;
   dXmax = x + textWidth('Or click HERE to load an example.');
   dYmin = y - bigText;
   dYmax = y + bigText;
   y += smallText;
-  text('3 patterns and 3 non-patterns should work best.', x, y);
+  text('3 patterns and 3 non-patterns should work well.', x, y);
   stroke(0);
   y += smallText;
 
@@ -531,17 +531,16 @@ function draw() {
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
-  text('The computer generates more patterns:', x, y-10);
+  text('The computer makes some more patterns:', x, y-10);
   y += smallText;
   text('Moving the source patterns around and flipping the colors.', x, y-10);
   y += smallText;
-  text('Click any box to generate.', x, y-10);
+  text('Click any box to make some more patterns.', x, y-10);
   stroke(0);
   for (let i = 0; i < generated.length; i++) {
     generated[i].drawPattern(x, y, pixelSize);
     x += (generated[i].cols + 2) * pixelSize;
   }
-
   x = startx;
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
@@ -574,9 +573,11 @@ function draw() {
   fill(myColors[0]);
   x = startx;
   y += (trainP[0].rows + 3) * pixelSize;
-  text('Check the label rectangles on your test patterns. Did it work?', x, y-10);
+  text('Check the label rectangles on your test patterns.', x, y-10);
   y += smallText;
-  text('Maybe try clicking the WEIGHTS box again. ', x, y-10);
+  text('Remember white means pattern, blue means non-pattern', x, y-10);
+  y += smallText;
+  text('If it didnt work, try clicking the WEIGHTS box a few more times.', x, y-10);
 
 
 

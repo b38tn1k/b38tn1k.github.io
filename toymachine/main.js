@@ -478,7 +478,7 @@ function setupScreen(){
     startx = 5;
   }
   if (windowWidth < 500) {
-    bigText = 24;
+    bigText = 22;
     smallText = 10.5;
     pixelSize = 7;
     startx = 5;

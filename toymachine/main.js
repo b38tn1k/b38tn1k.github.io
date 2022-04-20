@@ -465,7 +465,7 @@ function draw() {
   textSize(18);
   text('Draw some patterns and non-patterns using the boxes below.', x, y);
   y += 18;
-  text('Click the rectangle on the left to label each box as either a pattern (white) or a non-pattern. (blue)', x, y);
+  text('Click the rectangle on the left to label each box as either a pattern (white) or a non-pattern (blue).', x, y);
   y += 18;
   text('Or click HERE to load a preset.', x, y);
   dXmin = x;

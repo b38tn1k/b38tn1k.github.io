@@ -4,6 +4,7 @@ var allGeneratedIn = [];
 var allGeneratedOut = [];
 var testP = [];
 var numberOfThings = 6;
+var stepCount = 100;
 var tempWeights = [];
 
 var myColors, yesColor, noColor;
@@ -96,7 +97,7 @@ function jamesDotProd(inputs, delta) {
 }
 
 class NPattern {
-  constructor(rows, cols) {
+  constructor(rows, cols, isTest=false) {
     this.seqLength = rows * cols;
     this.rows = rows;
     this.cols = cols;
@@ -105,6 +106,8 @@ class NPattern {
     this.majorHitBox = [];
     this.egHitBox = [];
     this.isExample = false;
+    this.isTest = isTest;
+    this.lerp = 0;
   }
 
   generateAlt() {
@@ -114,13 +117,15 @@ class NPattern {
     let side = [];
     let end = [];
     // move up
-    side = this.nSequence.slice(0, this.cols);
+    // side = this.nSequence.slice(0, this.cols);
+    side = new Array(this.cols).fill(0);
     end = this.nSequence.slice(this.cols);
     combined = end.concat(side);
     alts.push(combined);
     // move down
     combined = [];
-    side = this.nSequence.slice(-1 * this.cols);
+    // side = this.nSequence.slice(-1 * this.cols);
+    side = new Array(this.cols).fill(0);
     end = this.nSequence.slice(0, -1 * this.cols);
     combined = side.concat(end);
     alts.push(combined);
@@ -130,11 +135,18 @@ class NPattern {
       combined.push(this.nSequence[i]);
     }
     combined.push(0);
+    for (let i = this.cols-1; i < this.seqLength; i+= this.cols) {
+      combined[i] = 0;
+    }
+
     alts.push(combined);
     //move right
     combined = [0];
     for (let i = 0; i < this.seqLength-1; i+= 1) {
       combined.push(this.nSequence[i]);
+    }
+    for (let i = 0; i < this.seqLength; i+= this.cols) {
+      combined[i] = 0;
     }
     alts.push(combined);
     return alts;
@@ -170,34 +182,38 @@ class NPattern {
     return false;
   }
 
-  drawPattern(x, y, w, b=0) {
-    let w2 = w / 2.0;
+  drawPattern(x, y, w) {
     let x2 = x;
     let egX;
-    b += w;
+    let egY = y;
+    let egH = w * this.rows;
     this.boxHitBox = [];
     this.majorHitBox = [x, 0, y, 0];
     for (let i = 0; i < this.nSequence.length; i++) {
       fill(myColors[this.nSequence[i]]);
       square(x2, y, w);
       this.boxHitBox.push([x2, x2 + w, y, y + w]);
-      x2 += b;
+      x2 += w;
       if ((i + 1) % this.cols == 0){
         egX = x2;
         x2 = x;
-        y += b;
+        y += w;
       }
     }
-    if (this.isExample) {
-      fill(yesColor);
+    if (this.isTest) {
+      fill(lerpColor(noColor, yesColor, this.lerp));
     } else {
-      fill(noColor);
+      if (this.isExample) {
+        fill(yesColor);
+      } else {
+        fill(noColor);
+      }
     }
     this.majorHitBox[1] = egX;
     this.majorHitBox[3] = y;
     y -= w;
-    this.egHitBox = [egX, egX + w, y, y + w];
-    square(egX, y, w)
+    this.egHitBox = [egX, egX + w, egY, egY + egH];
+    rect(egX, egY, w, egH);
   }
 }
 
@@ -222,17 +238,17 @@ function setupGenerates() {
 }
 
 function setupDemo() {
-  trainP[0].nSequence = [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0];
+  trainP[0].nSequence = [0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   trainP[0].isExample = true;
-  trainP[1].nSequence = [0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0];
+  trainP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0];
   trainP[1].isExample = true;
-  trainP[2].nSequence = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  trainP[2].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0];
   trainP[2].isExample = true;
-  trainP[3].nSequence = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  trainP[4].nSequence = [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  trainP[5].nSequence = [1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0];
-  testP[0].nSequence = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0];
-  testP[1].nSequence = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0];
+  trainP[3].nSequence = [1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1];
+  trainP[4].nSequence = [0,0,0,0,0,0,1,1,1,0,0,1,0,1,0,0,1,0,1,0,0,1,1,1,0,0,0,0,0,0];
+  trainP[5].nSequence = [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0];
+  testP[0].nSequence = [0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0];
+  testP[1].nSequence = [1,0,0,0,1,0,0,1,0,0,0,1,0,1,0,0,1,0,1,0,0,0,1,0,0,1,0,0,0,1];
 }
 
 function doNN() {
@@ -258,20 +274,42 @@ function doNN() {
   } else {
     myNN.weights = tempWeights;
   }
-  for (let its = 0; its < 10; its ++) {
-    for (let steps = 0; steps < 200; steps++) {
-      myNN.step();
-    }
+  for (let its = 0; its < stepCount; its ++) {
+    myNN.step();
     tempWeights = myNN.weights;
-    console.log('');
     for (let i = 0; i < tests.length; i++) {
-      let k = myNN.test(tests[i]);
-      console.log(k);
-      if (k > 0.9) {
-        testP[i].isExample = true;
-      } else {
-        testP[i].isExample = false;
-      }
+      testP[i].lerp = myNN.test(tests[i]);
+      // console.log(testP[i].lerp);
+    }
+  }
+}
+
+function drawWeights(x, y, w) {
+  let x2 = x;
+  let norm = [];
+  if (tempWeights.length > 0) {
+    for (let i = 0; i < tempWeights.length; i++) {
+      norm.push(tempWeights[i] - min(tempWeights));
+    }
+    let nMax = max(norm);
+    for (let i = 0; i < norm.length; i++) {
+      norm[i] = norm[i] / nMax;
+    }
+  } else {
+    norm = tempWeights;
+  }
+
+  for (let i = 0; i < trainP[0].nSequence.length; i++) {
+    if (tempWeights.length == 0){
+      fill(noColor);
+    } else {
+      fill(lerpColor(noColor, yesColor, norm[i]));
+    }
+    square(x2, y, w);
+    x2 += w;
+    if ((i + 1) % trainP[0].cols == 0){
+      x2 = x;
+      y += w;
     }
   }
 }
@@ -295,6 +333,25 @@ function mousePressed() {
 function keyTyped() {
   if (key === 'd') {
     setupDemo();
+  } else if (key === 's'){
+    let strin = '';
+    for (let i = 0; i < trainP.length; i++) {
+      strin += '['
+      for (let j = 0; j < trainP[i].nSequence.length; j++) {
+        strin += trainP[i].nSequence[j] + ','
+      }
+      strin += '] newline';
+    }
+    strin += 'newline';
+
+    for (let i = 0; i < testP.length; i++) {
+      strin += '['
+      for (let j = 0; j < testP[i].nSequence.length; j++) {
+        strin += testP[i].nSequence[j] + ','
+      }
+      strin += '] newline';
+    }
+    saveStrings(strin, 'demo.txt');
   } else {
     setupGenerates();
     doNN();
@@ -325,7 +382,7 @@ function setupScreen(){
     generated.push(new NPattern(6, 5));
   }
   for (let i = 0; i < 2; i++) {
-    testP.push(new NPattern(6, 5));
+    testP.push(new NPattern(6, 5, true));
   }
 }
 
@@ -364,6 +421,14 @@ function draw() {
     generated[i].drawPattern(x, y, pixelSize);
     x += (generated[i].cols + 2) * pixelSize;
   }
+
+  x = 20;
+  y += (trainP[0].rows + 3) * pixelSize;
+  noStroke();
+  fill(myColors[0]);
+  text('Weights', x, y-10);
+  stroke(0);
+  drawWeights(x, y, pixelSize);
 
   x = 20;
   y += (trainP[0].rows + 3) * pixelSize;

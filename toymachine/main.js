@@ -124,12 +124,16 @@ class NPattern {
     end = this.nSequence.slice(this.cols);
     combined = end.concat(side);
     alts.push(combined);
+    combined = invert(combined)
+    alts.push(combined);
     // move down
     combined = [];
     // side = this.nSequence.slice(-1 * this.cols);
     side = new Array(this.cols).fill(0);
     end = this.nSequence.slice(0, -1 * this.cols);
     combined = side.concat(end);
+    alts.push(combined);
+    combined = invert(combined)
     alts.push(combined);
     //move left
     combined = [];
@@ -140,7 +144,8 @@ class NPattern {
     for (let i = this.cols-1; i < this.seqLength; i+= this.cols) {
       combined[i] = 0;
     }
-
+    alts.push(combined);
+    combined = invert(combined)
     alts.push(combined);
     //move right
     combined = [0];
@@ -150,6 +155,8 @@ class NPattern {
     for (let i = 0; i < this.seqLength; i+= this.cols) {
       combined[i] = 0;
     }
+    alts.push(combined);
+    combined = invert(combined)
     alts.push(combined);
     return alts;
   }
@@ -260,7 +267,7 @@ function setupDemo() {
   trainP[4].nSequence = [0,0,0,0,0,0,1,1,1,0,0,1,0,1,0,0,1,0,1,0,0,1,1,1,0,0,0,0,0,0];
   trainP[5].nSequence = [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0];
   testP[0].nSequence = [0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0];
-  testP[1].nSequence = [1,0,0,0,1,0,0,1,0,0,0,1,0,1,0,0,1,0,1,0,0,0,1,0,0,1,0,0,0,1];
+  testP[1].nSequence = [1,1,1,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,1,1,1];
 }
 
 function doNN() {
@@ -294,6 +301,18 @@ function doNN() {
       // console.log(testP[i].lerp);
     }
   }
+}
+
+function invert(myArr) {
+  invArr = []
+  for (let i = 0; i < myArr.length; i++) {
+    if (myArr[i] == 1) {
+      invArr.push(0);
+    } else {
+      invArr.push(1);
+    }
+  }
+  return invArr;
 }
 
 function drawWeights(x, y, w) {
@@ -472,7 +491,7 @@ function draw() {
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
-  text('The computer generates more patterns by moving the source patterns around.', x, y-10);
+  text('The computer generates more patterns by moving the source patterns around and flipping the colors.', x, y-10);
   y += 18;
   text('Click any box to generate.', x, y-10);
   stroke(0);

@@ -68,7 +68,7 @@ class myDemoItem {
   updateDiv() {
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     let divString = this.imageHTML + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content;
-    let divLineHeight = squareItemImageWidth + ( (5 * textSize()) + textSize() * textWidth(this.title + this.content)/squareItemImageWidth);
+    let divLineHeight = int(squareItemImageWidth + ( (5 * textSize()) + textSize() * textWidth(this.title + this.content)/squareItemImageWidth));
 
     if (invertColors) {
       divString = '<style> a { color: #AAFFAA; } </style>' + divString;
@@ -80,10 +80,13 @@ class myDemoItem {
     this.div.style('overflow', "auto");
     let yPos = titleY - (titleHeight);
     let dheight = windowHeight - (titleY - (titleHeight) + 2*border);
+    console.log(dheight, divLineHeight, this.title);
     if (invertColors) {
-      // dheight -= 40;
+      dheight -= 20;
+      divLineHeight +=20;
       yPos -= 20;
       dheight = min(divLineHeight, dheight);
+      console.log(dheight);
 
       this.div.style('background-color', 'rgba(0, 0, 0, 0.3)')
       this.div.style('color', 'white');

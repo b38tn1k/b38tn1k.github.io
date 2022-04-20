@@ -41,7 +41,7 @@ To create a communally owned safety plan methodology, I stole some ideas from th
 
 # Safety Sprint
 
-Typically, design sprints are used to achieve *something* in a predetermined time frame. Design sprints kick off with planning and understanding. Safety Sprints are the same. Design sprints can end with a retrospective exercise, providing all involved the opportunity to reflect and improve processes in future sprints. In a Safety Sprint, the design retrospective is repurposed as an 'Unplanned Learning Event' retrospective. The outcomes of this retrospective can be fed back into the safe experiment plan. In a Safety Sprint, unlike a Design Sprint, the time frame is unknown.
+Typically, design sprints are used to achieve *something* in a predetermined time frame. Design sprints kick off with planning and understanding. Safety Sprints start of the same way. Design sprints can end with a retrospective exercise, providing all involved the opportunity to reflect and improve processes in future sprints. In a Safety Sprint, the design retrospective is repurposed as an 'Unplanned Learning Event' retrospective. The outcomes of this retrospective can be fed back into the safe experiment plan. In a Safety Sprint, unlike a Design Sprint, the time frame is unknown.
 
 ```
                ┌──────────────────┐

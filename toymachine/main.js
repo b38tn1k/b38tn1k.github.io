@@ -391,6 +391,7 @@ function mousePressed() {
   for (let i = 0; i < testP.length; i++){
     stop = testP[i].updateBoxWithClick(mx, my);
     if (stop) {
+      testP[i].lerp = 0;
       // tempWeights = [];
       return false;
     };

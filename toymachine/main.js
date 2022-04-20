@@ -465,7 +465,7 @@ function draw() {
   textSize(18);
   text('Draw some patterns and non-patterns using the boxes below.', x, y);
   y += 18;
-  text('Click the rectangle on the left to label each box as either a pattern or a non-pattern.', x, y);
+  text('Click the rectangle on the left to label each box as either a pattern (white) or a non-pattern. (blue)', x, y);
   y += 18;
   text('Or click HERE to load a preset.', x, y);
   dXmin = x;
@@ -528,7 +528,7 @@ function draw() {
   fill(myColors[0]);
   x = 20;
   y += (trainP[0].rows + 3) * pixelSize;
-  text('Check the labels on your test patterns. Did it work?', x, y-10);
+  text('Check the label rectangles on your test patterns. Did it work?', x, y-10);
   y += 18;
   text('Maybe try clicking the WEIGHTS box again', x, y-10);
 

@@ -128,7 +128,7 @@ class NPattern {
     end = this.nSequence.slice(this.cols);
     combined = end.concat(side);
     alts.push(combined);
-    combined = invert(combined)
+    combined = invertArr(combined)
     alts.push(combined);
     // move down
     combined = [];
@@ -137,7 +137,7 @@ class NPattern {
     end = this.nSequence.slice(0, -1 * this.cols);
     combined = side.concat(end);
     alts.push(combined);
-    combined = invert(combined)
+    combined = invertArr(combined)
     alts.push(combined);
     //move left
     combined = [];
@@ -149,7 +149,7 @@ class NPattern {
       combined[i] = 0;
     }
     alts.push(combined);
-    combined = invert(combined)
+    combined = invertArr(combined)
     alts.push(combined);
     //move right
     combined = [0];
@@ -160,7 +160,7 @@ class NPattern {
       combined[i] = 0;
     }
     alts.push(combined);
-    combined = invert(combined)
+    combined = invertArr(combined)
     alts.push(combined);
     return alts;
   }
@@ -260,7 +260,19 @@ function setupGenerates() {
   }
 }
 
+// function clearGenerates() {
+//   allGeneratedIn = [];
+//   allGeneratedOut = [];
+//   let alt = [];
+//   for (let i = 0; i < generated.length; i++) {
+//     generated[i].isExample = false;
+//     generated[i].nSequence = new Array(this.seqLength).fill(0);
+//   }
+// }
+
 function setupDemo() {
+  tempWeights = [];
+  // clearGenerates();
   trainP[0].nSequence = [0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   trainP[0].isExample = true;
   trainP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0];
@@ -307,7 +319,7 @@ function doNN() {
   }
 }
 
-function invert(myArr) {
+function invertArr(myArr) {
   invArr = []
   for (let i = 0; i < myArr.length; i++) {
     if (myArr[i] == 1) {
@@ -369,16 +381,6 @@ function mousePressed() {
     return false;
   }
 
-  for (let i = 0; i < testP.length; i++){
-    stop = testP[i].updateBoxWithClick(mx, my);
-    if (stop) {return false;};
-  }
-  for (let i = 0; i < trainP.length; i++){
-    stop = trainP[i].updateIsExampleWithClick(mx, my);
-    if (stop) {return false;};
-    stop = trainP[i].updateBoxWithClick(mx, my);
-    if (stop) {return false;};
-  }
   for (let i = 0; i < generated.length; i++) {
     let gen = generated[i].areaClicked(mx, my);
     if (gen) {
@@ -386,6 +388,28 @@ function mousePressed() {
       return false;
     }
   }
+  for (let i = 0; i < testP.length; i++){
+    stop = testP[i].updateBoxWithClick(mx, my);
+    if (stop) {
+      tempWeights = [];
+      return false;
+    };
+  }
+  for (let i = 0; i < trainP.length; i++){
+    stop = trainP[i].updateIsExampleWithClick(mx, my);
+    if (stop) {
+      tempWeights = [];
+      setupGenerates();
+      return false;
+    };
+    stop = trainP[i].updateBoxWithClick(mx, my);
+    if (stop) {
+      tempWeights = [];
+      setupGenerates();
+      return false;
+    };
+  }
+
 }
 
 function keyTyped() {

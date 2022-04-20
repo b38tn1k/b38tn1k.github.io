@@ -500,6 +500,8 @@ function draw() {
   fill(myColors[0]);
   // text('Weights', x, y-10);
   // y += 18;
+  text('The WEIGHTS box below shows how important each "pixel" is for recognising the pattern.', x, y-10);
+  y += 18;
   text('Click the WEIGHTS box below to train for ' + stepCount + ' iterations.', x, y-10);
   stroke(0);
   drawWeights(x, y, pixelSize);
@@ -510,6 +512,7 @@ function draw() {
   text('Check the labels on your test patterns. Did it work?', x, y-10);
   y += 18;
   text('Maybe try clicking the WEIGHTS box again', x, y-10);
+
 
 
 

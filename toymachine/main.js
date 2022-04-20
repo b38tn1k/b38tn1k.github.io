@@ -600,7 +600,7 @@ function draw() {
   y += (trainP[0].rows + 3) * pixelSize;
   text('Check the label rectangles on your test patterns.', x, y-10);
   y += smallText;
-  text('Remember white means pattern, blue means non-pattern', x, y-10);
+  text('Remember white means pattern, blue means non-pattern.', x, y-10);
   y += smallText;
   text('If it didnt work try clicking the WEIGHTS box a few more times.', x, y-10);
 

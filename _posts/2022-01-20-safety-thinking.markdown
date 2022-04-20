@@ -200,7 +200,7 @@ Thank everyone involved in creating the plan. Explain the concept of the Safety 
 Additional approval steps from safety experts and committees can be obtained using the 'cleaned up' experiment plan. The cleaned-up document should be shared with everyone who helped create it. At this point, the entire group should feel some ownership of the safe experiment plan, or at least be familiar with it.
 
 ## Doing Research
-Doing research provides an opportunity to test the safe experiment plan. Improvements can be made at any point with the lead researcher being responsible for ensuring regular check-ins and conversations occur regarding the efficacy of the plan and any notable gaps.
+Doing research provides an opportunity to test the safe experiment plan. Improvements can be made at any point with the lead researcher being responsible for ensuring efficacy of the plan through regular check-ins and conversations.
 
 ### Onboarding
 Adding new members to the experiment team can be done using an abridged version of the Kick-Off Session. The lead researcher takes the new team member through the Kick-Off session, sharing the group answers after a brief discussion of each prompt.

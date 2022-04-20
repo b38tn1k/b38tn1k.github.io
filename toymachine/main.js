@@ -430,7 +430,7 @@ function setupScreen(){
   // slowScratchNet();
   createCanvas(windowWidth, windowHeight);
   console.log(windowWidth);
-  bigText = 32;
+  bigText = 30;
   smallText = 16;
   pixelSize = 10;
   startx = 20;
@@ -577,7 +577,7 @@ function draw() {
   y += smallText;
   text('Remember white means pattern, blue means non-pattern', x, y-10);
   y += smallText;
-  text('If it didnt work, try clicking the WEIGHTS box a few more times.', x, y-10);
+  text('If it didnt work try clicking the WEIGHTS box a few more times.', x, y-10);
 
 
 

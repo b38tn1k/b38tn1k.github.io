@@ -487,7 +487,7 @@ function draw() {
   fill(myColors[0]);
   text('You can test the pattern recognition below.', x, y-10);
   y += 18;
-  text('Add a similar and a very different pattern:', x, y-10);
+  text('Add a similar (but not identical) pattern and a different pattern:', x, y-10);
   stroke(0);
   for (let i = 0; i < testP.length; i++) {
     testP[i].drawPattern(x, y, pixelSize);

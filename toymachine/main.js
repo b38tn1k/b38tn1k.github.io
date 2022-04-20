@@ -446,7 +446,7 @@ function draw() {
   textSize(18);
   text('Draw some patterns and non-patterns using the boxes below.', x, y);
   y += 18;
-  text('Click the rectangle on the left to label as a pattern or a non-pattern.', x, y);
+  text('Click the rectangle on the left to label each box as either a pattern or a non-pattern.', x, y);
   y += 18;
   text('Or click HERE to load a preset.', x, y);
   dXmin = x;
@@ -454,7 +454,7 @@ function draw() {
   dYmin = y - 32;
   dYmax = y + 32;
   y += 18;
-  text('Three patterns and Three non-patterns should work best.', x, y);
+  text('3 patterns and 3 non-patterns should work best.', x, y);
   stroke(0);
   y += 18;
 
@@ -472,7 +472,7 @@ function draw() {
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
-  text('The computer generates more patterns by translation.', x, y-10);
+  text('The computer generates more patterns by moving the source patterns around.', x, y-10);
   y += 18;
   text('Click any box to generate.', x, y-10);
   stroke(0);

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "mix tool"
-date:   2020-04-05
+date:   2022-04-05
 tags: demo
 image: 'https://b38tn1k.com/images/previews/mixtool.png'
 link: 'https://b38tn1k.com/mixtool/'

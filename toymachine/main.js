@@ -8,6 +8,10 @@ var stepCount = 10;
 var tempWeights = [];
 var wXmin, wXmax, wYmin, wYmax;
 var dXmin, dXmax, dYmin, dYMax;
+var bigText = 32;
+var smallText = 18;
+var pixelSize = 10;
+var startx = startX;
 
 var myColors, yesColor, noColor;
 
@@ -425,6 +429,35 @@ function setupScreen(){
   // scratchNet();
   // slowScratchNet();
   createCanvas(windowWidth, windowHeight);
+  console.log(windowWidth);
+  bigText = 32;
+  smallText = 18;
+  pixelSize = 10;
+  startx = startX;
+  if (windowWidth < 1100){
+    bigText = 30;
+    smallText = 14;
+    pixelSize = 10;
+    startX = 15;
+  }
+  if (windowWidth < 900){
+    bigText = 28;
+    smallText = 12;
+    pixelSize = 10;
+    startX = 10;
+  }
+  if (windowWidth < 700) {
+    bigText = 24;
+    smallText = 10;
+    pixelSize = 10;
+    startX = 5;
+  }
+  if (windowWidth < 500) {
+    bigText = 24;
+    smallText = 6;
+    pixelSize = 7;
+    startX = 5;
+  }
   // let ratio = windowWidth / windowHeight;
   trainP = [];
   generated = [];
@@ -451,34 +484,33 @@ function setup() {
   textFont('Courier New');
   setupScreen();
   frameRate(10);
-  textSize(18);
 }
 
 function draw() {
-  let x = 20;
-  let y = 32;
+  let x = startX;
+  let y = bigText;
   noStroke();
   fill(myColors[0]);
-  textSize(32);
+  textSize(bigText);
   text('Toy Neural Network', x, y);
-  y += 32;
-  textSize(18);
+  y += bigText;
+  textSize(smallText);
   text('Draw some patterns and non-patterns using the boxes below.', x, y);
-  y += 18;
+  y += smallText;
   text('Click the rectangle on the left to label each box as either a pattern (white) or a non-pattern (blue).', x, y);
-  y += 18;
+  y += smallText;
   text('Or click HERE to load a preset.', x, y);
   dXmin = x;
   dXmax = x + textWidth('Or click HERE to load a preset.');
-  dYmin = y - 32;
-  dYmax = y + 32;
-  y += 18;
+  dYmin = y - bigText;
+  dYmax = y + bigText;
+  y += smallText;
   text('3 patterns and 3 non-patterns should work best.', x, y);
   stroke(0);
-  y += 18;
+  y += smallText;
 
 
-  let pixelSize = 10;
+  // let pixelSize = 10;
   noStroke();
   fill(myColors[0]);
   // text('Training Inputs', x, y-10);
@@ -487,12 +519,12 @@ function draw() {
     trainP[i].drawPattern(x, y, pixelSize);
     x += (trainP[i].cols + 2) * pixelSize;
   }
-  x = 20;
+  x = startX;
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
   text('The computer generates more patterns by moving the source patterns around and flipping the colors.', x, y-10);
-  y += 18;
+  y += smallText;
   text('Click any box to generate.', x, y-10);
   stroke(0);
   for (let i = 0; i < generated.length; i++) {
@@ -500,12 +532,12 @@ function draw() {
     x += (generated[i].cols + 2) * pixelSize;
   }
 
-  x = 20;
+  x = startX;
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
   text('You can test the pattern recognition below.', x, y-10);
-  y += 18;
+  y += smallText;
   text('Add a similar (but not identical) pattern and a different pattern:', x, y-10);
   stroke(0);
   for (let i = 0; i < testP.length; i++) {
@@ -513,23 +545,23 @@ function draw() {
     x += (testP[i].cols + 2) * pixelSize;
   }
 
-  x = 20;
+  x = startX;
   y += (trainP[0].rows + 3) * pixelSize;
   noStroke();
   fill(myColors[0]);
   // text('Weights', x, y-10);
   // y += 18;
   text('The WEIGHTS box below shows how important each "pixel" is for recognising the pattern.', x, y-10);
-  y += 18;
+  y += smallText;
   text('Click the WEIGHTS box below to train for ' + stepCount + ' iterations.', x, y-10);
   stroke(0);
   drawWeights(x, y, pixelSize);
   noStroke();
   fill(myColors[0]);
-  x = 20;
+  x = startX;
   y += (trainP[0].rows + 3) * pixelSize;
   text('Check the label rectangles on your test patterns. Did it work?', x, y-10);
-  y += 18;
+  y += smallText;
   text('Maybe try clicking the WEIGHTS box again', x, y-10);
 
 

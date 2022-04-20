@@ -1,0 +1,10 @@
+---
+layout: post
+title:  "Toy Neural Net"
+date:   2022-04-20
+tags: demo
+image: 'https://b38tn1k.com/images/previews/toynn.png'
+link: 'https://b38tn1k.com/toymachine/'
+---
+
+[description]A little client run neural net that is very un-useful.[description]

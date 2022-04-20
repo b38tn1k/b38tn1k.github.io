@@ -399,13 +399,13 @@ function mousePressed() {
   for (let i = 0; i < trainP.length; i++){
     stop = trainP[i].updateIsExampleWithClick(mx, my);
     if (stop) {
-      tempWeights = [];
+      // tempWeights = [];
       setupGenerates();
       return false;
     };
     stop = trainP[i].updateBoxWithClick(mx, my);
     if (stop) {
-      tempWeights = [];
+      // tempWeights = [];
       setupGenerates();
       return false;
     };

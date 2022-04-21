@@ -637,7 +637,9 @@ function draw() {
   textSize(smallText);
   text('This program tries to recognise patterns or shapes.', x, y);
   y += smallText;
+  textStyle(BOLD);
   text('Click HERE to load an example.', x, y);
+  textStyle(NORMAL);
   dXmin = x;
   dXmax = x + textWidth('Click HERE to load an example.');
   dYmin = y - bigText;

@@ -6,6 +6,7 @@ var testP = [];
 var numberOfThings = 6;
 var stepCount = 10;
 var layer2Weights = [];
+var layer1Weights  = [];
 var wXmin, wXmax, wYmin, wYmax;
 var dXmin, dXmax, dYmin, dYMax;
 var bigText = 32;
@@ -163,6 +164,7 @@ class NN {
       let delta = this.getDelta(tOut);
       // dot product of inputs and deltas to update weights
       this.updateWeights(delta);
+      layer1Weights = this.weights;
     }
     // check descent is falling towards a solution
     let yesCount = 0;
@@ -435,34 +437,37 @@ function invertArr(myArr) {
   return invArr;
 }
 
-function drawWeights(x, y, w) {
-  wXmin = x;
-  wXmax = x + w * trainP[0].cols;
-  wYmin = y;
-  wYmax = y + w * trainP[0].rows;;
+function drawWeights(x, y, w, weights, sLength, cols, rows, button = true) {
+  if (button) {
+    wXmin = x;
+    wXmax = x + w * cols;
+    wYmin = y;
+    wYmax = y + w * rows;;
+  }
+
   let x2 = x;
   let norm = [];
-  if (layer2Weights.length > 0) {
-    for (let i = 0; i < layer2Weights.length; i++) {
-      norm.push(layer2Weights[i] - min(layer2Weights));
+  if (weights.length > 0) {
+    for (let i = 0; i < weights.length; i++) {
+      norm.push(weights[i] - min(weights));
     }
     let nMax = max(norm);
     for (let i = 0; i < norm.length; i++) {
       norm[i] = norm[i] / nMax;
     }
   } else {
-    norm = layer2Weights;
+    norm = weights;
   }
 
-  for (let i = 0; i < trainP[0].nSequence.length; i++) {
-    if (layer2Weights.length == 0){
+  for (let i = 0; i < sLength; i++) {
+    if (weights.length == 0){
       fill(noColor);
     } else {
       fill(lerpColor(noColor, yesColor, norm[i]));
     }
     square(x2, y, w);
     x2 += w;
-    if ((i + 1) % trainP[0].cols == 0){
+    if ((i + 1) % cols == 0){
       x2 = x;
       y += w;
     }
@@ -699,9 +704,15 @@ function draw() {
   y += smallText;
   text('But some pixels are more important than others.', x, y-10);
   y += smallText;
-  text('Click the WEIGHTS box below to train for ' + stepCount + ' times.', x, y-10);
+  text('Click the large WEIGHTS box below to train for ' + stepCount + ' times.', x, y-10);
   stroke(0);
-  drawWeights(x, y, pixelSize);
+  // drawWeights(x, y, w, weights, sLength, cols, rows, button = true)
+  drawWeights(x, y, pixelSize, layer2Weights, trainP[0].nSequence.length, trainP[0].cols, trainP[0].rows);
+  noStroke();
+  fill(myColors[0]);
+  text('The small box is a moving window that updates the big box', wXmax + 2 * pixelSize, y + smallText);
+  stroke(0);
+  drawWeights(wXmax + 2 * pixelSize, wYmax - 3 * pixelSize, pixelSize, layer1Weights, 9, 3, 3, false);
   noStroke();
   fill(myColors[0]);
   x = startx;

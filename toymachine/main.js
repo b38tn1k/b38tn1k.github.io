@@ -388,7 +388,7 @@ function mousePressed() {
     // if (weightClickCounter % 10 == 0) {
     //   tempWeights = [];
     // }
-    console.log(tempWeights);
+    // console.log(tempWeights);
     setupGenerates();
     doNN();
     return false;

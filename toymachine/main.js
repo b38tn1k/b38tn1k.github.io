@@ -710,7 +710,9 @@ function draw() {
   drawWeights(x, y, pixelSize, layer2Weights, trainP[0].nSequence.length, trainP[0].cols, trainP[0].rows);
   noStroke();
   fill(myColors[0]);
-  text('The small box is a moving window that updates the big box', wXmax + 2 * pixelSize, y + smallText);
+  text('The small box is a moving window.', wXmax + 2 * pixelSize, y + smallText);
+  text('It looks at every pixel and its neighbours.', wXmax + 2 * pixelSize, y + 2*smallText);
+  text('The big box works on the output of all the small boxes.', wXmax + 2 * pixelSize, y + 3*smallText);
   stroke(0);
   drawWeights(wXmax + 2 * pixelSize, wYmax - 3 * pixelSize, pixelSize, layer1Weights, 9, 3, 3, false);
   noStroke();

@@ -291,7 +291,7 @@ function setupDemo() {
   trainP[5].nSequence = [0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0];
 
   testP[0].nSequence = [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-  testP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  testP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 }
 
 function doNN() {
@@ -320,6 +320,7 @@ function doNN() {
   for (let its = 0; its < stepCount; its ++) {
     myNN.step();
     tempWeights = myNN.weights;
+    console.log("");
     for (let i = 0; i < tests.length; i++) {
       testP[i].lerp = myNN.test(tests[i]);
       console.log(testP[i].lerp);
@@ -362,7 +363,7 @@ function drawWeights(x, y, w) {
     if (tempWeights.length == 0){
       fill(noColor);
     } else {
-      fill(lerpColor(noColor, yesColor, norm[i]));
+      fill(lerpColor(yesColor, noColor, norm[i]));
     }
     square(x2, y, w);
     x2 += w;

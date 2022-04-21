@@ -700,7 +700,7 @@ function draw() {
   fill(myColors[0]);
   // text('Weights', x, y-10);
   // y += 18;
-  text('The WEIGHTS box is shown below.', x, y-10);
+  text('The WEIGHTS boxes are shown below.', x, y-10);
   y += smallText;
   text('Each "pixel" in the box helps recognise the pattern.', x, y-10);
   y += smallText;
@@ -714,7 +714,7 @@ function draw() {
   fill(myColors[0]);
   text('The small box is a moving window.', wXmax + 2 * pixelSize, y + smallText);
   text('It looks at every pixel and its neighbours.', wXmax + 2 * pixelSize, y + 2*smallText);
-  text('The big box works on the output of all the small boxes.', wXmax + 2 * pixelSize, y + 3*smallText);
+  text('The big box works on the output of the small box for every pixel.', wXmax + 2 * pixelSize, y + 3*smallText);
   stroke(0);
   drawWeights(wXmax + 2 * pixelSize, wYmax - 3 * pixelSize, pixelSize, layer1Weights, 9, 3, 3, false);
   noStroke();

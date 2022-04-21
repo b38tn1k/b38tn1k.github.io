@@ -4,7 +4,7 @@ var allGeneratedIn = [];
 var allGeneratedOut = [];
 var testP = [];
 var numberOfThings = 6;
-var stepCount = 10;
+var stepCount = 100;
 var tempWeights = [];
 var wXmin, wXmax, wYmin, wYmax;
 var dXmin, dXmax, dYmin, dYMax;
@@ -291,7 +291,7 @@ function setupDemo() {
   trainP[5].nSequence = [0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0];
 
   testP[0].nSequence = [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-  testP[1].nSequence = [1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  testP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] ;
 }
 
 function doNN() {
@@ -363,7 +363,7 @@ function drawWeights(x, y, w) {
     if (tempWeights.length == 0){
       fill(noColor);
     } else {
-      fill(lerpColor(yesColor, noColor, norm[i]));
+      fill(lerpColor(noColor, yesColor, norm[i]));
     }
     square(x2, y, w);
     x2 += w;

@@ -7,4 +7,4 @@ image: 'https://b38tn1k.com/images/previews/toynn.png'
 link: 'https://b38tn1k.com/toymachine/'
 ---
 
-[description]A little client run neural net that is very un-useful.[description]
+[description]A little client run neural net that is very un-useful. Still jamming on it so features may change.[description]

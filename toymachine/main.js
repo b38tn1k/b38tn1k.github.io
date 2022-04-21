@@ -8,6 +8,7 @@ var stepCount = 10;
 var layer2Weights = [];
 var layer1Weights  = [];
 var wXmin, wXmax, wYmin, wYmax;
+var rwXmin, rwXmax, rwYmin, rwYmax;
 var dXmin, dXmax, dYmin, dYMax;
 var bigText = 32;
 var smallText = 18;
@@ -131,6 +132,13 @@ class NN {
     }
   }
 
+  resetWeights() {
+    this.weights = [];
+    for (let i = 0; i < this.majorDataLength; i++) {
+      this.weights.push(random(-1, 1));
+    }
+  }
+
   step() {
     let tOut;
     if (this.parent) {
@@ -183,9 +191,8 @@ class NN {
     yesAccum = yesAccum / yesCount;
     noAccum = noAccum / noCount;
     if (noAccum > yesAccum) {
-      for (let i = 0; i < this.majorDataLength; i++) {
-        this.weights.push(random(-1, 1));
-      }
+      console.log('ahh!')
+      // this.resetWeights();
     }
   }
 }
@@ -216,8 +223,15 @@ class NPattern {
     end = this.nSequence.slice(this.cols);
     combined = end.concat(side);
     alts.push(combined);
-    combined = invertArr(combined)
-    alts.push(combined);
+    if (this.isExample == false) {
+      combined = invertArr(combined);
+      alts.push(combined);
+    } else {
+      side = new Array(this.cols).fill(0);
+      end = combined.slice(this.cols);
+      combined = end.concat(side);
+      alts.push(combined);
+    }
     // move down
     combined = [];
     // side = this.nSequence.slice(-1 * this.cols);
@@ -225,8 +239,15 @@ class NPattern {
     end = this.nSequence.slice(0, -1 * this.cols);
     combined = side.concat(end);
     alts.push(combined);
-    combined = invertArr(combined)
-    alts.push(combined);
+    if (this.isExample == false) {
+      combined = invertArr(combined);
+      alts.push(combined);
+    } else {
+      side = new Array(this.cols).fill(0);
+      end = combined.slice(0, -1 * this.cols);
+      combined = side.concat(end);
+      alts.push(combined);
+    }
     //move left
     combined = [];
     for (let i = 1; i < this.seqLength; i+= 1) {
@@ -237,8 +258,20 @@ class NPattern {
       combined[i] = 0;
     }
     alts.push(combined);
-    combined = invertArr(combined)
-    alts.push(combined);
+    if (this.isExample == false) {
+      combined = invertArr(combined);
+      alts.push(combined);
+    } else {
+      end = []
+      for (let i = 1; i < this.seqLength; i+= 1) {
+        end.push(combined[i]);
+      }
+      end.push(0);
+      for (let i = this.cols-1; i < this.seqLength; i+= this.cols) {
+        end[i] = 0;
+      }
+      alts.push(end);
+    }
     //move right
     combined = [0];
     for (let i = 0; i < this.seqLength-1; i+= 1) {
@@ -248,8 +281,19 @@ class NPattern {
       combined[i] = 0;
     }
     alts.push(combined);
-    combined = invertArr(combined)
-    alts.push(combined);
+    if (this.isExample == false) {
+      combined = invertArr(combined);
+      alts.push(combined);
+    } else {
+      end = [0];
+      for (let i = 0; i < this.seqLength-1; i+= 1) {
+        end.push(combined[i]);
+      }
+      for (let i = 0; i < this.seqLength; i+= this.cols) {
+        end[i] = 0;
+      }
+      alts.push(end);
+    }
     return alts;
   }
 
@@ -353,11 +397,19 @@ function setupGenerates() {
       generated[i].nSequence = trainP[i].nSequence;
     }
   }
+  for (let i = 0; i < 20; i++) {
+    let noise = []
+    for (let j = 0; j < trainP[0].nSequence.length; j++) {
+      noise.push(int(random(0, 2)));
+    }
+    allGeneratedIn.push(noise);
+    allGeneratedOut.push(false);
+  }
 }
 
 function setupDemo() {
   let rc = int(random(0, myDemo.length));
-  rc = 0;
+  // rc = 0;
   for (let i = 0; i < trainP.length; i++) {
     trainP[i].nSequence = myDemo[rc][0][i];
     trainP[i].isExample = myDemo[rc][1][i];
@@ -443,8 +495,12 @@ function drawWeights(x, y, w, weights, sLength, cols, rows, button = true) {
     wXmax = x + w * cols;
     wYmin = y;
     wYmax = y + w * rows;;
+  } else {
+    rwXmin = x;
+    rwXmax = x + w * cols;
+    rwYmin = y;
+    rwYmax = y + w * rows;;
   }
-
   let x2 = x;
   let norm = [];
   if (weights.length > 0) {
@@ -483,6 +539,16 @@ function mousePressed() {
     doNN();
     return false;
   }
+  if (mx > rwXmin && mx < rwXmax && my > rwYmin && my < rwYmax) {
+    if (!(myNN === null)) {
+      console.log('reset!');
+      myNN.resetWeights();
+      myNN.child.resetWeights();
+      layer2Weights = myNN.weights;
+      layer1Weights = myNN.child.weights;
+    }
+    return false;
+  }
   // console.log(mx, my, dXmin, dXmax, dYmin, dYmax);
 
   if (mx > dXmin && mx < dXmax && my > dYmin && my < dYmax) {
@@ -501,16 +567,19 @@ function mousePressed() {
     stop = testP[i].updateBoxWithClick(mx, my);
     if (stop) {
       testP[i].lerp = 0;
-      setupNN();
-      // layer2Weights = [];
+      if (layer2Weights.length > 0) {
+        setupNN();
+      }
+
       return false;
     };
   }
   for (let i = 0; i < trainP.length; i++){
     stop = trainP[i].updateIsExampleWithClick(mx, my);
     if (stop) {
-      // layer2Weights = [];
-      setupNN()
+      if (layer2Weights.length > 0) {
+        setupNN();
+      }
       setupGenerates();
       return false;
     };
@@ -598,7 +667,7 @@ function setupScreen(){
 }
 
 function preload() {
-  myDemo = [loadJSON('demo2.json'), loadJSON('demo.json')] ;
+  myDemo = [loadJSON('demo2.json'), loadJSON('demo.json'), loadJSON('demo3.json')] ; //
 }
 
 function setup() {
@@ -651,17 +720,11 @@ function draw() {
   y += smallText;
   text('A box can hold either a pattern (white) or a non-pattern (blue).', x, y);
   y += smallText;
-
-
   text('3 patterns and 3 non-patterns should work well.', x, y);
   stroke(0);
   y += smallText;
-
-
-  // let pixelSize = 10;
   noStroke();
   fill(myColors[0]);
-  // text('Training Inputs', x, y-10);
   stroke(0);
   for (let i = 0; i < trainP.length; i++) {
     trainP[i].drawPattern(x, y, pixelSize);
@@ -698,8 +761,6 @@ function draw() {
   y += (trainP[0].rows + 0.5) * pixelSize;
   noStroke();
   fill(myColors[0]);
-  // text('Weights', x, y-10);
-  // y += 18;
   text('The WEIGHTS boxes are shown below.', x, y-10);
   y += smallText;
   text('Each "pixel" in the box helps recognise the pattern.', x, y-10);
@@ -708,7 +769,6 @@ function draw() {
   y += smallText;
   text('Click the large WEIGHTS box below to train for ' + stepCount + ' times.', x, y-10);
   stroke(0);
-  // drawWeights(x, y, w, weights, sLength, cols, rows, button = true)
   drawWeights(x, y, pixelSize, layer2Weights, trainP[0].nSequence.length, trainP[0].cols, trainP[0].rows);
   noStroke();
   fill(myColors[0]);
@@ -727,5 +787,7 @@ function draw() {
   y += smallText;
   text('If it didnt work try clicking the WEIGHTS box a few more times.', x, y-10);
   y += smallText;
-  text('Or Refresh ¯\\_(ツ)_/¯ the training can go "weird" and fixing it is tricky on a web browser.', x, y-10);
+  text('Or click the small box to reset the weights ¯\\_(ツ)_/¯', x, y-10);
+  y += smallText;
+  text('Training can go "weird" and fixing it is tricky on a web browser.', x, y-10);
 }

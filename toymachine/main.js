@@ -186,11 +186,11 @@ class NPattern {
   }
 
   updateBoxWithClick(mx, my) { //oh man
-    if (mx > this.majorHitBox[0] && mx < this.majorHitBox[1]) {
-      if (my > this.majorHitBox[2] && my < this.majorHitBox[3]) {
+    if (mx > this.majorHitBox[0]-1 && mx < this.majorHitBox[1]+1) {
+      if (my > this.majorHitBox[2]-1 && my < this.majorHitBox[3]+1) {
         for (let j = 0; j < this.nSequence.length; j++) {
-          if (mx > this.boxHitBox[j][0] && mx < this.boxHitBox[j][1]) {
-            if (my > this.boxHitBox[j][2] && my < this.boxHitBox[j][3]) {
+          if (mx > this.boxHitBox[j][0]-1 && mx < this.boxHitBox[j][1]+1) {
+            if (my > this.boxHitBox[j][2]-1 && my < this.boxHitBox[j][3]+1) {
               if (this.nSequence[j] == 1) {
                 this.nSequence[j] = 0;
               } else {
@@ -209,19 +209,27 @@ class NPattern {
     let x2 = x;
     let egX;
     let egY = y;
-    let egH = w * this.rows;
+    let egH = w * (this.rows - 2);
     this.boxHitBox = [];
     this.majorHitBox = [x, 0, y, 0];
     for (let i = 0; i < this.nSequence.length; i++) {
-      fill(myColors[this.nSequence[i]]);
-      square(x2, y, w);
-      this.boxHitBox.push([x2, x2 + w, y, y + w]);
-      x2 += w;
-      if ((i + 1) % this.cols == 0){
-        egX = x2;
-        x2 = x;
-        y += w;
+      if (i < this.cols || i > this.nSequence.length - this.cols - 1 || (i % this.cols == 0) || (i + 1) % this.cols == 0) {
+        this.boxHitBox.push([0, 0, 0, 0]);
+      } else {
+        fill(myColors[this.nSequence[i]]);
+        if (i % this.cols == 0) {
+          fill(0);
+        }
+        square(x2, y, w);
+        this.boxHitBox.push([x2, x2 + w, y, y + w]);
+        x2 += w;
+        if ((i + 2) % this.cols == 0){
+          egX = x2;
+          x2 = x;
+          y += w;
+        }
       }
+
     }
     if (this.isTest) {
       fill(lerpColor(noColor, yesColor, this.lerp));
@@ -272,18 +280,18 @@ function setupGenerates() {
 
 function setupDemo() {
   tempWeights = [];
-  // clearGenerates();
-  trainP[0].nSequence = [0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  trainP[0].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   trainP[0].isExample = true;
-  trainP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0];
+  trainP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0];
   trainP[1].isExample = true;
-  trainP[2].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,0,0,0,1,0,0,0,0,0,0,0];
+  trainP[2].nSequence = [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   trainP[2].isExample = true;
-  trainP[3].nSequence = [1,0,0,0,1,0,1,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1];
-  trainP[4].nSequence = [0,0,0,0,0,0,1,1,1,0,0,1,0,1,0,0,1,0,1,0,0,1,1,1,0,0,0,0,0,0];
-  trainP[5].nSequence = [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0];
-  testP[0].nSequence = [0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0];
-  testP[1].nSequence = [1,1,1,1,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,0,0,0,1,1,1,1,1,1];
+  trainP[3].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,0,0,0,1,1,1,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0];
+  trainP[4].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0];
+  trainP[5].nSequence = [0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0];
+
+  testP[0].nSequence = [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  testP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 }
 
 function doNN() {
@@ -314,7 +322,7 @@ function doNN() {
     tempWeights = myNN.weights;
     for (let i = 0; i < tests.length; i++) {
       testP[i].lerp = myNN.test(tests[i]);
-      // console.log(testP[i].lerp);
+      console.log(testP[i].lerp);
     }
   }
 }
@@ -503,11 +511,14 @@ function setup() {
   allGeneratedOut = [];
   testP = [];
   for (let i = 0; i < numberOfThings; i++) {
-    trainP.push(new NPattern(6, 5));
-    generated.push(new NPattern(6, 5));
+    // trainP.push(new NPattern(6, 5));
+    // generated.push(new NPattern(6, 5));
+    trainP.push(new NPattern(8, 7));
+    generated.push(new NPattern(8, 7));
   }
   for (let i = 0; i < 2; i++) {
-    testP.push(new NPattern(6, 5, true));
+    // testP.push(new NPattern(6, 5, true));
+    testP.push(new NPattern(8, 7, true));
   }
   setupScreen();
   frameRate(10);
@@ -553,7 +564,7 @@ function draw() {
     x += (trainP[i].cols + 2) * pixelSize;
   }
   x = startx;
-  y += (trainP[0].rows + 3) * pixelSize;
+  y += (trainP[0].rows + 0.5) * pixelSize;
   noStroke();
   fill(myColors[0]);
   text('The computer makes some more patterns:', x, y-10);
@@ -567,7 +578,7 @@ function draw() {
     x += (generated[i].cols + 2) * pixelSize;
   }
   x = startx;
-  y += (trainP[0].rows + 3) * pixelSize;
+  y += (trainP[0].rows + 0.5) * pixelSize;
   noStroke();
   fill(myColors[0]);
   text('You can test the pattern recognition below.', x, y-10);
@@ -580,7 +591,7 @@ function draw() {
   }
 
   x = startx;
-  y += (trainP[0].rows + 3) * pixelSize;
+  y += (trainP[0].rows + 0.5) * pixelSize;
   noStroke();
   fill(myColors[0]);
   // text('Weights', x, y-10);

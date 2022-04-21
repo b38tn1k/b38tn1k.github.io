@@ -455,70 +455,86 @@ function setupDemo() {
     testP[i].nSequence = myDemo[rc][2][i];
     testP[i].lerp = 0;
   }
-  // let patternLength = int(random(2, 4));
-  // let pattern = [0];
-  // for (let i = 0; i < patternLength; i++) {
-  //   pattern.push(int(random(5, 9)));
-  //   pattern.push(int(random(12, 16)));
-  // }
-  // let gp;
-  // let start;
-  //
-  // let row;
-  // for (let i = 0; i < 3; i++) {
-  //   gp = new Array(trainP[0].nSequence.length).fill(0);
-  //   start = int(random(1, 3));
-  //   row = int(random(1, 3));
-  //   start = start + (i+1)*8;
-  //   for (let i = 0; i < pattern.length; i++) {
-  //     gp[start + pattern[i]] = 1;
-  //   }
-  //   trainP[i].nSequence = [];
-  //   trainP[i].nSequence = gp;
-  //   trainP[i].isExample = true;
-  // }
-  // gp = new Array(trainP[0].nSequence.length).fill(0);
-  // for (let i = 0; i < pattern.length; i++) {
-  //   gp[17 + pattern[i]] = 1;
-  // }
-  // testP[0].nSequence = [];
-  // testP[0].nSequence = gp;
-  // // counter example
-  // pattern = [];
-  // patternLength = int(random(3, 7));
-  // for (let i = 0; i < patternLength; i++) {
-  //   pattern.push(int(random(0, 3)));
-  //   pattern.push(int(random(4, 11)));
-  //   pattern.push(int(random(13, 16)));
-  //   pattern.push(int(random(22, 26)));
-  // }
-  // gp = new Array(trainP[0].nSequence.length).fill(0);
-  // for (let i = 0; i < pattern.length; i++) {
-  //   gp[18 + pattern[i]] = 1;
-  // }
-  // testP[1].nSequence = [];
-  // testP[1].nSequence = gp;
-  // pattern = [];
-  // for (let j = 3; j < 6; j++) {
-  //   patternLength = int(random(3, 7));
-  //   pattern = [];
-  //   for (let i = 0; i < patternLength; i++) {
-  //     pattern.push(int(random(0, 3)));
-  //     pattern.push(int(random(4, 11)));
-  //     pattern.push(int(random(13, 16)));
-  //     pattern.push(int(random(22, 26)));
-  //   }
-  //   gp = new Array(trainP[0].nSequence.length).fill(0);
-  //   start = int(random(1, 3));
-  //   row = int(random(1, 3));
-  //   start = start + row*8;
-  //   for (let i = 0; i < pattern.length; i++) {
-  //     gp[start + pattern[i]] = 1;
-  //   }
-  //   trainP[j].nSequence = [];
-  //   trainP[j].nSequence = gp;
-  //   trainP[j].isExample = false;
-  // }
+}
+
+function generateShape() {
+  if (!(myNN === null)) {
+    console.log('reset!');
+    myNN.resetWeights();
+    myNN.child.resetWeights();
+    layer2Weights = myNN.weights;
+    layer1Weights = myNN.child.weights;
+  }
+  let patternLength = int(random(2, 4));
+  let pattern = [0];
+  for (let i = 0; i < patternLength; i++) {
+    pattern.push(int(random(5, 9)));
+    pattern.push(int(random(12, 16)));
+  }
+  let gp;
+  let start;
+
+  let row;
+  for (let i = 0; i < 3; i++) {
+    gp = new Array(trainP[0].nSequence.length).fill(0);
+    start = int(random(1, 3));
+    row = int(random(1, 3));
+    start = start + (i+1)*8;
+    for (let i = 0; i < pattern.length; i++) {
+      gp[start + pattern[i]] = 1;
+    }
+    trainP[i].nSequence = [];
+    trainP[i].nSequence = gp;
+    trainP[i].isExample = true;
+  }
+  gp = new Array(trainP[0].nSequence.length).fill(0);
+  for (let i = 0; i < pattern.length; i++) {
+    gp[17 + pattern[i]] = 1;
+  }
+  testP[0].nSequence = [];
+  testP[0].nSequence = gp;
+  testP[0].lerp = 0;
+  // counter example
+  pattern = [];
+  patternLength = int(random(3, 7));
+  for (let i = 0; i < patternLength; i++) {
+    pattern.push(int(random(0, 3)));
+    pattern.push(int(random(4, 11)));
+    pattern.push(int(random(4, 11)));
+    pattern.push(int(random(13, 16)));
+    pattern.push(int(random(13, 16)));
+    pattern.push(int(random(22, 26)));
+  }
+  gp = new Array(trainP[0].nSequence.length).fill(0);
+  for (let i = 0; i < pattern.length; i++) {
+    gp[18 + pattern[i]] = 1;
+  }
+  testP[1].nSequence = [];
+  testP[1].nSequence = gp;
+  testP[1].lerp = 0;
+  pattern = [];
+  for (let j = 3; j < 6; j++) {
+    patternLength = int(random(3, 7));
+    pattern = [];
+    for (let i = 0; i < patternLength; i++) {
+      pattern.push(int(random(0, 3)));
+      pattern.push(int(random(4, 11)));
+      pattern.push(int(random(13, 16)));
+      pattern.push(int(random(4, 11)));
+      pattern.push(int(random(13, 16)));
+      pattern.push(int(random(22, 26)));
+    }
+    gp = new Array(trainP[0].nSequence.length).fill(0);
+    start = int(random(1, 3));
+    row = int(random(1, 3));
+    start = start + row*8;
+    for (let i = 0; i < pattern.length; i++) {
+      gp[start + pattern[i]] = 1;
+    }
+    trainP[j].nSequence = [];
+    trainP[j].nSequence = gp;
+    trainP[j].isExample = false;
+  }
 }
 
 function setupData() {
@@ -654,7 +670,8 @@ function mousePressed() {
   // console.log(mx, my, dXmin, dXmax, dYmin, dYmax);
 
   if (mx > dXmin && mx < dXmax && my > dYmin && my < dYmax) {
-    setupDemo();
+    // setupDemo();
+    generateShape();
     return false;
   }
 
@@ -711,6 +728,8 @@ function keyTyped() {
     }
     let myJSON = [trainPdatas, trainPoutputs, testPDatas];
     save(myJSON, 'demo.json');
+  } else if (key == 'g') {
+    generateShape();
   } else {
     setupGenerates();
     doNN();
@@ -809,10 +828,10 @@ function draw() {
   text('This program tries to recognise patterns or shapes.', x, y);
   y += smallText;
   textStyle(BOLD);
-  text('Click HERE to try an example.', x, y);
+  text('Click HERE to try a randomly generated example.', x, y);
   textStyle(NORMAL);
   dXmin = x;
-  dXmax = x + textWidth('Click HERE to try an example.');
+  dXmax = x + textWidth('Click HERE to try a randomly generated example.');
   dYmin = y - bigText;
   dYmax = y + bigText;
   y += smallText;
@@ -889,9 +908,10 @@ function draw() {
   y += smallText;
   text('If it didnt work try clicking the WEIGHTS box a few more times.', x, y-10);
   y += smallText;
-  text('Or click the small box to reset the weights ¯\\_(ツ)_/¯', x, y-10);
-  y += smallText;
   text('Click too many times and it will learn to recognise any pattern', x, y-10);
   y += smallText;
+  text('Make a different pattern or click the small box to reset the weights.', x, y-10);
+  y += smallText;
+
   text('Training can go "weird" and fixing it is tricky on a web browser.', x, y-10);
 }

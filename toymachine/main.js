@@ -4,7 +4,7 @@ var allGeneratedIn = [];
 var allGeneratedOut = [];
 var testP = [];
 var numberOfThings = 6;
-var stepCount = 100;
+var stepCount = 10;
 var tempWeights = [];
 var wXmin, wXmax, wYmin, wYmax;
 var dXmin, dXmax, dYmin, dYMax;
@@ -21,8 +21,12 @@ class NN {
     this.inputs = inputs;
     this.outputs = outputs;
     this.weights = [];
-    for (let i = 0; i < inputs[0].length; i++) {
-      this.weights.push(random(-1, 1));
+    if (inputs[0].length == 56) {
+      this.weights = [0.6814556029111165, -1.2886226228701199, 0.4199143472688638, -1.2368221805136217, 2.104427442020813, 0.5664233174832218, 0.5666481418006668, -1.0967020208595157, -5.39401852734773, -2.587527824277782, -1.2316076827874725, 0.9202078060807194, -0.2830506220374057, 0.5945079200019989, -1.1398266732657136, -1.6752995315312795, -1.192352562402921, 3.2169910048837886, 0.6570069189981063, 0.6063364663065318, 2.3033652555475705, -0.25793781150012834, -1.3260490608538398, 1.7750451818955761, 0.44976615574761136, 1.5847383475548364, -1.0128167796151688, -0.2872679820876544, 0.10225255066128786, -0.32915124740065693, 1.9746473014648374, -3.5705406625093064, 0.5024599561719163, -0.3961647352408671, -0.2702899466655415, -0.4436220846390658, -0.6320910510208099, -3.1628028729289412, 2.6039506425903265, -4.201569110089423, 0.7176061243756564, 0.46008573510945877, -0.2083019160716896, -1.1913930878097598, 0.8419178315031528, -4.142765346144346, 1.746039158670168, -1.7870320528390966, -0.22401459485452327, 0.04899247189919333, 0.1566533589986828, -3.335937019544963, 0.020996851839516658, -2.4468635672017136, -0.967958265624244, -1.220099459681018];
+    } else {
+      for (let i = 0; i < inputs[0].length; i++) {
+        this.weights.push(random(-1, 1));
+      }
     }
   }
 
@@ -292,7 +296,7 @@ function setupDemo() {
   trainP[5].nSequence = [0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0];
 
   testP[0].nSequence = [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-  testP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] ;
+  testP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 }
 
 function doNN() {
@@ -321,10 +325,10 @@ function doNN() {
   for (let its = 0; its < stepCount; its ++) {
     myNN.step();
     tempWeights = myNN.weights;
-    console.log("");
+    // console.log("");
     for (let i = 0; i < tests.length; i++) {
       testP[i].lerp = myNN.test(tests[i]);
-      console.log(testP[i].lerp);
+      // console.log(testP[i].lerp);
     }
   }
 }
@@ -384,6 +388,7 @@ function mousePressed() {
     // if (weightClickCounter % 10 == 0) {
     //   tempWeights = [];
     // }
+    console.log(tempWeights);
     setupGenerates();
     doNN();
     return false;
@@ -468,7 +473,7 @@ function setupScreen(){
   // scratchNet();
   // slowScratchNet();
   createCanvas(windowWidth, windowHeight);
-  console.log(windowWidth);
+  // console.log(windowWidth);
   bigText = 30;
   smallText = 15;
   pixelSize = 10;
@@ -531,6 +536,7 @@ function setup() {
 }
 
 function draw() {
+  background(255);
   let x = startx;
   let y = bigText;
   noStroke();
@@ -620,4 +626,6 @@ function draw() {
   text('Remember white means pattern, blue means non-pattern.', x, y-10);
   y += smallText;
   text('If it didnt work try clicking the WEIGHTS box a few more times.', x, y-10);
+  y += smallText;
+  text('Or Refresh ¯\\_(ツ)_/¯ the training can go "weird" and fixing it is tricky on a web browser.', x, y-10);
 }

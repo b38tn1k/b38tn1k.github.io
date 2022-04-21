@@ -31,6 +31,7 @@ class NN {
     }
     this.kernelShape = kernelShape
     this.inputs = inputs;
+    this.failCount = 0;
     this.outputs = outputs;
     this.weights = [];
     this.majorDataLength = inputs[0].length;
@@ -191,8 +192,11 @@ class NN {
     yesAccum = yesAccum / yesCount;
     noAccum = noAccum / noCount;
     if (noAccum > yesAccum) {
-      console.log('ahh!')
-      // this.resetWeights();
+      this.failCount += 1;
+    }
+    if (this.failureCount > 50) {
+      this.failCount = 0;
+      this.resetWeights();
     }
   }
 }
@@ -224,8 +228,8 @@ class NPattern {
     combined = end.concat(side);
     alts.push(combined);
     if (this.isExample == false) {
-      combined = invertArr(combined);
-      alts.push(combined);
+      //combined = invertArr(combined);
+      //alts.push(combined);
     } else {
       side = new Array(this.cols).fill(0);
       end = combined.slice(this.cols);
@@ -240,8 +244,8 @@ class NPattern {
     combined = side.concat(end);
     alts.push(combined);
     if (this.isExample == false) {
-      combined = invertArr(combined);
-      alts.push(combined);
+      // combined = invertArr(combined);
+      // alts.push(combined);
     } else {
       side = new Array(this.cols).fill(0);
       end = combined.slice(0, -1 * this.cols);
@@ -259,8 +263,8 @@ class NPattern {
     }
     alts.push(combined);
     if (this.isExample == false) {
-      combined = invertArr(combined);
-      alts.push(combined);
+      // combined = invertArr(combined);
+      // alts.push(combined);
     } else {
       end = []
       for (let i = 1; i < this.seqLength; i+= 1) {
@@ -282,8 +286,8 @@ class NPattern {
     }
     alts.push(combined);
     if (this.isExample == false) {
-      combined = invertArr(combined);
-      alts.push(combined);
+      //combined = invertArr(combined);
+      //alts.push(combined);
     } else {
       end = [0];
       for (let i = 0; i < this.seqLength-1; i+= 1) {
@@ -417,6 +421,70 @@ function setupDemo() {
   for (let i = 0; i < testP.length; i++) {
     testP[i].nSequence = myDemo[rc][2][i];
   }
+  // let patternLength = int(random(2, 4));
+  // let pattern = [0];
+  // for (let i = 0; i < patternLength; i++) {
+  //   pattern.push(int(random(5, 9)));
+  //   pattern.push(int(random(12, 16)));
+  // }
+  // let gp;
+  // let start;
+  //
+  // let row;
+  // for (let i = 0; i < 3; i++) {
+  //   gp = new Array(trainP[0].nSequence.length).fill(0);
+  //   start = int(random(1, 3));
+  //   row = int(random(1, 3));
+  //   start = start + (i+1)*8;
+  //   for (let i = 0; i < pattern.length; i++) {
+  //     gp[start + pattern[i]] = 1;
+  //   }
+  //   trainP[i].nSequence = [];
+  //   trainP[i].nSequence = gp;
+  //   trainP[i].isExample = true;
+  // }
+  // gp = new Array(trainP[0].nSequence.length).fill(0);
+  // for (let i = 0; i < pattern.length; i++) {
+  //   gp[17 + pattern[i]] = 1;
+  // }
+  // testP[0].nSequence = [];
+  // testP[0].nSequence = gp;
+  // // counter example
+  // pattern = [];
+  // patternLength = int(random(3, 7));
+  // for (let i = 0; i < patternLength; i++) {
+  //   pattern.push(int(random(0, 3)));
+  //   pattern.push(int(random(4, 11)));
+  //   pattern.push(int(random(13, 16)));
+  //   pattern.push(int(random(22, 26)));
+  // }
+  // gp = new Array(trainP[0].nSequence.length).fill(0);
+  // for (let i = 0; i < pattern.length; i++) {
+  //   gp[18 + pattern[i]] = 1;
+  // }
+  // testP[1].nSequence = [];
+  // testP[1].nSequence = gp;
+  // pattern = [];
+  // for (let j = 3; j < 6; j++) {
+  //   patternLength = int(random(3, 7));
+  //   pattern = [];
+  //   for (let i = 0; i < patternLength; i++) {
+  //     pattern.push(int(random(0, 3)));
+  //     pattern.push(int(random(4, 11)));
+  //     pattern.push(int(random(13, 16)));
+  //     pattern.push(int(random(22, 26)));
+  //   }
+  //   gp = new Array(trainP[0].nSequence.length).fill(0);
+  //   start = int(random(1, 3));
+  //   row = int(random(1, 3));
+  //   start = start + row*8;
+  //   for (let i = 0; i < pattern.length; i++) {
+  //     gp[start + pattern[i]] = 1;
+  //   }
+  //   trainP[j].nSequence = [];
+  //   trainP[j].nSequence = gp;
+  //   trainP[j].isExample = false;
+  // }
 }
 
 function setupData() {
@@ -635,7 +703,7 @@ function setupScreen(){
   startx = 20;
   if (windowWidth < 1100 || windowHeight < 650){
     bigText = 30;
-    smallText = 13;
+    smallText = 12;
     pixelSize = 10;
     startx = 15;
   }
@@ -702,15 +770,15 @@ function draw() {
   fill(myColors[0]);
   textSize(bigText);
   text('Toy Neural Network', x, y);
-  y += bigText;
+  y += bigText-5;
   textSize(smallText);
   text('This program tries to recognise patterns or shapes.', x, y);
   y += smallText;
   textStyle(BOLD);
-  text('Click HERE to load an example.', x, y);
+  text('Click HERE to try an example.', x, y);
   textStyle(NORMAL);
   dXmin = x;
-  dXmax = x + textWidth('Click HERE to load an example.');
+  dXmax = x + textWidth('Click HERE to try an example.');
   dYmin = y - bigText;
   dYmax = y + bigText;
   y += smallText;
@@ -736,7 +804,7 @@ function draw() {
   fill(myColors[0]);
   text('The computer makes some more patterns:', x, y-10);
   y += smallText;
-  text('Moving the source patterns around and flipping the colors.', x, y-10);
+  text('Moving the source patterns around.', x, y-10);// and flipping the colors.', x, y-10);
   y += smallText;
   text('Click any box to make some more patterns.', x, y-10);
   stroke(0);
@@ -788,6 +856,8 @@ function draw() {
   text('If it didnt work try clicking the WEIGHTS box a few more times.', x, y-10);
   y += smallText;
   text('Or click the small box to reset the weights ¯\\_(ツ)_/¯', x, y-10);
+  y += smallText;
+  text('Click too many times and it will learn to recognise any pattern', x, y-10);
   y += smallText;
   text('Training can go "weird" and fixing it is tricky on a web browser.', x, y-10);
 }

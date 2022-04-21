@@ -401,18 +401,24 @@ class NPattern {
     }
     if (this.isTest) {
       fill(lerpColor(noColor, yesColor, this.lerp));
+      rect(egX, egY, w, egH);
+      fill(noColor);
+      noStroke();
+      text(int(this.lerp.toFixed(2) * 100), egX + 1.5*w, y);
+      stroke(0);
     } else {
       if (this.isExample) {
         fill(yesColor);
       } else {
         fill(noColor);
       }
+      rect(egX, egY, w, egH);
     }
     this.majorHitBox[1] = egX;
     this.majorHitBox[3] = y;
     y -= w;
     this.egHitBox = [egX, egX + w, egY, egY + egH];
-    rect(egX, egY, w, egH);
+
   }
 }
 
@@ -457,7 +463,7 @@ function setupDemo() {
   }
 }
 
-function generateShape() {
+function generateShape() { // this bit is gross too
   if (!(myNN === null)) {
     console.log('reset!');
     myNN.resetWeights();
@@ -466,30 +472,36 @@ function generateShape() {
     layer1Weights = myNN.child.weights;
   }
   let patternLength = int(random(2, 4));
-  let pattern = [0];
+  let pattern = [];
   for (let i = 0; i < patternLength; i++) {
-    pattern.push(int(random(5, 9)));
-    pattern.push(int(random(12, 16)));
+    pattern.push(int(random(0, 2)));
+    pattern.push(int(random(6, 10)));
+    pattern.push(int(random(13, 16)));
   }
   let gp;
   let start;
+  let noise = 0
 
   let row;
   for (let i = 0; i < 3; i++) {
     gp = new Array(trainP[0].nSequence.length).fill(0);
     start = int(random(1, 3));
     row = int(random(1, 3));
-    start = start + (i+1)*8;
-    for (let i = 0; i < pattern.length; i++) {
-      gp[start + pattern[i]] = 1;
+    start = start + (i+2)*8 - 2;
+    for (let j = 0; j < pattern.length; j++) {
+      gp[start + pattern[j]] = 1;
+    }
+    for (let j = 0; j < i; j++) {
+      noise = int(random(8, 48));
+      gp[noise] = 1;
     }
     trainP[i].nSequence = [];
     trainP[i].nSequence = gp;
     trainP[i].isExample = true;
   }
   gp = new Array(trainP[0].nSequence.length).fill(0);
-  for (let i = 0; i < pattern.length; i++) {
-    gp[17 + pattern[i]] = 1;
+  for (let j = 0; j < pattern.length; j++) {
+    gp[17 + pattern[j]] = 1;
   }
   testP[0].nSequence = [];
   testP[0].nSequence = gp;
@@ -500,14 +512,14 @@ function generateShape() {
   for (let i = 0; i < patternLength; i++) {
     pattern.push(int(random(0, 3)));
     pattern.push(int(random(4, 11)));
-    pattern.push(int(random(4, 11)));
     pattern.push(int(random(13, 16)));
+    pattern.push(int(random(4, 11)));
     pattern.push(int(random(13, 16)));
     pattern.push(int(random(22, 26)));
   }
   gp = new Array(trainP[0].nSequence.length).fill(0);
-  for (let i = 0; i < pattern.length; i++) {
-    gp[18 + pattern[i]] = 1;
+  for (let j = 0; j < pattern.length; j++) {
+    gp[16 + pattern[j]] = 1;
   }
   testP[1].nSequence = [];
   testP[1].nSequence = gp;
@@ -528,8 +540,8 @@ function generateShape() {
     start = int(random(1, 3));
     row = int(random(1, 3));
     start = start + row*8;
-    for (let i = 0; i < pattern.length; i++) {
-      gp[start + pattern[i]] = 1;
+    for (let j = 0; j < pattern.length; j++) {
+      gp[start + pattern[j]] = 1;
     }
     trainP[j].nSequence = [];
     trainP[j].nSequence = gp;

@@ -12,6 +12,7 @@ var bigText = 32;
 var smallText = 18;
 var pixelSize = 10;
 var startx = 20;
+var weightClickCounter = 0;
 
 var myColors, yesColor, noColor;
 
@@ -379,6 +380,10 @@ function mousePressed() {
   my = mouseY;
   let stop = false;
   if (mx > wXmin && mx < wXmax && my > wYmin && my < wYmax) {
+    // weightClickCounter += 1;
+    // if (weightClickCounter % 10 == 0) {
+    //   tempWeights = [];
+    // }
     setupGenerates();
     doNN();
     return false;

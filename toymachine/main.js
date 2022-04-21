@@ -5,7 +5,7 @@ var allGeneratedOut = [];
 var testP = [];
 var numberOfThings = 6;
 var stepCount = 10;
-var tempWeights = [];
+var layer2Weights = [];
 var wXmin, wXmax, wYmin, wYmax;
 var dXmin, dXmax, dYmin, dYMax;
 var bigText = 32;
@@ -13,6 +13,7 @@ var smallText = 18;
 var pixelSize = 10;
 var startx = 20;
 var weightClickCounter = 0;
+var myNN = null;
 
 var myColors, yesColor, noColor;
 
@@ -59,30 +60,6 @@ class NN {
     for (let i = 0; i < this.weights.length; i++) {
       this.weights[i] += dotDelta[i];
     }
-  }
-}
-
-function scratchNet() {
-  let inputs = [[0, 0, 1, 0, 1, 1, 0, 1], [1, 0, 1, 0, 0, 0, 0, 0], [1, 0, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 1, 1]];
-  let outputs = [0, 1, 1, 0, 0];
-  let myNN = new NN(inputs, outputs);
-  for (let its = 0; its < 10; its ++) {
-    for (let steps = 0; steps < 10; steps++) {
-      myNN.step();
-    }
-    console.log(myNN.test([1, 0, 1, 0, 0, 1, 0, 0]));
-  }
-}
-
-function slowScratchNet() {
-  let inputs = [[0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0], [1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0]];
-  let outputs = [1, 0];
-  let myNN = new NN(inputs, outputs);
-  for (let its = 0; its < 10; its ++) {
-    for (let steps = 0; steps < 50; steps++) {
-      myNN.step();
-    }
-    console.log(myNN.test([0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0]));
   }
 }
 
@@ -273,18 +250,8 @@ function setupGenerates() {
   }
 }
 
-// function clearGenerates() {
-//   allGeneratedIn = [];
-//   allGeneratedOut = [];
-//   let alt = [];
-//   for (let i = 0; i < generated.length; i++) {
-//     generated[i].isExample = false;
-//     generated[i].nSequence = new Array(this.seqLength).fill(0);
-//   }
-// }
-
 function setupDemo() {
-  tempWeights = [];
+  layer2Weights = [];
   trainP[0].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
   trainP[0].isExample = true;
   trainP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0];
@@ -316,15 +283,17 @@ function doNN() {
     tests.push(testP[i].nSequence);
   }
   // run net
-  let myNN = new NN(inputs, outputs);
-  if (tempWeights.length == 0) {
-    tempWeights = myNN.weights;
+  if (myNN === null) {
+    myNN = new NN(inputs, outputs);
+  }
+  if (layer2Weights.length == 0) {
+    layer2Weights = myNN.weights;
   } else {
-    myNN.weights = tempWeights;
+    myNN.weights = layer2Weights;
   }
   for (let its = 0; its < stepCount; its ++) {
     myNN.step();
-    tempWeights = myNN.weights;
+    layer2Weights = myNN.weights;
     // console.log("");
     for (let i = 0; i < tests.length; i++) {
       testP[i].lerp = myNN.test(tests[i]);
@@ -352,20 +321,20 @@ function drawWeights(x, y, w) {
   wYmax = y + w * trainP[0].rows;;
   let x2 = x;
   let norm = [];
-  if (tempWeights.length > 0) {
-    for (let i = 0; i < tempWeights.length; i++) {
-      norm.push(tempWeights[i] - min(tempWeights));
+  if (layer2Weights.length > 0) {
+    for (let i = 0; i < layer2Weights.length; i++) {
+      norm.push(layer2Weights[i] - min(layer2Weights));
     }
     let nMax = max(norm);
     for (let i = 0; i < norm.length; i++) {
       norm[i] = norm[i] / nMax;
     }
   } else {
-    norm = tempWeights;
+    norm = layer2Weights;
   }
 
   for (let i = 0; i < trainP[0].nSequence.length; i++) {
-    if (tempWeights.length == 0){
+    if (layer2Weights.length == 0){
       fill(noColor);
     } else {
       fill(lerpColor(noColor, yesColor, norm[i]));
@@ -384,11 +353,6 @@ function mousePressed() {
   my = mouseY;
   let stop = false;
   if (mx > wXmin && mx < wXmax && my > wYmin && my < wYmax) {
-    // weightClickCounter += 1;
-    // if (weightClickCounter % 10 == 0) {
-    //   tempWeights = [];
-    // }
-    // console.log(tempWeights);
     setupGenerates();
     doNN();
     return false;
@@ -411,20 +375,20 @@ function mousePressed() {
     stop = testP[i].updateBoxWithClick(mx, my);
     if (stop) {
       testP[i].lerp = 0;
-      // tempWeights = [];
+      // layer2Weights = [];
       return false;
     };
   }
   for (let i = 0; i < trainP.length; i++){
     stop = trainP[i].updateIsExampleWithClick(mx, my);
     if (stop) {
-      // tempWeights = [];
+      // layer2Weights = [];
       setupGenerates();
       return false;
     };
     stop = trainP[i].updateBoxWithClick(mx, my);
     if (stop) {
-      // tempWeights = [];
+      // layer2Weights = [];
       setupGenerates();
       return false;
     };

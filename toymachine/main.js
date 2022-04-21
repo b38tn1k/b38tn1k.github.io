@@ -164,6 +164,27 @@ class NN {
       // dot product of inputs and deltas to update weights
       this.updateWeights(delta);
     }
+    // check descent is falling towards a solution
+    let yesCount = 0;
+    let noCount = 0;
+    let yesAccum = 0;
+    let noAccum = 0;
+    for (let i = 0; i < this.dataCount; i++) {
+      if (this.outputs[i] == 1) {
+        yesCount += 1;
+        yesAccum += tOut[i]
+      } else {
+        noCount += 1;
+        noAccum += tOut[i]
+      }
+    }
+    yesAccum = yesAccum / yesCount;
+    noAccum = noAccum / noCount;
+    if (noAccum > yesAccum) {
+      for (let i = 0; i < this.majorDataLength; i++) {
+        this.weights.push(random(-1, 1));
+      }
+    }
   }
 }
 
@@ -334,6 +355,7 @@ function setupGenerates() {
 
 function setupDemo() {
   let rc = int(random(0, myDemo.length));
+  rc = 0;
   for (let i = 0; i < trainP.length; i++) {
     trainP[i].nSequence = myDemo[rc][0][i];
     trainP[i].isExample = myDemo[rc][1][i];

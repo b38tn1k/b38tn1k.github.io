@@ -456,18 +456,18 @@ function setupScreen(){
   createCanvas(windowWidth, windowHeight);
   console.log(windowWidth);
   bigText = 30;
-  smallText = 16;
+  smallText = 15;
   pixelSize = 10;
   startx = 20;
   if (windowWidth < 1100){
     bigText = 30;
-    smallText = 14;
+    smallText = 13;
     pixelSize = 10;
     startx = 15;
   }
   if (windowWidth < 900){
     bigText = 28;
-    smallText = 12;
+    smallText = 11;
     pixelSize = 10;
     startx = 10;
   }
@@ -479,7 +479,7 @@ function setupScreen(){
   }
   if (windowWidth < 500) {
     bigText = 22;
-    smallText = 10.5;
+    smallText = 10;
     pixelSize = 7;
     startx = 5;
   }
@@ -490,6 +490,13 @@ function setupScreen(){
     startx = 5;
   }
   // let ratio = windowWidth / windowHeight;
+}
+
+function setup() {
+  yesColor = color('#FFFFFF');
+  noColor = color('#567DA7');
+  myColors = [color('#567DA7'), color('#FFFFFF')];
+  textFont('Courier New');
   trainP = [];
   generated = [];
   allGeneratedIn = [];
@@ -502,17 +509,6 @@ function setupScreen(){
   for (let i = 0; i < 2; i++) {
     testP.push(new NPattern(6, 5, true));
   }
-}
-
-function preload() {
-
-}
-
-function setup() {
-  yesColor = color('#FFFFFF');
-  noColor = color('#567DA7');
-  myColors = [color('#567DA7'), color('#FFFFFF')];
-  textFont('Courier New');
   setupScreen();
   frameRate(10);
 }
@@ -526,18 +522,22 @@ function draw() {
   text('Toy Neural Network', x, y);
   y += bigText;
   textSize(smallText);
-  text('Draw some patterns and non-patterns using the boxes below.', x, y);
+  text('This program tries to recognise patterns or shapes.', x, y);
   y += smallText;
-  text('Click the rectangle on the left to label each box:', x, y);
-  y += smallText;
-  text('Either a pattern (white) or a non-pattern (blue).', x, y);
-  y += smallText;
-  text('Or click HERE to load an example using + symbols.', x, y);
+  text('Click HERE to load an example using + symbols.', x, y);
   dXmin = x;
   dXmax = x + textWidth('Or click HERE to load an example.');
   dYmin = y - bigText;
   dYmax = y + bigText;
   y += smallText;
+  text('Draw some similar patterns and then some non-patterns in the boxes below.', x, y);
+  y += smallText;
+  text('Click the rectangle on the left to mark each box:', x, y);
+  y += smallText;
+  text('A box can hold either a pattern (white) or a non-pattern (blue).', x, y);
+  y += smallText;
+
+
   text('3 patterns and 3 non-patterns should work well.', x, y);
   stroke(0);
   y += smallText;
@@ -603,8 +603,4 @@ function draw() {
   text('Remember white means pattern, blue means non-pattern.', x, y-10);
   y += smallText;
   text('If it didnt work try clicking the WEIGHTS box a few more times.', x, y-10);
-
-
-
-
 }

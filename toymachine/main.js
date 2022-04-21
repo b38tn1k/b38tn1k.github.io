@@ -82,6 +82,39 @@ class NN {
     this.updateBabyDatas();
   }
 
+  ptest (input, weights=this.weights) {
+    // convert input into child inspected input
+    let k;
+    let newIn = [];
+    let kInd;
+    let bInputs = [];
+    // console.log(input);
+    for (let j = 0; j < this.windowShapeLength; j++) {
+      newIn = [];
+      k = this.windowShape[j];
+      for (let h = 0; h < this.kernelShape.length; h++) {
+        kInd = k + this.kernelShape[h];
+        newIn.push(input[kInd]);
+      }
+      bInputs.push(newIn);
+    }
+    let childOut = [];
+    for (let i = 0; i < bInputs.length; i++) {
+      childOut.push(this.child.test(bInputs[i]));
+    }
+    let _input = new Array(this.majorDataLength).fill(0);
+    for (let j = 0; j < this.windowShapeLength; j++) {
+      k = this.windowShape[j]
+      _input[k] = childOut[j];
+    }
+    let sum = 0;
+    for (let i = 0; i < this.majorDataLength; i++) {
+      sum += _input[i] * weights[i];
+    }
+    let value = 1 / (1 + exp(-1 * sum));
+    return value;
+  }
+
   test (input, weights=this.weights) {
     let sum = 0;
     for (let i = 0; i < this.majorDataLength; i++) {
@@ -541,7 +574,7 @@ function doNN() {
     myNN.step();
     layer2Weights = myNN.weights;
     for (let i = 0; i < tests.length; i++) {
-      testP[i].lerp = myNN.test(tests[i]);
+      testP[i].lerp = myNN.ptest(tests[i]);
     }
   }
 }

@@ -14,12 +14,14 @@ var pixelSize = 10;
 var startx = 20;
 var weightClickCounter = 0;
 var myNN = null;
+var myDemo;
 
 var myColors, yesColor, noColor;
 
 class NN {
   constructor(inputs, outputs, windowShape=null, kernelShape=null, parent=true) {
     this.parent = parent;
+    this.child = null;
     this.windowShape = windowShape;
     this.kernalShape = kernelShape
     this.inputs = inputs;
@@ -36,9 +38,17 @@ class NN {
     }
   }
 
+
+  updateBabyDatas(){
+      if (!this.parent){
+        return false;
+      }
+    }
+
   updateDatas(inputs, outputs){
     this.inputs = inputs;
     this.outputs = outputs;
+    this.updateBabyDatas();
   }
 
   test (input, weights=this.weights) {
@@ -93,6 +103,12 @@ class NN {
   }
 
   step() {
+    if (this.parent) {
+      if (this.child === null) {
+        this.child = new NN(this.inputs, this.outputs, null, null, false);
+        console.log('hello from me too!');
+      }
+    }
     // get guessed outputs
     let tOut = this.guess();
     // find delta between output and expected output
@@ -269,19 +285,14 @@ function setupGenerates() {
 }
 
 function setupDemo() {
-  layer2Weights = [];
-  trainP[0].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-  trainP[0].isExample = true;
-  trainP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0];
-  trainP[1].isExample = true;
-  trainP[2].nSequence = [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-  trainP[2].isExample = true;
-  trainP[3].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,0,0,0,1,1,1,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0];
-  trainP[4].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0];
-  trainP[5].nSequence = [0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0];
-
-  testP[0].nSequence = [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-  testP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  let rc = int(random(0, myDemo.length));
+  for (let i = 0; i < trainP.length; i++) {
+    trainP[i].nSequence = myDemo[rc][0][i];
+    trainP[i].isExample = myDemo[rc][1][i];
+  }
+  for (let i = 0; i < testP.length; i++) {
+    testP[i].nSequence = myDemo[rc][2][i];
+  }
 }
 
 function setupData() {
@@ -442,24 +453,18 @@ function keyTyped() {
   if (key === 'd') {
     setupDemo();
   } else if (key === 's'){
-    let strin = '';
+    let trainPdatas = []
+    let trainPoutputs = []
     for (let i = 0; i < trainP.length; i++) {
-      strin += '['
-      for (let j = 0; j < trainP[i].nSequence.length; j++) {
-        strin += trainP[i].nSequence[j] + ','
-      }
-      strin += '] newline';
+      trainPdatas.push(trainP[i].nSequence);
+      trainPoutputs.push(trainP[i].isExample);
     }
-    strin += 'newline';
-
+    let testPDatas = [];
     for (let i = 0; i < testP.length; i++) {
-      strin += '['
-      for (let j = 0; j < testP[i].nSequence.length; j++) {
-        strin += testP[i].nSequence[j] + ','
-      }
-      strin += '] newline';
+      testPDatas.push(testP[i].nSequence);
     }
-    saveStrings(strin, 'demo.txt');
+    let myJSON = [trainPdatas, trainPoutputs, testPDatas];
+    save(myJSON, 'demo.json');
   } else {
     setupGenerates();
     doNN();
@@ -484,7 +489,7 @@ function setupScreen(){
   smallText = 15;
   pixelSize = 10;
   startx = 20;
-  if (windowWidth < 1100){
+  if (windowWidth < 1100 || windowHeight < 650){
     bigText = 30;
     smallText = 13;
     pixelSize = 10;
@@ -496,13 +501,13 @@ function setupScreen(){
     pixelSize = 10;
     startx = 10;
   }
-  if (windowWidth < 700) {
+  if (windowWidth < 700 ) {
     bigText = 24;
     smallText = 10;
     pixelSize = 10;
     startx = 5;
   }
-  if (windowWidth < 500) {
+  if (windowWidth < 500 || windowHeight < 550) {
     bigText = 22;
     smallText = 10;
     pixelSize = 7;
@@ -515,6 +520,10 @@ function setupScreen(){
     startx = 5;
   }
   // let ratio = windowWidth / windowHeight;
+}
+
+function preload() {
+  myDemo = [loadJSON('demo2.json'), loadJSON('demo.json')] ;
 }
 
 function setup() {
@@ -553,9 +562,9 @@ function draw() {
   textSize(smallText);
   text('This program tries to recognise patterns or shapes.', x, y);
   y += smallText;
-  text('Click HERE to load an example using + symbols.', x, y);
+  text('Click HERE to load an example.', x, y);
   dXmin = x;
-  dXmax = x + textWidth('Or click HERE to load an example.');
+  dXmax = x + textWidth('Click HERE to load an example.');
   dYmin = y - bigText;
   dYmax = y + bigText;
   y += smallText;

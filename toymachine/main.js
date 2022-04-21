@@ -420,6 +420,7 @@ function setupDemo() {
   }
   for (let i = 0; i < testP.length; i++) {
     testP[i].nSequence = myDemo[rc][2][i];
+    testP[i].lerp = 0;
   }
   // let patternLength = int(random(2, 4));
   // let pattern = [0];

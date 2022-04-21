@@ -4,7 +4,7 @@ var allGeneratedIn = [];
 var allGeneratedOut = [];
 var testP = [];
 var numberOfThings = 6;
-var stepCount = 10;
+var stepCount = 100;
 var layer2Weights = [];
 var wXmin, wXmax, wYmin, wYmax;
 var dXmin, dXmax, dYmin, dYMax;
@@ -18,70 +18,89 @@ var myNN = null;
 var myColors, yesColor, noColor;
 
 class NN {
-  constructor(inputs, outputs) {
+  constructor(inputs, outputs, windowShape=null, kernelShape=null, parent=true) {
+    this.parent = parent;
+    this.windowShape = windowShape;
+    this.kernalShape = kernelShape
     this.inputs = inputs;
     this.outputs = outputs;
     this.weights = [];
-    if (inputs[0].length == 56) {
+    this.majorDataLength = inputs[0].length;
+    this.dataCount = inputs.length;
+    if (this.majorDataLength == 56) {
       this.weights = [0.6814556029111165, -1.2886226228701199, 0.4199143472688638, -1.2368221805136217, 2.104427442020813, 0.5664233174832218, 0.5666481418006668, -1.0967020208595157, -5.39401852734773, -2.587527824277782, -1.2316076827874725, 0.9202078060807194, -0.2830506220374057, 0.5945079200019989, -1.1398266732657136, -1.6752995315312795, -1.192352562402921, 3.2169910048837886, 0.6570069189981063, 0.6063364663065318, 2.3033652555475705, -0.25793781150012834, -1.3260490608538398, 1.7750451818955761, 0.44976615574761136, 1.5847383475548364, -1.0128167796151688, -0.2872679820876544, 0.10225255066128786, -0.32915124740065693, 1.9746473014648374, -3.5705406625093064, 0.5024599561719163, -0.3961647352408671, -0.2702899466655415, -0.4436220846390658, -0.6320910510208099, -3.1628028729289412, 2.6039506425903265, -4.201569110089423, 0.7176061243756564, 0.46008573510945877, -0.2083019160716896, -1.1913930878097598, 0.8419178315031528, -4.142765346144346, 1.746039158670168, -1.7870320528390966, -0.22401459485452327, 0.04899247189919333, 0.1566533589986828, -3.335937019544963, 0.020996851839516658, -2.4468635672017136, -0.967958265624244, -1.220099459681018];
     } else {
-      for (let i = 0; i < inputs[0].length; i++) {
+      for (let i = 0; i < this.majorDataLength; i++) {
         this.weights.push(random(-1, 1));
       }
     }
   }
 
+  updateDatas(inputs, outputs){
+    this.inputs = inputs;
+    this.outputs = outputs;
+  }
+
   test (input, weights=this.weights) {
     let sum = 0;
-    for (let i = 0; i < weights.length; i++) {
+    for (let i = 0; i < this.majorDataLength; i++) {
       sum += input[i] * weights[i];
     }
     let value = 1 / (1 + exp(-1 * sum));
     return value;
   }
 
-  step() {
+  guess() {
     let tOut = [];
     let value;
-    // get guessed outputs
-    for (let i = 0; i < this.inputs.length; i++) {
+    for (let i = 0; i < this.dataCount; i++) {
       value = this.test(this.inputs[i]);
       tOut.push(value);
     }
-    // find delta between output and expected output
+    return tOut;
+  }
+
+  getDelta(tOut) {
     let delta = [];
     let del;
-    for (let i = 0; i < this.outputs.length; i++) {
+    for (let i = 0; i < this.dataCount; i++) {
       del = (this.outputs[i] - tOut[i]) * (tOut[i] * (1 - tOut[i]));
       delta.push(del);
     }
-    // dot product of inputs and deltas to update weights
-    let dotDelta = jamesDotProd(this.inputs, delta);
-    for (let i = 0; i < this.weights.length; i++) {
+    return delta;
+  }
+
+  updateWeights(delta) {
+    let transpose = [];
+    for (let i = 0; i < this.majorDataLength; i++) {
+      transpose.push([])
+      for (let j = 0; j < this.dataCount; j++) {
+        transpose[i].push(this.inputs[j][i]);
+      }
+    }
+    let dotDelta = [];
+    for (let i = 0; i < this.majorDataLength; i++) {
+      dotDelta.push(0);
+    }
+    for (let h = 0; h < this.dataCount; h++){
+      for (let i = 0; i < this.majorDataLength; i++) {
+        dotDelta[i] += transpose[i][h] * delta[h];
+      }
+    }
+    for (let i = 0; i < this.majorDataLength; i++) {
       this.weights[i] += dotDelta[i];
     }
   }
-}
 
-function jamesDotProd(inputs, delta) {
-  let innerLength = inputs[0].length;
-  let transpose = [];
-  for (let i = 0; i < innerLength; i++) {
-    transpose.push([])
-    for (let j = 0; j < inputs.length; j++) {
-      transpose[i].push(inputs[j][i]);
-    }
+  step() {
+    // get guessed outputs
+    let tOut = this.guess();
+    // find delta between output and expected output
+    let delta = this.getDelta(tOut);
+    // dot product of inputs and deltas to update weights
+    this.updateWeights(delta);
+
   }
-  let dProd = [];
-  for (let i = 0; i < innerLength; i++) {
-    dProd.push(0);
-  }
-  for (let h = 0; h < delta.length; h++){
-    for (let i = 0; i < innerLength; i++) {
-      dProd[i] += transpose[i][h] * delta[h];
-    }
-  }
-  return dProd;
 }
 
 class NPattern {
@@ -211,7 +230,6 @@ class NPattern {
           y += w;
         }
       }
-
     }
     if (this.isTest) {
       fill(lerpColor(noColor, yesColor, this.lerp));
@@ -266,8 +284,7 @@ function setupDemo() {
   testP[1].nSequence = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 }
 
-function doNN() {
-  // setup data
+function setupData() {
   let inputs = [];
   let outputs = [];
   let tests = [];
@@ -282,22 +299,45 @@ function doNN() {
   for (let i = 0; i < testP.length; i++) {
     tests.push(testP[i].nSequence);
   }
-  // run net
+  return [inputs, outputs, tests];
+}
+
+function setupNN() {
+  let inputs = [];
+  let outputs = [];
+  let tests = [];
+  let vals = setupData();
+  inputs = vals[0];
+  outputs = vals[1];
+  tests = vals[2];
   if (myNN === null) {
-    myNN = new NN(inputs, outputs);
+    console.log('hello');
+    let slen = trainP[0].nSequence.length
+    let cols = trainP[0].cols
+    let aioWindowShape = [];
+    for (let i = 0; i < trainP[0].nSequence.length; i++) {
+      if (!(i < cols || i > slen - cols - 1 || (i % cols == 0) || (i + 1) % cols == 0)) {
+        aioWindowShape.push(i);
+      }
+    }
+    myNN = new NN(inputs, outputs, aioWindowShape, [-cols-1, -cols, cols+1, -1, 0, 1, cols-1, cols, cols+1]);
   }
+  myNN.updateDatas(inputs, outputs);
   if (layer2Weights.length == 0) {
     layer2Weights = myNN.weights;
-  } else {
-    myNN.weights = layer2Weights;
   }
+  return tests
+}
+
+function doNN() {
+  //setup NN
+  let tests = setupNN();
+  // run net
   for (let its = 0; its < stepCount; its ++) {
     myNN.step();
     layer2Weights = myNN.weights;
-    // console.log("");
     for (let i = 0; i < tests.length; i++) {
       testP[i].lerp = myNN.test(tests[i]);
-      // console.log(testP[i].lerp);
     }
   }
 }
@@ -375,6 +415,7 @@ function mousePressed() {
     stop = testP[i].updateBoxWithClick(mx, my);
     if (stop) {
       testP[i].lerp = 0;
+      setupNN();
       // layer2Weights = [];
       return false;
     };
@@ -383,6 +424,7 @@ function mousePressed() {
     stop = trainP[i].updateIsExampleWithClick(mx, my);
     if (stop) {
       // layer2Weights = [];
+      setupNN()
       setupGenerates();
       return false;
     };

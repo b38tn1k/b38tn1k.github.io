@@ -475,7 +475,7 @@ function generateShape() { // this bit is gross too
   let pattern = [];
   for (let i = 0; i < patternLength; i++) {
     pattern.push(int(random(0, 2)));
-    pattern.push(int(random(6, 10)));
+    pattern.push(int(random(5, 11)));
     pattern.push(int(random(13, 16)));
   }
   let gp;
@@ -511,11 +511,12 @@ function generateShape() { // this bit is gross too
   testP[0].lerp = 0;
   // test counter example
   pattern = [];
-  patternLength = int(random(2, 4));
+  patternLength += random([-1, 1]);
   for (let i = 0; i < patternLength; i++) {
-    pattern.push(int(random(0, 3)));
-    pattern.push(int(random(7, 10)));
-    pattern.push(int(random(13, 17)));
+    pattern.push(int(random(-1, 3)));
+    pattern.push(int(random(6, 11)));
+    pattern.push(int(random(7, 12)));
+    pattern.push(int(random(14, 17)));
 
   }
   gp = new Array(trainP[0].nSequence.length).fill(0);
@@ -527,12 +528,13 @@ function generateShape() { // this bit is gross too
   testP[1].lerp = 0;
   // train counter example
   for (let i = 3; i < 6; i++) {
-    patternLength = int(random(2, 4));
+    // patternLength = int(random(2, 4));
     pattern = [];
     for (let j = 0; j < patternLength; j++) {
-      pattern.push(int(random(0, 3)));
-      pattern.push(int(random(7, 10)));
-      pattern.push(int(random(13, 17)));
+      pattern.push(int(random(-1, 3)));
+      pattern.push(int(random(6, 11)));
+      pattern.push(int(random(7, 12)));
+      pattern.push(int(random(14, 17)));
     }
     gp = new Array(trainP[0].nSequence.length).fill(0);
     start = int(random(1, 3));
@@ -928,8 +930,7 @@ function draw() {
   y += smallText;
   text('Train too many times and it might learn to recognise any pattern', x, y-10);
   y += smallText;
-  text('Make a different pattern or click the small box to reset the weights.', x, y-10);
+  text('Make a different test pattern, or click the small box to reset the weights.', x, y-10);
   y += smallText;
-
   text('Training can go "weird" and fixing it is tricky on a web browser.', x, y-10);
 }

@@ -844,12 +844,15 @@ function hideTutorialDiv() {
 
 function setupScreen(){
   createCanvas(windowWidth, windowHeight);
-  wideScreen = (windowWidth / windowHeight > 1.5);
+  wideScreen = (windowWidth / windowHeight > 1.6);
+  let divWidth = 56;
 
   if (wideScreen) {
-    pixelSize = min(windowHeight / 60, windowWidth / 28);
+    pixelSize = min(windowHeight / 56, windowWidth / 28);
+    divWidth = (windowWidth/2 - 4*pixelSize)/pixelSize;
+
   } else {
-    pixelSize = min(windowHeight / 80, windowWidth / 52);
+    pixelSize = min(windowHeight / 96, windowWidth / 56);
   }
   startx = min(20, 3* pixelSize);
   let smallText = 1.2*pixelSize;
@@ -862,7 +865,7 @@ function setupScreen(){
   introDiv.remove();
   introDiv = createDiv(myDivStrings.intro);
   introDiv.position(startx-pixelSize, 0);
-  introDiv.size(pixelSize * 48);
+  introDiv.size(pixelSize * divWidth);
   introDiv.style('font-size', smallText + 'px');
   introDiv.style('font-family', "'courier new', courier");
   introDiv.show();
@@ -870,7 +873,7 @@ function setupScreen(){
   tutorialDiv = createDiv(myDivStrings.tutorial);
   tutorialDiv.position(startx-pixelSize, 0);
   tutorialDiv.hide();
-  tutorialDiv.size(pixelSize * 48, windowHeight);
+  tutorialDiv.size(pixelSize * divWidth, windowHeight);
   tutorialDiv.style('background-color', 'white');
   tutorialDiv.style('padding', '1em');
   tutorialDiv.style('font-size', smallText + 'px');
@@ -879,25 +882,25 @@ function setupScreen(){
   generatesDiv = createDiv(myDivStrings.generated);
   generatesDiv.style('font-size', smallText + 'px');
   generatesDiv.style('font-family', "'courier new', courier");
-  generatesDiv.size(pixelSize * 48);
+  generatesDiv.size(pixelSize * divWidth);
   generatesDiv.show();
   testDiv.remove();
   testDiv = createDiv(myDivStrings.test);
   testDiv.style('font-size', smallText + 'px');
   testDiv.style('font-family', "'courier new', courier");
-  testDiv.size(pixelSize * 48);
+  testDiv.size(pixelSize * divWidth);
   testDiv.show();
   weightsDiv.remove();
   weightsDiv = createDiv(myDivStrings.weights);
   weightsDiv.style('font-size', smallText + 'px');
   weightsDiv.style('font-family', "'courier new', courier");
-  weightsDiv.size(pixelSize * 48);
+  weightsDiv.size(pixelSize * divWidth);
   weightsDiv.show();
   conclusionDiv.remove();
   conclusionDiv = createDiv(myDivStrings.conclusion);
   conclusionDiv.style('font-size', smallText + 'px');
   conclusionDiv.style('font-family', "'courier new', courier");
-  conclusionDiv.size(pixelSize * 48);
+  conclusionDiv.size(pixelSize * divWidth);
   conclusionDiv.show();
 }
 

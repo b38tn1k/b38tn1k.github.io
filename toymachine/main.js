@@ -468,8 +468,8 @@ function generateShape() { // this bit is gross too
     console.log('reset!');
     myNN.resetWeights();
     myNN.child.resetWeights();
-    layer2Weights = myNN.weights;
-    layer1Weights = myNN.child.weights;
+    layer2Weights = [];//myNN.weights;
+    layer1Weights = [];//myNN.child.weights;
   }
   let patternLength = int(random(2, 4));
   let pattern = [];

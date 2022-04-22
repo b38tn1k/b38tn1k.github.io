@@ -471,7 +471,16 @@ function generateShape() { // this bit is gross too
     layer2Weights = [];//myNN.weights;
     layer1Weights = [];//myNN.child.weights;
   }
-  let patternLength = int(random(2, 5));
+  // let handdrawn = [];
+  // for (let rc = 0; rc < myDemo.length; rc++) {
+  //   for (let i = 0; i < trainP.length; i++) {
+  //     handdrawn.push(myDemo[rc][0][i]);
+  //   }
+  //   for (let i = 0; i < testP.length-1; i++) {
+  //     handdrawn.push(myDemo[rc][2][i]);
+  //   }
+  // }
+  let patternLength = int(random(2, 4));
   let pattern = [0];
   for (let i = 0; i < patternLength; i++) {
     pattern.push(int(random(0, 2)));
@@ -526,6 +535,23 @@ function generateShape() { // this bit is gross too
   testP[1].nSequence = [];
   testP[1].nSequence = gp;
   testP[1].lerp = 0;
+  // pattern = [];
+  // patternLength += 2;
+  // for (let i = 0; i < patternLength; i++) {
+  //   pattern.push(int(random(-1, 3)));
+  //   pattern.push(int(random(6, 11)));
+  //   pattern.push(int(random(7, 12)));
+  //   pattern.push(int(random(14, 17)));
+  //
+  // }
+  // gp = new Array(trainP[0].nSequence.length).fill(0);
+  // for (let j = 0; j < pattern.length; j++) {
+  //   gp[16 + pattern[j]] = 1;
+  // }
+  // testP[2].nSequence = [];
+  // // testP[2].nSequence = handdrawn[int(random(handdrawn.length))];
+  // testP[2].nSequence = gp;
+  // testP[2].lerp = 0;
   // train counter example
   for (let i = 3; i < 6; i++) {
     pattern = [];

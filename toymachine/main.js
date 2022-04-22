@@ -900,7 +900,7 @@ function draw() {
   text('But some pixels are more important than others.', x, y-10);
   y += smallText;
   textStyle(BOLD);
-  text('Click the large WEIGHTS (or press the \'r\' key) box below to train ' + stepCount + ' times.', x, y-10);
+  text('Click the large WEIGHTS box (or press \'r\') a few times to train the network ' + stepCount + 'x per click.', x, y-10);
   textStyle(NORMAL);
   stroke(0);
   drawWeights(x, y, pixelSize, layer2Weights, trainP[0].nSequence.length, trainP[0].cols, trainP[0].rows);

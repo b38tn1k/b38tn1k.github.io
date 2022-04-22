@@ -21,6 +21,7 @@ var startx = 20;
 var wideScreen = false;
 var titleHeight;
 var myColors, yesColor, noColor;
+var firstRun = true;
 
 class NN {
   constructor(inputs, outputs, paddingArr=null, kernelShape=null, fullyConnected=true) {
@@ -445,6 +446,10 @@ function setupGenerates() {
 function setupDemo() {
   resetWeights();
   let rc = int(random(0, myDemos.length));
+  if (firstRun) {
+    rc = 2; //best foor forward :-P
+    firstRun = false;
+  }
   // rc = 0;
   for (let i = 0; i < trainP.length; i++) {
     trainP[i].nSequence = myDemos[rc][0][i];

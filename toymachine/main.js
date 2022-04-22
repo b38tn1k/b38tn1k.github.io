@@ -562,11 +562,8 @@ function generateShape() { // this bit is gross too
       pattern.push(int(random(14, 17)));
     }
     gp = new Array(trainP[0].nSequence.length).fill(0);
-    start = int(random(1, 3));
-    row = int(random(1, 3));
-    start = start + row*8;
     for (let j = 0; j < pattern.length; j++) {
-      gp[start + pattern[j]] = 1;
+      gp[16 + pattern[j]] = 1;
     }
     for (let j = 0; j < i; j++) {
       noise = int(random(8, 48));

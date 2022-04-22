@@ -459,6 +459,7 @@ function setupDemo() {
     testP[i].nSequence = myDemos[rc][2][i];
     testP[i].lerp = 0;
   }
+  setupGenerates();
 }
 
 function generateShape() { // this bit is gross too
@@ -536,6 +537,7 @@ function generateShape() { // this bit is gross too
     testP[1].nSequence[pos] = 0;
   }
   testP[1].lerp = 0;
+  setupGenerates();
 }
 
 function setupData() {
@@ -658,6 +660,8 @@ function resetWeights() {
     layer2Weights = [];
     layer1Weights = [];
   }
+  testP[0].lerp = 0;
+  testP[1].lerp = 0;
 }
 
 function mousePressed() {
@@ -722,6 +726,8 @@ function keyTyped() {
     return false;
   } else if (key == 'r') {
     doNN();
+  } else if (key == 'q') {
+    resetWeights();
   }
   return false;
 }

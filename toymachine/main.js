@@ -565,13 +565,6 @@ function generateShape() { // this bit is gross too
     for (let j = 0; j < pattern.length; j++) {
       gp[16 + pattern[j]] = 1;
     }
-    for (let j = 0; j < i; j++) {
-      noise = int(random(8, 48));
-      while (noise % 7 == 0 || noise % 6 == 0) {
-        noise = int(random(8, 48));
-      }
-      gp[noise] = 1;
-    }
     trainP[i].nSequence = [];
     trainP[i].nSequence = gp;
     trainP[i].isExample = false;

@@ -481,13 +481,12 @@ function generateShape() { // this bit is gross too
   let gp;
   let start;
   let noise = 0
-
   let row;
+  // training examples
   for (let i = 0; i < 3; i++) {
     gp = new Array(trainP[0].nSequence.length).fill(0);
-    start = int(random(1, 3));
-    row = int(random(1, 3));
-    start = start + (i+2)*8 - 2;
+    start = int(random(1, 2));
+    start = start + (i+2)*8 - 1;
     for (let j = 0; j < pattern.length; j++) {
       gp[start + pattern[j]] = 1;
     }
@@ -502,6 +501,7 @@ function generateShape() { // this bit is gross too
     trainP[i].nSequence = gp;
     trainP[i].isExample = true;
   }
+  // test example
   gp = new Array(trainP[0].nSequence.length).fill(0);
   for (let j = 0; j < pattern.length; j++) {
     gp[17 + pattern[j]] = 1;
@@ -509,16 +509,14 @@ function generateShape() { // this bit is gross too
   testP[0].nSequence = [];
   testP[0].nSequence = gp;
   testP[0].lerp = 0;
-  // counter example
+  // test counter example
   pattern = [];
-  patternLength = int(random(3, 7));
+  patternLength = int(random(2, 4));
   for (let i = 0; i < patternLength; i++) {
     pattern.push(int(random(0, 3)));
-    pattern.push(int(random(4, 11)));
-    pattern.push(int(random(13, 16)));
-    pattern.push(int(random(4, 11)));
-    pattern.push(int(random(13, 16)));
-    pattern.push(int(random(22, 26)));
+    pattern.push(int(random(7, 10)));
+    pattern.push(int(random(13, 17)));
+
   }
   gp = new Array(trainP[0].nSequence.length).fill(0);
   for (let j = 0; j < pattern.length; j++) {
@@ -527,17 +525,14 @@ function generateShape() { // this bit is gross too
   testP[1].nSequence = [];
   testP[1].nSequence = gp;
   testP[1].lerp = 0;
-  pattern = [];
-  for (let j = 3; j < 6; j++) {
-    patternLength = int(random(3, 7));
+  // train counter example
+  for (let i = 3; i < 6; i++) {
+    patternLength = int(random(2, 4));
     pattern = [];
-    for (let i = 0; i < patternLength; i++) {
+    for (let j = 0; j < patternLength; j++) {
       pattern.push(int(random(0, 3)));
-      pattern.push(int(random(4, 11)));
-      pattern.push(int(random(13, 16)));
-      pattern.push(int(random(4, 11)));
-      pattern.push(int(random(13, 16)));
-      pattern.push(int(random(22, 26)));
+      pattern.push(int(random(7, 10)));
+      pattern.push(int(random(13, 17)));
     }
     gp = new Array(trainP[0].nSequence.length).fill(0);
     start = int(random(1, 3));
@@ -546,9 +541,16 @@ function generateShape() { // this bit is gross too
     for (let j = 0; j < pattern.length; j++) {
       gp[start + pattern[j]] = 1;
     }
-    trainP[j].nSequence = [];
-    trainP[j].nSequence = gp;
-    trainP[j].isExample = false;
+    for (let j = 0; j < i; j++) {
+      noise = int(random(8, 48));
+      while (noise % 7 == 0 || noise % 6 == 0) {
+        noise = int(random(8, 48));
+      }
+      gp[noise] = 1;
+    }
+    trainP[i].nSequence = [];
+    trainP[i].nSequence = gp;
+    trainP[i].isExample = false;
   }
 }
 

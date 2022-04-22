@@ -462,22 +462,7 @@ function setupDemo() {
 }
 
 function generateShape() { // this bit is gross too
-  if (!(myNN === null)) {
-    // console.log('reset!');
-    myNN.resetWeights();
-    myNN.convLayer.resetWeights();
-    layer2Weights = [];//myNN.weights;
-    layer1Weights = [];//myNN.convLayer.weights;
-  }
-  // let handdrawn = [];
-  // for (let rc = 0; rc < myDemos.length; rc++) {
-  //   for (let i = 0; i < trainP.length; i++) {
-  //     handdrawn.push(myDemos[rc][0][i]);
-  //   }
-  //   for (let i = 0; i < testP.length-1; i++) {
-  //     handdrawn.push(myDemos[rc][2][i]);
-  //   }
-  // }
+  resetWeights();
   let gp, start, row;
   let noise = 0
   let patternLength = int(random(2, 4));
@@ -515,22 +500,6 @@ function generateShape() { // this bit is gross too
   testP[0].nSequence = gp;
   testP[0].lerp = 0;
   // test counter example
-  pattern = [];
-  // patternLength += 2;
-  for (let i = 0; i < patternLength; i++) {
-    pattern.push(int(random(-1, 3)));
-    pattern.push(int(random(6, 11)));
-    pattern.push(int(random(7, 12)));
-    pattern.push(int(random(14, 17)));
-
-  }
-  gp = new Array(trainP[0].nSequence.length).fill(0);
-  for (let j = 0; j < pattern.length; j++) {
-    gp[16 + pattern[j]] = 1;
-  }
-  testP[1].nSequence = [];
-  testP[1].nSequence = gp;
-  testP[1].lerp = 0;
   for (let i = 3; i < 6; i++) {
     pattern = [];
     for (let j = 0; j < patternLength; j++) {
@@ -558,6 +527,15 @@ function generateShape() { // this bit is gross too
     trainP[i].nSequence = gp;
     trainP[i].isExample = false;
   }
+  let selector = int(random(3, 6));
+  testP[1].nSequence = [...trainP[selector].nSequence];
+  let pos = int(random(testP[1].nSequence.length))
+  if (testP[1].nSequence[pos] == 0){
+    testP[1].nSequence[pos] = 1;
+  } else {
+    testP[1].nSequence[pos] = 0;
+  }
+  testP[1].lerp = 0;
 }
 
 function setupData() {
@@ -615,7 +593,6 @@ function doNN(_stepCount = stepCount) {
     layer2Weights = myNN.weights;
     for (let i = 0; i < tests.length; i++) {
       testP[i].lerp = myNN.ptest(tests[i]);
-      console.log('hi');
     }
   }
 }
@@ -687,29 +664,6 @@ function mousePressed() {
   mx = mouseX;
   my = mouseY;
   let stop = false;
-  // if (mx > wXmin && mx < wXmax && my > wYmin && my < wYmax) {
-  //   setupGenerates();
-  //   doNN();
-  //   return false;
-  // }
-  // if (mx > rwXmin && mx < rwXmax && my > rwYmin && my < rwYmax) {
-  //   if (!(myNN === null)) {
-  //     console.log('reset!');
-  //     myNN.resetWeights();
-  //     myNN.convLayer.resetWeights();
-  //     layer2Weights = myNN.weights;
-  //     layer1Weights = myNN.convLayer.weights;
-  //   }
-  //   return false;
-  // }
-  // console.log(mx, my, dXmin, dXmax, dYmin, dYmax);
-
-  // if (mx > dXmin && mx < dXmax && my > dYmin && my < dYmax) {
-  //   // setupDemo();
-  //   generateShape();
-  //   return false;
-  // }
-
   for (let i = 0; i < generated.length; i++) {
     let gen = generated[i].areaClicked(mx, my);
     if (gen) {

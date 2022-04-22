@@ -443,6 +443,7 @@ function setupGenerates() {
 }
 
 function setupDemo() {
+  resetWeights();
   let rc = int(random(0, myDemos.length));
   // rc = 0;
   for (let i = 0; i < trainP.length; i++) {
@@ -457,7 +458,7 @@ function setupDemo() {
 
 function generateShape() { // this bit is gross too
   if (!(myNN === null)) {
-    console.log('reset!');
+    // console.log('reset!');
     myNN.resetWeights();
     myNN.convLayer.resetWeights();
     layer2Weights = [];//myNN.weights;
@@ -580,7 +581,7 @@ function setupNN() {
   outputs = vals[1];
   tests = vals[2];
   if (myNN === null) {
-    console.log('hello');
+    // console.log('hello');
     let slen = trainP[0].nSequence.length
     let cols = trainP[0].cols
     let aiopaddingArr = [];
@@ -608,6 +609,7 @@ function doNN(_stepCount = stepCount) {
     layer2Weights = myNN.weights;
     for (let i = 0; i < tests.length; i++) {
       testP[i].lerp = myNN.ptest(tests[i]);
+      console.log('hi');
     }
   }
 }
@@ -773,7 +775,7 @@ function windowResized() {
 }
 
 function preload() {
-  myDemos = [loadJSON('demo2.json'), loadJSON('demo.json'), loadJSON('demo3.json')];
+  myDemos = [loadJSON('demo2.json'), loadJSON('demo.json'), loadJSON('demo3.json'), loadJSON('demo4.json')];
   myDivStrings = loadJSON('htmlStrings.json');
 }
 
@@ -819,6 +821,7 @@ let troubleDiv;
 let conclusionDiv;
 
 function showTutorialDiv(){
+  wideScreen = false;
   tutorialDiv.show();
   introDiv.hide();
   generatesDiv.hide();
@@ -828,25 +831,8 @@ function showTutorialDiv(){
 }
 
 function hideTutorialDiv() {
+  wideScreen = (windowWidth / windowHeight > 1.5);
   tutorialDiv.hide();
-  introDiv.show();
-  generatesDiv.show();
-  testDiv.show();
-  weightsDiv.show();
-  conclusionDiv.show();
-}
-
-function showTroubleDiv(){
-  troubleDiv.show();
-  introDiv.hide();
-  generatesDiv.hide();
-  testDiv.hide();
-  weightsDiv.hide();
-  conclusionDiv.hide();
-}
-
-function hideTroubleDiv() {
-  troubleDiv.hide();
   introDiv.show();
   generatesDiv.show();
   testDiv.show();

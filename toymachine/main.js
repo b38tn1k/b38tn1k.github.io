@@ -516,7 +516,7 @@ function generateShape() { // this bit is gross too
   testP[0].lerp = 0;
   // test counter example
   pattern = [];
-  patternLength += 2;
+  // patternLength += 2;
   for (let i = 0; i < patternLength; i++) {
     pattern.push(int(random(-1, 3)));
     pattern.push(int(random(6, 11)));
@@ -535,6 +535,7 @@ function generateShape() { // this bit is gross too
     pattern = [];
     for (let j = 0; j < patternLength; j++) {
       pattern.push(int(random(-1, 3)));
+      pattern.push(int(random(6, 11)));
       pattern.push(int(random(6, 11)));
       pattern.push(int(random(7, 12)));
       pattern.push(int(random(14, 17)));

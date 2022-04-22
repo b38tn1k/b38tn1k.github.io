@@ -1,59 +1,59 @@
+var myNN = null;
+var stepCount = 10;
+var layer2Weights = [];
+var layer1Weights  = [];
+var nnInputWidgetCount = 6;
 var trainP = [];
 var generated = [];
 var allGeneratedIn = [];
 var allGeneratedOut = [];
 var testP = [];
-var numberOfThings = 6;
-var stepCount = 10;
-var layer2Weights = [];
-var layer1Weights  = [];
+
+var myDivStrings;
+var myDemos;
+
 var wXmin, wXmax, wYmin, wYmax;
 var rwXmin, rwXmax, rwYmin, rwYmax;
 var dXmin, dXmax, dYmin, dYMax;
-var bigText = 32;
-var smallText = 18;
+
 var pixelSize = 10;
 var startx = 20;
-var weightClickCounter = 0;
-var myNN = null;
-var myDemo;
-
+var wideScreen = false;
+var titleHeight;
 var myColors, yesColor, noColor;
 
 class NN {
-  constructor(inputs, outputs, windowShape=null, kernelShape=null, parent=true) {
-    this.parent = parent;
-    this.child = null;
-    this.windowShape = windowShape;
-    this.windowShapeLength = 0;
-    if (!(windowShape === null)) {
-      this.windowShapeLength = windowShape.length;
+  constructor(inputs, outputs, paddingArr=null, kernelShape=null, fullyConnected=true) {
+    this.fullyConnected = fullyConnected;
+    this.convLayer = null;
+    this.paddingArr = paddingArr;
+    this.paddingArrLength = 0;
+    if (!(paddingArr === null)) {
+      this.paddingArrLength = paddingArr.length;
     }
     this.kernelShape = kernelShape
     this.inputs = inputs;
-    this.failCount = 0;
     this.outputs = outputs;
     this.weights = [];
     this.majorDataLength = inputs[0].length;
     this.dataCount = inputs.length;
+    this.failCount = 0;
     for (let i = 0; i < this.majorDataLength; i++) {
       this.weights.push(random(-1, 1));
     }
   }
 
 
-  updateBabyDatas(){
-      if (!this.parent){
+  updateConvLayerData(){
+      if (!this.fullyConnected){
         return false;
       }
       let bInputs = [];
       let bOutputs = [];
-      let k;
-      let newIn;
-      let kInd;
+      let k, newIn, kInd;
       for (let i = 0; i < this.dataCount; i++) {
-        for (let j = 0; j < this.windowShapeLength; j++) {
-          k = this.windowShape[j];
+        for (let j = 0; j < this.paddingArrLength; j++) {
+          k = this.paddingArr[j];
           newIn = [];
           for (let h = 0; h < this.kernelShape.length; h++) {
             kInd = k + this.kernelShape[h];
@@ -65,49 +65,47 @@ class NN {
           } else {
             bOutputs.push(this.outputs[i]);
           }
-
         }
       }
-      if (this.child === null) {
-        this.child = new NN(bInputs, bOutputs, null, null, false);
-        console.log('hello from me too!');
+      if (this.convLayer === null) {
+        this.convLayer = new NN(bInputs, bOutputs, null, null, false);
+        // console.log('hello from me too!');
       } else {
-        this.child.updateDatas(bInputs, bOutputs);
+        this.convLayer.updateDatas(bInputs, bOutputs);
       }
     }
 
   updateDatas(inputs, outputs){
     this.inputs = inputs;
     this.outputs = outputs;
-    this.updateBabyDatas();
+    this.updateConvLayerData();
   }
 
   ptest (input, weights=this.weights) {
-    // convert input into child inspected input
-    let k;
+    // convert input into convLayer inspected input
+    let k, kInd;
+    let sum = 0;
     let newIn = [];
-    let kInd;
     let bInputs = [];
+    let convLayerOut = [];
     // console.log(input);
-    for (let j = 0; j < this.windowShapeLength; j++) {
+    for (let j = 0; j < this.paddingArrLength; j++) {
       newIn = [];
-      k = this.windowShape[j];
+      k = this.paddingArr[j];
       for (let h = 0; h < this.kernelShape.length; h++) {
         kInd = k + this.kernelShape[h];
         newIn.push(input[kInd]);
       }
       bInputs.push(newIn);
     }
-    let childOut = [];
     for (let i = 0; i < bInputs.length; i++) {
-      childOut.push(this.child.test(bInputs[i]));
+      convLayerOut.push(this.convLayer.test(bInputs[i]));
     }
     let _input = new Array(this.majorDataLength).fill(0);
-    for (let j = 0; j < this.windowShapeLength; j++) {
-      k = this.windowShape[j]
-      _input[k] = childOut[j];
+    for (let j = 0; j < this.paddingArrLength; j++) {
+      k = this.paddingArr[j]
+      _input[k] = convLayerOut[j];
     }
-    let sum = 0;
     for (let i = 0; i < this.majorDataLength; i++) {
       sum += _input[i] * weights[i];
     }
@@ -174,24 +172,22 @@ class NN {
   }
 
   step() {
-    let tOut;
-    if (this.parent) {
+    let tOut, _inp, k;
+    let _inputs = [];
+    let offset = 0;
+    if (this.fullyConnected) {
       for (let i = 0; i < 10; i++) {
-        this.child.step();
+        this.convLayer.step();
       }
-      let childOut = this.child.guess(this.child.inputs);
-      let _inputs = []
-      let _inp;
-      let k;
-      let offset = 0
-      // update the parent inputs with the child guesses
+      let convLayerOut = this.convLayer.guess(this.convLayer.inputs);
+      // update the fullyConnected inputs with the convLayer guesses
       for (let i = 0; i < this.dataCount; i++) {
         _inp = new Array(this.majorDataLength).fill(0);
-        for (let j = 0; j < this.windowShapeLength; j++) {
-          k = this.windowShape[j]
-          _inp[k] = childOut[j + offset];
+        for (let j = 0; j < this.paddingArrLength; j++) {
+          k = this.paddingArr[j]
+          _inp[k] = convLayerOut[j + offset];
         }
-        offset += this.windowShapeLength;
+        offset += this.paddingArrLength;
         _inputs.push(_inp);
       }
       tOut = this.guess(_inputs);
@@ -209,26 +205,24 @@ class NN {
       layer1Weights = this.weights;
     }
     // check descent is falling towards a solution
-    let yesCount = 0;
-    let noCount = 0;
-    let yesAccum = 0;
-    let noAccum = 0;
+    let c = [0, 0, 0, 0, 0, 0];
     for (let i = 0; i < this.dataCount; i++) {
       if (this.outputs[i] == 1) {
-        yesCount += 1;
-        yesAccum += tOut[i]
+        c[0] += 1;
+        c[1] += tOut[i];
       } else {
-        noCount += 1;
-        noAccum += tOut[i]
+        c[3] += 1;
+        c[4] += tOut[i];
       }
     }
-    yesAccum = yesAccum / yesCount;
-    noAccum = noAccum / noCount;
-    if (noAccum > yesAccum) {
+    c[2] = c[1] / c[0];
+    c[5] = c[4] / c[3];
+    if (c[5] > c[2]) {
       this.failCount += 1;
     }
     if (this.failureCount > 50) {
       this.failCount = 0;
+      console.log('ahh');
       this.resetWeights();
     }
   }
@@ -236,10 +230,10 @@ class NN {
 
 class NPattern {
   constructor(rows, cols, isTest=false) {
-    this.seqLength = rows * cols;
     this.rows = rows;
     this.cols = cols;
-    this.nSequence = new Array(this.seqLength).fill(0);
+    this.nSeqLength = rows * cols;
+    this.nSequence = new Array(this.nSeqLength).fill(0);
     this.boxHitBox = [];
     this.majorHitBox = [];
     this.egHitBox = [];
@@ -255,15 +249,11 @@ class NPattern {
     let side = [];
     let end = [];
     // move up
-    // side = this.nSequence.slice(0, this.cols);
     side = new Array(this.cols).fill(0);
     end = this.nSequence.slice(this.cols);
     combined = end.concat(side);
     alts.push(combined);
-    if (this.isExample == false) {
-      //combined = invertArr(combined);
-      //alts.push(combined);
-    } else {
+    if (this.isExample) {
       side = new Array(this.cols).fill(0);
       end = combined.slice(this.cols);
       combined = end.concat(side);
@@ -271,15 +261,11 @@ class NPattern {
     }
     // move down
     combined = [];
-    // side = this.nSequence.slice(-1 * this.cols);
     side = new Array(this.cols).fill(0);
     end = this.nSequence.slice(0, -1 * this.cols);
     combined = side.concat(end);
     alts.push(combined);
-    if (this.isExample == false) {
-      // combined = invertArr(combined);
-      // alts.push(combined);
-    } else {
+    if (this.isExample) {
       side = new Array(this.cols).fill(0);
       end = combined.slice(0, -1 * this.cols);
       combined = side.concat(end);
@@ -287,49 +273,54 @@ class NPattern {
     }
     //move left
     combined = [];
-    for (let i = 1; i < this.seqLength; i+= 1) {
+    for (let i = 1; i < this.nSeqLength; i+= 1) {
       combined.push(this.nSequence[i]);
     }
     combined.push(0);
-    for (let i = this.cols-1; i < this.seqLength; i+= this.cols) {
+    for (let i = this.cols-1; i < this.nSeqLength; i+= this.cols) {
       combined[i] = 0;
     }
     alts.push(combined);
-    if (this.isExample == false) {
-      // combined = invertArr(combined);
-      // alts.push(combined);
-    } else {
+    if (this.isExample) {
       end = []
-      for (let i = 1; i < this.seqLength; i+= 1) {
+      for (let i = 1; i < this.nSeqLength; i+= 1) {
         end.push(combined[i]);
       }
       end.push(0);
-      for (let i = this.cols-1; i < this.seqLength; i+= this.cols) {
+      for (let i = this.cols-1; i < this.nSeqLength; i+= this.cols) {
         end[i] = 0;
       }
       alts.push(end);
     }
     //move right
     combined = [0];
-    for (let i = 0; i < this.seqLength-1; i+= 1) {
+    for (let i = 0; i < this.nSeqLength-1; i+= 1) {
       combined.push(this.nSequence[i]);
     }
-    for (let i = 0; i < this.seqLength; i+= this.cols) {
+    for (let i = 0; i < this.nSeqLength; i+= this.cols) {
       combined[i] = 0;
     }
     alts.push(combined);
-    if (this.isExample == false) {
-      //combined = invertArr(combined);
-      //alts.push(combined);
-    } else {
+    if (this.isExample) {
       end = [0];
-      for (let i = 0; i < this.seqLength-1; i+= 1) {
+      for (let i = 0; i < this.nSeqLength-1; i+= 1) {
         end.push(combined[i]);
       }
-      for (let i = 0; i < this.seqLength; i+= this.cols) {
+      for (let i = 0; i < this.nSeqLength; i+= this.cols) {
         end[i] = 0;
       }
       alts.push(end);
+    }
+
+    for (let i = 0; i < 3; i++) {
+      combined = [...this.nSequence];
+      let pos = int(random(combined.length))
+      if (combined[pos] == 0){
+        combined[pos] = 1;
+      } else {
+        combined[pos] = 0;
+      }
+      alts.push(combined);
     }
     return alts;
   }
@@ -386,9 +377,9 @@ class NPattern {
         this.boxHitBox.push([0, 0, 0, 0]);
       } else {
         fill(myColors[this.nSequence[i]]);
-        if (i % this.cols == 0) {
-          fill(0);
-        }
+        // if (i % this.cols == 0) {
+        //   fill(0);
+        // }
         square(x2, y, w);
         this.boxHitBox.push([x2, x2 + w, y, y + w]);
         x2 += w;
@@ -404,7 +395,8 @@ class NPattern {
       rect(egX, egY, w, egH);
       fill(noColor);
       noStroke();
-      text(int(this.lerp.toFixed(2) * 100), egX + 1.5*w, y);
+      textSize(pixelSize);
+      text('Similarity:\n' + int(this.lerp * 100).toPrecision(3) + '%', x, y + 1.5*w);
       stroke(0);
     } else {
       if (this.isExample) {
@@ -451,14 +443,14 @@ function setupGenerates() {
 }
 
 function setupDemo() {
-  let rc = int(random(0, myDemo.length));
+  let rc = int(random(0, myDemos.length));
   // rc = 0;
   for (let i = 0; i < trainP.length; i++) {
-    trainP[i].nSequence = myDemo[rc][0][i];
-    trainP[i].isExample = myDemo[rc][1][i];
+    trainP[i].nSequence = myDemos[rc][0][i];
+    trainP[i].isExample = myDemos[rc][1][i];
   }
   for (let i = 0; i < testP.length; i++) {
-    testP[i].nSequence = myDemo[rc][2][i];
+    testP[i].nSequence = myDemos[rc][2][i];
     testP[i].lerp = 0;
   }
 }
@@ -467,31 +459,29 @@ function generateShape() { // this bit is gross too
   if (!(myNN === null)) {
     console.log('reset!');
     myNN.resetWeights();
-    myNN.child.resetWeights();
+    myNN.convLayer.resetWeights();
     layer2Weights = [];//myNN.weights;
-    layer1Weights = [];//myNN.child.weights;
+    layer1Weights = [];//myNN.convLayer.weights;
   }
   // let handdrawn = [];
-  // for (let rc = 0; rc < myDemo.length; rc++) {
+  // for (let rc = 0; rc < myDemos.length; rc++) {
   //   for (let i = 0; i < trainP.length; i++) {
-  //     handdrawn.push(myDemo[rc][0][i]);
+  //     handdrawn.push(myDemos[rc][0][i]);
   //   }
   //   for (let i = 0; i < testP.length-1; i++) {
-  //     handdrawn.push(myDemo[rc][2][i]);
+  //     handdrawn.push(myDemos[rc][2][i]);
   //   }
   // }
+  let gp, start, row;
+  let noise = 0
   let patternLength = int(random(2, 4));
   let pattern = [0];
+  // training examples
   for (let i = 0; i < patternLength; i++) {
     pattern.push(int(random(0, 2)));
     pattern.push(int(random(5, 11)));
     pattern.push(int(random(13, 16)));
   }
-  let gp;
-  let start;
-  let noise = 0
-  let row;
-  // training examples
   for (let i = 0; i < 3; i++) {
     gp = new Array(trainP[0].nSequence.length).fill(0);
     start = int(random(1, 2));
@@ -535,24 +525,6 @@ function generateShape() { // this bit is gross too
   testP[1].nSequence = [];
   testP[1].nSequence = gp;
   testP[1].lerp = 0;
-  // pattern = [];
-  // patternLength += 2;
-  // for (let i = 0; i < patternLength; i++) {
-  //   pattern.push(int(random(-1, 3)));
-  //   pattern.push(int(random(6, 11)));
-  //   pattern.push(int(random(7, 12)));
-  //   pattern.push(int(random(14, 17)));
-  //
-  // }
-  // gp = new Array(trainP[0].nSequence.length).fill(0);
-  // for (let j = 0; j < pattern.length; j++) {
-  //   gp[16 + pattern[j]] = 1;
-  // }
-  // testP[2].nSequence = [];
-  // // testP[2].nSequence = handdrawn[int(random(handdrawn.length))];
-  // testP[2].nSequence = gp;
-  // testP[2].lerp = 0;
-  // train counter example
   for (let i = 3; i < 6; i++) {
     pattern = [];
     for (let j = 0; j < patternLength; j++) {
@@ -562,8 +534,18 @@ function generateShape() { // this bit is gross too
       pattern.push(int(random(14, 17)));
     }
     gp = new Array(trainP[0].nSequence.length).fill(0);
+    start = int(random(1, 3));
+    row = int(random(1, 3));
+    start = start + row*8;
     for (let j = 0; j < pattern.length; j++) {
-      gp[16 + pattern[j]] = 1;
+      gp[start + pattern[j]] = 1;
+    }
+    for (let j = 0; j < i; j++) {
+      noise = int(random(8, 48));
+      while (noise % 7 == 0 || noise % 6 == 0) {
+        noise = int(random(8, 48));
+      }
+      gp[noise] = 1;
     }
     trainP[i].nSequence = [];
     trainP[i].nSequence = gp;
@@ -601,13 +583,13 @@ function setupNN() {
     console.log('hello');
     let slen = trainP[0].nSequence.length
     let cols = trainP[0].cols
-    let aioWindowShape = [];
+    let aiopaddingArr = [];
     for (let i = 0; i < trainP[0].nSequence.length; i++) {
       if (!(i < cols || i > slen - cols - 1 || (i % cols == 0) || (i + 1) % cols == 0)) {
-        aioWindowShape.push(i);
+        aiopaddingArr.push(i);
       }
     }
-    myNN = new NN(inputs, outputs, aioWindowShape, [-cols-1, -cols, -cols+1, -1, 0, 1, cols-1, cols, cols+1]);
+    myNN = new NN(inputs, outputs, aiopaddingArr, [-cols-1, -cols, -cols+1, -1, 0, 1, cols-1, cols, cols+1]);
   }
   myNN.updateDatas(inputs, outputs);
   if (layer2Weights.length == 0) {
@@ -616,11 +598,12 @@ function setupNN() {
   return tests
 }
 
-function doNN() {
+function doNN(_stepCount = stepCount) {
+  setupGenerates();
   //setup NN
   let tests = setupNN();
   // run net
-  for (let its = 0; its < stepCount; its ++) {
+  for (let its = 0; its < _stepCount; its ++) {
     myNN.step();
     layer2Weights = myNN.weights;
     for (let i = 0; i < tests.length; i++) {
@@ -682,32 +665,42 @@ function drawWeights(x, y, w, weights, sLength, cols, rows, button = true) {
   }
 }
 
+function resetWeights() {
+  if (!(myNN === null)) {
+    console.log('reset!');
+    myNN.resetWeights();
+    myNN.convLayer.resetWeights();
+    layer2Weights = [];
+    layer1Weights = [];
+  }
+}
+
 function mousePressed() {
   mx = mouseX;
   my = mouseY;
   let stop = false;
-  if (mx > wXmin && mx < wXmax && my > wYmin && my < wYmax) {
-    setupGenerates();
-    doNN();
-    return false;
-  }
-  if (mx > rwXmin && mx < rwXmax && my > rwYmin && my < rwYmax) {
-    if (!(myNN === null)) {
-      console.log('reset!');
-      myNN.resetWeights();
-      myNN.child.resetWeights();
-      layer2Weights = myNN.weights;
-      layer1Weights = myNN.child.weights;
-    }
-    return false;
-  }
+  // if (mx > wXmin && mx < wXmax && my > wYmin && my < wYmax) {
+  //   setupGenerates();
+  //   doNN();
+  //   return false;
+  // }
+  // if (mx > rwXmin && mx < rwXmax && my > rwYmin && my < rwYmax) {
+  //   if (!(myNN === null)) {
+  //     console.log('reset!');
+  //     myNN.resetWeights();
+  //     myNN.convLayer.resetWeights();
+  //     layer2Weights = myNN.weights;
+  //     layer1Weights = myNN.convLayer.weights;
+  //   }
+  //   return false;
+  // }
   // console.log(mx, my, dXmin, dXmax, dYmin, dYmax);
 
-  if (mx > dXmin && mx < dXmax && my > dYmin && my < dYmax) {
-    // setupDemo();
-    generateShape();
-    return false;
-  }
+  // if (mx > dXmin && mx < dXmax && my > dYmin && my < dYmax) {
+  //   // setupDemo();
+  //   generateShape();
+  //   return false;
+  // }
 
   for (let i = 0; i < generated.length; i++) {
     let gen = generated[i].areaClicked(mx, my);
@@ -766,7 +759,6 @@ function keyTyped() {
     generateShape();
     return false;
   } else if (key == 'r') {
-    setupGenerates();
     doNN();
   }
   return false;
@@ -780,50 +772,9 @@ function windowResized() {
   setupScreen();
 }
 
-function setupScreen(){
-  // scratchNet();
-  // slowScratchNet();
-  createCanvas(windowWidth, windowHeight);
-  // console.log(windowWidth);
-  bigText = 30;
-  smallText = 15;
-  pixelSize = 10;
-  startx = 20;
-  if (windowWidth < 1100 || windowHeight < 650){
-    bigText = 30;
-    smallText = 12;
-    pixelSize = 10;
-    startx = 15;
-  }
-  if (windowWidth < 900){
-    bigText = 28;
-    smallText = 11;
-    pixelSize = 10;
-    startx = 10;
-  }
-  if (windowWidth < 700 ) {
-    bigText = 24;
-    smallText = 10;
-    pixelSize = 10;
-    startx = 5;
-  }
-  if (windowWidth < 500 || windowHeight < 550) {
-    bigText = 22;
-    smallText = 10;
-    pixelSize = 7;
-    startx = 5;
-  }
-  if (windowWidth < 300) {
-    bigText = 24;
-    smallText = 6;
-    pixelSize = 5;
-    startx = 5;
-  }
-  // let ratio = windowWidth / windowHeight;
-}
-
 function preload() {
-  myDemo = [loadJSON('demo2.json'), loadJSON('demo.json'), loadJSON('demo3.json')] ; //
+  myDemos = [loadJSON('demo2.json'), loadJSON('demo.json'), loadJSON('demo3.json')];
+  myDivStrings = loadJSON('htmlStrings.json');
 }
 
 function setup() {
@@ -836,7 +787,7 @@ function setup() {
   allGeneratedIn = [];
   allGeneratedOut = [];
   testP = [];
-  for (let i = 0; i < numberOfThings; i++) {
+  for (let i = 0; i < nnInputWidgetCount; i++) {
     // trainP.push(new NPattern(6, 5));
     // generated.push(new NPattern(6, 5));
     trainP.push(new NPattern(8, 7));
@@ -846,106 +797,185 @@ function setup() {
     // testP.push(new NPattern(6, 5, true));
     testP.push(new NPattern(8, 7, true));
   }
+  introDiv = createDiv(myDivStrings.intro);
+  tutorialDiv = createDiv(myDivStrings.tutorial);
+  generatesDiv = createDiv(myDivStrings.generated);
+  testDiv = createDiv(myDivStrings.test);
+  weightsDiv = createDiv(myDivStrings.weights);
+  conclusionDiv = createDiv(myDivStrings.conclusion);
+  troubleDiv = createDiv(myDivStrings.troubleshooting);
+
   setupScreen();
   frameRate(10);
 }
 
-function draw() {
-  background(255);
-  let x = startx;
-  let y = bigText;
-  noStroke();
-  fill(myColors[0]);
-  textSize(bigText);
-  text('Toy Neural Network', x, y);
-  y += bigText-5;
-  textSize(smallText);
-  text('This program tries to recognise patterns or shapes.', x, y);
-  y += smallText;
-  textStyle(BOLD);
-  text('Click HERE or press the \'g\' key to randomly generate an example.', x, y);
-  textStyle(NORMAL);
-  dXmin = x;
-  dXmax = x + textWidth('Click HERE or press the \'g\' key to try a randomly generated example.');
-  dYmin = y - bigText;
-  dYmax = y + bigText;
-  y += smallText;
-  text('Draw some similar patterns and then some non-patterns in the boxes below.', x, y);
-  y += smallText;
-  text('Click the rectangle on the left to mark each box:', x, y);
-  y += smallText;
-  text('A box can be marked as either a pattern (white) or a non-pattern (blue).', x, y);
-  y += smallText;
-  text('3 patterns and 3 non-patterns should work well.', x, y);
-  stroke(0);
-  y += smallText;
-  noStroke();
-  fill(myColors[0]);
+
+let introDiv;
+let tutorialDiv;
+let generatesDiv;
+let testDiv;
+let weightsDiv;
+let troubleDiv;
+let conclusionDiv;
+
+function showTutorialDiv(){
+  tutorialDiv.show();
+  introDiv.hide();
+  generatesDiv.hide();
+  testDiv.hide();
+  weightsDiv.hide();
+  conclusionDiv.hide();
+}
+
+function hideTutorialDiv() {
+  tutorialDiv.hide();
+  introDiv.show();
+  generatesDiv.show();
+  testDiv.show();
+  weightsDiv.show();
+  conclusionDiv.show();
+}
+
+function showTroubleDiv(){
+  troubleDiv.show();
+  introDiv.hide();
+  generatesDiv.hide();
+  testDiv.hide();
+  weightsDiv.hide();
+  conclusionDiv.hide();
+}
+
+function hideTroubleDiv() {
+  troubleDiv.hide();
+  introDiv.show();
+  generatesDiv.show();
+  testDiv.show();
+  weightsDiv.show();
+  conclusionDiv.show();
+}
+
+function setupScreen(){
+  createCanvas(windowWidth, windowHeight);
+  wideScreen = (windowWidth / windowHeight > 1.5);
+
+  if (wideScreen) {
+    pixelSize = min(windowHeight / 60, windowWidth / 28);
+  } else {
+    pixelSize = min(windowHeight / 80, windowWidth / 52);
+  }
+  startx = min(20, 3* pixelSize);
+  let smallText = 1.2*pixelSize;
+
+  let title = createDiv(myDivStrings.title);
+  titleHeight = title.size()['height'];
+  title.remove();
+
+  introDiv.remove();
+  introDiv = createDiv(myDivStrings.intro);
+  introDiv.position(startx-pixelSize, 0);
+  introDiv.size(pixelSize * 48);
+  introDiv.style('font-size', smallText + 'px');
+  introDiv.show();
+  tutorialDiv.remove();
+  tutorialDiv = createDiv(myDivStrings.tutorial);
+  tutorialDiv.position(startx-pixelSize, 0);
+  tutorialDiv.hide();
+  tutorialDiv.size(pixelSize * 48, windowHeight);
+  tutorialDiv.style('background-color', 'white');
+  tutorialDiv.style('padding', '1em');
+  tutorialDiv.style('font-size', smallText + 'px');
+  generatesDiv.remove();
+  generatesDiv = createDiv(myDivStrings.generated);
+  generatesDiv.style('font-size', smallText + 'px');
+  generatesDiv.size(pixelSize * 48);
+  generatesDiv.show();
+  testDiv.remove();
+  testDiv = createDiv(myDivStrings.test);
+  testDiv.style('font-size', smallText + 'px');
+  testDiv.size(pixelSize * 48);
+  testDiv.show();
+  weightsDiv.remove();
+  weightsDiv = createDiv(myDivStrings.weights);
+  weightsDiv.style('font-size', smallText + 'px');
+  weightsDiv.size(pixelSize * 48);
+  weightsDiv.show();
+  conclusionDiv.remove();
+  conclusionDiv = createDiv(myDivStrings.conclusion);
+  conclusionDiv.style('font-size', smallText + 'px');
+  conclusionDiv.size(pixelSize * 48);
+  conclusionDiv.show();
+  troubleDiv.remove();
+  troubleDiv = createDiv(myDivStrings.troubleshooting);
+  troubleDiv.position(startx-pixelSize, 0);
+  troubleDiv.hide();
+  troubleDiv.size(pixelSize * 48, windowHeight);
+  troubleDiv.style('background-color', 'white');
+  troubleDiv.style('padding', '1em');
+  troubleDiv.style('font-size', smallText + 'px');
+}
+
+function drawNPatterns(x, y, pixelSize) {
   stroke(0);
   for (let i = 0; i < trainP.length; i++) {
     trainP[i].drawPattern(x, y, pixelSize);
-    x += (trainP[i].cols + 2) * pixelSize;
+    x += (trainP[i].cols) * pixelSize;
   }
-  x = startx;
-  y += (trainP[0].rows + 0.5) * pixelSize;
-  noStroke();
-  fill(myColors[0]);
-  text('The computer makes some more patterns by moving the source patterns around', x, y-10);
-  y += smallText;
-  text('Click any box to make some more patterns.', x, y-10);
+  y += (trainP[0].rows - 2) * pixelSize;
+  return y;
+}
+
+function drawGenPatterns(x, y, pixelSize){
   stroke(0);
   for (let i = 0; i < generated.length; i++) {
     generated[i].drawPattern(x, y, pixelSize);
-    x += (generated[i].cols + 2) * pixelSize;
+    x += (generated[i].cols) * pixelSize;
   }
   x = startx;
-  y += (trainP[0].rows + 0.5) * pixelSize;
-  noStroke();
-  fill(myColors[0]);
-  text('You can test the pattern recognition below.', x, y-10);
-  y += smallText;
-  text('Add a similar (not identical) pattern and a non-pattern:', x, y-10);
+  y += (trainP[0].rows -2) * pixelSize;
+  return y;
+}
+
+function drawTestPatterns(x, y, pixelSize) {
   stroke(0);
   for (let i = 0; i < testP.length; i++) {
     testP[i].drawPattern(x, y, pixelSize);
-    x += (testP[i].cols + 2) * pixelSize;
+    x += (testP[i].cols) * pixelSize;
   }
-
-  x = startx;
   y += (trainP[0].rows + 0.5) * pixelSize;
-  noStroke();
-  fill(myColors[0]);
-  text('The WEIGHTS boxes are shown below.', x, y-10);
-  y += smallText;
-  text('Each "pixel" in the box helps recognise the pattern.', x, y-10);
-  y += smallText;
-  text('But some pixels are more important than others.', x, y-10);
-  y += smallText;
-  textStyle(BOLD);
-  text('Click the large WEIGHTS box (or press \'r\') a few times to train the network ' + stepCount + 'x per click.', x, y-10);
-  textStyle(NORMAL);
+  return y;
+}
+
+function drawWeightPatterns(x, y, pixelSize) {
   stroke(0);
   drawWeights(x, y, pixelSize, layer2Weights, trainP[0].nSequence.length, trainP[0].cols, trainP[0].rows);
-  noStroke();
-  fill(myColors[0]);
-  text('The small box is a moving window.', wXmax + 2 * pixelSize, y + smallText);
-  text('It looks at every pixel and its neighbours.', wXmax + 2 * pixelSize, y + 2*smallText);
-  text('The big box works on the output of the small box for every pixel.', wXmax + 2 * pixelSize, y + 3*smallText);
-  stroke(0);
-  drawWeights(wXmax + 2 * pixelSize, wYmax - 3 * pixelSize, pixelSize, layer1Weights, 9, 3, 3, false);
-  noStroke();
-  fill(myColors[0]);
-  x = startx;
-  y += (trainP[0].rows + 3) * pixelSize;
-  text('Check the label rectangles on your test patterns.', x, y-10);
-  y += smallText;
-  text('Remember white means pattern, blue means non-pattern.', x, y-10);
-  y += smallText;
-  text('If it didnt work try training a few more times.', x, y-10);
-  y += smallText;
-  text('Train too many times and it might learn to recognise any pattern', x, y-10);
-  y += smallText;
-  text('Make a different test pattern, or click the small box to reset the weights.', x, y-10);
-  y += smallText;
-  text('Training can go "weird" and fixing it is tricky on a web browser.', x, y-10);
+  drawWeights(wXmax + pixelSize, wYmax - 3 * pixelSize, pixelSize, layer1Weights, 9, 3, 3, false);
+  y += (trainP[0].rows ) * pixelSize;
+  return y;
+}
+
+
+function draw() {
+  background(255);
+  let y = drawNPatterns(startx, introDiv.size()['height'], pixelSize);
+
+  generatesDiv.position(startx-pixelSize, y);
+
+  y = drawGenPatterns(startx, generatesDiv.size()['height'] + y, pixelSize);
+
+  testDiv.position(startx-pixelSize, y);
+
+  y = drawTestPatterns(startx, testDiv.size()['height'] + y, pixelSize);
+
+  let x = 0;
+  if (wideScreen) {
+    y = titleHeight;
+    x += windowWidth/2;
+    line(x - pixelSize, 0, x - pixelSize, windowHeight);
+
+  }
+
+  weightsDiv.position(x + startx-pixelSize, y);
+
+  y = drawWeightPatterns(x + startx, weightsDiv.size()['height'] + y, pixelSize);
+  conclusionDiv.position(x + startx-pixelSize, y);
 }

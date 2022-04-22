@@ -472,7 +472,7 @@ function generateShape() { // this bit is gross too
     layer1Weights = [];//myNN.child.weights;
   }
   let patternLength = int(random(2, 4));
-  let pattern = [];
+  let pattern = [0];
   for (let i = 0; i < patternLength; i++) {
     pattern.push(int(random(0, 2)));
     pattern.push(int(random(5, 11)));
@@ -528,7 +528,6 @@ function generateShape() { // this bit is gross too
   testP[1].lerp = 0;
   // train counter example
   for (let i = 3; i < 6; i++) {
-    // patternLength = int(random(2, 4));
     pattern = [];
     for (let j = 0; j < patternLength; j++) {
       pattern.push(int(random(-1, 3)));

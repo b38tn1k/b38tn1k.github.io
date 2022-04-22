@@ -810,8 +810,6 @@ function setup() {
   testDiv = createDiv(myDivStrings.test);
   weightsDiv = createDiv(myDivStrings.weights);
   conclusionDiv = createDiv(myDivStrings.conclusion);
-  troubleDiv = createDiv(myDivStrings.troubleshooting);
-
   setupScreen();
   frameRate(10);
 }
@@ -822,7 +820,6 @@ let tutorialDiv;
 let generatesDiv;
 let testDiv;
 let weightsDiv;
-let troubleDiv;
 let conclusionDiv;
 
 function showTutorialDiv(){
@@ -858,6 +855,7 @@ function setupScreen(){
   let smallText = 1.2*pixelSize;
 
   let title = createDiv(myDivStrings.title);
+  title.style('font-family', "'courier new', courier");
   titleHeight = title.size()['height'];
   title.remove();
 
@@ -866,6 +864,7 @@ function setupScreen(){
   introDiv.position(startx-pixelSize, 0);
   introDiv.size(pixelSize * 48);
   introDiv.style('font-size', smallText + 'px');
+  introDiv.style('font-family', "'courier new', courier");
   introDiv.show();
   tutorialDiv.remove();
   tutorialDiv = createDiv(myDivStrings.tutorial);
@@ -875,34 +874,31 @@ function setupScreen(){
   tutorialDiv.style('background-color', 'white');
   tutorialDiv.style('padding', '1em');
   tutorialDiv.style('font-size', smallText + 'px');
+  tutorialDiv.style('font-family', "'courier new', courier");
   generatesDiv.remove();
   generatesDiv = createDiv(myDivStrings.generated);
   generatesDiv.style('font-size', smallText + 'px');
+  generatesDiv.style('font-family', "'courier new', courier");
   generatesDiv.size(pixelSize * 48);
   generatesDiv.show();
   testDiv.remove();
   testDiv = createDiv(myDivStrings.test);
   testDiv.style('font-size', smallText + 'px');
+  testDiv.style('font-family', "'courier new', courier");
   testDiv.size(pixelSize * 48);
   testDiv.show();
   weightsDiv.remove();
   weightsDiv = createDiv(myDivStrings.weights);
   weightsDiv.style('font-size', smallText + 'px');
+  weightsDiv.style('font-family', "'courier new', courier");
   weightsDiv.size(pixelSize * 48);
   weightsDiv.show();
   conclusionDiv.remove();
   conclusionDiv = createDiv(myDivStrings.conclusion);
   conclusionDiv.style('font-size', smallText + 'px');
+  conclusionDiv.style('font-family', "'courier new', courier");
   conclusionDiv.size(pixelSize * 48);
   conclusionDiv.show();
-  troubleDiv.remove();
-  troubleDiv = createDiv(myDivStrings.troubleshooting);
-  troubleDiv.position(startx-pixelSize, 0);
-  troubleDiv.hide();
-  troubleDiv.size(pixelSize * 48, windowHeight);
-  troubleDiv.style('background-color', 'white');
-  troubleDiv.style('padding', '1em');
-  troubleDiv.style('font-size', smallText + 'px');
 }
 
 function drawNPatterns(x, y, pixelSize) {

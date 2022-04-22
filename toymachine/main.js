@@ -742,7 +742,8 @@ function keyTyped() {
     save(myJSON, 'demo.json');
   } else if (key == 'g') {
     generateShape();
-  } else {
+    return false;
+  } else if (key == 'r') {
     setupGenerates();
     doNN();
   }
@@ -840,10 +841,10 @@ function draw() {
   text('This program tries to recognise patterns or shapes.', x, y);
   y += smallText;
   textStyle(BOLD);
-  text('Click HERE to try a randomly generated example.', x, y);
+  text('Click HERE or press the \'g\' key to randomly generate an example.', x, y);
   textStyle(NORMAL);
   dXmin = x;
-  dXmax = x + textWidth('Click HERE to try a randomly generated example.');
+  dXmax = x + textWidth('Click HERE or press the \'g\' key to try a randomly generated example.');
   dYmin = y - bigText;
   dYmax = y + bigText;
   y += smallText;
@@ -851,7 +852,7 @@ function draw() {
   y += smallText;
   text('Click the rectangle on the left to mark each box:', x, y);
   y += smallText;
-  text('A box can hold either a pattern (white) or a non-pattern (blue).', x, y);
+  text('A box can be marked as either a pattern (white) or a non-pattern (blue).', x, y);
   y += smallText;
   text('3 patterns and 3 non-patterns should work well.', x, y);
   stroke(0);
@@ -867,9 +868,7 @@ function draw() {
   y += (trainP[0].rows + 0.5) * pixelSize;
   noStroke();
   fill(myColors[0]);
-  text('The computer makes some more patterns:', x, y-10);
-  y += smallText;
-  text('Moving the source patterns around.', x, y-10);// and flipping the colors.', x, y-10);
+  text('The computer makes some more patterns by moving the source patterns around', x, y-10);
   y += smallText;
   text('Click any box to make some more patterns.', x, y-10);
   stroke(0);
@@ -900,7 +899,9 @@ function draw() {
   y += smallText;
   text('But some pixels are more important than others.', x, y-10);
   y += smallText;
-  text('Click the large WEIGHTS box below to train for ' + stepCount + ' times.', x, y-10);
+  textStyle(BOLD);
+  text('Click the large WEIGHTS (or press the \'r\' key) box below to train ' + stepCount + ' times.', x, y-10);
+  textStyle(NORMAL);
   stroke(0);
   drawWeights(x, y, pixelSize, layer2Weights, trainP[0].nSequence.length, trainP[0].cols, trainP[0].rows);
   noStroke();
@@ -918,9 +919,9 @@ function draw() {
   y += smallText;
   text('Remember white means pattern, blue means non-pattern.', x, y-10);
   y += smallText;
-  text('If it didnt work try clicking the WEIGHTS box a few more times.', x, y-10);
+  text('If it didnt work try training a few more times.', x, y-10);
   y += smallText;
-  text('Click too many times and it will learn to recognise any pattern', x, y-10);
+  text('Train too many times and it might learn to recognise any pattern', x, y-10);
   y += smallText;
   text('Make a different pattern or click the small box to reset the weights.', x, y-10);
   y += smallText;

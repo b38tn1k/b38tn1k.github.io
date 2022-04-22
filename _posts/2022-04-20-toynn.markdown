@@ -7,4 +7,4 @@ image: 'https://b38tn1k.com/images/previews/toynn.png'
 link: 'https://b38tn1k.com/toymachine/'
 ---
 
-[description]A little client run neural net that is very un-useful. Still jamming on it so features may change. Running a convolutional neural network in a browser may lock up your browser if you have many tabs open. Proceed with caution :-P [description]
+[description]A little client run neural net that is very un-useful. Still jamming on it so features may change. Running a convolutional neural network in a browser might lock up your browser if you have many tabs open. Proceed with caution :-P <small>(it runs ok in Chrome on a 2015 Mac Air with a couple extra tabs, just be cautious)</small>[description]

@@ -238,7 +238,7 @@ Including operator(s) in the retro is my main concern here. Stuff like fatigue, 
 
 So the idea is:
 - understand the sequence of events **without speculating on the cause**
-- find the failure in the experiment plan
+- find the failure in the experiment plan (speculation allowable)
 - update the experiment plan
 
 # Conclusions

@@ -293,7 +293,7 @@ function checkRightBrain(myTags){
 }
 
 function setupPostDiv() {
-  let divString = '<table width="100%"><tr><td><a href="javascript:void(0)" onclick="filterPosts(0)">All</a></td><td><a href="javascript:void(0)" onclick="filterPosts(1)">Techy</a></td><td> <a href="javascript:void(0)" onclick="filterPosts(2)">Arty</a></td></tr></table><br>';
+  let divString = '<table width="100%"><tr><td style="text-align:left" ><a href="javascript:void(0)" onclick="filterPosts(0)">All</a></td><td style="text-align:center"><a href="javascript:void(0)" onclick="filterPosts(1)">Techy</a></td><td style="text-align:right"><a href="javascript:void(0)" onclick="filterPosts(2)">Arty</a></td></tr></table><br>';
   for (let i = 0; i < posts.length; i++) {
     if (postFilter == 1) {
       if (checkLeftBrain(posts[i]['tags'])) {

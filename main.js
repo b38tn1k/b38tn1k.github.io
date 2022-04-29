@@ -38,6 +38,7 @@ var albumPointer = 0;
 // posts
 var posts = [];
 var postDiv;
+var postFilter = 0;
 // demos
 var demos = [];
 var demoPointer = 0;
@@ -80,14 +81,11 @@ class myDemoItem {
     this.div.style('overflow', "auto");
     let yPos = titleY - (titleHeight);
     let dheight = windowHeight - (titleY - (titleHeight) + 2*border);
-    console.log(dheight, divLineHeight, this.title);
     if (invertColors) {
       dheight -= 20;
       divLineHeight +=20;
       yPos -= 20;
       dheight = min(divLineHeight, dheight);
-      console.log(dheight);
-
       this.div.style('background-color', 'rgba(0, 0, 0, 0.3)')
       this.div.style('color', 'white');
       this.div.style('padding', '20px');
@@ -230,6 +228,242 @@ class myButton {
   }
 }
 
+function unpackStringArray(myArr, end=null){
+  let myString = ''
+  for (let i = 0; i < myArr.length-1; i++){
+    if (!(end === null)) {
+      myString += myArr[i] + end;
+    } else {
+      myString += myArr[i]
+    }
+  }
+  return myString;
+}
+
+function setupPosts(){
+  let tempTitle, tempDate, tempLink;
+  tempTitle = null;
+  tempDate = null;
+  tempLink = null;
+  let tempTags = [];
+  let readingPosts = false;
+  for (let i = 0; i < contentStringArr.length; i++) {
+    if (contentStringArr[i].includes('startpost')) {
+      readingPosts = true;
+    } else if (contentStringArr[i].includes('endpost')) {
+      readingPosts = false;
+      if (!(tempTitle === null)) {
+        posts.push(new myPost(tempTitle, tempDate, tempLink, tempTags));
+      }
+      tempTitle = null;
+      tempDate = null;
+      tempLink = null;
+      tempTags = [];
+    }
+    if(readingPosts) {
+      if (contentStringArr[i].includes('title') && tempTitle === null){ tempTitle = contentStringArr[i];}
+      else if (contentStringArr[i].includes('date') && tempDate === null){ tempDate = contentStringArr[i];}
+      else if (contentStringArr[i].includes('link') && tempLink === null){ tempLink = contentStringArr[i];}
+      else if (contentStringArr[i].includes('$ ')){
+        let mySliceString = contentStringArr[i];
+        mySliceString = mySliceString.slice(mySliceString.indexOf('$ ') + 2); // removing weird spacing stuff
+        tempTags.push(mySliceString);
+      }
+    }
+  }
+}
+
+function filterPosts(myTag) {
+  postFilter = int(myTag);
+  setupPostDiv();
+}
+
+function checkLeftBrain(myTags){
+  if (myTags.includes('robot') || myTags.includes('patent') || myTags.includes('rover') || myTags.includes('safety') || myTags.includes('code') || myTags.includes('arduino')) {
+    return true;
+  }
+  return false;
+}
+
+function checkRightBrain(myTags){
+  if (myTags.includes('i made another outsider art filmclip') || myTags.includes('art') || myTags.includes('fun') || myTags.includes('music')) {
+    return true;
+  }
+  return false;
+}
+
+function setupPostDiv() {
+  let divString = '<table width="100%"><tr><td><a href="javascript:void(0)" onclick="filterPosts(0)">Everything</a></td><td><a href="javascript:void(0)" onclick="filterPosts(1)">Left Brain</a></td><td> <a href="javascript:void(0)" onclick="filterPosts(2)">Right Brain</a></td></tr></table><br>';
+  for (let i = 0; i < posts.length; i++) {
+    if (postFilter == 1) {
+      if (checkLeftBrain(posts[i]['tags'])) {
+        if (invertColors) {
+          divString += posts[i].postHTMLDark;
+        } else {
+          divString += posts[i].postHTML;
+        }
+      }
+    } else if (postFilter == 2) {
+      if (checkRightBrain(posts[i]['tags'])){
+        if (invertColors) {
+          divString += posts[i].postHTMLDark;
+        } else {
+          divString += posts[i].postHTML;
+        }
+      }
+    } else {
+      if (invertColors) {
+        divString += posts[i].postHTMLDark;
+      } else {
+        divString += posts[i].postHTML;
+      }
+    }
+  }
+  postDiv.remove();
+  postDiv = createDiv(divString);
+  postDiv.style('font-size', textSize() + 'px');
+  postDiv.style('font-family', "'courier new', courier");
+  postDiv.style('font-family', "'courier new', courier");
+  if (invertColors) {
+    postDiv.style('color', 'white');
+  } else {
+    postDiv.style('color', 'black');
+  }
+  postDiv.style('overflow', "auto");
+  postDiv.size(int(windowWidth / 2), windowHeight - 4* border);//- (titleY - (titleHeight) + 2*border));
+  postDiv.position(0, border*2);//titleY - (titleHeight));
+  postDiv.center('horizontal');
+  postDiv.hide();
+}
+
+function setupDiscog() {
+    let tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate;
+    tempTitle = null;
+    tempArtists= null;
+    tempCover= null;
+    tempSpot= null;
+    tempApp= null;
+    tempBC= null;
+    tempDate= null;
+    let readingDiscog = false
+    for (let i = 0; i < contentStringArr.length; i++) {
+      if (contentStringArr[i].includes('startrelease')) {
+        readingDiscog = true;
+      } else if (contentStringArr[i].includes('endrelease')) {
+        readingDiscog = false;
+        if (!(tempTitle === null)) {
+          discography.push(new myDiscogEntry(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate));
+        }
+        tempTitle = null;
+        tempArtists= null;
+        tempCover= null;
+        tempSpot= null;
+        tempApp= null;
+        tempBC= null;
+        tempDate= null;
+      }
+      if (readingDiscog){
+        if (contentStringArr[i].includes('title')){ tempTitle = contentStringArr[i];}
+        else if (contentStringArr[i].includes('artists')){ tempArtists = contentStringArr[i];}
+        else if (contentStringArr[i].includes('cover')){ tempCover = contentStringArr[i];}
+        else if (contentStringArr[i].includes('spoti')){ tempSpot = contentStringArr[i];}
+        else if (contentStringArr[i].includes('applem')){ tempApp = contentStringArr[i];}
+        else if (contentStringArr[i].includes('bandcam')){ tempBC = contentStringArr[i];}
+        else if (contentStringArr[i].includes('date')){ tempDate = contentStringArr[i];}
+      }
+    }
+}
+
+function setupDemos() {
+  let tempTitle, tempImage, tempLink, tempContent;
+  tempTitle = null;
+  tempImage = null;
+  tempContent = null;
+  tempLink = null;
+  let readingDemos = false;
+  let readingContent = false;
+  for (let i = 0; i < contentStringArr.length; i++) {
+    if (contentStringArr[i].includes('startdemo')) {
+      readingDemos = true;
+    } else if (contentStringArr[i].includes('enddemo')) {
+      readingDemos = false;
+      if (!(tempTitle === null)) {
+        demos.push(new myDemoItem(tempTitle, tempImage, tempLink, tempContent));
+      }
+      tempTitle = null;
+      tempImage = null;
+      tempContent = null;
+      tempLink = null;
+      readingContent = false;
+    }
+    if (readingDemos){
+      if (readingContent) (tempContent += contentStringArr[i]);
+      if (contentStringArr[i].includes('title')&& tempTitle === null){ tempTitle = contentStringArr[i];}
+      else if (contentStringArr[i].includes('image') && tempImage === null){ tempImage = contentStringArr[i];}
+      else if (contentStringArr[i].includes('link') && tempLink === null){ tempLink = contentStringArr[i];}
+      else if (contentStringArr[i].includes('content')){readingContent = true;}
+    }
+  }
+}
+
+function drawButtons() {
+  for (let i = 0; i < buttons.length; i++){
+    drawButton(buttons[i]);
+  }
+}
+
+function drawButton(button) {
+  if (button.clickCountDown > 0) {
+    fill(fgColor);
+    rect(button.x, button.y, button.width, button.height)
+    fill(bgColor);
+    text(button.label, button.x, button.y);
+    button.clickCountDown -= 1;
+  } else {
+    fill(255, 255, 255, transparent);
+    rect(button.x, button.y, button.width, button.height)
+    fill(fgColor);
+    text(button.label, button.x, button.y);
+  }
+}
+
+function buttonPressed(button, mx, my){
+  let pressed = false;
+  if (mx > button.x_min  && mx < button.x_max) {
+    if (my > button.y_min && my < button.y_max){
+      pressed = true;
+    }
+  }
+  return pressed;
+}
+
+function drawSprites() {
+  for (let i = 0; i < sprites.length; i++){
+    if (showItem) {
+      if ((sprites[i][1] <= width/2) && (sprites[i][1] > width/8)) {
+        sprites[i][3] = -1;
+      } else if ((sprites[i][1] > width/2) && (sprites[i][1] < 2*(width/3))) {
+        sprites[i][3] = 1;
+      } else {
+        if (frameCount % sprites[i][5] == 0) {
+          sprites[i][3] = int(random(-2, 2));
+        }
+      }
+    }
+    view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
+    sprites[i][1] += sprites[i][3] * sprites[i][6];
+    sprites[i][2] += sprites[i][4] * sprites[i][6];
+    if (frameCount % sprites[i][5] == 0) {
+      sprites[i][3] = int(random(-2, 2));
+    }
+
+    if (sprites[i][1] < 0) {sprites[i][1] = view.width;}
+    if (sprites[i][1] > view.width) {sprites[i][1] = 0;}
+    if (sprites[i][2] < 0){sprites[i][2] = view.height;}
+    if (sprites[i][2] > view.height) {sprites[i][2] = 0;}
+  }
+}
+
 function genSprite(spriteWidth, spriteHeight, pixelSize, color) {
   let sprite = createGraphics((spriteWidth+2)*pixelSize, spriteHeight*2*pixelSize);
   sprite.fill(color);
@@ -307,21 +541,26 @@ function drawGradient(rgb){
   }
 }
 
+function drawBorder(g){
+  stroke(fgColor);
+  strokeWeight(2);
+  noFill();
+  rect(centerX, centerY, g.width, g.height);
+}
+
 function setupScreen() {
-  console.log(windowWidth, windowHeight);
   let screenRatio = windowWidth / windowHeight;
   fullScreen = false;
   halfScreen = false;
   mobile = false;
-  console.log(screenRatio);
   if (screenRatio > 1.4) {
-    console.log('full screen');
+    // console.log('full screen');
     fullScreen = true;
   } else if (screenRatio > 0.9) {
-    console.log('half screen');
+    // console.log('half screen');
     halfScreen = true;
   } else {
-    console.log('mobile');
+    // console.log('mobile');
     mobile = true;
   }
   if (!invertColors) {
@@ -460,6 +699,14 @@ function preload() {
   // contentStringArr = loadStrings('http://127.0.0.1:4000/map_for_p5/');
 }
 
+function deviceTurned() {
+  setupScreen();
+}
+
+function windowResized() {
+  setupScreen();
+}
+
 function mousePressed() {
   mx = mouseX;
   my = mouseY;
@@ -538,222 +785,6 @@ function mousePressed() {
     return false;
   }
 
-}
-
-function setupPosts(){
-  let tempTitle, tempDate, tempLink;
-  tempTitle = null;
-  tempDate = null;
-  tempLink = null;
-  let tempTags = [];
-  let readingPosts = false;
-  for (let i = 0; i < contentStringArr.length; i++) {
-    if (contentStringArr[i].includes('startpost')) {
-      readingPosts = true;
-    } else if (contentStringArr[i].includes('endpost')) {
-      readingPosts = false;
-      if (!(tempTitle === null)) {
-        posts.push(new myPost(tempTitle, tempDate, tempLink, tempTags));
-      }
-      tempTitle = null;
-      tempDate = null;
-      tempLink = null;
-      tempTags = [];
-    }
-    if(readingPosts) {
-      if (contentStringArr[i].includes('title') && tempTitle === null){ tempTitle = contentStringArr[i];}
-      else if (contentStringArr[i].includes('date') && tempDate === null){ tempDate = contentStringArr[i];}
-      else if (contentStringArr[i].includes('link') && tempLink === null){ tempLink = contentStringArr[i];}
-      else if (contentStringArr[i].includes('$ ')){
-        let mySliceString = contentStringArr[i];
-        mySliceString = mySliceString.slice(mySliceString.indexOf('$ ') + 2); // removing weird spacing stuff
-        tempTags.push(mySliceString);
-      }
-    }
-  }
-}
-
-function setupPostDiv() {
-  let divString = '';
-  for (let i = 0; i < posts.length; i++) {
-    if (invertColors) {
-      divString += posts[i].postHTMLDark;
-    } else {
-      divString += posts[i].postHTML;
-    }
-
-  }
-  postDiv.remove();
-  postDiv = createDiv(divString);
-  postDiv.style('font-size', textSize() + 'px');
-  postDiv.style('font-family', "'courier new', courier");
-  postDiv.style('font-family', "'courier new', courier");
-  if (invertColors) {
-    postDiv.style('color', 'white');
-  } else {
-    postDiv.style('color', 'black');
-  }
-  postDiv.style('overflow', "auto");
-  postDiv.size(int(windowWidth / 2), windowHeight - 4* border);//- (titleY - (titleHeight) + 2*border));
-  postDiv.position(0, border*2);//titleY - (titleHeight));
-  postDiv.center('horizontal');
-  postDiv.hide();
-  // console.log(divString);
-}
-
-function setupDiscog() {
-    let tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate;
-    tempTitle = null;
-    tempArtists= null;
-    tempCover= null;
-    tempSpot= null;
-    tempApp= null;
-    tempBC= null;
-    tempDate= null;
-    let readingDiscog = false
-    for (let i = 0; i < contentStringArr.length; i++) {
-      if (contentStringArr[i].includes('startrelease')) {
-        readingDiscog = true;
-      } else if (contentStringArr[i].includes('endrelease')) {
-        readingDiscog = false;
-        if (!(tempTitle === null)) {
-          discography.push(new myDiscogEntry(tempTitle, tempArtists, tempCover, tempSpot, tempApp, tempBC, tempDate));
-        }
-        tempTitle = null;
-        tempArtists= null;
-        tempCover= null;
-        tempSpot= null;
-        tempApp= null;
-        tempBC= null;
-        tempDate= null;
-      }
-      if (readingDiscog){
-        if (contentStringArr[i].includes('title')){ tempTitle = contentStringArr[i];}
-        else if (contentStringArr[i].includes('artists')){ tempArtists = contentStringArr[i];}
-        else if (contentStringArr[i].includes('cover')){ tempCover = contentStringArr[i];}
-        else if (contentStringArr[i].includes('spoti')){ tempSpot = contentStringArr[i];}
-        else if (contentStringArr[i].includes('applem')){ tempApp = contentStringArr[i];}
-        else if (contentStringArr[i].includes('bandcam')){ tempBC = contentStringArr[i];}
-        else if (contentStringArr[i].includes('date')){ tempDate = contentStringArr[i];}
-      }
-    }
-}
-
-function setupDemos() {
-  let tempTitle, tempImage, tempLink, tempContent;
-  tempTitle = null;
-  tempImage = null;
-  tempContent = null;
-  tempLink = null;
-  let readingDemos = false;
-  let readingContent = false;
-  for (let i = 0; i < contentStringArr.length; i++) {
-    if (contentStringArr[i].includes('startdemo')) {
-      readingDemos = true;
-    } else if (contentStringArr[i].includes('enddemo')) {
-      readingDemos = false;
-      if (!(tempTitle === null)) {
-        demos.push(new myDemoItem(tempTitle, tempImage, tempLink, tempContent));
-      }
-      tempTitle = null;
-      tempImage = null;
-      tempContent = null;
-      tempLink = null;
-      readingContent = false;
-    }
-    if (readingDemos){
-      if (readingContent) (tempContent += contentStringArr[i]);
-      if (contentStringArr[i].includes('title')&& tempTitle === null){ tempTitle = contentStringArr[i];}
-      else if (contentStringArr[i].includes('image') && tempImage === null){ tempImage = contentStringArr[i];}
-      else if (contentStringArr[i].includes('link') && tempLink === null){ tempLink = contentStringArr[i];}
-      else if (contentStringArr[i].includes('content')){readingContent = true;}
-    }
-  }
-}
-
-function drawSprites() {
-  for (let i = 0; i < sprites.length; i++){
-    if (showItem) {
-      if ((sprites[i][1] <= width/2) && (sprites[i][1] > width/8)) {
-        sprites[i][3] = -1;
-      } else if ((sprites[i][1] > width/2) && (sprites[i][1] < 2*(width/3))) {
-        sprites[i][3] = 1;
-      } else {
-        if (frameCount % sprites[i][5] == 0) {
-          sprites[i][3] = int(random(-2, 2));
-        }
-      }
-    }
-    view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
-    sprites[i][1] += sprites[i][3] * sprites[i][6];
-    sprites[i][2] += sprites[i][4] * sprites[i][6];
-    if (frameCount % sprites[i][5] == 0) {
-      sprites[i][3] = int(random(-2, 2));
-    }
-
-    if (sprites[i][1] < 0) {sprites[i][1] = view.width;}
-    if (sprites[i][1] > view.width) {sprites[i][1] = 0;}
-    if (sprites[i][2] < 0){sprites[i][2] = view.height;}
-    if (sprites[i][2] > view.height) {sprites[i][2] = 0;}
-  }
-}
-
-function drawButtons() {
-  for (let i = 0; i < buttons.length; i++){
-    drawButton(buttons[i]);
-  }
-}
-
-function drawButton(button) {
-  if (button.clickCountDown > 0) {
-    fill(fgColor);
-    rect(button.x, button.y, button.width, button.height)
-    fill(bgColor);
-    text(button.label, button.x, button.y);
-    button.clickCountDown -= 1;
-  } else {
-    fill(255, 255, 255, transparent);
-    rect(button.x, button.y, button.width, button.height)
-    fill(fgColor);
-    text(button.label, button.x, button.y);
-  }
-}
-
-function drawBorder(g){
-  stroke(fgColor);
-  strokeWeight(2);
-  noFill();
-  rect(centerX, centerY, g.width, g.height);
-}
-
-function buttonPressed(button, mx, my){
-  let pressed = false;
-  if (mx > button.x_min  && mx < button.x_max) {
-    if (my > button.y_min && my < button.y_max){
-      pressed = true;
-    }
-  }
-  return pressed;
-}
-
-function deviceTurned() {
-  setupScreen();
-}
-
-function windowResized() {
-  setupScreen();
-}
-
-function unpackStringArray(myArr, end=null){
-  let myString = ''
-  for (let i = 0; i < myArr.length-1; i++){
-    if (!(end === null)) {
-      myString += myArr[i] + end;
-    } else {
-      myString += myArr[i]
-    }
-  }
-  return myString;
 }
 
 function setup() {

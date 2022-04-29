@@ -1,0 +1,15 @@
+---
+layout: post
+title:  "Music out of This Century"
+date:   2022-03-14
+tags: releasehidden
+spotify: "https://open.spotify.com/album/4dkQcYKmoJ2XWZtniKUDgz?si=CFIEcOmRQI6sKrKK535Nnw"
+bandcamp: ""
+applemusic: "https://music.apple.com/us/album/music-out-of-this-century/1615113335"
+albumcover: "/images/covers/reload1.jpeg"
+artists: RELOAD, mastered by me
+---
+
+![cover]({{ site.url }}/images/covers/reload1.jpg)
+
+I mastered a record for someone other than RC or myself! sorta fun, sorta scary.

@@ -5,6 +5,7 @@ date:   2022-03-14
 tags: releasehidden
 spotify: "https://open.spotify.com/album/4dkQcYKmoJ2XWZtniKUDgz?si=CFIEcOmRQI6sKrKK535Nnw"
 applemusic: "https://open.spotify.com/album/1oBh9SXqz0T3dLLSbNjijW?si=P6KP2a8fRl6cBOAJjZq5Pw"
+bandcamp: ""
 albumcover: "/images/covers/reload1.jpeg"
 artists: RELOAD, mastered by me
 ---

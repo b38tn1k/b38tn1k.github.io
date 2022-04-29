@@ -7,7 +7,7 @@ spotify: "https://open.spotify.com/album/4dkQcYKmoJ2XWZtniKUDgz?si=CFIEcOmRQI6sK
 bandcamp: ""
 applemusic: "https://music.apple.com/us/album/music-out-of-this-century/1615113335"
 albumcover: "/images/covers/reload1.jpeg"
-artists: RELOAD, mastered by me
+artists: RELOAD, Mark Mothersbaugh (DEVO!??!), mastered by me
 ---
 
 ![cover]({{ site.url }}/images/covers/reload1.jpg)

@@ -7,4 +7,4 @@ image: 'https://b38tn1k.com/images/previews/initialconditions.png'
 link: 'https://b38tn1k.com/nested/'
 ---
 
-[description]a short story but not really?[description]
+[description]a short story[description]

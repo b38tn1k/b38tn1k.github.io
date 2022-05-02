@@ -1,0 +1,32 @@
+---
+layout: post
+title:  "Rover Part 6: He's dead, Jim. And new things"
+date:   2019-09-20
+categories: [rover, code, arduino]
+comments: True
+---
+
+*It has been a while since I posted about the rover project. Coding and building continued. I added a web-client and better control over WiFi based on a ROS XBOX controller module. Rover1 got a friend in the form of a Tello drone that would launch and (occasionally) land back into a 3D printed nest using Apriltags, cameras, and super bright LEDs. For prototyping silly ideas, Rover1 was awesome.*
+
+![Video Screenshot]({{ site.url }}/images/nestlaunch.png)
+
+## Rover1 is retired.
+The gearbox on one of the wheel motors was turned into dust after a low speed collision with a wall. Finding a replacement for a part with no serial number is difficult. The online documentation provided a lead but the gearbox that I ordered turned out to have a different gear ratio. Around then I figured it was easier to just make a new Rover.
+
+## DIY Robocars and Rover2
+Through work I met Chris Anderson (3DR, Wired Magazine, DroneCode) and he put me onto a group he had started called DIY Robocars. The basic concept of DIY Robocars is 'build and race' small autonomous vehicles. They have a warehouse nearby in Oakland and it looked like an awesome community. For Rover2, I would aim to make something I could take to a meet, starting with a build using an existing project and making modifications along the way. [Donkey Car](https://www.donkeycar.com/) gives a nice RPi image for adding autonomy to a standard RC platform. I also really like the simplicity of their approach:
+```
+camera stream -> neural network -> steering angle.
+```
+They have everything laid out for maximum customisation; change the neural net, add more sensors, add more outputs, it's all python and C++ and nicely documented.
+
+## Rover2 Hardware
+I sourced a Redcat Racing Blackout XTE RC truck: waterproof with brushless motors, independent suspension, big chunky wheels and lots or room to build on. The 3D printed chassis provided by Donkey Car was not compatible and I have little patience for 3D printing anyway. Laser cutting work here and is faster. I stayed late one evening in the makerspace and put this together:
+
+![Laser Donkey]({{ site.url }}/images/laserdonkey.jpg)
+
+## It's Alive
+Using the un-modified Donkey Car software I can drive it around with my phone and gather training data. I was able to offload the data to my mac and train a 'neural pilot' that can navigate the hallway I was testing in fairly OK (only made one dent on the wall). At the lowest speed setting, Rover2 is still sorta fast! [STLs for the chassis are here.](https://github.com/b38tn1k/Laser-Donkey)
+
+## What's next?
+Looking forward I would like to start messing with the code - racing is cool but I think a follow bot might have some utility also. But we are moving to Boston so it may have to wait until I find a decent and safe test location. My partner just got into a post-doc program at Boston Children's (she's so smart!) and I will be working remote and deep diving into some of the flying robot stuff I have been investigating with MIT. Should be cool :-D

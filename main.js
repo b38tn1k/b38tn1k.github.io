@@ -16,12 +16,14 @@ var buttonLabels = ['music', 'blog', 'demos'];
 var exitButton;
 var buttonLinks = [null, null, null];
 var showItem = false;
-var itemToShow;
+var itemToShow = 1;
 //a11y
 var showBackgroundButton;
 var showBackground = true;
 var invertColorsButton;
 var invertColors = false;
+var retroButton;
+var retro = true;
 // some fun
 var sprites = [];
 var spriteCount = 25;
@@ -42,6 +44,7 @@ var postFilter = 0;
 // demos
 var demos = [];
 var demoPointer = 0;
+
 
 
 class myDemoItem {
@@ -77,7 +80,12 @@ class myDemoItem {
     this.div.remove();
     this.div = createDiv(divString);
     this.div.style('font-size', textSize() + 'px');
-    this.div.style('font-family', "'courier new', courier");
+    if (retro) {
+      this.div.style('font-family', "'courier new', courier");
+    } else {
+      this.div.style('font-family', "'arial', sans-serif");
+    }
+
     this.div.style('overflow', "auto");
     let yPos = titleY - (titleHeight);
     let dheight = windowHeight - (titleY - (titleHeight) + 2*border);
@@ -95,6 +103,11 @@ class myDemoItem {
     this.div.size(squareItemImageWidth, dheight);
     this.div.position(0, yPos);
     this.div.center('horizontal');
+    if (! retro) {
+      let pos = this.div.position();
+      this.div.position(pos['x'] + border, yPos);
+    }
+
     this.div.hide();
   }
 }
@@ -164,7 +177,11 @@ class myDiscogEntry {
     let dheight = windowHeight - (titleY - (titleHeight) + 2*border);
     this.div = createDiv(divString);
     this.div.style('font-size', textSize() + 'px');
-    this.div.style('font-family', "'courier new', courier");
+    if (retro) {
+      this.div.style('font-family', "'courier new', courier");
+    } else {
+      this.div.style('font-family', "'arial', sans-serif");
+    }
     if (invertColors) {
       this.div.style('color', 'white');
       this.div.style('background-color', 'rgba(0, 0, 0, 0.3)')
@@ -176,6 +193,10 @@ class myDiscogEntry {
     this.div.size(squareItemImageWidth, dheight);
     this.div.position(0, titleY - (titleHeight));
     this.div.center('horizontal');
+    if (! retro) {
+      let pos = this.div.position();
+      this.div.position(pos['x'] + border, pos['y']);
+    }
     this.div.hide();
   }
 }
@@ -322,17 +343,33 @@ function setupPostDiv() {
   postDiv.remove();
   postDiv = createDiv(divString);
   postDiv.style('font-size', textSize() + 'px');
-  postDiv.style('font-family', "'courier new', courier");
-  postDiv.style('font-family', "'courier new', courier");
+  if (retro) {
+    postDiv.style('font-family', "'courier new', courier");
+    postDiv.style('font-family', "'courier new', courier");
+  } else {
+    postDiv.style('font-family', "'arial', sans-serif");
+  }
+
   if (invertColors) {
     postDiv.style('color', 'white');
   } else {
     postDiv.style('color', 'black');
   }
   postDiv.style('overflow', "auto");
-  postDiv.size(int(windowWidth / 2), windowHeight - 4* border);//- (titleY - (titleHeight) + 2*border));
-  postDiv.position(0, border*2);//titleY - (titleHeight));
-  postDiv.center('horizontal');
+  if (retro) {
+    postDiv.size(int(windowWidth / 2), windowHeight - 4* border);//- (titleY - (titleHeight) + 2*border));
+    postDiv.position(0, border*2);//titleY - (titleHeight));
+    postDiv.center('horizontal');
+  } else {
+    postDiv.size(int(windowWidth / 2), (windowHeight - 6* border));//- (titleY - (titleHeight) + 2*border));
+    if (mobile) {
+      postDiv.size(int(windowWidth / 2), (windowHeight - 9* border));//- (titleY - (titleHeight) + 2*border));
+    }
+    postDiv.position(0, titleY - (titleHeight));//titleY - (titleHeight));
+    postDiv.center('horizontal');
+    // let po = postDiv.position()
+    // postDiv.position(po['x'] + 2 * border, po['y']);
+  }
   postDiv.hide();
 }
 
@@ -413,17 +450,24 @@ function drawButtons() {
 }
 
 function drawButton(button) {
-  if (button.clickCountDown > 0) {
-    fill(fgColor);
-    rect(button.x, button.y, button.width, button.height)
-    fill(bgColor);
-    text(button.label, button.x, button.y);
-    button.clickCountDown -= 1;
+  if (retro) {
+    if (button.clickCountDown > 0) {
+      fill(fgColor);
+      rect(button.x, button.y, button.width, button.height)
+      fill(bgColor);
+      text(button.label, button.x, button.y);
+      button.clickCountDown -= 1;
+    } else {
+      fill(255, 255, 255, transparent);
+      rect(button.x, button.y, button.width, button.height)
+      fill(fgColor);
+      text(button.label, button.x, button.y);
+    }
   } else {
-    fill(255, 255, 255, transparent);
-    rect(button.x, button.y, button.width, button.height)
+    fill(bgColor);
+    rect(button.x, button.y, button.width, button.height, 5)
     fill(fgColor);
-    text(button.label, button.x, button.y);
+    text(button.name, button.x, button.y)
   }
 }
 
@@ -548,6 +592,26 @@ function drawBorder(g){
   rect(centerX, centerY, g.width, g.height);
 }
 
+function showMusic(){
+  titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p><a href="javascript:void(0)" onclick="nextAlbum()"> next album</a></p><br><p><a href="javascript:void(0)" onclick="previousAlbum()"> previous album</a></p>');
+  showItem = true;
+  itemToShow = 0;
+
+}
+
+function showBlog(){
+  titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p>');
+  showItem = true;
+  itemToShow = 1;
+}
+
+function showDemos(){
+  titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p><a href="javascript:void(0)" onclick="nextDemo()"> next demo</a></p><br><p><a href="javascript:void(0)" onclick="previousDemo()"> previous demo</a></p>');
+  showItem = true;
+  itemToShow = 2;
+}
+
+
 function setupScreen() {
   let screenRatio = windowWidth / windowHeight;
   fullScreen = false;
@@ -608,8 +672,15 @@ function setupScreen() {
   }
   buttonY = titleY + 1.5*titleHeight;
   textSize(tSize);
-  textFont('Courier New');
-  view.textFont('Courier New');
+  if (retro) {
+    textFont('Courier New');
+    view.textFont('Courier New');
+  } else {
+    textFont('Helvetica');
+    view.textFont('Helvetica');
+    showItem = true;
+    // itemToShow = 1;
+  }
   titleWidth = textWidth(titleStringArr[1]);
   buttons = [];
   // button setup
@@ -645,21 +716,32 @@ function setupScreen() {
   previousItem = new myButton('prev', null, int(4*border - buttonNudge), buttonY);
   // html setup
   titleDiv.remove();
-  titleDiv = createDiv(titleDivString);
-  if (mobile) {
+  if (retro) {
+    titleDiv = createDiv(titleDivString);
+    titleDiv.style('font-family', "'courier new', courier");
+  } else {
+    titleDiv = createDiv('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p>');
+    titleDiv.style('font-family', "'arial', sans-serif");
+  }
+
+  if (mobile && retro) {
     titleDiv.style('font-size', (0.6*tSize )+ 'px');
   } else {
     titleDiv.style('font-size', tSize + 'px');
   }
-
   if (invertColors) {
     titleDiv.style('color', 'white');
     titleDiv.style('background-color', 'rgba(0, 0, 0, 0.3)')
   } else {
     titleDiv.style('color', 'black');
   }
-  titleDiv.position(0, titleY - (titleHeight));
-  titleDiv.center('horizontal');
+  if (retro) {
+    titleDiv.position(0, titleY - (titleHeight));
+    titleDiv.center('horizontal');
+  } else {
+    titleDiv.position(int(1.5 * border), border);
+  }
+
 
   for (let i = 0; i < discography.length; i++) {
     discography[i].updateDiv();
@@ -671,6 +753,13 @@ function setupScreen() {
   // invaders guy
   showBackgroundButton = new myButton('BG: OFF', null, width - (border + textWidth('BG: OFF ')/2 + 1), int(height-border - textSize()/2), true);
   invertColorsButton = new myButton('dark ', null, (border + 5 + (textWidth('light')/2)), int(height-border - textSize()/2), true);
+  retroButton = new myButton('retro', null, invertColorsButton.x + textWidth('BG: OFF '), int(height-border - textSize()/2), true);
+
+  if (retro) {
+    retroButton.label = 'clean';
+  } else {
+    retroButton.label = 'retro';
+  }
   if (showBackground) {
     showBackgroundButton.label = 'BG: OFF ';
   } else {
@@ -678,8 +767,10 @@ function setupScreen() {
   }
   if (invertColors) {
     invertColorsButton.label = 'light';
+    invertColorsButton.name = 'light';
   } else {
     invertColorsButton.label = 'dark ';
+    invertColorsButton.name = 'dark ';
   }
   sprites = [];
   let spritePixelSize = int(max(3, tSize/12));
@@ -719,52 +810,36 @@ function mousePressed() {
     }
     return false;
   }
+  if (buttonPressed(retroButton, mx, my)) {
+    retro = ! retro;
+    setupScreen();
+    return false;
+  }
   if (buttonPressed(invertColorsButton, mx, my)){
     invertColors = !invertColors;
-    // if (invertColors) {showBackground = false;}
     setupScreen();
     return false;
   }
   if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextItem, mx, my)) {
     nextItem.clickCountDown = 2;
-    discography[albumPointer].div.hide();
-    albumPointer += 1;
-    if (albumPointer >= discography.length) {
-      albumPointer = 0;
-    }
-    discography[albumPointer].div.show();
+    nextAlbum();
     return false;
 
   }
   if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(previousItem, mx, my)) {
     previousItem.clickCountDown = 2;
-    discography[albumPointer].div.hide();
-    albumPointer -= 1;
-    if (albumPointer == -1) {
-      albumPointer = discography.length-1;
-    }
-    discography[albumPointer].div.show();
+    previousAlbum();
     return false;
   }
   if (showItem && buttonLabels[itemToShow] == 'demos' && buttonPressed(nextItem, mx, my)) {
     nextItem.clickCountDown = 2;
-    demos[demoPointer].div.hide();
-    demoPointer += 1;
-    if (demoPointer >= demos.length) {
-      demoPointer = 0;
-    }
-    demos[demoPointer].div.show();
+    nextDemo();
     return false;
 
   }
   if (showItem && buttonLabels[itemToShow] == 'demos' && buttonPressed(previousItem, mx, my)) {
     previousItem.clickCountDown = 2;
-    demos[demoPointer].div.hide();
-    demoPointer -= 1;
-    if (demoPointer == -1) {
-      demoPointer = demos.length-1;
-    }
-    demos[demoPointer].div.show();
+    previousDemo();
     return false;
   }
 
@@ -787,6 +862,42 @@ function mousePressed() {
 
 }
 
+function nextAlbum() {
+  discography[albumPointer].div.hide();
+  albumPointer += 1;
+  if (albumPointer >= discography.length) {
+    albumPointer = 0;
+  }
+  discography[albumPointer].div.show();
+}
+
+function previousAlbum() {
+  discography[albumPointer].div.hide();
+  albumPointer -= 1;
+  if (albumPointer == -1) {
+    albumPointer = discography.length-1;
+  }
+  discography[albumPointer].div.show();
+}
+
+function nextDemo() {
+  demos[demoPointer].div.hide();
+  demoPointer += 1;
+  if (demoPointer >= demos.length) {
+    demoPointer = 0;
+  }
+  demos[demoPointer].div.show();
+}
+
+function previousDemo() {
+  demos[demoPointer].div.hide();
+  demoPointer -= 1;
+  if (demoPointer == -1) {
+    demoPointer = demos.length-1;
+  }
+  demos[demoPointer].div.show();
+}
+
 function setup() {
   titleString = unpackStringArray(titleStringArr, '\n');
   titleDivString = unpackStringArray(titleDivStringArr);
@@ -805,7 +916,7 @@ function draw(){
   textAlign(CENTER, CENTER);
   textStyle(NORMAL);
   rectMode(CENTER);
-  if (showBackground) {
+  if (showBackground && retro) {
     view.image(gradient, 0, 0);
     drawSprites();
   } else {
@@ -830,27 +941,46 @@ function draw(){
   noStroke();
 
   if (showItem) {
-    titleDiv.hide();
-    drawButton(exitButton);
+    if (retro) {
+      titleDiv.hide();
+      drawButton(exitButton);
+    }
     if (buttonLabels[itemToShow] == 'music'){
       discography[albumPointer].div.show();
-      drawButton(nextItem);
-      drawButton(previousItem);
+      demos[demoPointer].div.hide();
+      postDiv.hide();
+      if (retro) {
+        drawButton(nextItem);
+        drawButton(previousItem);
+      }
     } else if (buttonLabels[itemToShow] == 'blog'){
       postDiv.show();
+      discography[albumPointer].div.hide();
+      demos[demoPointer].div.hide();
     } else if (buttonLabels[itemToShow] == 'demos') {
-      drawButton(nextItem);
-      drawButton(previousItem);
+      if (retro) {
+        drawButton(nextItem);
+        drawButton(previousItem);
+      }
       demos[demoPointer].div.show();
+      postDiv.hide();
+      discography[albumPointer].div.hide();
     }
   } else {
     discography[albumPointer].div.hide();
     demos[demoPointer].div.hide();
     postDiv.hide();
     titleDiv.show();
-    drawButtons();
+    if (retro){
+      drawButtons();
+    }
+
   }
-  drawButton(showBackgroundButton);
+  if (retro) {
+    drawButton(showBackgroundButton);
+  }
+
+  drawButton(retroButton);
   drawButton(invertColorsButton);
   drawBorder(view);
 

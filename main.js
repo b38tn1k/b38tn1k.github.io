@@ -361,11 +361,11 @@ function setupPostDiv() {
     postDiv.position(0, border*2);//titleY - (titleHeight));
     postDiv.center('horizontal');
   } else {
-    postDiv.size(int(windowWidth / 2), (windowHeight - 6* border));//- (titleY - (titleHeight) + 2*border));
+    postDiv.size(int(windowWidth / 2), (windowHeight - 4* border));//- (titleY - (titleHeight) + 2*border));
     if (mobile) {
       postDiv.size(int(windowWidth / 2), (windowHeight - 9* border));//- (titleY - (titleHeight) + 2*border));
     }
-    postDiv.position(0, titleY - (titleHeight));//titleY - (titleHeight));
+    postDiv.position(0, 2*border);//titleY - (titleHeight));//titleY - (titleHeight));
     postDiv.center('horizontal');
     // let po = postDiv.position()
     // postDiv.position(po['x'] + 2 * border, po['y']);

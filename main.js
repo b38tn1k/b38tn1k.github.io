@@ -580,6 +580,7 @@ function buttonPressed(button, mx, my){
 }
 
 function drawSprites() {
+  let dead = -1;
   for (let i = 0; i < sprites.length; i++){
     if (showItem) {
       if ((sprites[i][1] <= width/2) && (sprites[i][1] > width/8)) {
@@ -597,9 +598,9 @@ function drawSprites() {
       if (tank.checkShot(sprites[i][1], sprites[i][2])) {
         sprites[i][1] = random(view.width);
         sprites[i][2] = random(view.height);
+        dead = i;
       }
     }
-
     sprites[i][1] += sprites[i][3] * sprites[i][6];
     sprites[i][2] += sprites[i][4] * sprites[i][6];
     if (frameCount % sprites[i][5] == 0) {
@@ -609,6 +610,9 @@ function drawSprites() {
     if (sprites[i][1] > view.width) {sprites[i][1] = 0;}
     if (sprites[i][2] < 0){sprites[i][2] = view.height;}
     if (sprites[i][2] > view.height) {sprites[i][2] = 0;}
+  }
+  if (dead >= 0){
+    sprites.splice(dead, 1);
   }
 }
 

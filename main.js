@@ -30,6 +30,7 @@ var spriteCount = 25;
 var dawndusk = [255, 200, 100];
 var daytime = [100, 200, 255];
 var nighttime = [100, 100, 200];
+var tank;
 // various item menus
 var contentStringArr;
 var squareItemImageWidth = 200;
@@ -45,7 +46,15 @@ var postFilter = 0;
 var demos = [];
 var demoPointer = 0;
 
-
+class Tank {
+  constructor(pixelSize) {
+    this.x = windowWidth / 2;
+    this.y = windowHeight - 1.5 * border;
+    this.sprite = createGraphics(pixelSize * 9, pixelSize * 3);
+    this.sprite.background(255, 0, 0);
+    // this.sprite.square(pixelSize, 4 * pixelSize, 0);
+  }
+}
 
 class myDemoItem {
   constructor(title, image, link, content) {
@@ -615,7 +624,6 @@ function showDemos(){
   itemToShow = 2;
 }
 
-
 function setupScreen() {
   let screenRatio = windowWidth / windowHeight;
   fullScreen = false;
@@ -740,13 +748,20 @@ function setupScreen() {
     titleDiv.style('color', 'black');
   }
   if (retro) {
+    showItem = false;
     titleDiv.position(0, titleY - (titleHeight));
     titleDiv.center('horizontal');
   } else {
+    if (itemToShow == 0) {
+      titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p><a href="javascript:void(0)" onclick="nextAlbum()"> next album</a></p><br><p><a href="javascript:void(0)" onclick="previousAlbum()"> previous album</a></p>');
+    } else if (itemToShow == 1) {
+      titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p>');
+    } else {
+      titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p><a href="javascript:void(0)" onclick="nextDemo()"> next demo</a></p><br><p><a href="javascript:void(0)" onclick="previousDemo()"> previous demo</a></p>');
+    }
     titleDiv.position(int(1.5 * border), border);
   }
-
-
+  
   for (let i = 0; i < discography.length; i++) {
     discography[i].updateDiv();
   }
@@ -781,6 +796,7 @@ function setupScreen() {
   for (let i = 0; i < spriteCount; i++){
     sprites.push([genSprite(8, 5, spritePixelSize, colorOfTheTime), random(view.width), random(view.height), int(random(-2, 2)), 1, int(random(50, 100)), spritePixelSize]);
   }
+  tank = new Tank(spritePixelSize);
   // prettify
   background(bgColor);
   view.background(bgColor);
@@ -923,6 +939,7 @@ function draw(){
   if (showBackground && retro) {
     view.image(gradient, 0, 0);
     drawSprites();
+    view.image(tank.sprite, tank.x, tank.y);
   } else {
     background(bgColor);
   }

@@ -31,6 +31,7 @@ var dawndusk = [255, 200, 100];
 var daytime = [100, 200, 255];
 var nighttime = [100, 100, 200];
 var tank;
+var game = false;
 // various item menus
 var contentStringArr;
 var squareItemImageWidth = 200;
@@ -47,12 +48,93 @@ var demos = [];
 var demoPointer = 0;
 
 class Tank {
-  constructor(pixelSize) {
-    this.x = windowWidth / 2;
-    this.y = windowHeight - 1.5 * border;
-    this.sprite = createGraphics(pixelSize * 9, pixelSize * 3);
-    this.sprite.background(255, 0, 0);
-    // this.sprite.square(pixelSize, 4 * pixelSize, 0);
+  constructor(pixelSize, x, y, rgb) {
+    this.x = x;
+    this.y = y;
+    this.killcount = 0;
+    this.pixelSize = pixelSize;
+    this.speedCount = 0;
+    this.bulletsX = [-1, -1, -1, -1, -1];
+    this.bulletsY = [-1, -1, -1, -1, -1];
+    this.bullet = createGraphics(pixelSize, 2*pixelSize);
+    this.bullet.background(color(rgb[0], rgb[1], rgb[2]));
+    this.bullet.noStroke();
+    this.bullet.fill(255, 255, 255);
+    this.bullet.square(0, 0, pixelSize);
+    this.sprite = createGraphics(pixelSize * 9, pixelSize * 5);
+    this.sprite.fill(bgColor);
+    this.sprite.noStroke();
+    this.sprite.square(pixelSize * 4, 0, pixelSize);
+    for (let j = 3; j < 6; j++) {
+      this.sprite.square(pixelSize * j, pixelSize, pixelSize);
+    }
+    for (let j = 1; j < 8; j++) {
+      this.sprite.square(pixelSize * j, 2*pixelSize, pixelSize);
+    }
+    this.sprite.rect(0, 3*pixelSize, this.sprite.width, this.sprite.width);
+  }
+
+  moveLeft(){
+    this.speedCount += 1;
+    if (this.speedCount < 3){
+      this.x -= this.pixelSize;
+    } else {
+      this.x -= 5 * this.pixelSize;
+    }
+    if (this.x < this.pixelSize * 4){
+      this.x = view.width - this.pixelSize * 5;
+    }
+  }
+
+  moveRight(){
+    this.speedCount += 1;
+    if (this.speedCount < 3){
+      this.x += this.pixelSize;
+    } else {
+      this.x += 5 * this.pixelSize;
+    }
+    if (this.x > view.width - this.pixelSize * 4){
+      this.x = this.pixelSize * 5;
+    }
+  }
+
+  speedReset(){
+    this.speedCount = 0;
+  }
+
+  checkShot(x, y){
+    let minX  = x - (8 * this.pixelSize);
+    let maxX  = x + (8 * this.pixelSize);
+    let yInc = y - this.pixelSize * 20;
+    for (let i = 0; i < this.bulletsX.length; i++) {
+      if (this.bulletsY[i] > 0) {
+        if (this.bulletsY[i] < y && this.bulletsY[i] > yInc) {
+          if (this.bulletsX[i] > minX && this.bulletsX[i] < maxX) {
+            this.bulletsY[i] = -1;
+            this.killcount += 1;
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  shoot() {
+    let cx = 0;
+    let nx = 0;
+    let cy = 0;
+    let ny = 0;
+    for (let i = 0; i < this.bulletsX.length; i++) {
+      cx = this.bulletsX[i]
+      this.bulletsX[i] = nx;
+      nx = cx;
+      cy = this.bulletsY[i]
+      this.bulletsY[i] = ny;
+      ny = cy;
+    }
+    this.bulletsX[0] = this.x + this.pixelSize * 4;
+    this.bulletsY[0] = this.y;
   }
 }
 
@@ -508,12 +590,18 @@ function drawSprites() {
       }
     }
     view.image(sprites[i][0], sprites[i][1], sprites[i][2]);
+    if (game) {
+      if (tank.checkShot(sprites[i][1], sprites[i][2])) {
+        sprites[i][1] = random(view.width);
+        sprites[i][2] = random(view.height);
+      }
+    }
+
     sprites[i][1] += sprites[i][3] * sprites[i][6];
     sprites[i][2] += sprites[i][4] * sprites[i][6];
     if (frameCount % sprites[i][5] == 0) {
       sprites[i][3] = int(random(-2, 2));
     }
-
     if (sprites[i][1] < 0) {sprites[i][1] = view.width;}
     if (sprites[i][1] > view.width) {sprites[i][1] = 0;}
     if (sprites[i][2] < 0){sprites[i][2] = view.height;}
@@ -761,7 +849,7 @@ function setupScreen() {
     }
     titleDiv.position(int(1.5 * border), border);
   }
-  
+
   for (let i = 0; i < discography.length; i++) {
     discography[i].updateDiv();
   }
@@ -796,7 +884,7 @@ function setupScreen() {
   for (let i = 0; i < spriteCount; i++){
     sprites.push([genSprite(8, 5, spritePixelSize, colorOfTheTime), random(view.width), random(view.height), int(random(-2, 2)), 1, int(random(50, 100)), spritePixelSize]);
   }
-  tank = new Tank(spritePixelSize);
+  tank = new Tank(spritePixelSize, view.width / 2, view.height - 6 * spritePixelSize, colorOfTheTime);
   // prettify
   background(bgColor);
   view.background(bgColor);
@@ -882,6 +970,22 @@ function mousePressed() {
 
 }
 
+function keyTyped() {
+  if (key === ' ') {
+    game = true;
+    tank.shoot();
+  }
+}
+
+function keyPressed() {
+  if (keyCode === LEFT_ARROW) {
+    tank.moveLeft();
+  }
+  if (keyCode === RIGHT_ARROW) {
+    tank.moveRight();
+  }
+}
+
 function nextAlbum() {
   discography[albumPointer].div.hide();
   albumPointer += 1;
@@ -939,7 +1043,22 @@ function draw(){
   if (showBackground && retro) {
     view.image(gradient, 0, 0);
     drawSprites();
-    view.image(tank.sprite, tank.x, tank.y);
+    if (game) {
+      for (let j = 0; j < tank.bulletsX.length; j++) {
+        if (tank.bulletsY[j] > 0) {
+          view.image(tank.bullet, tank.bulletsX[j], tank.bulletsY[j]);
+          tank.bulletsY[j] -= 20 * tank.pixelSize;
+        }
+      }
+      view.image(tank.sprite, tank.x, tank.y);
+      if (keyIsDown(LEFT_ARROW)){
+        tank.moveLeft();
+      } else if (keyIsDown(RIGHT_ARROW)){
+        tank.moveRight();
+      } else {
+        tank.speedReset();
+      }
+    }
   } else {
     background(bgColor);
   }

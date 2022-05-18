@@ -56,11 +56,13 @@ class Tank {
     this.speedCount = 0;
     this.bulletsX = [-1, -1, -1, -1, -1];
     this.bulletsY = [-1, -1, -1, -1, -1];
-    this.bullet = createGraphics(pixelSize, 2*pixelSize);
+    this.bullet = createGraphics(pixelSize, 5*pixelSize);
     this.bullet.background(color(rgb[0], rgb[1], rgb[2]));
     this.bullet.noStroke();
     this.bullet.fill(255, 255, 255);
     this.bullet.square(0, 0, pixelSize);
+    this.bullet.square(0, 2*pixelSize, pixelSize);
+    this.bullet.square(0, 4*pixelSize, pixelSize);
     this.sprite = createGraphics(pixelSize * 9, pixelSize * 5);
     this.sprite.fill(bgColor);
     this.sprite.noStroke();
@@ -106,6 +108,7 @@ class Tank {
     let minX  = x - (8 * this.pixelSize);
     let maxX  = x + (8 * this.pixelSize);
     let yInc = y - this.pixelSize * 20;
+    y -= 2 * this.pixelSize;
     for (let i = 0; i < this.bulletsX.length; i++) {
       if (this.bulletsY[i] > 0) {
         if (this.bulletsY[i] < y && this.bulletsY[i] > yInc) {

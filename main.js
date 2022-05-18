@@ -32,6 +32,7 @@ var daytime = [100, 200, 255];
 var nighttime = [100, 100, 200];
 var tank;
 var game = false;
+var autotank = true;
 // various item menus
 var contentStringArr;
 var squareItemImageWidth = 200;
@@ -49,6 +50,10 @@ var demoPointer = 0;
 
 class Tank {
   constructor(pixelSize, x, y, rgb) {
+    this.autotankDir = int(random(4));
+    this.autotankChangeThresh = int(random(20));
+    this.autotankCounter = 0;
+
     this.x = x;
     this.y = y;
     this.killcount = 0;
@@ -138,6 +143,31 @@ class Tank {
     }
     this.bulletsX[0] = this.x + this.pixelSize * 4;
     this.bulletsY[0] = this.y;
+  }
+
+  automode() {
+    this.autotankCounter += 1;
+    if (this.autotankCounter >= this.autotankChangeThresh) {
+      this.autotankChangeThresh = int(random(20));
+      this.autotankCounter = 0;
+      this.autotankDir = int(random(3));
+      console.log(this.autotankDir);
+    }
+    if (random(100) > 95) {
+      this.shoot();
+    }
+    switch(this.autotankDir) {
+      case 1:
+        this.moveLeft();
+        this.moveLeft();
+        break;
+      case 2:
+        this.moveRight();
+        this.moveRight();
+        break;
+      default:
+        break;
+    }
   }
 }
 
@@ -1065,6 +1095,9 @@ function draw(){
       } else {
         tank.speedReset();
       }
+      // if (autotank) {
+      //   tank.automode();
+      // }
     }
   } else {
     background(bgColor);

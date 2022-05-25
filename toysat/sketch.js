@@ -1,7 +1,19 @@
 var starfield, starX, starY;
 var mySat, buttonColors, buttonLookup;
-var menuBar, widthOnTwo, menuHeight;
+var menuBar, widthOnTwo, heightOnTwo, menuHeight;
 var testing = true;
+
+//  1________1
+// 4|        |2
+//  |        |
+// 4|________|2
+//   3       3
+
+//  1________2
+// 8|        |3
+//  |        |
+// 7|________|4
+//   6       5
 
 class RCSSat {
 
@@ -12,10 +24,9 @@ class RCSSat {
     this.a = a;
     this.vx = 0;
     this.vy = 0;
+    this.vn = 0; // heading, vh to confusable with vn
+    this.vf = 0;
     this.va = 0;
-    this.ax = 0;
-    this.ay = 0;
-    this.aa = 0;
     this.dims = wh;
     this.d = sqrt(wh*wh + wh*wh);
     this.mass = 100;
@@ -27,21 +38,67 @@ class RCSSat {
     this.prop.cartesian_direction = [];
     this.prop.angular_direction = [];
     this.prop.duration = 20; // frames
-    this.prop.fuel_decrement = 1/(this.prop.duration - 1);
-    this.prop.force = 1; // newtons I guess but does it really matter
+    this.prop.fuel_decrement = 1/(this.prop.duration);
+    this.prop.force = 5; // random value that makes sat move enough to be interesting
     // graphics
     this.setupGraphics(mb);
   }
 
+  stop() {
+    // P = m * v = F * t
+    // t = (m * v) / F
+    let controlEfforts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    let vfControlEffort = (this.vf * this.mass) / (this.prop.force);
+    // Using the two booster things that will oppose motion
+    // and spliting control effort between them
+    // they output the same force, time is abs, pos
+    vfControlEffort = round(vfControlEffort)/2;
+    vfControlEffort = int(abs(vfControlEffort));
+    if (this.vf < 0) {
+      controlEfforts[1] += vfControlEffort;
+      controlEfforts[2] += vfControlEffort;
+    } else {
+      controlEfforts[5] += vfControlEffort;
+      controlEfforts[6] += vfControlEffort;
+    }
+    let vnControlEffort = (this.vn * this.mass) / (this.prop.force);
+    vnControlEffort = round(vnControlEffort)/2;
+    vnControlEffort = int(abs(vnControlEffort));
+    if (this.vn > 0) {
+      controlEfforts[3] += vnControlEffort;
+      controlEfforts[4] += vnControlEffort;
+    } else {
+      controlEfforts[8] += vnControlEffort;
+      controlEfforts[7] += vnControlEffort;
+    }
+    let vaControlEffort = (this.va * this.mass * this.d) / this.prop.force;
+    vaControlEffort = round(vaControlEffort)/2;
+    vaControlEffort = int(abs(vaControlEffort));
+    if (this.va > 0) {
+      controlEfforts[1] += vaControlEffort;
+      controlEfforts[5] += vaControlEffort;
+    } else {
+      controlEfforts[2] += vaControlEffort;
+      controlEfforts[6] += vaControlEffort;
+    }
+    // set thrusters to STOP :-P
+    for (let i = 0; i < controlEfforts.length; i++) {
+      this.prop.active[i] = controlEfforts[i];
+    }
+  }
+
   setupGraphics(mb){
     this.graphics = {};
+    this.graphics.showBreadcrumbs = false;
+    this.graphics.breadcrumbs = createGraphics(windowWidth, windowHeight);
+    this.graphics.breadcrumbs.stroke(255);
     this.graphics.telem = {};
     this.graphics.telem.w = mb.width / 100;
     this.graphics.telem.h = mb.height *0.25;
     this.graphics.telem.y = windowHeight - 0.6*mb.height;
     this.graphics.telem.bary = this.graphics.telem.y - this.graphics.telem.h/2
     this.graphics.telem.textx = 2 * this.graphics.telem.w;
-    this.graphics.telem.texty = this.graphics.telem.y - (textSize() + 1);
+    this.graphics.telem.texty = this.graphics.telem.y - this.graphics.telem.h;
     this.graphics.sat = {};
     this.graphics.sat.sprite = createGraphics(this.dims, this.dims);
     this.graphics.thrusters = {};
@@ -146,11 +203,18 @@ class RCSSat {
     }
     noStroke();
     fill(0);
-    let vxstring = 'Vx: ' + String(this.vx.toFixed(2)) + ' p/fr   ';
-    let vystring = 'Vy: ' + String((-1 * this.vy).toFixed(2)) + ' p/fr   ';
-    let vastring = 'Va: ' + String(this.va.toFixed(2)) + ' rad/fr   ';
-    let fuelstring = 'Mass: ' + String((this.mass).toFixed(2)) + ' Fuel: ' + String((this.mass - this.empty_mass).toFixed(2)) + ' Dry: ' + this.empty_mass + '   ';
+    let vhstring = 'V heading: ' + (-1 * this.vf).toFixed(2) + '   ';
+    let vnstring = 'V normal: ' + (this.vn).toFixed(2) + '   ';
+    let vxstring = 'V x: ' + this.vx.toFixed(2) + '   ';
+    let vystring = 'V y: ' + (-1 * this.vy).toFixed(2) + '   ';
+    let vastring = 'V a: ' + this.va.toFixed(2) + '   ';
+    let fuelstring = 'Mass: ' + (this.mass).toFixed(2) + ' Fuel: ' + (this.mass - this.empty_mass).toFixed(2) + ' Dry: ' + this.empty_mass + '   ';
+    let screenstring = 'Screen: X ' + this.x.toFixed(2) + ' Y ' + this.y.toFixed(2) + ' A ' + this.a.toFixed(2);
     let textX = this.graphics.telem.textx;
+    text(vhstring, textX, this.graphics.telem.texty);
+    textX += textWidth(vhstring);
+    text(vnstring, textX, this.graphics.telem.texty);
+    textX += textWidth(vnstring);
     text(vxstring, textX, this.graphics.telem.texty);
     textX += textWidth(vxstring);
     text(vystring, textX, this.graphics.telem.texty);
@@ -158,6 +222,8 @@ class RCSSat {
     text(vastring, textX, this.graphics.telem.texty);
     textX += textWidth(vastring);
     text(fuelstring, textX, this.graphics.telem.texty);
+    textX += textWidth(fuelstring);
+    text(screenstring, textX, this.graphics.telem.texty);
   }
 
   drawSprites(x, y, a){
@@ -202,12 +268,36 @@ class RCSSat {
     if (this.y > windowHeight - this.dims) {
       this.drawSprites(this.x, this.y - windowHeight, this.a);
     }
+    if (this.graphics.showBreadcrumbs) {
+      image(this.graphics.breadcrumbs, widthOnTwo, heightOnTwo);
+    }
+  }
+
+  drawBreadcrumbs(x1, y1, x2, y2) {
+    this.graphics.breadcrumbs.line(x1, y1, x2, y2);
+    if (x1 > windowWidth - this.dims) {
+      this.graphics.breadcrumbs.line(x1-windowWidth, y1, x2-windowWidth, y2);
+    }
+    if (x1 < this.dims) {
+      this.graphics.breadcrumbs.line(x1+windowWidth, y1, x2+windowWidth, y2);
+    }
+    if (y1 > windowHeight - this.dims) {
+      this.graphics.breadcrumbs.line(x1, y1-windowHeight, x2, y2-windowHeight);
+    }
+    if (y1 < this.dims) {
+      this.graphics.breadcrumbs.line(x1, y1+windowHeight, x2, y2+windowHeight);
+    }
   }
 
   move(dx, dy, da){
+    if (this.graphics.showBreadcrumbs) {
+      this.drawBreadcrumbs(this.x, this.y, this.x + dx, this.y + dy);
+    }
     this.x += dx;
     this.y += dy;
     this.a += da;
+
+
     // keep in view
     if (this.x > windowWidth + this.dims/2) {
       this.x -= windowWidth;
@@ -223,46 +313,69 @@ class RCSSat {
     }
   }
 
-  update() {
-    // update craft velocity for any active propulsion and geometry
-    for (let i = 0; i < this.prop.active.length; i++){
-      this.prop.active[i] = max(this.prop.active[i]-1, 0);
-      if (this.prop.active[i] > 0) {
-        this.mass -= this.prop.fuel_decrement;
-        if (this.prop.cartesian_direction[i] == 1) {
-          this.vy += (this.prop.force / this.mass) * (this.prop.duration - this.prop.active[i]); // (f / m) * delta(t)
-        } else if (this.prop.cartesian_direction[i] == 2) {
-          this.vx -= (this.prop.force / this.mass) * (this.prop.duration - this.prop.active[i]);
-        } else if (this.prop.cartesian_direction[i] == 3) {
-          this.vy -= (this.prop.force / this.mass) * (this.prop.duration - this.prop.active[i]);
-        } else if (this.prop.cartesian_direction[i] == 4) {
-          this.vx += (this.prop.force / this.mass) * (this.prop.duration - this.prop.active[i]);
-        }
-        if (this.prop.angular_direction[i] == 1) {
-          this.va += (this.prop.force / (this.mass * this.d)) * (this.prop.duration - this.prop.active[i]); // assume point mass cause we are in 2D anyway
-        } else if (this.prop.angular_direction[i] == 0) {
-          this.va -= (this.prop.force / (this.mass * this.d)) * (this.prop.duration - this.prop.active[i]);
-        }
-      }
-    }
-    // convert vx, vy, va to screen coords
-    let dt = 1; // just incase I wanna change it
-    let angle = this.a + this.va * dt
-    let sx = (this.vx * cos(angle) + this.vy * sin(angle)) * dt;
-    let sy = (this.vy * cos(angle) + this.vx * sin(angle)) * dt;
-    this.move(sx, sy, this.va * dt);
+  reset() {
+    this.vn = 0;
+    this.vf = 0;
+    this.va = 0;
+    this.vx = 0;
+    this.vy = 0;
+    this.mass = 100;
+    this.x = windowWidth/2;
+    this.y = windowHeight/2 - menuBar.height;
+    this.a = 0;
+    this.prop.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.graphics.breadcrumbs.clear();
   }
 
-  setPropulsionVectors(i){
-    if (i == 0) { // clean up once I get physics down
-      this.vx = 0;
-      this.vy = 0;
-      this.va = 0;
-      this.mass = 101;
+  update() {
+    // update craft velocity for any active propulsion and geometry
+    let dt = 1; // just incase I wanna change it
+    let update_dynamics = false;
+    for (let i = 0; i < this.prop.active.length; i++){
+      if (this.prop.active[i] > 0) {
+        update_dynamics = true;
+        this.mass -= this.prop.fuel_decrement;
+        if (this.prop.cartesian_direction[i] == 1) {
+          this.vf += (this.prop.force / this.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
+        } else if (this.prop.cartesian_direction[i] == 2) {
+          this.vn -= (this.prop.force / this.mass) * dt;
+        } else if (this.prop.cartesian_direction[i] == 3) {
+          this.vf -= (this.prop.force / this.mass) * dt;
+        } else if (this.prop.cartesian_direction[i] == 4) {
+          this.vn += (this.prop.force / this.mass) * dt;
+        }
+        if (this.prop.angular_direction[i] == 1) {
+          this.va += (this.prop.force / (this.mass * this.d)) * dt; // assume point mass cause we are in 2D anyway
+        } else if (this.prop.angular_direction[i] == 0) {
+          this.va -= (this.prop.force / (this.mass * this.d)) * dt;
+        }
+      }
+      this.prop.active[i] = max(this.prop.active[i]-1, 0);
     }
-    if (this.mass > this.empty_mass && i < this.prop.active.length) {
+    // convert vx, vy, va to screen coords
+    if (this.a < -PI) { // for a relaxed brain
+      this.a += 2*PI;
+    }
+    if (this.a > PI) {
+      this.a -= 2*PI;
+    }
+    if (update_dynamics) {
+      let heading_angle = this.a + this.va * dt // a = ai + w * deltat(t)
+      let normal_angle = heading_angle + PI/2; // rotated
+      this.vx = this.vn * cos(heading_angle) + this.vf * cos(normal_angle);
+      this.vy = this.vn * sin(heading_angle) + this.vf * sin(normal_angle);
+
+    }
+
+    this.move(this.vx * dt, this.vy * dt, this.va * dt);
+  }
+
+  setPropulsionVectors(i, propDuration=this.prop.duration){
+    if (i == 0) {
+      this.stop();
+    } else if (this.mass > this.empty_mass && i < this.prop.active.length) {
       if (this.prop.active[i] == 0){
-        this.prop.active[i] = this.prop.duration;
+        this.prop.active[i] = propDuration;
       }
     }
   }
@@ -300,9 +413,8 @@ function makeStarfield() {
 }
 
 function makeMenuBar(){
-  menuBar = createGraphics(windowWidth, min(0.1*windowHeight, 100));
+  menuBar = createGraphics(windowWidth, min(0.15*windowHeight, 100));
   menuBar.background(100, 100, 100);
-
   menuHeight = windowHeight - menuBar.height/2;
   let controlString = 'qwertdsgf';
   let tButtonOffset = windowWidth / buttonColors.length;
@@ -322,8 +434,11 @@ function keyPressed() {
     if (key == 'm') {
       mySat.mass = 20;
     }
-    if ('1234567890'.indexOf(key) != -1) {
-      mySat.a = '1234567890'.indexOf(key) * 0.2 * PI;
+    if (key == 'b') {
+      mySat.va = 0.1;
+    }
+    if ('12345678'.indexOf(key) != -1) {
+      mySat.a = '12345678'.indexOf(key) * 0.25 * PI;
     }
   }
 
@@ -348,6 +463,21 @@ function keyPressed() {
   }  else if (keyCode == RIGHT_ARROW){
     mySat.setPropulsionVectors(7);
     mySat.setPropulsionVectors(8);
+    return;
+  } else if (key == 'a') {
+    mySat.setPropulsionVectors(1);
+    mySat.setPropulsionVectors(5);
+    return;
+  } else if (key == 'z') {
+    mySat.setPropulsionVectors(2);
+    mySat.setPropulsionVectors(6);
+    return;
+  } else if (key == ' ') {
+    mySat.graphics.breadcrumbs.clear();
+    mySat.graphics.showBreadcrumbs = !mySat.graphics.showBreadcrumbs;
+    return;
+  } else if (key == 'm') {
+    mySat.reset();
     return;
   }
 }
@@ -382,6 +512,7 @@ function mousePressed() {
 function setupScreen() {
   createCanvas(windowWidth, windowHeight);
   widthOnTwo = windowWidth / 2;
+  heightOnTwo = windowHeight / 2;
   makeStarfield();
   buttonColors = [color('#FF0000'), color('#66FF00'), color('#1974D2'), color('#08E8DE'), color('#FFF000'), color('#FFAA1D'), color('#FF007F'), color('#7D11E1'), color('#D0FF00')];
   buttonLookup = [];
@@ -389,7 +520,7 @@ function setupScreen() {
     buttonLookup.push(buttonColors[i].levels)
   }
   makeMenuBar();
-  mySat = new RCSSat(windowWidth/2, windowHeight/2, 0, 100, menuBar);
+  mySat = new RCSSat(windowWidth/2, windowHeight/2 - menuBar.height, 0, 100, menuBar);
 }
 
 function setup() {

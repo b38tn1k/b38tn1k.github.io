@@ -30,15 +30,15 @@ class RCSSat {
     this.dims = wh;
     this.d = sqrt(wh*wh + wh*wh);
     this.mass = 100;
-    this.mass_units = 100;
-    this.empty_mass = 20;
+    this.massUnits = 100;
+    this.emptyMass = 20;
     this.prop = {}
     this.prop.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.prop.coords = [];
-    this.prop.cartesian_direction = [];
-    this.prop.angular_direction = [];
+    this.prop.cartesianDirection = [];
+    this.prop.angularDirection = [];
     this.prop.duration = 20; // frames
-    this.prop.fuel_decrement = 1/(this.prop.duration);
+    this.prop.fuelDecrement = 1/(this.prop.duration);
     this.prop.force = 5; // random value that makes sat move enough to be interesting
     // graphics
     this.setupGraphics(mb);
@@ -129,58 +129,58 @@ class RCSSat {
     this.graphics.sat.sprite.fill(buttonColors[0]);
     this.graphics.sat.sprite.circle(this.dims/2, this.dims/2, this.graphics.vars.minor);
     this.prop.coords.push([this.dims/2, this.dims/2]);
-    this.prop.cartesian_direction.push(-1);
-    this.prop.angular_direction.push(-1);
+    this.prop.cartesianDirection.push(-1);
+    this.prop.angularDirection.push(-1);
     // boosters
     this.graphics.sat.sprite.rectMode(CORNER);
     //top left
     this.graphics.sat.sprite.fill(buttonColors[1]);
     this.graphics.sat.sprite.square(this.graphics.vars.minor, 0, this.graphics.vars.minor);
     this.prop.coords.push([this.graphics.vars.minor, 0]);
-    this.prop.cartesian_direction.push(1);
-    this.prop.angular_direction.push(0);
+    this.prop.cartesianDirection.push(1);
+    this.prop.angularDirection.push(0);
     // top right
     this.graphics.sat.sprite.fill(buttonColors[2]);
     this.graphics.sat.sprite.square(this.dims-2*this.graphics.vars.minor, 0, this.graphics.vars.minor);
     this.prop.coords.push([this.dims-2*this.graphics.vars.minor, 0]);
-    this.prop.cartesian_direction.push(1);
-    this.prop.angular_direction.push(1);
+    this.prop.cartesianDirection.push(1);
+    this.prop.angularDirection.push(1);
     // right top
     this.graphics.sat.sprite.fill(buttonColors[3]);
     this.graphics.sat.sprite.square(this.dims-this.graphics.vars.minor, this.graphics.vars.minor, this.graphics.vars.minor);
     this.prop.coords.push([this.dims-this.graphics.vars.minor, this.graphics.vars.minor]);
-    this.prop.cartesian_direction.push(2);
-    this.prop.angular_direction.push(0);
+    this.prop.cartesianDirection.push(2);
+    this.prop.angularDirection.push(0);
     // right bottom
     this.graphics.sat.sprite.fill(buttonColors[4]);
     this.graphics.sat.sprite.square(this.dims-this.graphics.vars.minor, this.dims-2*this.graphics.vars.minor, this.graphics.vars.minor);
     this.prop.coords.push([this.dims-this.graphics.vars.minor, this.dims-2*this.graphics.vars.minor]);
-    this.prop.cartesian_direction.push(2);
-    this.prop.angular_direction.push(1);
+    this.prop.cartesianDirection.push(2);
+    this.prop.angularDirection.push(1);
     // bottom right
     this.graphics.sat.sprite.fill(buttonColors[5]);
     this.graphics.sat.sprite.square(this.dims-2*this.graphics.vars.minor, this.dims-this.graphics.vars.minor, this.graphics.vars.minor);
     this.prop.coords.push([this.dims-2*this.graphics.vars.minor, this.dims-this.graphics.vars.minor]);
-    this.prop.cartesian_direction.push(3);
-    this.prop.angular_direction.push(0);
+    this.prop.cartesianDirection.push(3);
+    this.prop.angularDirection.push(0);
     //bottom left
     this.graphics.sat.sprite.fill(buttonColors[6]);
     this.graphics.sat.sprite.square(this.graphics.vars.minor, this.dims-this.graphics.vars.minor, this.graphics.vars.minor);
     this.prop.coords.push([this.graphics.vars.minor, this.dims-this.graphics.vars.minor]);
-    this.prop.cartesian_direction.push(3);
-    this.prop.angular_direction.push(1);
+    this.prop.cartesianDirection.push(3);
+    this.prop.angularDirection.push(1);
     // left bottom
     this.graphics.sat.sprite.fill(buttonColors[7]);
     this.graphics.sat.sprite.square(0, this.dims-2*this.graphics.vars.minor, this.graphics.vars.minor);
     this.prop.coords.push([0, this.dims-2*this.graphics.vars.minor]);
-    this.prop.cartesian_direction.push(4);
-    this.prop.angular_direction.push(0);
+    this.prop.cartesianDirection.push(4);
+    this.prop.angularDirection.push(0);
     // left top
     this.graphics.sat.sprite.fill(buttonColors[8]);
     this.graphics.sat.sprite.square(0, this.graphics.vars.minor, this.graphics.vars.minor);
     this.prop.coords.push([0, this.graphics.vars.minor]);
-    this.prop.cartesian_direction.push(4);
-    this.prop.angular_direction.push(1);
+    this.prop.cartesianDirection.push(4);
+    this.prop.angularDirection.push(1);
   }
 
   drawTelemetry(){
@@ -192,12 +192,12 @@ class RCSSat {
     fill(50, 255, 100);
     rect(0, this.graphics.telem.bary, (this.graphics.telem.w) * this.mass, this.graphics.telem.h);
     fill(100, 100, 100);
-    rect(0, this.graphics.telem.bary, (this.graphics.telem.w) * this.empty_mass, this.graphics.telem.h);
+    rect(0, this.graphics.telem.bary, (this.graphics.telem.w) * this.emptyMass, this.graphics.telem.h);
     rectMode(CENTER);
     stroke(0);
     strokeWeight(1);
     noFill();
-    for (let i = 0; i < this.mass_units; i++){
+    for (let i = 0; i < this.massUnits; i++){
       rect(fuelX, this.graphics.telem.y, this.graphics.telem.w, this.graphics.telem.h);
       fuelX += this.graphics.telem.w;
     }
@@ -208,7 +208,7 @@ class RCSSat {
     let vxstring = 'V x: ' + this.vx.toFixed(2) + '   ';
     let vystring = 'V y: ' + (-1 * this.vy).toFixed(2) + '   ';
     let vastring = 'V a: ' + this.va.toFixed(2) + '   ';
-    let fuelstring = 'Mass: ' + (this.mass).toFixed(2) + ' Fuel: ' + (this.mass - this.empty_mass).toFixed(2) + ' Dry: ' + this.empty_mass + '   ';
+    let fuelstring = 'Mass: ' + (this.mass).toFixed(2) + ' Fuel: ' + (this.mass - this.emptyMass).toFixed(2) + ' Dry: ' + this.emptyMass + '   ';
     let screenstring = 'Screen: X ' + this.x.toFixed(2) + ' Y ' + this.y.toFixed(2) + ' A ' + this.a.toFixed(2);
     let textX = this.graphics.telem.textx;
     text(vhstring, textX, this.graphics.telem.texty);
@@ -240,13 +240,13 @@ class RCSSat {
     for (let i = 1; i < 9; i++){
       if (this.prop.active[i] > 0){
         this.graphics.thrusters.sprite.fill(255, 255, 255);
-        if (this.prop.cartesian_direction[i] == 1) {
+        if (this.prop.cartesianDirection[i] == 1) {
           this.graphics.thrusters.sprite.rect(this.graphics.thrusters.offset+this.prop.coords[i][0], this.graphics.thrusters.offset+this.prop.coords[i][1], this.graphics.vars.minor, -3*this.graphics.vars.minor);
-        } else if (this.prop.cartesian_direction[i] == 2) {
+        } else if (this.prop.cartesianDirection[i] == 2) {
           this.graphics.thrusters.sprite.rect(this.graphics.thrusters.offset+this.prop.coords[i][0], this.graphics.thrusters.offset+this.prop.coords[i][1], 4*this.graphics.vars.minor, this.graphics.vars.minor);
-        } else if (this.prop.cartesian_direction[i] == 3) {
+        } else if (this.prop.cartesianDirection[i] == 3) {
           this.graphics.thrusters.sprite.rect(this.graphics.thrusters.offset+this.prop.coords[i][0], this.graphics.thrusters.offset+this.prop.coords[i][1], this.graphics.vars.minor, 4*this.graphics.vars.minor);
-        } else if (this.prop.cartesian_direction[i] == 4) {
+        } else if (this.prop.cartesianDirection[i] == 4) {
           this.graphics.thrusters.sprite.rect(this.graphics.thrusters.offset+this.prop.coords[i][0], this.graphics.thrusters.offset+this.prop.coords[i][1], -4*this.graphics.vars.minor, this.graphics.vars.minor);
         }
       }
@@ -330,23 +330,23 @@ class RCSSat {
   update() {
     // update craft velocity for any active propulsion and geometry
     let dt = 1; // just incase I wanna change it
-    let update_dynamics = false;
+    let updateDynamics = false;
     for (let i = 0; i < this.prop.active.length; i++){
       if (this.prop.active[i] > 0) {
-        update_dynamics = true;
-        this.mass -= this.prop.fuel_decrement;
-        if (this.prop.cartesian_direction[i] == 1) {
+        updateDynamics = true;
+        this.mass -= this.prop.fuelDecrement;
+        if (this.prop.cartesianDirection[i] == 1) {
           this.vf += (this.prop.force / this.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
-        } else if (this.prop.cartesian_direction[i] == 2) {
+        } else if (this.prop.cartesianDirection[i] == 2) {
           this.vn -= (this.prop.force / this.mass) * dt;
-        } else if (this.prop.cartesian_direction[i] == 3) {
+        } else if (this.prop.cartesianDirection[i] == 3) {
           this.vf -= (this.prop.force / this.mass) * dt;
-        } else if (this.prop.cartesian_direction[i] == 4) {
+        } else if (this.prop.cartesianDirection[i] == 4) {
           this.vn += (this.prop.force / this.mass) * dt;
         }
-        if (this.prop.angular_direction[i] == 1) {
+        if (this.prop.angularDirection[i] == 1) {
           this.va += (this.prop.force / (this.mass * this.d)) * dt; // assume point mass cause we are in 2D anyway
-        } else if (this.prop.angular_direction[i] == 0) {
+        } else if (this.prop.angularDirection[i] == 0) {
           this.va -= (this.prop.force / (this.mass * this.d)) * dt;
         }
       }
@@ -359,11 +359,11 @@ class RCSSat {
     if (this.a > PI) {
       this.a -= 2*PI;
     }
-    if (update_dynamics) {
-      let heading_angle = this.a + this.va * dt // a = ai + w * deltat(t)
-      let normal_angle = heading_angle + PI/2; // rotated
-      this.vx = this.vn * cos(heading_angle) + this.vf * cos(normal_angle);
-      this.vy = this.vn * sin(heading_angle) + this.vf * sin(normal_angle);
+    if (updateDynamics) {
+      let headingAngle = this.a + this.va * dt // a = ai + w * deltat(t)
+      let normalAngle = headingAngle + PI/2; // rotated
+      this.vx = this.vn * cos(headingAngle) + this.vf * cos(normalAngle);
+      this.vy = this.vn * sin(headingAngle) + this.vf * sin(normalAngle);
 
     }
 
@@ -373,7 +373,7 @@ class RCSSat {
   setPropulsionVectors(i, propDuration=this.prop.duration){
     if (i == 0) {
       this.stop();
-    } else if (this.mass > this.empty_mass && i < this.prop.active.length) {
+    } else if (this.mass > this.emptyMass && i < this.prop.active.length) {
       if (this.prop.active[i] == 0){
         this.prop.active[i] = propDuration;
       }

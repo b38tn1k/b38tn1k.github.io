@@ -416,7 +416,6 @@ function makeMenuBar(){
   menuBar = createGraphics(windowWidth, min(0.15*windowHeight, 100));
   menuBar.background(100, 100, 100);
   menuHeight = windowHeight - menuBar.height/2;
-  menuHeight = menuBar.height/2;
   let controlString = 'qwertdsgf';
   let tButtonOffset = windowWidth / buttonColors.length;
   let tButtonX = 0;

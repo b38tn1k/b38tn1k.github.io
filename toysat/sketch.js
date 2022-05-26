@@ -111,17 +111,24 @@ class RCSSat {
     // let deltay = this.control.position.targetPose[1] - this.y;
     // convert this.a to +/- PI
     this.control.position.poseManeuverFlag = true;
-    let atarget = asin(sin(this.a));
-    let deltaa = this.control.position.targetPose[2] - atarget;
-    console.log(deltaa, atarget);
+    let a_pose = this.a;
+    if (a_pose > PI) {
+      a_pose -= TWO_PI;
+    } else if (a_pose < -PI) {
+      a_pose += TWO_PI;
+    }
+    let deltaa = this.control.position.targetPose[2] - a_pose;
+    console.log(deltaa, a_pose);
     // try alpha first, assume va is 0
     // alpha = alpha_i + wt
     // assuming va = 0, alpha = wt
     // (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
-    let burndur = 5
-    let w = burndur * this.model.force / (this.model.mass * this.model.d);
-    this.control.position.intraBurnInterval = int(abs(deltaa) / (4*w)) + 2 * burndur;
-    if (deltaa > 0){
+    let burndur = 15;
+    let initialv = burndur * 4 * this.model.force / (this.model.mass * this.model.d);
+    let finalv = burndur * 4 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement) * this.model.d)
+    let w = (initialv + finalv) / 2;
+    this.control.position.intraBurnInterval = abs(int(deltaa / (w)));
+    if (deltaa >= 0){
       for (let i = 2; i < 10; i+=2) {
         mySat.setPropulsionVectors(i, burndur);
         this.control.position.stopBurn[i-1] = burndur;
@@ -317,7 +324,7 @@ class RCSSat {
     let vystring = 'V y: ' + (-1 * this.vy).toFixed(2) + '   ';
     let vastring = 'V a: ' + this.va.toFixed(2) + '   ';
     let fuelstring = 'Mass: ' + (this.model.mass).toFixed(2) + ' Fuel: ' + (this.model.mass - this.model.massMin).toFixed(2) + ' Dry: ' + this.model.massMin + '   ';
-    let screenstring = 'Screen: X: ' + this.x.toFixed(2) + ' Y: ' + this.y.toFixed(2) + ' A: ' + this.a.toFixed(2);
+    let screenstring = 'Screen: X: ' + this.x.toFixed(2) + ' Y: ' + this.y.toFixed(2) + ' A: ' + (this.a).toFixed(2);
     let texty = this.g.telem.textOffset;
     text(vhstring, this.g.telem.textOffset, texty);
     texty += textSize() + 1;
@@ -487,7 +494,6 @@ class RCSSat {
         this.control.position.poseManeuverFlag = false;
       } else {
         this.control.position.intraBurnInterval -= 1;
-        console.log(this.control.position.intraBurnInterval);
       }
 
     }
@@ -545,6 +551,9 @@ function keyPressed() {
   if (testing) {
     if (key == 'm') {
       mySat.model.mass = 20;
+    }
+    if (key == 'p') {
+      mySat.attainPose();
     }
     if (key == 'b') {
       mySat.va = 0.1;

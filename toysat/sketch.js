@@ -1,7 +1,7 @@
 var starfield, starX, starY;
 var mySat, buttonColors, buttonLookup;
 var widthOnTwo, heightOnTwo;
-var testing = true;
+var testing = false;
 
 class RCSSat {
 
@@ -40,8 +40,15 @@ class RCSSat {
     this.control.position.hold = false;
     this.control.position.holdInterval = 24;
     this.control.position.targetPose = [x, y, a];
-    this.control.position.intraBurnInterval = 0;
-    this.control.position.stopBurn = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.control.position.intraAlphaBurnInterval = -1;
+    this.control.position.intraXBurnInterval = -1;
+    this.control.position.intraYBurnInterval = -1;
+    this.control.position.stopAlphaBurn = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.control.position.alphaBurnWait = -1;
+    this.control.position.stopXBurn = [0, 0, 0];
+    this.control.position.stopYBurn = [0, 0, 0];
+    this.control.position.startXBurn = [0, 0, 0];
+    this.control.position.startYBurn = [0, 0, 0];
     // graphics
     this.setupGraphics();
   }
@@ -103,17 +110,24 @@ class RCSSat {
     this.control.stop.f = !this.control.stop.a && !(vfControlEffort == 0);
     this.control.stop.flag = this.control.stop.a || this.control.stop.n || this.control.stop.f;
     if (!this.control.stop.flag){
+      // this.control.position.targetPose = [this.x, this.y, 0];
+      this.control.position.targetPose = [windowWidth/2, windowHeight/2, 0];
       this.attainPose();
     }
   }
 
   checkPose() {
-    let divergence = 0;
-    let angle = asin(sin(this.a));
-    if (angle > PI) {
-      angle -= PI;
+    let divergence = asin(sin(this.a));
+    if (divergence > PI) {
+      divergence -= PI;
     }
-    divergence += abs(angle);
+    divergence = abs(divergence);
+    if (abs(this.x - this.control.position.targetPose[0]) > 50) {
+      divergence += 1;
+    }
+    if (abs(this.y - this.control.position.targetPose[1]) > 50) {
+      divergence += 1;
+    }
     return divergence;
   }
 
@@ -126,7 +140,11 @@ class RCSSat {
     // let deltax = this.control.position.targetPose[0] - this.x;
     // let deltay = this.control.position.targetPose[1] - this.y;
     // convert this.a to +/- PI
-    this.control.position.stopBurn = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.control.position.stopAlphaBurn = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.control.position.stopXBurn = [0, 0, 0];
+    this.control.position.stopYBurn = [0, 0, 0];
+    this.control.position.startXBurn = [0, 0, 0];
+    this.control.position.startYBurn = [0, 0, 0];
     this.control.position.poseManeuverFlag = true;
     let a_pose = this.a;
     if (a_pose > PI) {
@@ -135,26 +153,59 @@ class RCSSat {
       a_pose += TWO_PI;
     }
     let deltaa = this.control.position.targetPose[2] - a_pose;
-    // try alpha first, assume va is 0
+    // assume va is 0 for now, could be interesting efficiencies in recycling momentum
     // alpha = alpha_i + wt
     // assuming va = 0, alpha = wt
     // (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
     let burndur = abs(int(deltaa * 10)); // made up for now, more effort to do bigger changes faster
-    let initialv = burndur * 4 * this.model.force / (this.model.mass * this.model.d);
+    this.control.position.alphaBurnWait = burndur;
+    let initialv = burndur * 4 * this.model.force / (this.model.mass * this.model.d); // using 4 thrusters
     let finalv = burndur * 4 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement) * this.model.d)
     let w = (initialv + finalv) / 2;
-    this.control.position.intraBurnInterval = abs(int(deltaa / (w)));
-    if (this.control.position.intraBurnInterval > 0){
+    this.control.position.intraAlphaBurnInterval = abs(int(deltaa / (w)));
+    if (this.control.position.intraAlphaBurnInterval > 0){
       if (deltaa >= 0){
         for (let i = 2; i < 10; i+=2) {
-          mySat.setPropulsionVectors(i, burndur);
-          this.control.position.stopBurn[i-1] = burndur;
+          this.setPropulsionVectors(i, burndur);
+          this.control.position.stopAlphaBurn[i-1] = burndur;
         }
       } else {
         for (let i = 1; i < 9; i+=2) {
-          mySat.setPropulsionVectors(i, burndur);
-          this.control.position.stopBurn[i+1] = burndur;
+          this.setPropulsionVectors(i, burndur);
+          this.control.position.stopAlphaBurn[i+1] = burndur;
         }
+      }
+    }
+    // assume vx = 0
+    let deltax = this.x - this.control.position.targetPose[0];
+    burndur = abs(int(deltax/10));
+    initialv = burndur * 2 * this.model.force / (this.model.mass); // using 2 thrusters
+    finalv = burndur * 2 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement))
+    let vx = (initialv + finalv) / 2;
+    this.control.position.intraXBurnInterval = abs(int(deltax / vx));
+    if (this.control.position.intraXBurnInterval > 0){
+      if (deltax > 0) {
+        this.control.position.startXBurn = [3, 4, burndur];
+        this.control.position.stopXBurn = [8, 7, burndur];
+      } else {
+        this.control.position.startXBurn = [7, 8, burndur];
+        this.control.position.stopXBurn = [3, 4, burndur];
+      }
+    }
+    // assume vy = 0
+    let deltay = this.y - this.control.position.targetPose[1];
+    burndur = abs(int(deltay/10));
+    initialv = burndur * 2 * this.model.force / (this.model.mass); // using 2 thrusters
+    finalv = burndur * 2 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement))
+    let vy = (initialv + finalv) / 2;
+    this.control.position.intraYBurnInterval = abs(int(deltay / vy));
+    if (this.control.position.intraYBurnInterval > 0){
+      if (deltay > 0) {
+        this.control.position.startYBurn = [5, 6, burndur];
+        this.control.position.stopYBurn = [1, 2, burndur];
+      } else {
+        this.control.position.startYBurn = [1, 2, burndur];
+        this.control.position.stopYBurn = [5, 6, burndur];
       }
     }
   }
@@ -449,20 +500,6 @@ class RCSSat {
     }
   }
 
-  reset() {
-    this.vn = 0;
-    this.vf = 0;
-    this.va = 0;
-    this.vx = 0;
-    this.vy = 0;
-    this.model.mass = 100;
-    this.x = windowWidth/2;
-    this.y = windowHeight/2;
-    this.a = 0;
-    this.model.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    this.g.breadcrumbs.image.clear();
-  }
-
   update() {
     // update craft velocity for any active propulsion and geometry
     let dt = 1; // just incase I wanna change it
@@ -507,16 +544,51 @@ class RCSSat {
       this.stop();
     }
     if (this.control.position.poseManeuverFlag) {
-      if (this.control.position.intraBurnInterval == 0) {
-        this.model.active = this.control.position.stopBurn;
+      // when it is all done, turn off
+      if (this.control.position.intraAlphaBurnInterval < 0 && this.control.position.alphaBurnWait < 0 && this.control.position.intraXBurnInterval < 0 && this.control.position.intraYBurnInterval < 0){
         this.control.position.poseManeuverFlag = false;
         this.control.position.hold = true;
+        this.control.position.targetPose = [this.x, this.y, this.a];
+      }
+      // fire the braking thrusters after count down
+      if (this.control.position.intraAlphaBurnInterval == 0) {
+        this.model.active = this.control.position.stopAlphaBurn;
+        this.control.position.intraAlphaBurnInterval -= 1;
       } else {
-        this.control.position.intraBurnInterval -= 1;
+        this.control.position.intraAlphaBurnInterval -= 1;
+      }
+      if (this.control.position.intraAlphaBurnInterval < 0) {
+        this.control.position.alphaBurnWait -= 1;
+      }
+      // once the attitude is sorted, do the x / y
+      if (this.control.position.alphaBurnWait == 0) {
+        this.model.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.setPropulsionVectors(this.control.position.startXBurn[0], this.control.position.startXBurn[2]);
+        this.setPropulsionVectors(this.control.position.startXBurn[1], this.control.position.startXBurn[2]);
+        this.setPropulsionVectors(this.control.position.startYBurn[0], this.control.position.startYBurn[2]);
+        this.setPropulsionVectors(this.control.position.startYBurn[1], this.control.position.startYBurn[2]);
+        this.control.position.alphaBurnWait -= 1;
+      }
+      if (this.control.position.alphaBurnWait < 0) {
+        if (this.control.position.intraYBurnInterval == 0) {
+          this.setPropulsionVectors(this.control.position.stopYBurn[0], this.control.position.stopYBurn[2]);
+          this.setPropulsionVectors(this.control.position.stopYBurn[1], this.control.position.stopYBurn[2]);
+          this.control.position.intraYBurnInterval -= 1;
+        } else {
+          this.control.position.intraYBurnInterval -= 1;
+        }
+        if (this.control.position.intraXBurnInterval == 0) {
+          this.setPropulsionVectors(this.control.position.stopXBurn[0], this.control.position.stopXBurn[2]);
+          this.setPropulsionVectors(this.control.position.stopXBurn[1], this.control.position.stopXBurn[2]);
+          this.control.position.intraXBurnInterval -= 1;
+        } else {
+          this.control.position.intraXBurnInterval -= 1;
+        }
       }
     }
+    // console.log(this.control.position.hold)
     if (this.control.position.hold && frameCount % this.control.position.holdInterval == 0 && this.checkPose() > 0.1) {
-      this.attainPose();
+      this.control.stop.flag = true;
     }
   }
 
@@ -631,7 +703,7 @@ function keyPressed() {
     mySat.g.breadcrumbs.show = !mySat.g.breadcrumbs.show;
     return;
   } else if (key == 'm') {
-    mySat.reset();
+    setupScreen();
     return;
   }
 }

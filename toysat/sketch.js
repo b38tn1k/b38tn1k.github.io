@@ -1,6 +1,6 @@
 var starfield, starX, starY;
 var mySat, buttonColors, buttonLookup;
-var menuBar, widthOnTwo, heightOnTwo, menuHeight;
+var widthOnTwo, heightOnTwo;
 var testing = true;
 
 //  1________1
@@ -18,28 +18,27 @@ var testing = true;
 class RCSSat {
 
   constructor(x, y, a, wh, mb) {
-    // properties
     this.x = x;
     this.y = y;
     this.a = a;
     this.vx = 0;
     this.vy = 0;
-    this.vn = 0; // heading, vh to confusable with vn
-    this.vf = 0;
+    this.vn = 0;
+    this.vf = 0; // heading, vh to confusable with vn
     this.va = 0;
-    this.dims = wh;
-    this.d = sqrt(wh*wh + wh*wh);
-    this.mass = 100;
-    this.massUnits = 100;
-    this.emptyMass = 20;
-    this.prop = {}
-    this.prop.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    this.prop.coords = [];
-    this.prop.cartesianDirection = [];
-    this.prop.angularDirection = [];
-    this.prop.duration = 20; // frames
-    this.prop.fuelDecrement = 1/(this.prop.duration);
-    this.prop.force = 5; // random value that makes sat move enough to be interesting
+    this.model = {}
+    this.model.dims = wh;
+    this.model.d = sqrt(wh*wh + wh*wh);
+    this.model.mass = 100;
+    this.model.massMax = 100;
+    this.model.massMin = 20;
+    this.model.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.model.coords = [];
+    this.model.cartesianDirection = [];
+    this.model.angularDirection = [];
+    this.model.duration = 20; // frames
+    this.model.fuelDecrement = 1/(this.model.duration);
+    this.model.force = 5; // random value that makes sat move enough to be interesting
     // graphics
     this.setupGraphics(mb);
   }
@@ -48,7 +47,7 @@ class RCSSat {
     // P = m * v = F * t
     // t = (m * v) / F
     let controlEfforts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let vfControlEffort = (this.vf * this.mass) / (this.prop.force);
+    let vfControlEffort = (this.vf * this.model.mass) / (this.model.force);
     // Using the two booster things that will oppose motion
     // and spliting control effort between them
     // they output the same force, time is abs, pos
@@ -61,7 +60,7 @@ class RCSSat {
       controlEfforts[5] += vfControlEffort;
       controlEfforts[6] += vfControlEffort;
     }
-    let vnControlEffort = (this.vn * this.mass) / (this.prop.force);
+    let vnControlEffort = (this.vn * this.model.mass) / (this.model.force);
     vnControlEffort = round(vnControlEffort)/2;
     vnControlEffort = int(abs(vnControlEffort));
     if (this.vn > 0) {
@@ -71,7 +70,7 @@ class RCSSat {
       controlEfforts[8] += vnControlEffort;
       controlEfforts[7] += vnControlEffort;
     }
-    let vaControlEffort = (this.va * this.mass * this.d) / this.prop.force;
+    let vaControlEffort = (this.va * this.model.mass * this.model.d) / this.model.force;
     vaControlEffort = round(vaControlEffort)/2;
     vaControlEffort = int(abs(vaControlEffort));
     if (this.va > 0) {
@@ -83,171 +82,192 @@ class RCSSat {
     }
     // set thrusters to STOP :-P
     for (let i = 0; i < controlEfforts.length; i++) {
-      this.prop.active[i] = controlEfforts[i];
+      this.model.active[i] = controlEfforts[i];
     }
   }
 
-  setupGraphics(mb){
-    this.graphics = {};
-    this.graphics.showBreadcrumbs = false;
-    this.graphics.breadcrumbs = createGraphics(windowWidth, windowHeight);
-    this.graphics.breadcrumbs.stroke(255);
-    this.graphics.telem = {};
-    this.graphics.telem.w = mb.width / 100;
-    this.graphics.telem.h = mb.height *0.25;
-    this.graphics.telem.y = windowHeight - 0.6*mb.height;
-    this.graphics.telem.bary = this.graphics.telem.y - this.graphics.telem.h/2
-    this.graphics.telem.textx = 2 * this.graphics.telem.w;
-    this.graphics.telem.texty = this.graphics.telem.y - this.graphics.telem.h;
-    this.graphics.sat = {};
-    this.graphics.sat.sprite = createGraphics(this.dims, this.dims);
-    this.graphics.thrusters = {};
-    this.graphics.thrusters.sprite = createGraphics(2*this.dims, 2*this.dims);
-    this.graphics.thrusters.sprite.rectMode(CORNER);
-    this.graphics.thrusters.offset = this.dims/2;
-    this.graphics.vars = {};
-    this.graphics.vars.major = 0.9 * this.dims;
-    this.graphics.vars.minor = 0.1 * this.dims;
-    this.graphics.sat.sprite.stroke(0);
-    this.graphics.sat.sprite.strokeWeight(2);
-    this.graphics.sat.sprite.rectMode(CENTER);
-    // body
-    this.graphics.sat.sprite.fill(100, 100, 100);
-    this.graphics.sat.sprite.square(this.dims/2, this.dims/2, this.dims-2*this.graphics.vars.major);
-    // directionality
-    let trix = this.dims/2;
-    let triy = 2*this.graphics.vars.minor
-    this.graphics.sat.sprite.fill(50, 50, 50);
-    this.graphics.sat.sprite.triangle(trix, triy, trix - this.graphics.vars.minor, triy + 2*this.graphics.vars.minor, trix + this.graphics.vars.minor, triy + 2*this.graphics.vars.minor);
-    trix = trix + this.graphics.vars.minor;
-    triy = triy + 2*this.graphics.vars.minor;
-    this.graphics.sat.sprite.fill(100, 100, 100);
-    this.graphics.sat.sprite.triangle(trix, triy, trix + 2 * this.graphics.vars.minor, triy + this.graphics.vars.minor, trix, triy + 2*this.graphics.vars.minor);
+  setupGraphics(){
+    this.g = {};
+    this.g.vars = {};
+    this.g.vars.major = 0.9 * this.model.dims;
+    this.g.vars.minor = 0.1 * this.model.dims;
+    // breadcrumbs
+    this.g.breadcrumbs = {}
+    this.g.breadcrumbs.show = false;
+    this.g.breadcrumbs.image = createGraphics(windowWidth, windowHeight);
+    this.g.breadcrumbs.image.stroke(255);
+    // information overlay
+    this.g.telem = {};
+    this.g.telem.textOffset = int(2 * this.g.vars.minor);
+    this.g.telem.fg = {};
+    this.g.telem.fg.w = 2*this.g.vars.minor;
+    this.g.telem.fg.h = windowHeight / 106;
+    this.g.telem.fg.y = this.g.telem.fg.h * 3;
+    this.g.telem.fg.x = windowWidth - 3*this.g.vars.minor;
+    this.g.telem.buttons = createGraphics(windowWidth, windowHeight);
+    let controlString = 'qwertdsgf';
+    let buttonY = this.g.telem.textOffset + 8 * textSize();
+    let buttonGap = 3*this.g.vars.minor;
+    let buttonSize = 4*this.g.vars.minor;
+    for (let i = 0; i < buttonColors.length; i++){
+      this.g.telem.buttons.fill(buttonColors[i]);
+      this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+      this.g.telem.buttons.fill(0);
+      this.g.telem.buttons.text(String(controlString[i]), this.g.telem.textOffset + this.g.vars.minor, buttonY + textSize());
+      buttonY += buttonGap;
+    }
+    // this.g.telem.texty = this.g.telem.fg.y - this.g.telem.fg.h;
+    this.g.sat = {};
+    this.g.sat.sprite = createGraphics(this.model.dims, this.model.dims);
+    this.g.thrusters = {};
+    this.g.thrusters.sprite = createGraphics(2*this.model.dims, 2*this.model.dims);
+    this.g.thrusters.sprite.rectMode(CORNER);
+    this.g.thrusters.offset = this.model.dims/2;
 
-    // this.graphics.sat.sprite.triangle(this.dims/2 + this.graphics.vars.minor, 4*this.graphics.vars.minor, this.dims/2 + this.graphics.vars.minor, 4*this.graphics.vars.minor - this.graphics.vars.minor, 4*this.graphics.vars.minor, );
+    this.g.sat.sprite.stroke(0);
+    this.g.sat.sprite.strokeWeight(2);
+    this.g.sat.sprite.rectMode(CENTER);
+    // body
+    this.g.sat.sprite.fill(100, 100, 100);
+    this.g.sat.sprite.square(this.model.dims/2, this.model.dims/2, this.model.dims-2*this.g.vars.major);
+    // directionality
+    let trix = this.model.dims/2;
+    let triy = 2*this.g.vars.minor
+    this.g.sat.sprite.fill(50, 50, 50);
+    this.g.sat.sprite.triangle(trix, triy, trix - this.g.vars.minor, triy + 2*this.g.vars.minor, trix + this.g.vars.minor, triy + 2*this.g.vars.minor);
+    trix = trix + this.g.vars.minor;
+    triy = triy + 2*this.g.vars.minor;
+    this.g.sat.sprite.fill(100, 100, 100);
+    this.g.sat.sprite.triangle(trix, triy, trix + 2 * this.g.vars.minor, triy + this.g.vars.minor, trix, triy + 2*this.g.vars.minor);
+    // this.g.sat.sprite.triangle(this.model.dims/2 + this.g.vars.minor, 4*this.g.vars.minor, this.model.dims/2 + this.g.vars.minor, 4*this.g.vars.minor - this.g.vars.minor, 4*this.g.vars.minor, );
     // CG
-    this.graphics.sat.sprite.fill(buttonColors[0]);
-    this.graphics.sat.sprite.circle(this.dims/2, this.dims/2, this.graphics.vars.minor);
-    this.prop.coords.push([this.dims/2, this.dims/2]);
-    this.prop.cartesianDirection.push(-1);
-    this.prop.angularDirection.push(-1);
+    this.g.sat.sprite.fill(buttonColors[0]);
+    this.g.sat.sprite.circle(this.model.dims/2, this.model.dims/2, this.g.vars.minor);
+    this.model.coords.push([this.model.dims/2, this.model.dims/2]);
+    this.model.cartesianDirection.push(-1);
+    this.model.angularDirection.push(-1);
     // boosters
-    this.graphics.sat.sprite.rectMode(CORNER);
+    this.g.sat.sprite.rectMode(CORNER);
     //top left
-    this.graphics.sat.sprite.fill(buttonColors[1]);
-    this.graphics.sat.sprite.square(this.graphics.vars.minor, 0, this.graphics.vars.minor);
-    this.prop.coords.push([this.graphics.vars.minor, 0]);
-    this.prop.cartesianDirection.push(1);
-    this.prop.angularDirection.push(0);
+    this.g.sat.sprite.fill(buttonColors[1]);
+    this.g.sat.sprite.square(this.g.vars.minor, 0, this.g.vars.minor);
+    this.model.coords.push([this.g.vars.minor, 0]);
+    this.model.cartesianDirection.push(1);
+    this.model.angularDirection.push(0);
     // top right
-    this.graphics.sat.sprite.fill(buttonColors[2]);
-    this.graphics.sat.sprite.square(this.dims-2*this.graphics.vars.minor, 0, this.graphics.vars.minor);
-    this.prop.coords.push([this.dims-2*this.graphics.vars.minor, 0]);
-    this.prop.cartesianDirection.push(1);
-    this.prop.angularDirection.push(1);
+    this.g.sat.sprite.fill(buttonColors[2]);
+    this.g.sat.sprite.square(this.model.dims-2*this.g.vars.minor, 0, this.g.vars.minor);
+    this.model.coords.push([this.model.dims-2*this.g.vars.minor, 0]);
+    this.model.cartesianDirection.push(1);
+    this.model.angularDirection.push(1);
     // right top
-    this.graphics.sat.sprite.fill(buttonColors[3]);
-    this.graphics.sat.sprite.square(this.dims-this.graphics.vars.minor, this.graphics.vars.minor, this.graphics.vars.minor);
-    this.prop.coords.push([this.dims-this.graphics.vars.minor, this.graphics.vars.minor]);
-    this.prop.cartesianDirection.push(2);
-    this.prop.angularDirection.push(0);
+    this.g.sat.sprite.fill(buttonColors[3]);
+    this.g.sat.sprite.square(this.model.dims-this.g.vars.minor, this.g.vars.minor, this.g.vars.minor);
+    this.model.coords.push([this.model.dims-this.g.vars.minor, this.g.vars.minor]);
+    this.model.cartesianDirection.push(2);
+    this.model.angularDirection.push(0);
     // right bottom
-    this.graphics.sat.sprite.fill(buttonColors[4]);
-    this.graphics.sat.sprite.square(this.dims-this.graphics.vars.minor, this.dims-2*this.graphics.vars.minor, this.graphics.vars.minor);
-    this.prop.coords.push([this.dims-this.graphics.vars.minor, this.dims-2*this.graphics.vars.minor]);
-    this.prop.cartesianDirection.push(2);
-    this.prop.angularDirection.push(1);
+    this.g.sat.sprite.fill(buttonColors[4]);
+    this.g.sat.sprite.square(this.model.dims-this.g.vars.minor, this.model.dims-2*this.g.vars.minor, this.g.vars.minor);
+    this.model.coords.push([this.model.dims-this.g.vars.minor, this.model.dims-2*this.g.vars.minor]);
+    this.model.cartesianDirection.push(2);
+    this.model.angularDirection.push(1);
     // bottom right
-    this.graphics.sat.sprite.fill(buttonColors[5]);
-    this.graphics.sat.sprite.square(this.dims-2*this.graphics.vars.minor, this.dims-this.graphics.vars.minor, this.graphics.vars.minor);
-    this.prop.coords.push([this.dims-2*this.graphics.vars.minor, this.dims-this.graphics.vars.minor]);
-    this.prop.cartesianDirection.push(3);
-    this.prop.angularDirection.push(0);
+    this.g.sat.sprite.fill(buttonColors[5]);
+    this.g.sat.sprite.square(this.model.dims-2*this.g.vars.minor, this.model.dims-this.g.vars.minor, this.g.vars.minor);
+    this.model.coords.push([this.model.dims-2*this.g.vars.minor, this.model.dims-this.g.vars.minor]);
+    this.model.cartesianDirection.push(3);
+    this.model.angularDirection.push(0);
     //bottom left
-    this.graphics.sat.sprite.fill(buttonColors[6]);
-    this.graphics.sat.sprite.square(this.graphics.vars.minor, this.dims-this.graphics.vars.minor, this.graphics.vars.minor);
-    this.prop.coords.push([this.graphics.vars.minor, this.dims-this.graphics.vars.minor]);
-    this.prop.cartesianDirection.push(3);
-    this.prop.angularDirection.push(1);
+    this.g.sat.sprite.fill(buttonColors[6]);
+    this.g.sat.sprite.square(this.g.vars.minor, this.model.dims-this.g.vars.minor, this.g.vars.minor);
+    this.model.coords.push([this.g.vars.minor, this.model.dims-this.g.vars.minor]);
+    this.model.cartesianDirection.push(3);
+    this.model.angularDirection.push(1);
     // left bottom
-    this.graphics.sat.sprite.fill(buttonColors[7]);
-    this.graphics.sat.sprite.square(0, this.dims-2*this.graphics.vars.minor, this.graphics.vars.minor);
-    this.prop.coords.push([0, this.dims-2*this.graphics.vars.minor]);
-    this.prop.cartesianDirection.push(4);
-    this.prop.angularDirection.push(0);
+    this.g.sat.sprite.fill(buttonColors[7]);
+    this.g.sat.sprite.square(0, this.model.dims-2*this.g.vars.minor, this.g.vars.minor);
+    this.model.coords.push([0, this.model.dims-2*this.g.vars.minor]);
+    this.model.cartesianDirection.push(4);
+    this.model.angularDirection.push(0);
     // left top
-    this.graphics.sat.sprite.fill(buttonColors[8]);
-    this.graphics.sat.sprite.square(0, this.graphics.vars.minor, this.graphics.vars.minor);
-    this.prop.coords.push([0, this.graphics.vars.minor]);
-    this.prop.cartesianDirection.push(4);
-    this.prop.angularDirection.push(1);
+    this.g.sat.sprite.fill(buttonColors[8]);
+    this.g.sat.sprite.square(0, this.g.vars.minor, this.g.vars.minor);
+    this.model.coords.push([0, this.g.vars.minor]);
+    this.model.cartesianDirection.push(4);
+    this.model.angularDirection.push(1);
+
   }
 
   drawTelemetry(){
-    let fuelX = this.graphics.telem.w/2;
+    // fuel and mass gauge
     rectMode(CORNER);
     noStroke();
-    fill(100, 100, 100);
-    rect(0, this.graphics.telem.bary, windowWidth, this.graphics.telem.h);
     fill(50, 255, 100);
-    rect(0, this.graphics.telem.bary, (this.graphics.telem.w) * this.mass, this.graphics.telem.h);
+    rect(this.g.telem.fg.x, this.g.telem.fg.y, this.g.telem.fg.w, this.g.telem.fg.h * this.model.massMax);
     fill(100, 100, 100);
-    rect(0, this.graphics.telem.bary, (this.graphics.telem.w) * this.emptyMass, this.graphics.telem.h);
-    rectMode(CENTER);
+    rect(this.g.telem.fg.x, this.g.telem.fg.y, this.g.telem.fg.w, this.g.telem.fg.h * (this.model.massMax - this.model.mass));
+    fill(100, 100, 100);
+    rect(this.g.telem.fg.x, this.g.telem.fg.y + this.g.telem.fg.h * (this.model.massMax - this.model.massMin), this.g.telem.fg.w, this.g.telem.fg.h * (this.model.massMin));
     stroke(0);
     strokeWeight(1);
     noFill();
-    for (let i = 0; i < this.massUnits; i++){
-      rect(fuelX, this.graphics.telem.y, this.graphics.telem.w, this.graphics.telem.h);
-      fuelX += this.graphics.telem.w;
+    let fuelY = this.g.telem.fg.y;
+    for (let i = 0; i < this.model.massMax; i++){
+      rect(this.g.telem.fg.x, fuelY, this.g.telem.fg.w, this.g.telem.fg.h);
+      fuelY += this.g.telem.fg.h;
     }
+    // telem vals
+    rectMode(CENTER);
     noStroke();
-    fill(0);
+    fill(255);
     let vhstring = 'V heading: ' + (-1 * this.vf).toFixed(2) + '   ';
     let vnstring = 'V normal: ' + (this.vn).toFixed(2) + '   ';
     let vxstring = 'V x: ' + this.vx.toFixed(2) + '   ';
     let vystring = 'V y: ' + (-1 * this.vy).toFixed(2) + '   ';
     let vastring = 'V a: ' + this.va.toFixed(2) + '   ';
-    let fuelstring = 'Mass: ' + (this.mass).toFixed(2) + ' Fuel: ' + (this.mass - this.emptyMass).toFixed(2) + ' Dry: ' + this.emptyMass + '   ';
-    let screenstring = 'Screen: X ' + this.x.toFixed(2) + ' Y ' + this.y.toFixed(2) + ' A ' + this.a.toFixed(2);
-    let textX = this.graphics.telem.textx;
-    text(vhstring, textX, this.graphics.telem.texty);
-    textX += textWidth(vhstring);
-    text(vnstring, textX, this.graphics.telem.texty);
-    textX += textWidth(vnstring);
-    text(vxstring, textX, this.graphics.telem.texty);
-    textX += textWidth(vxstring);
-    text(vystring, textX, this.graphics.telem.texty);
-    textX += textWidth(vystring);
-    text(vastring, textX, this.graphics.telem.texty);
-    textX += textWidth(vastring);
-    text(fuelstring, textX, this.graphics.telem.texty);
-    textX += textWidth(fuelstring);
-    text(screenstring, textX, this.graphics.telem.texty);
+    let fuelstring = 'Mass: ' + (this.model.mass).toFixed(2) + ' Fuel: ' + (this.model.mass - this.model.massMin).toFixed(2) + ' Dry: ' + this.model.massMin + '   ';
+    let screenstring = 'Screen: X: ' + this.x.toFixed(2) + ' Y: ' + this.y.toFixed(2) + ' A: ' + this.a.toFixed(2);
+    let texty = this.g.telem.textOffset;
+    text(vhstring, this.g.telem.textOffset, texty);
+    texty += textSize() + 1;
+    text(vnstring, this.g.telem.textOffset, texty);
+    texty += textSize() + 1;
+    text(vxstring, this.g.telem.textOffset, texty);
+    texty += textSize() + 1;
+    text(vystring, this.g.telem.textOffset, texty);
+    texty += textSize() + 1;
+    text(vastring, this.g.telem.textOffset, texty);
+    texty += textSize() + 1;
+    text(fuelstring, this.g.telem.textOffset, texty);
+    texty += textSize() + 1;
+    text(screenstring, this.g.telem.textOffset, texty);
+    // buttons
+    image(this.g.telem.buttons, widthOnTwo, heightOnTwo);
   }
 
   drawSprites(x, y, a){
     push();
     translate(x, y);
     rotate(a);
-    image(this.graphics.thrusters.sprite, 0, 0);
-    image(this.graphics.sat.sprite, 0, 0);
+    image(this.g.thrusters.sprite, 0, 0);
+    image(this.g.sat.sprite, 0, 0);
     pop();
   }
 
   setupThrusterTexture(){
-    this.graphics.thrusters.sprite.clear()
+    this.g.thrusters.sprite.clear()
     for (let i = 1; i < 9; i++){
-      if (this.prop.active[i] > 0){
-        this.graphics.thrusters.sprite.fill(255, 255, 255);
-        if (this.prop.cartesianDirection[i] == 1) {
-          this.graphics.thrusters.sprite.rect(this.graphics.thrusters.offset+this.prop.coords[i][0], this.graphics.thrusters.offset+this.prop.coords[i][1], this.graphics.vars.minor, -3*this.graphics.vars.minor);
-        } else if (this.prop.cartesianDirection[i] == 2) {
-          this.graphics.thrusters.sprite.rect(this.graphics.thrusters.offset+this.prop.coords[i][0], this.graphics.thrusters.offset+this.prop.coords[i][1], 4*this.graphics.vars.minor, this.graphics.vars.minor);
-        } else if (this.prop.cartesianDirection[i] == 3) {
-          this.graphics.thrusters.sprite.rect(this.graphics.thrusters.offset+this.prop.coords[i][0], this.graphics.thrusters.offset+this.prop.coords[i][1], this.graphics.vars.minor, 4*this.graphics.vars.minor);
-        } else if (this.prop.cartesianDirection[i] == 4) {
-          this.graphics.thrusters.sprite.rect(this.graphics.thrusters.offset+this.prop.coords[i][0], this.graphics.thrusters.offset+this.prop.coords[i][1], -4*this.graphics.vars.minor, this.graphics.vars.minor);
+      if (this.model.active[i] > 0){
+        this.g.thrusters.sprite.fill(255, 255, 255);
+        if (this.model.cartesianDirection[i] == 1) {
+          this.g.thrusters.sprite.rect(this.g.thrusters.offset+this.model.coords[i][0], this.g.thrusters.offset+this.model.coords[i][1], this.g.vars.minor, -3*this.g.vars.minor);
+        } else if (this.model.cartesianDirection[i] == 2) {
+          this.g.thrusters.sprite.rect(this.g.thrusters.offset+this.model.coords[i][0], this.g.thrusters.offset+this.model.coords[i][1], 4*this.g.vars.minor, this.g.vars.minor);
+        } else if (this.model.cartesianDirection[i] == 3) {
+          this.g.thrusters.sprite.rect(this.g.thrusters.offset+this.model.coords[i][0], this.g.thrusters.offset+this.model.coords[i][1], this.g.vars.minor, 4*this.g.vars.minor);
+        } else if (this.model.cartesianDirection[i] == 4) {
+          this.g.thrusters.sprite.rect(this.g.thrusters.offset+this.model.coords[i][0], this.g.thrusters.offset+this.model.coords[i][1], -4*this.g.vars.minor, this.g.vars.minor);
         }
       }
     }
@@ -256,42 +276,43 @@ class RCSSat {
   draw(){
     this.setupThrusterTexture();
     this.drawSprites(this.x, this.y, this.a);
-    if (this.x > windowWidth - this.dims) {
+    if (this.x > windowWidth - this.model.dims) {
       this.drawSprites(this.x - windowWidth, this.y, this.a);
     }
-    if (this.x < this.dims) {
+    if (this.x < this.model.dims) {
       this.drawSprites(this.x + windowWidth, this.y, this.a);
     }
-    if (this.y < this.dims) {
+    if (this.y < this.model.dims) {
       this.drawSprites(this.x, this.y + windowHeight, this.a);
     }
-    if (this.y > windowHeight - this.dims) {
+    if (this.y > windowHeight - this.model.dims) {
       this.drawSprites(this.x, this.y - windowHeight, this.a);
     }
-    if (this.graphics.showBreadcrumbs) {
-      image(this.graphics.breadcrumbs, widthOnTwo, heightOnTwo);
+    if (this.g.breadcrumbs.show) {
+      image(this.g.breadcrumbs.image, widthOnTwo, heightOnTwo);
     }
+    this.drawTelemetry();
   }
 
   drawBreadcrumbs(x1, y1, x2, y2) {
-    this.graphics.breadcrumbs.line(x1, y1, x2, y2);
-    if (x1 > windowWidth - this.dims) {
-      this.graphics.breadcrumbs.line(x1-windowWidth, y1, x2-windowWidth, y2);
+    this.g.breadcrumbs.image.line(x1, y1, x2, y2);
+    if (x1 > windowWidth - this.model.dims) {
+      this.g.breadcrumbs.image.line(x1-windowWidth, y1, x2-windowWidth, y2);
     }
-    if (x1 < this.dims) {
-      this.graphics.breadcrumbs.line(x1+windowWidth, y1, x2+windowWidth, y2);
+    if (x1 < this.model.dims) {
+      this.g.breadcrumbs.image.line(x1+windowWidth, y1, x2+windowWidth, y2);
     }
-    if (y1 > windowHeight - this.dims) {
-      this.graphics.breadcrumbs.line(x1, y1-windowHeight, x2, y2-windowHeight);
+    if (y1 > windowHeight - this.model.dims) {
+      this.g.breadcrumbs.image.line(x1, y1-windowHeight, x2, y2-windowHeight);
     }
-    if (y1 < this.dims) {
-      this.graphics.breadcrumbs.line(x1, y1+windowHeight, x2, y2+windowHeight);
+    if (y1 < this.model.dims) {
+      this.g.breadcrumbs.image.line(x1, y1+windowHeight, x2, y2+windowHeight);
     }
   }
 
   move(dx, dy, da){
-    if (this.graphics.showBreadcrumbs) {
-      this.drawBreadcrumbs(this.x, this.y, this.x + dx, this.y + dy);
+    if (this.g.breadcrumbs.show) {
+      this.model.drawBreadcrumbs(this.x, this.y, this.x + dx, this.y + dy);
     }
     this.x += dx;
     this.y += dy;
@@ -299,16 +320,16 @@ class RCSSat {
 
 
     // keep in view
-    if (this.x > windowWidth + this.dims/2) {
+    if (this.x > windowWidth + this.model.dims/2) {
       this.x -= windowWidth;
     }
-    if (this.x <= -this.dims/2) {
+    if (this.x <= -this.model.dims/2) {
       this.x += windowWidth;
     }
-    if (this.y > windowHeight + this.dims/2) {
+    if (this.y > windowHeight + this.model.dims/2) {
       this.y -= windowHeight;
     }
-    if (this.y < -this.dims/2) {
+    if (this.y < -this.model.dims/2) {
       this.y += windowHeight;
     }
   }
@@ -319,38 +340,38 @@ class RCSSat {
     this.va = 0;
     this.vx = 0;
     this.vy = 0;
-    this.mass = 100;
+    this.model.mass = 100;
     this.x = windowWidth/2;
     this.y = windowHeight/2 - menuBar.height;
     this.a = 0;
-    this.prop.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    this.graphics.breadcrumbs.clear();
+    this.model.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.g.breadcrumbs.image.clear();
   }
 
   update() {
     // update craft velocity for any active propulsion and geometry
     let dt = 1; // just incase I wanna change it
     let updateDynamics = false;
-    for (let i = 0; i < this.prop.active.length; i++){
-      if (this.prop.active[i] > 0) {
+    for (let i = 0; i < this.model.active.length; i++){
+      if (this.model.active[i] > 0) {
         updateDynamics = true;
-        this.mass -= this.prop.fuelDecrement;
-        if (this.prop.cartesianDirection[i] == 1) {
-          this.vf += (this.prop.force / this.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
-        } else if (this.prop.cartesianDirection[i] == 2) {
-          this.vn -= (this.prop.force / this.mass) * dt;
-        } else if (this.prop.cartesianDirection[i] == 3) {
-          this.vf -= (this.prop.force / this.mass) * dt;
-        } else if (this.prop.cartesianDirection[i] == 4) {
-          this.vn += (this.prop.force / this.mass) * dt;
+        this.model.mass -= this.model.fuelDecrement;
+        if (this.model.cartesianDirection[i] == 1) {
+          this.vf += (this.model.force / this.model.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
+        } else if (this.model.cartesianDirection[i] == 2) {
+          this.vn -= (this.model.force / this.model.mass) * dt;
+        } else if (this.model.cartesianDirection[i] == 3) {
+          this.vf -= (this.model.force / this.model.mass) * dt;
+        } else if (this.model.cartesianDirection[i] == 4) {
+          this.vn += (this.model.force / this.model.mass) * dt;
         }
-        if (this.prop.angularDirection[i] == 1) {
-          this.va += (this.prop.force / (this.mass * this.d)) * dt; // assume point mass cause we are in 2D anyway
-        } else if (this.prop.angularDirection[i] == 0) {
-          this.va -= (this.prop.force / (this.mass * this.d)) * dt;
+        if (this.model.angularDirection[i] == 1) {
+          this.va += (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
+        } else if (this.model.angularDirection[i] == 0) {
+          this.va -= (this.model.force / (this.model.mass * this.model.d)) * dt;
         }
       }
-      this.prop.active[i] = max(this.prop.active[i]-1, 0);
+      this.model.active[i] = max(this.model.active[i]-1, 0);
     }
     // convert vx, vy, va to screen coords
     if (this.a < -PI) { // for a relaxed brain
@@ -370,12 +391,12 @@ class RCSSat {
     this.move(this.vx * dt, this.vy * dt, this.va * dt);
   }
 
-  setPropulsionVectors(i, propDuration=this.prop.duration){
+  setPropulsionVectors(i, propDuration=this.model.duration){
     if (i == 0) {
       this.stop();
-    } else if (this.mass > this.emptyMass && i < this.prop.active.length) {
-      if (this.prop.active[i] == 0){
-        this.prop.active[i] = propDuration;
+    } else if (this.model.mass > this.model.massMin && i < this.model.active.length) {
+      if (this.model.active[i] == 0){
+        this.model.active[i] = propDuration;
       }
     }
   }
@@ -416,9 +437,10 @@ function makeMenuBar(){
   menuBar = createGraphics(windowWidth, min(0.15*windowHeight, 100));
   menuBar.background(100, 100, 100);
   menuHeight = windowHeight - menuBar.height/2;
-  let controlString = 'qwertdsgf';
+
   let tButtonOffset = windowWidth / buttonColors.length;
   let tButtonX = 0;
+  let controlString = 'qwertdsgf';
   for (let i = 0; i < buttonColors.length; i++){
     menuBar.fill(buttonColors[i]);
     menuBar.square(tButtonX, menuBar.height/2, tButtonOffset);
@@ -432,7 +454,7 @@ function keyPressed() {
   // testing
   if (testing) {
     if (key == 'm') {
-      mySat.mass = 20;
+      mySat.model.mass = 20;
     }
     if (key == 'b') {
       mySat.va = 0.1;
@@ -473,8 +495,8 @@ function keyPressed() {
     mySat.setPropulsionVectors(6);
     return;
   } else if (key == ' ') {
-    mySat.graphics.breadcrumbs.clear();
-    mySat.graphics.showBreadcrumbs = !mySat.graphics.showBreadcrumbs;
+    mySat.g.breadcrumbs.image.clear();
+    mySat.g.breadcrumbs.show = !mySat.g.breadcrumbs.show;
     return;
   } else if (key == 'm') {
     mySat.reset();
@@ -536,6 +558,4 @@ function draw() {
   image(starfield, starX, starY);
   mySat.draw();
   mySat.update();
-  image(menuBar, widthOnTwo, menuHeight)
-  mySat.drawTelemetry();
 }

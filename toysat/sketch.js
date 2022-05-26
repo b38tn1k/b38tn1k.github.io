@@ -2,6 +2,7 @@ var starfield, starX, starY;
 var mySat, buttonColors, buttonLookup;
 var widthOnTwo, heightOnTwo;
 var testing = false;
+var satDim = 100;
 
 class RCSSat {
 
@@ -626,6 +627,11 @@ function drawStars(c, r, w, star=false){
       starfield.point(random(starfield.width), random(starfield.height));
     }
   }
+  starfield.rectMode(CENTER);
+  starfield.stroke(255, 255, 255, 10);
+  starfield.strokeWeight(5);
+  starfield.noFill(5);
+  starfield.square(windowWidth/2, windowHeight/2, 1.5 * satDim);
 }
 
 function makeStarfield() {

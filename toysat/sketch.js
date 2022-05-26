@@ -37,10 +37,11 @@ class RCSSat {
     this.control.stop.n = false;
     this.control.position = {};
     this.control.position.poseManeuverFlag = false;
+    this.control.position.hold = false;
+    this.control.position.holdInterval = 24;
     this.control.position.targetPose = [x, y, a];
     this.control.position.intraBurnInterval = 0;
     this.control.position.stopBurn = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-
     // graphics
     this.setupGraphics();
   }
@@ -106,10 +107,26 @@ class RCSSat {
     }
   }
 
+  checkPose() {
+    let divergence = 0;
+    let angle = asin(sin(this.a));
+    if (angle > PI) {
+      angle -= PI;
+    }
+    divergence += abs(angle);
+    return divergence;
+  }
+
+  manualInputConfig() {
+    this.control.position.poseManeuverFlag = false;
+    this.control.position.hold = false;
+  }
+
   attainPose() {
     // let deltax = this.control.position.targetPose[0] - this.x;
     // let deltay = this.control.position.targetPose[1] - this.y;
     // convert this.a to +/- PI
+    this.control.position.stopBurn = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.control.position.poseManeuverFlag = true;
     let a_pose = this.a;
     if (a_pose > PI) {
@@ -118,25 +135,26 @@ class RCSSat {
       a_pose += TWO_PI;
     }
     let deltaa = this.control.position.targetPose[2] - a_pose;
-    console.log(deltaa, a_pose);
     // try alpha first, assume va is 0
     // alpha = alpha_i + wt
     // assuming va = 0, alpha = wt
     // (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
-    let burndur = 15;
+    let burndur = abs(int(deltaa * 10)); // made up for now, more effort to do bigger changes faster
     let initialv = burndur * 4 * this.model.force / (this.model.mass * this.model.d);
     let finalv = burndur * 4 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement) * this.model.d)
     let w = (initialv + finalv) / 2;
     this.control.position.intraBurnInterval = abs(int(deltaa / (w)));
-    if (deltaa >= 0){
-      for (let i = 2; i < 10; i+=2) {
-        mySat.setPropulsionVectors(i, burndur);
-        this.control.position.stopBurn[i-1] = burndur;
-      }
-    } else {
-      for (let i = 1; i < 9; i+=2) {
-        mySat.setPropulsionVectors(i, burndur);
-        this.control.position.stopBurn[i+1] = burndur;
+    if (this.control.position.intraBurnInterval > 0){
+      if (deltaa >= 0){
+        for (let i = 2; i < 10; i+=2) {
+          mySat.setPropulsionVectors(i, burndur);
+          this.control.position.stopBurn[i-1] = burndur;
+        }
+      } else {
+        for (let i = 1; i < 9; i+=2) {
+          mySat.setPropulsionVectors(i, burndur);
+          this.control.position.stopBurn[i+1] = burndur;
+        }
       }
     }
   }
@@ -492,10 +510,13 @@ class RCSSat {
       if (this.control.position.intraBurnInterval == 0) {
         this.model.active = this.control.position.stopBurn;
         this.control.position.poseManeuverFlag = false;
+        this.control.position.hold = true;
       } else {
         this.control.position.intraBurnInterval -= 1;
       }
-
+    }
+    if (this.control.position.hold && frameCount % this.control.position.holdInterval == 0 && this.checkPose() > 0.1) {
+      this.attainPose();
     }
   }
 
@@ -557,6 +578,7 @@ function keyPressed() {
     }
     if (key == 'b') {
       mySat.va = 0.1;
+      mySat.manualInputConfig();
     }
     if ('12345678'.indexOf(key) != -1) {
       mySat.a = '12345678'.indexOf(key) * 0.25 * PI;
@@ -565,6 +587,7 @@ function keyPressed() {
 
   for (let i = 0; i < 'qwertdsgf'.length; i++){
     if (key === 'qwertdsgf'[i]) {
+      mySat.manualInputConfig();
       mySat.setPropulsionVectors(i);
       return;
     }
@@ -572,30 +595,36 @@ function keyPressed() {
    if (keyCode == DOWN_ARROW){
     mySat.setPropulsionVectors(1);
     mySat.setPropulsionVectors(2);
+    mySat.manualInputConfig();
     return;
   }  else if (keyCode == LEFT_ARROW){
     mySat.setPropulsionVectors(3);
     mySat.setPropulsionVectors(4);
+    mySat.manualInputConfig();
     return;
   }  else if (keyCode == UP_ARROW){
     mySat.setPropulsionVectors(5);
     mySat.setPropulsionVectors(6);
+    mySat.manualInputConfig();
     return;
   }  else if (keyCode == RIGHT_ARROW){
     mySat.setPropulsionVectors(7);
     mySat.setPropulsionVectors(8);
+    mySat.manualInputConfig();
     return;
   } else if (key == 'a') {
     mySat.setPropulsionVectors(2);
     mySat.setPropulsionVectors(6);
     mySat.setPropulsionVectors(4);
     mySat.setPropulsionVectors(8);
+    mySat.manualInputConfig();
     return;
   } else if (key == 'z') {
     mySat.setPropulsionVectors(1);
     mySat.setPropulsionVectors(5);
     mySat.setPropulsionVectors(3);
     mySat.setPropulsionVectors(7);
+    mySat.manualInputConfig();
     return;
   } else if (key == ' ') {
     mySat.g.breadcrumbs.image.clear();
@@ -621,24 +650,28 @@ function mousePressed() {
   if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
     mySat.setPropulsionVectors(5);
     mySat.setPropulsionVectors(6);
+    mySat.manualInputConfig();
     return;
   }
   val += 1;
   if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
     mySat.setPropulsionVectors(1);
     mySat.setPropulsionVectors(2);
+    mySat.manualInputConfig();
     return;
   }
   val += 1;
   if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
     mySat.setPropulsionVectors(7);
     mySat.setPropulsionVectors(8);
+    mySat.manualInputConfig();
     return;
   }
   val += 1;
   if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
     mySat.setPropulsionVectors(3);
     mySat.setPropulsionVectors(4);
+    mySat.manualInputConfig();
     return;
   }
   val += 1;
@@ -647,6 +680,7 @@ function mousePressed() {
     mySat.setPropulsionVectors(6);
     mySat.setPropulsionVectors(4);
     mySat.setPropulsionVectors(8);
+    mySat.manualInputConfig();
     return;
   }
   val += 1;
@@ -655,6 +689,7 @@ function mousePressed() {
     mySat.setPropulsionVectors(5);
     mySat.setPropulsionVectors(3);
     mySat.setPropulsionVectors(7);
+    mySat.manualInputConfig();
     return;
   }
   val += 1;
@@ -671,6 +706,7 @@ function mousePressed() {
     }
     if (match) {
       mySat.setPropulsionVectors(i);
+      mySat.manualInputConfig();
       return;
     }
   }

@@ -424,12 +424,16 @@ class RCSSat {
     if (this.a > PI) {
       this.a -= 2*PI;
     }
+    // TODO figure out why v changes weird when force applied. I think I might need to go to vx only, force along heading :-/
+    let headingAngle = this.a + this.va * dt // a = ai + w * deltat(t)
+    let normalAngle = headingAngle + PI/2; // I should just be able to use cos + sin but phase seems backwards (?)
     if (updateDynamics) {
-      let headingAngle = this.a + this.va * dt // a = ai + w * deltat(t)
-      let normalAngle = headingAngle + PI/2; // rotated
       this.vx = this.vn * cos(headingAngle) + this.vf * cos(normalAngle);
       this.vy = this.vn * sin(headingAngle) + this.vf * sin(normalAngle);
-
+    } else {
+      this.vf = this.vx * sin(headingAngle) + this.vy * cos(headingAngle);
+      this.vn = this.vx * cos(headingAngle) + this.vy * sin(headingAngle);
+      console.log(headingAngle);
     }
 
     this.move(this.vx * dt, this.vy * dt, this.va * dt);

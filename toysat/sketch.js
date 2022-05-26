@@ -17,7 +17,7 @@ var testing = true;
 
 class RCSSat {
 
-  constructor(x, y, a, wh, mb) {
+  constructor(x, y, a, wh) {
     this.x = x;
     this.y = y;
     this.a = a;
@@ -40,7 +40,7 @@ class RCSSat {
     this.model.fuelDecrement = 1/(this.model.duration);
     this.model.force = 5; // random value that makes sat move enough to be interesting
     // graphics
-    this.setupGraphics(mb);
+    this.setupGraphics();
   }
 
   stop() {
@@ -105,25 +105,69 @@ class RCSSat {
     this.g.telem.fg.y = this.g.telem.fg.h * 3;
     this.g.telem.fg.x = windowWidth - 3*this.g.vars.minor;
     this.g.telem.buttons = createGraphics(windowWidth, windowHeight);
+    this.g.telem.buttons.ellipseMode(CORNER);
+    this.g.telem.buttons.textAlign(LEFT, CENTER);
     let controlString = 'qwertdsgf';
     let buttonY = this.g.telem.textOffset + 8 * textSize();
     let buttonGap = 3*this.g.vars.minor;
     let buttonSize = 4*this.g.vars.minor;
+    let textX = 2*this.g.telem.fg.w + this.g.telem.textOffset + this.g.vars.minor;
     for (let i = 0; i < buttonColors.length; i++){
       this.g.telem.buttons.fill(buttonColors[i]);
-      this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
-      this.g.telem.buttons.fill(0);
-      this.g.telem.buttons.text(String(controlString[i]), this.g.telem.textOffset + this.g.vars.minor, buttonY + textSize());
+      if (i == 0) {
+        this.g.telem.buttons.ellipse(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+      } else {
+        this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+      }
+      this.g.telem.buttons.fill(255);
+      this.g.telem.buttons.text(String(controlString[i]), textX, buttonY + 2*textSize()/3);
       buttonY += buttonGap;
     }
-    // this.g.telem.texty = this.g.telem.fg.y - this.g.telem.fg.h;
+    this.g.telem.cartesian = buttonY;
+    // 5 & 6
+    this.g.telem.buttons.fill(200);
+    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+    this.g.telem.buttons.fill(255);
+    this.g.telem.buttons.text('^', textX, buttonY + 2*textSize()/3);
+    buttonY += buttonGap;
+    // 2 & 1
+    this.g.telem.buttons.fill(201);
+    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+    this.g.telem.buttons.fill(255);
+    this.g.telem.buttons.text('v', textX, buttonY + 2*textSize()/3);
+    buttonY += buttonGap;
+    // 7 & 8
+    this.g.telem.buttons.fill(202);
+    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+    this.g.telem.buttons.fill(255);
+    this.g.telem.buttons.text('>', textX, buttonY + 2*textSize()/3);
+    buttonY += buttonGap;
+    // 3 & 4
+    this.g.telem.buttons.fill(203);
+    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+    this.g.telem.buttons.fill(255);
+    this.g.telem.buttons.text('<', textX, buttonY + 2*textSize()/3);
+    buttonY += buttonGap;
+    // 2 & 6
+    this.g.telem.angular = buttonY;
+    this.g.telem.buttons.fill(204);
+    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+    this.g.telem.buttons.fill(255);
+    this.g.telem.buttons.text('a: cw', textX, buttonY + 2*textSize()/3);
+    // 1 & 5
+    buttonY += buttonGap;
+    this.g.telem.buttons.fill(205);
+    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+    this.g.telem.buttons.fill(255);
+    this.g.telem.buttons.text('z: ccw', textX, buttonY + 2*textSize()/3);
+    buttonY += buttonGap;
+    // oh man
     this.g.sat = {};
     this.g.sat.sprite = createGraphics(this.model.dims, this.model.dims);
     this.g.thrusters = {};
     this.g.thrusters.sprite = createGraphics(2*this.model.dims, 2*this.model.dims);
     this.g.thrusters.sprite.rectMode(CORNER);
     this.g.thrusters.offset = this.model.dims/2;
-
     this.g.sat.sprite.stroke(0);
     this.g.sat.sprite.strokeWeight(2);
     this.g.sat.sprite.rectMode(CENTER);
@@ -312,7 +356,7 @@ class RCSSat {
 
   move(dx, dy, da){
     if (this.g.breadcrumbs.show) {
-      this.model.drawBreadcrumbs(this.x, this.y, this.x + dx, this.y + dy);
+      this.drawBreadcrumbs(this.x, this.y, this.x + dx, this.y + dy);
     }
     this.x += dx;
     this.y += dy;
@@ -342,7 +386,7 @@ class RCSSat {
     this.vy = 0;
     this.model.mass = 100;
     this.x = windowWidth/2;
-    this.y = windowHeight/2 - menuBar.height;
+    this.y = windowHeight/2;
     this.a = 0;
     this.model.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.g.breadcrumbs.image.clear();
@@ -433,23 +477,6 @@ function makeStarfield() {
   drawStars(color('#747c96'), 0.00005, 4, true);
 }
 
-function makeMenuBar(){
-  menuBar = createGraphics(windowWidth, min(0.15*windowHeight, 100));
-  menuBar.background(100, 100, 100);
-  menuHeight = windowHeight - menuBar.height/2;
-
-  let tButtonOffset = windowWidth / buttonColors.length;
-  let tButtonX = 0;
-  let controlString = 'qwertdsgf';
-  for (let i = 0; i < buttonColors.length; i++){
-    menuBar.fill(buttonColors[i]);
-    menuBar.square(tButtonX, menuBar.height/2, tButtonOffset);
-    menuBar.fill(0);
-    menuBar.text(String(controlString[i]), tButtonX + tButtonOffset/2 - textWidth(String(controlString[i])), menuBar.height*0.8);
-    tButtonX += tButtonOffset;
-  }
-}
-
 function keyPressed() {
   // testing
   if (testing) {
@@ -487,12 +514,12 @@ function keyPressed() {
     mySat.setPropulsionVectors(8);
     return;
   } else if (key == 'a') {
-    mySat.setPropulsionVectors(1);
-    mySat.setPropulsionVectors(5);
-    return;
-  } else if (key == 'z') {
     mySat.setPropulsionVectors(2);
     mySat.setPropulsionVectors(6);
+    return;
+  } else if (key == 'z') {
+    mySat.setPropulsionVectors(1);
+    mySat.setPropulsionVectors(5);
     return;
   } else if (key == ' ') {
     mySat.g.breadcrumbs.image.clear();
@@ -514,6 +541,44 @@ function windowResized() {
 
 function mousePressed() {
   pixelColor = get(mouseX, mouseY);
+  let val = 200;
+  if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
+    mySat.setPropulsionVectors(5);
+    mySat.setPropulsionVectors(6);
+    return;
+  }
+  val += 1;
+  if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
+    mySat.setPropulsionVectors(1);
+    mySat.setPropulsionVectors(2);
+    return;
+  }
+  val += 1;
+  if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
+    mySat.setPropulsionVectors(7);
+    mySat.setPropulsionVectors(8);
+    return;
+  }
+  val += 1;
+  if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
+    mySat.setPropulsionVectors(3);
+    mySat.setPropulsionVectors(4);
+    return;
+  }
+  val += 1;
+  if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
+    mySat.setPropulsionVectors(2);
+    mySat.setPropulsionVectors(6);
+    return;
+  }
+  val += 1;
+  if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
+    mySat.setPropulsionVectors(1);
+    mySat.setPropulsionVectors(5);
+    return;
+  }
+  val += 1;
+
   // check buttons based on color
   for (let i = 0; i < buttonColors.length; i++){
     let match = true;
@@ -541,8 +606,7 @@ function setupScreen() {
   for (let i = 0; i < buttonColors.length; i++){
     buttonLookup.push(buttonColors[i].levels)
   }
-  makeMenuBar();
-  mySat = new RCSSat(windowWidth/2, windowHeight/2 - menuBar.height, 0, 100, menuBar);
+  mySat = new RCSSat(windowWidth/2, windowHeight/2, 0, 100);
 }
 
 function setup() {

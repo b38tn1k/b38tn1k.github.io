@@ -3,18 +3,6 @@ var mySat, buttonColors, buttonLookup;
 var widthOnTwo, heightOnTwo;
 var testing = true;
 
-//  1________1
-// 4|        |2
-//  |        |
-// 4|________|2
-//   3       3
-
-//  1________2
-// 8|        |3
-//  |        |
-// 7|________|4
-//   6       5
-
 class RCSSat {
 
   constructor(x, y, a, wh) {
@@ -26,6 +14,8 @@ class RCSSat {
     this.vn = 0;
     this.vf = 0; // heading, vh to confusable with vn
     this.va = 0;
+    this.vfa = 0;
+    this.vna = 0;
     this.model = {}
     this.model.dims = wh;
     this.model.d = sqrt(wh*wh + wh*wh);
@@ -39,6 +29,18 @@ class RCSSat {
     this.model.duration = 20; // frames
     this.model.fuelDecrement = 1/(this.model.duration);
     this.model.force = 5; // random value that makes sat move enough to be interesting
+    this.control = {};
+    this.control.stop = {};
+    this.control.stop.flag = false;
+    this.control.stop.a = false;
+    this.control.stop.f = false;
+    this.control.stop.n = false;
+    this.control.position = {};
+    this.control.position.poseManeuverFlag = false;
+    this.control.position.targetPose = [x, y, a];
+    this.control.position.intraBurnInterval = 0;
+    this.control.position.stopBurn = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+
     // graphics
     this.setupGraphics();
   }
@@ -46,43 +48,89 @@ class RCSSat {
   stop() {
     // P = m * v = F * t
     // t = (m * v) / F
-    let controlEfforts = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let vfControlEffort = (this.vf * this.model.mass) / (this.model.force);
     // Using the two booster things that will oppose motion
     // and spliting control effort between them
     // they output the same force, time is abs, pos
+    this.model.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+    let vfControlEffort = (this.vf * this.model.mass) / (this.model.force);
     vfControlEffort = round(vfControlEffort)/2;
     vfControlEffort = int(abs(vfControlEffort));
-    if (this.vf < 0) {
-      controlEfforts[1] += vfControlEffort;
-      controlEfforts[2] += vfControlEffort;
-    } else {
-      controlEfforts[5] += vfControlEffort;
-      controlEfforts[6] += vfControlEffort;
+    if (vfControlEffort == 0) {
+      this.control.stop.f = false;
+    }
+    if (this.control.stop.f) {
+      if (this.vf < 0) {
+        this.model.active[5] += vfControlEffort;
+        this.model.active[6] += vfControlEffort;
+      } else {
+        this.model.active[1] += vfControlEffort;
+        this.model.active[2] += vfControlEffort;
+      }
     }
     let vnControlEffort = (this.vn * this.model.mass) / (this.model.force);
     vnControlEffort = round(vnControlEffort)/2;
     vnControlEffort = int(abs(vnControlEffort));
-    if (this.vn > 0) {
-      controlEfforts[3] += vnControlEffort;
-      controlEfforts[4] += vnControlEffort;
-    } else {
-      controlEfforts[8] += vnControlEffort;
-      controlEfforts[7] += vnControlEffort;
+
+    if (this.control.stop.n) {
+      if (this.vn > 0) {
+        this.model.active[3] += vnControlEffort;
+        this.model.active[4] += vnControlEffort;
+      } else {
+        this.model.active[8] += vnControlEffort;
+        this.model.active[7] += vnControlEffort;
+      }
     }
     let vaControlEffort = (this.va * this.model.mass * this.model.d) / this.model.force;
-    vaControlEffort = round(vaControlEffort)/2;
+    vaControlEffort = round(vaControlEffort)/4;
     vaControlEffort = int(abs(vaControlEffort));
-    if (this.va > 0) {
-      controlEfforts[1] += vaControlEffort;
-      controlEfforts[5] += vaControlEffort;
-    } else {
-      controlEfforts[2] += vaControlEffort;
-      controlEfforts[6] += vaControlEffort;
+
+    if (this.control.stop.a) {
+      if (this.va > 0) {
+        this.model.active[1] += vaControlEffort;
+        this.model.active[3] += vaControlEffort;
+        this.model.active[5] += vaControlEffort;
+        this.model.active[7] += vaControlEffort;
+      } else {
+        this.model.active[2] += vaControlEffort;
+        this.model.active[4] += vaControlEffort;
+        this.model.active[6] += vaControlEffort;
+        this.model.active[8] += vaControlEffort;
+      }
     }
-    // set thrusters to STOP :-P
-    for (let i = 0; i < controlEfforts.length; i++) {
-      this.model.active[i] = controlEfforts[i];
+    this.control.stop.a = !(vaControlEffort == 0);
+    this.control.stop.n = !this.control.stop.a && !(vnControlEffort == 0);
+    this.control.stop.f = !this.control.stop.a && !(vfControlEffort == 0);
+    this.control.stop.flag = this.control.stop.a || this.control.stop.n || this.control.stop.f;
+    if (!this.control.stop.flag){
+      this.attainPose();
+    }
+  }
+
+  attainPose() {
+    // let deltax = this.control.position.targetPose[0] - this.x;
+    // let deltay = this.control.position.targetPose[1] - this.y;
+    // convert this.a to +/- PI
+    this.control.position.poseManeuverFlag = true;
+    let atarget = asin(sin(this.a));
+    let deltaa = this.control.position.targetPose[2] - atarget;
+    console.log(deltaa, atarget);
+    // try alpha first, assume va is 0
+    // alpha = alpha_i + wt
+    // assuming va = 0, alpha = wt
+    // (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
+    let burndur = 5
+    let w = burndur * this.model.force / (this.model.mass * this.model.d);
+    this.control.position.intraBurnInterval = int(abs(deltaa) / (4*w)) + 2 * burndur;
+    if (deltaa > 0){
+      for (let i = 2; i < 10; i+=2) {
+        mySat.setPropulsionVectors(i, burndur);
+        this.control.position.stopBurn[i-1] = burndur;
+      }
+    } else {
+      for (let i = 1; i < 9; i+=2) {
+        mySat.setPropulsionVectors(i, burndur);
+        this.control.position.stopBurn[i+1] = burndur;
+      }
     }
   }
 
@@ -93,7 +141,7 @@ class RCSSat {
     this.g.vars.minor = 0.1 * this.model.dims;
     // breadcrumbs
     this.g.breadcrumbs = {}
-    this.g.breadcrumbs.show = false;
+    this.g.breadcrumbs.show = testing;
     this.g.breadcrumbs.image = createGraphics(windowWidth, windowHeight);
     this.g.breadcrumbs.image.stroke(255);
     // information overlay
@@ -123,45 +171,22 @@ class RCSSat {
       this.g.telem.buttons.text(String(controlString[i]), textX, buttonY + 2*textSize()/3);
       buttonY += buttonGap;
     }
-    this.g.telem.cartesian = buttonY;
-    // 5 & 6
-    this.g.telem.buttons.fill(200);
-    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
-    this.g.telem.buttons.fill(255);
-    this.g.telem.buttons.text('^', textX, buttonY + 2*textSize()/3);
-    buttonY += buttonGap;
-    // 2 & 1
-    this.g.telem.buttons.fill(201);
-    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
-    this.g.telem.buttons.fill(255);
-    this.g.telem.buttons.text('v', textX, buttonY + 2*textSize()/3);
-    buttonY += buttonGap;
-    // 7 & 8
-    this.g.telem.buttons.fill(202);
-    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
-    this.g.telem.buttons.fill(255);
-    this.g.telem.buttons.text('>', textX, buttonY + 2*textSize()/3);
-    buttonY += buttonGap;
-    // 3 & 4
-    this.g.telem.buttons.fill(203);
-    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
-    this.g.telem.buttons.fill(255);
-    this.g.telem.buttons.text('<', textX, buttonY + 2*textSize()/3);
-    buttonY += buttonGap;
-    // 2 & 6
-    this.g.telem.angular = buttonY;
-    this.g.telem.buttons.fill(204);
-    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
-    this.g.telem.buttons.fill(255);
-    this.g.telem.buttons.text('a: cw', textX, buttonY + 2*textSize()/3);
-    // 1 & 5
-    buttonY += buttonGap;
-    this.g.telem.buttons.fill(205);
-    this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
-    this.g.telem.buttons.fill(255);
-    this.g.telem.buttons.text('z: ccw', textX, buttonY + 2*textSize()/3);
-    buttonY += buttonGap;
-    // oh man
+    let fc = 200
+    let cstr = '^V><az'
+    for (let i = 0; i < cstr.length; i++) {
+      this.g.telem.buttons.fill(fc);
+      this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+      this.g.telem.buttons.fill(255);
+      if (cstr[i] == 'a') {
+        this.g.telem.buttons.text('a: cw', textX, buttonY + 2*textSize()/3);
+      } else if (cstr[i] == 'z') {
+        this.g.telem.buttons.text('z: ccw', textX, buttonY + 2*textSize()/3);
+      } else {
+        this.g.telem.buttons.text(cstr[i], textX, buttonY + 2*textSize()/3);
+      }
+      buttonY += buttonGap;
+      fc += 1;
+    }
     this.g.sat = {};
     this.g.sat.sprite = createGraphics(this.model.dims, this.model.dims);
     this.g.thrusters = {};
@@ -190,7 +215,27 @@ class RCSSat {
     this.model.coords.push([this.model.dims/2, this.model.dims/2]);
     this.model.cartesianDirection.push(-1);
     this.model.angularDirection.push(-1);
+
     // boosters
+    // assignment
+    //  1________2
+    // 8|        |3
+    //  |        |
+    // 7|________|4
+    //   6       5
+    // cartesianDirection
+    //  1________1
+    // 4|        |2
+    //  |        |
+    // 4|________|2
+    //   3       3
+    // angularDirection
+    //  0________1
+    // 1|        |0
+    //  |        |
+    // 0|________|1
+    //   1       0
+
     this.g.sat.sprite.rectMode(CORNER);
     //top left
     this.g.sat.sprite.fill(buttonColors[1]);
@@ -240,7 +285,6 @@ class RCSSat {
     this.model.coords.push([0, this.g.vars.minor]);
     this.model.cartesianDirection.push(4);
     this.model.angularDirection.push(1);
-
   }
 
   drawTelemetry(){
@@ -265,8 +309,10 @@ class RCSSat {
     rectMode(CENTER);
     noStroke();
     fill(255);
-    let vhstring = 'V heading: ' + (-1 * this.vf).toFixed(2) + '   ';
-    let vnstring = 'V normal: ' + (this.vn).toFixed(2) + '   ';
+    // let vhstring = 'V heading: ' + (-1 * this.vf).toFixed(2) + ' ' + (-1 * this.vfa).toFixed(2) + '   ';
+    // let vnstring = 'V normal: ' + (this.vn).toFixed(2) + ' ' + (this.vna).toFixed(2) + '   ';
+    let vhstring = 'V heading: ' + (-1 * this.vfa).toFixed(2) + '   ';
+    let vnstring = 'V normal: '  + (this.vna).toFixed(2) + '   ';
     let vxstring = 'V x: ' + this.vx.toFixed(2) + '   ';
     let vystring = 'V y: ' + (-1 * this.vy).toFixed(2) + '   ';
     let vastring = 'V a: ' + this.va.toFixed(2) + '   ';
@@ -395,17 +441,17 @@ class RCSSat {
   update() {
     // update craft velocity for any active propulsion and geometry
     let dt = 1; // just incase I wanna change it
-    let updateDynamics = false;
+    let accelerationPeriod = false;
     for (let i = 0; i < this.model.active.length; i++){
       if (this.model.active[i] > 0) {
-        updateDynamics = true;
+        accelerationPeriod = true;
         this.model.mass -= this.model.fuelDecrement;
         if (this.model.cartesianDirection[i] == 1) {
-          this.vf += (this.model.force / this.model.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
+          this.vf -= (this.model.force / this.model.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
         } else if (this.model.cartesianDirection[i] == 2) {
           this.vn -= (this.model.force / this.model.mass) * dt;
         } else if (this.model.cartesianDirection[i] == 3) {
-          this.vf -= (this.model.force / this.model.mass) * dt;
+          this.vf += (this.model.force / this.model.mass) * dt;
         } else if (this.model.cartesianDirection[i] == 4) {
           this.vn += (this.model.force / this.model.mass) * dt;
         }
@@ -418,30 +464,43 @@ class RCSSat {
       this.model.active[i] = max(this.model.active[i]-1, 0);
     }
     // convert vx, vy, va to screen coords
-    if (this.a < -PI) { // for a relaxed brain
-      this.a += 2*PI;
+    let normalAngle = this.a + this.va * dt; // a = ai + w * deltat(t)
+    let headingAngle = normalAngle - HALF_PI; // 0 rad parallel with - y axes for screen coords
+    let fy = this.vf * sin(headingAngle);
+    let fx = this.vf * cos(headingAngle);
+    let ny = this.vn * sin(normalAngle);
+    let nx = this.vn * cos(normalAngle);
+    if (accelerationPeriod) {
+      this.vy = fy + ny;
+      this.vx = fx + nx;
     }
-    if (this.a > PI) {
-      this.a -= 2*PI;
-    }
-    // TODO figure out why v changes weird when force applied. I think I might need to go to vx only, force along heading :-/
-    let headingAngle = this.a + this.va * dt // a = ai + w * deltat(t)
-    let normalAngle = headingAngle + PI/2; // I should just be able to use cos + sin but phase seems backwards (?)
-    if (updateDynamics) {
-      this.vx = this.vn * cos(headingAngle) + this.vf * cos(normalAngle);
-      this.vy = this.vn * sin(headingAngle) + this.vf * sin(normalAngle);
-    } else {
-      this.vf = this.vx * sin(headingAngle) + this.vy * cos(headingAngle);
-      this.vn = this.vx * cos(headingAngle) + this.vy * sin(headingAngle);
-      console.log(headingAngle);
-    }
+    this.vfa = this.vf * sin(headingAngle) + this.vn * cos(headingAngle);
+    this.vna = this.vn * sin(headingAngle) + this.vf * cos(headingAngle);
 
     this.move(this.vx * dt, this.vy * dt, this.va * dt);
+    if (this.control.stop.flag) {
+      this.stop();
+    }
+    if (this.control.position.poseManeuverFlag) {
+      if (this.control.position.intraBurnInterval == 0) {
+        this.model.active = this.control.position.stopBurn;
+        this.control.position.poseManeuverFlag = false;
+      } else {
+        this.control.position.intraBurnInterval -= 1;
+        console.log(this.control.position.intraBurnInterval);
+      }
+
+    }
+  }
+
+  setStopSequence(){
+    this.control.stop.flag = true;
+    this.control.stop.a = true;
   }
 
   setPropulsionVectors(i, propDuration=this.model.duration){
     if (i == 0) {
-      this.stop();
+      this.setStopSequence();
     } else if (this.model.mass > this.model.massMin && i < this.model.active.length) {
       if (this.model.active[i] == 0){
         this.model.active[i] = propDuration;
@@ -520,10 +579,14 @@ function keyPressed() {
   } else if (key == 'a') {
     mySat.setPropulsionVectors(2);
     mySat.setPropulsionVectors(6);
+    mySat.setPropulsionVectors(4);
+    mySat.setPropulsionVectors(8);
     return;
   } else if (key == 'z') {
     mySat.setPropulsionVectors(1);
     mySat.setPropulsionVectors(5);
+    mySat.setPropulsionVectors(3);
+    mySat.setPropulsionVectors(7);
     return;
   } else if (key == ' ') {
     mySat.g.breadcrumbs.image.clear();
@@ -573,12 +636,16 @@ function mousePressed() {
   if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
     mySat.setPropulsionVectors(2);
     mySat.setPropulsionVectors(6);
+    mySat.setPropulsionVectors(4);
+    mySat.setPropulsionVectors(8);
     return;
   }
   val += 1;
   if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
     mySat.setPropulsionVectors(1);
     mySat.setPropulsionVectors(5);
+    mySat.setPropulsionVectors(3);
+    mySat.setPropulsionVectors(7);
     return;
   }
   val += 1;

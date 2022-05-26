@@ -599,9 +599,12 @@ class RCSSat {
   }
 
   setPropulsionVectors(i, propDuration=this.model.duration){
+    if (this.model.mass < this.model.massMin) {
+      return;
+    }
     if (i == 0) {
       this.setStopSequence();
-    } else if (this.model.mass > this.model.massMin && i < this.model.active.length) {
+    } else if (i < this.model.active.length) {
       if (this.model.active[i] == 0){
         this.model.active[i] = propDuration;
       }

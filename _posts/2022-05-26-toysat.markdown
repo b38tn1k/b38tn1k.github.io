@@ -28,5 +28,5 @@ So the control sequence looks like this:
 
 This approach is not efficient. Control efforts might be spending fuel to kill momentum and then creating a similar moment in the next step of the sequence. There is a lot to think about to get opportunistic fuel efficiency correct. And I was doing this for fun.
 
-Also, the physics gets weird at high speed / low mass. Breaking it is half the fun.
+Also, the physics gets weird at high speed + high spin. Breaking it is half the fun. 
 [description]

@@ -80,7 +80,6 @@ class RCSSat {
     let vnControlEffort = (this.vn * this.model.mass) / (this.model.force);
     vnControlEffort = round(vnControlEffort)/2;
     vnControlEffort = int(abs(vnControlEffort));
-
     if (this.control.stop.n) {
       if (this.vn > 0) {
         this.model.active[3] += vnControlEffort;
@@ -188,6 +187,10 @@ class RCSSat {
     }
   }
   update() {
+    if (this.model.mass < this.model.massMin) {
+      this.model.mass = this.model.massMin;
+      manualInputConfig();
+    }
     // update craft velocity for any active propulsion and geometry
     let dt = 1; // just incase I wanna change it
     let accelerationPeriod = false;
@@ -254,20 +257,25 @@ class RCSSat {
         this.setPropulsionVectors(this.control.position.startXBurn[1], this.control.position.startXBurn[2]);
         this.setPropulsionVectors(this.control.position.startYBurn[0], this.control.position.startYBurn[2]);
         this.setPropulsionVectors(this.control.position.startYBurn[1], this.control.position.startYBurn[2]);
-        this.control.position.alphaBurnWait -= 1;
+        this.control.position.alphaBurnWait = -1;
       }
       if (this.control.position.alphaBurnWait < 0) {
         if (this.control.position.intraYBurnInterval == 0) {
           this.setPropulsionVectors(this.control.position.stopYBurn[0], this.control.position.stopYBurn[2]);
           this.setPropulsionVectors(this.control.position.stopYBurn[1], this.control.position.stopYBurn[2]);
-          this.control.position.intraYBurnInterval -= 1;
+          this.control.position.intraYBurnInterval = -1;
+          this.control.position.intraAlphaBurnInterval = -1;
+          this.control.position.alphaBurnWait = -1;
         } else {
           this.control.position.intraYBurnInterval -= 1;
         }
         if (this.control.position.intraXBurnInterval == 0) {
           this.setPropulsionVectors(this.control.position.stopXBurn[0], this.control.position.stopXBurn[2]);
           this.setPropulsionVectors(this.control.position.stopXBurn[1], this.control.position.stopXBurn[2]);
-          this.control.position.intraXBurnInterval -= 1;
+          this.control.position.intraXBurnInterval = -1;
+          this.control.position.intraYBurnInterval = -1;
+          this.control.position.intraAlphaBurnInterval = -1;
+          this.control.position.alphaBurnWait = -1;
         } else {
           this.control.position.intraXBurnInterval -= 1;
         }
@@ -344,7 +352,7 @@ class RCSSat {
     this.g.telem.buttons.ellipseMode(CORNER);
     this.g.telem.buttons.textAlign(LEFT, CENTER);
     let controlString = 'qwertdsgf';
-    let buttonY = this.g.telem.textOffset + 8 * textSize();
+    let buttonY = 0;//this.g.telem.textOffset + 8 * textSize();
     let buttonGap = 3*this.g.vars.minor;
     let buttonSize = 4*this.g.vars.minor;
     let textX = 2*this.g.telem.fg.w + this.g.telem.textOffset + this.g.vars.minor;
@@ -503,6 +511,7 @@ class RCSSat {
     let vastring = 'V a: ' + this.va.toFixed(2) + '   ';
     let fuelstring = 'Mass: ' + (this.model.mass).toFixed(2) + ' Fuel: ' + (this.model.mass - this.model.massMin).toFixed(2) + ' Dry: ' + this.model.massMin + '   ';
     let screenstring = 'Screen: X: ' + this.x.toFixed(2) + ' Y: ' + this.y.toFixed(2) + ' A: ' + (this.a).toFixed(2);
+    let holdstring = 'Position Hold: ' + this.control.position.hold;
     let texty = this.g.telem.textOffset;
     text(vhstring, this.g.telem.textOffset, texty);
     texty += textSize() + 1;
@@ -517,8 +526,11 @@ class RCSSat {
     text(fuelstring, this.g.telem.textOffset, texty);
     texty += textSize() + 1;
     text(screenstring, this.g.telem.textOffset, texty);
+    texty += textSize() + 1;
+    text(holdstring, this.g.telem.textOffset, texty);
+    texty += textSize() + 1;
     // buttons
-    image(this.g.telem.buttons, widthOnTwo, heightOnTwo);
+    image(this.g.telem.buttons, widthOnTwo, heightOnTwo + texty);
   }
 
   drawSprites(x, y, a){

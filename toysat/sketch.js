@@ -5,6 +5,7 @@ var testing = false;
 var run = true;
 var satDim = 100;
 var link;
+var defaultRotatePropSpeed = 5;
 
 class RCSSat {
 
@@ -712,17 +713,17 @@ function keyPressed() {
     mySat.manualInputConfig();
     return;
   } else if (key == 'a') {
-    mySat.setPropulsionVectors(2);
-    mySat.setPropulsionVectors(6);
-    mySat.setPropulsionVectors(4);
-    mySat.setPropulsionVectors(8);
+    mySat.setPropulsionVectors(2, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(6, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(4, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(8, defaultRotatePropSpeed);
     mySat.manualInputConfig();
     return;
   } else if (key == 'z') {
-    mySat.setPropulsionVectors(1);
-    mySat.setPropulsionVectors(5);
-    mySat.setPropulsionVectors(3);
-    mySat.setPropulsionVectors(7);
+    mySat.setPropulsionVectors(1, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(5, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(3, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(7, defaultRotatePropSpeed);
     mySat.manualInputConfig();
     return;
   } else if (key == ' ') {
@@ -778,19 +779,19 @@ function mousePressed() {
   }
   val += 1;
   if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
-    mySat.setPropulsionVectors(2);
-    mySat.setPropulsionVectors(6);
-    mySat.setPropulsionVectors(4);
-    mySat.setPropulsionVectors(8);
+    mySat.setPropulsionVectors(2, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(6, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(4, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(8, defaultRotatePropSpeed);
     mySat.manualInputConfig();
     return;
   }
   val += 1;
   if (pixelColor[0] == val && pixelColor[1] == pixelColor[2]) {
-    mySat.setPropulsionVectors(1);
-    mySat.setPropulsionVectors(5);
-    mySat.setPropulsionVectors(3);
-    mySat.setPropulsionVectors(7);
+    mySat.setPropulsionVectors(1, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(5, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(3, defaultRotatePropSpeed);
+    mySat.setPropulsionVectors(7, defaultRotatePropSpeed);
     mySat.manualInputConfig();
     return;
   }

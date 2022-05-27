@@ -522,7 +522,7 @@ class RCSSat {
     let screenvstring = 'Screen V X: ' + this.vx.toFixed(2) + ' Y: ' + (-1 * this.vy).toFixed(2) + ' A: ' + this.va.toFixed(2) + '   ';
     let fuelstring = 'Mass: ' + (this.model.mass).toFixed(2) + ' Fuel: ' + (this.model.mass - this.model.massMin).toFixed(2) + ' Dry: ' + this.model.massMin + '   ';
     let screenstring = 'Screen: X: ' + this.x.toFixed(2) + ' Y: ' + this.y.toFixed(2) + ' A: ' + (this.a).toFixed(2);
-    let holdstring = 'Stopping: ' + this.control.stop.flag + ' Position Hold: ' + this.control.position.hold;
+    let holdstring = 'Stopping: ' + this.control.stop.flag + ' RTH: ' + this.control.position.poseManeuverFlag + ' Position Hold: ' + this.control.position.hold;
     let texty = this.g.telem.textOffset;
     text(vhstring, this.g.telem.textOffset, texty);
     texty += textSize() + 1;

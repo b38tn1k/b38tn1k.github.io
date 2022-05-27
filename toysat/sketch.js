@@ -1,7 +1,8 @@
 var starfield, starX, starY;
 var mySat, buttonColors, buttonLookup;
 var widthOnTwo, heightOnTwo;
-var testing = false;
+var testing = true;
+var run = true;
 var satDim = 100;
 var link;
 
@@ -18,6 +19,8 @@ class RCSSat {
     this.va = 0;
     this.vfa = 0;
     this.vna = 0;
+    this.af = 0;
+    this.an = 0;
     this.model = {}
     this.model.dims = wh;
     this.model.d = sqrt(wh*wh + wh*wh);
@@ -56,65 +59,75 @@ class RCSSat {
   }
 
   stop() {
+    let recalc = this.checkNoThrust();
     // P = m * v = F * t
     // t = (m * v) / F
     // Using the two booster things that will oppose motion
     // and spliting control effort between them
     // they output the same force, time is abs, pos
-    this.model.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let vfControlEffort = (this.vf * this.model.mass) / (this.model.force);
-    vfControlEffort = round(vfControlEffort)/2;
-    vfControlEffort = int(abs(vfControlEffort));
-    if (vfControlEffort == 0) {
-      this.control.stop.f = false;
-    }
-    if (this.control.stop.f) {
-      if (this.vf < 0) {
-        this.model.active[5] += vfControlEffort;
-        this.model.active[6] += vfControlEffort;
-      } else {
-        this.model.active[1] += vfControlEffort;
-        this.model.active[2] += vfControlEffort;
-      }
-    }
-    let vnControlEffort = (this.vn * this.model.mass) / (this.model.force);
-    vnControlEffort = round(vnControlEffort)/2;
-    vnControlEffort = int(abs(vnControlEffort));
-    if (this.control.stop.n) {
-      if (this.vn > 0) {
-        this.model.active[3] += vnControlEffort;
-        this.model.active[4] += vnControlEffort;
-      } else {
-        this.model.active[8] += vnControlEffort;
-        this.model.active[7] += vnControlEffort;
-      }
-    }
-    let vaControlEffort = (this.va * this.model.mass * this.model.d) / this.model.force;
-    vaControlEffort = round(vaControlEffort)/4;
-    vaControlEffort = int(abs(vaControlEffort));
-
+    let vfControlEffort = -1; //init non zero
+    let vnControlEffort = -1;
+    let vaControlEffort = -1;
     if (this.control.stop.a) {
-      if (this.va > 0) {
-        this.model.active[1] += vaControlEffort;
-        this.model.active[3] += vaControlEffort;
-        this.model.active[5] += vaControlEffort;
-        this.model.active[7] += vaControlEffort;
-      } else {
-        this.model.active[2] += vaControlEffort;
-        this.model.active[4] += vaControlEffort;
-        this.model.active[6] += vaControlEffort;
-        this.model.active[8] += vaControlEffort;
+      vaControlEffort = (this.va * this.model.mass * this.model.d) / this.model.force;
+      vaControlEffort = round(vaControlEffort)/4;
+      vaControlEffort = int(abs(vaControlEffort));
+      this.control.stop.a = !(vaControlEffort == 0);
+      if (this.control.stop.a) {
+        if (this.va > 0) {
+          this.model.active[1] = vaControlEffort;
+          this.model.active[3] = vaControlEffort;
+          this.model.active[5] = vaControlEffort;
+          this.model.active[7] = vaControlEffort;
+        } else {
+          this.model.active[2] = vaControlEffort;
+          this.model.active[4] = vaControlEffort;
+          this.model.active[6] = vaControlEffort;
+          this.model.active[8] = vaControlEffort;
+        }
       }
     }
-    this.control.stop.a = !(vaControlEffort == 0);
-    this.control.stop.n = !this.control.stop.a && !(vnControlEffort == 0);
-    this.control.stop.f = !this.control.stop.a && !(vfControlEffort == 0);
+    if (this.control.stop.a == false && recalc) {
+      vfControlEffort = (this.vfa * this.model.mass) / (this.model.force);
+      vfControlEffort = round(vfControlEffort)/2;
+      vfControlEffort = int(abs(vfControlEffort));
+      this.control.stop.f = !(vfControlEffort == 0);
+      if (this.control.stop.f) {
+        if (this.vf < 0) {
+          this.model.active[5] = vfControlEffort;
+          this.model.active[6] = vfControlEffort;
+        } else {
+          this.model.active[1] = vfControlEffort;
+          this.model.active[2] = vfControlEffort;
+        }
+      }
+    }
+    if (this.control.stop.a == false && this.control.stop.f == false && recalc) {
+      vnControlEffort = (this.vna * this.model.mass) / (this.model.force);
+      vnControlEffort = round(vnControlEffort)/2;
+      vnControlEffort = int(abs(vnControlEffort));
+      this.control.stop.n = !(vnControlEffort == 0);
+      if (this.control.stop.n ) {
+        if (this.vn > 0) {
+          this.model.active[3] = vnControlEffort;
+          this.model.active[4] = vnControlEffort;
+        } else {
+          this.model.active[8] = vnControlEffort;
+          this.model.active[7] = vnControlEffort;
+        }
+      }
+      this.control.stop.n = false;
+    }
     this.control.stop.flag = this.control.stop.a || this.control.stop.n || this.control.stop.f;
     if (!this.control.stop.flag){
       // this.control.position.targetPose = [this.x, this.y, 0];
       this.control.position.targetPose = [windowWidth/2, windowHeight/2, 0];
       this.attainPose();
     }
+  }
+
+  checkNoThrust() {
+    return (max(this.model.active) == 0);
   }
 
   attainPose() {
@@ -186,6 +199,7 @@ class RCSSat {
       }
     }
   }
+
   update() {
     if (this.model.mass < this.model.massMin) {
       this.model.mass = this.model.massMin;
@@ -196,6 +210,9 @@ class RCSSat {
     let accelerationPeriod = false;
     let normalAngle = this.a + this.va * dt; // a = ai + w * deltat(t)
     let headingAngle = normalAngle - HALF_PI; // 0 rad parallel with - y axes for screen coords
+    this.af = 0;
+    this.an = 0;
+    // console.log(this.model.active);
     for (let i = 0; i < this.model.active.length; i++){
       if (this.model.active[i] > 0) {
         accelerationPeriod = true;
@@ -206,28 +223,25 @@ class RCSSat {
           this.va -= (this.model.force / (this.model.mass * this.model.d)) * dt;
         }
         if (this.model.cartesianDirection[i] == 1) {
-          this.vf -= (this.model.force / this.model.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
+          this.af -= (this.model.force / this.model.mass);
         } else if (this.model.cartesianDirection[i] == 2) {
-          this.vn -= (this.model.force / this.model.mass) * dt;
+          this.an -= (this.model.force / this.model.mass);
         } else if (this.model.cartesianDirection[i] == 3) {
-          this.vf += (this.model.force / this.model.mass) * dt;
+          this.af += (this.model.force / this.model.mass);
         } else if (this.model.cartesianDirection[i] == 4) {
-          this.vn += (this.model.force / this.model.mass) * dt;
+          this.an += (this.model.force / this.model.mass);
         }
       }
       this.model.active[i] = max(this.model.active[i]-1, 0);
     }
+    // console.log(this.model.active);
     // convert vx, vy, va to screen coords
-    let fy = this.vf * sin(headingAngle);
-    let fx = this.vf * cos(headingAngle);
-    let ny = this.vn * sin(normalAngle);
-    let nx = this.vn * cos(normalAngle);
-    if (accelerationPeriod) {
-      this.vy = fy + ny;
-      this.vx = fx + nx;
-    }
-    this.vfa = this.vf * sin(headingAngle) + this.vn * cos(headingAngle);
-    this.vna = this.vn * sin(headingAngle) + this.vf * cos(headingAngle);
+    this.vf = this.vf + this.af * dt;
+    this.vn = this.vn + this.an * dt;
+    this.vx = this.vx + (this.af * cos(headingAngle) + this.an * cos(normalAngle)) * dt ;
+    this.vy = this.vy + (this.af * sin(headingAngle) + this.an * sin(normalAngle)) * dt;
+    this.vfa = this.vy * sin(headingAngle) + this.vx * cos(headingAngle);
+    this.vna = this.vy * sin(normalAngle) + this.vx * cos(normalAngle);
 
     this.move(this.vx * dt, this.vy * dt, this.va * dt);
     if (this.control.stop.flag) {
@@ -504,26 +518,20 @@ class RCSSat {
     rectMode(CENTER);
     noStroke();
     fill(255);
-    let vhstring = 'V cmy: ' + (-1 * this.vfa).toFixed(2) + '   ';
-    let vnstring = 'V cmx: '  + (this.vna).toFixed(2) + '   ';
-    let vxstring = 'V x: ' + this.vx.toFixed(2) + '   ';
-    let vystring = 'V y: ' + (-1 * this.vy).toFixed(2) + '   ';
-    let vastring = 'V a: ' + this.va.toFixed(2) + '   ';
+    let vhstring = 'V f: ' + (-1 * this.vfa).toFixed(2) + ' V n: ' + (this.vna).toFixed(2) + ' V a: ' + (this.va).toFixed(2) + '   ';
+    let vnstring = 'A f: '  + (this.af).toFixed(2) + ' A n: ' + (this.an).toFixed(2) +  '   ';
+    let screenvstring = 'Screen V X: ' + this.vx.toFixed(2) + ' Y: ' + (-1 * this.vy).toFixed(2) + ' A: ' + this.va.toFixed(2) + '   ';
     let fuelstring = 'Mass: ' + (this.model.mass).toFixed(2) + ' Fuel: ' + (this.model.mass - this.model.massMin).toFixed(2) + ' Dry: ' + this.model.massMin + '   ';
     let screenstring = 'Screen: X: ' + this.x.toFixed(2) + ' Y: ' + this.y.toFixed(2) + ' A: ' + (this.a).toFixed(2);
-    let holdstring = 'Position Hold: ' + this.control.position.hold;
+    let holdstring = 'Stopping: ' + this.control.stop.flag + ' Position Hold: ' + this.control.position.hold;
     let texty = this.g.telem.textOffset;
     text(vhstring, this.g.telem.textOffset, texty);
     texty += textSize() + 1;
     text(vnstring, this.g.telem.textOffset, texty);
     texty += textSize() + 1;
-    text(vxstring, this.g.telem.textOffset, texty);
-    texty += textSize() + 1;
-    text(vystring, this.g.telem.textOffset, texty);
-    texty += textSize() + 1;
-    text(vastring, this.g.telem.textOffset, texty);
-    texty += textSize() + 1;
     text(fuelstring, this.g.telem.textOffset, texty);
+    texty += textSize() + 1;
+    text(screenvstring, this.g.telem.textOffset, texty);
     texty += textSize() + 1;
     text(screenstring, this.g.telem.textOffset, texty);
     texty += textSize() + 1;
@@ -722,6 +730,9 @@ function keyPressed() {
   } else if (key == 'm') {
     setupScreen();
     return;
+  } else if (key == 'n') {
+    run = ! run;
+    return;
   }
 }
 
@@ -829,5 +840,8 @@ function setup() {
 function draw() {
   image(starfield, starX, starY);
   mySat.draw();
-  mySat.update();
+  if (run) {
+    mySat.update();
+  }
+
 }

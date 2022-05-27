@@ -189,15 +189,22 @@ class RCSSat {
   update() {
     if (this.model.mass < this.model.massMin) {
       this.model.mass = this.model.massMin;
-      manualInputConfig();
+      this.manualInputConfig();
     }
     // update craft velocity for any active propulsion and geometry
     let dt = 1; // just incase I wanna change it
     let accelerationPeriod = false;
+    let normalAngle = this.a + this.va * dt; // a = ai + w * deltat(t)
+    let headingAngle = normalAngle - HALF_PI; // 0 rad parallel with - y axes for screen coords
     for (let i = 0; i < this.model.active.length; i++){
       if (this.model.active[i] > 0) {
         accelerationPeriod = true;
         this.model.mass -= this.model.fuelDecrement;
+        if (this.model.angularDirection[i] == 1) {
+          this.va += (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
+        } else if (this.model.angularDirection[i] == 0) {
+          this.va -= (this.model.force / (this.model.mass * this.model.d)) * dt;
+        }
         if (this.model.cartesianDirection[i] == 1) {
           this.vf -= (this.model.force / this.model.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
         } else if (this.model.cartesianDirection[i] == 2) {
@@ -207,17 +214,10 @@ class RCSSat {
         } else if (this.model.cartesianDirection[i] == 4) {
           this.vn += (this.model.force / this.model.mass) * dt;
         }
-        if (this.model.angularDirection[i] == 1) {
-          this.va += (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
-        } else if (this.model.angularDirection[i] == 0) {
-          this.va -= (this.model.force / (this.model.mass * this.model.d)) * dt;
-        }
       }
       this.model.active[i] = max(this.model.active[i]-1, 0);
     }
     // convert vx, vy, va to screen coords
-    let normalAngle = this.a + this.va * dt; // a = ai + w * deltat(t)
-    let headingAngle = normalAngle - HALF_PI; // 0 rad parallel with - y axes for screen coords
     let fy = this.vf * sin(headingAngle);
     let fx = this.vf * cos(headingAngle);
     let ny = this.vn * sin(normalAngle);
@@ -504,8 +504,8 @@ class RCSSat {
     rectMode(CENTER);
     noStroke();
     fill(255);
-    let vhstring = 'V heading: ' + (-1 * this.vfa).toFixed(2) + '   ';
-    let vnstring = 'V normal: '  + (this.vna).toFixed(2) + '   ';
+    let vhstring = 'V cmy: ' + (-1 * this.vfa).toFixed(2) + '   ';
+    let vnstring = 'V cmx: '  + (this.vna).toFixed(2) + '   ';
     let vxstring = 'V x: ' + this.vx.toFixed(2) + '   ';
     let vystring = 'V y: ' + (-1 * this.vy).toFixed(2) + '   ';
     let vastring = 'V a: ' + this.va.toFixed(2) + '   ';

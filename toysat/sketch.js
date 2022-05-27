@@ -1,7 +1,7 @@
 var starfield, starX, starY;
 var mySat, buttonColors, buttonLookup;
 var widthOnTwo, heightOnTwo;
-var testing = true;
+var testing = false;
 var run = true;
 var satDim = 100;
 var link;

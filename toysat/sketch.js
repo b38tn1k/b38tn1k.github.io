@@ -118,30 +118,7 @@ class RCSSat {
     }
   }
 
-  checkPose() {
-    let divergence = asin(sin(this.a));
-    if (divergence > PI) {
-      divergence -= PI;
-    }
-    divergence = abs(divergence);
-    if (abs(this.x - this.control.position.targetPose[0]) > 50) {
-      divergence += 1;
-    }
-    if (abs(this.y - this.control.position.targetPose[1]) > 50) {
-      divergence += 1;
-    }
-    return divergence;
-  }
-
-  manualInputConfig() {
-    this.control.position.poseManeuverFlag = false;
-    this.control.position.hold = false;
-  }
-
   attainPose() {
-    // let deltax = this.control.position.targetPose[0] - this.x;
-    // let deltay = this.control.position.targetPose[1] - this.y;
-    // convert this.a to +/- PI
     this.control.position.stopAlphaBurn = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.control.position.stopXBurn = [0, 0, 0];
     this.control.position.stopYBurn = [0, 0, 0];
@@ -158,7 +135,6 @@ class RCSSat {
     // assume va is 0 for now, could be interesting efficiencies in recycling momentum
     // alpha = alpha_i + wt
     // assuming va = 0, alpha = wt
-    // (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
     let burndur = abs(int(deltaa * 10)); // made up for now, more effort to do bigger changes faster
     this.control.position.alphaBurnWait = burndur;
     let initialv = burndur * 4 * this.model.force / (this.model.mass * this.model.d); // using 4 thrusters
@@ -210,6 +186,135 @@ class RCSSat {
         this.control.position.stopYBurn = [5, 6, burndur];
       }
     }
+  }
+  update() {
+    // update craft velocity for any active propulsion and geometry
+    let dt = 1; // just incase I wanna change it
+    let accelerationPeriod = false;
+    for (let i = 0; i < this.model.active.length; i++){
+      if (this.model.active[i] > 0) {
+        accelerationPeriod = true;
+        this.model.mass -= this.model.fuelDecrement;
+        if (this.model.cartesianDirection[i] == 1) {
+          this.vf -= (this.model.force / this.model.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
+        } else if (this.model.cartesianDirection[i] == 2) {
+          this.vn -= (this.model.force / this.model.mass) * dt;
+        } else if (this.model.cartesianDirection[i] == 3) {
+          this.vf += (this.model.force / this.model.mass) * dt;
+        } else if (this.model.cartesianDirection[i] == 4) {
+          this.vn += (this.model.force / this.model.mass) * dt;
+        }
+        if (this.model.angularDirection[i] == 1) {
+          this.va += (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
+        } else if (this.model.angularDirection[i] == 0) {
+          this.va -= (this.model.force / (this.model.mass * this.model.d)) * dt;
+        }
+      }
+      this.model.active[i] = max(this.model.active[i]-1, 0);
+    }
+    // convert vx, vy, va to screen coords
+    let normalAngle = this.a + this.va * dt; // a = ai + w * deltat(t)
+    let headingAngle = normalAngle - HALF_PI; // 0 rad parallel with - y axes for screen coords
+    let fy = this.vf * sin(headingAngle);
+    let fx = this.vf * cos(headingAngle);
+    let ny = this.vn * sin(normalAngle);
+    let nx = this.vn * cos(normalAngle);
+    if (accelerationPeriod) {
+      this.vy = fy + ny;
+      this.vx = fx + nx;
+    }
+    this.vfa = this.vf * sin(headingAngle) + this.vn * cos(headingAngle);
+    this.vna = this.vn * sin(headingAngle) + this.vf * cos(headingAngle);
+
+    this.move(this.vx * dt, this.vy * dt, this.va * dt);
+    if (this.control.stop.flag) {
+      this.stop();
+    }
+    if (this.control.position.poseManeuverFlag) {
+      // when it is all done, turn off
+      if (this.control.position.intraAlphaBurnInterval < 0 && this.control.position.alphaBurnWait < 0 && this.control.position.intraXBurnInterval < 0 && this.control.position.intraYBurnInterval < 0){
+        this.control.position.poseManeuverFlag = false;
+        this.control.position.hold = true;
+        this.control.position.targetPose = [this.x, this.y, this.a];
+      }
+      // fire the braking thrusters after count down
+      if (this.control.position.intraAlphaBurnInterval == 0) {
+        this.model.active = this.control.position.stopAlphaBurn;
+        this.control.position.intraAlphaBurnInterval -= 1;
+      } else {
+        this.control.position.intraAlphaBurnInterval -= 1;
+      }
+      if (this.control.position.intraAlphaBurnInterval < 0) {
+        this.control.position.alphaBurnWait -= 1;
+      }
+      // once the attitude is sorted, do the x / y
+      if (this.control.position.alphaBurnWait == 0) {
+        this.model.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.setPropulsionVectors(this.control.position.startXBurn[0], this.control.position.startXBurn[2]);
+        this.setPropulsionVectors(this.control.position.startXBurn[1], this.control.position.startXBurn[2]);
+        this.setPropulsionVectors(this.control.position.startYBurn[0], this.control.position.startYBurn[2]);
+        this.setPropulsionVectors(this.control.position.startYBurn[1], this.control.position.startYBurn[2]);
+        this.control.position.alphaBurnWait -= 1;
+      }
+      if (this.control.position.alphaBurnWait < 0) {
+        if (this.control.position.intraYBurnInterval == 0) {
+          this.setPropulsionVectors(this.control.position.stopYBurn[0], this.control.position.stopYBurn[2]);
+          this.setPropulsionVectors(this.control.position.stopYBurn[1], this.control.position.stopYBurn[2]);
+          this.control.position.intraYBurnInterval -= 1;
+        } else {
+          this.control.position.intraYBurnInterval -= 1;
+        }
+        if (this.control.position.intraXBurnInterval == 0) {
+          this.setPropulsionVectors(this.control.position.stopXBurn[0], this.control.position.stopXBurn[2]);
+          this.setPropulsionVectors(this.control.position.stopXBurn[1], this.control.position.stopXBurn[2]);
+          this.control.position.intraXBurnInterval -= 1;
+        } else {
+          this.control.position.intraXBurnInterval -= 1;
+        }
+      }
+    }
+    if (this.control.position.hold && frameCount % this.control.position.holdInterval == 0 && this.checkPose() > 0.1) {
+      this.control.stop.flag = true;
+    }
+  }
+
+  setStopSequence(){
+    this.control.stop.flag = true;
+    this.control.stop.a = true;
+  }
+
+  setPropulsionVectors(i, propDuration=this.model.duration){
+    if (this.model.mass < this.model.massMin) {
+      return;
+    }
+    if (i == 0) {
+      this.setStopSequence();
+    } else if (i < this.model.active.length) {
+      if (this.model.active[i] == 0){
+        this.model.active[i] = propDuration;
+      }
+    }
+  }
+
+  checkPose() {
+    // lazy check for it sat has drifted too far
+    let divergence = asin(sin(this.a));
+    if (divergence > PI) {
+      divergence -= PI;
+    }
+    divergence = abs(divergence);
+    if (abs(this.x - this.control.position.targetPose[0]) > 50) {
+      divergence += 1;
+    }
+    if (abs(this.y - this.control.position.targetPose[1]) > 50) {
+      divergence += 1;
+    }
+    return divergence;
+  }
+
+  manualInputConfig() {
+    this.control.position.poseManeuverFlag = false;
+    this.control.position.hold = false;
   }
 
   setupGraphics(){
@@ -286,7 +391,6 @@ class RCSSat {
     triy = triy + 2*this.g.vars.minor;
     this.g.sat.sprite.fill(100, 100, 100);
     this.g.sat.sprite.triangle(trix, triy, trix + 2 * this.g.vars.minor, triy + this.g.vars.minor, trix, triy + 2*this.g.vars.minor);
-    // this.g.sat.sprite.triangle(this.model.dims/2 + this.g.vars.minor, 4*this.g.vars.minor, this.model.dims/2 + this.g.vars.minor, 4*this.g.vars.minor - this.g.vars.minor, 4*this.g.vars.minor, );
     // CG
     this.g.sat.sprite.fill(buttonColors[0]);
     this.g.sat.sprite.circle(this.model.dims/2, this.model.dims/2, this.g.vars.minor);
@@ -387,8 +491,6 @@ class RCSSat {
     rectMode(CENTER);
     noStroke();
     fill(255);
-    // let vhstring = 'V heading: ' + (-1 * this.vf).toFixed(2) + ' ' + (-1 * this.vfa).toFixed(2) + '   ';
-    // let vnstring = 'V normal: ' + (this.vn).toFixed(2) + ' ' + (this.vna).toFixed(2) + '   ';
     let vhstring = 'V heading: ' + (-1 * this.vfa).toFixed(2) + '   ';
     let vnstring = 'V normal: '  + (this.vna).toFixed(2) + '   ';
     let vxstring = 'V x: ' + this.vx.toFixed(2) + '   ';
@@ -485,8 +587,6 @@ class RCSSat {
     this.x += dx;
     this.y += dy;
     this.a += da;
-
-
     // keep in view
     if (this.x > windowWidth + this.model.dims/2) {
       this.x -= windowWidth;
@@ -499,116 +599,6 @@ class RCSSat {
     }
     if (this.y < -this.model.dims/2) {
       this.y += windowHeight;
-    }
-  }
-
-  update() {
-    // update craft velocity for any active propulsion and geometry
-    let dt = 1; // just incase I wanna change it
-    let accelerationPeriod = false;
-    for (let i = 0; i < this.model.active.length; i++){
-      if (this.model.active[i] > 0) {
-        accelerationPeriod = true;
-        this.model.mass -= this.model.fuelDecrement;
-        if (this.model.cartesianDirection[i] == 1) {
-          this.vf -= (this.model.force / this.model.mass) * dt; // v = vi + a * delta(t) = vi + f / m * delta(t)
-        } else if (this.model.cartesianDirection[i] == 2) {
-          this.vn -= (this.model.force / this.model.mass) * dt;
-        } else if (this.model.cartesianDirection[i] == 3) {
-          this.vf += (this.model.force / this.model.mass) * dt;
-        } else if (this.model.cartesianDirection[i] == 4) {
-          this.vn += (this.model.force / this.model.mass) * dt;
-        }
-        if (this.model.angularDirection[i] == 1) {
-          this.va += (this.model.force / (this.model.mass * this.model.d)) * dt; // assume point mass cause we are in 2D anyway
-        } else if (this.model.angularDirection[i] == 0) {
-          this.va -= (this.model.force / (this.model.mass * this.model.d)) * dt;
-        }
-      }
-      this.model.active[i] = max(this.model.active[i]-1, 0);
-    }
-    // convert vx, vy, va to screen coords
-    let normalAngle = this.a + this.va * dt; // a = ai + w * deltat(t)
-    let headingAngle = normalAngle - HALF_PI; // 0 rad parallel with - y axes for screen coords
-    let fy = this.vf * sin(headingAngle);
-    let fx = this.vf * cos(headingAngle);
-    let ny = this.vn * sin(normalAngle);
-    let nx = this.vn * cos(normalAngle);
-    if (accelerationPeriod) {
-      this.vy = fy + ny;
-      this.vx = fx + nx;
-    }
-    this.vfa = this.vf * sin(headingAngle) + this.vn * cos(headingAngle);
-    this.vna = this.vn * sin(headingAngle) + this.vf * cos(headingAngle);
-
-    this.move(this.vx * dt, this.vy * dt, this.va * dt);
-    if (this.control.stop.flag) {
-      this.stop();
-    }
-    if (this.control.position.poseManeuverFlag) {
-      // when it is all done, turn off
-      if (this.control.position.intraAlphaBurnInterval < 0 && this.control.position.alphaBurnWait < 0 && this.control.position.intraXBurnInterval < 0 && this.control.position.intraYBurnInterval < 0){
-        this.control.position.poseManeuverFlag = false;
-        this.control.position.hold = true;
-        this.control.position.targetPose = [this.x, this.y, this.a];
-      }
-      // fire the braking thrusters after count down
-      if (this.control.position.intraAlphaBurnInterval == 0) {
-        this.model.active = this.control.position.stopAlphaBurn;
-        this.control.position.intraAlphaBurnInterval -= 1;
-      } else {
-        this.control.position.intraAlphaBurnInterval -= 1;
-      }
-      if (this.control.position.intraAlphaBurnInterval < 0) {
-        this.control.position.alphaBurnWait -= 1;
-      }
-      // once the attitude is sorted, do the x / y
-      if (this.control.position.alphaBurnWait == 0) {
-        this.model.active = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        this.setPropulsionVectors(this.control.position.startXBurn[0], this.control.position.startXBurn[2]);
-        this.setPropulsionVectors(this.control.position.startXBurn[1], this.control.position.startXBurn[2]);
-        this.setPropulsionVectors(this.control.position.startYBurn[0], this.control.position.startYBurn[2]);
-        this.setPropulsionVectors(this.control.position.startYBurn[1], this.control.position.startYBurn[2]);
-        this.control.position.alphaBurnWait -= 1;
-      }
-      if (this.control.position.alphaBurnWait < 0) {
-        if (this.control.position.intraYBurnInterval == 0) {
-          this.setPropulsionVectors(this.control.position.stopYBurn[0], this.control.position.stopYBurn[2]);
-          this.setPropulsionVectors(this.control.position.stopYBurn[1], this.control.position.stopYBurn[2]);
-          this.control.position.intraYBurnInterval -= 1;
-        } else {
-          this.control.position.intraYBurnInterval -= 1;
-        }
-        if (this.control.position.intraXBurnInterval == 0) {
-          this.setPropulsionVectors(this.control.position.stopXBurn[0], this.control.position.stopXBurn[2]);
-          this.setPropulsionVectors(this.control.position.stopXBurn[1], this.control.position.stopXBurn[2]);
-          this.control.position.intraXBurnInterval -= 1;
-        } else {
-          this.control.position.intraXBurnInterval -= 1;
-        }
-      }
-    }
-    // console.log(this.control.position.hold)
-    if (this.control.position.hold && frameCount % this.control.position.holdInterval == 0 && this.checkPose() > 0.1) {
-      this.control.stop.flag = true;
-    }
-  }
-
-  setStopSequence(){
-    this.control.stop.flag = true;
-    this.control.stop.a = true;
-  }
-
-  setPropulsionVectors(i, propDuration=this.model.duration){
-    if (this.model.mass < this.model.massMin) {
-      return;
-    }
-    if (i == 0) {
-      this.setStopSequence();
-    } else if (i < this.model.active.length) {
-      if (this.model.active[i] == 0){
-        this.model.active[i] = propDuration;
-      }
     }
   }
 }

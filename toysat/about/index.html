@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+<head>
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://b38tn1k.com/styles.css">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ site.baseurl }}/public/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="{{ site.baseurl }}/public/favicon.ico">
+
+  <!-- <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width"> -->
+  <meta charset="utf-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> -->
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://b38tn1k.com/inv.png" />
+  <meta property="og:url" content="https://b38tn1k.com/toysat/about/" />
+  <meta property="og:title" content="About Toy Sat" />
+  <meta property="og:description" content="Satellite Physic Control Sim Thing" />
+  <title>About Toy Sat</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <style>
+    body {
+      padding: 2em 2em 2em 2em;
+      margin: auto;
+    }
+  </style>
+  <meta name="description" content="Satellite Physic Control Sim Thing">
+</head>
+<style>
+/* Place the navbar at the bottom of the page, and make it stick */
+  .navbar {
+    font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+    background-color: black;
+    overflow: hidden;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+
+  /* Style the links inside the navigation bar */
+  .navbar a {
+    float: left;
+    display: block;
+    color: #808080;
+    text-align: center;
+    padding: 1em 0.5em;
+    text-decoration: none;
+    font-size: 17px;
+  }
+
+  /* Add a color to the active/current link */
+  .navbar a.active {
+    color: #A9A9A9;
+  }
+
+  .mobar {
+    font-family: Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+    background-color: black;
+    overflow: hidden;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+
+  /* Style the links inside the navigation bar */
+  .mobar a {
+    float: left;
+    display: block;
+    color: #808080;
+    text-align: center;
+    padding: 3em 1em;
+    text-decoration: none;
+    font-size: 12px;
+  }
+
+  /* Add a color to the active/current link */
+  .mobar a.active {
+    color: #A9A9A9;
+  }
+
+  @media (max-width: 769px) { /* and ipads */
+      .navbar{
+          display:none;
+      }
+  }
+
+  @media (min-width: 769px) {
+      .mobar{
+          display:none;
+      }
+  }
+
+</style>
+
+<div class="navbar">
+  <a class="active" href="https://b38tn1k.com/toysat/">Toy Sat</a>
+  <a href="https://b38tn1k.com/archive/">blog</a>
+  <a href="https://b38tn1k.com/stream/">music</a>
+  <a href="https://b38tn1k.com/">B38TN1K</a>
+</div>
+
+<div class="mobar">
+  <a class="active" href="https://b38tn1k.com/toysat/">Toy Sat</a>
+  <a href="https://b38tn1k.com/archive/">blog</a>
+  <a href="https://b38tn1k.com/stream/">music</a>
+  <a href="https://b38tn1k.com/">B38TN1K</a>
+</div>
+
+<body>
+  <main>
+    <h1><a href="https://b38tn1k.com/toysat/" >Toy Sat</a> Help</h1>
+
+    <p>Toy Sat is a naive physics model of a fully actuated 2D cube satellite. All motion is calculated based on physical properties:</p>
+<ul>
+<li>F = ma</li>
+<li>M = Fd</li>
+<li>etc...</li>
+</ul>
+<p>The thrusters output a constant force each video frame. Every frame a thruster is active, the fuel level is reduced, reducing the mass of the satellite - the satellite accelerates way faster when it is low on fuel! You can see the fuel / mass level on the RHS of the screen</p>
+<img src="/images/previews/sat.png" alt="a screenshot" style="width:500px;height:500px">
+<p>You can control the individual thrusters by clicking or pressing on the buttons, or use the keyboard. The grey buttons combine typical thruster combinations for understandable motion. You can use the keyboard arrow keys for direction and 'a' and 'z' to set rotation using these thruster combinations.</p>
+<p>The round red button 'q' triggers an open loop control function that calculates thruster sequences and durations that will bring the stationary to a stop before navigating it back to the middle of the screen. The control sequence is:</p>
+<ul>
+<li>stop any spin</li>
+<li>stop the trajectory</li>
+<li>rotate the satellite to orient with the screen (start and stop burns)</li>
+<li>fly the satellite back to the center of the screen (start and stop burns)</li>
+<li>enter HOLD POSITION mode until a new manual input is made</li>
+</ul>
+<p>You will notice some inefficiencies in this approach - if the satelite is already spinning, why stop it spinning at an arbitraty angle only to start it again to reach the desired angle? Momentum is a useful tool, I don't use it here.&nbsp;</p>
+<p>The physics will also fall apart at high speed, acceleration, or rotation values. This is running in a webbrowser after all. You can break it nicely by getting the satellite up to speed and in a spin, then hitting the red button.</p>
+
+
+
+  </main>
+</body>
+
+</html>

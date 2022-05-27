@@ -3,6 +3,7 @@ var mySat, buttonColors, buttonLookup;
 var widthOnTwo, heightOnTwo;
 var testing = false;
 var satDim = 100;
+var link;
 
 class RCSSat {
 
@@ -797,13 +798,15 @@ function setupScreen() {
   createCanvas(windowWidth, windowHeight);
   widthOnTwo = windowWidth / 2;
   heightOnTwo = windowHeight / 2;
+  satDim = min(100, windowHeight/8);
   makeStarfield();
   buttonColors = [color('#FF0000'), color('#66FF00'), color('#1974D2'), color('#08E8DE'), color('#FFF000'), color('#FFAA1D'), color('#FF007F'), color('#7D11E1'), color('#D0FF00')];
   buttonLookup = [];
   for (let i = 0; i < buttonColors.length; i++){
     buttonLookup.push(buttonColors[i].levels)
   }
-  mySat = new RCSSat(windowWidth/2, windowHeight/2, 0, 100);
+  mySat = new RCSSat(windowWidth/2, windowHeight/2, 0, satDim);
+  link.position(10, windowHeight - 30);
 }
 
 function setup() {
@@ -812,6 +815,7 @@ function setup() {
   textStyle(NORMAL);
   rectMode(CENTER);
   frameRate(25);
+  link = createA('https://b38tn1k.com/toysat/help/', 'ABOUT');
   setupScreen();
 }
 

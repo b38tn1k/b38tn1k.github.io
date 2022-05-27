@@ -142,59 +142,62 @@ class RCSSat {
     } else if (a_pose < -PI) {
       a_pose += TWO_PI;
     }
-    let deltaa = this.control.position.targetPose[2] - a_pose;
-    // assume va is 0 for now, could be interesting efficiencies in recycling momentum
-    // alpha = alpha_i + wt
-    // assuming va = 0, alpha = wt
-    let burndur = abs(int(deltaa * 10)); // made up for now, more effort to do bigger changes faster
-    this.control.position.alphaBurnWait = burndur;
-    let initialv = burndur * 4 * this.model.force / (this.model.mass * this.model.d); // using 4 thrusters
-    let finalv = burndur * 4 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement) * this.model.d)
-    let w = (initialv + finalv) / 2;
-    this.control.position.intraAlphaBurnInterval = abs(int(deltaa / (w)));
-    if (this.control.position.intraAlphaBurnInterval > 0){
-      if (deltaa >= 0){
-        for (let i = 2; i < 10; i+=2) {
-          this.setPropulsionVectors(i, burndur);
-          this.control.position.stopAlphaBurn[i-1] = burndur;
-        }
-      } else {
-        for (let i = 1; i < 9; i+=2) {
-          this.setPropulsionVectors(i, burndur);
-          this.control.position.stopAlphaBurn[i+1] = burndur;
+    if (this.checkNoThrust()) {
+
+      let deltaa = this.control.position.targetPose[2] - a_pose;
+      // assume va is 0 for now, could be interesting efficiencies in recycling momentum
+      // alpha = alpha_i + wt
+      // assuming va = 0, alpha = wt
+      let burndur = abs(int(deltaa * 10)); // made up for now, more effort to do bigger changes faster
+      this.control.position.alphaBurnWait = burndur;
+      let initialv = burndur * 4 * this.model.force / (this.model.mass * this.model.d); // using 4 thrusters
+      let finalv = burndur * 4 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement) * this.model.d)
+      let w = (initialv + finalv) / 2;
+      this.control.position.intraAlphaBurnInterval = abs(int(deltaa / (w)));
+      if (this.control.position.intraAlphaBurnInterval > 0){
+        if (deltaa >= 0){
+          for (let i = 2; i < 10; i+=2) {
+            this.setPropulsionVectors(i, burndur);
+            this.control.position.stopAlphaBurn[i-1] = burndur;
+          }
+        } else {
+          for (let i = 1; i < 9; i+=2) {
+            this.setPropulsionVectors(i, burndur);
+            this.control.position.stopAlphaBurn[i+1] = burndur;
+          }
         }
       }
-    }
-    // assume vx = 0
-    let deltax = this.x - this.control.position.targetPose[0];
-    burndur = abs(int(deltax/10));
-    initialv = burndur * 2 * this.model.force / (this.model.mass); // using 2 thrusters
-    finalv = burndur * 2 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement))
-    let vx = (initialv + finalv) / 2;
-    this.control.position.intraXBurnInterval = abs(int(deltax / vx));
-    if (this.control.position.intraXBurnInterval > 0){
-      if (deltax > 0) {
-        this.control.position.startXBurn = [3, 4, burndur];
-        this.control.position.stopXBurn = [8, 7, burndur];
-      } else {
-        this.control.position.startXBurn = [7, 8, burndur];
-        this.control.position.stopXBurn = [3, 4, burndur];
+      // assume vx = 0
+      let deltax = this.x - this.control.position.targetPose[0];
+      burndur = abs(int(deltax/10));
+      initialv = burndur * 2 * this.model.force / (this.model.mass); // using 2 thrusters
+      finalv = burndur * 2 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement))
+      let vx = (initialv + finalv) / 2;
+      this.control.position.intraXBurnInterval = abs(int(deltax / vx));
+      if (this.control.position.intraXBurnInterval > 0){
+        if (deltax > 0) {
+          this.control.position.startXBurn = [3, 4, burndur];
+          this.control.position.stopXBurn = [8, 7, burndur];
+        } else {
+          this.control.position.startXBurn = [7, 8, burndur];
+          this.control.position.stopXBurn = [3, 4, burndur];
+        }
       }
-    }
-    // assume vy = 0
-    let deltay = this.y - this.control.position.targetPose[1];
-    burndur = abs(int(deltay/10));
-    initialv = burndur * 2 * this.model.force / (this.model.mass); // using 2 thrusters
-    finalv = burndur * 2 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement))
-    let vy = (initialv + finalv) / 2;
-    this.control.position.intraYBurnInterval = abs(int(deltay / vy));
-    if (this.control.position.intraYBurnInterval > 0){
-      if (deltay > 0) {
-        this.control.position.startYBurn = [5, 6, burndur];
-        this.control.position.stopYBurn = [1, 2, burndur];
-      } else {
-        this.control.position.startYBurn = [1, 2, burndur];
-        this.control.position.stopYBurn = [5, 6, burndur];
+      // assume vy = 0
+      let deltay = this.y - this.control.position.targetPose[1];
+      burndur = abs(int(deltay/10));
+      initialv = burndur * 2 * this.model.force / (this.model.mass); // using 2 thrusters
+      finalv = burndur * 2 * this.model.force / ((this.model.mass - burndur * this.model.fuelDecrement))
+      let vy = (initialv + finalv) / 2;
+      this.control.position.intraYBurnInterval = abs(int(deltay / vy));
+      if (this.control.position.intraYBurnInterval > 0){
+        if (deltay > 0) {
+          this.control.position.startYBurn = [5, 6, burndur];
+          this.control.position.stopYBurn = [1, 2, burndur];
+        } else {
+          this.control.position.startYBurn = [1, 2, burndur];
+          this.control.position.stopYBurn = [5, 6, burndur];
+        }
       }
     }
   }

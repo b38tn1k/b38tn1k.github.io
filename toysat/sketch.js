@@ -116,7 +116,6 @@ class RCSSat {
           this.model.active[7] = vnControlEffort;
         }
       }
-      this.control.stop.n = false;
     }
     this.control.stop.flag = this.control.stop.a || this.control.stop.n || this.control.stop.f;
     if (!this.control.stop.flag){

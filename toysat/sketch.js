@@ -276,6 +276,11 @@ class RCSSat {
     if (this.control.position.hold && frameCount % this.control.position.holdInterval == 0 && this.checkPose() > 0.1) {
       this.control.stop.flag = true;
     }
+    if (this.a > PI) {
+      this.a -= TWO_PI;
+    } else if (this.a < -PI) {
+      this.a += TWO_PI;
+    }
   }
 
   setStopSequence(){

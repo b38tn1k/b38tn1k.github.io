@@ -1,0 +1,11 @@
+---
+layout: post
+title:  "Anyways and also Sorry"
+date:   2020-05-20
+tags: releasehidden
+spotify: "https://open.spotify.com/album/5dacWKr2VzqjypHwKShdLH?si=6qqfXohQTKyZYnl9lAPX2A"
+bandcamp: "https://royalchant.bandcamp.com/album/anyways-and-also-sorry"
+applemusic: "https://music.apple.com/us/album/anyways-and-also-sorry/1618317305"
+albumcover: "/img/aaas.jpeg"
+artists: ROYAL CHANT
+---

@@ -375,11 +375,14 @@ class RCSSat {
       this.g.telem.buttons.fill(buttonColors[i]);
       if (i == 0) {
         this.g.telem.buttons.ellipse(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+        this.g.telem.buttons.fill(255);
+        this.g.telem.buttons.text('q: stop and return to home position', textX, buttonY + 2*textSize()/3);
       } else {
         this.g.telem.buttons.rect(this.g.telem.textOffset, buttonY, buttonSize, this.g.telem.fg.w);
+        this.g.telem.buttons.fill(255);
+        this.g.telem.buttons.text(String(controlString[i]), textX, buttonY + 2*textSize()/3);
       }
-      this.g.telem.buttons.fill(255);
-      this.g.telem.buttons.text(String(controlString[i]), textX, buttonY + 2*textSize()/3);
+
       buttonY += buttonGap;
     }
     let fc = 200

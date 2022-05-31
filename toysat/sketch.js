@@ -89,12 +89,13 @@ class RCSSat {
       }
     }
     if (this.control.stop.a == false && recalc) {
+      console.log('forward stop', this.vfa)
       vfControlEffort = (this.vfa * this.model.mass) / (this.model.force);
       vfControlEffort = round(vfControlEffort)/2;
       vfControlEffort = int(abs(vfControlEffort));
       this.control.stop.f = !(vfControlEffort == 0);
       if (this.control.stop.f) {
-        if (this.vf < 0) {
+        if (this.vfa < 0) {
           this.model.active[5] = vfControlEffort;
           this.model.active[6] = vfControlEffort;
         } else {
@@ -104,15 +105,18 @@ class RCSSat {
       }
     }
     if (this.control.stop.a == false && this.control.stop.f == false && recalc) {
+      console.log('normal stop', this.vna)
       vnControlEffort = (this.vna * this.model.mass) / (this.model.force);
       vnControlEffort = round(vnControlEffort)/2;
       vnControlEffort = int(abs(vnControlEffort));
       this.control.stop.n = !(vnControlEffort == 0);
       if (this.control.stop.n ) {
-        if (this.vn > 0) {
+        if (this.vna > 0) {
+          console.log('positive');
           this.model.active[3] = vnControlEffort;
           this.model.active[4] = vnControlEffort;
         } else {
+          console.log('negative');
           this.model.active[8] = vnControlEffort;
           this.model.active[7] = vnControlEffort;
         }
@@ -144,7 +148,7 @@ class RCSSat {
       a_pose += TWO_PI;
     }
     if (this.checkNoThrust()) {
-
+      console.log('attain pose');
       let deltaa = this.control.position.targetPose[2] - a_pose;
       // assume va is 0 for now, could be interesting efficiencies in recycling momentum
       // alpha = alpha_i + wt
@@ -333,12 +337,8 @@ class RCSSat {
       divergence -= PI;
     }
     divergence = abs(divergence);
-    if (abs(this.x - this.control.position.targetPose[0]) > 50) {
-      divergence += 1;
-    }
-    if (abs(this.y - this.control.position.targetPose[1]) > 50) {
-      divergence += 1;
-    }
+    let diff = sqrt((this.x - this.control.position.targetPose[0]) ** 2 + (this.y - this.control.position.targetPose[1]) ** 2)
+    divergence += diff / 25.
     return divergence;
   }
 

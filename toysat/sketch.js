@@ -112,11 +112,9 @@ class RCSSat {
       this.control.stop.n = !(vnControlEffort == 0);
       if (this.control.stop.n ) {
         if (this.vna > 0) {
-          console.log('positive');
           this.model.active[3] = vnControlEffort;
           this.model.active[4] = vnControlEffort;
         } else {
-          console.log('negative');
           this.model.active[8] = vnControlEffort;
           this.model.active[7] = vnControlEffort;
         }
@@ -318,7 +316,7 @@ class RCSSat {
   }
 
   setPropulsionVectors(i, propDuration=this.model.duration){
-    if (this.model.mass < this.model.massMin) {
+    if (this.model.mass <= this.model.massMin) {
       return;
     }
     if (i == 0) {

@@ -300,7 +300,7 @@ class RCSSat {
         }
       }
     }
-    if (this.control.position.hold && frameCount % this.control.position.holdInterval == 0 && this.checkPose() > 0.1) {
+    if (this.control.position.hold && frameCount % this.control.position.holdInterval == 0 && this.checkPose() > 0.2) {
       this.control.stop.flag = true;
     }
     if (this.a > PI) {
@@ -337,6 +337,7 @@ class RCSSat {
     divergence = abs(divergence);
     let diff = sqrt((this.x - this.control.position.targetPose[0]) ** 2 + (this.y - this.control.position.targetPose[1]) ** 2)
     divergence += diff / 25.
+    console.log('pose divergence: ', divergence);
     return divergence;
   }
 

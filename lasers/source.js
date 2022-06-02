@@ -13,7 +13,7 @@ class LIDAR {
     this.dx = 0;
     this.dy = 0;
     this.alpha = 0;
-    this.alphaIncrement = PI / 5.2;
+    this.alphaIncrement = PI / 5.234334235;
     this.scansPerFrame = 1;
     this.locomotionSpeed = 2;
     this.radius = 10;
@@ -189,9 +189,12 @@ class LIDAR {
       return;
     }
     // has the target location been seen before?
-    let c = graph.get(this.target[0], this.target[1]);
-    let seen = (c[0] > 50) || c[1] > 50;
-    console.log(seen);
+    // let c = graph.get(this.target[0], this.target[1]);
+    // let seen = (c[0] > 50);
+
+    plan.line(this.x, this.y, this.target[0], this.target[1]);
+
+
     // basic
     let r02 = 0;
     let deltaX = (this.target[0] - this.x);

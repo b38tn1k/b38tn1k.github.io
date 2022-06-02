@@ -17,36 +17,40 @@ html = '''
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <style> body {padding: 0; margin: 0;} </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
-    <script src="source.js"></script>
-
      <meta name="description" content="namenamenamename">
      <style>
-     body {
-       padding: 0;
-       margin: 0;
-       user-select: none;
-       background-color: #373a62;
+     html, body {
+      height: 100%;
+    }
+    body {
+      margin: 0;
+      display: flex;
+
+      /* This centers our sketch horizontally. */
+      justify-content: center;
+
+      /* This centers our sketch vertically. */
+      align-items: center;
+      padding: 0;
+      margin: 0;
+      user-select: none;
+      background-color: #373a62;
      }
      a:link {
       color: white;
       background-color: transparent;
       text-decoration: none;
     }
-
     a:visited {
       color: white;
       background-color: transparent;
       text-decoration: none;
     }
-
     a:hover {
       color: white;
       background-color: transparent;
       text-decoration: underline;
     }
-
     a:active {
       color: white;
       background-color: transparent;
@@ -57,6 +61,8 @@ html = '''
 
   <body scroll="no" style="overflow: hidden">
     <main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
+    <script src="source.js"></script>
     </main>
   </body>
 
@@ -99,7 +105,7 @@ function mousePressed() {
 }
 
 function setupScreen() {
-  createCanvas(windowWidth, windowHeight, WEBGL);
+  createCanvas(windowWidth, windowHeight);
   widthOnTwo = windowWidth / 2;
   heightOnTwo = windowHeight / 2;
 }

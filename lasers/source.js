@@ -31,9 +31,12 @@ class LIDAR {
     this.laserCSlider = createSlider(0, 10, 1, 1);
     this.laserCSlider.position(graphX + 5, graphY + 50);
     this.laserCSlider.style('width', '100px');
-    this.scanRanSlider = createSlider(2, 100, 9, 1);
+    this.scanRanSlider = createSlider(2, 200, 100, 1);
     this.scanRanSlider.position(graphX + 5, graphY + 10);
     this.scanRanSlider.style('width', '100px');
+    this.laserASlider = createSlider(0, TWO_PI, TWO_PI, PI/16);
+    this.laserASlider.position(graphX + 5, graphY + 70);
+    this.laserASlider.style('width', '100px');
   }
 
   goToTarget() {
@@ -97,15 +100,17 @@ class LIDAR {
     this.thetaDFrame = this.thetaDSlider.value();
     this.scanRange = this.scanRanSlider.value();
     this.laserCount = this.laserCSlider.value();
+    this.laserAngle = this.laserASlider.value();
     let occ = [];
     let free = [];
     let x, y, xInc, yInc, c;
     this.theta += this.thetaDFrame;
-    let laserArrangement = TWO_PI / this.laserCount;
+    // this.theta = PI;
+    let laserArrangement = this.laserAngle / this.laserCount;
     for (let i = 0; i < this.laserCount; i++) {
       this.theta += laserArrangement;
-      xInc = sin(this.theta) * this.robotRadius;
-      yInc = cos(this.theta) * this.robotRadius;
+      xInc = sin(this.theta)// * this.robotRadius / 2;
+      yInc = cos(this.theta)// * this.robotRadius / 2;
       x = this.x;
       y = this.y;
       for (let i = 0; i < this.scanRange; i++) {
@@ -116,12 +121,14 @@ class LIDAR {
         // converting them to local polar only to convert back to globa cart will just impact FPS
         c = world.get(int(x), int(y));
         if (c[0] != 0) {
+          free.pop();
           occ.push([int(x), int(y)]);
           let xx = x;
           let yy = y;
-          for (let t = i-1; t < this.scanRange; t++) {
-            if ((graph.get(xx, yy)[1] == 50) || (graph.get(xx, yy)[0] == 255)) {
+          for (let t = i; t < this.scanRange; t++) {
+            if ((graph.get(xx, yy)[1] != 255)){// || (graph.get(xx, yy)[0] == 255)) {
               occ.push([int(xx), int(yy)]);
+              occ.push([int(xx - xInc), int(yy - yInc)]);
               xx += xInc;
               yy += yInc;
             }
@@ -150,17 +157,17 @@ class LIDAR {
     this.occ = setifyArrOfArr(this.occ, this.occ.length);
     this.free = setifyArrOfArr(this.free, this.free.length);
     // checking
-    // let toRemove = [];
-    // for (let i = 0; i < this.occ.length; i++) {
-    //   for (let j = 0; j < this.free.length; j++) {
-    //     if ((this.free[j][0] == this.occ[i][0]) && (this.free[j][1] == this.occ[i][1])){
-    //       toRemove.push(i);
-    //     }
-    //   }
-    // }
-    // for (let i = 0; i < toRemove.length; i++) {
-    //   this.occ = this.occ.slice(i);
-    // }
+    let toRemove = [];
+    for (let i = 0; i < this.occ.length; i++) {
+      for (let j = 0; j < this.free.length; j++) {
+        if ((this.free[j][0] == this.occ[i][0]) && (this.free[j][1] == this.occ[i][1])){
+          toRemove.push(i);
+        }
+      }
+    }
+    for (let i = 0; i < toRemove.length; i++) {
+      this.occ = this.occ.slice(i);
+    }
   }
 
   update(world, graph) {
@@ -175,7 +182,7 @@ class LIDAR {
 
   draw(x = 0, y = 0) {
     plan.clear();
-    graph.clear();
+    // graph.clear();
     let rx = this.x + x;
     let ry = this.y + y;
     stroke(0, 255, 0);
@@ -296,6 +303,7 @@ class LIDAR {
     this.thetaDSlider.remove();
     this.scanRanSlider.remove();
     this.laserCSlider.remove();
+    this.laserASlider.remove();
   }
 }
 
@@ -435,5 +443,6 @@ function draw() {
   text('RANGE', graphX + 110, graphY + 10 + textSize());
   text('RATE', graphX + 110, graphY + 30+ textSize());
   text('# LASER', graphX + 110, graphY + 50+ textSize());
-  text('EXTREME VALUES WILL KILL FPS: ' + frameRate().toFixed(2), graphX + 5, graphY + 80+ textSize());
+  text('LASER ANGLE', graphX + 110, graphY + 70+ textSize());
+  text('EXTREME VALUES WILL KILL FPS: ' + frameRate().toFixed(2), graphX + 5, graphY + 100+ textSize());
 }

@@ -386,4 +386,5 @@ function draw() {
   text('RANGE', graphX + 110, graphY + 10 + textSize());
   text('RATE', graphX + 110, graphY + 30+ textSize());
   text('# LASER', graphX + 110, graphY + 50+ textSize());
+  text('EXTREME VALUES WILL KILL FPS: ' + frameRate().toFixed(2), graphX + 5, graphY + 80+ textSize());
 }

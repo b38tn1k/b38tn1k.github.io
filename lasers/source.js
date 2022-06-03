@@ -72,7 +72,7 @@ class LIDAR {
     let cangle = cos(angle);
     let sangle = sin(angle);
     for (let i = 0; i < initialPathLength; i++) {
-      if (x <= this.x) {
+      if (deltaX < 0) {
         vx = this.robotSpeed * cangle;
         vy = this.robotSpeed * sangle;
       } else {
@@ -113,7 +113,7 @@ class LIDAR {
           occ.push([int(x), int(y)]);
           let xx = x;
           let yy = y;
-          for (let t = 0; t < max(world.width, world.height); t++) {
+          for (let t = i; t < this.scanRange; t++) {
             if ((graph.get(xx, yy)[1] == 50) || (graph.get(xx, yy)[0] == 255)) {
               occ.push([int(xx), int(yy)]);
               xx += xInc;

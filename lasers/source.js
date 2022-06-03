@@ -1,10 +1,9 @@
 var widthOnTwo, heightOnTwo;
-var graph, graphX, graphY;
+var graph, graphX, graphY, graphW, graphH, graphW2, graphH2;
 var plan, planX, planY;
 var world, worldX, worldY;
 var origin, originX, originY;
 var target;
-var bg;
 
 class LIDAR {
   constructor(x, y) {
@@ -13,15 +12,26 @@ class LIDAR {
     this.dx = 0;
     this.dy = 0;
     this.alpha = 0;
-    this.alphaIncrement = PI / 5.234334235;
-    this.scansPerFrame = 1;
+    this.alphaIncrement = PI / 3.234334235;
+    this.alphaIncSlider = createSlider(0, PI, PI / 3.234334235, 0.1);
+    this.alphaIncSlider.position(graphX + 5, graphY + 30);
+    this.alphaIncSlider.style('width', '100px');
+    this.scansPerFrame = 2;
+    this.spfSlider = createSlider(0, 10, 1, 1);
+    this.spfSlider.position(graphX + 5, graphY + 50);
+    this.spfSlider.style('width', '100px');
     this.locomotionSpeed = 2;
     this.radius = 10;
-    this.scanRange = 100;
+    this.scanRanSlider = createSlider(2, 100, 9, 1);
+    this.scanRanSlider.position(graphX + 5, graphY + 10);
+    this.scanRanSlider.style('width', '100px');
+    this.scanRange = 9;
     this.target = [int(x), int(y)];
     this.pathfinding = true;
     this.path = [];
     this.free = [];
+    this.occ = [];
+    this.lidarLines = [];
   }
 
   keepOnScreen(){
@@ -88,28 +98,34 @@ class LIDAR {
     }
   }
 
-  scan(world, graph, draw=true) {
+  clear() {
+    this.alphaIncSlider.remove();
+    this.scanRanSlider.remove();
+    this.spfSlider.remove();
+  }
+
+  scan(world, graph) {
+    this.alphaIncrement = this.alphaIncSlider.value();
+    this.scanRange = this.scanRanSlider.value();
+    this.scansPerFrame = this.spfSlider.value();
     let occ = [];
     let free = [];
+    this.alpha += this.alphaIncrement;
     for (let i = 0; i < this.scansPerFrame; i++) {
-      this.alpha += this.alphaIncrement;
-      let xInc = sin(this.alpha);
-      let yInc = cos(this.alpha);
+      this.alpha += TWO_PI / this.scansPerFrame;
+      let xInc = sin(this.alpha) * this.radius;
+      let yInc = cos(this.alpha) * this.radius;
       let x = this.x;
       let y = this.y;
       let c;
-      stroke(0, 255, 0);
       for (let i = 0; i < this.scanRange; i++) {
-        c = world.get(int(x), int(y));
-        if (draw) {
-          point(x, y);
-        }
+        c = world.get(int(x), int(y)); // IRL lidar would give a range, have to convert polar to cart using r and theta. doing it here just slows down FPS. assume perfect GPS :-P
         if (c[0] != 0) {
           occ.push([int(x), int(y)]);
           let xx = x;
           let yy = y;
           for (let t = 0; t < max(world.width, world.height); t++) {
-            if (graph.get(xx, yy)[1] == 50) {
+            if ((graph.get(xx, yy)[1] == 50) || (graph.get(xx, yy)[0] == 255)) {
               occ.push([int(xx), int(yy)]);
               xx += xInc;
               yy += yInc;
@@ -124,55 +140,53 @@ class LIDAR {
         x += xInc;
         y += yInc;
       }
+      this.lidarLines.push([this.x, this.y, x, y])
     }
-    this.updateAndDrawGraph(graph, occ, free);
+    return [occ, free];
   }
 
-  updateAndDrawGraph(graph, oc, fre) {
-    let occ = [];
-    let free = [];
-    let cen = this.radius/2;
-    for (let i = 0; i < fre.length; i++) {
-      free.push([int(fre[i][0]/this.radius) * this.radius, int(fre[i][1]/this.radius) * this.radius]);
-    }
-    free = setifyArrOfArr(free, free.length);
-    for (let i = 0; i < oc.length; i++) {
-      occ.push([int(oc[i][0]/this.radius) * this.radius, int(oc[i][1]/this.radius) * this.radius]);
-    }
-    this.free.push(...free)
-    this.free = setifyArrOfArr(this.free, this.free.length);
-    occ = setifyArrOfArr(occ, occ.length);
+  updateGraph(graph, occ, free) {
     for (let i = 0; i < free.length; i++) {
-      if (graph.get(free[i][0], free[i][1])[1] == 255) {
-        graph.fill(0, 255, 0);
-        graph.square(free[i][0], free[i][1], this.radius);
-      } else {
-        graph.fill(0, 255, 0);
-        graph.square(free[i][0], free[i][1], this.radius);
-        graph.fill(0, 255, 200);
-        graph.square(free[i][0], free[i][1], cen);
-      }
+      this.free.push([int(free[i][0]/this.radius) * this.radius, int(free[i][1]/this.radius) * this.radius]);
     }
     for (let i = 0; i < occ.length; i++) {
-      graph.fill(255, 0, 0);
-      graph.square(occ[i][0], occ[i][1], this.radius);
-      let xInc = sin(this.alpha) * this.radius;
-      let yInc = cos(this.alpha) * this.radius;
+      this.occ.push([int(occ[i][0]/this.radius) * this.radius, int(occ[i][1]/this.radius) * this.radius]);
     }
+    this.occ = setifyArrOfArr(this.occ, this.occ.length);
+    this.free = setifyArrOfArr(this.free, this.free.length);
+    let toRemove = [];
+    for (let i = 0; i < this.occ.length; i++) {
+      for (let j = 0; j < this.free.length; j++) {
+        if ((this.free[j][0] == this.occ[i][0]) && (this.free[j][1] == this.occ[i][1])){
+          toRemove.push(i);
+        }
+      }
+    }
+    for (let i = 0; i < toRemove.length; i++) {
+      this.occ = this.occ.slice(i);
+    }
+
   }
 
   update(world, graph) {
     this.keepOnScreen();
     this.checkInputsAndDrive(world);
-    this.scan(world, graph);
+    let res = this.scan(world, graph);
+    this.updateGraph(graph, res[0], res[1]);
     if (this.pathfinding) {
       this.goToTarget();
     }
+
   }
 
   draw(x = 0, y = 0) {
     let rx = this.x + x;
     let ry = this.y + y;
+    stroke(0, 255, 0);
+    for (let i = 0; i < this.lidarLines.length; i++) {
+      line(this.lidarLines[i][0], this.lidarLines[i][1], this.lidarLines[i][2], this.lidarLines[i][3])
+    }
+    this.lidarLines = [];
     stroke(0);
     fill(100);
     square(rx - this.radius, ry - this.radius, this.radius * 2);
@@ -180,6 +194,22 @@ class LIDAR {
     circle(rx, ry, this.radius);
     if (this.pathfinding) {
       plan.image(target, this.target[0], this.target[1]);
+    }
+    let cen = this.radius/2;
+    for (let i = 0; i < this.free.length; i++) {
+      if (graph.get(this.free[i][0], this.free[i][1])[1] == 255) {
+        graph.fill(0, 255, 0);
+        graph.square(this.free[i][0], this.free[i][1], this.radius);
+      } else {
+        graph.fill(0, 255, 0);
+        graph.square(this.free[i][0], this.free[i][1], this.radius);
+        graph.fill(0, 255, 200);
+        graph.square(this.free[i][0], this.free[i][1], cen);
+      }
+    }
+    for (let i = 0; i < this.occ.length; i++) {
+      graph.fill(255, 0, 0);
+      graph.square(this.occ[i][0], this.occ[i][1], this.radius);
     }
   }
 
@@ -191,14 +221,14 @@ class LIDAR {
     // has the target location been seen before?
     // let c = graph.get(this.target[0], this.target[1]);
     // let seen = (c[0] > 50);
-
+    let deltaX = (this.target[0] - this.x);
+    let deltaY = (this.target[1] - this.y);
     plan.line(this.x, this.y, this.target[0], this.target[1]);
 
 
     // basic
     let r02 = 0;
-    let deltaX = (this.target[0] - this.x);
-    let deltaY = (this.target[1] - this.y);
+
     if (deltaX > r02) {
       this.goRight();
     }
@@ -265,7 +295,7 @@ function inrange(x, y, tx, ty, r){
 }
 
 function createWorld() {
-  world.background(0);
+  // world.background(0);
   let r = 0.01;
   let wh2 = world.height/2;
   let ww2 = world.width/2;
@@ -289,10 +319,6 @@ function setupScreen() {
   widthOnTwo = floor(windowWidth / 2);
   heightOnTwo = floor(windowHeight / 2);
   let ratio = width / height;
-  bg = createGraphics(windowWidth, windowHeight);
-  bg.background(0);
-  bg.noStroke();
-  bg.fill(50);
   if (ratio >= 1) {
     world = createGraphics(widthOnTwo, height);
     worldX = 0;
@@ -301,7 +327,6 @@ function setupScreen() {
     plan = createGraphics(widthOnTwo, height);
     graphX = widthOnTwo;
     graphY = 0;
-    bg.rect(0, 0, widthOnTwo, height);
   } else {
     world = createGraphics(width, heightOnTwo);
     worldX = 0;
@@ -310,19 +335,20 @@ function setupScreen() {
     plan = createGraphics(width, heightOnTwo);
     graphX = 0;
     graphY = heightOnTwo;
-    bg.rect(0, 0, width, heightOnTwo);
   }
+  graphW = graph.width/2;
+  graphH = graph.height/2;
+  graphW2 = graph.width/4;
+  graphH2 = graph.height/4;
   world.pixelDensity(1);
   origin = createGraphics(60, 60);
   origin.stroke(0, 0, 255);
-  origin.strokeWeight(5);
+  origin.strokeWeight(4);
   origin.line(30, 0, 30, 60);
   origin.line(0, 30, 60, 30);
-  originX = graphX + graph.width/2 -  30;
-  originY = graphY + graph.height/2 - 30;
   target = createGraphics(60, 60);
   target.stroke(255, 0, 255);
-  target.strokeWeight(5);
+  target.strokeWeight(4);
   target.line(30, 0, 30, 60);
   target.line(0, 30, 60, 30);
   graph.noStroke();
@@ -332,22 +358,32 @@ function setupScreen() {
   plan.stroke(255, 0, 255);
   plan.strokeWeight(5);
   createWorld();
+  myLidar.clear();
   myLidar = new LIDAR(world.width/2, world.height/2);
 }
 
 function setup() {
   frameRate(15);
   pixelDensity(1);
+  myLidar = new LIDAR(100, 100);
   setupScreen();
+  textAlign(LEFT, CENTER);
 }
 
 function draw() {
   background(50);
-  image(graph, graphX - myLidar.dx, graphY - myLidar.dy);
-  image(plan, graphX - myLidar.dx, graphY - myLidar.dy);
-  plan.clear();
-  image(world, worldX, worldY)
-  image(origin, originX, originY);
-  myLidar.draw();
+  fill(0);
+  rect(worldX, worldY, world.width, world.height);
   myLidar.update(world, graph);
+  myLidar.draw();
+  let x = graphX - myLidar.dx/2 + graphW2;
+  let y = graphY - myLidar.dy/2 + graphH2
+  image(graph, x, y, graphW, graphH);
+  plan.image(origin, myLidar.x, myLidar.y);
+  image(plan, x, y, graphW, graphH);
+  plan.clear();
+  image(world, worldX, worldY);
+  text('RANGE', graphX + 110, graphY + 10 + textSize());
+  text('RATE', graphX + 110, graphY + 30+ textSize());
+  text('# LASER', graphX + 110, graphY + 50+ textSize());
 }

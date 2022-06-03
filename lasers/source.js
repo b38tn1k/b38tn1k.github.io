@@ -375,6 +375,7 @@ function setupScreen() {
   createWorld();
   myLidar.clear();
   myLidar = new LIDAR(world.width/2, world.height/2);
+  noStroke();
 }
 
 function setup() {
@@ -386,16 +387,19 @@ function setup() {
 }
 
 function draw() {
-  background(50);
+  // background(50);
   fill(0);
   rect(worldX, worldY, world.width, world.height);
   myLidar.update(world, graph);
   myLidar.draw();
+  fill(50);
+  rect(graphX, graphY, world.width, world.height);
   let x = graphX - (myLidar.dx >> 1) + graphW2;
   let y = graphY - (myLidar.dy >> 1) + graphH2
   image(graph, x, y, graphW, graphH);
   image(plan, x, y, graphW, graphH);
   image(world, worldX, worldY);
+  fill(255);
   text('RANGE', graphX + 110, graphY + 10 + textSize());
   text('RATE', graphX + 110, graphY + 30+ textSize());
   text('# LASER', graphX + 110, graphY + 50+ textSize());

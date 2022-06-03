@@ -37,32 +37,21 @@ class LIDAR {
   }
 
   goToTarget() {
-    if (this.x == this.pathTarget[0] && this.y == this.pathTarget[1]) {
+    if ((this.x == this.pathTarget[0] && this.y == this.pathTarget[1]) || this.path.length == 0) {
       this.navigating = false;
       return;
     }
     // has the target location been seen before?
     // let c = graph.get(this.pathTarget[0], this.pathTarget[1]);
     // let seen = (c[0] > 50);
-    let deltaX = (this.pathTarget[0] - this.x);
-    let deltaY = (this.pathTarget[1] - this.y);
-    // basic
-    let r02 = 0;
+    let next = this.path.pop();
+    if (world.get(next[0], next[1])[0] == 0) {
+      this.x = next[0];
+      this.y = next[1];
+      this.dx -= next[2];
+      this.dy -= next[3];
 
-    if (deltaX > r02) {
-      this.goRight();
     }
-    if (deltaX < -r02) {
-      this.goLeft();
-    }
-    if (deltaY > r02) {
-      this.goDown();
-    }
-    if (deltaY < -r02) {
-      this.goUp();
-    }
-
-    plan.line(this.x, this.y, this.pathTarget[0], this.pathTarget[1]);
   }
 
   setTarget(x, y) {
@@ -70,6 +59,32 @@ class LIDAR {
     y = this.scaleToGraph(y);
     this.navigating = true;
     this.pathTarget = [x, y];
+    this.path = [];
+    let deltaX = (x - this.x);
+    let deltaY = (y - this.y);
+    let hypot = this.scaleToGraph(sqrt(deltaX ** 2 + deltaY ** 2));
+    let angle = 0;
+    if (deltaX != 0) {
+      angle = atan(deltaY / deltaX);
+    }
+    let initialPathLength = hypot / this.robotSpeed;
+    let vx, vy;
+    let cangle = cos(angle);
+    let sangle = sin(angle);
+    for (let i = 0; i < initialPathLength; i++) {
+      if (x <= this.x) {
+        vx = this.robotSpeed * cangle;
+        vy = this.robotSpeed * sangle;
+      } else {
+        vx = -1 * this.robotSpeed * cangle;
+        vy = -1 * this.robotSpeed * sangle;
+      }
+      this.path.push([parseFloat(x.toFixed(2)), parseFloat(y.toFixed(2)), parseFloat(vx.toFixed(2)), parseFloat(vy.toFixed(2))]);
+      x += vx;
+      y += vy;
+    }
+    this.path.push([this.x, this.y, 0, 0]);
+    this.path = setifyArrOfArr(this.path);
   }
 
   scan(world, graph) {
@@ -143,12 +158,12 @@ class LIDAR {
 
   update(world, graph) {
     this.keepOnScreen();
-    this.checkInputsAndDrive(world);
-    let res = this.scan(world, graph);
-    this.updateGraph(graph, res[0], res[1]);
     if (this.navigating) {
       this.goToTarget();
     }
+    this.checkInputsAndDrive(world);
+    let res = this.scan(world, graph);
+    this.updateGraph(graph, res[0], res[1]);
   }
 
   draw(x = 0, y = 0) {
@@ -184,7 +199,13 @@ class LIDAR {
     }
     if (this.navigating) {
       plan.image(target, this.pathTarget[0], this.pathTarget[1]);
-      plan.line(this.x, this.y, this.pathTarget[0], this.pathTarget[1]);
+      for (let i = 0; i < this.path.length; i++) {
+        plan.stroke(0, 255, 255);
+        if (i % 2 == 0) {
+          plan.stroke(255, 0, 255);
+        }
+        plan.point(this.path[i][0], this.path[i][1]);
+      }
     }
     plan.image(origin, myLidar.x, myLidar.y);
   }
@@ -394,8 +415,8 @@ function draw() {
   myLidar.draw();
   fill(50);
   rect(graphX, graphY, world.width, world.height);
-  let x = graphX - (myLidar.dx >> 1) + graphW2;
-  let y = graphY - (myLidar.dy >> 1) + graphH2
+  let x = graphX - (int(myLidar.dx) >> 1) + graphW2;
+  let y = graphY - (int(myLidar.dy) >> 1) + graphH2
   image(graph, x, y, graphW, graphH);
   image(plan, x, y, graphW, graphH);
   image(world, worldX, worldY);

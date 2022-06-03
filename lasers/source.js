@@ -55,8 +55,14 @@ class LIDAR {
   }
 
   setTarget(x, y) {
-    x = this.scaleToGraph(x);
-    y = this.scaleToGraph(y);
+    if (x == this.x) {
+      x += 0.1;
+    }
+    if (y == this.y) {
+      y += 0.1;
+    }
+    // x = this.scaleToGraph(x);
+    // y = this.scaleToGraph(y);
     this.navigating = true;
     this.pathTarget = [x, y];
     this.path = [];
@@ -113,7 +119,7 @@ class LIDAR {
           occ.push([int(x), int(y)]);
           let xx = x;
           let yy = y;
-          for (let t = i; t < this.scanRange; t++) {
+          for (let t = i-1; t < this.scanRange; t++) {
             if ((graph.get(xx, yy)[1] == 50) || (graph.get(xx, yy)[0] == 255)) {
               occ.push([int(xx), int(yy)]);
               xx += xInc;
@@ -143,17 +149,18 @@ class LIDAR {
     }
     this.occ = setifyArrOfArr(this.occ, this.occ.length);
     this.free = setifyArrOfArr(this.free, this.free.length);
-    let toRemove = [];
-    for (let i = 0; i < this.occ.length; i++) {
-      for (let j = 0; j < this.free.length; j++) {
-        if ((this.free[j][0] == this.occ[i][0]) && (this.free[j][1] == this.occ[i][1])){
-          toRemove.push(i);
-        }
-      }
-    }
-    for (let i = 0; i < toRemove.length; i++) {
-      this.occ = this.occ.slice(i);
-    }
+    // checking
+    // let toRemove = [];
+    // for (let i = 0; i < this.occ.length; i++) {
+    //   for (let j = 0; j < this.free.length; j++) {
+    //     if ((this.free[j][0] == this.occ[i][0]) && (this.free[j][1] == this.occ[i][1])){
+    //       toRemove.push(i);
+    //     }
+    //   }
+    // }
+    // for (let i = 0; i < toRemove.length; i++) {
+    //   this.occ = this.occ.slice(i);
+    // }
   }
 
   update(world, graph) {
@@ -168,6 +175,7 @@ class LIDAR {
 
   draw(x = 0, y = 0) {
     plan.clear();
+    graph.clear();
     let rx = this.x + x;
     let ry = this.y + y;
     stroke(0, 255, 0);
@@ -341,6 +349,9 @@ function createWorld() {
       let value = noise(r*i, r*j);
       if (inrange(i, j, ww2, wh2, rad)) {
         value -= 0.3;
+      }
+      if (inrange(i, j, ww2, wh2 -30, 7, 4)) {
+        value = 1;
       }
       if (value > 0.6) {
         world.set(i, j, 255);

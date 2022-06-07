@@ -55,14 +55,14 @@ class LIDAR {
       this.dy -= next[3];
     }
     let c;
-    let collision = new Set();
+    let collision = [];
     for (let i = 0; i < this.path.length; i++) {
       c = graph.get(this.path[i][0], this.path[i][1]);
       if (c[0] == 255) {
-        collision.add(i);
+        collision.push(i);
       }
     }
-    // console.log(collision);
+    console.log(collision);
   }
 
   setTarget(x, y) {

@@ -40,13 +40,12 @@ class LIDAR {
   }
 
   goToTarget() {
+    // check state
     if ((this.x == this.pathTarget[0] && this.y == this.pathTarget[1]) || this.path.length == 0) {
       this.navigating = false;
       return;
     }
-    // has the target location been seen before?
-    // let c = graph.get(this.pathTarget[0], this.pathTarget[1]);
-    // let seen = (c[0] > 50);
+    // move
     let next = this.path.pop();
     if (world.get(next[0], next[1])[0] == 0) {
       this.x = next[0];
@@ -54,6 +53,12 @@ class LIDAR {
       this.dx -= next[2];
       this.dy -= next[3];
     }
+
+
+    // has the target location been seen before?
+    // let c = graph.get(this.pathTarget[0], this.pathTarget[1]);
+    // let seen = (c[0] > 50);
+
     let c;
     let collision = [];
     for (let i = 0; i < this.path.length; i++) {

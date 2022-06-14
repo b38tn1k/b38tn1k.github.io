@@ -30,7 +30,7 @@ class LIDAR {
     }
 
     // path planning graphics hack
-    let dim = max(graphw, graphh);
+    let dim = 2 * max(graphw, graphh);
     this.pathGradientOverlay = createGraphics(dim, dim);
     this.pathGradient = createGraphics(dim, dim);
     this.pathGradient.imageMode(CENTER);
@@ -208,17 +208,17 @@ class LIDAR {
     this.occ = setifyArrOfArr(this.occ, this.occ.length);
     this.free = setifyArrOfArr(this.free, this.free.length);
     // checking
-    let toRemove = [];
-    for (let i = 0; i < this.occ.length; i++) {
-      for (let j = 0; j < this.free.length; j++) {
-        if ((this.free[j][0] == this.occ[i][0]) && (this.free[j][1] == this.occ[i][1])){
-          toRemove.push(j);
-        }
-      }
-    }
-    for (let i = 0; i < toRemove.length; i++) {
-      this.free = this.free.slice(toRemove[i]);
-    }
+    // let toRemove = [];
+    // for (let i = 0; i < this.occ.length; i++) {
+    //   for (let j = 0; j < this.free.length; j++) {
+    //     if ((this.free[j][0] == this.occ[i][0]) && (this.free[j][1] == this.occ[i][1])){
+    //       toRemove.push(j);
+    //     }
+    //   }
+    // }
+    // for (let i = 0; i < toRemove.length; i++) {
+    //   this.free = this.free.slice(toRemove[i]);
+    // }
   }
 
   update(world, graph) {

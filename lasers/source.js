@@ -6,14 +6,14 @@ var origin, originX, originY;
 var target;
 
 class LIDAR {
-  constructor(x, y) {
+  constructor(x, y, graphw, graphh) {
     this.x = int(x);
     this.y = int(y);
     this.dx = 0;
     this.dy = 0;
     this.theta = 0;
     this.thetaDFrame = PI / 3.234334235;
-    this.laserCount = 2;
+    this.laserCount = 1;
     this.robotSpeed = 2;
     this.robotRadius = 10;
     this.scanRange = 9;
@@ -23,20 +23,54 @@ class LIDAR {
     this.free = [];
     this.occ = [];
     this.scaleArray = [];
-    // graphics
+    this.recentScan = [];
+    this.recentScanPointer = 0;
+    for (let i = 0; i < 100; i++) {
+      this.recentScan.push(0)
+    }
+
+    // path planning graphics hack
+    let dim = max(graphw, graphh);
+    this.pathGradientOverlay = createGraphics(dim, dim);
+    this.pathGradient = createGraphics(dim, dim);
+    this.pathGradient.imageMode(CENTER);
+    let m = dim/2;
+    for (let i = dim; i > 0; i-=2) {
+      let c = lerpColor(color(0), color(255), i/dim);
+      this.pathGradientOverlay.stroke(c);
+      this.pathGradientOverlay.fill(c);
+      this.pathGradientOverlay.circle(m, m, i);
+    }
+
+
+
+    // graphics and control
+
+    // this.thetaDFrame = this.thetaDSlider.value();
+    // this.scanRange = this.scanRanSlider.value();
+    // this.laserCount = this.laserCSlider.value();
+    // this.laserAngle = this.laserASlider.value();
+
     this.lidarLines = [];
-    this.thetaDSlider = createSlider(0, PI, PI / 3.234334235, 0.1);
+    this.thetaDSlider = createSlider(-0, PI, PI / 3.234334235, 0.1);
     this.thetaDSlider.position(graphX + 5, graphY + 30);
     this.thetaDSlider.style('width', '100px');
-    this.laserCSlider = createSlider(0, 10, 1, 1);
+
+    this.laserCSlider = createSlider(0, 10, 2, 1);
     this.laserCSlider.position(graphX + 5, graphY + 50);
     this.laserCSlider.style('width', '100px');
+
     this.scanRanSlider = createSlider(2, 200, 20, 1);
     this.scanRanSlider.position(graphX + 5, graphY + 10);
     this.scanRanSlider.style('width', '100px');
-    this.laserASlider = createSlider(0, TWO_PI, TWO_PI, PI/16);
+
+    this.laserASlider = createSlider(0, TWO_PI, PI/16 + 0.03, PI/16);
     this.laserASlider.position(graphX + 5, graphY + 70);
     this.laserASlider.style('width', '100px');
+
+    this.recentScanHisto = createGraphics(graphw, 100);
+    this.recentScanHisto.stroke(255, 255, 255);
+    this.recentScanHisto.strokeWeight(2);
   }
 
   goToTarget() {
@@ -47,27 +81,31 @@ class LIDAR {
     }
     // move
     let next = this.path.pop();
-    if (world.get(next[0], next[1])[0] == 0) {
+    if (graph.get(next[0], next[1])[0] == 0) {
       this.x = next[0];
       this.y = next[1];
       this.dx -= next[2];
       this.dy -= next[3];
+    } else {
+      this.navigating = false;
+      return;
     }
+    // path plan
 
 
     // has the target location been seen before?
     // let c = graph.get(this.pathTarget[0], this.pathTarget[1]);
     // let seen = (c[0] > 50);
 
-    let c;
-    let collision = [];
-    for (let i = 0; i < this.path.length; i++) {
-      c = graph.get(this.path[i][0], this.path[i][1]);
-      if (c[0] == 255) {
-        collision.push(i);
-      }
-    }
-    console.log(collision);
+    // let c;
+    // let collision = [];
+    // for (let i = 0; i < this.path.length; i++) {
+    //   c = graph.get(this.path[i][0], this.path[i][1]);
+    //   if (c[0] == 255) {
+    //     collision.push(i);
+    //   }
+    // }
+    // console.log(collision);
   }
 
   setTarget(x, y) {
@@ -80,6 +118,8 @@ class LIDAR {
     // x = this.scaleToGraph(x);
     // y = this.scaleToGraph(y);
     this.navigating = true;
+    this.pathGradient.clear();
+    this.pathGradient.image(this.pathGradientOverlay, x, y);
     this.pathTarget = [x, y];
     this.path = [];
     let path = this.makePathSegment(x, y, this.x, this.y)
@@ -125,6 +165,9 @@ class LIDAR {
     let x, y, xInc, yInc, c;
     this.theta += this.thetaDFrame;
     let r = this.robotRadius / 2;
+    if (this.recentScanPointer == 100){
+      this.recentScanPointer = 0;
+    }
     // this.theta = PI;
     let laserArrangement = this.laserAngle / this.laserCount;
     for (let i = 0; i < this.laserCount; i++) {
@@ -133,26 +176,17 @@ class LIDAR {
       yInc = cos(this.theta) * r;
       x = this.x;
       y = this.y;
-      for (let i = 0; i < this.scanRange; i++) {
+      for (let i = 0; i <= this.scanRange; i++) {
         // IRL lidar would give a range and theta,
         // I would have to convert polar to cart using r and theta
         // and then convert from robot coord to global coord, shifting map to fit new areas
         // In this case, the global cartesian coords are how I access the world map already
         // converting them to local polar only to convert back to globa cart will just impact FPS
+        this.recentScan[this.recentScanPointer] = i;
         c = world.get(int(x), int(y));
         if (c[0] != 0) {
           this.free.pop();
           this.occ.push([this.scaleToGraph(int(x)), this.scaleToGraph(int(y))]);
-          // let xx = x;
-          // let yy = y;
-          // for (let t = i; t < this.scanRange; t++) {
-          //   if ((graph.get(xx, yy)[1] != 255)){// || (graph.get(xx, yy)[0] == 255)) {
-          //     occ.push([int(xx), int(yy)]);
-          //     occ.push([int(xx - xInc), int(yy - yInc)]);
-          //     xx += xInc;
-          //     yy += yInc;
-          //   }
-          // }
           break;
         } else {
           if (x > 0 && x < world.width && y > 0 && y < world.height) {
@@ -164,6 +198,9 @@ class LIDAR {
       }
       this.lidarLines.push([this.x, this.y, x, y])
     }
+    this.recentScan[this.recentScanPointer] /= this.scanRange;
+    this.recentScanPointer += 1;
+
     return [occ, free];
   }
 
@@ -212,14 +249,13 @@ class LIDAR {
 
     let cen = this.robotRadius >> 1;
     for (let i = 0; i < this.free.length; i++) {
-      if (graph.get(this.free[i][0], this.free[i][1])[1] == 255) {
-        graph.fill(0, 255, 0);
+      if (this.navigating) {
+        let y = this.pathGradient.get(this.free[i][0], this.free[i][1]);
+        graph.fill(0, 255 - y[0], y[0]);
         graph.square(this.free[i][0], this.free[i][1], this.robotRadius);
       } else {
         graph.fill(0, 255, 0);
         graph.square(this.free[i][0], this.free[i][1], this.robotRadius);
-        graph.fill(0, 255, 200);
-        graph.square(this.free[i][0], this.free[i][1], cen);
       }
     }
     for (let i = 0; i < this.occ.length; i++) {
@@ -237,6 +273,14 @@ class LIDAR {
       }
     }
     plan.image(origin, myLidar.x, myLidar.y);
+
+    // this.recentScanHisto.clear();
+    // let xg = 0;
+    // let xInt = this.recentScanHisto.width / this.recentScan.length;
+    // for (let i = 0; i < this.recentScan.length; i ++) {
+    //   this.recentScanHisto.point(xg, this.recentScanHisto.height*(this.recentScan[i]));
+    //   xg += xInt;
+    // }
   }
 
   keepOnScreen(){
@@ -428,14 +472,14 @@ function setupScreen() {
   plan.strokeWeight(5);
   createWorld();
   myLidar.clear();
-  myLidar = new LIDAR(world.width/2, world.height/2);
+  myLidar = new LIDAR(world.width/2, world.height/2, world.width, world.height);
   noStroke();
 }
 
 function setup() {
   frameRate(15);
   pixelDensity(1);
-  myLidar = new LIDAR(100, 100);
+  myLidar = new LIDAR(100, 100, 100, 100);
   setupScreen();
   textAlign(LEFT, CENTER);
 }
@@ -453,6 +497,7 @@ function draw() {
   image(graph, x, y, graphW, graphH);
   image(plan, x, y, graphW, graphH);
   image(world, worldX, worldY);
+  // image(myLidar.recentScanHisto, graphX, windowHeight - myLidar.recentScanHisto.height);
   fill(255);
   text('RANGE', graphX + 110, graphY + 10 + textSize());
   text('RATE', graphX + 110, graphY + 30+ textSize());

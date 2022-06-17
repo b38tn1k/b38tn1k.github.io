@@ -965,24 +965,23 @@ function mousePressed() {
     setupScreen();
     return false;
   }
-  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextItem, mx, my)) {
+  if (retro && showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(nextItem, mx, my)) {
     nextItem.clickCountDown = 2;
     nextAlbum();
     return false;
-
   }
-  if (showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(previousItem, mx, my)) {
+  if (retro && showItem && buttonLabels[itemToShow] == 'music' && buttonPressed(previousItem, mx, my)) {
     previousItem.clickCountDown = 2;
     previousAlbum();
     return false;
   }
-  if (showItem && buttonLabels[itemToShow] == 'demos' && buttonPressed(nextItem, mx, my)) {
+  if (retro && showItem && buttonLabels[itemToShow] == 'demos' && buttonPressed(nextItem, mx, my)) {
     nextItem.clickCountDown = 2;
     nextDemo();
     return false;
 
   }
-  if (showItem && buttonLabels[itemToShow] == 'demos' && buttonPressed(previousItem, mx, my)) {
+  if (retro && showItem && buttonLabels[itemToShow] == 'demos' && buttonPressed(previousItem, mx, my)) {
     previousItem.clickCountDown = 2;
     previousDemo();
     return false;
@@ -1024,19 +1023,23 @@ function keyPressed() {
 }
 
 function nextAlbum() {
+  console.log(albumPointer);
+  console.log(discography.length);
   discography[albumPointer].div.hide();
   albumPointer += 1;
   if (albumPointer >= discography.length) {
-    albumPointer = 0;
+    albumPointer = discography.length - 1;
   }
   discography[albumPointer].div.show();
+  console.log(albumPointer);
 }
 
 function previousAlbum() {
   discography[albumPointer].div.hide();
   albumPointer -= 1;
   if (albumPointer == -1) {
-    albumPointer = discography.length-1;
+    // albumPointer = discography.length-1;
+    albumPointer = 0;
   }
   discography[albumPointer].div.show();
 }
@@ -1045,7 +1048,8 @@ function nextDemo() {
   demos[demoPointer].div.hide();
   demoPointer += 1;
   if (demoPointer >= demos.length) {
-    demoPointer = 0;
+    // demoPointer = 0;
+    demoPointer = demos.length - 1;
   }
   demos[demoPointer].div.show();
 }
@@ -1054,7 +1058,8 @@ function previousDemo() {
   demos[demoPointer].div.hide();
   demoPointer -= 1;
   if (demoPointer == -1) {
-    demoPointer = demos.length-1;
+    // demoPointer = demos.length-1;
+    demoPointer = 0;
   }
   demos[demoPointer].div.show();
 }
@@ -1070,6 +1075,7 @@ function setup() {
   setupPostDiv();
   frameRate(5);
   setupScreen();
+  console.log('hello');
 }
 
 function draw(){

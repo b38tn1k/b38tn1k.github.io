@@ -21,9 +21,9 @@ var itemToShow = 1;
 var showBackgroundButton;
 var showBackground = true;
 var invertColorsButton;
-var invertColors = false;
+var invertColors = true;
 var retroButton;
-var retro = true;
+var retro = false;
 // some fun
 var sprites = [];
 var spriteCount = 25;

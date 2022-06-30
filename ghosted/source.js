@@ -155,7 +155,12 @@ function setup() {
 
 function draw() {
   background(50, 100, 50);
+  bgX = min(bgX, bgTexture.width >> 1);
+  bgX = max(bgX, 0);
+  bgY = min(bgY, bgTexture.height >> 1);
+  bgY = max(bgY, 0);
   image(bgTexture, bgX, bgY);
+
   if (keyIsDown(DOWN_ARROW)){
     player.moveDown();
   }

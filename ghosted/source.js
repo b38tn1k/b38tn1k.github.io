@@ -1,5 +1,6 @@
 
 var player;
+var bgTexture, bgX, bgY;
 
 class Player {
   constructor(x, y) {
@@ -20,16 +21,32 @@ class Player {
     image(this.spriteSheet, this.x, this.y, this.width, this.height, this.width * this.currentFrame, 0, this.width, this.height);
   }
   moveUp(speed = 1) {
-    this.y -= speed;
+    if (this.y > windowHeight * 0.2) {
+      this.y -= speed;
+    } else {
+      bgY += speed;
+    }
   }
   moveDown(speed = 1) {
-    this.y += speed;
+    if (this.y < windowHeight * 0.9) {
+      this.y += speed;
+    } else {
+      bgY -= speed;
+    }
   }
   moveLeft(speed = 1) {
-    this.x -= speed;
+    if (this.x > windowWidth * 0.1) {
+      this.x -= speed;
+    } else {
+      bgX += speed;
+    }
   }
   moveRight(speed = 1) {
-    this.x += speed;
+    if (this.x < windowWidth * 0.9) {
+      this.x += speed;
+    } else {
+      bgX -= speed;
+    }
   }
   moveWithPress(x, y, speed = 1){
     let dx = this.x - x;
@@ -37,8 +54,19 @@ class Player {
     let angle = atan2(dy, dx);
     //sohcahtoa
     // sin(angle) * h = 0
-    this.x += cos(angle) * speed;
-    this.y += sin(angle) * speed;
+    if (((this.x - cos(angle) * speed) < windowWidth * 0.9) && ((this.x - cos(angle) * speed) > windowWidth * 0.1)) {
+      this.x -= cos(angle) * speed;
+    } else {
+      bgX += cos(angle) * speed;
+    }
+
+    if (((this.y  - sin(angle) * speed)< windowHeight * 0.9) && ((this.y  - sin(angle) * speed) > windowHeight * 0.2)) {
+      this.y -= sin(angle) * speed;
+    } else {
+      bgY += sin(angle) * speed;
+    }
+
+    // this.y += sin(angle) * speed;
   }
 }
 
@@ -55,7 +83,6 @@ function makeGhostSpriteSheet(w, h, frames) {
   spS.circle((w * 4)/10, (h * 9)/20, 10);
   spS.circle((w * 6)/10, (h * 9)/20, 10);
   spS.noErase();
-  // spS.fill(255, 0, 0);
   spS.circle((w * 4)/10, (h * 9)/20, 3);
   spS.circle((w * 6)/10, (h * 9)/20, 3);
   let sheet = createGraphics(w * frames, (3*h)/2);
@@ -72,6 +99,26 @@ function makeGhostSpriteSheet(w, h, frames) {
   return sheet;
 }
 
+function makeBackgroundTexture() {
+  bgTexture = createGraphics(2*windowWidth, 2*windowHeight);
+  bgX = windowWidth;
+  bgY = windowHeight;
+  // draw grass clumps
+  bgTexture.noStroke();
+  bgTexture.fill(100, 150, 100);
+  let startX, startY, width, length;
+  for (let i = 0; i < (bgTexture.width * bgTexture.height) / 20000; i++) {
+    startX = random(bgTexture.width);
+    startY = random(bgTexture.height);
+    width = random(3, 7);
+    length = random(10, 30);
+    for (let j = 0; j < length; j++) {
+      bgTexture.triangle(startX, startY, random(startX, startX + width), startY - random(5, 10) * sin((j / length) * PI), startX + width, startY);
+      startX += width;
+      width = random(3, 7);
+    }
+  }
+}
 
 function keyPressed() {
   if (key == ' ') {
@@ -88,21 +135,27 @@ function windowResized() {
 }
 
 function mousePressed() {
-  console.log(mouseX, mouseY)
+  // console.log(mouseX, mouseY)
 }
 
 function setupScreen() {
   createCanvas(windowWidth, windowHeight);
+}
+
+function setupGame() {
   player = new Player(windowWidth>>1, windowHeight>>1);
+  makeBackgroundTexture();
 }
 
 function setup() {
   imageMode(CENTER);
   setupScreen();
+  setupGame();
 }
 
 function draw() {
   background(50, 100, 50);
+  image(bgTexture, bgX, bgY);
   if (keyIsDown(DOWN_ARROW)){
     player.moveDown();
   }

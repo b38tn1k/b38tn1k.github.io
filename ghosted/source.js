@@ -31,6 +31,15 @@ class Player {
   moveRight(speed = 1) {
     this.x += speed;
   }
+  moveWithPress(x, y, speed = 1){
+    let dx = this.x - x;
+    let dy = this.y - y;
+    let angle = atan2(dy, dx);
+    //sohcahtoa
+    // sin(angle) * h = 0
+    this.x += cos(angle) * speed;
+    this.y += sin(angle) * speed;
+  }
 }
 
 function makeGhostSpriteSheet(w, h, frames) {
@@ -46,17 +55,21 @@ function makeGhostSpriteSheet(w, h, frames) {
   spS.circle((w * 4)/10, (h * 9)/20, 10);
   spS.circle((w * 6)/10, (h * 9)/20, 10);
   spS.noErase();
+  // spS.fill(255, 0, 0);
+  spS.circle((w * 4)/10, (h * 9)/20, 3);
+  spS.circle((w * 6)/10, (h * 9)/20, 3);
   let sheet = createGraphics(w * frames, (3*h)/2);
   let bob = 0;
-  sheet.fill(100, 100, 100, 100);
+  sheet.fill(0, 0, 0, 40);
   sheet.noStroke();
   for (let i = 0; i < frames; i++) {
     bob = sin((i / frames + 1) * PI);
     sheet.image(spS, i*w, bob * 10.0);
     sheet.ellipse(w/2 + i*w, h, w/2 + (4.0 * bob), h/6 - (2.0 * bob));
+    sheet.ellipse(w/2 + i*w, h, w/3 + (4.0 * bob), h/9 - (2.0 * bob));
+    sheet.ellipse(w/2 + i*w, h, w/5 + (4.0 * bob), h/11 - (2.0 * bob));
   }
   return sheet;
-
 }
 
 
@@ -76,7 +89,6 @@ function windowResized() {
 
 function mousePressed() {
   console.log(mouseX, mouseY)
-
 }
 
 function setupScreen() {
@@ -90,7 +102,7 @@ function setup() {
 }
 
 function draw() {
-  clear();
+  background(50, 100, 50);
   if (keyIsDown(DOWN_ARROW)){
     player.moveDown();
   }
@@ -102,6 +114,9 @@ function draw() {
   }
   if (keyIsDown(RIGHT_ARROW)){
     player.moveRight();
+  }
+  if (mouseIsPressed === true) {
+    player.moveWithPress(mouseX, mouseY);
   }
   player.draw();
 

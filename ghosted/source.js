@@ -154,28 +154,53 @@ function setup() {
 }
 
 function draw() {
-  background(50, 100, 50);
+  clear();
   bgX = min(bgX, bgTexture.width >> 1);
   bgX = max(bgX, 0);
   bgY = min(bgY, bgTexture.height >> 1);
   bgY = max(bgY, 0);
   image(bgTexture, bgX, bgY);
+  let cameraCenter = true;
 
   if (keyIsDown(DOWN_ARROW)){
     player.moveDown();
+    cameraCenter = false;
   }
   if (keyIsDown(LEFT_ARROW)){
     player.moveLeft();
+    cameraCenter = false;
   }
   if (keyIsDown(UP_ARROW)){
     player.moveUp();
+    cameraCenter = false;
   }
   if (keyIsDown(RIGHT_ARROW)){
     player.moveRight();
+    cameraCenter = false;
   }
   if (mouseIsPressed === true) {
     player.moveWithPress(mouseX, mouseY);
+    cameraCenter = false;
   }
   player.draw();
-
+  if (cameraCenter === true) {
+    if (bgX > 0 && bgX < windowWidth){
+      if (int(player.x) <= windowWidth >> 1) {
+        player.x += 1;
+        bgX += 1;
+      } else {
+        player.x -= 1;
+        bgX -= 1;
+      }
+    }
+    if (bgY > 0 && bgY < windowHeight){
+      if (int(player.y) <= windowHeight >> 1) {
+        player.y += 1;
+        bgY += 1;
+      } else {
+        player.y -= 1;
+        bgY -= 1;
+      }
+    }
+  }
 }

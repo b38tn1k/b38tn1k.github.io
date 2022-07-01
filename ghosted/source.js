@@ -55,15 +55,15 @@ class Player {
     //sohcahtoa
     // sin(angle) * h = 0
     if (((this.x - cos(angle) * speed) < windowWidth * 0.9) && ((this.x - cos(angle) * speed) > windowWidth * 0.1)) {
-      this.x -= cos(angle) * speed;
+      this.x += cos(angle) * speed;
     } else {
-      bgX += cos(angle) * speed;
+      bgX -= cos(angle) * speed;
     }
 
     if (((this.y  - sin(angle) * speed)< windowHeight * 0.9) && ((this.y  - sin(angle) * speed) > windowHeight * 0.2)) {
-      this.y -= sin(angle) * speed;
+      this.y += sin(angle) * speed;
     } else {
-      bgY += sin(angle) * speed;
+      bgY -= sin(angle) * speed;
     }
 
     // this.y += sin(angle) * speed;
@@ -184,6 +184,7 @@ function draw() {
   }
   player.draw();
   if (cameraCenter === true) {
+    // console.log(bgX, (windowWidth))
     if (bgX > 0 && bgX < windowWidth){
       if (int(player.x) <= windowWidth >> 1) {
         player.x += 1;

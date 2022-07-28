@@ -88,7 +88,9 @@ function draw() {
   image(card, 0, 0);
   fill(0);
   textSize(titleTextSize);
+  textStyle(BOLD);
   text(cards[index]['title'], textX, textY, textW);
+  textStyle(NORMAL);
   textSize(tTextSize);
   text(cards[index]['text'], textX, textY + (1.5* titleTextSize), textW);
   functionList[index]();
@@ -173,13 +175,24 @@ function segmentation() {
   ani.clear();
   ani.noStroke();
   ani.fill(rCols[0]);
-  ani.circle(ani.width/2, ani.height/2, cr);
-  ani.strokeWeight(mStroke);
-  ani.stroke(255, 255, 255, 127.5 + 127.5 * sin(millis() / 300));
-  ani.line(ani.width/2, 0, ani.width/2, ani.height);
-  ani.line(gap, ani.height/2, ani.width, ani.height/2);
-  // ani.line(gap, icr, igap, cr);
-  // ani.line(gap, cr, igap, icr);
+  let start = 0;
+  let inc = HALF_PI;
+  let g4 = gap/6;
+  let ofs = g4 + g4 * sin(millis() / 700);
+  ani.arc(ani.width/2 + ofs, ani.height/2 + ofs, cr, cr, start, start+inc);
+  start += inc;
+  ani.arc(ani.width/2 - ofs, ani.height/2 + ofs, cr, cr, start, start+inc);
+  start += inc;
+  ani.arc(ani.width/2 - ofs, ani.height/2 - ofs, cr, cr, start, start+inc);
+  start += inc;
+  ani.arc(ani.width/2 + ofs, ani.height/2 - ofs, cr, cr, start, start+inc);
+  start += inc;
+
+  // ani.circle(ani.width/2, ani.height/2, cr);
+  // ani.strokeWeight(mStroke);
+  // ani.stroke(255, 255, 255, 127.5 + 127.5 * sin(millis() / 300));
+  // ani.line(ani.width/2, 0, ani.width/2, ani.height);
+  // ani.line(gap, ani.height/2, ani.width, ani.height/2);
 }
 
 function takeout() {

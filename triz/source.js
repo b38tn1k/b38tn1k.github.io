@@ -3,7 +3,6 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index;
 var textX, textY, textW;
-var newInfo;
 var cardslength = 3;
 var ani, aniX, aniY;
 var titleTextSize = 32;
@@ -33,17 +32,23 @@ function preload() {
 }
 
 function chooseIndex(){
-  index = int(random(0, cardslength));
-  newInfo = true;
+  let old_index = index;
+  while (index == old_index) {
+    index = int(random(0, cardslength));
+  }
+  rCols = threerCols();
 }
 
 function threerCols() {
   let c = [color([0, 0, 255]),color([0, 255, 255]),color([0, 255, 0]),color([255, 255, 0]),color([255, 0, 0])];
-  while (c.length > 3) {
-    let i = int(random(0, c.length));
-    c.pop(i);
+  let j = [];
+  while (j.length < 3) {
+    for (let k = 0; k < int(random(0, c.length)); k++){
+      c.push(c.shift());
+    }
+    j.push(c.pop());
   }
-  return(c);
+  return(j);
 }
 
 function segmentation() {
@@ -155,10 +160,6 @@ function draw() {
   text(cards[index]['title'], textX, textY, textW);
   textSize(tTextSize);
   text(cards[index]['text'], textX, textY + (1.5* titleTextSize), textW);
-  if (newInfo == true) {
-    newInfo = false;
-    rCols = threerCols();
-  }
   functionList[index]();
   image(ani, aniX, aniY);
 

@@ -221,7 +221,7 @@ function asymmetry(){
   let ltime = int(millis() / 2000); // second and millis not synced?
   let inc = PI/8;
   if (ltime % 2 == 0){
-    start = (millis()/1000);
+    start = (millis()/1000) * HALF_PI;
   }
   for (let i = 0; i < 17; i++) {
     ani.fill(rCols[i%2]);

@@ -6,7 +6,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 5;
+var cardslength = 6;
 var ani, aniX, aniY, cr, icr, gap, igap;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -71,6 +71,7 @@ function setupScreen() {
   functionList.push(localquality);
   functionList.push(asymmetry);
   functionList.push(merging);
+  functionList.push(universality);
 }
 
 function setup() {
@@ -301,6 +302,9 @@ function merging(){
     let lye = lys + inc  + inc * (sin(millis() / 300));
     ani.line(l2s, lys, l2e, lye);
   }
+}
 
+function universality(){
+  ani.clear();
 }
 // divide, adapte, pre-empt, change property, change material, make efficient, make harmless, save labor

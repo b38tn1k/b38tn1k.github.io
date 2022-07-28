@@ -12,7 +12,7 @@
   },
   {
     "title": "Local Quality",
-    "text": "Consider the utility of each feature. \n\nDifferent parts of the object may perform different functions.\n\nA knife has a handle and a blade.\n\nA pencil with an eraser.",
+    "text": "Consider the utility of each feature. \n\nDifferent parts of the object may perform different functions.\n\nA knife has a handle and a blade.\n\nA pencil with an eraser.\nA claw hammer.",
     "type": "Divide"
   },
   {
@@ -22,12 +22,12 @@
   },
   {
     "title": "Merging",
-    "text": "Merge the operations of identical objects. \n\nMake similar objects identical. \n\nMake operations parallel.",
+    "text": "Merge the operations of similar objects. \n\nMake similar objects identical. \n\nMake operations parallel.\n\nA phone is also a camera and a torch.",
     "type": ""
   },
   {
     "title": "Universality",
-    "text": "Increase part features to increase utility.\n\nThe Spork, Heelys, The Swiss Army Knife.\nAdd features to help with the next step.",
+    "text": "Design features to have multiple functions.\n\nThe Spork, Heelys, The Swiss Army Knife.\nAdjustable Wrenches and Multi-Bit Screwdriver kits.\n\nUse a spade to row a boat.\n Use an axe as a door stop.",
     "type": ""
   },
   {

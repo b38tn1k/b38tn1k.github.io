@@ -279,6 +279,7 @@ function merging(){
   ani.stroke(rCols[2]);
   ani.line(gap, inc, gap, ani.height - inc);
   ani.line(l2s, inc, l2s, ani.height - inc);
+  ani.line(l2e, icr + inc + inc * (sin(millis() / 300)), l2e, 2*inc + inc * (sin(millis() / 300)) + 3.8*gap);
 
   for (let i = 0; i < 4; i++){
     ani.stroke(rCols[0]);
@@ -304,7 +305,85 @@ function merging(){
   }
 }
 
+function equiTriangle(x, y, l, normal=false){
+  vertices = [];
+  l = l * sin(60);
+  if (normal == true) {
+    vertices.push(x-l);
+    vertices.push(y);
+    vertices.push(x+l);
+    vertices.push(y - l);
+    vertices.push(x+l);
+    vertices.push(y + l);
+  } else {
+    vertices.push(x);
+    vertices.push(y+l);
+    vertices.push(x+l);
+    vertices.push(y - l);
+    vertices.push(x-l);
+    vertices.push(y - l);
+    // vertices.push(x);
+    // vertices.push(y-l);
+    // vertices.push(x-l);
+    // vertices.push(y + l);
+    // vertices.push(x+l);
+    // vertices.push(y + l);
+  }
+  return vertices;
+}
+
 function universality(){
   ani.clear();
+  ani.noStroke();
+  let timer = sin(millis()/600);
+  let timer2 = cos(millis()/600);
+
+  // wedge
+  let gapOn2 = gap/2;
+  let gap2 = 2*gap;
+  let gapSin60 = gap * sin(60);
+  let t1x = ani.width/2 + ani.width/4 * timer + gapSin60;
+  let t1y = ani.height/4;
+
+  let rx = ani.width/2;
+  let r1y = ani.height/4 - gapOn2;
+  let r2y = ani.height/4;
+
+  if (timer2 < 0){
+    if (timer > 0) {
+      r1y += gapSin60;
+      r2y -= gapSin60;
+      t1x = 3*ani.width/4 + gapSin60;
+    } else {
+      t1x = ani.width/4 + gapSin60;
+    }
+  } else {
+    if (timer > 0) {
+      r1y += timer * gapSin60;
+      r2y -= timer  * gapSin60;
+    }
+  }
+  let tri1 = equiTriangle(t1x, t1y, gap, true);
+  ani.fill(rCols[1]);
+  ani.rect(rx, r1y, gap2, gapOn2);
+  ani.rect(rx, r2y, gap2, gapOn2);
+  ani.fill(rCols[0]);
+  ani.triangle(tri1[0], tri1[1], tri1[2], tri1[3], tri1[4], tri1[5]);
+  // stop
+  ani.fill(rCols[0]);
+  let t2x = 3*ani.width/4;
+  let t2y = 3*ani.height/4;
+  let tri2 = equiTriangle(t2x, t2y, gap, false);
+  ani.triangle(tri2[0], tri2[1], tri2[2], tri2[3], tri2[4], tri2[5]);
+  ani.fill(rCols[1]);
+  let ballx = ani.width/2 + ((ani.width/4) * timer) + gapSin60;
+  if (timer2 < 0){
+    if (timer > 0) {
+      ballx = 3*ani.width/4 + gapSin60;
+    } else {
+      ballx = ani.width/4 + gapSin60;
+    }
+  }
+  ani.circle(ballx, t2y, gapOn2);
 }
 // divide, adapte, pre-empt, change property, change material, make efficient, make harmless, save labor

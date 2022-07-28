@@ -4,7 +4,8 @@ var card, cardDeck;
 var cards, index;
 var textX, textY, textW;
 var cardslength = 3;
-var ani, aniX, aniY;
+var ani, aniX, aniY, cr, icr, gap, igap;
+var aniLayers = {};
 var titleTextSize = 32;
 var tTextSize = 16;
 var functionList;
@@ -55,25 +56,19 @@ function segmentation() {
   ani.clear();
   ani.noStroke();
   ani.fill(rCols[0]);
-  let cr = (ani.height * 0.9);
-  let icr = (ani.height * 0.1);
-  let gap = (ani.width - ani.height)/2;
   ani.circle(ani.width/2, ani.height/2, cr);
   ani.strokeWeight(mStroke);
   ani.stroke(255, 255, 255, 127.5 + 127.5 * sin(millis() / 600));
   ani.line(ani.width/2, 0, ani.width/2, ani.height);
   ani.line(gap, ani.height/2, ani.width, ani.height/2);
-  ani.line(gap, icr, ani.width-gap, cr);
-  ani.line(gap, cr, ani.width-gap, icr);
+  ani.line(gap, icr, igap, cr);
+  ani.line(gap, cr, igap, icr);
 }
 
 function takeout() {
   ani.clear();
   ani.noStroke();
   ani.fill(rCols[0]);
-  let cr = (ani.height * 0.8);
-  let icr = (ani.height * 0.2);
-  let gap = (ani.width - ani.height)/2;
   let updateValX = abs(gap* sin(millis() / 1000));
   let updateValY = abs(icr/2* sin(millis() / 1000));
   ani.arc(ani.width/2 + updateValX, ani.height/2 - updateValY, cr, cr, 0, HALF_PI);
@@ -85,6 +80,50 @@ function takeout() {
 
 function localquality() {
   ani.clear();
+  ani.strokeWeight(mStroke);
+  ani.stroke(0);
+  let ltime = int(millis() / 1000); // second and millis not synced?
+  let normd = ((millis() % 1000)/1000);
+  let pos = (igap - gap) * normd;
+  let gOn2 = gap * 0.5;
+  if (!('pencil' in aniLayers)){
+    aniLayers['pencil'] = createGraphics(gap, 3*gap);
+    aniLayers['pencil'].noStroke();
+    aniLayers['pencil'].fill(rCols[0]);
+    aniLayers['pencil'].triangle(gOn2, 3*gap, 0, 2*gap, gap, 2*gap);
+    aniLayers['pencil'].fill(rCols[1]);
+    aniLayers['pencil'].rect(0, gap, gap, gap);
+    aniLayers['pencil'].fill(rCols[2]);
+    aniLayers['pencil'].arc(gOn2, gap, gap, 2*gap, PI, TWO_PI);
+
+    aniLayers['ipencil'] = createGraphics(gap, 3*gap);
+    aniLayers['ipencil'].noStroke();
+    aniLayers['ipencil'].fill(rCols[0]);
+    aniLayers['ipencil'].triangle(gOn2, 0, 0, gap, gap, gap);
+    aniLayers['ipencil'].fill(rCols[1]);
+    aniLayers['ipencil'].rect(0, gap, gap, gap);
+    aniLayers['ipencil'].fill(rCols[2]);
+    aniLayers['ipencil'].arc(gOn2, 2*gap, gap, 2*gap, TWO_PI, PI);
+  }
+
+  if (ltime % 6 == 0) {
+    ani.line(gap, cr, gap + pos, cr);
+    ani.image(aniLayers['pencil'], gOn2 + pos, cr - 3*gap);
+  } else if (ltime % 6 == 1) {
+    ani.line(gap, cr, igap, cr);
+    ani.image(aniLayers['pencil'], igap - gOn2, cr - 3*gap);
+  } else if (ltime % 6 == 2) {
+    ani.line(gap, cr, igap, cr);
+    ani.image(aniLayers['ipencil'], igap - gOn2, cr - 3*gap);
+  } else if (ltime % 6 == 3) {
+    ani.line(gap, cr, igap - pos, cr);
+    ani.image(aniLayers['ipencil'], igap - pos - gOn2, cr - 3*gap);
+  } else if (ltime % 6 == 4) {
+    ani.image(aniLayers['ipencil'], gOn2, cr - 3*gap);
+  } else {
+    ani.image(aniLayers['pencil'], gOn2, cr - 3*gap);
+  }
+
 
 }
 
@@ -144,6 +183,10 @@ function drawCard() {
   aniY = heightOnTwo - int(0.47 * h);
   titleTextSize = int(h / 16);
   tTextSize = int(titleTextSize/2);
+  cr = (ani.height * 0.8);
+  icr = (ani.height * 0.2);
+  gap = (ani.width - ani.height)/2;
+  igap = ani.width - gap;
 }
 
 function setup() {

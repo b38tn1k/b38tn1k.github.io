@@ -12,12 +12,12 @@
   },
   {
     "title": "Local Quality",
-    "text": "Consider the utility of each feature in the object. \nDifferent parts of the object may perform different functions.\nA knife has a handle and an edge.\nA pencil with an eraser.",
+    "text": "Consider the utility of each feature in the object. \nDifferent parts of the object may perform different functions.\nA knife has a handle and a blade.\nA pencil with an eraser.",
     "type": "Divide"
   },
   {
     "title": "Asymmetry",
-    "text": "",
+    "text": "Make the design asymmetrical.\nWould asymmetry improve ergonomics?\nWould asymmetry improve stability?",
     "type": "Divide"
   },
   {

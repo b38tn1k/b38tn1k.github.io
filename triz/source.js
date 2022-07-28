@@ -79,7 +79,6 @@ function setup() {
 }
 
 function draw() {
-
   clear();
   image(cardDeck, 0, 0);
   image(card, 0, 0);
@@ -89,10 +88,10 @@ function draw() {
   text(cards[index]['text'], textX, textY + (1.5* titleTextSize), textW);
   functionList[index]();
   image(ani, aniX, aniY);
-
 }
 
 function drawCard() {
+  rCols = threerCols();
   cardDeck = createGraphics(windowWidth, windowHeight);
   card = createGraphics(windowWidth, windowHeight);
   let y_ratio = 8.8;
@@ -216,6 +215,24 @@ function localquality() {
 }
 
 function asymmetry(){
-
+  ani.clear();
+  ani.noStroke();
+  let start = 0;
+  let ltime = int(millis() / 2000); // second and millis not synced?
+  let inc = PI/8;
+  if (ltime % 2 == 0){
+    start = (millis()/1000);
+  }
+  for (let i = 0; i < 17; i++) {
+    ani.fill(rCols[i%2]);
+    ani.arc(ani.width/2, ani.height/2, cr, cr, start, start+inc);
+    start += inc;
+  }
+  if (ltime % 2 == 1){
+    ani.fill(255);
+    ani.rect(0, cr, ani.width, ani.height);
+  }
+  ani.fill(rCols[0]);
+  ani.circle(ani.width/2, ani.height/2, icr);
 }
 // divide, adapte, pre-empt, change property, change material, make efficient, make harmless, save labor

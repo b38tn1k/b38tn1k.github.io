@@ -1,15 +1,203 @@
 [
   {
     "title": "Segmentation",
-    "text": "Divide a design into seperate components. Increase fragmentation. How would IKEA do it?"
+    "text": "Divide a design into seperate components. \nIncrease fragmentation. \nHow would IKEA do it?\nWould the User want to extend it in the future?\nDo you need to carry an empty fuel tank into orbit?",
+    "type": "Divide"
   },
-{
+  {
     "title": "Take It Out",
-    "text": "Remove and isolate the problem component. Find a new location. Which components are necessary?"
-  },
-{
-    "title": "Local Quality",
-    "text": "Consider the utility of each feature in the object."
-  }
+    "text": "Isolate the problem component. \nCan it be relocated? \nPut the noisey air compressor outside and use a vent.\nYou don't need a drill, you need to make a hole",
+    "type" : "Divide"
 
+  },
+  {
+    "title": "Local Quality",
+    "text": "Consider the utility of each feature in the object. \nDifferent parts of the object may perform different functions.\nA knife has a handle and an edge.\nA pencil with an eraser.",
+    "type": "Divide"
+  },
+  {
+    "title": "Asymmetry",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Merging",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Universality",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Matryoshka",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Anti-weight",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Preliminary Anti-actions",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Preliminary Actions",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Beforehand Cushioning",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Equipontentiality",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "The Other War Round",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Curvature",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Dynamics",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Partial or Excessive Actions",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Another Dimension",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Mechanical Vibration",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Periodic Action",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Continuity of Useful Action",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Skipping",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Blessing in Disguise",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Feedback",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Intermediary",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Self-service",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Copying",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Consider Consumable Objects",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Mechanics Substitution",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Pneumatics and Hydraulics",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Flexible Shells and Thin Films",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Porous Materials",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Color Changes",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Homogeneity",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Discarding and Recovering",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Parameter Changes",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Phase Transitions",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Thermal Expansion",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Strong Oxidants",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Inert Atmosphere",
+    "text": "",
+    "type": ""
+  },
+  {
+    "title": "Composite Materials",
+    "text": "",
+    "type": ""
+  }
 ]

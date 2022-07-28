@@ -5,6 +5,12 @@ var cards, index;
 var textX, textY, textW;
 var newInfo;
 var cardslength = 3;
+var ani, aniX, aniY;
+var titleTextSize = 32;
+var tTextSize = 16;
+var functionList;
+var rCols = [];
+var mStroke;
 
 function keyPressed() {
   chooseIndex();
@@ -24,13 +30,57 @@ function mousePressed() {
 
 function preload() {
   cards = loadJSON('cards.json');
-  console.log(cards.length);
 }
 
 function chooseIndex(){
   index = int(random(0, cardslength));
   newInfo = true;
-  console.log(index);
+}
+
+function threerCols() {
+  let c = [color([0, 0, 255]),color([0, 255, 255]),color([0, 255, 0]),color([255, 255, 0]),color([255, 0, 0])];
+  while (c.length > 3) {
+    let i = int(random(0, c.length));
+    c.pop(i);
+  }
+  return(c);
+}
+
+function segmentation() {
+  ani.clear();
+  ani.noStroke();
+  ani.fill(rCols[0]);
+  let cr = (ani.height * 0.9);
+  let icr = (ani.height * 0.1);
+  let gap = (ani.width - ani.height)/2;
+  ani.circle(ani.width/2, ani.height/2, cr);
+  ani.strokeWeight(mStroke);
+  ani.stroke(255, 255, 255, 127.5 + 127.5 * sin(millis() / 600));
+  ani.line(ani.width/2, 0, ani.width/2, ani.height);
+  ani.line(gap, ani.height/2, ani.width, ani.height/2);
+  ani.line(gap, icr, ani.width-gap, cr);
+  ani.line(gap, cr, ani.width-gap, icr);
+}
+
+function takeout() {
+  ani.clear();
+  ani.noStroke();
+  ani.fill(rCols[0]);
+  let cr = (ani.height * 0.8);
+  let icr = (ani.height * 0.2);
+  let gap = (ani.width - ani.height)/2;
+  let updateValX = abs(gap* sin(millis() / 1000));
+  let updateValY = abs(icr/2* sin(millis() / 1000));
+  ani.arc(ani.width/2 + updateValX, ani.height/2 - updateValY, cr, cr, 0, HALF_PI);
+  ani.fill(rCols[1]);
+  ani.arc(ani.width/2 + updateValX, ani.height/2 - updateValY, cr, cr, PI, TWO_PI);
+  ani.fill(rCols[2]);
+  ani.arc(ani.width/2 - updateValX, ani.height/2 + updateValY, cr, cr, HALF_PI, PI);
+}
+
+function localquality() {
+  ani.clear();
+
 }
 
 function setupScreen() {
@@ -39,6 +89,10 @@ function setupScreen() {
   widthOnTwo = windowWidth / 2;
   heightOnTwo = windowHeight / 2;
   drawCard();
+  functionList = [];
+  functionList.push(segmentation);
+  functionList.push(takeout);
+  functionList.push(localquality);
 }
 
 function drawCard() {
@@ -54,17 +108,17 @@ function drawCard() {
     h = (w / x_ratio) * y_ratio;
   }
   let rad = 0.05 * w;
-  let off = rad * 0.25;
+  mStroke = rad * 0.25;
   cardDeck.clear();
   cardDeck.rectMode(CENTER);
   cardDeck.noStroke();
   let c = [[0, 0, 255],[0, 255, 255],[0, 255, 0],[255, 255, 0],[255, 0, 0],[255, 255, 255]];
-  let px = widthOnTwo + (c.length * off);
-  let py = heightOnTwo + (c.length * off);
+  let px = widthOnTwo + (c.length * mStroke);
+  let py = heightOnTwo + (c.length * mStroke);
   for (let i = 0; i < c.length; i++) {
     cardDeck.fill(color(c[i]));
-    px -= off;
-    py -= off;
+    px -= mStroke;
+    py -= mStroke;
     cardDeck.rect(int(px), int(py), w, h, rad);
   }
   card.rectMode(CENTER);
@@ -72,14 +126,19 @@ function drawCard() {
   card.fill(255);
   card.rect(int(px), int(py), w, h, rad);
   card.stroke(0);
-  card.strokeWeight(off);
+  card.strokeWeight(mStroke);
   card.rect(int(px), int(py), w - rad, h - rad, rad * 0.6);
   let l1 = px - w * 0.45;
   let l2 = px + w * 0.45;
   card.line(l1, py, l2, py);
   textX = l1;
-  textY = py + off;
+  textY = py + mStroke;
   textW = 0.9 * w;
+  ani = createGraphics(int(w * 0.9), int(h * 0.45));
+  aniX = l1;
+  aniY = heightOnTwo - int(0.47 * h);
+  titleTextSize = int(h / 16);
+  tTextSize = int(titleTextSize/2);
 }
 
 function setup() {
@@ -89,14 +148,20 @@ function setup() {
 }
 
 function draw() {
+  clear();
+  image(cardDeck, 0, 0);
+  image(card, 0, 0);
+  textSize(titleTextSize);
+  text(cards[index]['title'], textX, textY, textW);
+  textSize(tTextSize);
+  text(cards[index]['text'], textX, textY + (1.5* titleTextSize), textW);
   if (newInfo == true) {
-    image(cardDeck, 0, 0);
-    image(card, 0, 0);
-    textSize(32);
-    text(cards[index]['title'], textX, textY, textW);
-    textSize(16);
-    text(cards[index]['text'], textX, textY + 40, textW);
     newInfo = false;
+    rCols = threerCols();
   }
+  functionList[index]();
+  image(ani, aniX, aniY);
 
 }
+
+// divide, adapte, pre-empt, change property, change material, make efficient, make harmless, save labor

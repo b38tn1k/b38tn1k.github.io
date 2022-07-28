@@ -1,9 +1,12 @@
 
+var DEBUG = true;
+// var DEBUG = false;
+
 var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index;
 var textX, textY, textW;
-var cardslength = 3;
+var cardslength = 4;
 var ani, aniX, aniY, cr, icr, gap, igap;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -50,6 +53,93 @@ function threerCols() {
     j.push(c.pop());
   }
   return(j);
+}
+
+function setupScreen() {
+  if (DEBUG == true) {
+    index = cardslength - 1;
+  } else {
+    chooseIndex();
+  }
+  createCanvas(windowWidth, windowHeight);
+  widthOnTwo = windowWidth / 2;
+  heightOnTwo = windowHeight / 2;
+  drawCard();
+  functionList = [];
+  functionList.push(segmentation);
+  functionList.push(takeout);
+  functionList.push(localquality);
+  functionList.push(asymmetry);
+}
+
+function setup() {
+  setupScreen();
+  textAlign(LEFT, TOP);
+  document.body.style.backgroundImage = "url('bg" + str(int(random(0, 8)))+".gif')";
+}
+
+function draw() {
+
+  clear();
+  image(cardDeck, 0, 0);
+  image(card, 0, 0);
+  textSize(titleTextSize);
+  text(cards[index]['title'], textX, textY, textW);
+  textSize(tTextSize);
+  text(cards[index]['text'], textX, textY + (1.5* titleTextSize), textW);
+  functionList[index]();
+  image(ani, aniX, aniY);
+
+}
+
+function drawCard() {
+  cardDeck = createGraphics(windowWidth, windowHeight);
+  card = createGraphics(windowWidth, windowHeight);
+  let y_ratio = 8.8;
+  let x_ratio = 6.3;
+  let margin = 0.85;
+  let h = windowHeight * margin;
+  let w = (h / y_ratio) * x_ratio;
+  if (w > windowWidth * margin) {
+    w = windowWidth * margin;
+    h = (w / x_ratio) * y_ratio;
+  }
+  let rad = 0.05 * w;
+  mStroke = rad * 0.25;
+  cardDeck.clear();
+  cardDeck.rectMode(CENTER);
+  cardDeck.noStroke();
+  let c = [[0, 0, 255],[0, 255, 255],[0, 255, 0],[255, 255, 0],[255, 0, 0],[255, 255, 255]];
+  let px = widthOnTwo + (c.length * mStroke);
+  let py = heightOnTwo + (c.length * mStroke);
+  for (let i = 0; i < c.length; i++) {
+    cardDeck.fill(color(c[i]));
+    px -= mStroke;
+    py -= mStroke;
+    cardDeck.rect(int(px), int(py), w, h, rad);
+  }
+  card.rectMode(CENTER);
+  card.noStroke();
+  card.fill(255);
+  card.rect(int(px), int(py), w, h, rad);
+  card.stroke(0);
+  card.strokeWeight(mStroke);
+  card.rect(int(px), int(py), w - rad, h - rad, rad * 0.6);
+  let l1 = px - w * 0.45;
+  let l2 = px + w * 0.45;
+  card.line(l1, py, l2, py);
+  textX = l1;
+  textY = py + mStroke;
+  textW = 0.9 * w;
+  ani = createGraphics(int(w * 0.9), int(h * 0.45));
+  aniX = l1;
+  aniY = heightOnTwo - int(0.47 * h);
+  titleTextSize = int(h / 16);
+  tTextSize = int(titleTextSize/2);
+  cr = (ani.height * 0.8);
+  icr = (ani.height * 0.2);
+  gap = (ani.width - ani.height)/2;
+  igap = ani.width - gap;
 }
 
 function segmentation() {
@@ -123,89 +213,9 @@ function localquality() {
   } else {
     ani.image(aniLayers['pencil'], gOn2, cr - 3*gap);
   }
-
-
 }
 
-function setupScreen() {
-  chooseIndex();
-  createCanvas(windowWidth, windowHeight);
-  widthOnTwo = windowWidth / 2;
-  heightOnTwo = windowHeight / 2;
-  drawCard();
-  functionList = [];
-  functionList.push(segmentation);
-  functionList.push(takeout);
-  functionList.push(localquality);
-}
-
-function drawCard() {
-  cardDeck = createGraphics(windowWidth, windowHeight);
-  card = createGraphics(windowWidth, windowHeight);
-  let y_ratio = 8.8;
-  let x_ratio = 6.3;
-  let margin = 0.85;
-  let h = windowHeight * margin;
-  let w = (h / y_ratio) * x_ratio;
-  if (w > windowWidth * margin) {
-    w = windowWidth * margin;
-    h = (w / x_ratio) * y_ratio;
-  }
-  let rad = 0.05 * w;
-  mStroke = rad * 0.25;
-  cardDeck.clear();
-  cardDeck.rectMode(CENTER);
-  cardDeck.noStroke();
-  let c = [[0, 0, 255],[0, 255, 255],[0, 255, 0],[255, 255, 0],[255, 0, 0],[255, 255, 255]];
-  let px = widthOnTwo + (c.length * mStroke);
-  let py = heightOnTwo + (c.length * mStroke);
-  for (let i = 0; i < c.length; i++) {
-    cardDeck.fill(color(c[i]));
-    px -= mStroke;
-    py -= mStroke;
-    cardDeck.rect(int(px), int(py), w, h, rad);
-  }
-  card.rectMode(CENTER);
-  card.noStroke();
-  card.fill(255);
-  card.rect(int(px), int(py), w, h, rad);
-  card.stroke(0);
-  card.strokeWeight(mStroke);
-  card.rect(int(px), int(py), w - rad, h - rad, rad * 0.6);
-  let l1 = px - w * 0.45;
-  let l2 = px + w * 0.45;
-  card.line(l1, py, l2, py);
-  textX = l1;
-  textY = py + mStroke;
-  textW = 0.9 * w;
-  ani = createGraphics(int(w * 0.9), int(h * 0.45));
-  aniX = l1;
-  aniY = heightOnTwo - int(0.47 * h);
-  titleTextSize = int(h / 16);
-  tTextSize = int(titleTextSize/2);
-  cr = (ani.height * 0.8);
-  icr = (ani.height * 0.2);
-  gap = (ani.width - ani.height)/2;
-  igap = ani.width - gap;
-}
-
-function setup() {
-  setupScreen();
-  textAlign(LEFT, TOP);
-  document.body.style.backgroundImage = "url('bg" + str(int(random(0, 8)))+".gif')";
-}
-
-function draw() {
-  clear();
-  image(cardDeck, 0, 0);
-  image(card, 0, 0);
-  textSize(titleTextSize);
-  text(cards[index]['title'], textX, textY, textW);
-  textSize(tTextSize);
-  text(cards[index]['text'], textX, textY + (1.5* titleTextSize), textW);
-  functionList[index]();
-  image(ani, aniX, aniY);
+function asymmetry(){
 
 }
-
 // divide, adapte, pre-empt, change property, change material, make efficient, make harmless, save labor

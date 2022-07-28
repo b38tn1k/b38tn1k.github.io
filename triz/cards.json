@@ -1,28 +1,28 @@
 [
   {
     "title": "Segmentation",
-    "text": "Divide a design into seperate components. \nIncrease fragmentation. \nHow would IKEA do it?\nCan it grow with use?\nDo you need to carry an empty fuel tank into orbit?",
+    "text": "Divide a design into seperate components. \nIncrease fragmentation. \n\nHow would IKEA do it?\nCan it grow with use?\nDo you need an empty fuel tank in orbit?",
     "type": "Divide"
   },
   {
     "title": "Take It Out",
-    "text": "Isolate the problem component. \nCan it be relocated? \nPut the noisey air compressor outside and use a vent.\nYou don't need a drill, you need to make a hole",
+    "text": "Isolate the problem component. \n\nCan it be relocated? \nYou don't need a drill, you need the hole.",
     "type" : "Divide"
 
   },
   {
     "title": "Local Quality",
-    "text": "Consider the utility of each feature in the object. \nDifferent parts of the object may perform different functions.\nA knife has a handle and a blade.\nA pencil with an eraser.",
+    "text": "Consider the utility of each feature. \n\nDifferent parts of the object may perform different functions.\n\nA knife has a handle and a blade.\n\nA pencil with an eraser.",
     "type": "Divide"
   },
   {
     "title": "Asymmetry",
-    "text": "Make the design asymmetrical.\nWould asymmetry improve ergonomics?\nWould asymmetry improve stability?",
+    "text": "Make the design asymmetrical.\n\nWould asymmetry improve ergonomics?\nWould asymmetry improve stability?\n\nA cement mixer both holds cement and allows easy access.",
     "type": "Divide"
   },
   {
     "title": "Merging",
-    "text": "",
+    "text": "Merge the operations of identical objects. \n\nMake similar objects identical. \n\nMake operations parallel.",
     "type": ""
   },
   {

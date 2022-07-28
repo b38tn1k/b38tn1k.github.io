@@ -5,8 +5,8 @@ var DEBUG = true;
 var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index;
-var textX, textY, textW;
-var cardslength = 4;
+var textX, textY, textW, logoX, logoY;
+var cardslength = 5;
 var ani, aniX, aniY, cr, icr, gap, igap;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -70,6 +70,7 @@ function setupScreen() {
   functionList.push(takeout);
   functionList.push(localquality);
   functionList.push(asymmetry);
+  functionList.push(merging);
 }
 
 function setup() {
@@ -79,15 +80,30 @@ function setup() {
 }
 
 function draw() {
+  textAlign(LEFT, TOP);
   clear();
   image(cardDeck, 0, 0);
   image(card, 0, 0);
+  fill(0);
   textSize(titleTextSize);
   text(cards[index]['title'], textX, textY, textW);
   textSize(tTextSize);
   text(cards[index]['text'], textX, textY + (1.5* titleTextSize), textW);
   functionList[index]();
+  fill(220);
+  textStyle(BOLD);
+  textSize(titleTextSize);
+  textAlign(RIGHT, BOTTOM);
+  if (index < 10){
+    text("0" + str(index+1), logoX, logoY);
+  } else {
+    text(index + 1, logoX, logoY);
+  }
+
   image(ani, aniX, aniY);
+  if (DEBUG == true){
+    text("DEBUG", 10, 10);
+  }
 }
 
 function drawCard() {
@@ -124,17 +140,27 @@ function drawCard() {
   card.stroke(0);
   card.strokeWeight(mStroke);
   card.rect(int(px), int(py), w - rad, h - rad, rad * 0.6);
+  titleTextSize = int(h / 16);
+  tTextSize = int(titleTextSize/2);
   let l1 = px - w * 0.45;
   let l2 = px + w * 0.45;
   card.line(l1, py, l2, py);
+  card.noStroke();
+  card.fill(230);
+  card.textStyle(BOLD);
+  card.textSize(0.75*titleTextSize);
+  logoX = widthOnTwo + (w/2) - rad - 1.6*titleTextSize;
+  logoY = heightOnTwo + (h/2) - rad;
+  card.textSize(tTextSize);
+  card.text('TRIZ40', logoX , logoY);
+  logoY -= tTextSize * 0.5;
+  logoX += 1.6*titleTextSize;
   textX = l1;
   textY = py + mStroke;
   textW = 0.9 * w;
   ani = createGraphics(int(w * 0.9), int(h * 0.45));
   aniX = l1;
   aniY = heightOnTwo - int(0.47 * h);
-  titleTextSize = int(h / 16);
-  tTextSize = int(titleTextSize/2);
   cr = (ani.height * 0.8);
   icr = (ani.height * 0.2);
   gap = (ani.width - ani.height)/2;
@@ -147,11 +173,11 @@ function segmentation() {
   ani.fill(rCols[0]);
   ani.circle(ani.width/2, ani.height/2, cr);
   ani.strokeWeight(mStroke);
-  ani.stroke(255, 255, 255, 127.5 + 127.5 * sin(millis() / 600));
+  ani.stroke(255, 255, 255, 127.5 + 127.5 * sin(millis() / 300));
   ani.line(ani.width/2, 0, ani.width/2, ani.height);
   ani.line(gap, ani.height/2, ani.width, ani.height/2);
-  ani.line(gap, icr, igap, cr);
-  ani.line(gap, cr, igap, icr);
+  // ani.line(gap, icr, igap, cr);
+  // ani.line(gap, cr, igap, icr);
 }
 
 function takeout() {
@@ -218,7 +244,7 @@ function asymmetry(){
   ani.clear();
   ani.noStroke();
   let start = 0;
-  let ltime = int(millis() / 2000); // second and millis not synced?
+  let ltime = int(millis() / 2000);
   let inc = PI/8;
   if (ltime % 2 == 0){
     start = (millis()/1000) * HALF_PI;
@@ -234,5 +260,47 @@ function asymmetry(){
   }
   ani.fill(rCols[0]);
   ani.circle(ani.width/2, ani.height/2, icr);
+}
+
+function merging(){
+  ani.clear();
+  ani.stroke(rCols[0]);
+  ani.strokeWeight(2 * mStroke);
+  let wOn2 = ani.width/2;
+  let series = [icr, 2*icr, 3*icr, 4*icr];
+  let inc = icr/5;
+  let ltime = int(millis() / 500);
+  let l2s = wOn2 + gap;
+  let l2e = wOn2 + 2*gap;
+  let gap2 = 2*gap;
+  let move = ltime % 5 - 1;
+  let direction = ltime % 10;
+  ani.stroke(rCols[2]);
+  ani.line(gap, inc, gap, ani.height - inc);
+  ani.line(l2s, inc, l2s, ani.height - inc);
+
+  for (let i = 0; i < 4; i++){
+    ani.stroke(rCols[0]);
+    let flye;
+    if (direction <= 4){
+      if (i <= move) {
+        flye = icr + i * icr + 2*inc;
+      } else {
+        flye = icr + i * icr;
+      }
+    } else {
+      if (i > move) {
+        flye = icr + i * icr + 2*inc;
+      } else {
+        flye = icr + i * icr;
+      }
+    }
+    ani.line(gap, icr + i * icr, gap2, flye);
+    ani.stroke(rCols[1]);
+    let lys = icr + i * icr;
+    let lye = lys + inc  + inc * (sin(millis() / 300));
+    ani.line(l2s, lys, l2e, lye);
+  }
+
 }
 // divide, adapte, pre-empt, change property, change material, make efficient, make harmless, save labor

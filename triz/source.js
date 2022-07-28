@@ -1,6 +1,6 @@
 
 var DEBUG = true;
-// var DEBUG = false;
+DEBUG = false;
 
 var widthOnTwo, heightOnTwo;
 var card, cardDeck;

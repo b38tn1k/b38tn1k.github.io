@@ -192,7 +192,7 @@ function drawCard() {
 function setup() {
   setupScreen();
   textAlign(LEFT, TOP);
-  newInfo = true;
+  document.body.style.backgroundImage = "url('bg" + str(int(random(0, 8)))+".gif')";
 }
 
 function draw() {

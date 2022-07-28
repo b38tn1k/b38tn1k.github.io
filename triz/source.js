@@ -6,7 +6,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 6;
+var cardslength = 7;
 var ani, aniX, aniY, cr, icr, gap, igap;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -72,6 +72,7 @@ function setupScreen() {
   functionList.push(asymmetry);
   functionList.push(merging);
   functionList.push(universality);
+  functionList.push(matryoshka);
 }
 
 function setup() {
@@ -385,5 +386,28 @@ function universality(){
     }
   }
   ani.circle(ballx, t2y, gapOn2);
+}
+
+function matryoshka() { // yes I should use recursion here
+  ani.clear();
+  ani.noStroke();
+  let timer = sin(millis()/700);
+  let majorDim = gap/4;
+  let mdOn2= majorDim/2;
+  ani.fill(rCols[0]);
+  ani.arc(ani.width/2, ani.height/2 , majorDim, 2*majorDim, PI, TWO_PI);
+  ani.arc(ani.width/2, ani.height/2, majorDim, majorDim, TWO_PI, PI);
+  ani.fill(rCols[1]);
+  majorDim *= 2;
+  mdOn2 *= 2;
+  ani.arc(ani.width/2, ani.height/2 - (timer * mdOn2) - mdOn2, majorDim, 2*majorDim, PI, TWO_PI);
+  ani.arc(ani.width/2, ani.height/2 + (timer * mdOn2) + mdOn2, majorDim, majorDim, TWO_PI, PI);
+  ani.fill(rCols[2]);
+  majorDim *= 2;
+  mdOn2 *= 2;
+  ani.arc(ani.width/2, ani.height/2 - (timer * mdOn2) - mdOn2, majorDim, 2*majorDim, PI, TWO_PI);
+  ani.arc(ani.width/2, ani.height/2 + (timer * mdOn2) + mdOn2, majorDim, majorDim, TWO_PI, PI);
+
+
 }
 // divide, adapte, pre-empt, change property, change material, make efficient, make harmless, save labor

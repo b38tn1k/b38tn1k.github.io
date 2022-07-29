@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 8;
+var cardslength = 9;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -76,6 +76,7 @@ function setupScreen() {
   functionList.push(universality);
   functionList.push(matryoshka);
   functionList.push(antiweight);
+  functionList.push(pantiactions);
 }
 
 function setup() {
@@ -99,9 +100,16 @@ function draw() {
   textSize(titleTextSize);
   textStyle(BOLD);
   text(cards[curr]['title'], textX, textY, textW);
+  let tTextY = textY + titleTextSize;
+  let tL = textWidth(cards[curr]['title']);
+  while (tL > textW) {
+    tTextY += titleTextSize;
+    tL -= textW;
+  }
+  tTextY += titleTextSize * 0.5;
   textStyle(NORMAL);
   textSize(tTextSize);
-  text(cards[curr]['text'], textX, textY + (1.5* titleTextSize), textW);
+  text(cards[curr]['text'], textX, tTextY, textW);
   functionList[curr]();
   fill(220);
   textStyle(BOLD);
@@ -112,7 +120,6 @@ function draw() {
   } else {
     text(curr + 1, logoX, logoY);
   }
-
   image(ani, aniX, aniY);
   if (DEBUG == true){
     textAlign(LEFT, TOP);
@@ -445,13 +452,6 @@ function antiweight() {
   let axs, ays, axe, aye;
   let timer = sin((millis()/1500));
   let timer2 = (cos((millis()/1500))) > 0;
-
-  // let osc = gapOn2 * timer;
-  // axs = gap2;
-  // ays = (aniHeightOn3) + osc;
-  // axe = ani.width - gap2;
-  // aye = (aniHeightOn3) - osc;
-
   let osc = PI/12 * timer;
   let hypot = aniWidthOn2 - gap2;
   axs = aniWidthOn2 - hypot * cos(osc);
@@ -479,4 +479,46 @@ function antiweight() {
   ani.line(axs, ays, axe, aye);
   ani.triangle(axs, ays + mStroke, axs-gap, ays+gap2, axs+gap, ays+gap2);
   ani.triangle(axe, aye + mStroke, axe-gap, aye+gap2, axe+gap, aye+gap2);
+}
+
+function pantiactions(){
+  ani.clear();
+  let cx = ani.width-(gap + gapOn2); //cy = gap
+  let from = color(0, 255, 255);
+  let to = color(0, 0, 255);
+  let lerpVal = ((sin(millis()/500))/2) + 0.5;
+  let mc = lerpColor(from, to, lerpVal);
+  ani.stroke(mc);
+  for (let i = -2; i <=2; i+=0.25){
+    ani.line(cx + i*gapOn2, gap, cx + i*gapOn2, ani.height-gapOn2);
+  }
+  mc = lerpColor(to, from, lerpVal);
+  ani.stroke(mc);
+  for (let i = -2; i <=2; i+=0.5){
+    ani.line(cx + i*gapOn2, gap, cx + i*gapOn2, ani.height-gapOn2);
+  }
+  ani.noStroke();
+  ani.fill(255, 255, 0); //sun
+  ani.circle(gap, gap, gap);
+  ani.fill(220); //clouds
+  for (let i = -2; i <=2; i++) {
+    ani.circle(cx + i*gapOn2, gap, gapOn2);
+  }
+  for (let i = -1.5; i <=1.5; i++) {
+    ani.circle(cx + i*gapOn2, gap34, gapOn2);
+    ani.circle(cx + i*gapOn2, gapOn4+gap, gapOn2);
+  }
+  ani.fill(rCol[0]); //umbrella
+  let osc = aniWidthOn2 + sin(millis()/2000) * aniWidthOn3;
+  ani.ellipse(osc, aniHeightOn3*2, gap2, gap);
+  ani.fill(255);
+  ani.rect(osc - gap, aniHeightOn3*2, gap2, ani.height);
+  for (let i = -1; i <=1; i++) {
+    ani.circle(osc + i*gapOn2, aniHeightOn3*2 + gapOn4/2, gapOn2);
+  }
+  ani.stroke(0);
+  ani.line(osc, aniHeightOn3*2-gapOn4/2, osc, ani.height-gapOn2);
+  ani.fill(255);
+  ani.arc(osc+gapOn4/2, ani.height-gapOn2, gapOn4, gapOn4, 0, PI);
+
 }

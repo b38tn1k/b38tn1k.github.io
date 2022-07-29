@@ -1,203 +1,163 @@
 [
   {
     "title": "Segmentation",
-    "text": "Divide a design into seperate components. \nIncrease fragmentation. \n\nHow would IKEA do it?\nCan it grow with use?\n\nDo you need an empty fuel tank in orbit?\nMulti-Bit Screwdriver kits.",
-    "type": "Divide"
+    "text": "Divide a design into seperate components. \nIncrease fragmentation. \n\nHow would IKEA do it?\nCan it grow with use?\n\nDo you need an empty fuel tank in orbit?\nMulti-Bit Screwdriver kits."
   },
   {
     "title": "Take It Out",
-    "text": "Isolate the problem component. \nCan it be relocated?\nCan functions be delayed?\n\nYou don't need a drill, you need the hole.\nThe noisy furnace is located in the basement.\nOff-peak water heating.",
-    "type" : "Divide"
+    "text": "Isolate the problem component. \nCan it be relocated?\nCan functions be delayed?\n\nYou don't need a drill, you need the hole.\nThe noisy furnace is located in the basement.\nOff-peak water heating."
 
   },
   {
     "title": "Local Quality",
-    "text": "Consider the utility of each feature. \n\nDifferent parts of the object may perform different functions.\n\nA knife has a handle and a blade.\nA pencil with an eraser.\nA claw hammer.",
-    "type": "Divide"
+    "text": "Consider the utility of each feature. \n\nDifferent parts of the object may perform different functions.\n\nA knife has a handle and a blade.\nA pencil with an eraser.\nA claw hammer."
   },
   {
     "title": "Asymmetry",
-    "text": "Make the design asymmetrical.\n\nWould asymmetry improve ergonomics?\nWould asymmetry improve stability?\nIs wear concentrated or spread out?\n\nThe kitchen cupboards open outwards.\nScissors can be right or left handed.",
-    "type": "Divide"
+    "text": "Make the design asymmetrical.\n\nWould asymmetry improve ergonomics?\nWould asymmetry improve stability?\nIs wear concentrated or spread out?\n\nThe kitchen cupboards open outwards.\nScissors can be right or left handed."
   },
   {
     "title": "Merging",
-    "text": "Merge the operations of similar objects. \n\nMake similar objects identical. \n\nMake operations parallel.\n\nA phone is also a camera and a torch.",
-    "type": ""
+    "text": "Merge the operations of similar objects. \n\nMake similar objects identical. \n\nMake operations parallel.\n\nA phone is also a camera and a torch."
   },
   {
     "title": "Universality",
-    "text": "Design features to have multiple functions.\n\nThe Spork, Heelys, The Swiss Army Knife.\nAdjustable Wrenches & Multi-Bit Screwdrivers.\n\nUse a spade to row a boat.\n Use an axe as a door stop.",
-    "type": ""
+    "text": "Design features to have multiple functions.\n\nThe Spork, Heelys, The Swiss Army Knife.\nAdjustable Wrenches & Multi-Bit Screwdrivers.\n\nUse a spade to row a boat.\n Use an axe as a door stop."
   },
   {
     "title": "Matryoshka",
-    "text": "Nest objects within themselves.\nUse Recursion.\n\nExtendable ladders.\nRetractable landing gear.\nA stack of bowls.",
-    "type": ""
+    "text": "Nest objects within themselves.\nUse Recursion.\n\nExtendable ladders.\nRetractable landing gear.\nA stack of bowls."
   },
   {
     "title": "Anti-weight",
-    "text": "",
-    "type": ""
+    "text": "Compensate for weight.\nAdd features to reduce weight.\nImprove functions that create lift\n\nBuoyancy Control Devices for diving.\nAerated and Cored bricks.\nAerospace, blimps."
   },
   {
     "title": "Preliminary Anti-actions",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Preliminary Actions",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Beforehand Cushioning",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Equipontentiality",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "The Other War Round",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Curvature",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Dynamics",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Partial or Excessive Actions",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Another Dimension",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Mechanical Vibration",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Periodic Action",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Continuity of Useful Action",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Skipping",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Blessing in Disguise",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Feedback",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Intermediary",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Self-service",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Copying",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Consider Consumable Objects",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Mechanics Substitution",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Pneumatics and Hydraulics",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Flexible Shells and Thin Films",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Porous Materials",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Color Changes",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Homogeneity",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Discarding and Recovering",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Parameter Changes",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Phase Transitions",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Thermal Expansion",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Strong Oxidants",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Inert Atmosphere",
-    "text": "",
-    "type": ""
+    "text": ""
   },
   {
     "title": "Composite Materials",
-    "text": "",
-    "type": ""
+    "text": ""
   }
 ]

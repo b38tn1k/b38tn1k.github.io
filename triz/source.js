@@ -1,18 +1,19 @@
 
 var DEBUG = true;
 // DEBUG = false;
+// divide, adapte, pre-empt, change property, change material, make efficient, make harmless, save labor
 
 var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 7;
-var ani, aniX, aniY, cr, icr, gap, igap;
+var cardslength = 8;
+var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
 var tTextSize = 16;
 var functionList;
-var rCols = [];
+var rCol = [];
 var mStroke;
 
 function keyPressed() {
@@ -40,13 +41,14 @@ function chooseIndex(){
   if (index == cardslength) {
     index -= cardslength;
   }
-  rCols = threerCols();
+  rCol = shuffleColrs();
 }
 
-function threerCols() {
+function shuffleColrs() {
   let c = [color([0, 0, 255]),color([0, 255, 255]),color([0, 255, 0]),color([255, 255, 0]),color([255, 0, 0])];
   let j = [];
-  while (j.length < 3) {
+  let cl = c.length;
+  while (j.length <= cl) {
     for (let k = 0; k < int(random(0, c.length)); k++){
       c.push(c.shift());
     }
@@ -57,7 +59,7 @@ function threerCols() {
 
 function setupScreen() {
   if (DEBUG == true) {
-    index = cardslength - 1;
+    index = order.indexOf(cardslength - 1);
   } else {
     chooseIndex();
   }
@@ -73,6 +75,7 @@ function setupScreen() {
   functionList.push(merging);
   functionList.push(universality);
   functionList.push(matryoshka);
+  functionList.push(antiweight);
 }
 
 function setup() {
@@ -112,12 +115,13 @@ function draw() {
 
   image(ani, aniX, aniY);
   if (DEBUG == true){
-    text("DEBUG", 10, 10);
+    textAlign(LEFT, TOP);
+    text("TESTING", 10, 10);
   }
 }
 
 function drawCard() {
-  rCols = threerCols();
+  rCol = shuffleColrs();
   cardDeck = createGraphics(windowWidth, windowHeight);
   card = createGraphics(windowWidth, windowHeight);
   let y_ratio = 8.8;
@@ -175,43 +179,51 @@ function drawCard() {
   icr = (ani.height * 0.2);
   gap = (ani.width - ani.height)/2;
   igap = ani.width - gap;
+  gap2 = gap*2;
+  gap3 = gap*3;
+  gap4 = gap*4;
+  gap34 = 0.75*gap;
+  gapOn2 = gap/2;
+  gapOn3 = gap/3;
+  gapOn4 = gap/4;
+  gapOn6 = gap/6;
+  aniWidthOn2 = ani.width/2;
+  aniHeightOn2 = ani.height/2;
+  aniWidthOn3 = ani.width/3;
+  aniHeightOn3 = ani.height/3;
+  aniWidthOn4 = ani.width/4;
+  aniHeightOn4 = ani.height/4;
 }
 
 function segmentation() {
   ani.clear();
   ani.noStroke();
-  ani.fill(rCols[0]);
+  ani.fill(rCol[0]);
   let start = 0;
   let inc = HALF_PI;
   let g4 = gap/6;
   let ofs = g4 + g4 * sin(millis() / 700);
-  ani.arc(ani.width/2 + ofs, ani.height/2 + ofs, cr, cr, start, start+inc);
+  ani.arc(aniWidthOn2 + ofs, aniHeightOn2 + ofs, cr, cr, start, start+inc);
   start += inc;
-  ani.arc(ani.width/2 - ofs, ani.height/2 + ofs, cr, cr, start, start+inc);
+  ani.arc(aniWidthOn2 - ofs, aniHeightOn2 + ofs, cr, cr, start, start+inc);
   start += inc;
-  ani.arc(ani.width/2 - ofs, ani.height/2 - ofs, cr, cr, start, start+inc);
+  ani.arc(aniWidthOn2 - ofs, aniHeightOn2 - ofs, cr, cr, start, start+inc);
   start += inc;
-  ani.arc(ani.width/2 + ofs, ani.height/2 - ofs, cr, cr, start, start+inc);
+  ani.arc(aniWidthOn2 + ofs, aniHeightOn2 - ofs, cr, cr, start, start+inc);
   start += inc;
-
-  // ani.circle(ani.width/2, ani.height/2, cr);
-  // ani.strokeWeight(mStroke);
-  // ani.stroke(255, 255, 255, 127.5 + 127.5 * sin(millis() / 300));
-  // ani.line(ani.width/2, 0, ani.width/2, ani.height);
-  // ani.line(gap, ani.height/2, ani.width, ani.height/2);
 }
 
 function takeout() {
   ani.clear();
   ani.noStroke();
-  ani.fill(rCols[0]);
+  ani.fill(rCol[0]);
   let updateValX = abs(gap* sin(millis() / 1000));
   let updateValY = abs(icr/2* sin(millis() / 1000));
-  ani.arc(ani.width/2 + updateValX, ani.height/2 - updateValY, cr, cr, 0, HALF_PI);
-  ani.fill(rCols[1]);
-  ani.arc(ani.width/2 + updateValX, ani.height/2 - updateValY, cr, cr, PI, TWO_PI);
-  ani.fill(rCols[2]);
-  ani.arc(ani.width/2 - updateValX, ani.height/2 + updateValY, cr, cr, HALF_PI, PI);
+  ani.arc(aniWidthOn2 + updateValX, aniHeightOn2 - updateValY, cr, cr, 0, HALF_PI);
+  ani.fill(rCol[1]);
+  ani.arc(aniWidthOn2 + updateValX, aniHeightOn2 - updateValY, cr, cr, PI, TWO_PI);
+  ani.fill(rCol[2]);
+  ani.arc(aniWidthOn2 - updateValX, aniHeightOn2 + updateValY, cr, cr, HALF_PI, PI);
 }
 
 function localquality() {
@@ -221,43 +233,42 @@ function localquality() {
   let ltime = int(millis() / 1000); // second and millis not synced?
   let normd = ((millis() % 1000)/1000);
   let pos = (igap - gap) * normd;
-  let gOn2 = gap * 0.5;
   if (!('pencil' in aniLayers)){
-    aniLayers['pencil'] = createGraphics(gap, 3*gap);
+    aniLayers['pencil'] = createGraphics(gap, gap3);
     aniLayers['pencil'].noStroke();
-    aniLayers['pencil'].fill(rCols[0]);
-    aniLayers['pencil'].triangle(gOn2, 3*gap, 0, 2*gap, gap, 2*gap);
-    aniLayers['pencil'].fill(rCols[1]);
+    aniLayers['pencil'].fill(rCol[0]);
+    aniLayers['pencil'].triangle(gapOn2, gap3, 0, gap2, gap, gap2);
+    aniLayers['pencil'].fill(rCol[1]);
     aniLayers['pencil'].rect(0, gap, gap, gap);
-    aniLayers['pencil'].fill(rCols[2]);
-    aniLayers['pencil'].arc(gOn2, gap, gap, 2*gap, PI, TWO_PI);
+    aniLayers['pencil'].fill(rCol[2]);
+    aniLayers['pencil'].arc(gapOn2, gap, gap, gap2, PI, TWO_PI);
 
-    aniLayers['ipencil'] = createGraphics(gap, 3*gap);
+    aniLayers['ipencil'] = createGraphics(gap, gap3);
     aniLayers['ipencil'].noStroke();
-    aniLayers['ipencil'].fill(rCols[0]);
-    aniLayers['ipencil'].triangle(gOn2, 0, 0, gap, gap, gap);
-    aniLayers['ipencil'].fill(rCols[1]);
+    aniLayers['ipencil'].fill(rCol[0]);
+    aniLayers['ipencil'].triangle(gapOn2, 0, 0, gap, gap, gap);
+    aniLayers['ipencil'].fill(rCol[1]);
     aniLayers['ipencil'].rect(0, gap, gap, gap);
-    aniLayers['ipencil'].fill(rCols[2]);
-    aniLayers['ipencil'].arc(gOn2, 2*gap, gap, 2*gap, TWO_PI, PI);
+    aniLayers['ipencil'].fill(rCol[2]);
+    aniLayers['ipencil'].arc(gapOn2, gap2, gap, gap2, TWO_PI, PI);
   }
 
   if (ltime % 6 == 0) {
     ani.line(gap, cr, gap + pos, cr);
-    ani.image(aniLayers['pencil'], gOn2 + pos, cr - 3*gap);
+    ani.image(aniLayers['pencil'], gapOn2 + pos, cr - gap3);
   } else if (ltime % 6 == 1) {
     ani.line(gap, cr, igap, cr);
-    ani.image(aniLayers['pencil'], igap - gOn2, cr - 3*gap);
+    ani.image(aniLayers['pencil'], igap - gapOn2, cr - gap3);
   } else if (ltime % 6 == 2) {
     ani.line(gap, cr, igap, cr);
-    ani.image(aniLayers['ipencil'], igap - gOn2, cr - 3*gap);
+    ani.image(aniLayers['ipencil'], igap - gapOn2, cr - gap3);
   } else if (ltime % 6 == 3) {
     ani.line(gap, cr, igap - pos, cr);
-    ani.image(aniLayers['ipencil'], igap - pos - gOn2, cr - 3*gap);
+    ani.image(aniLayers['ipencil'], igap - pos - gapOn2, cr - gap3);
   } else if (ltime % 6 == 4) {
-    ani.image(aniLayers['ipencil'], gOn2, cr - 3*gap);
+    ani.image(aniLayers['ipencil'], gapOn2, cr - gap3);
   } else {
-    ani.image(aniLayers['pencil'], gOn2, cr - 3*gap);
+    ani.image(aniLayers['pencil'], gapOn2, cr - gap3);
   }
 }
 
@@ -267,45 +278,43 @@ function asymmetry(){
   let start = 0;
   let ltime = int(millis() / 2000);
   let inc = PI/8;
-  let wobble = sin(millis()/100) * gap/4;
+  let wobble = sin(millis()/100) * gapOn4;
   if (ltime % 2 == 0){
     start = 0.1*sin(millis()/100);
   } else {
     wobble = 0;
   }
   for (let i = 0; i < 17; i++) {
-    ani.fill(rCols[i%2]);
-    ani.arc(ani.width/2 + wobble, ani.height/2, cr, cr, start, start+inc);
+    ani.fill(rCol[i%2]);
+    ani.arc(aniWidthOn2 + wobble, aniHeightOn2, cr, cr, start, start+inc);
     start += inc;
   }
   if (ltime % 2 == 1){
     ani.fill(255);
     ani.rect(0, cr, ani.width, ani.height);
   }
-  ani.fill(rCols[0]);
-  ani.circle(ani.width/2 + wobble, ani.height/2, icr);
+  ani.fill(rCol[0]);
+  ani.circle(aniWidthOn2 + wobble, aniHeightOn2, icr);
 }
 
 function merging(){
   ani.clear();
-  ani.stroke(rCols[0]);
+  ani.stroke(rCol[0]);
   ani.strokeWeight(2 * mStroke);
-  let wOn2 = ani.width/2;
   let series = [icr, 2*icr, 3*icr, 4*icr];
   let inc = icr/5;
   let ltime = int(millis() / 500);
-  let l2s = wOn2 + gap;
-  let l2e = wOn2 + 2*gap;
-  let gap2 = 2*gap;
+  let l2s = aniWidthOn2 + gap;
+  let l2e = (aniWidthOn2) + gap2;
   let move = ltime % 5 - 1;
   let direction = ltime % 10;
-  ani.stroke(rCols[2]);
+  ani.stroke(rCol[2]);
   ani.line(gap, inc, gap, ani.height - inc);
   ani.line(l2s, inc, l2s, ani.height - inc);
   ani.line(l2e, icr + inc + inc * (sin(millis() / 300)), l2e, 2*inc + inc * (sin(millis() / 300)) + 3.8*gap);
 
   for (let i = 0; i < 4; i++){
-    ani.stroke(rCols[0]);
+    ani.stroke(rCol[0]);
     let flye;
     if (direction <= 4){
       if (i <= move) {
@@ -321,7 +330,7 @@ function merging(){
       }
     }
     ani.line(gap, icr + i * icr, gap2, flye);
-    ani.stroke(rCols[1]);
+    ani.stroke(rCol[1]);
     let lys = icr + i * icr;
     let lye = lys + inc  + inc * (sin(millis() / 300));
     ani.line(l2s, lys, l2e, lye);
@@ -362,23 +371,23 @@ function universality(){
   let timer2 = cos(millis()/600);
 
   // wedge
-  let gapOn2 = gap/2;
-  let gap2 = 2*gap;
+  // let gapOn2 = gap/2;
+  // let gap2 = 2*gap;
   let gapSin60 = gap * sin(60);
-  let t1x = ani.width/2 + ani.width/4 * timer + gapSin60;
-  let t1y = ani.height/4;
+  let t1x = aniWidthOn2 + aniWidthOn4 * timer + gapSin60;
+  let t1y = aniHeightOn4;
 
-  let rx = ani.width/2;
-  let r1y = ani.height/4 - gapOn2;
-  let r2y = ani.height/4;
+  let rx = aniWidthOn2;
+  let r1y = aniHeightOn4 - gapOn2;
+  let r2y = aniHeightOn4;
 
   if (timer2 < 0){
     if (timer > 0) {
       r1y += gapSin60;
       r2y -= gapSin60;
-      t1x = 3*ani.width/4 + gapSin60;
+      t1x = 3*aniWidthOn4 + gapSin60;
     } else {
-      t1x = ani.width/4 + gapSin60;
+      t1x = aniWidthOn4 + gapSin60;
     }
   } else {
     if (timer > 0) {
@@ -387,24 +396,24 @@ function universality(){
     }
   }
   let tri1 = equiTriangle(t1x, t1y, gap, true);
-  ani.fill(rCols[1]);
+  ani.fill(rCol[1]);
   ani.rect(rx, r1y, gap2, gapOn2);
   ani.rect(rx, r2y, gap2, gapOn2);
-  ani.fill(rCols[0]);
+  ani.fill(rCol[0]);
   ani.triangle(tri1[0], tri1[1], tri1[2], tri1[3], tri1[4], tri1[5]);
   // stop
-  ani.fill(rCols[0]);
-  let t2x = 3*ani.width/4;
-  let t2y = 3*ani.height/4;
+  ani.fill(rCol[0]);
+  let t2x = 3*aniWidthOn4;
+  let t2y = 3*aniHeightOn4;
   let tri2 = equiTriangle(t2x, t2y, gap, false);
   ani.triangle(tri2[0], tri2[1], tri2[2], tri2[3], tri2[4], tri2[5]);
-  ani.fill(rCols[1]);
-  let ballx = ani.width/2 + ((ani.width/4) * timer) + gapSin60;
+  ani.fill(rCol[1]);
+  let ballx = aniWidthOn2 + (aniWidthOn4 * timer) + gapSin60;
   if (timer2 < 0){
     if (timer > 0) {
-      ballx = 3*ani.width/4 + gapSin60;
+      ballx = 3*aniWidthOn4 + gapSin60;
     } else {
-      ballx = ani.width/4 + gapSin60;
+      ballx = aniWidthOn4 + gapSin60;
     }
   }
   ani.circle(ballx, t2y, gapOn2);
@@ -414,22 +423,60 @@ function matryoshka() { // yes I should use recursion here
   ani.clear();
   ani.noStroke();
   let timer = sin(millis()/700);
-  let majorDim = gap/4;
+  let majorDim = gapOn4;
   let mdOn2= majorDim/2;
-  ani.fill(rCols[0]);
-  ani.arc(ani.width/2, ani.height/2 , majorDim, 2*majorDim, PI, TWO_PI);
-  ani.arc(ani.width/2, ani.height/2, majorDim, majorDim, TWO_PI, PI);
-  ani.fill(rCols[1]);
+  ani.fill(rCol[0]);
+  ani.arc(aniWidthOn2, aniHeightOn2, majorDim, 2*majorDim, PI, TWO_PI);
+  ani.arc(aniWidthOn2, aniHeightOn2, majorDim, majorDim, TWO_PI, PI);
+  ani.fill(rCol[1]);
   majorDim *= 2;
   mdOn2 *= 2;
-  ani.arc(ani.width/2, ani.height/2 - (timer * mdOn2) - mdOn2, majorDim, 2*majorDim, PI, TWO_PI);
-  ani.arc(ani.width/2, ani.height/2 + (timer * mdOn2) + mdOn2, majorDim, majorDim, TWO_PI, PI);
-  ani.fill(rCols[2]);
+  ani.arc(aniWidthOn2, aniHeightOn2 - (timer * mdOn2) - mdOn2, majorDim, 2*majorDim, PI, TWO_PI);
+  ani.arc(aniWidthOn2, aniHeightOn2 + (timer * mdOn2) + mdOn2, majorDim, majorDim, TWO_PI, PI);
+  ani.fill(rCol[2]);
   majorDim *= 2;
   mdOn2 *= 2;
-  ani.arc(ani.width/2, ani.height/2 - (timer * mdOn2) - mdOn2, majorDim, 2*majorDim, PI, TWO_PI);
-  ani.arc(ani.width/2, ani.height/2 + (timer * mdOn2) + mdOn2, majorDim, majorDim, TWO_PI, PI);
-
-
+  ani.arc(aniWidthOn2, aniHeightOn2 - (timer * mdOn2) - mdOn2, majorDim, 2*majorDim, PI, TWO_PI);
+  ani.arc(aniWidthOn2, aniHeightOn2 + (timer * mdOn2) + mdOn2, majorDim, majorDim, TWO_PI, PI);
 }
-// divide, adapte, pre-empt, change property, change material, make efficient, make harmless, save labor
+
+function antiweight() {
+  ani.clear();
+  let axs, ays, axe, aye;
+  let timer = sin((millis()/1500));
+  let timer2 = (cos((millis()/1500))) > 0;
+
+  // let osc = gapOn2 * timer;
+  // axs = gap2;
+  // ays = (aniHeightOn3) + osc;
+  // axe = ani.width - gap2;
+  // aye = (aniHeightOn3) - osc;
+
+  let osc = PI/12 * timer;
+  let hypot = aniWidthOn2 - gap2;
+  axs = aniWidthOn2 - hypot * cos(osc);
+  ays = hypot * sin(osc) + aniHeightOn3;
+  axe = aniWidthOn2 + hypot * cos(osc);
+  aye = -hypot * sin(osc) + aniHeightOn3;
+  ani.noStroke();
+  ani.fill(0);
+  ani.circle(aniWidthOn2, aniHeightOn3, gapOn2);
+  ani.circle(axs, ays, gapOn4);
+  ani.circle(axe, aye, gapOn4);
+  ani.fill(rCol[0]);
+  ani.rect(axe - gapOn4, aye + gap + gapOn2-mStroke, gapOn2, gapOn2);
+  ani.fill(rCol[1]);
+  let by = ays+gap+gapOn2-mStroke;
+  ani.rect(axs - gapOn2, by, gap, gapOn2);
+  ani.strokeWeight(mStroke);
+  if (timer2 == false){
+    ani.fill(255);
+    ani.stroke(255);
+    ani.rect(axs-gapOn4, by+(gapOn4/2), gapOn2, gapOn4);
+  }
+  ani.stroke(0);
+  ani.noFill();
+  ani.line(axs, ays, axe, aye);
+  ani.triangle(axs, ays + mStroke, axs-gap, ays+gap2, axs+gap, ays+gap2);
+  ani.triangle(axe, aye + mStroke, axe-gap, aye+gap2, axe+gap, aye+gap2);
+}

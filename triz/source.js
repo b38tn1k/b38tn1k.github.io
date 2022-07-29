@@ -1,10 +1,10 @@
 
 var DEBUG = true;
-DEBUG = false;
+// DEBUG = false;
 
 var widthOnTwo, heightOnTwo;
 var card, cardDeck;
-var cards, index;
+var cards, index, order;
 var textX, textY, textW, logoX, logoY;
 var cardslength = 7;
 var ani, aniX, aniY, cr, icr, gap, igap;
@@ -36,9 +36,9 @@ function preload() {
 }
 
 function chooseIndex(){
-  let old_index = index;
-  while (index == old_index) {
-    index = int(random(0, cardslength));
+  index += 1;
+  if (index == cardslength) {
+    index -= cardslength;
   }
   rCols = threerCols();
 }
@@ -76,12 +76,18 @@ function setupScreen() {
 }
 
 function setup() {
+  order = [];
+  for (let i = 0; i < cardslength; i++){
+    order.push(i);
+  }
+  shuffle(order, true);
   setupScreen();
   textAlign(LEFT, TOP);
   document.body.style.backgroundImage = "url('bg" + str(int(random(0, 8)))+".gif')";
 }
 
 function draw() {
+  let curr = order[index];
   textAlign(LEFT, TOP);
   clear();
   image(cardDeck, 0, 0);
@@ -89,19 +95,19 @@ function draw() {
   fill(0);
   textSize(titleTextSize);
   textStyle(BOLD);
-  text(cards[index]['title'], textX, textY, textW);
+  text(cards[curr]['title'], textX, textY, textW);
   textStyle(NORMAL);
   textSize(tTextSize);
-  text(cards[index]['text'], textX, textY + (1.5* titleTextSize), textW);
-  functionList[index]();
+  text(cards[curr]['text'], textX, textY + (1.5* titleTextSize), textW);
+  functionList[curr]();
   fill(220);
   textStyle(BOLD);
   textSize(titleTextSize);
   textAlign(RIGHT, BOTTOM);
   if (index < 10){
-    text("0" + str(index+1), logoX, logoY);
+    text("0" + str(curr+1), logoX, logoY);
   } else {
-    text(index + 1, logoX, logoY);
+    text(curr + 1, logoX, logoY);
   }
 
   image(ani, aniX, aniY);
@@ -261,12 +267,15 @@ function asymmetry(){
   let start = 0;
   let ltime = int(millis() / 2000);
   let inc = PI/8;
+  let wobble = sin(millis()/100) * gap/4;
   if (ltime % 2 == 0){
-    start = (millis()/1000) * HALF_PI;
+    start = 0.1*sin(millis()/100);
+  } else {
+    wobble = 0;
   }
   for (let i = 0; i < 17; i++) {
     ani.fill(rCols[i%2]);
-    ani.arc(ani.width/2, ani.height/2, cr, cr, start, start+inc);
+    ani.arc(ani.width/2 + wobble, ani.height/2, cr, cr, start, start+inc);
     start += inc;
   }
   if (ltime % 2 == 1){
@@ -274,7 +283,7 @@ function asymmetry(){
     ani.rect(0, cr, ani.width, ani.height);
   }
   ani.fill(rCols[0]);
-  ani.circle(ani.width/2, ani.height/2, icr);
+  ani.circle(ani.width/2 + wobble, ani.height/2, icr);
 }
 
 function merging(){

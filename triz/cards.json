@@ -1,23 +1,23 @@
 [
   {
     "title": "Segmentation",
-    "text": "Divide a design into seperate components. \nIncrease fragmentation. \n\nHow would IKEA do it?\nCan it grow with use?\nDo you need an empty fuel tank in orbit?\nConsider Multi-Bit Screwdriver kits.",
+    "text": "Divide a design into seperate components. \nIncrease fragmentation. \n\nHow would IKEA do it?\nCan it grow with use?\n\nDo you need an empty fuel tank in orbit?\nMulti-Bit Screwdriver kits.",
     "type": "Divide"
   },
   {
     "title": "Take It Out",
-    "text": "Isolate the problem component. \n\nCan it be relocated? \nYou don't need a drill, you need the hole.",
+    "text": "Isolate the problem component. \nCan it be relocated?\nCan functions be delayed?\n\nYou don't need a drill, you need the hole.\nThe noisy furnace is located in the basement.\nOff-peak water heating.",
     "type" : "Divide"
 
   },
   {
     "title": "Local Quality",
-    "text": "Consider the utility of each feature. \n\nDifferent parts of the object may perform different functions.\n\nA knife has a handle and a blade.\n\nA pencil with an eraser.\nA claw hammer.",
+    "text": "Consider the utility of each feature. \n\nDifferent parts of the object may perform different functions.\n\nA knife has a handle and a blade.\nA pencil with an eraser.\nA claw hammer.",
     "type": "Divide"
   },
   {
     "title": "Asymmetry",
-    "text": "Make the design asymmetrical.\n\nWould asymmetry improve ergonomics?\nWould asymmetry improve stability?\nIs wear concentrated or spread out?",
+    "text": "Make the design asymmetrical.\n\nWould asymmetry improve ergonomics?\nWould asymmetry improve stability?\nIs wear concentrated or spread out?\n\nThe kitchen cupboards open outwards.\nScissors can be right or left handed.",
     "type": "Divide"
   },
   {
@@ -27,7 +27,7 @@
   },
   {
     "title": "Universality",
-    "text": "Design features to have multiple functions.\n\nThe Spork, Heelys, The Swiss Army Knife.\nAdjustable Wrenches and Multi-Bit Screwdriver kits.\n\nUse a spade to row a boat.\n Use an axe as a door stop.",
+    "text": "Design features to have multiple functions.\n\nThe Spork, Heelys, The Swiss Army Knife.\nAdjustable Wrenches & Multi-Bit Screwdrivers.\n\nUse a spade to row a boat.\n Use an axe as a door stop.",
     "type": ""
   },
   {

@@ -603,7 +603,7 @@ function preactions(){
     houses.push([hx, start + i * inc]);
   }
   //draw layout
-  ani.square(warehouse[0], warehouse[1], gap * 1.5);
+  ani.square(warehouse[0], warehouse[1], gap2);
   for (let i = 0; i < sats.length; i++){
     ani.square(sats[i][0], sats[i][1], gap);
   }
@@ -616,14 +616,27 @@ function preactions(){
     }
     ani.square(houses[i][0], houses[i][1], gapOn2);
   }
+  ani.fill(0);
+  ani.square(sats[0][0], sats[0][1], gapOn2);
+  ani.square(sats[1][0], sats[1][1], gapOn2);
   // transport test
   ani.fill(rCol[1]);
   ani.noStroke();
-  let c = deliverCir(sats[int(ind / 2)], houses[ind], period, ind);
+  let c = deliver(sats[int(ind / 2)], houses[ind], period, ind);
   ani.square(c[0], c[1], gapOn2 - mStroke);
-  c = deliverCir(warehouse, sats[int(ind / 2)], period, ind);
+  let ws = [warehouse[0] + gapOn2, warehouse[1] - gapOn2];
+  c = deliver(ws, sats[int(ind / 2)], period, ind);
   ani.square(c[0], c[1], gapOn2- mStroke);
-  // console.log(int(ind/2));
+
+  // warehouse inventory
+  c = deliver([ws[0], ws[1]+ gapOn2 + mStroke], ws, period, ind);
+  ani.square(c[0], c[1] , gapOn2 - mStroke);
+  ani.square(c[0], c[1] + (gapOn2 + mStroke), gapOn2 - mStroke);
+
+  let first = [ws[0], ws[1] + gap + 2*mStroke];
+  let offscr = [-gap, first[1]];
+  c = deliver(offscr, first, period, ind);
+  ani.square(c[0], c[1] , gapOn2 - mStroke);
   if (ind == 0 || ind == 1){
     c = sats[1];
   } else {
@@ -631,9 +644,11 @@ function preactions(){
   }
   ani.square(c[0], c[1], gapOn2- mStroke);
   ani.rectMode(CORNER);
+  ani.fill(255); //ani.square(warehouse[0], warehouse[1], gap2);
+  ani.rect(0, 0, warehouse[0] - (gap * 1.05), ani.height);
 }
 
-function deliverCir(s, d, period, phase=0){
+function deliver(s, d, period, phase=0){
   let myFunc = [sin, cos, sin, cos];
   let x = s[0] + abs(myFunc[phase](millis()/period)) * (d[0] - s[0]);
   let y = s[1] + abs(myFunc[phase](millis()/period)) * (d[1] - s[1]);

@@ -116,7 +116,8 @@ function draw() {
   textStyle(BOLD);
   textSize(titleTextSize);
   textAlign(RIGHT, BOTTOM);
-  if (index < 10){
+  // console.log(index);
+  if (curr < 9){
     text("0" + str(curr+1), logoX, logoY);
   } else {
     text(curr + 1, logoX, logoY);
@@ -606,13 +607,9 @@ function preactions(){
   for (let i = 0; i < sats.length; i++){
     ani.square(sats[i][0], sats[i][1], gap);
   }
-  let index = countTo3(period);
-  // let index2counter = countTo15(period);
-  // let shuffle = [3, 0, 1, 2, 2, 1, 3, 0, 2, 1, 2, 3, 0, 2, 3, 4];
-  // let hid = shuffle[index2counter];
-  // console.log(shuffle[index2]);
+  let ind = countTo3(period);
   for (let i = 0; i < houses.length; i++){
-    if (i == index) {
+    if (i == ind) {
       ani.fill(0);
     } else {
       ani.fill(rCol[1]);
@@ -622,12 +619,12 @@ function preactions(){
   // transport test
   ani.fill(rCol[1]);
   ani.noStroke();
-  let c = deliverCir(sats[int(index / 2)], houses[index], period, index);
+  let c = deliverCir(sats[int(ind / 2)], houses[ind], period, ind);
   ani.square(c[0], c[1], gapOn2 - mStroke);
-  c = deliverCir(warehouse, sats[int(index / 2)], period, index);
+  c = deliverCir(warehouse, sats[int(ind / 2)], period, ind);
   ani.square(c[0], c[1], gapOn2- mStroke);
-  // console.log(int(index/2));
-  if (index == 0 || index == 1){
+  // console.log(int(ind/2));
+  if (ind == 0 || ind == 1){
     c = sats[1];
   } else {
     c = sats[0];

@@ -607,31 +607,38 @@ function preactions(){
     ani.square(sats[i][0], sats[i][1], gap);
   }
   let index = countTo3(period);
-  let flash = countTo3(period/2);
+  // let index2counter = countTo15(period);
+  // let shuffle = [3, 0, 1, 2, 2, 1, 3, 0, 2, 1, 2, 3, 0, 2, 3, 4];
+  // let hid = shuffle[index2counter];
+  // console.log(shuffle[index2]);
   for (let i = 0; i < houses.length; i++){
-    if (i == index && flash % 2 == 0) {
-      ani.fill(rCol[0]);
+    if (i == index) {
+      ani.fill(0);
     } else {
-      ani.noFill();
+      ani.fill(rCol[1]);
     }
     ani.square(houses[i][0], houses[i][1], gapOn2);
   }
   // transport test
   ani.fill(rCol[1]);
   ani.noStroke();
-  let cdx, cdy;
-  if (index == 0) {
-    cdx = sats[0][0] + sin(millis()/period) * (houses[0][1] - sats[0][0]);
-    cdy = sats[0][1] + sin(millis()/period) * (sats[0][1] - houses[0][1]);
-    if (cdx > houses[0][0]){
-      cdx = houses[0][0];
-    }
-    if (cdy < houses[0][1]){
-      cdx = houses[0][1];
-    }
-    ani.circle(cdx, cdy, gapOn3);
+  let c = deliverCir(sats[int(index / 2)], houses[index], period, index);
+  ani.square(c[0], c[1], gapOn2 - mStroke);
+  c = deliverCir(warehouse, sats[int(index / 2)], period, index);
+  ani.square(c[0], c[1], gapOn2- mStroke);
+  // console.log(int(index/2));
+  if (index == 0 || index == 1){
+    c = sats[1];
+  } else {
+    c = sats[0];
   }
-  let cs = gapOn3;
-  ani.noStroke();
+  ani.square(c[0], c[1], gapOn2- mStroke);
   ani.rectMode(CORNER);
+}
+
+function deliverCir(s, d, period, phase=0){
+  let myFunc = [sin, cos, sin, cos];
+  let x = s[0] + abs(myFunc[phase](millis()/period)) * (d[0] - s[0]);
+  let y = s[1] + abs(myFunc[phase](millis()/period)) * (d[1] - s[1]);
+  return [x, y];
 }

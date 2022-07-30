@@ -593,7 +593,7 @@ function preactions(){
   // hub
   let warehouse = [aniWidthOn4 - gapOn2, aniHeightOn2];
   // sats
-  let sats = [[aniWidthOn2, aniHeightOn3],[aniWidthOn2, aniHeightOn3 * 2]];
+  let sats = [[aniWidthOn2 + gapOn4, aniHeightOn3],[aniWidthOn2+ gapOn4, aniHeightOn3 * 2]];
   // houses
   let hx = aniWidthOn4 * 3 + gapOn2;//(gapOn2 + gapOn3);
   let houses = [];

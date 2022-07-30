@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 9;
+var cardslength = 10;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -58,7 +58,7 @@ function shuffleColrs() {
 }
 
 function setupScreen() {
-  if (DEBUG == true) {
+  if (DEBUG) {
     index = order.indexOf(cardslength - 1);
   } else {
     chooseIndex();
@@ -77,6 +77,7 @@ function setupScreen() {
   functionList.push(matryoshka);
   functionList.push(antiweight);
   functionList.push(pantiactions);
+  functionList.push(preactions);
 }
 
 function setup() {
@@ -121,7 +122,10 @@ function draw() {
     text(curr + 1, logoX, logoY);
   }
   image(ani, aniX, aniY);
-  if (DEBUG == true){
+  if (DEBUG){
+    fill(0);
+    stroke(255);
+    strokeWeight(1);
     textAlign(LEFT, TOP);
     text("TESTING", 10, 10);
   }
@@ -347,7 +351,7 @@ function merging(){
 function equiTriangle(x, y, l, normal=false){
   vertices = [];
   l = l * sin(60);
-  if (normal == true) {
+  if (normal) {
     vertices.push(x-l);
     vertices.push(y);
     vertices.push(x+l);
@@ -469,12 +473,13 @@ function antiweight() {
   let by = ays+gap+gapOn2-mStroke;
   ani.rect(axs - gapOn2, by, gap, gapOn2);
   ani.strokeWeight(mStroke);
-  if (timer2 == false){
+  if (!timer2){
     ani.fill(255);
     ani.stroke(255);
     ani.rect(axs-gapOn4, by+(gapOn4/2), gapOn2, gapOn4);
   }
   ani.stroke(0);
+  ani.strokeWeight(mStroke);
   ani.noFill();
   ani.line(axs, ays, axe, aye);
   ani.triangle(axs, ays + mStroke, axs-gap, ays+gap2, axs+gap, ays+gap2);
@@ -486,17 +491,44 @@ function pantiactions(){
   let cx = ani.width-(gap + gapOn2); //cy = gap
   let from = color(0, 255, 255);
   let to = color(0, 0, 255);
-  let lerpVal = ((sin(millis()/500))/2) + 0.5;
+  let lerpVal = ((sin(millis()/400))/2) + 0.5;
   let mc = lerpColor(from, to, lerpVal);
+  let mc2 = lerpColor(to, from, lerpVal);
   ani.stroke(mc);
-  for (let i = -2; i <=2; i+=0.25){
-    ani.line(cx + i*gapOn2, gap, cx + i*gapOn2, ani.height-gapOn2);
-  }
-  mc = lerpColor(to, from, lerpVal);
-  ani.stroke(mc);
+  ani.strokeWeight(mStroke/2);
+  let toggle = true;
+  let cs = 0;
   for (let i = -2; i <=2; i+=0.5){
-    ani.line(cx + i*gapOn2, gap, cx + i*gapOn2, ani.height-gapOn2);
+    toggle = true;
+    for (let j = gap; j < ani.height-gapOn2; j+= gapOn4){
+      if (toggle) {
+        ani.line(cx + i*gapOn2, j, cx + i*gapOn2, j+gapOn4/2);
+        cs++;
+      }
+      if ((cs % 2) == 0){
+        ani.stroke(mc);
+      } else {
+        ani.stroke(mc2);
+      }
+      toggle = !toggle;
+    }
   }
+  for (let i = -1.75; i <=2; i+=0.5){
+    toggle = false;
+    for (let j = gap; j < ani.height-gapOn2; j+= gapOn4){
+      if (toggle) {
+        ani.line(cx + i*gapOn2, j, cx + i*gapOn2, j+gapOn4/2);
+        cs++;
+      }
+      if ((cs % 2) == 0){
+        ani.stroke(mc);
+      } else {
+        ani.stroke(mc2);
+      }
+      toggle = !toggle;
+    }
+  }
+
   ani.noStroke();
   ani.fill(255, 255, 0); //sun
   ani.circle(gap, gap, gap);
@@ -517,8 +549,83 @@ function pantiactions(){
     ani.circle(osc + i*gapOn2, aniHeightOn3*2 + gapOn4/2, gapOn2);
   }
   ani.stroke(0);
+  ani.strokeWeight(mStroke);
   ani.line(osc, aniHeightOn3*2-gapOn4/2, osc, ani.height-gapOn2);
+  ani.point(osc, aniHeightOn3*2-gapOn2);
   ani.fill(255);
-  ani.arc(osc+gapOn4/2, ani.height-gapOn2, gapOn4, gapOn4, 0, PI);
+  ani.stroke(rCol[0]);
+  ani.arc(osc-gapOn4/2, ani.height-gapOn2, gapOn4, gapOn4, 0, PI);
+}
 
+function countTo3(period, shift=0, now=millis(), invert=false){
+  let t1 = sin(now/period + shift) > 0;
+  let t2 = cos(now/period + shift) > 0;
+  let pArr = [0, 3, 1, 2];
+  if (invert){
+    pArr = [3, 0, 2, 1];
+  }
+  return pArr[t1 + 2*t2];
+}
+
+function countTo15(period, now=millis(), invert=false) {
+  let major = 4 * countTo3(period*4, PI/4, now, invert);
+  let minor = countTo3(period, 0, now, invert);
+  return major + minor;
+}
+
+function aniRulers(){
+  ani.stroke(0);
+  ani.strokeWeight(1);
+  ani.line(0, aniHeightOn2, ani.width, aniHeightOn2);
+  ani.line(aniWidthOn2, 0, aniWidthOn2, ani.height);
+  // ani.line(0, aniHeightOn2 - (gap + gapOn2), ani.width, aniHeightOn2 - (gap + gapOn2));
+  // ani.line(0, aniHeightOn2 + gap, ani.width, aniHeightOn2 + gap);
+}
+
+function preactions(){
+  ani.clear();
+  ani.rectMode(CENTER);
+  ani.stroke(0);
+  ani.strokeWeight(mStroke);
+  ani.noFill();
+  // hub
+  let warehouse = [aniWidthOn4 - gapOn2, aniHeightOn2];
+  // sats
+  let sats = [[aniWidthOn2, aniHeightOn3],[aniWidthOn2, aniHeightOn3 * 2]];
+  // houses
+  let hx = aniWidthOn4 * 3 + gapOn2;//(gapOn2 + gapOn3);
+  let houses = [];
+  let inc = ani.height/5;
+  let start = inc;
+  for (let i = 0; i < 4; i++){
+    houses.push([hx, start + i * inc]);
+  }
+  //draw layout
+  ani.square(warehouse[0], warehouse[1], gap * 1.5);
+  for (let i = 0; i < sats.length; i++){
+    ani.square(sats[i][0], sats[i][1], gap);
+  }
+  let index = countTo3(1000);
+  for (let i = 0; i < houses.length; i++){
+    if (i == index) {
+      ani.fill(rCol[0]);
+    } else {
+      ani.noFill();
+    }
+    ani.square(houses[i][0], houses[i][1], gapOn2);
+    // ani.square(houses[i][0], houses[i][1], gapOn2);
+  }
+  let cs = gapOn3;
+  ani.noStroke();
+  // ani.fill(rCol[0]);
+  console.log(index);
+  // ani.circle(warehouse[0], warehouse[1], cs);
+  // for (let i = 0; i < sats.length; i++){
+  //   ani.circle(sats[i][0], sats[i][1], cs);
+  // }
+  // for (let i = 0; i < houses.length; i++){
+  //   ani.circle(houses[i][0], houses[i][1], cs);
+  // }
+  // the hub will resupply the satelites, occasionally a house will flash, the sat will resupply the house
+  ani.rectMode(CORNER);
 }

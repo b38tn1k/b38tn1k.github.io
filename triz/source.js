@@ -588,6 +588,7 @@ function preactions(){
   ani.stroke(0);
   ani.strokeWeight(mStroke);
   ani.noFill();
+  let period = 1000;
   // hub
   let warehouse = [aniWidthOn4 - gapOn2, aniHeightOn2];
   // sats
@@ -605,27 +606,32 @@ function preactions(){
   for (let i = 0; i < sats.length; i++){
     ani.square(sats[i][0], sats[i][1], gap);
   }
-  let index = countTo3(1000);
+  let index = countTo3(period);
+  let flash = countTo3(period/2);
   for (let i = 0; i < houses.length; i++){
-    if (i == index) {
+    if (i == index && flash % 2 == 0) {
       ani.fill(rCol[0]);
     } else {
       ani.noFill();
     }
     ani.square(houses[i][0], houses[i][1], gapOn2);
-    // ani.square(houses[i][0], houses[i][1], gapOn2);
+  }
+  // transport test
+  ani.fill(rCol[1]);
+  ani.noStroke();
+  let cdx, cdy;
+  if (index == 0) {
+    cdx = sats[0][0] + sin(millis()/period) * (houses[0][1] - sats[0][0]);
+    cdy = sats[0][1] + sin(millis()/period) * (sats[0][1] - houses[0][1]);
+    if (cdx > houses[0][0]){
+      cdx = houses[0][0];
+    }
+    if (cdy < houses[0][1]){
+      cdx = houses[0][1];
+    }
+    ani.circle(cdx, cdy, gapOn3);
   }
   let cs = gapOn3;
   ani.noStroke();
-  // ani.fill(rCol[0]);
-  console.log(index);
-  // ani.circle(warehouse[0], warehouse[1], cs);
-  // for (let i = 0; i < sats.length; i++){
-  //   ani.circle(sats[i][0], sats[i][1], cs);
-  // }
-  // for (let i = 0; i < houses.length; i++){
-  //   ani.circle(houses[i][0], houses[i][1], cs);
-  // }
-  // the hub will resupply the satelites, occasionally a house will flash, the sat will resupply the house
   ani.rectMode(CORNER);
 }

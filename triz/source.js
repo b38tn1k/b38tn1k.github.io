@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 10;
+var cardslength = 11;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -17,7 +17,7 @@ var rCol = [];
 var mStroke;
 
 function keyPressed() {
-  chooseIndex();
+  // chooseIndex();
 }
 
 function deviceTurned() {
@@ -37,9 +37,9 @@ function preload() {
 }
 
 function chooseIndex(){
-  index += 1;
-  if (index == cardslength) {
-    index -= cardslength;
+  index -= 1;
+  if (index == -1) {
+    index += cardslength;
   }
   rCol = shuffleColrs();
 }
@@ -78,6 +78,8 @@ function setupScreen() {
   functionList.push(antiweight);
   functionList.push(pantiactions);
   functionList.push(preactions);
+  functionList.push(beforehandcushioning);
+
 }
 
 function setup() {
@@ -85,10 +87,13 @@ function setup() {
   for (let i = 0; i < cardslength; i++){
     order.push(i);
   }
-  shuffle(order, true);
+  if (!DEBUG) {
+    shuffle(order, true);
+  }
+
   setupScreen();
   textAlign(LEFT, TOP);
-  document.body.style.backgroundImage = "url('bg" + str(int(random(0, 8)))+".gif')";
+  document.body.style.backgroundImage = "url('bg" + str(int(random(0, 5)))+".gif')";
 }
 
 function draw() {
@@ -246,6 +251,21 @@ function localquality() {
   let normd = ((millis() % 1000)/1000);
   let pos = (igap - gap) * normd;
   if (!('pencil' in aniLayers)){
+    // aniLayers['pencil'] = createGraphics(gap, gap3);
+    // aniLayers['pencil'].stroke(0);
+    // aniLayers['pencil'].fill(rCol[0]);
+    // let x1 = gapOn2; let y1 = gap3; let x2 = 0; let y2 = gap2; let x3 = gap; let y3 = gap2;
+    // aniLayers['pencil'].triangle(x1, y1, x2, y2, x3, y3);
+    // aniLayers['pencil'].fill(0);
+    // aniLayers['pencil'].triangle(x1, y1, gapOn2 - gapOn6, gap2 + gap34, gapOn2 + gapOn6, gap2 + gap34);
+    // aniLayers['pencil'].fill(rCol[1]);
+    // aniLayers['pencil'].rect(0, gap, gapOn3, gap);
+    // aniLayers['pencil'].rect(gapOn3, gap, gapOn3, gap);
+    // aniLayers['pencil'].rect(gapOn3*2, gap, gapOn3, gap);
+    // aniLayers['pencil'].fill(245, 161, 157); // eraser
+    // aniLayers['pencil'].arc(gapOn2, gap, gap, gap2 * 0.97, PI, TWO_PI);
+    // aniLayers['pencil'].fill(255, 165, 0);
+    // aniLayers['pencil'].rect(0, gap - gapOn3, gap * 1.5, gapOn2);
     aniLayers['pencil'] = createGraphics(gap, gap3);
     aniLayers['pencil'].noStroke();
     aniLayers['pencil'].fill(rCol[0]);
@@ -254,16 +274,14 @@ function localquality() {
     aniLayers['pencil'].rect(0, gap, gap, gap);
     aniLayers['pencil'].fill(rCol[2]);
     aniLayers['pencil'].arc(gapOn2, gap, gap, gap2, PI, TWO_PI);
-
     aniLayers['ipencil'] = createGraphics(gap, gap3);
-    aniLayers['ipencil'].noStroke();
-    aniLayers['ipencil'].fill(rCol[0]);
-    aniLayers['ipencil'].triangle(gapOn2, 0, 0, gap, gap, gap);
-    aniLayers['ipencil'].fill(rCol[1]);
-    aniLayers['ipencil'].rect(0, gap, gap, gap);
-    aniLayers['ipencil'].fill(rCol[2]);
-    aniLayers['ipencil'].arc(gapOn2, gap2, gap, gap2, TWO_PI, PI);
-  }
+    aniLayers['ipencil'].imageMode(CENTER);
+    aniLayers['ipencil'].push();
+    aniLayers['ipencil'].scale(1, -1);
+    aniLayers['ipencil'].translate(gapOn2, -1.5*gap);
+    aniLayers['ipencil'].image(aniLayers['pencil'], 0, 0);
+    aniLayers['ipencil'].pop();
+}
 
   if (ltime % 6 == 0) {
     ani.line(gap, cr, gap + pos, cr);
@@ -653,4 +671,50 @@ function deliver(s, d, period, phase=0){
   let x = s[0] + abs(myFunc[phase](millis()/period)) * (d[0] - s[0]);
   let y = s[1] + abs(myFunc[phase](millis()/period)) * (d[1] - s[1]);
   return [x, y];
+}
+
+function smoothSquare(period, now=millis()){
+  let st = sin(now/period);
+  let ct = cos(now/period);
+  let result = 0;
+  if (st > 0 && ct < 0){
+    result = st;
+  } else if (st >= 0) {
+    result = 1;
+  } else if (st < 0 && ct > 0) {
+    result = 1 + st;
+  }
+  return result
+}
+
+function beforehandcushioning(){
+  ani.clear();
+  ani.rectMode(CENTER);
+  let timer = sin(millis()/1000);
+  let x = (timer * (aniWidthOn3/2)) + aniWidthOn3;
+  ani.noStroke();
+  ani.fill(rCol[0]);
+  let ah32 = aniHeightOn3*2
+  ani.rect(x, ah32, gap2, gap);
+  ani.fill(rCol[1]);
+  ani.circle(x - gapOn2, ah32 + gapOn2, gap34);
+  ani.circle(x + gapOn2, ah32 + gapOn2, gap34);
+  ani.fill(rCol[2]);
+  ani.rect(ani.width - aniWidthOn4, aniHeightOn2, aniWidthOn3 - gap, aniHeightOn2 + gap);
+  ani.stroke(0);
+  let spx = x + gap + 1;
+  let inc = aniWidthOn3/8;
+  if (x > (aniWidthOn3)) {
+    inc = ((aniWidthOn2) - x) / 4;
+  }
+  for (let i = 0; i < 5; i++) {
+    ani.line(spx, ah32 - gapOn4, spx, ah32 + gapOn4);
+    if (i < 4) {
+      ani.line(spx, ah32 - gapOn4, spx + inc, ah32 + gapOn4);
+    }
+    spx += inc;
+  }
+
+
+
 }

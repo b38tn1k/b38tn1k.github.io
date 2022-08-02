@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 11;
+var cardslength = 12;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -79,6 +79,7 @@ function setupScreen() {
   functionList.push(pantiactions);
   functionList.push(preactions);
   functionList.push(beforehandcushioning);
+  functionList.push(equipotentiality);
 
 }
 
@@ -673,20 +674,6 @@ function deliver(s, d, period, phase=0){
   return [x, y];
 }
 
-function smoothSquare(period, now=millis()){
-  let st = sin(now/period);
-  let ct = cos(now/period);
-  let result = 0;
-  if (st > 0 && ct < 0){
-    result = st;
-  } else if (st >= 0) {
-    result = 1;
-  } else if (st < 0 && ct > 0) {
-    result = 1 + st;
-  }
-  return result
-}
-
 function beforehandcushioning(){
   ani.clear();
   ani.rectMode(CENTER);
@@ -714,6 +701,75 @@ function beforehandcushioning(){
     }
     spx += inc;
   }
+  ani.rectMode(CORNER);
+}
+
+function smoothSquare(period, now=millis()){
+  let st = sin(now/period);
+  let ct = cos(now/period);
+  let result = 0;
+  if (st > 0 && ct < 0){
+    result = st;
+  } else if (st >= 0) {
+    result = 1;
+  } else if (st < 0 && ct > 0) {
+    result = 1 + st;
+  }
+  return result
+}
+
+function equipotentiality(){
+  ani.clear();
+  ani.rectMode(CORNER);
+  let t = smoothSquare(1000);
+  let s = smoothSquare(250);
+  // let sig = sin(millis()/250) * 0.5 + 0.5;
+  ani.noStroke();
+  ani.fill(0, 0, 255);
+  let low = 2*aniHeightOn3;
+  let high = aniHeightOn3
+  ani.rect(0, low, aniWidthOn3, gap);
+  ani.rect(aniWidthOn3 * 2, high, aniWidthOn3, gap + aniHeightOn3);
+  ani.rect(aniWidthOn3, low, aniWidthOn3, gap);
+
+  let lockHeight = low - (t * high)
+
+  ani.rect(aniWidthOn3, low - (t * high), aniWidthOn3, gap + (t * high));
+  let boatx = 0;
+  let boaty = 0;
+  let l1 = (aniHeightOn3 * 2) + gap;
+  let l2 = aniWidthOn3 - gap;
+  if (t == 0) {
+    // boatx = int(aniWidthOn3 - gap + s * gap2);
+    boatx = aniWidthOn2 - (1-s) * gap2;
+    boaty = low - gapOn2/2;
+  } else if (t==1){
+    // boatx = int(2*aniWidthOn3 - s * gap2 + gap);
+    boatx = aniWidthOn2 + (1-s) * gap2;
+    boaty = high - gapOn2/2;
+  } else {
+    boatx = aniWidthOn2;
+    boaty = lockHeight - gapOn2/2;
+    if ((sin(millis()/1000)) > 0) {
+      l1 = (aniHeightOn3 * 2);
+    } else {
+      l2 = aniWidthOn3;
+    }
+  }
+  ani.fill(255, 0, 0);
+  ani.rectMode(CENTER);
+  ani.rect(boatx, boaty, gap, gapOn2);
+  ani.triangle(boatx - gapOn2, boaty - gapOn4, boatx - gap, boaty - gapOn4, boatx - gapOn2, boaty + gapOn4)
+  ani.triangle(boatx + gapOn2, boaty - gapOn4, boatx + gap, boaty - gapOn4, boatx + gapOn2, boaty + gapOn4)
+  ani.rect(boatx, boaty - gap34, gapOn6/2, gap);
+  ani.fill(255, 255, 0);
+  let mast = boatx - gapOn6/2;
+  ani.triangle(mast, boaty - (gap + gapOn4), mast, boaty - gapOn4, mast - gap34, boaty - gapOn4);
+  ani.rectMode(CORNER);
+  ani.strokeWeight(mStroke);
+  ani.stroke(0);
+  ani.line(aniWidthOn3, aniWidthOn3 - gap, aniWidthOn3, l1);
+  ani.line(2*aniWidthOn3, l2, 2*aniWidthOn3, (aniHeightOn3 * 2) + gap);
 
 
 

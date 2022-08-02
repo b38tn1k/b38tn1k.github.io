@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 12;
+var cardslength = 15;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -80,7 +80,9 @@ function setupScreen() {
   functionList.push(preactions);
   functionList.push(beforehandcushioning);
   functionList.push(equipotentiality);
-
+  functionList.push(dothingsbackwards);
+  functionList.push(curvature);
+  functionList.push(dynamics);
 }
 
 function setup() {
@@ -139,6 +141,7 @@ function draw() {
 }
 
 function drawCard() {
+  aniLayers = {};
   rCol = shuffleColrs();
   cardDeck = createGraphics(windowWidth, windowHeight);
   card = createGraphics(windowWidth, windowHeight);
@@ -172,7 +175,7 @@ function drawCard() {
   card.stroke(0);
   card.strokeWeight(mStroke);
   card.rect(int(px), int(py), w - rad, h - rad, rad * 0.6);
-  titleTextSize = int(h / 16);
+  titleTextSize = int(h / 17);
   tTextSize = int(titleTextSize/2);
   let l1 = px - w * 0.45;
   let l2 = px + w * 0.45;
@@ -771,7 +774,110 @@ function equipotentiality(){
   ani.stroke(0);
   ani.line(aniWidthOn3, aniWidthOn3 - gap, aniWidthOn3, l1);
   ani.line(2*aniWidthOn3, l2, 2*aniWidthOn3, (aniHeightOn3 * 2) + gap);
+}
 
+function dothingsbackwards() {
+  ani.clear();
+  ani.noStroke();
+  let per = 200;
+
+  let ah42 = aniHeightOn4/2;
+  let aw42 = aniWidthOn4/2;
+  ani.fill(139, 69, 19);
+  ani.rect(aniWidthOn4, ah42, gapOn3, aniWidthOn2);
+  let timer = sin(millis()/per);
+  let nailx = timer * gap + (aw42 + gap) + gap2;
+  let vy1 = ah42 + gapOn3;
+  let vy2 = vy1 + gapOn3*2;
+  let vy3 = (vy1 + vy2)/2;
+  let pos = countTo3(4*per, -per/2, millis(), true);
+  let gpos = max(pos-1, 0);
+  if (pos == 0) {
+    nailx = aw42 + gap2;
+  }
+  let wpx = nailx + (pos) * gapOn4;
+  ani.rect(wpx, ah42, gap, gap + gapOn2);
+  ani.fill(190);
+  ani.rect(aw42, ah42 + gapOn4, gap2, gap);
+  ani.triangle(nailx, vy1, nailx, vy2, nailx + gap, vy3);
+}
+
+function curvature(){
+  ani.clear();
+  let per = 500;
+  let tx1 = sin(millis()/per);
+  let tx2 = cos(millis()/per);
+  let cx = aniWidthOn4;
+  let cy = aniWidthOn3;
+  let cr = aniWidthOn3 - gap * 1.5;
+  let mcx = cx + tx1 * cr;
+  let mcy = cy + tx2 * cr;
+  ani.noStroke()
+  ani.fill(rCol[0]);
+  ani.circle(cx, cy, cr * 3);
+  let tb = cy - cr*1.5
+  let aw315 = aniWidthOn3*1.5 + cr*0.5;
+  ani.rect(cx, tb, aw315, cr/2);
+  ani.rect(cx, cy + cr, aw315, cr/2);
+  ani.fill(255);
+  ani.circle(cx, cy, cr);
+  ani.fill(rCol[1]);
+  ani.circle(mcx, mcy, gapOn2);
+  ani.rect(2 * aniWidthOn3 + tx1 * cr, tb + cr/2, gapOn4, cr*2);
+  ani.strokeWeight(mStroke);
+  ani.stroke(rCol[2]);
+  ani.line(mcx, mcy, 2 * aniWidthOn3 + tx1 * cr + gapOn4/2, tb + cr * 1.5);
+}
+
+function dynamics() {
+  if (!('dynSin' in aniLayers)){
+    aniLayers['dynSin'] = createGraphics(int(aniWidthOn2), gap2);
+    aniLayers['dynSin'].strokeWeight(mStroke);
+    aniLayers['dynSin'].stroke(0);
+    for (let i = -1; i < aniLayers['dynSin'].width+1; i++) {
+      let x = i;
+      let y = aniLayers['dynSin'].height/2;
+      y += gapOn4/2 * sin((i /aniLayers['dynSin'].width) * TWO_PI * 2);
+      aniLayers['dynSin'].point(x, y);
+    }
+  }
+  ani.clear();
+  ani.noStroke();
+
+  let cx = aniWidthOn2 + aniWidthOn4 *sin(millis()/1000);
+  let cr = gap;
+  let osc = gapOn4/2 * sin((cx /aniLayers['dynSin'].width) * TWO_PI * 2);
+  let cy = (aniWidthOn2 - gapOn2) + osc;
+  let type = countTo3(2000);
+  ani.fill(rCol[0]);
+  ani.circle(cx, cy, cr);
+  ani.strokeWeight(mStroke);
+  ani.stroke(0);
+  let ah8 = aniHeightOn4/2;
+  let cyp = cy - ah8
+  ani.line(cx, cy, cx, cyp);
+  ani.line(cx - gap, cyp, cx + gap, cyp);
+  let pl = aniHeightOn2;
+  let inc = (cy - pl) / 3;
+  let pos = inc;
+  for (let i = 0; i < 3; i++) {
+    ani.line(cx - gap, cyp - pos, cx - gapOn2, cyp - pos)
+    pos += inc;
+  }
+  let bb = aniHeightOn4 + gapOn2;
+  ani.line (cx + gap34, cyp, cx + gap34, cyp - gapOn6);
+  ani.line (cx + gap34, bb, cx + gap34, bb + gapOn6);
+  ani.stroke(220);
+  ani.line (0, aniHeightOn4 + gapOn4, ani.width, aniHeightOn4+ gapOn4);
+
+  ani.noStroke();
+  ani.fill(rCol[1]);
+  ani.rect(cx - gap, aniHeightOn4, gap2, gapOn2);
+  ani.fill(rCol[2]);
+  ani.rect(cx + gapOn2, bb + gapOn6, gapOn2, (cyp - bb - gapOn3));
+
+  ani.image(aniLayers['dynSin'], 0, aniHeightOn2);
+  ani.image(aniLayers['dynSin'], aniWidthOn2, aniHeightOn2);
 
 
 }

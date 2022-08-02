@@ -689,6 +689,7 @@ function beforehandcushioning(){
   ani.fill(rCol[2]);
   ani.rect(ani.width - aniWidthOn4, aniHeightOn2, aniWidthOn3 - gap, aniHeightOn2 + gap);
   ani.stroke(0);
+  ani.strokeWeight(mStroke/2);
   let spx = x + gap + 1;
   let inc = aniWidthOn3/8;
   if (x > (aniWidthOn3)) {

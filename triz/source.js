@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 15;
+var cardslength = 16;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -83,6 +83,7 @@ function setupScreen() {
   functionList.push(dothingsbackwards);
   functionList.push(curvature);
   functionList.push(dynamics);
+  functionList.push(partialorexcessive);
 }
 
 function setup() {
@@ -708,9 +709,9 @@ function beforehandcushioning(){
   ani.rectMode(CORNER);
 }
 
-function smoothSquare(period, now=millis()){
-  let st = sin(now/period);
-  let ct = cos(now/period);
+function smoothSquare(period, now=millis(), shift=0){
+  let st = sin(now/period + shift);
+  let ct = cos(now/period + shift);
   let result = 0;
   if (st > 0 && ct < 0){
     result = st;
@@ -869,15 +870,74 @@ function dynamics() {
   ani.line (cx + gap34, bb, cx + gap34, bb + gapOn6);
   ani.stroke(220);
   ani.line (0, aniHeightOn4 + gapOn4, ani.width, aniHeightOn4+ gapOn4);
-
   ani.noStroke();
   ani.fill(rCol[1]);
   ani.rect(cx - gap, aniHeightOn4, gap2, gapOn2);
   ani.fill(rCol[2]);
   ani.rect(cx + gapOn2, bb + gapOn6, gapOn2, (cyp - bb - gapOn3));
-
   ani.image(aniLayers['dynSin'], 0, aniHeightOn2);
   ani.image(aniLayers['dynSin'], aniWidthOn2, aniHeightOn2);
+}
 
+function partialorexcessive() {
+  let now = millis();
+  let per = 500;
+  let ind = countTo3(per * 4, 0, now);
+  let prevInd = ind - 1;
+  if (prevInd < 0) {
+    prevInd = 3;
+  }
+  let paintPhase = (ind % 2 == 0);
+  console.log(ind);
+  ani.fill(rCol[ind]);
+  ani.noStroke();
+  let f = now/per;
+  let stencilTimer = sin(f);
+  let paintTimer = -cos(f);
+  ani.clear();
+  ani.background(rCol[prevInd]);
+  let xPaint;
+  if (stencilTimer >= 0) {
+    xPaint = paintTimer * ani.width;
+  } else {
+    xPaint = ani.width;
+  }
+  ani.rect(0, 0, xPaint, ani.height);
+  let sp = smoothSquare(per, now, per/2) * aniWidthOn2 + aniWidthOn4;
 
+  let aw34 = aniWidthOn4 * 3
+  if (xPaint < aw34) {
+    let pprev = prevInd - 1;
+    if (pprev < 0) {
+      pprev = 3;
+    }
+    ani.fill(rCol[pprev]);
+  } else {
+    ani.fill(rCol[prevInd]);
+  }
+  star(aw34, aniHeightOn2, gap, gapOn2, 5);
+  if (sp < xPaint) {
+    ani.fill(rCol[ind]);
+  } else {
+    ani.fill(rCol[prevInd]);
+  }
+  ani.stroke(0);
+  ani.strokeWeight(mStroke);
+  star(sp, aniHeightOn2, gap, gapOn2, 5);
+  // ani.square( sp, aniHeightOn2 - gapOn2, gap);
+}
+
+function star(x, y, radius1, radius2, npoints) {
+  let angle = TWO_PI / npoints;
+  let halfAngle = angle / 2.0;
+  ani.beginShape();
+  for (let a = 0; a < TWO_PI; a += angle) {
+    let sx = x + cos(a) * radius2;
+    let sy = y + sin(a) * radius2;
+    ani.vertex(sx, sy);
+    sx = x + cos(a + halfAngle) * radius1;
+    sy = y + sin(a + halfAngle) * radius1;
+    ani.vertex(sx, sy);
+  }
+  ani.endShape(CLOSE);
 }

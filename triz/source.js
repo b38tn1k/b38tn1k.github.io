@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 17;
+var cardslength = 18;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -85,6 +85,7 @@ function setupScreen() {
   functionList.push(dynamics);
   functionList.push(partialorexcessive);
   functionList.push(anotherdimension);
+  functionList.push(vibrations);
 }
 
 function setup() {
@@ -889,7 +890,6 @@ function partialorexcessive() {
     prevInd = 4;
   }
   let paintPhase = (ind % 2 == 0);
-  console.log(ind);
   ani.fill(rCol[ind]);
   ani.noStroke();
   let f = now/per;
@@ -998,12 +998,37 @@ function anotherdimension(){
   for (let i = 1; i < 12; i+=2) {
     ani.rect(gapOn4 * i, gapOn4, gapOn4, aniHeightOn3 - gapOn2);
   }
-
   ani.pop();
   ani.image(aniLayers['truck'], 0, 0);
   ani.stroke(0);
-  // ani.line(bcx + aniWidthOn3, 0, bcx + aniWidthOn3, ani.height);
+}
 
+function vibrations() {
+  ani.clear();
+  ani.noStroke();
+  ani.rectMode(CENTER);
+  let per = 1000;
+  let lt = cos(millis() / per + per/2);
+  let lt2 = (sin(millis() / per + per/2) + 1)/4;
+  let osc = 0;
+  let c1 = lerpColor(rCol[0], rCol[1], lt2);
+  let c2 = lerpColor(rCol[1], rCol[0], lt2);
+  if (lt > 0) {
+    osc = sin(millis() / 20) * gapOn4/2;
+  }
+  ani.fill(c1);
+  ani.rect(aniWidthOn2 + osc, aniHeightOn3 + osc, aniWidthOn3, aniHeightOn3);
+  ani.fill(c2);
+  ani.rect(aniWidthOn2 + osc, 2*aniHeightOn3 + osc, aniWidthOn3, aniHeightOn3);
+  ani.strokeWeight(mStroke);
+  ani.stroke(c1);
+  ani.line(aniWidthOn3 + osc, aniHeightOn2 + osc, aniWidthOn3*2 + osc, aniHeightOn2 + osc);
+  ani.stroke(0);
+  ani.noFill();
+  ani.rect(aniWidthOn2 + osc, aniHeightOn2 + osc, aniWidthOn3, aniHeightOn3*2);
+  ani.rectMode(CORNER);
+}
 
-
+function periodicaction(){
+  ani.clear();
 }

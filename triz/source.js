@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 16;
+var cardslength = 17;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -84,6 +84,7 @@ function setupScreen() {
   functionList.push(curvature);
   functionList.push(dynamics);
   functionList.push(partialorexcessive);
+  functionList.push(anotherdimension);
 }
 
 function setup() {
@@ -915,7 +916,7 @@ function partialorexcessive() {
   // } else {
   //   ani.fill(rCol[prevInd]);
   // }
-  ani.fill(rCol[0]);
+  ani.fill(255);
   star(aw34, aniHeightOn2, gap, gapOn2, 6);
   if (sp < xPaint) {
     ani.fill(rCol[ind]);
@@ -941,4 +942,68 @@ function star(x, y, radius1, radius2, npoints) {
     ani.vertex(sx, sy);
   }
   ani.endShape(CLOSE);
+}
+
+function anotherdimension(){
+  if (!('truck' in aniLayers)){
+    aniLayers['truck'] = createGraphics(ani.width, ani.height);
+    aniLayers['truck'].noStroke();
+    aniLayers['truck'].fill(100);
+    let aw8 = aniWidthOn4/2;
+    aniLayers['truck'].rect(0, ani.height - aniHeightOn4 - gapOn2, aniWidthOn4 * 3, gapOn2);
+    aniLayers['truck'].arc(aw8 + aniWidthOn2, ani.height - aniHeightOn4, 6*gapOn4, 6*gapOn4, PI, 0);
+    aniLayers['truck'].fill(255, 0, 0);
+    aniLayers['truck'].rect(0, aniHeightOn4, aniWidthOn4, aniHeightOn2);
+    aniLayers['truck'].fill(255, 100, 100);
+    aniLayers['truck'].rect(aniWidthOn4/2, aniHeightOn3 + gapOn6, aniWidthOn4/3, aniHeightOn4);
+    aniLayers['truck'].fill(0, 255, 255);
+    aniLayers['truck'].rect(0, aniHeightOn3 + gapOn6, gapOn2, gap34);
+    aniLayers['truck'].fill(255, 255, 0);
+    aniLayers['truck'].rect(0, aniHeightOn2 + gapOn2, gapOn6, gapOn6);
+    aniLayers['truck'].fill(0);
+    aniLayers['truck'].circle(aw8, ani.height - aniHeightOn4, gap);
+    aniLayers['truck'].circle(aw8 + aniWidthOn2, ani.height - aniHeightOn4, gap);
+    aniLayers['truck'].fill(100);
+    aniLayers['truck'].circle(aw8, ani.height - aniHeightOn4, gapOn3);
+    aniLayers['truck'].circle(aw8 + aniWidthOn2, ani.height - aniHeightOn4, gapOn3);
+  }
+  ani.clear();
+  ani.noStroke();
+  ani.rectMode(CORNER);
+  bcx = aniWidthOn2 - aniWidthOn4;
+  let bcy = (aniHeightOn3 * 2) - (aniHeightOn4 + gapOn2);
+  let timer = sin(millis()/1000);
+  let osc = timer * (QUARTER_PI / 2) + (QUARTER_PI / 2);
+  let fall = (cos(millis()/1000));
+  let ind = countTo3(4000);
+  let cx = ani.width - gapOn2;
+  let cy = ani.height - aniHeightOn4 + gapOn4;
+  ani.fill(rCol[ind]);
+  if (osc > 0.6 && fall > 0) {
+    ani.circle(cx - abs(fall * gapOn4), cy - abs(fall * gap), gapOn2);
+  } else if (fall < 0){
+    ani.circle(cx, cy, gapOn2);
+  }
+  ani.strokeWeight(mStroke * 2);
+  ani.stroke(150);
+  ani.line(bcx, bcy + aniHeightOn3, sin(osc + QUARTER_PI) * aniWidthOn2, (bcy + aniHeightOn3) - sin(osc + QUARTER_PI) * aniHeightOn3);
+  ani.strokeWeight(mStroke);
+  ani.stroke(100);
+  ani.fill(150);
+  ani.push();
+  ani.translate(bcx + sin(osc) * aniWidthOn2, bcy - sin(osc) * aniHeightOn3);
+  ani.rotate(osc);
+  ani.rect(0, 0, aniWidthOn2, aniHeightOn3);
+  ani.fill(200);
+  for (let i = 1; i < 12; i+=2) {
+    ani.rect(gapOn4 * i, gapOn4, gapOn4, aniHeightOn3 - gapOn2);
+  }
+
+  ani.pop();
+  ani.image(aniLayers['truck'], 0, 0);
+  ani.stroke(0);
+  // ani.line(bcx + aniWidthOn3, 0, bcx + aniWidthOn3, ani.height);
+
+
+
 }

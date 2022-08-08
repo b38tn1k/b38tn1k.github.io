@@ -43,23 +43,7 @@ function chooseIndex(){
     index += cardslength;
   }
   rCol = shuffleColrs();
-  rTone = shuffleSkinTones();
 }
-
-function shuffleSkinTones() {
-  let c = [color([141, 85, 36]),color([198, 134, 66]),color([224, 172, 105]),color([241, 194, 125]),color([255, 219, 172])];
-  let j = [];
-  let cl = c.length;
-  while (j.length <= cl) {
-    for (let k = 0; k < int(random(0, c.length)); k++){
-      c.push(c.shift());
-    }
-    j.push(c.pop());
-  }
-  return(j);
-}
-
-
 
 function shuffleColrs() {
   let c = [color([0, 0, 255]),color([0, 255, 255]),color([0, 255, 0]),color([255, 255, 0]),color([255, 0, 0])];
@@ -166,7 +150,6 @@ function draw() {
 function drawCard() {
   aniLayers = {};
   rCol = shuffleColrs();
-  rTone = shuffleSkinTones();
   cardDeck = createGraphics(windowWidth, windowHeight);
   card = createGraphics(windowWidth, windowHeight);
   let y_ratio = 8.8;
@@ -1161,20 +1144,29 @@ function continuityofusefulaction() {
 
 function skipping() {
   ani.clear();
-  // ani.stroke(0);
-  // ani.strokeWeight(mStroke);
+  // let c = [color([141, 85, 36]),color([198, 134, 66]),color([224, 172, 105]),color([241, 194, 125]),color([255, 219, 172])];
+  let c = [color([141, 85, 36]),color([224, 172, 105]),color([255, 219, 172])];
+  let index = 0;
+  for (let i = 0; i < 3; i++) {
+    if (rCol[i].levels[0] == 255) {
+      index += 1;
+    }
+  }
   let timer = sin(millis()/200);
-  ani.background(rTone[0]);
+  ani.background(c[index]);
   ani.noStroke();
   if (timer > 0.8) {
     ani.fill(lerpColor(color(255), color(255, 0, 0), timer - 0.8));
   } else {
     ani.fill(255);
   }
-
   ani.circle(aniWidthOn2, aniHeightOn2, aniWidthOn2);
   ani.noStroke();
-  ani.fill(0, 255, 255);
+  if (rCol[4].levels[0] == 255) {
+    ani.fill(0, 255, 255);
+  } else {
+    ani.fill(color([198, 134, 66]));
+  }
   ani.circle(aniWidthOn2, aniHeightOn2, aniWidthOn4);
   ani.fill(0);
   ani.circle(aniWidthOn2, aniHeightOn2, aniWidthOn4/2);

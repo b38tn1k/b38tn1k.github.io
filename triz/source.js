@@ -882,10 +882,10 @@ function dynamics() {
 function partialorexcessive() {
   let now = millis();
   let per = 500;
-  let ind = countTo3(per * 4, 0, now);
+  let ind = countTo3(per * 4, 0, now) + 1;
   let prevInd = ind - 1;
-  if (prevInd < 0) {
-    prevInd = 3;
+  if (prevInd == 0) {
+    prevInd = 4;
   }
   let paintPhase = (ind % 2 == 0);
   console.log(ind);
@@ -906,16 +906,17 @@ function partialorexcessive() {
   let sp = smoothSquare(per, now, per/2) * aniWidthOn2 + aniWidthOn4;
 
   let aw34 = aniWidthOn4 * 3
-  if (xPaint < aw34) {
-    let pprev = prevInd - 1;
-    if (pprev < 0) {
-      pprev = 3;
-    }
-    ani.fill(rCol[pprev]);
-  } else {
-    ani.fill(rCol[prevInd]);
-  }
-  star(aw34, aniHeightOn2, gap, gapOn2, 5);
+  // if (xPaint < aw34) {
+  //   let pprev = prevInd - 1;
+  //   if (pprev < 0) {
+  //     pprev = 3;
+  //   }
+  //   ani.fill(rCol[pprev]);
+  // } else {
+  //   ani.fill(rCol[prevInd]);
+  // }
+  ani.fill(rCol[0]);
+  star(aw34, aniHeightOn2, gap, gapOn2, 6);
   if (sp < xPaint) {
     ani.fill(rCol[ind]);
   } else {
@@ -923,7 +924,7 @@ function partialorexcessive() {
   }
   ani.stroke(0);
   ani.strokeWeight(mStroke);
-  star(sp, aniHeightOn2, gap, gapOn2, 5);
+  star(sp, aniHeightOn2, gap, gapOn2, 6);
   // ani.square( sp, aniHeightOn2 - gapOn2, gap);
 }
 

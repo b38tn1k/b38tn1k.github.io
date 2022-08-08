@@ -14,7 +14,6 @@ var titleTextSize = 32;
 var tTextSize = 16;
 var functionList;
 var rCol = [];
-var rTone = [];
 var mStroke;
 
 function keyPressed() {

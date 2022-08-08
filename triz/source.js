@@ -7,13 +7,14 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 20;
+var cardslength = 21;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
 var tTextSize = 16;
 var functionList;
 var rCol = [];
+var rTone = [];
 var mStroke;
 
 function keyPressed() {
@@ -42,7 +43,23 @@ function chooseIndex(){
     index += cardslength;
   }
   rCol = shuffleColrs();
+  rTone = shuffleSkinTones();
 }
+
+function shuffleSkinTones() {
+  let c = [color([141, 85, 36]),color([198, 134, 66]),color([224, 172, 105]),color([241, 194, 125]),color([255, 219, 172])];
+  let j = [];
+  let cl = c.length;
+  while (j.length <= cl) {
+    for (let k = 0; k < int(random(0, c.length)); k++){
+      c.push(c.shift());
+    }
+    j.push(c.pop());
+  }
+  return(j);
+}
+
+
 
 function shuffleColrs() {
   let c = [color([0, 0, 255]),color([0, 255, 255]),color([0, 255, 0]),color([255, 255, 0]),color([255, 0, 0])];
@@ -88,6 +105,7 @@ function setupScreen() {
   functionList.push(vibrations);
   functionList.push(periodicaction);
   functionList.push(continuityofusefulaction);
+  functionList.push(skipping);
 }
 
 function setup() {
@@ -148,6 +166,7 @@ function draw() {
 function drawCard() {
   aniLayers = {};
   rCol = shuffleColrs();
+  rTone = shuffleSkinTones();
   cardDeck = createGraphics(windowWidth, windowHeight);
   card = createGraphics(windowWidth, windowHeight);
   let y_ratio = 8.8;
@@ -1138,5 +1157,37 @@ function continuityofusefulaction() {
   ani.noFill();
   ani.stroke(0);
   ani.rect(ani.width - (aniWidthOn3), aniHeightOn3/2, gap2, 2*aniHeightOn3);
+}
 
+function skipping() {
+  ani.clear();
+  // ani.stroke(0);
+  // ani.strokeWeight(mStroke);
+  let timer = sin(millis()/200);
+  ani.background(rTone[0]);
+  ani.noStroke();
+  if (timer > 0.8) {
+    ani.fill(lerpColor(color(255), color(255, 0, 0), timer - 0.8));
+  } else {
+    ani.fill(255);
+  }
+
+  ani.circle(aniWidthOn2, aniHeightOn2, aniWidthOn2);
+  ani.noStroke();
+  ani.fill(0, 255, 255);
+  ani.circle(aniWidthOn2, aniHeightOn2, aniWidthOn4);
+  ani.fill(0);
+  ani.circle(aniWidthOn2, aniHeightOn2, aniWidthOn4/2);
+  ani.push();
+  ani.translate(aniWidthOn2, aniHeightOn2);
+  ani.rotate(-QUARTER_PI);
+  if (timer > 0.8) {
+    ani.strokeWeight(mStroke);
+    ani.stroke(0, 255, 0);
+    ani.line(0, 0, ani.width, 0);
+  }
+  ani.fill(200);
+  ani.noStroke();
+  ani.rect(aniWidthOn4 + gapOn4, -gapOn2, ani.width, gap);
+  ani.pop();
 }

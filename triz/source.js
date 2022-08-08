@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 18;
+var cardslength = 20;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -86,6 +86,8 @@ function setupScreen() {
   functionList.push(partialorexcessive);
   functionList.push(anotherdimension);
   functionList.push(vibrations);
+  functionList.push(periodicaction);
+  functionList.push(continuityofusefulaction);
 }
 
 function setup() {
@@ -944,7 +946,7 @@ function star(x, y, radius1, radius2, npoints) {
   ani.endShape(CLOSE);
 }
 
-function anotherdimension(){
+function drawTruck() {
   if (!('truck' in aniLayers)){
     aniLayers['truck'] = createGraphics(ani.width, ani.height);
     aniLayers['truck'].noStroke();
@@ -967,6 +969,10 @@ function anotherdimension(){
     aniLayers['truck'].circle(aw8, ani.height - aniHeightOn4, gapOn3);
     aniLayers['truck'].circle(aw8 + aniWidthOn2, ani.height - aniHeightOn4, gapOn3);
   }
+}
+
+function anotherdimension(){
+  drawTruck()
   ani.clear();
   ani.noStroke();
   ani.rectMode(CORNER);
@@ -1031,4 +1037,106 @@ function vibrations() {
 
 function periodicaction(){
   ani.clear();
+  ani.rectMode(CENTER);
+  ani.noFill();
+  ani.strokeWeight(mStroke);
+  ani.stroke(0);
+  let aw34 = 3*aniWidthOn4;
+  let ah34 = 3*aniHeightOn4;
+  let sx = gapOn2 + mStroke;
+  let ex = ani.width - (gapOn2 + mStroke);
+  let ty = aniHeightOn4;
+  let by = ah34;
+  ani.fill(rCol[0]);
+  let per = 500;
+  let t1 = sin(millis()/per);
+  let t2 = (cos(millis()/per) + 1) / 2;
+  if (t1 >= 0) {
+    t2 = 1 - t2;
+  }
+  ani.noStroke();
+  ani.circle(sx + t2 *(ex - sx), ty, gapOn3);
+
+  let batchT = countTo3(2 * per);
+  let diffx = (ex - sx - gap);
+  if (batchT == 0) {
+    ani.circle(gap + sx + t2 * diffx, by, gapOn3);
+    ani.circle(gap + gapOn2 + sx + t2 * diffx, by, gapOn3);
+    ani.circle(gap2 + sx + t2 * diffx, by, gapOn3);
+  } else if (batchT == 1) {
+    ani.circle(sx + t2 * (gap2), by, gapOn3);
+  } else if (batchT == 2) {
+    ani.circle(sx + gap2, by, gapOn3);
+    ani.circle(sx + t2 * (gap + gapOn2), by, gapOn3);
+  } else if (batchT == 3) {
+    ani.circle(sx + gap + gapOn2, by, gapOn3);
+    ani.circle(sx + gap2, by, gapOn3);
+    ani.circle(sx + t2 * gap, by, gapOn3);
+  }
+  ani.fill(255);
+  ani.rect(ex + gap, aniHeightOn2, gap2, ani.height);
+  ani.fill(rCol[1]);
+  ani.square(sx, ty, gap);
+  ani.square(sx, by, gap);
+  ani.fill(rCol[0]);
+  ani.square(ex, ty, gap);
+  ani.square(ex, by, gap);
+  ani.rectMode(CORNER);
+}
+
+function continuityofusefulaction() {
+  ani.clear();
+  ani.noStroke();
+  ani.fill(200);
+  let per = 1000;
+  let timer = sin(millis()/per);
+  ani.push();
+  ani.translate(aniWidthOn2, ani.height - aniHeightOn3);
+  ani.rotate(TWO_PI*(millis()/per));
+  ani.circle(0, 0, gap);
+  ani.fill(100);
+  ani.arc(0, 0, gap, gap, 0, QUARTER_PI);
+  ani.arc(0, 0, gap, gap, HALF_PI, HALF_PI + QUARTER_PI);
+  ani.arc(0, 0, gap, gap, PI, PI + QUARTER_PI);
+  ani.arc(0, 0, gap, gap, -HALF_PI, - QUARTER_PI);
+  ani.pop();
+  ani.strokeWeight(mStroke/2);
+  ani.stroke(0);
+  ani.circle(aniWidthOn2, ani.height - aniHeightOn3, gapOn2);
+  ani.rect(aniWidthOn2-gapOn2, ani.height - aniHeightOn3, gap, gapOn2);
+  let lh = ani.height - aniHeightOn3 + gap;
+  ani.line(aniWidthOn2, lh - gapOn2, aniWidthOn2, lh );
+  if (timer > 0) {
+    ani.fill(255, 255, 0);
+    ani.stroke(255, 255, 0);
+    ani.line(aniWidthOn2, lh, gap, lh );
+    ani.line(gap, lh, gap, aniHeightOn3 + gap);
+    ani.stroke(0);
+    ani.line(aniWidthOn2, lh, ani.width - aniWidthOn3/2, lh );
+    ani.line(ani.width - aniWidthOn3/2, lh, ani.width - aniWidthOn3/2, ani.height - aniHeightOn3/2);
+  } else {
+    ani.noFill();
+    ani.stroke(255, 255, 0);
+    ani.line(aniWidthOn2, lh, ani.width - aniWidthOn3/2, lh );
+    ani.line(ani.width - aniWidthOn3/2, lh, ani.width - aniWidthOn3/2, ani.height - aniHeightOn3/2);
+    ani.stroke(0);
+    ani.line(aniWidthOn2, lh, gap, lh );
+    ani.line(gap, lh, gap, aniHeightOn3 + gap);
+  }
+  ani.stroke(0);
+  ani.ellipse(gap, aniHeightOn3, gap, gap2);
+  ani.noFill();
+  ani.triangle(gap - gapOn4, aniHeightOn3, gap + gapOn4, aniHeightOn3, gap, aniHeightOn3 + gap);
+  ani.fill(100);
+  ani.rect(gapOn2, aniHeightOn3 + gap34 , gap, gapOn2);
+  ani.fill(0, 0, 255);
+  ani.noStroke();
+  ani.rect(ani.width - (aniWidthOn3), aniHeightOn3/2, gap2, 2*aniHeightOn3);
+  let water = 1 - (cos(millis()/per) + 1)/2;
+  ani.fill(255);
+  ani.rect(ani.width - (aniWidthOn3), aniHeightOn3/2 , gap2, 2*aniHeightOn3 * water);
+  ani.noFill();
+  ani.stroke(0);
+  ani.rect(ani.width - (aniWidthOn3), aniHeightOn3/2, gap2, 2*aniHeightOn3);
+
 }

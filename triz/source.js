@@ -1101,7 +1101,7 @@ function continuityofusefulaction() {
   ani.arc(0, 0, gap, gap, PI, PI + QUARTER_PI);
   ani.arc(0, 0, gap, gap, -HALF_PI, - QUARTER_PI);
   ani.pop();
-  ani.strokeWeight(mStroke/2);
+  ani.strokeWeight(mStroke);
   ani.stroke(0);
   ani.circle(aniWidthOn2, ani.height - aniHeightOn3, gapOn2);
   ani.rect(aniWidthOn2-gapOn2, ani.height - aniHeightOn3, gap, gapOn2);
@@ -1155,7 +1155,7 @@ function skipping() {
   ani.background(c[index]);
   ani.noStroke();
   if (timer > 0.8) {
-    ani.fill(lerpColor(color(255), color(255, 0, 0), timer - 0.8));
+    ani.fill(255, 230, 230);
   } else {
     ani.fill(255);
   }

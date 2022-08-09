@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 21;
+var cardslength = 22;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -89,6 +89,7 @@ function setupScreen() {
   functionList.push(periodicaction);
   functionList.push(continuityofusefulaction);
   functionList.push(skipping);
+  functionList.push(harmtobenefit);
 }
 
 function setup() {
@@ -1181,4 +1182,84 @@ function skipping() {
   ani.noStroke();
   ani.rect(aniWidthOn4 + gapOn4, -gapOn2, ani.width, gap);
   ani.pop();
+}
+
+function drawCar(){
+  if (!('car' in aniLayers)){
+    aniLayers['car'] = createGraphics(ani.width, ani.height);
+    aniLayers['car window'] = createGraphics(ani.width, ani.height);
+    aniLayers['car'].noStroke();
+    let body = [];
+    body.push([0.1, 0.72]);
+    body.push([0.26, 0.63]);
+    body.push([0.43, 0.51]);
+    body.push([0.83, 0.51]);
+    body.push([0.92, 0.65]);
+    body.push([0.92, 0.73]);
+    body.push([0.93, 0.78]);
+    body.push([0.93, 0.86]);
+    body.push([0.9, 0.9]);
+    body.push([0.09, 0.93]);
+    body.push([0.06, 0.84]);
+    body.push([0.1, 0.72]);
+    body.push([0.26, 0.63]);
+    body.push([0.43, 0.51]);
+    aniLayers['car'].beginShape();
+    aniLayers['car'].fill(0, 0, 255);
+    for (let i = 0; i < body.length; i++) {
+      aniLayers['car'].curveVertex(body[i][0] * ani.width, body[i][1] * ani.height);
+    }
+    aniLayers['car'].endShape();
+    let windows = [];
+    windows.push([0.3, 0.68]);
+    windows.push([0.3, 0.68]);
+    windows.push([0.4, 0.55]);
+    windows.push([0.78, 0.53]);
+    windows.push([0.82, 0.66]);
+    windows.push([0.3, 0.68]);
+    aniLayers['car window'].beginShape();
+    aniLayers['car window'].fill(255);
+    aniLayers['car window'].noStroke();
+    for (let i = 0; i < windows.length; i++) {
+      aniLayers['car window'].curveVertex(windows[i][0] * ani.width, windows[i][1] * ani.height);
+    }
+    aniLayers['car window'].endShape();
+    // aniLayers['car'].fill(255, 255, 0);
+    // aniLayers['car'].ellipse(0.12*ani.width, 0.77 * ani.height, 0.04*ani.width, 0.06*ani.width);
+    // aniLayers['car'].ellipse(0.9*ani.width, 0.68 * ani.height, 0.04*ani.width, 0.06*ani.width);
+    // let lights = [[0.12, 0.77], [0.9, 0.7]];
+    // let wheels = [[0.23, 0.9], [0.83, 0.9]];
+    aniLayers['car'].fill(0);
+    aniLayers['car'].circle(0.23*ani.width, 0.88*ani.height, 0.16*ani.width);
+    aniLayers['car'].circle(0.83*ani.width, 0.88*ani.height, 0.16*ani.width);
+    aniLayers['car'].fill(100);
+    aniLayers['car'].circle(0.23*ani.width, 0.88*ani.height, 0.08*ani.width);
+    aniLayers['car'].circle(0.83*ani.width, 0.88*ani.height, 0.08*ani.width);
+
+  }
+}
+
+function harmtobenefit() {
+  drawCar();
+  ani.clear();
+  ani.image(aniLayers['car'], 0, -aniHeightOn3/2);
+  let timer = sin(millis()/500);
+  ani.rectMode(CENTER);
+  ani.noStroke();
+  let c = lerpColor(color(100), color(255, 0, 0), timer );
+  ani.fill(c);
+  let ex = aniWidthOn2 + gapOn2;
+  let ey = aniHeightOn2 + gap34;
+  ani.rect(ex, ey, gap, gapOn2);
+  ani.rect(ex - gap34, ey, gapOn6, gapOn2);
+  ani.rect(ex - gap34/2, ey, gap34, gapOn6);
+  ani.rect(ex, ey - gapOn3, gapOn2, gapOn6);
+  ani.rect(ex + gap34, ey, gapOn6, gapOn2);
+  ani.rect(ex + gap34/2, ey, gap34, gapOn6)
+  c = lerpColor(color(200, 255, 255), color(255, 255, 100), timer );
+  ani.tint(c);
+  ani.image(aniLayers['car window'], 0, -aniHeightOn3/2);
+  ani.noTint();
+  ani.rectMode(CORNER);
+
 }

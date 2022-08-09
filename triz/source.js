@@ -1243,7 +1243,7 @@ function harmtobenefit() {
   drawCar();
   ani.clear();
   ani.image(aniLayers['car'], 0, -aniHeightOn3/2);
-  let timer = sin(millis()/500);
+  let timer = smoothSquare(500);
   ani.rectMode(CENTER);
   ani.noStroke();
   let c = lerpColor(color(100), color(255, 0, 0), timer );

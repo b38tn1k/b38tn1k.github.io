@@ -791,7 +791,7 @@ function makeMenuDivDemos() {
     // small image, title. both clickable to set demoPointer
   }
   menuDiv.html(myString);
-  menuDiv.position(windowWidth - border * 1.5 - imgSize, demos[demoPointer].div.y);
+  menuDiv.position(windowWidth - border * 1.5 - imgSize , demos[demoPointer].div.y + 20);
   menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
   menuDiv.addClass('grad');
   menuDiv.show();

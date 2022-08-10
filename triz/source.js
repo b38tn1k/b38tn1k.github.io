@@ -1299,7 +1299,7 @@ function drawFBLoop() {
     let outputSignalX = ani.width - aw8 - gapOn3/3;
     let outputSignalY = gapOn3;
     let targetX = aniWidthOn2 + gapOn2;
-    let targetY = aniHeightOn4 * 3 - gHeight + gapOn4 - mStroke/2;
+    let targetY = aniHeightOn2 - gHeight/2 + gapOn3;//aniHeightOn4 * 3 - gHeight + gapOn4 - mStroke/2;
     aniLayers['fbl overlay'] = createGraphics(ani.width, ani.height);
     aniLayers['fbl overlay'].strokeWeight(mStroke);
     aniLayers['fbl overlay'].stroke(0);
@@ -1347,7 +1347,7 @@ function feedback(){
   ani.fill(0, 0, 255);
   ani.rect(outputSignalX, outputSignalY + (1-output) * gHeight, gapOn3, gHeight*output);
   let targetX = aniWidthOn2 + gapOn2;
-  let targetY = aniHeightOn4 * 3 - gHeight + gapOn4 - mStroke/2;
+  let targetY = aniHeightOn2 - gHeight/2 + gapOn3;//aniHeightOn4 * 3 - gHeight + gapOn4 - mStroke/2;
   ani.fill(255);
   ani.rect(targetX, targetY, gapOn3, gHeight);
   ani.fill(255, 0, 255);

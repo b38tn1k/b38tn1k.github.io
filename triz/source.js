@@ -1290,6 +1290,27 @@ function drawFBLoop() {
     aniLayers['fbl'].triangle(txs, ty, txs + gapOn6, ty - g12, txs + gapOn6, ty + g12);
     txs = aniWidthOn2 + aniWidthOn4 - gapOn3;
     aniLayers['fbl'].triangle(txs, ty, txs + gapOn6, ty - g12, txs + gapOn6, ty + g12);
+    aw8 = aniWidthOn4/2;
+    let gHeight = gap2;
+    let inputSignalX = aw8 - gapOn3;
+    let inputSignalY = gapOn3;
+    let errorX = aniWidthOn3 - gapOn6;
+    let errorY = gapOn3;
+    let outputSignalX = ani.width - aw8 - gapOn3/3;
+    let outputSignalY = gapOn3;
+    let targetX = aniWidthOn2 + gapOn2;
+    let targetY = aniHeightOn4 * 3 - gHeight + gapOn4 - mStroke/2;
+    aniLayers['fbl overlay'] = createGraphics(ani.width, ani.height);
+    aniLayers['fbl overlay'].strokeWeight(mStroke);
+    aniLayers['fbl overlay'].stroke(0);
+    aniLayers['fbl overlay'].noFill();
+    aniLayers['fbl overlay'].rect(inputSignalX, inputSignalY, gapOn3, gHeight);
+    aniLayers['fbl overlay'].rect(outputSignalX, outputSignalY, gapOn3, gHeight);
+    aniLayers['fbl overlay'].rect(targetX, targetY, gapOn3, gHeight);
+    aniLayers['fbl overlay'].rect(errorX, errorY, gapOn3, gHeight);
+    aniLayers['fbl overlay'].line(targetX + gapOn3, targetY + gHeight/2, targetX + gap + gapOn4, targetY + gHeight/2);
+    aniLayers['fbl overlay'].line(targetX, targetY + gHeight/2, aniWidthOn2, targetY + gHeight/2);
+    aniLayers['fbl overlay'].line(aniWidthOn2, targetY + gHeight/2, aniWidthOn2, aniHeightOn3 + gapOn4);
   }
 }
 
@@ -1297,51 +1318,50 @@ function feedback(){
   ani.clear();
   drawFBLoop();
   ani.image(aniLayers['fbl'], 0, gapOn3);
-  let per = 500;
-  let input = (sin(millis()/per) + 1) / 2;
+  // let input = (sin(millis()/100) + 1) * 0.33 + 0.165;
+  let input = (sin(millis()/50) + 1) * 0.1 + (sin(millis()/1000) + 1) * 0.3;
+  let target = 0.5 * smoothSquare(600) + 0.25;
   // simulate plant delay
   // let inputDelayed = (sin(millis()/per - per/8) + 1) / 2;
-  let error = 0.5 - input;
-  // let output = input + error;
+  let error = target - input;
+  let output = input + error;
   ani.noStroke();
   let aw8 = aniWidthOn4/2;
-
+  let gHeight = gap2;
   let inputSignalX = aw8 - gapOn3;
   let inputSignalY = gapOn3;
-  let inputHeight = gap2;
   ani.fill(255);
-  ani.rect(inputSignalX, inputSignalY, gapOn3, inputHeight);
-  ani.fill(255, 0, 0);
-  ani.rect(inputSignalX, inputSignalY + (1-input) * inputHeight, gapOn3, inputHeight*input);
-
+  ani.rect(inputSignalX, inputSignalY, gapOn3, gHeight);
+  ani.fill(0, 255, 0);
+  ani.rect(inputSignalX, inputSignalY + (1-input) * gHeight, gapOn3, gHeight*input);
   let errorX = aniWidthOn3 - gapOn6;
   let errorY = gapOn3;
-  let errorH = gap2;
   ani.fill(255);
-  ani.rect(errorX, errorY, gapOn3, errorH);
-  ani.fill(0, 255, 0);
-  ani.rect(errorX, errorY + (1-error) * errorH - errorH/2, gapOn3, errorH*error);
-
+  ani.rect(errorX, errorY, gapOn3, gHeight);
+  ani.fill(255, 0, 0);
+  ani.rect(errorX, errorY + (1-error/2) * gHeight - gHeight/2, gapOn3, gHeight*error/2);
   let outputSignalX = ani.width - aw8 - gapOn3/3;
   let outputSignalY = gapOn3;
-  let outputHeight = gap2;
   ani.fill(255);
-  ani.rect(outputSignalX, outputSignalY, gapOn3, outputHeight);
+  ani.rect(outputSignalX, outputSignalY, gapOn3, gHeight);
   ani.fill(0, 0, 255);
-  ani.rect(outputSignalX, outputSignalY + outputHeight/2, gapOn3, outputHeight/2);
-
-  let outputSignalX2 = aniWidthOn2;
-  let outputSignalY2 = aniHeightOn4 * 3 - outputHeight/2;
+  ani.rect(outputSignalX, outputSignalY + (1-output) * gHeight, gapOn3, gHeight*output);
+  let targetX = aniWidthOn2 + gapOn2;
+  let targetY = aniHeightOn4 * 3 - gHeight + gapOn4 - mStroke/2;
   ani.fill(255);
-  ani.rect(outputSignalX2, outputSignalY2, gapOn3, outputHeight);
-  ani.fill(0, 0, 255);
-  ani.rect(outputSignalX2, outputSignalY2 + outputHeight/2, gapOn3, outputHeight/2);
-
+  ani.rect(targetX, targetY, gapOn3, gHeight);
+  ani.fill(255, 0, 255);
+  ani.rect(targetX, targetY + (1-target) * gHeight, gapOn3, gHeight*target);
+  let cx = targetX + gap// + gapOn4;
+  ani.image(aniLayers['fbl overlay'], 0, 0);
   ani.strokeWeight(mStroke);
   ani.stroke(0);
-  ani.noFill();
-  ani.rect(inputSignalX, inputSignalY, gapOn3, inputHeight);
-  ani.rect(outputSignalX, outputSignalY, gapOn3, outputHeight);
-  ani.rect(outputSignalX2, outputSignalY2, gapOn3, outputHeight);
-  ani.rect(errorX, errorY, gapOn3, errorH);
+  ani.push();
+  ani.translate(cx, targetY + gHeight/2);
+  target = -(QUARTER_PI) + (target - 0.25) * PI;
+  ani.rotate(target);
+  ani.fill(255, 0, 255);
+  ani.circle(0, 0, gap34);
+  ani.line(0, 0, 0, -gap34/2);
+  ani.pop();
 }

@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 22;
+var cardslength = 23;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -90,6 +90,7 @@ function setupScreen() {
   functionList.push(continuityofusefulaction);
   functionList.push(skipping);
   functionList.push(harmtobenefit);
+  functionList.push(feedback);
 }
 
 function setup() {
@@ -1261,5 +1262,86 @@ function harmtobenefit() {
   ani.image(aniLayers['car window'], 0, -aniHeightOn3/2);
   ani.noTint();
   ani.rectMode(CORNER);
+}
 
+function drawFBLoop() {
+  if (!('fbl' in aniLayers)){
+    aniLayers['fbl'] = createGraphics(ani.width, ani.height);
+    aniLayers['fbl'].rectMode(CENTER);
+    aniLayers['fbl'].noFill();
+    aniLayers['fbl'].strokeWeight(mStroke);
+    aniLayers['fbl'].stroke(0);
+    aniLayers['fbl'].rect(aniWidthOn2, aniHeightOn2, aniWidthOn4 * 2.5, aniHeightOn2);
+    aniLayers['fbl'].line(0, aniHeightOn4, ani.width, aniHeightOn4);
+    aniLayers['fbl'].fill(rCol[1]);
+    let aw8 = aniWidthOn4/2;
+    aniLayers['fbl'].circle(aniWidthOn4 * 0.75, aniHeightOn4, gapOn2);
+    aniLayers['fbl'].rect(aniWidthOn2, aniHeightOn4, gapOn2, gapOn2);
+    // aniLayers['fbl'].rect(aniWidthOn2 + aw8, aniHeightOn4, gapOn2, gapOn2);
+    // aniLayers['fbl'].rect(aniWidthOn2, aniHeightOn4 * 3, gapOn2, gapOn2);
+    aniLayers['fbl'].fill(0);
+    let txs = ani.width - gapOn6;
+    let g12 = gapOn6/2
+    aniLayers['fbl'].triangle(txs, aniHeightOn4, txs - gapOn6, aniHeightOn4 - g12, txs - gapOn6, aniHeightOn4 + g12);
+    txs = gapOn3;
+    aniLayers['fbl'].triangle(txs, aniHeightOn4, txs - gapOn6, aniHeightOn4 - g12, txs - gapOn6, aniHeightOn4 + g12);
+    txs = aniWidthOn2 - aniWidthOn4;
+    let ty = aniHeightOn4 * 3;
+    aniLayers['fbl'].triangle(txs, ty, txs + gapOn6, ty - g12, txs + gapOn6, ty + g12);
+    txs = aniWidthOn2 + aniWidthOn4 - gapOn3;
+    aniLayers['fbl'].triangle(txs, ty, txs + gapOn6, ty - g12, txs + gapOn6, ty + g12);
+  }
+}
+
+function feedback(){
+  ani.clear();
+  drawFBLoop();
+  ani.image(aniLayers['fbl'], 0, gapOn3);
+  let per = 500;
+  let input = (sin(millis()/per) + 1) / 2;
+  // simulate plant delay
+  // let inputDelayed = (sin(millis()/per - per/8) + 1) / 2;
+  let error = 0.5 - input;
+  // let output = input + error;
+  ani.noStroke();
+  let aw8 = aniWidthOn4/2;
+
+  let inputSignalX = aw8 - gapOn3;
+  let inputSignalY = gapOn3;
+  let inputHeight = gap2;
+  ani.fill(255);
+  ani.rect(inputSignalX, inputSignalY, gapOn3, inputHeight);
+  ani.fill(255, 0, 0);
+  ani.rect(inputSignalX, inputSignalY + (1-input) * inputHeight, gapOn3, inputHeight*input);
+
+  let errorX = aniWidthOn3 - gapOn6;
+  let errorY = gapOn3;
+  let errorH = gap2;
+  ani.fill(255);
+  ani.rect(errorX, errorY, gapOn3, errorH);
+  ani.fill(0, 255, 0);
+  ani.rect(errorX, errorY + (1-error) * errorH - errorH/2, gapOn3, errorH*error);
+
+  let outputSignalX = ani.width - aw8 - gapOn3/3;
+  let outputSignalY = gapOn3;
+  let outputHeight = gap2;
+  ani.fill(255);
+  ani.rect(outputSignalX, outputSignalY, gapOn3, outputHeight);
+  ani.fill(0, 0, 255);
+  ani.rect(outputSignalX, outputSignalY + outputHeight/2, gapOn3, outputHeight/2);
+
+  let outputSignalX2 = aniWidthOn2;
+  let outputSignalY2 = aniHeightOn4 * 3 - outputHeight/2;
+  ani.fill(255);
+  ani.rect(outputSignalX2, outputSignalY2, gapOn3, outputHeight);
+  ani.fill(0, 0, 255);
+  ani.rect(outputSignalX2, outputSignalY2 + outputHeight/2, gapOn3, outputHeight/2);
+
+  ani.strokeWeight(mStroke);
+  ani.stroke(0);
+  ani.noFill();
+  ani.rect(inputSignalX, inputSignalY, gapOn3, inputHeight);
+  ani.rect(outputSignalX, outputSignalY, gapOn3, outputHeight);
+  ani.rect(outputSignalX2, outputSignalY2, gapOn3, outputHeight);
+  ani.rect(errorX, errorY, gapOn3, errorH);
 }

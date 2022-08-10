@@ -8,7 +8,7 @@ var titleStringArr = [];
 var titleString = '';
 var titleDivStringArr = [];
 var titleDivString = '';
-var titleDiv;
+var titleDiv, menuDiv;
 var titleWidth, titleHeight;
 // buttons
 var buttons = [];
@@ -53,7 +53,6 @@ class Tank {
     this.autotankDir = int(random(4));
     this.autotankChangeThresh = int(random(20));
     this.autotankCounter = 0;
-
     this.x = x;
     this.y = y;
     this.killcount = 0;
@@ -730,23 +729,78 @@ function drawBorder(g){
   rect(centerX, centerY, g.width, g.height);
 }
 
-function showMusic(){
-  titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p><a href="javascript:void(0)" onclick="nextAlbum()"> next album</a></p><br><p><a href="javascript:void(0)" onclick="previousAlbum()"> previous album</a></p>');
-  showItem = true;
-  itemToShow = 0;
-
-}
-
 function showBlog(){
   titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p>');
   showItem = true;
   itemToShow = 1;
+  menuDiv.hide();
+}
+
+function selectDemo(i) {
+  if (i != demoPointer) {
+    demos[demoPointer].div.hide();
+    demoPointer=i;
+    demos[demoPointer].div.show();
+  }
+}
+
+function selectAlbum(i) {
+  if (i != albumPointer) {
+    discography[albumPointer].div.hide();
+    albumPointer=i;
+    discography[albumPointer].div.show();
+  }
+}
+
+function makeMenuDivMusic() {
+  let myString = '';
+  let imageHTML;
+  let fontSize = parseInt(titleDiv.style('font-size'));
+  let imgSize = fontSize * 5;
+  for (let i = 0; i < discography.length; i++) {
+    imageHTML = '<img src="' + discography[i].cover + '" alt="' + discography[i].title + '" width="' + imgSize + '">';
+    // myString += '<a href="javascript:void(0)" onclick="discography[albumPointer].div.hide();albumPointer='+ String(i) + ';discography[albumPointer].div.show();">' + imageHTML + '</a><br>';
+    myString += '<a href="javascript:void(0)" onclick="selectAlbum('+ String(i) + ');">' + imageHTML + '</a><br>';
+    // small image, title. both clickable to set demoPointer
+  }
+  menuDiv.html(myString);
+  menuDiv.position(windowWidth - border * 1.5 - imgSize, border * 1.5);
+  menuDiv.size(imgSize * 2, windowHeight - 4*border);
+  menuDiv.show();
+}
+
+function makeMenuDivDemos() {
+  let myString = '';
+  let imageHTML;
+  let fontSize = parseInt(titleDiv.style('font-size'));
+  let imgSize = fontSize * 5;
+  for (let i = 0; i < demos.length; i++) {
+    imageHTML = '<img src="' + demos[i].image + '" alt="' + demos[i].title + '" width="' + imgSize + '">';
+    // myString += '<a href="javascript:void(0)" onclick="demos[demoPointer].div.hide();demoPointer='+ String(i) + ';demos[demoPointer].div.show();">' + imageHTML + '</a><br>';
+    myString += '<a href="javascript:void(0)" onclick="selectDemo('+ String(i) + ');">' + imageHTML + '</a><br>';
+    // small image, title. both clickable to set demoPointer
+  }
+  menuDiv.html(myString);
+  menuDiv.position(windowWidth - border * 1.5 - imgSize, border * 1.5);
+  menuDiv.size(imgSize * 2, windowHeight - 4*border);
+  menuDiv.show();
+}
+
+function showMusic(){
+  titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p>');
+  showItem = true;
+  itemToShow = 0;
+  makeMenuDivMusic();
 }
 
 function showDemos(){
-  titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p><a href="javascript:void(0)" onclick="nextDemo()"> next demo</a></p><br><p><a href="javascript:void(0)" onclick="previousDemo()"> previous demo</a></p>');
+  // let myString = '<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p><a href="javascript:void(0)" onclick="nextDemo()"> next demo</a></p><br><p><a href="javascript:void(0)" onclick="previousDemo()"> previous demo</a></p>'
+
+  titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br>');
   showItem = true;
   itemToShow = 2;
+  makeMenuDivDemos();
+
 }
 
 function setupScreen() {
@@ -872,17 +926,26 @@ function setupScreen() {
   } else {
     titleDiv.style('color', 'black');
   }
+  menuDiv.remove();
+  menuDiv = createDiv('blank');
+  menuDiv.style('font-family', titleDiv.style('font-family'));
+  menuDiv.style('font-size', titleDiv.style('font-size'));
+  menuDiv.style('color', titleDiv.style('color'));
+  menuDiv.style('background-color', titleDiv.style('background-color'));
+  menuDiv.style('overflow', "auto");
+  menuDiv.hide();
   if (retro) {
     showItem = false;
     titleDiv.position(0, titleY - (titleHeight));
     titleDiv.center('horizontal');
   } else {
+    titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p>');
     if (itemToShow == 0) {
-      titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p><a href="javascript:void(0)" onclick="nextAlbum()"> next album</a></p><br><p><a href="javascript:void(0)" onclick="previousAlbum()"> previous album</a></p>');
+      makeMenuDivMusic();
     } else if (itemToShow == 1) {
-      titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p>');
+      menuDiv.hide();
     } else {
-      titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p><br><p><a href="javascript:void(0)" onclick="nextDemo()"> next demo</a></p><br><p><a href="javascript:void(0)" onclick="previousDemo()"> previous demo</a></p>');
+      makeMenuDivDemos();
     }
     titleDiv.position(int(1.5 * border), border);
   }
@@ -999,7 +1062,7 @@ function mousePressed() {
       }
     }
   }
-  if (buttonPressed(exitButton, mx, my)){
+  if (buttonPressed(exitButton, mx, my) && retro){
     showItem = false;
     return false;
   }
@@ -1068,6 +1131,7 @@ function setup() {
   titleString = unpackStringArray(titleStringArr, '\n');
   titleDivString = unpackStringArray(titleDivStringArr);
   titleDiv = createDiv(titleDivString);
+  menuDiv = createDiv('blank');
   postDiv = createDiv('blank');
   setupDiscog();
   setupPosts();

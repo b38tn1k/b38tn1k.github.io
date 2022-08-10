@@ -1020,6 +1020,9 @@ function mousePressed() {
   }
   if (buttonPressed(retroButton, mx, my)) {
     retro = ! retro;
+    if (retro) {
+      invertColors = false;
+    }
     setupScreen();
     return false;
   }

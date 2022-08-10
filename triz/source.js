@@ -1338,8 +1338,10 @@ function feedback(){
   let errorY = gapOn3;
   ani.fill(255);
   ani.rect(errorX, errorY, gapOn3, gHeight);
-  ani.fill(255, 0, 255);
-  ani.rect(errorX, errorY + (1-error/2) * gHeight - gHeight/2, gapOn3, gHeight*error/2);
+  ani.fill(255, 0, 0);
+  ani.rect(errorX, errorY + (1-error/2) * gHeight - gHeight/2, gapOn3/2, gHeight*error/2);
+  ani.fill(0, 0, 255);
+  ani.rect(errorX + gapOn3/2, errorY + (1-error/2) * gHeight - gHeight/2, gapOn3/2, gHeight*error/2);
   let outputSignalX = ani.width - aw8 - gapOn3/3;
   let outputSignalY = gapOn3;
   ani.fill(255);

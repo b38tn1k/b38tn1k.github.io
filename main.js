@@ -757,10 +757,13 @@ function makeMenuDivMusic() {
   let imageHTML;
   let fontSize = parseInt(titleDiv.style('font-size'));
   let imgSize = fontSize * 5;
+  if (mobile) {
+    imgSize = fontSize * 3;
+  }
   for (let i = 0; i < discography.length; i++) {
     imageHTML = '<img src="' + discography[i].cover + '" alt="' + discography[i].title + '" width="' + imgSize + '">';
     // myString += '<a href="javascript:void(0)" onclick="discography[albumPointer].div.hide();albumPointer='+ String(i) + ';discography[albumPointer].div.show();">' + imageHTML + '</a><br>';
-    myString += '<a href="javascript:void(0)" onclick="selectAlbum('+ String(i) + ');">' + imageHTML + '</a><br>';
+    myString += '<a href="javascript:void(0)" onclick="selectAlbum('+ String(i) + ');">' + imageHTML + '</a><br><br>';
     // small image, title. both clickable to set demoPointer
   }
   menuDiv.html(myString);
@@ -774,10 +777,13 @@ function makeMenuDivDemos() {
   let imageHTML;
   let fontSize = parseInt(titleDiv.style('font-size'));
   let imgSize = fontSize * 5;
+  if (mobile) {
+    imgSize = fontSize * 3;
+  }
   for (let i = 0; i < demos.length; i++) {
     imageHTML = '<img src="' + demos[i].image + '" alt="' + demos[i].title + '" width="' + imgSize + '">';
     // myString += '<a href="javascript:void(0)" onclick="demos[demoPointer].div.hide();demoPointer='+ String(i) + ';demos[demoPointer].div.show();">' + imageHTML + '</a><br>';
-    myString += '<a href="javascript:void(0)" onclick="selectDemo('+ String(i) + ');">' + imageHTML + '</a><br>';
+    myString += '<a href="javascript:void(0)" onclick="selectDemo('+ String(i) + ');">' + imageHTML + '</a><br><br>';
     // small image, title. both clickable to set demoPointer
   }
   menuDiv.html(myString);

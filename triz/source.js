@@ -1340,7 +1340,7 @@ function feedback(){
   ani.rect(errorX, errorY, gapOn3, gHeight);
   ani.fill(255, 0, 0);
   ani.rect(errorX, errorY + (1-error/2) * gHeight - gHeight/2, gapOn3/2, gHeight*error/2);
-  ani.fill(0, 0, 255);
+  ani.fill(255, 0, 255);
   ani.rect(errorX + gapOn3/2, errorY + (1-error/2) * gHeight - gHeight/2, gapOn3/2, gHeight*error/2);
   let outputSignalX = ani.width - aw8 - gapOn3/3;
   let outputSignalY = gapOn3;
@@ -1352,7 +1352,7 @@ function feedback(){
   let targetY = aniHeightOn2 - gHeight/2 + gapOn3;//aniHeightOn4 * 3 - gHeight + gapOn4 - mStroke/2;
   ani.fill(255);
   ani.rect(targetX, targetY, gapOn3, gHeight);
-  ani.fill(0, 0, 255);
+  ani.fill(255, 0, 255);
   ani.rect(targetX, targetY + (1-target) * gHeight, gapOn3, gHeight*target);
   let cx = targetX + gap// + gapOn4;
   ani.image(aniLayers['fbl overlay'], 0, 0);
@@ -1362,7 +1362,7 @@ function feedback(){
   ani.translate(cx, targetY + gHeight/2);
   target = -(QUARTER_PI) + (target - 0.25) * PI;
   ani.rotate(target);
-  ani.fill(0, 0, 255);
+  ani.fill(255, 0, 255);
   ani.circle(0, 0, gap34);
   ani.line(0, 0, 0, -gap34/2);
   ani.pop();

@@ -770,13 +770,14 @@ function makeMenuDivMusic() {
   // menuDiv.position(windowWidth - border * 1.5 - imgSize, border * 1.5);
   // menuDiv.size(imgSize * 2, windowHeight - 4*border);
   menuDiv.position(windowWidth - border * 1.5 - imgSize, discography[albumPointer].div.y);
-  menuDiv.size(imgSize + 4, discography[albumPointer].div.height);
+  // menuDiv.size(imgSize + 4, discography[albumPointer].div.height);
+  menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
   menuDiv.addClass('grad');
   menuDiv.show();
 }
 
 function makeMenuDivDemos() {
-  let myString = '<br><br>';
+  let myString = '';
   let imageHTML;
   let fontSize = parseInt(titleDiv.style('font-size'));
   let imgSize = fontSize * 5;

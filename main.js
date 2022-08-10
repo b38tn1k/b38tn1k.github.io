@@ -767,13 +767,16 @@ function makeMenuDivMusic() {
     // small image, title. both clickable to set demoPointer
   }
   menuDiv.html(myString);
-  menuDiv.position(windowWidth - border * 1.5 - imgSize, border * 1.5);
-  menuDiv.size(imgSize * 2, windowHeight - 4*border);
+  // menuDiv.position(windowWidth - border * 1.5 - imgSize, border * 1.5);
+  // menuDiv.size(imgSize * 2, windowHeight - 4*border);
+  menuDiv.position(windowWidth - border * 1.5 - imgSize, discography[albumPointer].div.y);
+  menuDiv.size(imgSize + 4, discography[albumPointer].div.height);
+  menuDiv.addClass('grad');
   menuDiv.show();
 }
 
 function makeMenuDivDemos() {
-  let myString = '';
+  let myString = '<br><br>';
   let imageHTML;
   let fontSize = parseInt(titleDiv.style('font-size'));
   let imgSize = fontSize * 5;
@@ -787,8 +790,9 @@ function makeMenuDivDemos() {
     // small image, title. both clickable to set demoPointer
   }
   menuDiv.html(myString);
-  menuDiv.position(windowWidth - border * 1.5 - imgSize, border * 1.5);
-  menuDiv.size(imgSize * 2, windowHeight - 4*border);
+  menuDiv.position(windowWidth - border * 1.5 - imgSize, demos[demoPointer].div.y);
+  menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
+  menuDiv.addClass('grad');
   menuDiv.show();
 }
 

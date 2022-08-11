@@ -766,12 +766,16 @@ function makeMenuDivMusic() {
     myString += '<a href="javascript:void(0)" onclick="selectAlbum('+ String(i) + ');">' + imageHTML + '</a><br><br>';
     // small image, title. both clickable to set demoPointer
   }
+  myString += '<br><br><br><br><br><br>';
   menuDiv.html(myString);
-  // menuDiv.position(windowWidth - border * 1.5 - imgSize, border * 1.5);
-  // menuDiv.size(imgSize * 2, windowHeight - 4*border);
-  menuDiv.position(windowWidth - border * 1.5 - imgSize, discography[albumPointer].div.y);
-  // menuDiv.size(imgSize + 4, discography[albumPointer].div.height);
-  menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
+  // // menuDiv.position(windowWidth - border * 1.5 - imgSize, border * 1.5);
+  // // menuDiv.size(imgSize * 2, windowHeight - 4*border);
+  // menuDiv.position(windowWidth - border * 1.5 - imgSize, discography[albumPointer].div.y);
+  // // menuDiv.size(imgSize + 4, discography[albumPointer].div.height);
+  // menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
+
+  menuDiv.position(windowWidth - border * 1.5 - imgSize ,  titleDiv.position()['y'] + 1.3*fontSize);
+  menuDiv.size(imgSize + 4, windowHeight - 2*(titleDiv.position()['y'] + 1.3*fontSize));
   menuDiv.addClass('grad');
   menuDiv.show();
 }
@@ -790,9 +794,13 @@ function makeMenuDivDemos() {
     myString += '<a href="javascript:void(0)" onclick="selectDemo('+ String(i) + ');">' + imageHTML + '</a><br><br>';
     // small image, title. both clickable to set demoPointer
   }
+  myString += '<br><br><br><br><br><br>';
   menuDiv.html(myString);
-  menuDiv.position(windowWidth - border * 1.5 - imgSize , demos[demoPointer].div.y);
-  menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
+  // menuDiv.position(windowWidth - border * 1.5 - imgSize , demos[demoPointer].div.y);
+  // menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
+  menuDiv.position(windowWidth - border * 1.5 - imgSize ,  titleDiv.position()['y'] + 1.3*fontSize);
+  menuDiv.size(imgSize + 4, windowHeight - 2*(titleDiv.position()['y'] + 1.3*fontSize));
+  console.log(titleDiv.position());
   menuDiv.addClass('grad');
   menuDiv.show();
 }
@@ -951,14 +959,19 @@ function setupScreen() {
     titleDiv.center('horizontal');
   } else {
     titleDiv.html('<h1>B38TN1K</h1><p>aka James C<p><br><p><a href="javascript:void(0)" onclick="showBlog()"> blog</a></p><br><p><a href="javascript:void(0)" onclick="showDemos()"> demos</a></p><br><p><a href="javascript:void(0)" onclick="showMusic()"> music</a></p>');
+    titleDiv.position(int(1.5 * border), border);
     if (itemToShow == 0) {
       makeMenuDivMusic();
+      showMusic();
     } else if (itemToShow == 1) {
       menuDiv.hide();
+      showBlog();
     } else {
       makeMenuDivDemos();
+      showDemos();
     }
-    titleDiv.position(int(1.5 * border), border);
+
+    console.log('hi');
   }
 
   for (let i = 0; i < discography.length; i++) {

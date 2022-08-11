@@ -191,10 +191,12 @@ class myDemoItem {
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     let divString = this.linkHTML;
     this.div = createDiv(divString);
+    this.permalink = '';
   }
   updateDiv() {
+    let permalinkString = '<a href="' + this.permalink + '"> permalink </a>';
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
-    let divString = this.imageHTML + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content;
+    let divString = this.imageHTML + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content + '<br><br>' + permalinkString;
     let divLineHeight = int(squareItemImageWidth + ( (5 * textSize()) + textSize() * textWidth(this.title + this.content)/squareItemImageWidth));
 
     if (invertColors) {
@@ -287,11 +289,13 @@ class myDiscogEntry {
     let divString = this.coverHTML + '<br>' + this.title + '<br>' + this.artists + '<br>' + this.date + '<br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
     this.div = createDiv(divString);
     this.div.hide();
+    this.permalink = '';
   }
 
   updateDiv() {
+    let permalinkString = '<a href="' + this.permalink + '"> permalink </a>';
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
-    let divString = this.coverHTML + '<br><strong>' + this.title + '</strong><br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML;
+    let divString = this.coverHTML + '<br><strong>' + this.title + '</strong><br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML + '<br><br>' + permalinkString;
     let divLineHeight = squareItemImageWidth + ( (10 * textSize()) + textSize() * textWidth(this.title)/squareItemImageWidth);
     this.div.remove();
     if (invertColors) {
@@ -570,6 +574,27 @@ function setupDemos() {
   }
 }
 
+function createPermalink(cat, id) {
+  id = id.toLowerCase();
+  id = id.replace(/[.,/#!$%^&*;:{}=-_`~()]/g, "");
+  return (getURL().split('#')[0] + "#" + cat.split(" ").join("-") + "/" + id.split(" ").join("-"));
+}
+
+function setPermalinks() {
+  for (let i = 0; i < demos.length; i++) {
+    demos[i].permalink = createPermalink("demos", demos[i].title);
+    let pString = '<a href="' + demos[i].permalink + '"> permalink </a>';
+    demos[i].div.html(pString, true);
+    console.log(demos[i].permalink);
+  }
+  for (let i = 0; i < discography.length; i++) {
+    discography[i].permalink = createPermalink("discog", discography[i].title);
+    let pString = '<a href="' + discography[i].permalink + '"> permalink </a>';
+    discography[i].div.html(pString, true);
+    console.log(discography[i].permalink);
+  }
+}
+
 function drawButtons() {
   for (let i = 0; i < buttons.length; i++){
     drawButton(buttons[i]);
@@ -800,7 +825,6 @@ function makeMenuDivDemos() {
   // menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
   menuDiv.position(windowWidth - border * 1.5 - imgSize ,  titleDiv.position()['y'] + 1.3*fontSize);
   menuDiv.size(imgSize + 4, windowHeight - 2*(titleDiv.position()['y'] + 1.3*fontSize));
-  console.log(titleDiv.position());
   menuDiv.addClass('grad');
   menuDiv.show();
 }
@@ -970,8 +994,6 @@ function setupScreen() {
       makeMenuDivDemos();
       showDemos();
     }
-
-    console.log('hi');
   }
 
   for (let i = 0; i < discography.length; i++) {
@@ -1163,9 +1185,33 @@ function setup() {
   setupDiscog();
   setupPosts();
   setupDemos();
+  setPermalinks();
   setupPostDiv();
   frameRate(5);
   setupScreen();
+  let curUrl = getURL();
+  if (curUrl.indexOf('#') != -1) {
+    let cat = curUrl.split('#')[1].split('/')[0];
+    let id = curUrl.split('#')[1].split('/')[1].toLowerCase();
+    if (cat.indexOf('discog') == 0) {
+      showMusic();
+      for (let i = 0; i < discography.length; i++) {
+        if (discography[i].permalink.indexOf(id) != -1) {
+          albumPointer = i;
+          break;
+        }
+      }
+    }
+    if (cat.indexOf('demos') == 0) {
+      showDemos();
+      for (let i = 0; i < demos.length; i++) {
+        if (demos[i].permalink.indexOf(id) != -1) {
+          demoPointer = i;
+          break;
+        }
+      }
+    }
+  }
   console.log('hello');
 }
 
@@ -1256,11 +1302,9 @@ function draw(){
   if (retro) {
     drawButton(showBackgroundButton);
   }
-
   drawButton(retroButton);
   drawButton(invertColorsButton);
   drawBorder(view);
-
   // text('windowWidth: ' + windowWidth, 150, 10);
   // text('windowHeight: ' + windowHeight, 150, 30);
   // text('tSize: ' + textSize(), 150, 50);

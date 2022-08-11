@@ -1501,5 +1501,4 @@ function selfservice() {
   star(aniWidthOn2, py, size/2, size/4, 5);
   polygon(rx, ry, size/2, 3)
   ani.rectMode(CORNER);
-
 }

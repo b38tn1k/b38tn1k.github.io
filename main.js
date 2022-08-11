@@ -227,9 +227,13 @@ class myDemoItem {
     this.div.size(squareItemImageWidth, dheight);
     this.div.position(0, yPos);
     this.div.center('horizontal');
+    let pos = this.div.position();
     if (! retro) {
-      let pos = this.div.position();
       this.div.position(pos['x'] + border, yPos);
+    }
+    if (pos['y'] < border) {
+      this.div.position(pos['x'], border * 1.5);
+      this.div.size(squareItemImageWidth, windowHeight - 3*border);
     }
 
     this.div.hide();
@@ -294,7 +298,17 @@ class myDiscogEntry {
   updateDiv() {
     let permalinkString = '<a href="' + this.permalink + '" target="_blank"> permalink </a>';
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
-    let divString = this.coverHTML + '<br><strong>' + this.title + '</strong><br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML + '<br><br>' + permalinkString;
+    let divString = this.coverHTML + '<br><strong>' + this.title + '</strong><br>' + this.artists + '<br>' + this.date + '<br> <br>';
+    if (this.bandcampHTML.length > 2) {
+      divString += this.bandcampHTML + '<br>';
+    }
+    if (this.spotifyHTML.length > 2) {
+      divString += this.spotifyHTML + '<br>';
+    }
+    if (this.applemusicHTML.length > 2) {
+      divString += this.applemusicHTML + '<br>';
+    }
+    divString += permalinkString;
     let divLineHeight = squareItemImageWidth + ( (10 * textSize()) + textSize() * textWidth(this.title)/squareItemImageWidth);
     this.div.remove();
     if (invertColors) {
@@ -319,9 +333,13 @@ class myDiscogEntry {
     this.div.size(squareItemImageWidth, dheight);
     this.div.position(0, titleY - (titleHeight));
     this.div.center('horizontal');
+    let pos = this.div.position();
     if (! retro) {
-      let pos = this.div.position();
       this.div.position(pos['x'] + border, pos['y']);
+    }
+    if (pos['y'] < border) {
+      this.div.position(pos['x'], border * 1.5);
+      this.div.size(squareItemImageWidth, windowHeight - 3*border);
     }
     this.div.hide();
   }

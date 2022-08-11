@@ -9,7 +9,9 @@ link: 'https://youtube.com/playlist?list=PLZttbibA79ov0Y0J_pEOQnuLViuv8ho1e'
 
 [description] During lockdown I have been putting Arduinos in boxes and connecting them to MIDI to provide various musical utility.
 
-Arduino can act as a synth or a sampler (I [did](https://b38tn1k.com/#discog/music-for-arduino-algorithmic-suite-for-uno-quartet) [two](https://b38tn1k.com/#discog/music-for-arduino-escape-from-dinosaur-island) Arduino-only EPs last year) but it really shines as a MIDI insert and passthrough effect.
 
-I think I overused 'the one-note-triggered harp-like chords' effect on my last [two](https://b38tn1k.com/#discog/new-desk) [EPs](https://b38tn1k.com/#discog/z). It's too easy, sounds very pretty.
+
+Arduino can act as a synth or a sampler (I <a href="https://b38tn1k.com/#discog/music-for-arduino-algorithmic-suite-for-uno-quartet" target="_blank" >did</a> <a href="https://b38tn1k.com/#discog/music-for-arduino-escape-from-dinosaur-island" target="_blank" >two</a> Arduino-only EPs last year) but it really shines as a MIDI insert and passthrough effect.
+
+I think I overused 'the one-note-triggered harp-like chords' effect on my last <a href="https://b38tn1k.com/#discog/new-desk" target="_blank" >two</a> <a href="https://b38tn1k.com/#discog/z" target="_blank" >EPs</a>. It's too easy, sounds very pretty.
 [description]

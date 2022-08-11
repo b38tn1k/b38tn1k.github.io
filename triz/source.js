@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 23;
+var cardslength = 24;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -91,6 +91,7 @@ function setupScreen() {
   functionList.push(skipping);
   functionList.push(harmtobenefit);
   functionList.push(feedback);
+  functionList.push(intermediary);
 }
 
 function setup() {
@@ -1387,4 +1388,51 @@ function feedback(){
   ani.circle(0, 0, gap34);
   ani.line(0, 0, 0, -gap34/2);
   ani.pop();
+}
+
+function drawCarpentry() {
+  if (!('nail' in aniLayers)) {
+    aniLayers['nail'] = createGraphics(gap, gap2);
+    aniLayers['nail'].stroke(100);
+    aniLayers['nail'].fill(100);
+    aniLayers['nail'].rectMode(CENTER);
+    aniLayers['nail'].rect(gapOn2, 0, gap34, gapOn6);
+    aniLayers['nail'].rect(gapOn2, gapOn3*2, gapOn4, gap2-gapOn3);
+    aniLayers['nail'].triangle(gapOn2, gap2, gapOn2 - gapOn4/2, gap2-gapOn2, gapOn2 + gapOn4/2, gap2 - gapOn2);
+    aniLayers['nail small'] = createGraphics(gapOn2, gap);
+    aniLayers['nail small'].push();
+    aniLayers['nail small'].scale(0.5, 0.5);
+    aniLayers['nail small'].image(aniLayers['nail'], 0, 0);
+    aniLayers['nail small'].pop();
+  }
+}
+
+function intermediary() {
+  drawCarpentry();
+  ani.clear();
+  let per = 500;
+  let counter = countTo3(per) % 2;
+  let timer = (1.0 - sin(millis()/(per/2)));
+  let wh = aniHeightOn3 * 2;
+  let nh = wh - gap * counter;
+  let hh = wh + gapOn4 - gapOn2*(1.0 - sin(millis()/(per/2)));
+  ani.noStroke();
+  ani.fill(rCol[0]);
+  ani.rect(0, wh, ani.width, ani.height);
+  if (counter == 0) {
+    ani.fill(255);
+    ani.circle(aniWidthOn3 - gap34, wh-gap34, gap2);
+  }
+  ani.fill(rCol[1]);
+  ani.rect(2 * aniWidthOn3, nh - gapOn2, gapOn2, gapOn2);
+  ani.fill(100);
+  ani.rect(aniWidthOn3 - gap34 - gapOn4, hh - gap - gapOn2, gapOn2, gap);
+  ani.rect(2 * aniWidthOn3, hh - gap2, gapOn2, gap);
+  ani.fill(rCol[2]);
+  ani.rect(aniWidthOn3-gapOn2, hh - (gap + gapOn4/2), gap, gapOn4);
+  ani.rect(2 * aniWidthOn3 + gapOn2, hh - gap - gapOn2 - gapOn4/2, gap, gapOn4);
+  ani.image(aniLayers['nail small'], aniWidthOn3-gap, nh );
+  ani.image(aniLayers['nail small'], 2 * aniWidthOn3, nh);
+
+
 }

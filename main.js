@@ -150,7 +150,6 @@ class Tank {
       this.autotankChangeThresh = int(random(20));
       this.autotankCounter = 0;
       this.autotankDir = int(random(3));
-      console.log(this.autotankDir);
     }
     if (random(100) > 95) {
       this.shoot();
@@ -194,7 +193,7 @@ class myDemoItem {
     this.permalink = '';
   }
   updateDiv() {
-    let permalinkString = '<a href="' + this.permalink + '"> permalink </a>';
+    let permalinkString = '<a href="' + this.permalink + '" target="_blank"> permalink </a>';
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     let divString = this.imageHTML + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content + '<br><br>' + permalinkString;
     let divLineHeight = int(squareItemImageWidth + ( (5 * textSize()) + textSize() * textWidth(this.title + this.content)/squareItemImageWidth));
@@ -293,7 +292,7 @@ class myDiscogEntry {
   }
 
   updateDiv() {
-    let permalinkString = '<a href="' + this.permalink + '"> permalink </a>';
+    let permalinkString = '<a href="' + this.permalink + '" target="_blank"> permalink </a>';
     this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     let divString = this.coverHTML + '<br><strong>' + this.title + '</strong><br>' + this.artists + '<br>' + this.date + '<br> <br>' + this.bandcampHTML + '<br>' + this.spotifyHTML + '<br>' + this.applemusicHTML + '<br><br>' + permalinkString;
     let divLineHeight = squareItemImageWidth + ( (10 * textSize()) + textSize() * textWidth(this.title)/squareItemImageWidth);
@@ -574,10 +573,10 @@ function setupDemos() {
   }
 }
 
-function createPermalink(cat, id) {
-  id = id.toLowerCase();
-  id = id.replace(/[.,/#!$%^&*;:{}=-_`~()]/g, "");
-  return (getURL().split('#')[0] + "#" + cat.split(" ").join("-") + "/" + id.split(" ").join("-"));
+function createPermalink(cat, cid) {
+  cid = cid.toLowerCase();
+  cid = cid.replace(/[.,/#!$%^&*;:{}=-_`~()]/g, "");
+  return (getURL().split('#')[0] + "#" + cat.split(" ").join("-") + "/" + cid.split(" ").join("-"));
 }
 
 function setPermalinks() {
@@ -585,13 +584,11 @@ function setPermalinks() {
     demos[i].permalink = createPermalink("demos", demos[i].title);
     let pString = '<a href="' + demos[i].permalink + '"> permalink </a>';
     demos[i].div.html(pString, true);
-    console.log(demos[i].permalink);
   }
   for (let i = 0; i < discography.length; i++) {
     discography[i].permalink = createPermalink("discog", discography[i].title);
     let pString = '<a href="' + discography[i].permalink + '"> permalink </a>';
     discography[i].div.html(pString, true);
-    console.log(discography[i].permalink);
   }
 }
 
@@ -852,13 +849,10 @@ function setupScreen() {
   halfScreen = false;
   mobile = false;
   if (screenRatio > 1.4) {
-    // console.log('full screen');
     fullScreen = true;
   } else if (screenRatio > 0.9) {
-    // console.log('half screen');
     halfScreen = true;
   } else {
-    // console.log('mobile');
     mobile = true;
   }
   if (!invertColors) {
@@ -1135,15 +1129,12 @@ function keyPressed() {
 }
 
 function nextAlbum() {
-  console.log(albumPointer);
-  console.log(discography.length);
   discography[albumPointer].div.hide();
   albumPointer += 1;
   if (albumPointer >= discography.length) {
     albumPointer = discography.length - 1;
   }
   discography[albumPointer].div.show();
-  console.log(albumPointer);
 }
 
 function previousAlbum() {
@@ -1192,11 +1183,11 @@ function setup() {
   let curUrl = getURL();
   if (curUrl.indexOf('#') != -1) {
     let cat = curUrl.split('#')[1].split('/')[0];
-    let id = curUrl.split('#')[1].split('/')[1].toLowerCase();
+    let cid = curUrl.split('#')[1].split('/')[1].toLowerCase();
     if (cat.indexOf('discog') == 0) {
       showMusic();
       for (let i = 0; i < discography.length; i++) {
-        if (discography[i].permalink.indexOf(id) != -1) {
+        if (discography[i].permalink.indexOf(cid) != -1) {
           albumPointer = i;
           break;
         }
@@ -1205,7 +1196,7 @@ function setup() {
     if (cat.indexOf('demos') == 0) {
       showDemos();
       for (let i = 0; i < demos.length; i++) {
-        if (demos[i].permalink.indexOf(id) != -1) {
+        if (demos[i].permalink.indexOf(cid) != -1) {
           demoPointer = i;
           break;
         }
@@ -1308,5 +1299,4 @@ function draw(){
   // text('windowWidth: ' + windowWidth, 150, 10);
   // text('windowHeight: ' + windowHeight, 150, 30);
   // text('tSize: ' + textSize(), 150, 50);
-
 }

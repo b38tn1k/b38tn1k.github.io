@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 24;
+var cardslength = 25;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -92,6 +92,8 @@ function setupScreen() {
   functionList.push(harmtobenefit);
   functionList.push(feedback);
   functionList.push(intermediary);
+  functionList.push(selfservice);
+
 }
 
 function setup() {
@@ -937,9 +939,10 @@ function partialorexcessive() {
 
 function star(x, y, radius1, radius2, npoints) {
   let angle = TWO_PI / npoints;
+  let off = HALF_PI - angle;
   let halfAngle = angle / 2.0;
   ani.beginShape();
-  for (let a = 0; a < TWO_PI; a += angle) {
+  for (let a = off; a < TWO_PI + off; a += angle) {
     let sx = x + cos(a) * radius2;
     let sy = y + sin(a) * radius2;
     ani.vertex(sx, sy);
@@ -1433,6 +1436,70 @@ function intermediary() {
   ani.rect(2 * aniWidthOn3 + gapOn2, hh - gap - gapOn2 - gapOn4/2, gap, gapOn4);
   ani.image(aniLayers['nail small'], aniWidthOn3-gap, nh );
   ani.image(aniLayers['nail small'], 2 * aniWidthOn3, nh);
+}
 
+function polygon(x, y, radius, npoints) {
+  let angle = TWO_PI / npoints;
+  let off = angle - HALF_PI;
+  ani.beginShape();
+  for (let a = off; a < TWO_PI + off; a += angle) {
+    let sx = x + cos(a) * radius;
+    let sy = y + sin(a) * radius;
+    ani.vertex(sx, sy);
+  }
+  ani.endShape(CLOSE);
+}
+
+function selfservice() {
+  ani.clear();
+  ani.rectMode(CENTER);
+  let per = 1000;
+  let size = gap34;
+  let t = sin(millis()/per);
+  let t2 = cos(millis()/per);
+  let ramp = (t2 + 1)/2;
+  if (t >= 0) {
+    ramp = 1 - ramp;
+  }
+  let iramp = 1-ramp;
+  let px = aniWidthOn4*3;
+  let py = aniHeightOn2 - gap;
+  let rx = aniWidthOn4;
+  let drx = px - rx;
+  let ry = py + gap2;
+  let dry = ry - py;
+  ani.noFill();
+  ani.stroke(0);
+  ani.strokeWeight(mStroke);
+  ani.rect(aniWidthOn2, aniHeightOn2, gap3 + gapOn3, gap2)
+  ani.line(aniWidthOn2, py, px+gap, py)
+  ani.line(gapOn2, ry, rx, ry);
+  ani.fill(0);
+  ani.triangle(px+gap, py, px + gap34, py-gapOn6, px + gap34, py+gapOn6)
+  ani.noStroke();
+  // waste
+  ani.fill(rCol[1]);
+  ani.square(px, py + ramp * gap2, size);
+  ani.fill(255);
+  ani.circle(px, py + ramp * gap2, size);
+  // part
+  ani.fill(rCol[1]);
+  ani.circle(px + ramp * gap3, py, size);
+  ani.square(rx, ry - ramp*dry, size);
+  ani.square(rx + drx * ramp, py, size);
+  // waste
+  ani.fill(rCol[1]);
+  ani.square(rx + iramp * drx, ry, size);
+  ani.square(rx - iramp * drx, ry, size/2);
+  ani.fill(255);
+  ani.circle(rx + iramp * drx, ry, size);
+  // processors
+  ani.fill(rCol[0]);
+  ani.square(rx, ry, size*1.5);
+  ani.square(aniWidthOn2, py, size*1.5);
+  ani.fill(rCol[2]);
+  star(aniWidthOn2, py, size/2, size/4, 5);
+  polygon(rx, ry, size/2, 3)
+  ani.rectMode(CORNER);
 
 }

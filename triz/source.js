@@ -1544,7 +1544,10 @@ function copying(){
   ani.image(aniLayers['trophy'], tx, ty);
   ani.image(aniLayers['trophy'], tx2, ty);
   ani.fill(100);
+  let bsx = tx2 + gap34;
   ani.rect(tx2 + gap34, ty, gap34, gap, gap, gapOn4, gapOn3, gapOn6);
+  bsx += gap34;
+  ani.triangle(bsx, ty-gapOn6, bsx - gapOn6, ty + gapOn3, bsx + gapOn6, ty);
   let pw = gap;
   let ph =  gap;
   let px = aniWidthOn4 - pw/2;

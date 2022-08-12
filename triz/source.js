@@ -1590,41 +1590,47 @@ function cheapshort() {
   let index = countTo3(per, 0, now);
   let tri = abs((timer % 4) - 2)/2;
   let tri2f = abs(((timer / 8) % 4) - 2);
+  let tri3 = int (4 * abs((((timer / 8) + per/8) % 4) - 2));
   let tri2 = int(2 * tri2f)
   let offsets = [0, -gap - gapOn2, gap + gapOn2, 0];
-  // ball(s)
-  ani.fill(rCol[0]);
   let cx = tri * (ani.width - gap2) + gap;
-  let cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[tri2] + gapOn2;
-  ani.circle(cx, cy, gapOn2);
+  let cy;
+
+  // cheap
   if (tri2 == 3) {
+    if (tri <= 0.05) {
+      ani.fill(rCol[3]);
+    } else {
+      ani.fill(rCol[2]);
+    }
+    if (tri3 != 3 && tri3 != 4) {
+      ani.rect(gapOn2, aniHeightOn2 + offsets[1] - gapOn2, gapOn4, gap);
+    }
     cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[1] + gapOn2;
     ani.circle(cx, cy, gapOn2);
-    if (tri < 0.6) {
-      if (tri <= 0.05) {
-        ani.fill(rCol[3]);
-      } else {
-        ani.fill(rCol[2]);
-      }
-      ani.rect(gapOn4, aniHeightOn2 + offsets[1] - gapOn2, gapOn2, gap);
-    }
-
   }
+  console.log(tri2);
   if (tri2 == 0) {
+    if (tri <= 0.05) {
+      ani.fill(rCol[3]);
+    } else {
+      ani.fill(rCol[2]);
+    }
+    if (tri3 != 3 && tri3 != 4) {
+      ani.rect(gapOn2, aniHeightOn2 + offsets[1] - gapOn2, gapOn4, gap);
+      ani.rect(gapOn2, aniHeightOn2 + offsets[2] - gapOn2, gapOn4, gap);
+    }
     cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[1] + gapOn2;
     ani.circle(cx, cy, gapOn2);
     cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[2] + gapOn2;
     ani.circle(cx, cy, gapOn2);
-    if (tri < 0.6) {
-      if (tri <= 0.05) {
-        ani.fill(rCol[3]);
-      } else {
-        ani.fill(rCol[2]);
-      }
-      ani.rect(gapOn4, aniHeightOn2 + offsets[1] - gapOn2, gapOn2, gap);
-      ani.rect(gapOn4, aniHeightOn2 + offsets[2] - gapOn2, gapOn2, gap);
-    }
   }
+
+  // ball(s)
+  ani.fill(rCol[0]);
+
+  cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[tri2] + gapOn2;
+  ani.circle(cx, cy, gapOn2);
   // wall
   ani.fill(rCol[1]);
   ani.rect(ani.width - gap34, 0, gapOn2, ani.height);

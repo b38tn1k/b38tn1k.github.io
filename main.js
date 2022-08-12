@@ -1335,7 +1335,7 @@ function draw(){
   }
   if (bodyOpacity < 1.0){
     let fr = max(10, frameRate());
-    bodyOpacity += 1.5 / fr;
+    bodyOpacity += 1 / fr;
     if (bodyOpacity >= 1.0){
       bodyOpacity = 1;
     }

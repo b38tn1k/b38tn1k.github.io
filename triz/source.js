@@ -1509,17 +1509,13 @@ function drawTrophy(){
   if (!('trophy' in aniLayers)){
     aniLayers['trophy'] = createGraphics(gap, gap2);
     aniLayers['trophy'].noStroke();
-    aniLayers['trophy'].fill(255, 255, 0);
+    aniLayers['trophy'].fill(255, 200, 0);
     aniLayers['trophy'].circle(gapOn2, gapOn2, gap)
+    aniLayers['trophy'].rect(0, 0, gap, gapOn2);
     aniLayers['trophy'].rectMode(CENTER);
-    aniLayers['trophy'].rect(gapOn2, gap, gapOn4, gap);
-    aniLayers['trophy'].rect(gapOn2, gap + gapOn2, gap34, gapOn4);
-    aniLayers['trophy'].fill(100);
-    aniLayers['trophy'].rect(gapOn2, gap2, gap, gap);
-    aniLayers['trophy'].fill(255, 150, 0);
-    aniLayers['trophy'].textSize(gap34);
-    aniLayers['trophy'].textAlign(CENTER, CENTER);
-    aniLayers['trophy'].text("★", gapOn2, gapOn2);
+    aniLayers['trophy'].rect(gapOn2, gap, gapOn4, gap2);
+    aniLayers['trophy'].rect(gapOn2, gap + gapOn2 + gapOn4, gap34, gapOn4);
+    aniLayers['trophy'].rect(gapOn2, gap2, gap, gapOn2);
   }
 }
 
@@ -1531,22 +1527,59 @@ function copying(){
   let per = 1000;
   let now = millis();
   let r1 = smoothSquare(per, now);
-  let r2 = smoothSquare(per, now-5);
-  let t = sin(millis()/(per / 10));
+  let t = cos(millis()/(per / 20));
   let ramp = r1;
-  if (r1 - r2 >= 0) {
-    ramp = 0;
-  }
+  // if (r1 - r2 >= 0) {
+  //   if (r1 < 0.5) {
+  //     ramp = 0;
+  //   } else {
+  //     ramp = 1;
+  //   }
+  // }
+  let alarm = 0;
   if (ramp == 0) {
-    let cv = t * 255;
+    let cv = t * 100;
     ani.fill(255, 255 - cv, 255 - cv);
-    ani.rect(0, 0, aniWidthOn2, ani.height);
+    ani.ellipse(aniWidthOn4, aniHeightOn2, aniWidthOn2, ani.height);
+    // ani.rect(0, 0, aniWidthOn2, ani.height);
+    alarm = sin(millis()/(per/2));
   }
   let tx = aniWidthOn4 - gap + gap*ramp;
   let tx2 = tx + aniWidthOn2;
   let ty = aniHeightOn3;
   ani.image(aniLayers['trophy'], tx, ty);
   ani.image(aniLayers['trophy'], tx2, ty);
-
+  ani.fill(100);
+  ani.rect(tx2 + gap34, ty, gap34, gap, gap, gapOn4, gapOn3, gapOn6);
+  let pw = gap;
+  let ph =  gap;
+  let px = aniWidthOn4 - pw/2;
+  let px2 = px + aniWidthOn2;
+  let py = aniHeightOn3 + aniLayers['trophy'].height/2;
+  ani.fill(rCol[1]);
+  ani.rect(px, py - alarm * gapOn2, gap, gapOn4);
+  ani.rect(px + gapOn4, py - alarm * gapOn2, gapOn2, gap);
+  ani.rect(px2, py, gap, gapOn4);
+  ani.fill(rCol[0]);
+  ani.rect(px, py + gapOn4, gap, gap);
+  ani.rect(px2, py + gapOn4, gap, gap);
+  ani.stroke(0);
+  ani.strokeWeight(mStroke);
+  let sx = px + gapOn4;
+  let ex = px + gap34;
+  let sx2 = px + gapOn4 + aniWidthOn2;
+  let ex2 = px + gap34 + aniWidthOn2;
+  let sy = py + gap + gapOn4 - mStroke;
+  let inc = (py  - sy)/4;
+  for (let i = 0; i <=3; i++) {
+    ani.line(sx2, sy, ex2, sy);
+    sy += inc;
+  }
+  sy = py + gap + gapOn4 - mStroke;
+  inc = ((py - alarm * gapOn2) - sy)/4;
+  for (let i = 0; i <=3; i++) {
+    ani.line(sx, sy, ex, sy);
+    sy += inc;
+  }
   ani.imageMode(CORNER);
 }

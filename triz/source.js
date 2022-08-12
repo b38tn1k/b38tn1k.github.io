@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 26;
+var cardslength = 27;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -94,6 +94,7 @@ function setupScreen() {
   functionList.push(intermediary);
   functionList.push(selfservice);
   functionList.push(copying);
+  functionList.push(cheapshort);
 
 }
 
@@ -1529,13 +1530,6 @@ function copying(){
   let r1 = smoothSquare(per, now);
   let t = cos(millis()/(per / 20));
   let ramp = r1;
-  // if (r1 - r2 >= 0) {
-  //   if (r1 < 0.5) {
-  //     ramp = 0;
-  //   } else {
-  //     ramp = 1;
-  //   }
-  // }
   let alarm = 0;
   if (ramp == 0) {
     let cv = t * 100;
@@ -1582,4 +1576,57 @@ function copying(){
     sy += inc;
   }
   ani.imageMode(CORNER);
+}
+
+function cheapshort() {
+  ani.clear();
+  ani.noStroke();
+  let per = 500;
+  let now = millis();
+  let timer = now/per;
+  let index = countTo3(per, 0, now);
+  let tri = abs((timer % 4) - 2)/2;
+  let tri2f = abs(((timer / 8) % 4) - 2);
+  let tri2 = int(2 * tri2f)
+  let offsets = [0, -gap - gapOn2, gap + gapOn2, 0];
+  // ball(s)
+  ani.fill(rCol[0]);
+  let cx = tri * (ani.width - gap2) + gap;
+  let cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[tri2] + gapOn2;
+  ani.circle(cx, cy, gapOn2);
+  if (tri2 == 3) {
+    cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[1] + gapOn2;
+    ani.circle(cx, cy, gapOn2);
+    if (tri < 0.6) {
+      if (tri <= 0.05) {
+        ani.fill(rCol[3]);
+      } else {
+        ani.fill(rCol[2]);
+      }
+      ani.rect(gapOn4, aniHeightOn2 + offsets[1] - gapOn2, gapOn2, gap);
+    }
+
+  }
+  if (tri2 == 0) {
+    cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[1] + gapOn2;
+    ani.circle(cx, cy, gapOn2);
+    cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[2] + gapOn2;
+    ani.circle(cx, cy, gapOn2);
+    if (tri < 0.6) {
+      if (tri <= 0.05) {
+        ani.fill(rCol[3]);
+      } else {
+        ani.fill(rCol[2]);
+      }
+      ani.rect(gapOn4, aniHeightOn2 + offsets[1] - gapOn2, gapOn2, gap);
+      ani.rect(gapOn4, aniHeightOn2 + offsets[2] - gapOn2, gapOn2, gap);
+    }
+  }
+  console.log(tri2);
+  // wall
+  ani.fill(rCol[1]);
+  ani.rect(ani.width - gap34, 0, gapOn2, ani.height);
+  // paddle
+  let px = aniHeightOn2 - gapOn2 + (1-tri) * offsets[tri2];
+  ani.rect(gapOn4, px, gapOn2, gap);
 }

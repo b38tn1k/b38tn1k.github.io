@@ -3,6 +3,9 @@ var view, border, gradient;
 var centerX, centerY, titleY, buttonY;
 var bgColor, fgColor, transparent;
 var fullScreen, halfScreen, mobile;
+var loaded = false;
+var bodyOpacity = 0;
+var body;
 // strings
 var titleStringArr = [];
 var titleString = '';
@@ -961,7 +964,10 @@ function setupScreen() {
   nextItem = new myButton('next', null, int(width - 4*border + buttonNudge), buttonY);
   previousItem = new myButton('prev', null, int(4*border - buttonNudge), buttonY);
   // html setup
-  titleDiv.remove();
+  if (titleDiv) {
+    titleDiv.remove();
+  }
+
   if (retro) {
     titleDiv = createDiv(titleDivString);
     titleDiv.style('font-family', "'courier new', courier");
@@ -1186,6 +1192,9 @@ function previousDemo() {
 }
 
 function setup() {
+  body = select('main');
+  body.style('opacity', bodyOpacity);
+  body.style('visibility', 'hidden');
   titleString = unpackStringArray(titleStringArr, '\n');
   titleDivString = unpackStringArray(titleDivStringArr);
   titleDiv = createDiv(titleDivString);
@@ -1196,7 +1205,6 @@ function setup() {
   setupDemos();
   setPermalinks();
   setupPostDiv();
-  frameRate(5);
   setupScreen();
   let curUrl = getURL();
   if (curUrl.indexOf('#') != -1) {
@@ -1229,6 +1237,11 @@ function draw(){
   textAlign(CENTER, CENTER);
   textStyle(NORMAL);
   rectMode(CENTER);
+  if (retro) {
+    frameRate(5);
+  } else {
+    frameRate(30);
+  }
   if (showBackground && retro) {
     view.image(gradient, 0, 0);
     drawSprites();
@@ -1314,6 +1327,20 @@ function draw(){
   drawButton(retroButton);
   drawButton(invertColorsButton);
   drawBorder(view);
+  if (loaded === false) {
+    frameRate(30);
+    body.style('visibility', 'visible');
+    body.style('background-image', 'none !important');
+    loaded = true;
+  }
+  if (bodyOpacity < 1.0){
+    let fr = max(10, frameRate());
+    bodyOpacity += 1.5 / fr;
+    if (bodyOpacity >= 1.0){
+      bodyOpacity = 1;
+    }
+    body.style('opacity', bodyOpacity);
+  }
   // text('windowWidth: ' + windowWidth, 150, 10);
   // text('windowHeight: ' + windowHeight, 150, 30);
   // text('tSize: ' + textSize(), 150, 50);

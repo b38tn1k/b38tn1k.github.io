@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 25;
+var cardslength = 26;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -93,6 +93,7 @@ function setupScreen() {
   functionList.push(feedback);
   functionList.push(intermediary);
   functionList.push(selfservice);
+  functionList.push(copying);
 
 }
 
@@ -1490,7 +1491,8 @@ function selfservice() {
   // waste
   ani.fill(rCol[1]);
   ani.square(rx + iramp * drx, ry, size);
-  ani.square(rx - iramp * drx, ry, size/2);
+  let subSquareSize = 0.85 * size; // sqrt ( Pi (d/2)^2) = sqrt(pi) * (d/2)
+  ani.square(rx - iramp * drx, ry, subSquareSize);
   ani.fill(255);
   ani.circle(rx + iramp * drx, ry, size);
   // processors
@@ -1501,4 +1503,50 @@ function selfservice() {
   star(aniWidthOn2, py, size/2, size/4, 5);
   polygon(rx, ry, size/2, 3)
   ani.rectMode(CORNER);
+}
+
+function drawTrophy(){
+  if (!('trophy' in aniLayers)){
+    aniLayers['trophy'] = createGraphics(gap, gap2);
+    aniLayers['trophy'].noStroke();
+    aniLayers['trophy'].fill(255, 255, 0);
+    aniLayers['trophy'].circle(gapOn2, gapOn2, gap)
+    aniLayers['trophy'].rectMode(CENTER);
+    aniLayers['trophy'].rect(gapOn2, gap, gapOn4, gap);
+    aniLayers['trophy'].rect(gapOn2, gap + gapOn2, gap34, gapOn4);
+    aniLayers['trophy'].fill(100);
+    aniLayers['trophy'].rect(gapOn2, gap2, gap, gap);
+    aniLayers['trophy'].fill(255, 150, 0);
+    aniLayers['trophy'].textSize(gap34);
+    aniLayers['trophy'].textAlign(CENTER, CENTER);
+    aniLayers['trophy'].text("★", gapOn2, gapOn2);
+  }
+}
+
+function copying(){
+  drawTrophy();
+  ani.clear();
+  ani.imageMode(CENTER);
+  ani.noStroke();
+  let per = 1000;
+  let now = millis();
+  let r1 = smoothSquare(per, now);
+  let r2 = smoothSquare(per, now-5);
+  let t = sin(millis()/(per / 10));
+  let ramp = r1;
+  if (r1 - r2 >= 0) {
+    ramp = 0;
+  }
+  if (ramp == 0) {
+    let cv = t * 255;
+    ani.fill(255, 255 - cv, 255 - cv);
+    ani.rect(0, 0, aniWidthOn2, ani.height);
+  }
+  let tx = aniWidthOn4 - gap + gap*ramp;
+  let tx2 = tx + aniWidthOn2;
+  let ty = aniHeightOn3;
+  ani.image(aniLayers['trophy'], tx, ty);
+  ani.image(aniLayers['trophy'], tx2, ty);
+
+  ani.imageMode(CORNER);
 }

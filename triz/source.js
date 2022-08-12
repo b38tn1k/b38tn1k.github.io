@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 27;
+var cardslength = 28;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -95,6 +95,7 @@ function setupScreen() {
   functionList.push(selfservice);
   functionList.push(copying);
   functionList.push(cheapshort);
+  functionList.push(mechanicalsubstitution);
 
 }
 
@@ -1595,7 +1596,6 @@ function cheapshort() {
   let offsets = [0, -gap - gapOn2, gap + gapOn2, 0];
   let cx = tri * (ani.width - gap2) + gap;
   let cy;
-
   // cheap
   if (tri2 == 3) {
     if (tri <= 0.05) {
@@ -1606,10 +1606,10 @@ function cheapshort() {
     if (tri3 != 3 && tri3 != 4) {
       ani.rect(gapOn2, aniHeightOn2 + offsets[1] - gapOn2, gapOn4, gap);
     }
+    ani.fill(rCol[0]);
     cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[1] + gapOn2;
     ani.circle(cx, cy, gapOn2);
   }
-  console.log(tri2);
   if (tri2 == 0) {
     if (tri <= 0.05) {
       ani.fill(rCol[3]);
@@ -1620,15 +1620,14 @@ function cheapshort() {
       ani.rect(gapOn2, aniHeightOn2 + offsets[1] - gapOn2, gapOn4, gap);
       ani.rect(gapOn2, aniHeightOn2 + offsets[2] - gapOn2, gapOn4, gap);
     }
+    ani.fill(rCol[0]);
     cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[1] + gapOn2;
     ani.circle(cx, cy, gapOn2);
     cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[2] + gapOn2;
     ani.circle(cx, cy, gapOn2);
   }
-
   // ball(s)
   ani.fill(rCol[0]);
-
   cy = aniHeightOn2 - gapOn2 + (1-tri) * offsets[tri2] + gapOn2;
   ani.circle(cx, cy, gapOn2);
   // wall
@@ -1637,4 +1636,8 @@ function cheapshort() {
   // paddle
   let px = aniHeightOn2 - gapOn2 + (1-tri) * offsets[tri2];
   ani.rect(gapOn4, px, gapOn2, gap);
+}
+
+function mechanicalsubstitution(){
+
 }

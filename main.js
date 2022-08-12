@@ -817,8 +817,8 @@ function makeMenuDivMusic() {
   // // menuDiv.size(imgSize + 4, discography[albumPointer].div.height);
   // menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
 
-  menuDiv.position(windowWidth - border * 1.5 - imgSize ,  titleDiv.position()['y'] + 1.3*fontSize);
-  menuDiv.size(imgSize + 4, windowHeight - 2*(titleDiv.position()['y'] + 1.3*fontSize));
+  menuDiv.position(windowWidth - border * 1.5 - imgSize,  titleDiv.position()['y'] + 1.3*fontSize);
+  menuDiv.size(imgSize + fontSize, windowHeight - 2*(titleDiv.position()['y'] + 1.3*fontSize));
   menuDiv.addClass('grad');
   menuDiv.show();
 }
@@ -841,8 +841,8 @@ function makeMenuDivDemos() {
   menuDiv.html(myString);
   // menuDiv.position(windowWidth - border * 1.5 - imgSize , demos[demoPointer].div.y);
   // menuDiv.size(imgSize + 4, demos[demoPointer].div.height);
-  menuDiv.position(windowWidth - border * 1.5 - imgSize ,  titleDiv.position()['y'] + 1.3*fontSize);
-  menuDiv.size(imgSize + 4, windowHeight - 2*(titleDiv.position()['y'] + 1.3*fontSize));
+  menuDiv.position(windowWidth - border * 1.5 - imgSize,  titleDiv.position()['y'] + 1.3*fontSize);
+  menuDiv.size(imgSize + fontSize, windowHeight - 2*(titleDiv.position()['y'] + 1.3*fontSize));
   menuDiv.addClass('grad');
   menuDiv.show();
 }

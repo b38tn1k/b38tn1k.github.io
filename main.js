@@ -198,7 +198,7 @@ class myDemoItem {
   updateDiv() {
     let permalinkString = '<a href="' + this.permalink + '" target="_blank"> permalink </a>';
     this.imageHTML = '<img src="' + this.image + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
-    let divString = this.imageHTML + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content + '<br><br>' + permalinkString;
+    let divString = '<a href="' + this.link + '" target="_blank">' + this.imageHTML + '</a>' + '<br><strong>' + this.linkHTML + '</strong><br> <br>' + this.content + '<br><br>' + permalinkString;
     let divLineHeight = int(squareItemImageWidth + ( (5 * textSize()) + textSize() * textWidth(this.title + this.content)/squareItemImageWidth));
 
     if (invertColors) {

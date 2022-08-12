@@ -1622,7 +1622,6 @@ function cheapshort() {
       ani.rect(gapOn4, aniHeightOn2 + offsets[2] - gapOn2, gapOn2, gap);
     }
   }
-  console.log(tri2);
   // wall
   ani.fill(rCol[1]);
   ani.rect(ani.width - gap34, 0, gapOn2, ani.height);

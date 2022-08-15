@@ -1639,5 +1639,106 @@ function cheapshort() {
 }
 
 function mechanicalsubstitution(){
-
+  ani.clear();
+  ani.noStroke();
+  ani.rectMode(CENTER);
+  let per = 2000;
+  let currentAngle = (TWO_PI * millis()/per) % TWO_PI;
+  let coscurrentAngle = cos(currentAngle);
+  let sincurrentAngle = sin(currentAngle);
+  let c1 = color(255, 0, 0);
+  let c2 = color(0, 0, 255);
+  //brushed()
+  ani.push();
+  ani.translate(aniWidthOn4 - gapOn6, aniHeightOn2);
+  ani.fill(c1);
+  ani.rect(-gap, 0, gapOn4, gap3);
+  ani.fill(c2);
+  ani.rect(gap, 0, gapOn4, gap3);
+  ani.rotate(currentAngle);
+  if (sincurrentAngle < 0) {
+    [c1, c2] = [c2, c1];
+  }
+  ani.fill(c1);
+  let xoff = gap34/2;
+  ani.rect(-xoff, 0, gap34, gapOn2);
+  ani.fill(c2);
+  ani.rect(xoff, 0, gap34, gapOn2);
+  ani.arc(0, 0, gap34, gap34, PI, 0);
+  ani.fill(c1);
+  ani.arc(0, 0, gap34, gap34, 0, PI);
+  ani.fill(255);
+  ani.rect(0, 0, gap34, gapOn6/2);
+  ani.pop();
+  ani.strokeWeight(mStroke);
+  ani.stroke(0);
+  let yend = gapOn2;
+  let x1 = aniWidthOn4-xoff - gapOn6;
+  let x2 = aniWidthOn4+xoff - gapOn6;
+  ani.line(x1, aniHeightOn2, x1, yend);
+  ani.line(x2, aniHeightOn2, x2, yend);
+  ani.noStroke();
+  ani.fill(255, 230, 0);
+  ani.circle(x1, aniHeightOn2, gapOn4);
+  ani.circle(x2, aniHeightOn2, gapOn4);
+  ani.fill(255, 0, 0);
+  ani.circle(x1, yend, gapOn2);
+  ani.fill(0, 0, 255);
+  ani.circle(x2, yend, gapOn2);
+  //brushless
+  let xc = ani.width - aniWidthOn4 + gapOn6;
+  let xy = aniHeightOn2 + gapOn2;
+  let radius = gap2;
+  ani.strokeWeight(mStroke);
+  ani.stroke(0);
+  xoff = gap + gapOn6;
+  x1 = xc-xoff;
+  x2 = xc;
+  let x3 = xc+xoff;
+  ani.line(x1, gapOn2, x1, xy + 0.35 * aniHeightOn4);
+  ani.line(x2, gapOn2, x2, xy - aniHeightOn4);
+  ani.line(x3, gapOn2, x3, xy + 0.35 * aniHeightOn4);
+  ani.noStroke();
+  redC = color(255, 0, 0);
+  blueC = color(0, 0, 255);
+  off = color(100);
+  let stators = [];
+  stators.push([[off, off], [blueC, redC], [redC, blueC]]);
+  stators.push([[redC, blueC], [blueC, redC], [off, off]]);
+  stators.push([[redC, blueC], [off, off], [blueC, redC]]);
+  stators.push([[off, off], [redC, blueC], [blueC, redC]]);
+  stators.push([[blueC, redC], [redC, blueC], [off, off]]);
+  stators.push([[blueC, redC], [off, off], [redC, blueC]]);
+  stators.push([[off, off], [blueC, redC], [redC, blueC]]);
+  let phase = round(currentAngle);
+  ani.fill(stators[phase][0][0]);
+  ani.circle(x2, gapOn2, gapOn2);
+  ani.fill(stators[phase][1][0]);
+  ani.circle(x3, gapOn2, gapOn2);
+  ani.fill(stators[phase][2][0]);
+  ani.circle(x1, gapOn2, gapOn2);
+  let rotations = [0, TWO_PI/3, 2*TWO_PI/3];
+  for (let i = 0; i < 3; i++) {
+    ani.push();
+    ani.translate(xc, xy);
+    ani.rotate(rotations[i]);
+    ani.fill(stators[phase][i][0]);
+    ani.rect(0, - aniHeightOn4, gapOn2, gapOn4);
+    ani.fill(stators[phase][i][1]);
+    ani.rect(0, -aniHeightOn4 - gapOn4, gapOn2, gapOn4);
+    ani.pop();
+  }
+  ani.push();
+  ani.translate(xc, xy);
+  ani.rotate(currentAngle);
+  ani.fill(redC);
+  let arad = gap + gapOn2;
+  ani.arc(0, 0, arad, arad, PI, 0);
+  ani.fill(blueC);
+  ani.arc(0, 0, arad, arad, 0, PI);
+  ani.fill(255);
+  ani.circle(0, 0, gap34);
+  ani.pop();
+  ani.stroke(200);
+  ani.line (aniWidthOn2, 0, aniWidthOn2, ani.height);
 }

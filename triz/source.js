@@ -7,7 +7,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 27;
+var cardslength = 28;
 var ani, aniX, aniY, cr, icr, gap, igap, gap2, gap3, gap4, gap34, gapOn2, gapOn3, gapOn4, gapOn6, aniWidthOn2, aniHeightOn2, aniWidthOn3, aniHeightOn3, aniWidthOn4, aniHeightOn4;
 var aniLayers = {};
 var titleTextSize = 32;
@@ -1650,25 +1650,25 @@ function mechanicalsubstitution(){
   let c2 = color(0, 0, 255);
   //brushed()
   ani.push();
-  ani.translate(aniWidthOn4 - gapOn6, aniHeightOn2);
-  ani.fill(c1);
-  ani.rect(-gap, 0, gapOn4, gap3);
-  ani.fill(c2);
-  ani.rect(gap, 0, gapOn4, gap3);
-  ani.rotate(currentAngle);
-  if (sincurrentAngle < 0) {
-    [c1, c2] = [c2, c1];
-  }
-  ani.fill(c1);
-  let xoff = gap34/2;
-  ani.rect(-xoff, 0, gap34, gapOn2);
-  ani.fill(c2);
-  ani.rect(xoff, 0, gap34, gapOn2);
-  ani.arc(0, 0, gap34, gap34, PI, 0);
-  ani.fill(c1);
-  ani.arc(0, 0, gap34, gap34, 0, PI);
-  ani.fill(255);
-  ani.rect(0, 0, gap34, gapOn6/2);
+    ani.translate(aniWidthOn4 - gapOn6, aniHeightOn2);
+    ani.fill(c1);
+    ani.rect(-gap, 0, gapOn4, gap3);
+    ani.fill(c2);
+    ani.rect(gap, 0, gapOn4, gap3);
+    ani.rotate(currentAngle);
+    if (sincurrentAngle < 0) {
+      [c1, c2] = [c2, c1];
+    }
+    ani.fill(c1);
+    let xoff = gap34/2;
+    ani.rect(-xoff, 0, gap34, gapOn2);
+    ani.fill(c2);
+    ani.rect(xoff, 0, gap34, gapOn2);
+    ani.arc(0, 0, gap34, gap34, PI, 0);
+    ani.fill(c1);
+    ani.arc(0, 0, gap34, gap34, 0, PI);
+    ani.fill(255);
+    ani.rect(0, 0, gap34, gapOn6/2);
   ani.pop();
   ani.strokeWeight(mStroke);
   ani.stroke(0);
@@ -1720,25 +1720,26 @@ function mechanicalsubstitution(){
   let rotations = [0, TWO_PI/3, 2*TWO_PI/3];
   for (let i = 0; i < 3; i++) {
     ani.push();
-    ani.translate(xc, xy);
-    ani.rotate(rotations[i]);
-    ani.fill(stators[phase][i][0]);
-    ani.rect(0, - aniHeightOn4, gapOn2, gapOn4);
-    ani.fill(stators[phase][i][1]);
-    ani.rect(0, -aniHeightOn4 - gapOn4, gapOn2, gapOn4);
+      ani.translate(xc, xy);
+      ani.rotate(rotations[i]);
+      ani.fill(stators[phase][i][0]);
+      ani.rect(0, - aniHeightOn4, gapOn2, gapOn4);
+      ani.fill(stators[phase][i][1]);
+      ani.rect(0, -aniHeightOn4 - gapOn4, gapOn2, gapOn4);
     ani.pop();
   }
   ani.push();
-  ani.translate(xc, xy);
-  ani.rotate(currentAngle);
-  ani.fill(redC);
-  let arad = gap + gapOn2;
-  ani.arc(0, 0, arad, arad, PI, 0);
-  ani.fill(blueC);
-  ani.arc(0, 0, arad, arad, 0, PI);
-  ani.fill(255);
-  ani.circle(0, 0, gap34);
+    ani.translate(xc, xy);
+    ani.rotate(currentAngle);
+    ani.fill(redC);
+    let arad = gap + gapOn2;
+    ani.arc(0, 0, arad, arad, PI, 0);
+    ani.fill(blueC);
+    ani.arc(0, 0, arad, arad, 0, PI);
+    ani.fill(255);
+    ani.circle(0, 0, gap34);
   ani.pop();
   ani.stroke(200);
   ani.line (aniWidthOn2, 0, aniWidthOn2, ani.height);
+  ani.rectMode(CORNER);
 }

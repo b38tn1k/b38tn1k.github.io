@@ -19,9 +19,10 @@ var T_DIV = 14;
 var T_MOD = 32;
 var T_GOTO = 16;
 var T_NOT = 28;
-var T_CONDITION = 11;
-var T_ELSE = 18;
-var T_DO = 42;
+var T_CONDITION = 103;
+var T_ELSE = 102;
+var T_DO = 101;
+var T_OUTLET = 100;
 
 var blockLabels = {};
 blockLabels[T_BLOCK] = "block";
@@ -42,6 +43,7 @@ blockLabels[T_NOT] = "not";
 blockLabels[T_CONDITION] = "condition";
 blockLabels[T_ELSE] = "else";
 blockLabels[T_DO] = "do";
+blockLabels[T_OUTLET] = "out";
 
 function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
@@ -61,6 +63,7 @@ class Cell {
     // graphical interface
     this.highlight = false;
     // body
+    this.ySpacer = 0;
     this.width = w;
     this.height = h;
     this.minWidth = w;
@@ -79,13 +82,13 @@ class Cell {
     // specifics
     this.type = type
     this.textLabel = blockLabels[type];
-    // labels
+    this.outletValue;
+    // labels, tools, setup
     this.indexLabeldiv = createDiv(this.textLabel);
     this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y + this.childYBorder);
     this.indexLabeldiv.style('font-size', '16px');
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
-    this.ySpacer = 0;
     this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size')) + this.childYBorder;
     this.height += this.yHeaderEnd;
     if (type == T_BLOCK || type == T_INPUT || type == T_GOTO || type == T_VAR) {
@@ -127,6 +130,13 @@ class Cell {
     return [this.width, this.height]
   }
 
+  updateOutletValue(value) {
+    this.outletValue = value;
+    console.log(this.textLabel);
+    let htmlString = this.textLabel + '<br><br>' + String(this.outletValue);
+    this.indexLabeldiv.html(htmlString);
+  }
+
   draw(canvas=null) {
     if (canvas === null) {
       // body
@@ -143,7 +153,7 @@ class Cell {
       // resize handle
       rect(this.x + this.width - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
       // delete handle
-      if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO) {
+      if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
         fill(this.colors[3]);
         stroke(this.colors[3]);
         rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
@@ -183,7 +193,10 @@ class Cell {
     }
     this.width = max(this.minWidth, this.width);
     this.height = max(this.minHeight, this.height);
-    this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
+    if (this.type == T_VAR || this.type == T_INPUT || this.type == T_BLOCK || this.type == T_GOTO) {
+      this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
+    }
+
   }
 
   reshape() {
@@ -248,7 +261,7 @@ class Cell {
       }
     }
     // delete
-    if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO) {
+    if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
       if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
         if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
           this.mode = M_DELETE;
@@ -260,10 +273,23 @@ class Cell {
   }
 
   addChild(ind, child) {
+    let theOnesWithOutlets = [T_EQUAL,T_LESS,T_GREATER,T_ADD,T_SUBTRACT,T_MULT,T_DIV,T_MOD];
+    let thisOneHasAnOutlet = false;
+    for (let i = 0; i < theOnesWithOutlets.length; i++) {
+      if (this.type == theOnesWithOutlets[i]) {
+        thisOneHasAnOutlet = true;
+      }
+    }
     if (this.type != T_VAR && this.type != T_INPUT) {
       if (this.childIndicies.indexOf(ind) == -1) {
-        this.childIndicies.push(ind);
-        this.children.push(child);
+        if (thisOneHasAnOutlet == true && this.children.length != 0) {
+          this.children.splice(this.children.length-1, 0, child);
+          this.childIndicies.splice(this.children.length-1, 0, ind);
+        } else {
+          this.children.push(child);
+          this.childIndicies.push(ind);
+        }
+
       }
     }
   }

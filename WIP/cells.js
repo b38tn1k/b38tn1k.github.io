@@ -38,10 +38,7 @@ class Cells {
     this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
     let pIndex = this.length - 1;
     if (type == T_INPUT) {
-      let tempID = '';
-      for (let i = 0; i < 3; i++) {
-        tempID += this.varNames[floor(random(0, this.varNames.length))];
-      }
+      let tempID = this.getID(4);
       this.cells[pIndex].varID= tempID;
       this.cells[pIndex].textLabel += ' ' + tempID;
       this.cells[pIndex].indexLabeldiv.html(this.cells[pIndex].textLabel);
@@ -57,7 +54,33 @@ class Cells {
       }
       this.cells[pIndex].moveC(this.cells[pIndex].x, this.cells[pIndex].y);
     }
-    // this.cells[this.length-1].indexLabeldiv.html(this.length-1);
+
+    let theOnesWithOutlets = [T_EQUAL,T_LESS,T_GREATER,T_ADD,T_SUBTRACT,T_MULT,T_DIV,T_MOD];
+    let thisOneHasAnOutlet = false;
+    for (let i = 0; i < theOnesWithOutlets.length; i++) {
+      if (type == theOnesWithOutlets[i]) {
+        thisOneHasAnOutlet = true;
+      }
+    }
+    if (thisOneHasAnOutlet == true) {
+      this.cells.push(new Cell(T_OUTLET, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+      this.cells[pIndex].addChild(pIndex + 1, this.cells[pIndex + 1]);
+      this.cells[pIndex + 1].addParent(pIndex, this.cells[pIndex]);
+      let tempID = this.getID(4);
+      this.cells[pIndex + 1].varID= tempID;
+      this.cells[pIndex + 1].textLabel += ' ' + tempID;
+      this.cells[pIndex + 1].indexLabeldiv.html(this.cells[pIndex + 1].textLabel);
+      this.cells[pIndex + 1].updateOutletValue('unset');
+      this.varHandles.push(tempID);
+    }
+  }
+
+  getID(count) {
+    let tempID = '';
+    for (let i = 0; i < count; i++) {
+      tempID += this.varNames[floor(random(0, this.varNames.length))];
+    }
+    return tempID;
   }
 
   checkSelected(x, y) {
@@ -185,6 +208,7 @@ class Cells {
     let goto_indices = [];
     let variable_indices = [];
     let input_indicies = [];
+    let outlet_indicies = [];
     let blocks = [];
     for (let i = 0; i < this.length; i++) {
       blocks.push('');
@@ -204,6 +228,9 @@ class Cells {
       if (this.cells[i].type == T_INPUT) {
         input_indicies.push(i);
       }
+      if (this.cells[i].type == T_OUTLET) {
+        outlet_indicies.push(i);
+      }
     }
     for (let i = 0; i < goto_indices.length; i++) {
       for (let j = 0; j < blocks.length; j++) {
@@ -222,6 +249,11 @@ class Cells {
       for (let j = 0; j < input_indicies.length; j++) {
         if (value == this.cells[input_indicies[j]].varID) {
           this.cells[variable_indices[i]].varLabeldiv.html(this.cells[input_indicies[j]].input.value());
+        }
+      }
+      for (let j = 0; j < outlet_indicies.length; j++) {
+        if (value == this.cells[outlet_indicies[j]].varID) {
+          this.cells[variable_indices[i]].varLabeldiv.html(this.cells[outlet_indicies[j]].outletValue);
         }
       }
     }

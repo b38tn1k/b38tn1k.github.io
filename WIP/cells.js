@@ -10,6 +10,8 @@ class Cells {
     this.lowlights = l;
     this.inverted = i;
     this.dualtone = dt;
+    this.varNames = 'abcdefghijklmnopqrstuvwxyz';
+    this.varHandles = ['none'];
   }
 
   get length() {
@@ -22,16 +24,39 @@ class Cells {
     let width = this.dWidth;
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].y < this.dHeight + y && this.cells[i].x < x + width) {
-        y += this.cells[i].height + 10;
+        if (this.cells[i].parent == -1) {
+          y += this.cells[i].height + 10;
+        }
         width = max(width, this.cells[i].width + 10);
       }
-      if (y > windowHeight/2) {
+      if (y > windowHeight*0.7) {
         y = 20;
         x += width;
         width = this.dWidth;
       }
     }
     this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+    let pIndex = this.length - 1;
+    if (type == T_INPUT) {
+      let tempID = '';
+      for (let i = 0; i < 3; i++) {
+        tempID += this.varNames[floor(random(0, this.varNames.length))];
+      }
+      this.cells[pIndex].varID= tempID;
+      this.cells[pIndex].textLabel += ' ' + tempID;
+      this.cells[pIndex].indexLabeldiv.html(this.cells[pIndex].textLabel);
+      this.varHandles.push(tempID);
+    }
+    if (type == T_IF || type == T_WHILE) {
+      this.cells.push(new Cell(T_CONDITION, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+      this.cells.push(new Cell(T_DO, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+      this.cells.push(new Cell(T_ELSE, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+      for (let i = 1; i <= 3; i++) {
+        this.cells[pIndex].addChild(pIndex + i, this.cells[pIndex + i]);
+        this.cells[pIndex + i].addParent(pIndex, this.cells[pIndex]);
+      }
+      this.cells[pIndex].moveC(this.cells[pIndex].x, this.cells[pIndex].y);
+    }
     // this.cells[this.length-1].indexLabeldiv.html(this.length-1);
   }
 
@@ -158,6 +183,8 @@ class Cells {
       }
     }
     let goto_indices = [];
+    let variable_indices = [];
+    let input_indicies = [];
     let blocks = [];
     for (let i = 0; i < this.length; i++) {
       blocks.push('');
@@ -171,14 +198,33 @@ class Cells {
       if (this.cells[i].type == T_GOTO) {
         goto_indices.push(i);
       }
+      if (this.cells[i].type == T_VAR) {
+        variable_indices.push(i);
+      }
+      if (this.cells[i].type == T_INPUT) {
+        input_indicies.push(i);
+      }
     }
-
     for (let i = 0; i < goto_indices.length; i++) {
       for (let j = 0; j < blocks.length; j++) {
         this.cells[goto_indices[i]].input.option(blocks[j]);
       }
     }
 
+    for (let i = 0; i < variable_indices.length; i++) {
+      for (let j = 0; j < this.varHandles.length; j++) {
+        this.cells[variable_indices[i]].input.option(this.varHandles[j], this.varHandles[j]);
+      }
+      let value = this.cells[variable_indices[i]].input.value();
+      if (value == 'none') {
+        this.cells[variable_indices[i]].varLabeldiv.html('');
+      }
+      for (let j = 0; j < input_indicies.length; j++) {
+        if (value == this.cells[input_indicies[j]].varID) {
+          this.cells[variable_indices[i]].varLabeldiv.html(this.cells[input_indicies[j]].input.value());
+        }
+      }
+    }
   }
 
   draw(canvas = null) {

@@ -5,7 +5,8 @@ var M_DELETE = 3;
 var M_SELECTED = 4;
 
 var T_BLOCK = 23;
-var T_SOURCE = 47;
+var T_VAR = 45;
+var T_INPUT = 47;
 var T_IF = 30;
 var T_WHILE = 7;
 var T_EQUAL = 48;
@@ -18,10 +19,14 @@ var T_DIV = 14;
 var T_MOD = 32;
 var T_GOTO = 16;
 var T_NOT = 28;
+var T_CONDITION = 11;
+var T_ELSE = 18;
+var T_DO = 42;
 
 var blockLabels = {};
 blockLabels[T_BLOCK] = "block";
-blockLabels[T_SOURCE] = "source";
+blockLabels[T_VAR] = "variable";
+blockLabels[T_INPUT] = "input";
 blockLabels[T_IF] = "if";
 blockLabels[T_WHILE] = "while";
 blockLabels[T_EQUAL] = "equals";
@@ -34,8 +39,9 @@ blockLabels[T_DIV] = "divide";
 blockLabels[T_MOD] = "modulus";
 blockLabels[T_GOTO] = "goto";
 blockLabels[T_NOT] = "not";
-
-
+blockLabels[T_CONDITION] = "condition";
+blockLabels[T_ELSE] = "else";
+blockLabels[T_DO] = "do";
 
 function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
@@ -57,17 +63,19 @@ class Cell {
     // body
     this.width = w;
     this.height = h;
+    this.minWidth = w;
+    this.minHeight = h;
     this.radius = r;
     this.x = x;
     this.y = y;
     this.offX = this.childXBorder;
     this.offY = this.childYBorder;
+    this.varID;
     // handles
     this.handleW = 1.5*r;
     this.handleH = 1.5*r;
     // colors
     this.colors = c;
-
     // specifics
     this.type = type
     this.textLabel = blockLabels[type];
@@ -80,25 +88,34 @@ class Cell {
     this.ySpacer = 0;
     this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size')) + this.childYBorder;
     this.height += this.yHeaderEnd;
-    if (type == T_BLOCK || type == T_SOURCE || type == T_GOTO) {
-      if (type == T_BLOCK || type == T_SOURCE) {
+    if (type == T_BLOCK || type == T_INPUT || type == T_GOTO || type == T_VAR) {
+      if (type == T_BLOCK || type == T_INPUT) {
         this.input = createInput();
       }
-      if (type == T_GOTO){
+      if (type == T_GOTO || type == T_VAR){
         this.input = createSelect();
-        let h = this.input.size().height;
-        this.input.size(this.width, h);
       }
+      this.input.style('font-size', '16px');
+      let h = this.input.size().height;
+      this.standardInputHeight = h;
+      this.input.size(this.width, h);
       this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
       this.input.style('border', 0);
-      this.input.style('font-size', '16px');
       this.input.position(x + this.childXBorder, y + this.yHeaderEnd);
       this.width = this.input.size().width + 3*this.childXBorder;
-      this.minWidth = this.width;
       this.ySpacer += this.input.height;
-
+      this.minWidth = this.width;
+      if (type == T_VAR) {
+        this.varLabeldiv = createDiv("empty");
+        this.varLabeldiv.position(x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
+        this.height += this.childYBorder + this.ySpacer;
+        this.minHeight = this.height;
+        this.varLabeldiv.style('font-size', '16px');
+        this.varLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
+        this.varLabeldiv.show();
+      }
     }
   }
 
@@ -113,7 +130,7 @@ class Cell {
   draw(canvas=null) {
     if (canvas === null) {
       // body
-      if (this.highlight === true && this.type != T_SOURCE) {
+      if (this.highlight === true && this.type != T_INPUT && this.type != T_VAR) {
         fill(this.colors[2]);
       } else {
         fill(this.colors[0]);
@@ -126,9 +143,11 @@ class Cell {
       // resize handle
       rect(this.x + this.width - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
       // delete handle
-      fill(this.colors[3]);
-      stroke(this.colors[3]);
-      rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
+      if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO) {
+        fill(this.colors[3]);
+        stroke(this.colors[3]);
+        rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
+      }
     }
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].draw();
@@ -138,8 +157,11 @@ class Cell {
   moveC(x, y) {
     this.x = x;
     this.y = y;
-    if (this.type == T_BLOCK || this.type == T_SOURCE || this.type == T_GOTO) {
+    if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
       this.input.position(this.x + this.childXBorder, this.y + this.childYBorder + this.yHeaderEnd);
+    }
+    if (this.type == T_VAR) {
+      this.varLabeldiv.position(x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
     }
     this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y);
     let childX = x + this.childXBorder;
@@ -161,6 +183,7 @@ class Cell {
     }
     this.width = max(this.minWidth, this.width);
     this.height = max(this.minHeight, this.height);
+    this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
   }
 
   reshape() {
@@ -197,8 +220,11 @@ class Cell {
       this.indexLabeldiv.remove();
       par = this.parent;
       this.removeParent();
-      if (this.type == T_BLOCK || this.type == T_SOURCE || this.type == T_GOTO) {
+      if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
         this.input.remove();
+      }
+      if (this.type == T_VAR) {
+        this.varLabeldiv.remove();
       }
     }
     return par;
@@ -221,18 +247,20 @@ class Cell {
         breaker = true;
       }
     }
-
-    if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
-      if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
-        this.mode = M_DELETE;
-        breaker = true;
+    // delete
+    if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO) {
+      if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
+        if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
+          this.mode = M_DELETE;
+          breaker = true;
+        }
       }
     }
     return breaker;
   }
 
   addChild(ind, child) {
-    if (this.type != T_SOURCE) {
+    if (this.type != T_VAR && this.type != T_INPUT) {
       if (this.childIndicies.indexOf(ind) == -1) {
         this.childIndicies.push(ind);
         this.children.push(child);
@@ -251,7 +279,7 @@ class Cell {
   }
 
   removeChild(ind) {
-    if (this.type != T_SOURCE) {
+    if (this.type != T_VAR && this.type != T_INPUT) {
       let ci = this.childIndicies.indexOf(ind);
       if (ci != -1) {
         this.childIndicies.splice(ci, 1);

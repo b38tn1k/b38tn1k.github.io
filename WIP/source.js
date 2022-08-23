@@ -81,7 +81,8 @@ function setup() {
   setupScreen();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
   menu = createDiv('<a href="javascript:void(0)" onclick="newCell(' + T_BLOCK + ')"> + block</a><br>');
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_SOURCE + ')"> + source</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_INPUT + ')"> + input</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_VAR + ')"> + variable</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_IF + ')"> + if</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_WHILE + ')"> + while</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_NOT + ')"> + not</a><br>', true);
@@ -94,7 +95,6 @@ function setup() {
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_DIV + ')"> + divide</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_MOD + ')"> + modulus</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_GOTO + ')"> + goto</a><br>', true);
-
   menu.position(10, 10);
   menu.style('font-size', '16px');
   menu.show();

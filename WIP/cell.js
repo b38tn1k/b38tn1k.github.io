@@ -29,11 +29,16 @@ class Cell {
     this.handleH = 1.5*r;
     // colors
     this.colors = c;
-  }
+    // labels
+    this.div = createDiv();
+    this.div.position(this.x + this.childXBorder, this.y);
+    let colorString = "rgb(" + this.colors[4]._getRed() + ", " + this.colors[4]._getGreen() + ", " + this.colors[4]._getBlue() + ")";
+    this.div.style('font-size', '16px');
+    this.div.style('color', colorString);
+    this.div.show();
 
-  setPos(pos) {
-    this.x = pos[0];
-    this.y = pos[1];
+    console.log(this.colors[3]._getRed());
+
   }
 
   get pos() {
@@ -60,7 +65,9 @@ class Cell {
       // resize handle
       rect(this.x + this.width - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
       // delete handle
-      circle(this.x + this.width - this.radius, this.y + this.radius, this.radius*2);
+      fill(this.colors[3]);
+      stroke(this.colors[3]);
+      rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
     }
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].draw();
@@ -70,6 +77,7 @@ class Cell {
   moveC(x, y) {
     this.x = x;
     this.y = y;
+    this.div.position(this.x + this.childXBorder, this.y);
     let childX = x + this.childXBorder;
     let childY = this.y + this.childYBorder;
     for (let i = 0; i < this.children.length; i++) {
@@ -106,8 +114,24 @@ class Cell {
     if (heightSum > this.height) {
       this.height = heightSum;
     }
-
     this.moveC(this.x, this.y);
+  }
+
+  markForDeletion() {
+    for (let i = 0; i < this.children.length; i++) {
+      this.children[i].markForDeletion();
+    }
+    this.mode = M_DELETE;
+  }
+
+  cleanForDeletionSafe() {
+    let par = -1;
+    if (this.mode == M_DELETE) {
+      this.div.remove();
+      par = this.parent;
+      this.removeParent();
+    }
+    return par;
   }
 
   checkButtons(x, y) {
@@ -155,13 +179,11 @@ class Cell {
   }
 
   removeChild(ind) {
-    console.log(this.childIndicies.length)
     let ci = this.childIndicies.indexOf(ind);
     if (ci != -1) {
       this.childIndicies.splice(ci, 1);
       this.children.splice(ci, 1);
     }
-    console.log(this.childIndicies.length)
     // sort out offsets
   }
 

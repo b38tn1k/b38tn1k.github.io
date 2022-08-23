@@ -2,6 +2,8 @@
 var widthOnTwo, heightOnTwo;
 var cells;
 var colors = [];
+var icolors = [];
+var dtcolors = [];
 var highlights = [];
 var lowlights = [];
 var c;
@@ -61,12 +63,15 @@ function colorSetup() {
   for (let i = 0; i < colors.length; i++) {
     cvals = colors[i]['levels'][0] + colors[i]['levels'][1] + colors[i]['levels'][2];
     m = colors[i]['maxes']['rgb'][0] + colors[i]['maxes']['rgb'][1] + colors[i]['maxes']['rgb'][2];
+    icolors.push(color(colors[i]['maxes']['rgb'][0] - colors[i]['levels'][0], colors[i]['maxes']['rgb'][1] - colors[i]['levels'][1], colors[i]['maxes']['rgb'][2] - colors[i]['levels'][2]))
     if (cvals > m/2) {
       highlights.push(lerpColor(colors[i], color(0), 0.5));
       lowlights.push(lerpColor(colors[i], color(255), 0.2));
+      dtcolors.push(color(0));
     } else {
       highlights.push(lerpColor(colors[i], color(255), 0.5));
       lowlights.push(lerpColor(colors[i], color(0), 0.2));
+      dtcolors.push(color(255));
     }
   }
 }
@@ -74,7 +79,7 @@ function colorSetup() {
 function setup() {
   colorSetup();
   setupScreen();
-  cells = new Cells(colors, highlights, lowlights);
+  cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
   menu = createDiv('<a href="javascript:void(0)" onclick="newCell()"> + </a>');
   menu.position(10, 10);
   menu.style('font-size', '16px');

@@ -16,9 +16,22 @@ class Cells {
     return this.cells.length;
   }
 
-  addCell(x, y, c) {
-    this.cells.push(new Cell(x, y, this.dWidth, this.dHeight, [this.colors[c], this.highlights[c], this.lowlights[c], this.inverted[c], this.dualtone[c]], this.dRadius));
-    this.cells[this.length-1].div.html(this.length-1);
+  addCell(type) {
+    let x = 0.15 * windowWidth;
+    let y = 10;
+    let width = this.dWidth;
+    for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].y < this.dHeight + y && this.cells[i].x < x + width) {
+        y += this.cells[i].height + 10;
+        width = max(width, this.cells[i].width + 10);
+      }
+      if (y > windowHeight - this.dHeight) {
+        y = 10;
+        x += width;
+      }
+    }
+    this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+    // this.cells[this.length-1].indexLabeldiv.html(this.length-1);
   }
 
   checkSelected(x, y) {
@@ -145,7 +158,7 @@ class Cells {
     }
     for (let i = 0; i < this.length; i++) {
       this.cells[i].reshape();
-      this.cells[i].div.html(i);
+      // this.cells[i].indexLabeldiv.html(i);
     }
   }
 

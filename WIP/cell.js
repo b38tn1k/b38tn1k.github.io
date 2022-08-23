@@ -3,8 +3,45 @@ var M_MOVE = 1;
 var M_RESIZE = 2;
 var M_DELETE = 3;
 
+var T_BLOCK = 23;
+var T_SOURCE = 47;
+var T_IF = 6;
+var T_WHILE = 7;
+var T_EQUAL = 8;
+var T_LESS = 9;
+var T_GREATER = 10;
+var T_ADD = 11;
+var T_SUBTRACT = 12;
+var T_MULT = 13;
+var T_DIV = 14;
+var T_MOD = 15;
+var T_GOTO = 16;
+var T_NOT = 18;
+
+var blockLabels = {};
+blockLabels[T_BLOCK] = "block";
+blockLabels[T_SOURCE] = "source";
+blockLabels[T_IF] = "if";
+blockLabels[T_WHILE] = "while";
+blockLabels[T_EQUAL] = "equals";
+blockLabels[T_LESS] = "less";
+blockLabels[T_GREATER] = "greater";
+blockLabels[T_ADD] = "add";
+blockLabels[T_SUBTRACT] = "subtract";
+blockLabels[T_MULT] = "multiply";
+blockLabels[T_DIV] = "divide";
+blockLabels[T_MOD] = "modulus";
+blockLabels[T_GOTO] = "goto";
+blockLabels[T_NOT] = "not";
+
+
+
+function colorToHTMLRGB(color) {
+  return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
+}
+
 class Cell {
-  constructor(x, y, w, h, c, r=5) {
+  constructor(type, x, y, w, h, c, r=5) {
     // heirachy
     this.children = [];
     this.childIndicies = [];
@@ -29,16 +66,30 @@ class Cell {
     this.handleH = 1.5*r;
     // colors
     this.colors = c;
+
+    // specifics
+    this.type = type
+    this.textLabel = blockLabels[type];
     // labels
-    this.div = createDiv();
-    this.div.position(this.x + this.childXBorder, this.y);
-    let colorString = "rgb(" + this.colors[4]._getRed() + ", " + this.colors[4]._getGreen() + ", " + this.colors[4]._getBlue() + ")";
-    this.div.style('font-size', '16px');
-    this.div.style('color', colorString);
-    this.div.show();
-
-    console.log(this.colors[3]._getRed());
-
+    this.indexLabeldiv = createDiv(this.textLabel);
+    this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y + this.childYBorder);
+    this.indexLabeldiv.style('font-size', '16px');
+    this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
+    this.indexLabeldiv.show();
+    this.ySpacer = 0;
+    this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size'));
+    console.log(this.yHeaderEnd)
+    this.height += this.yHeaderEnd;
+    if (type == T_BLOCK || type == T_SOURCE || type == T_GOTO) {
+      this.input = createInput();
+      this.input.position(x + this.childXBorder, y + this.yHeaderEnd);
+      this.width = this.input.width + 2*this.childXBorder;
+      this.ySpacer += this.input.height;
+      this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
+      this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
+      this.input.style('color', colorToHTMLRGB(this.colors[4]));
+      this.input.style('border', 0);
+    }
   }
 
   get pos() {
@@ -52,7 +103,7 @@ class Cell {
   draw(canvas=null) {
     if (canvas === null) {
       // body
-      if (this.highlight === true) {
+      if (this.highlight === true && this.type != T_SOURCE) {
         fill(this.colors[2]);
       } else {
         fill(this.colors[0]);
@@ -77,9 +128,12 @@ class Cell {
   moveC(x, y) {
     this.x = x;
     this.y = y;
-    this.div.position(this.x + this.childXBorder, this.y);
+    if (this.type == T_BLOCK || this.type == T_SOURCE) {
+      this.input.position(this.x + this.childXBorder, this.y + this.childYBorder + this.yHeaderEnd);
+    }
+    this.indexLabeldiv.position(this.x + this.childXBorder, this.y);
     let childX = x + this.childXBorder;
-    let childY = this.y + this.childYBorder;
+    let childY = this.y + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].moveC(childX, childY);
       childY += this.childYBorder + this.children[i].height;
@@ -103,7 +157,7 @@ class Cell {
         this.children[i].reshape();
       }
     }
-    let heightSum = this.childYBorder;
+    let heightSum = this.childYBorder + this.ySpacer;
     for (let i = 0; i < this.children.length; i++) {
       if (this.children[i].width + this.childXBorder * 2 > this.width) {
         this.width = this.children[i].width + this.childXBorder * 2;
@@ -127,9 +181,12 @@ class Cell {
   cleanForDeletionSafe() {
     let par = -1;
     if (this.mode == M_DELETE) {
-      this.div.remove();
+      this.indexLabeldiv.remove();
       par = this.parent;
       this.removeParent();
+      if (this.type == T_BLOCK || this.type == T_SOURCE) {
+        this.input.remove();
+      }
     }
     return par;
   }
@@ -162,9 +219,11 @@ class Cell {
   }
 
   addChild(ind, child) {
-    if (this.childIndicies.indexOf(ind) == -1) {
-      this.childIndicies.push(ind);
-      this.children.push(child);
+    if (this.type != T_SOURCE) {
+      if (this.childIndicies.indexOf(ind) == -1) {
+        this.childIndicies.push(ind);
+        this.children.push(child);
+      }
     }
   }
 
@@ -179,10 +238,12 @@ class Cell {
   }
 
   removeChild(ind) {
-    let ci = this.childIndicies.indexOf(ind);
-    if (ci != -1) {
-      this.childIndicies.splice(ci, 1);
-      this.children.splice(ci, 1);
+    if (this.type != T_SOURCE) {
+      let ci = this.childIndicies.indexOf(ind);
+      if (ci != -1) {
+        this.childIndicies.splice(ci, 1);
+        this.children.splice(ci, 1);
+      }
     }
     // sort out offsets
   }

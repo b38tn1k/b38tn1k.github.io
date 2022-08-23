@@ -2,21 +2,22 @@ var M_IDLE = 0;
 var M_MOVE = 1;
 var M_RESIZE = 2;
 var M_DELETE = 3;
+var M_SELECTED = 4;
 
 var T_BLOCK = 23;
 var T_SOURCE = 47;
-var T_IF = 6;
+var T_IF = 30;
 var T_WHILE = 7;
-var T_EQUAL = 8;
+var T_EQUAL = 48;
 var T_LESS = 9;
-var T_GREATER = 10;
+var T_GREATER = 38;
 var T_ADD = 11;
-var T_SUBTRACT = 12;
+var T_SUBTRACT = 52;
 var T_MULT = 13;
 var T_DIV = 14;
-var T_MOD = 15;
+var T_MOD = 32;
 var T_GOTO = 16;
-var T_NOT = 18;
+var T_NOT = 28;
 
 var blockLabels = {};
 blockLabels[T_BLOCK] = "block";
@@ -77,18 +78,27 @@ class Cell {
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
     this.ySpacer = 0;
-    this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size'));
-    console.log(this.yHeaderEnd)
+    this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size')) + this.childYBorder;
     this.height += this.yHeaderEnd;
     if (type == T_BLOCK || type == T_SOURCE || type == T_GOTO) {
-      this.input = createInput();
-      this.input.position(x + this.childXBorder, y + this.yHeaderEnd);
-      this.width = this.input.width + 2*this.childXBorder;
-      this.ySpacer += this.input.height;
+      if (type == T_BLOCK || type == T_SOURCE) {
+        this.input = createInput();
+      }
+      if (type == T_GOTO){
+        this.input = createSelect();
+        let h = this.input.size().height;
+        this.input.size(this.width, h);
+      }
       this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
       this.input.style('border', 0);
+      this.input.style('font-size', '16px');
+      this.input.position(x + this.childXBorder, y + this.yHeaderEnd);
+      this.width = this.input.size().width + 3*this.childXBorder;
+      this.minWidth = this.width;
+      this.ySpacer += this.input.height;
+
     }
   }
 
@@ -128,10 +138,10 @@ class Cell {
   moveC(x, y) {
     this.x = x;
     this.y = y;
-    if (this.type == T_BLOCK || this.type == T_SOURCE) {
+    if (this.type == T_BLOCK || this.type == T_SOURCE || this.type == T_GOTO) {
       this.input.position(this.x + this.childXBorder, this.y + this.childYBorder + this.yHeaderEnd);
     }
-    this.indexLabeldiv.position(this.x + this.childXBorder, this.y);
+    this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y);
     let childX = x + this.childXBorder;
     let childY = this.y + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
     for (let i = 0; i < this.children.length; i++) {
@@ -149,6 +159,8 @@ class Cell {
     if (nh > 2*this.handleH) {
       this.height = nh;
     }
+    this.width = max(this.minWidth, this.width);
+    this.height = max(this.minHeight, this.height);
   }
 
   reshape() {
@@ -157,7 +169,7 @@ class Cell {
         this.children[i].reshape();
       }
     }
-    let heightSum = this.childYBorder + this.ySpacer;
+    let heightSum = this.yHeaderEnd + this.childYBorder + this.ySpacer;
     for (let i = 0; i < this.children.length; i++) {
       if (this.children[i].width + this.childXBorder * 2 > this.width) {
         this.width = this.children[i].width + this.childXBorder * 2;
@@ -167,6 +179,7 @@ class Cell {
     heightSum += 2 * this.childYBorder;
     if (heightSum > this.height) {
       this.height = heightSum;
+      this.minHeight = this.height;
     }
     this.moveC(this.x, this.y);
   }
@@ -184,7 +197,7 @@ class Cell {
       this.indexLabeldiv.remove();
       par = this.parent;
       this.removeParent();
-      if (this.type == T_BLOCK || this.type == T_SOURCE) {
+      if (this.type == T_BLOCK || this.type == T_SOURCE || this.type == T_GOTO) {
         this.input.remove();
       }
     }

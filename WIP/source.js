@@ -93,6 +93,7 @@ function setup() {
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_MULT + ')"> + multiply</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_DIV + ')"> + divide</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_MOD + ')"> + modulus</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_GOTO + ')"> + goto</a><br>', true);
 
   menu.position(10, 10);
   menu.style('font-size', '16px');

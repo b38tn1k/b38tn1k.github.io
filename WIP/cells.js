@@ -18,16 +18,17 @@ class Cells {
 
   addCell(type) {
     let x = 0.15 * windowWidth;
-    let y = 10;
+    let y = 20;
     let width = this.dWidth;
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].y < this.dHeight + y && this.cells[i].x < x + width) {
         y += this.cells[i].height + 10;
         width = max(width, this.cells[i].width + 10);
       }
-      if (y > windowHeight - this.dHeight) {
-        y = 10;
+      if (y > windowHeight/2) {
+        y = 20;
         x += width;
+        width = this.dWidth;
       }
     }
     this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
@@ -37,6 +38,7 @@ class Cells {
   checkSelected(x, y) {
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].inArea(x, y) === true) {
+        this.cells[i].mode = M_SELECTED;
         if (this.cells[i].checkButtons(x, y) === true) {
           this.activeIndex = i;
           break;
@@ -124,7 +126,6 @@ class Cells {
             this.cells[this.activeIndex].removeParent();
           }
         }
-
         // resize
         if (mdown === true && this.cells[this.activeIndex].mode == M_RESIZE) {
           this.cells[this.activeIndex].resizeC(x, y);
@@ -156,10 +157,28 @@ class Cells {
         }
       }
     }
+    let goto_indices = [];
+    let blocks = [];
     for (let i = 0; i < this.length; i++) {
+      blocks.push('');
+      // make pretty
       this.cells[i].reshape();
-      // this.cells[i].indexLabeldiv.html(i);
+      // read from block names
+      if (this.cells[i].type == T_BLOCK && this.cells[i].mode != M_SELECTED) {
+        blocks[i] = this.cells[i].input.value();
+      }
+      // remember gotos for population
+      if (this.cells[i].type == T_GOTO) {
+        goto_indices.push(i);
+      }
     }
+
+    for (let i = 0; i < goto_indices.length; i++) {
+      for (let j = 0; j < blocks.length; j++) {
+        this.cells[goto_indices[i]].input.option(blocks[j]);
+      }
+    }
+
   }
 
   draw(canvas = null) {

@@ -14,6 +14,7 @@ class Cells {
     this.varHandles = ['none'];
     this.map = {};
     this.addCell(T_START);
+    this.run = false;
   }
 
   get length() {
@@ -87,7 +88,7 @@ class Cells {
       tempID += this.varNames[floor(random(0, this.varNames.length))];
     }
     if (this.varHandles.indexOf(tempID) != -1) {
-      tempID = this.getID
+      tempID = this.getID();
     }
 
     return tempID;
@@ -134,114 +135,113 @@ class Cells {
     console.log(myStr + '\n');
   }
 
-  update(x, y, mdown) {
-    this.cells[0].startButtonHighlight(x, y);
-    // active cell
-    if (this.activeIndex != -1) {
-      // deleting
-      if (this.cells[this.activeIndex].mode == M_DELETE){
-        let rebuildFlag = this.cells[this.activeIndex].hasHandle;
-        let varID;
-        if (rebuildFlag == true) {
-          varID = this.cells[this.activeIndex].varID;
-        }
-        if (this.length == 1) { // last cell
-          this.cells[0].cleanForDeletionSafe();
-          this.cells = [];
-        } else {
-          // recursive call to find all children to also be deleted
-          this.cells[this.activeIndex].markForDeletion();
-          let map = []; // for the 'survivors'
-          for (let i = 0; i < this.length; i++) {
-            if (this.cells[i].mode != M_DELETE){
-              map.push(i); // find all cells that will not be deleted
-            }
-            // remove parent / child links and divs for those in delete mode
-            let parent = this.cells[i].cleanForDeletionSafe();
-            if (parent != -1){
-              this.cells[parent].removeChild(i);
-            }
-          }
-          // reassign parent/child relationship
-          for (let i = 0; i < this.length; i++) {
-            for (let j = 0; j < this.cells[i].childIndicies.length; j++) {
-              let oldCI = this.cells[i].childIndicies[j]
-              let oldPI = i;
-              let newCI = map.indexOf(oldCI);
-              let newPI = map.indexOf(oldPI);
-              this.cells[oldCI].parent = newPI;
-              this.cells[i].childIndicies[j] = newCI;
-            }
-          }
-          // recreate the cell list
-          let newCells = [];
-          for (let i = 0; i < map.length; i++) {
-            newCells.push(this.cells[map[i]]);
-          }
-          this.cells = newCells;
-        }
-        this.activeIndex = -1;
-        if (rebuildFlag === true) {
-          if (this.varHandles.indexOf(varID) != -1) {
-            this.varHandles.splice(this.varHandles.indexOf(varID), 1);
-          }
-          for (let i = 0; i < this.length; i++) {
-            if (this.cells[i].hasSelect == true) {
-              this.cells[i].input.remove();
-              if (this.cells[i].type != T_GOTO){
-                this.cells[i].varLabeldiv.remove();
-              }
-              this.cells[i].buildDivs();
-            }
-          }
-        }
-      } else {
-        // move
-        if (mdown === true && this.cells[this.activeIndex].mode == M_MOVE) {
-          this.cells[this.activeIndex].moveC(x, y);
-          if (this.cells[this.activeIndex].parent != -1) {
-            this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
-            this.cells[this.activeIndex].removeParent();
-          }
-        }
-        // resize
-        if (mdown === true && this.cells[this.activeIndex].mode == M_RESIZE) {
-          this.cells[this.activeIndex].resizeC(x, y);
-        }
-        if (mdown === true && this.cells[this.activeIndex].mode == M_EXPAND_OR_COLLAPSE) {
-          this.cells[this.activeIndex].expandOrCollapse();
-        }
-        // drop indicator
+  startStop(x, y, mdown) {
+    this.run = ! this.run;
+    this.cells[this.activeIndex].mode = M_IDLE;
+    this.cells[this.activeIndex].toggleStartForm(this.run);
+  }
 
-        let pParentIndex = -1;
-        if (this.cells[this.activeIndex].type != T_START) {
-          for (let i = 0; i < this.length; i++) {
-            if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
-              this.cells[i].highlight = mdown;
-              pParentIndex = i;
-            } else {
-              this.cells[i].highlight = false;
-            }
-          }
-        }
+  doDelete(x, y, mdown) {
+    let rebuildFlag = this.cells[this.activeIndex].hasHandle;
 
-        // release
-        if (mdown === false && this.cells[this.activeIndex].mode == M_MOVE) {
-          // create parent/child link and initial align
-          if (pParentIndex != -1) {
-            if (this.cells[this.activeIndex].parent != -1) {
-              this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
-              this.cells[this.activeIndex].removeParent();
-            }
-            this.cells[pParentIndex].addChild(this.activeIndex, this.cells[this.activeIndex]);
-            this.cells[this.activeIndex].addParent(pParentIndex, this.cells[pParentIndex]);
-            this.cells[pParentIndex].moveC(this.cells[pParentIndex].x, this.cells[pParentIndex].y);
+    let varID;
+    if (rebuildFlag == true) {
+      varID = this.cells[this.activeIndex].varID;
+    }
+    console.log(rebuildFlag, varID);
+    if (this.length == 1) { // last cell
+      this.cells[0].cleanForDeletionSafe();
+      this.cells = [];
+    } else {
+      // recursive call to find all children to also be deleted
+      this.cells[this.activeIndex].markForDeletion();
+      let map = []; // for the 'survivors'
+      for (let i = 0; i < this.length; i++) {
+        if (this.cells[i].mode != M_DELETE){
+          map.push(i); // find all cells that will not be deleted
+        }
+        // remove parent / child links and divs for those in delete mode
+        let parent = this.cells[i].cleanForDeletionSafe();
+        if (parent != -1){
+          this.cells[parent].removeChild(i);
+        }
+      }
+      // reassign parent/child relationship
+      for (let i = 0; i < this.length; i++) {
+        for (let j = 0; j < this.cells[i].childIndicies.length; j++) {
+          let oldCI = this.cells[i].childIndicies[j]
+          let oldPI = i;
+          let newCI = map.indexOf(oldCI);
+          let newPI = map.indexOf(oldPI);
+          this.cells[oldCI].parent = newPI;
+          this.cells[i].childIndicies[j] = newCI;
+        }
+      }
+      // recreate the cell list
+      let newCells = [];
+      for (let i = 0; i < map.length; i++) {
+        newCells.push(this.cells[map[i]]);
+      }
+      this.cells = newCells;
+    }
+    this.activeIndex = -1;
+    if (rebuildFlag === true) {
+      // fix this to work with children!
+      console.log('fix me for children of equal / less / etc..')
+      if (this.varHandles.indexOf(varID) != -1) {
+        this.varHandles.splice(this.varHandles.indexOf(varID), 1);
+      }
+      for (let i = 0; i < this.length; i++) {
+        if (this.cells[i].hasSelect == true) {
+          this.cells[i].input.remove();
+          if (this.cells[i].type != T_GOTO){
+            this.cells[i].varLabeldiv.remove();
           }
-          this.cells[this.activeIndex].mode = M_IDLE;
-          this.activeIndex = -1;
+          this.cells[i].buildDivs();
         }
       }
     }
+  }
+
+  doMove(x, y, mdown) {
+    this.cells[this.activeIndex].moveC(x, y);
+    if (this.cells[this.activeIndex].parent != -1) {
+      this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
+      this.cells[this.activeIndex].removeParent();
+    }
+  }
+
+  doParentDrop(x, y, mdown) {
+    let pParentIndex = -1;
+    if (this.cells[this.activeIndex].type != T_START) {
+      for (let i = 0; i < this.length; i++) {
+        if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
+          this.cells[i].highlight = mdown;
+          pParentIndex = i;
+        } else {
+          this.cells[i].highlight = false;
+        }
+      }
+    }
+
+    // release
+    if (mdown === false && this.cells[this.activeIndex].mode == M_MOVE) {
+      // create parent/child link and initial align
+      if (pParentIndex != -1) {
+        if (this.cells[this.activeIndex].parent != -1) {
+          this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
+          this.cells[this.activeIndex].removeParent();
+        }
+        this.cells[pParentIndex].addChild(this.activeIndex, this.cells[this.activeIndex]);
+        this.cells[this.activeIndex].addParent(pParentIndex, this.cells[pParentIndex]);
+        this.cells[pParentIndex].moveC(this.cells[pParentIndex].x, this.cells[pParentIndex].y);
+      }
+      this.cells[this.activeIndex].mode = M_IDLE;
+      this.activeIndex = -1;
+    }
+  }
+
+  mapAndLink() {
     let blocks = [];
     this.map = {};
     for (let i = 0; i < this.length; i++) {
@@ -251,7 +251,6 @@ class Cells {
         this.map[this.cells[i].type] = new Set();
         this.map[this.cells[i].type].add(i);
       }
-
       blocks.push('none');
       // make pretty
       this.cells[i].reshape();
@@ -295,6 +294,43 @@ class Cells {
           }
         }
       }
+    }
+  }
+
+  update(x, y, mdown) {
+    this.cells[0].startButtonHighlight(x, y);
+    // build mode
+    if (this.run == false) {
+      // active cell
+      if (this.activeIndex != -1) {
+        if (this.cells[this.activeIndex].mode == M_START){
+          this.startStop(x, y, mdown);
+        }
+        // deleting
+        if (this.cells[this.activeIndex].mode == M_DELETE){
+          this.doDelete(x, y, mdown);
+        } else {
+          // move
+          if (mdown === true && this.cells[this.activeIndex].mode == M_MOVE) {
+            this.doMove(x, y, mdown);
+          }
+          // resize
+          if (mdown === true && this.cells[this.activeIndex].mode == M_RESIZE) {
+            this.cells[this.activeIndex].resizeC(x, y);
+          }
+          if (mdown === true && this.cells[this.activeIndex].mode == M_EXPAND_OR_COLLAPSE) {
+            this.cells[this.activeIndex].expandOrCollapse();
+          }
+          this.doParentDrop(x, y, mdown)
+        }
+      }
+      this.mapAndLink();
+    } else { // RUN MODE!!!
+      // stop button
+      if (this.cells[0].mode == M_START){
+        this.startStop(x, y, mdown);
+      }
+      // and NOTHING ELSE CAUSE I SHOULD MAKE A NEW THING!
     }
   }
 

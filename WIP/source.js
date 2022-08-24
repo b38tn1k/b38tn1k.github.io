@@ -63,6 +63,7 @@ function setup() {
   colorSetup();
   setupScreen();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
+  controller = new Controller();
   menu = createDiv('<a href="javascript:void(0)" onclick="newCell(' + T_BLOCK + ')"> + block</a><br>');
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_INPUT + ')"> + input</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_VAR + ')"> + variable</a><br>', true);
@@ -87,4 +88,5 @@ function draw() {
   clear();
   cells.draw();
   cells.update(mouseX, mouseY, mouseIsPressed);
+  controller.update(cells);
 }

@@ -7,6 +7,7 @@ var M_EXPAND_OR_COLLAPSE = 5;
 var M_START = 6;
 
 var T_START = 1;
+var T_STOP = 0;
 var T_BLOCK = 23;
 var T_VAR = 45;
 var T_INPUT = 47;
@@ -25,7 +26,7 @@ var T_NOT = 28;
 var T_CONDITION = 103;
 var T_ELSE = 102;
 var T_DO = 101;
-var T_OUTLET = 100;
+var T_OUTLET = 104;
 
 var blockLabels = {};
 blockLabels[T_BLOCK] = "block";
@@ -47,7 +48,8 @@ blockLabels[T_CONDITION] = "condition";
 blockLabels[T_ELSE] = "else";
 blockLabels[T_DO] = "do";
 blockLabels[T_OUTLET] = "out";
-blockLabels[T_START] = "run";
+blockLabels[T_START] = "start";
+blockLabels[T_STOP] = "stop";
 
 function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
@@ -66,6 +68,7 @@ class Cell {
     this.mode = M_IDLE;
     // graphical interface
     this.highlight = false;
+    this.toggleShape = false;
     // body
     this.ySpacer = 0;
     this.width = w;
@@ -218,7 +221,12 @@ class Cell {
       fill(this.colors[0]);
       rect(this.x + this.width/2 - 1.5*this.handleW, this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH), 3*this.handleW, 3 * this.handleH);
       fill(this.colors[2]);
-      triangle(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd, this.x + this.width/2 + this.handleW, this.y + this.yHeaderEnd - this.handleH);
+      if (this.toggleShape === true) {
+        rect(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.handleW * 2, this.handleH * 2);
+      } else {
+        triangle(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd, this.x + this.width/2 + this.handleW, this.y + this.yHeaderEnd - this.handleH);
+      }
+
     }
   }
 
@@ -310,6 +318,17 @@ class Cell {
     return par;
   }
 
+  toggleStartForm(myBool){
+    this.toggleShape = myBool;
+    if (myBool == true) {
+      this.textLabel = blockLabels[T_STOP];
+      this.indexLabeldiv.html(this.textLabel);
+    } else {
+      this.textLabel = blockLabels[T_START];
+      this.indexLabeldiv.html(this.textLabel);
+    }
+  }
+
   startButtonHighlight(x, y){
     if (this.type == T_START && this.mode != M_START) {
       let xMin = this.x + this.width/2 - 1.5*this.handleW;
@@ -321,7 +340,11 @@ class Cell {
           fill(this.colors[2]);
           rect(this.x + this.width/2 - 1.5*this.handleW, this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH), 3*this.handleW, 3 * this.handleH);
           fill(this.colors[0]);
-          triangle(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd, this.x + this.width/2 + this.handleW, this.y + this.yHeaderEnd - this.handleH);
+          if (this.toggleShape === true) {
+            rect(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.handleW * 2, this.handleH * 2);
+          } else {
+            triangle(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd, this.x + this.width/2 + this.handleW, this.y + this.yHeaderEnd - this.handleH);
+          }
         }
       }
     }
@@ -339,7 +362,6 @@ class Cell {
           if (y > yMin && y < yMax) {
             this.mode = M_START;
             breaker = true;
-            console.log('go!');
           }
         }
       }

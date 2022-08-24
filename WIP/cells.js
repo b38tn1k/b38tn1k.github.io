@@ -13,6 +13,7 @@ class Cells {
     this.varNames = 'abcdefghijklmnopqrstuvwxyz';
     this.varHandles = ['none'];
     this.map = {};
+    this.addCell(T_START);
   }
 
   get length() {
@@ -36,7 +37,11 @@ class Cells {
         width = this.dWidth;
       }
     }
-    this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+    let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
+    if (type == T_START) {
+      c = [this.colors[type], this.highlights[type], this.colors[49], this.inverted[type], this.dualtone[type]];
+    }
+    this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, c, this.dRadius));
     let pIndex = this.length - 1;
     if (type == T_INPUT) {
       let tempID = this.getID(4);
@@ -81,6 +86,10 @@ class Cells {
     for (let i = 0; i < count; i++) {
       tempID += this.varNames[floor(random(0, this.varNames.length))];
     }
+    if (this.varHandles.indexOf(tempID) != -1) {
+      tempID = this.getID
+    }
+
     return tempID;
   }
 
@@ -126,6 +135,7 @@ class Cells {
   }
 
   update(x, y, mdown) {
+    this.cells[0].startButtonHighlight(x, y);
     // active cell
     if (this.activeIndex != -1) {
       // deleting
@@ -202,15 +212,19 @@ class Cells {
           this.cells[this.activeIndex].expandOrCollapse();
         }
         // drop indicator
+
         let pParentIndex = -1;
-        for (let i = 0; i < this.length; i++) {
-          if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
-            this.cells[i].highlight = mdown;
-            pParentIndex = i;
-          } else {
-            this.cells[i].highlight = false;
+        if (this.cells[this.activeIndex].type != T_START) {
+          for (let i = 0; i < this.length; i++) {
+            if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
+              this.cells[i].highlight = mdown;
+              pParentIndex = i;
+            } else {
+              this.cells[i].highlight = false;
+            }
           }
         }
+
         // release
         if (mdown === false && this.cells[this.activeIndex].mode == M_MOVE) {
           // create parent/child link and initial align

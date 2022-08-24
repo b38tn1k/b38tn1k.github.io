@@ -4,7 +4,9 @@ var M_RESIZE = 2;
 var M_DELETE = 3;
 var M_SELECTED = 4;
 var M_EXPAND_OR_COLLAPSE = 5;
+var M_START = 6;
 
+var T_START = 1;
 var T_BLOCK = 23;
 var T_VAR = 45;
 var T_INPUT = 47;
@@ -45,6 +47,7 @@ blockLabels[T_CONDITION] = "condition";
 blockLabels[T_ELSE] = "else";
 blockLabels[T_DO] = "do";
 blockLabels[T_OUTLET] = "out";
+blockLabels[T_START] = "run";
 
 function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
@@ -72,8 +75,6 @@ class Cell {
     this.radius = r;
     this.x = x;
     this.y = y;
-    this.offX = this.childXBorder;
-    this.offY = this.childYBorder;
     this.varID;
     this.hide = false;
     this.shrink = false;
@@ -100,6 +101,9 @@ class Cell {
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
     this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size')) + this.childYBorder;
+    if (this.type == T_START) {
+      this.yHeaderEnd += 2 * this.handleH;
+    }
     this.height += this.yHeaderEnd;
     this.startHeight = this.height;
     this.startWidth = this.width;
@@ -166,9 +170,6 @@ class Cell {
   }
 
   draw(canvas=null) {
-    if (this.shrink == false){
-
-    }
     if (this.hide === false){
       if (canvas === null) {
         // body
@@ -195,11 +196,12 @@ class Cell {
           rect(this.x, this.y, this.handleW, this.handleH);
           // shrinkHandle
           rect(this.x + this.width/2 - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
-          // delete handle
-          fill(this.colors[3]);
-          stroke(this.colors[3]);
-          rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
-
+          if (this.type != T_START) {
+            // delete handle
+            fill(this.colors[3]);
+            stroke(this.colors[3]);
+            rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
+          }
         }
       }
       for (let i = 0; i < this.children.length; i++) {
@@ -210,6 +212,13 @@ class Cell {
     }
     if (this.shrink === true) {
       this.hideDivs();
+    }
+    if (this.type == T_START) {
+      stroke(this.colors[1]);
+      fill(this.colors[0]);
+      rect(this.x + this.width/2 - 1.5*this.handleW, this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH), 3*this.handleW, 3 * this.handleH);
+      fill(this.colors[2]);
+      triangle(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd, this.x + this.width/2 + this.handleW, this.y + this.yHeaderEnd - this.handleH);
     }
   }
 
@@ -301,9 +310,39 @@ class Cell {
     return par;
   }
 
+  startButtonHighlight(x, y){
+    if (this.type == T_START && this.mode != M_START) {
+      let xMin = this.x + this.width/2 - 1.5*this.handleW;
+      let xMax = xMin + 3*this.handleW;
+      if (x > xMin && x < xMax) {
+        let yMin = this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH);
+        let yMax = yMin + 3*this.handleH;
+        if (y > yMin && y < yMax) {
+          fill(this.colors[2]);
+          rect(this.x + this.width/2 - 1.5*this.handleW, this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH), 3*this.handleW, 3 * this.handleH);
+          fill(this.colors[0]);
+          triangle(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd, this.x + this.width/2 + this.handleW, this.y + this.yHeaderEnd - this.handleH);
+        }
+      }
+    }
+  }
+
   checkButtons(x, y) {
     let breaker = false;
     if (this.hide === false) {
+      if (this.type == T_START) {
+        let xMin = this.x + this.width/2 - 1.5*this.handleW;
+        let xMax = xMin + 3*this.handleW;
+        if (x > xMin && x < xMax) {
+          let yMin = this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH);
+          let yMax = yMin + 3*this.handleH;
+          if (y > yMin && y < yMax) {
+            this.mode = M_START;
+            breaker = true;
+            console.log('go!');
+          }
+        }
+      }
       let fudge = 2;
       //resize handle?
       if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
@@ -352,8 +391,6 @@ class Cell {
 
   addParent(ind, parent) {
     this.parent = ind;
-    this.offX = parent.childXBorder;
-    this.offY = parent.childY - this.height;
   }
 
   removeParent() {

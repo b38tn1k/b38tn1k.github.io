@@ -217,7 +217,7 @@ class Cell {
 
   }
 
-  reshape() {
+  reshape(reshape=false) {
     for (let i = 0; i < this.children.length; i++) {
       if (this.children[i].mode == M_IDLE) {
         this.children[i].reshape();
@@ -234,6 +234,9 @@ class Cell {
     if (heightSum > this.height) {
       this.height = heightSum;
       this.minHeight = this.height;
+    }
+    if (reshape == true) {
+      this.height = this.minHeight;
     }
     this.moveC(this.x, this.y);
   }
@@ -319,8 +322,7 @@ class Cell {
       }
     }
     this.minHeight = 0;
-    this.reshape();
-    // sort out offsets
+    this.reshape(true);
   }
 
   inArea(x, y) {

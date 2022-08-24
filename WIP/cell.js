@@ -107,6 +107,7 @@ class Cell {
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
       this.input.style('border', 0);
       this.input.position(x + this.childXBorder, y + this.yHeaderEnd);
+
       this.width = this.input.size().width + 3*this.childXBorder;
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
@@ -145,15 +146,23 @@ class Cell {
       } else {
         fill(this.colors[0]);
       }
+      if ((this.highlight === true) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
+        this.input.hide();
+      }
+      if ((this.highlight === false) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
+        this.input.show();
+      }
       stroke(this.colors[1]);
       rect(this.x, this.y, this.width, this.height, this.radius);
-      // move handle
-      fill(this.colors[1]);
-      rect(this.x, this.y, this.handleW, this.handleH);
+
       // resize handle
       rect(this.x + this.width - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
-      // delete handle
+
       if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
+        // move handle
+        fill(this.colors[1]);
+        rect(this.x, this.y, this.handleW, this.handleH);
+        // delete handle
         fill(this.colors[3]);
         stroke(this.colors[3]);
         rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
@@ -246,13 +255,6 @@ class Cell {
   checkButtons(x, y) {
     let breaker = false;
     let fudge = 2;
-    // move handle?
-    if (x > this.x - fudge && x < this.x + this.handleW + fudge) {
-      if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
-        this.mode = M_MOVE;
-        breaker = true;
-      }
-    }
     //resize handle?
     if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
       if (y > this.y + this.height - this.handleH - fudge && y < this.y + this.height + fudge) {
@@ -260,8 +262,16 @@ class Cell {
         breaker = true;
       }
     }
-    // delete
+
     if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
+      // move handle?
+      if (x > this.x - fudge && x < this.x + this.handleW + fudge) {
+        if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
+          this.mode = M_MOVE;
+          breaker = true;
+        }
+      }
+      // delete
       if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
         if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
           this.mode = M_DELETE;
@@ -289,7 +299,6 @@ class Cell {
           this.children.push(child);
           this.childIndicies.push(ind);
         }
-
       }
     }
   }

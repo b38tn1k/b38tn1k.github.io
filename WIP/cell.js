@@ -292,22 +292,10 @@ class Cell {
   }
 
   addChild(ind, child) {
-    let theOnesWithOutlets = [T_EQUAL,T_LESS,T_GREATER,T_ADD,T_SUBTRACT,T_MULT,T_DIV,T_MOD];
-    let thisOneHasAnOutlet = false;
-    for (let i = 0; i < theOnesWithOutlets.length; i++) {
-      if (this.type == theOnesWithOutlets[i]) {
-        thisOneHasAnOutlet = true;
-      }
-    }
     if (this.type != T_VAR && this.type != T_INPUT) {
       if (this.childIndicies.indexOf(ind) == -1) {
-        if (thisOneHasAnOutlet == true && this.children.length != 0) {
-          this.children.splice(this.children.length-1, 0, child);
-          this.childIndicies.splice(this.children.length-1, 0, ind);
-        } else {
-          this.children.push(child);
-          this.childIndicies.push(ind);
-        }
+        this.children.push(child);
+        this.childIndicies.push(ind);
       }
     }
   }
@@ -330,6 +318,8 @@ class Cell {
         this.children.splice(ci, 1);
       }
     }
+    this.minHeight = 0;
+    this.reshape();
     // sort out offsets
   }
 

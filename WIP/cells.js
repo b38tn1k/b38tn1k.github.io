@@ -50,8 +50,8 @@ class Cells {
       this.cells.push(new Cell(T_DO, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       this.cells.push(new Cell(T_ELSE, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       for (let i = 1; i <= 3; i++) {
-        this.cells[pIndex].addChild(pIndex + i, this.cells[pIndex + i]);
-        this.cells[pIndex + i].addParent(pIndex, this.cells[pIndex]);
+        this.cells[pIndex].addChild(pIndex + i, this.cells[pIndex + i], true);
+        this.cells[pIndex + i].addParent(pIndex, this.cells[pIndex], true);
       }
       this.cells[pIndex].moveC(this.cells[pIndex].x, this.cells[pIndex].y);
     }

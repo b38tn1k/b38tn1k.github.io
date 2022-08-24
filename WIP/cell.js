@@ -150,7 +150,7 @@ class Cell {
   draw(canvas=null) {
     if (canvas === null) {
       // body
-      if (this.highlight === true && this.type != T_INPUT && this.type != T_VAR) {
+      if (this.highlight === true && this.type != T_INPUT && this.type != T_VAR && this.type != T_IF && this.type != T_WHILE) {
         fill(this.colors[2]);
       } else {
         fill(this.colors[0]);
@@ -294,8 +294,8 @@ class Cell {
     return breaker;
   }
 
-  addChild(ind, child) {
-    if (this.type != T_VAR && this.type != T_INPUT) {
+  addChild(ind, child, force=false) {
+    if ((this.type != T_VAR && this.type != T_INPUT && this.type != T_IF && this.type != T_WHILE) || force == true) {
       if (this.childIndicies.indexOf(ind) == -1) {
         this.children.push(child);
         this.childIndicies.push(ind);

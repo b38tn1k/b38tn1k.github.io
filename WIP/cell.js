@@ -30,7 +30,7 @@ blockLabels[T_VAR] = "variable";
 blockLabels[T_INPUT] = "input";
 blockLabels[T_IF] = "if";
 blockLabels[T_WHILE] = "while";
-blockLabels[T_EQUAL] = "equals";
+blockLabels[T_EQUAL] = "equal";
 blockLabels[T_LESS] = "less";
 blockLabels[T_GREATER] = "greater";
 blockLabels[T_ADD] = "add";
@@ -82,7 +82,9 @@ class Cell {
     // specifics
     this.type = type
     this.textLabel = blockLabels[type];
-    this.outletValue;
+    this.outletValueSH;
+    this.outletHandleSH;
+    this.trackingSH;
     // labels, tools, setup
     this.indexLabeldiv = createDiv(this.textLabel);
     this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y + this.childYBorder);
@@ -131,11 +133,18 @@ class Cell {
     return [this.width, this.height]
   }
 
-  updateOutletValue(value) {
-    this.outletValue = value;
-    console.log(this.textLabel);
-    let htmlString = this.textLabel + '<br><br>' + String(this.outletValue);
-    this.indexLabeldiv.html(htmlString);
+  updateoutletHandleSH(value) {
+    this.outletHandleSH = value;
+  }
+
+  updateoutletValueSH(value) {
+    this.outletValueSH = value;
+    if (this.type != T_VAR) {
+      let htmlString = this.textLabel + '<br><br>' + String(this.outletValueSH);
+      this.indexLabeldiv.html(htmlString);
+    } else {
+      this.varLabeldiv.html(value);
+    }
   }
 
   draw(canvas=null) {

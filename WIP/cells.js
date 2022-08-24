@@ -12,6 +12,7 @@ class Cells {
     this.dualtone = dt;
     this.varNames = 'abcdefghijklmnopqrstuvwxyz';
     this.varHandles = ['none'];
+    this.map = {};
   }
 
   get length() {
@@ -70,7 +71,7 @@ class Cells {
       this.cells[pIndex + 1].varID= tempID;
       this.cells[pIndex + 1].textLabel += ' ' + tempID;
       this.cells[pIndex + 1].indexLabeldiv.html(this.cells[pIndex + 1].textLabel);
-      this.cells[pIndex + 1].updateOutletValue('unset');
+      this.cells[pIndex + 1].updateoutletValueSH('unset');
       this.varHandles.push(tempID);
     }
   }
@@ -205,55 +206,56 @@ class Cells {
         }
       }
     }
-    let goto_indices = [];
-    let variable_indices = [];
-    let input_indicies = [];
-    let outlet_indicies = [];
     let blocks = [];
     for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].type in this.map) {
+        this.map[this.cells[i].type].add(i);
+      } else {
+        this.map[this.cells[i].type] = new Set();
+        this.map[this.cells[i].type].add(i);
+      }
+
       blocks.push('');
       // make pretty
       this.cells[i].reshape();
       // read from block names
       if (this.cells[i].type == T_BLOCK && this.cells[i].mode != M_SELECTED) {
         blocks[i] = this.cells[i].input.value();
-      }
-      // remember gotos for population
-      if (this.cells[i].type == T_GOTO) {
-        goto_indices.push(i);
-      }
-      if (this.cells[i].type == T_VAR) {
-        variable_indices.push(i);
-      }
-      if (this.cells[i].type == T_INPUT) {
-        input_indicies.push(i);
-      }
-      if (this.cells[i].type == T_OUTLET) {
-        outlet_indicies.push(i);
+        this.cells[i].updateoutletHandleSH(blocks[i]);
       }
     }
-    for (let i = 0; i < goto_indices.length; i++) {
-      for (let j = 0; j < blocks.length; j++) {
-        this.cells[goto_indices[i]].input.option(blocks[j]);
-      }
-    }
-
-    for (let i = 0; i < variable_indices.length; i++) {
-      for (let j = 0; j < this.varHandles.length; j++) {
-        this.cells[variable_indices[i]].input.option(this.varHandles[j], this.varHandles[j]);
-      }
-      let value = this.cells[variable_indices[i]].input.value();
-      if (value == 'none') {
-        this.cells[variable_indices[i]].varLabeldiv.html('');
-      }
-      for (let j = 0; j < input_indicies.length; j++) {
-        if (value == this.cells[input_indicies[j]].varID) {
-          this.cells[variable_indices[i]].varLabeldiv.html(this.cells[input_indicies[j]].input.value());
+    // linking (oof)
+    for (key in this.map) {
+      if (key == T_GOTO) {
+        for (let i of this.map[key]) {
+          for (let j = 0; j < blocks.length; j++) {
+            this.cells[i].input.option(blocks[j]);
+          }
         }
       }
-      for (let j = 0; j < outlet_indicies.length; j++) {
-        if (value == this.cells[outlet_indicies[j]].varID) {
-          this.cells[variable_indices[i]].varLabeldiv.html(this.cells[outlet_indicies[j]].outletValue);
+      if (key == T_VAR) {
+        for (let vi of this.map[key]) {
+          for (let j = 0; j < this.varHandles.length; j++) {
+            this.cells[vi].input.option(this.varHandles[j], this.varHandles[j]);
+          }
+          this.cells[vi].trackingSH = this.cells[vi].input.value();
+          for (key in this.map) {
+            if (key == T_INPUT) {
+              for (let ii of this.map[key]) {
+                if (this.cells[vi].trackingSH == this.cells[ii].varID) {
+                  this.cells[vi].updateoutletValueSH(this.cells[ii].input.value());
+                }
+              }
+            }
+
+            if (key == T_OUTLET) {
+              for (let oi of this.map[key]) {
+                if (this.cells[vi].trackingSH == this.cells[oi].varID) {
+                  this.cells[vi].updateoutletValueSH(this.cells[oi].outletValueSH);
+                }
+              }
+            }
+          }
         }
       }
     }

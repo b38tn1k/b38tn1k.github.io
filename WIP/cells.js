@@ -130,6 +130,11 @@ class Cells {
     if (this.activeIndex != -1) {
       // deleting
       if (this.cells[this.activeIndex].mode == M_DELETE){
+        let rebuildFlag = this.cells[this.activeIndex].hasHandle;
+        let varID;
+        if (rebuildFlag == true) {
+          varID = this.cells[this.activeIndex].varID;
+        }
         if (this.length == 1) { // last cell
           this.cells[0].cleanForDeletionSafe();
           this.cells = [];
@@ -166,6 +171,20 @@ class Cells {
           this.cells = newCells;
         }
         this.activeIndex = -1;
+        if (rebuildFlag === true) {
+          if (this.varHandles.indexOf(varID) != -1) {
+            this.varHandles.splice(this.varHandles.indexOf(varID), 1);
+          }
+          for (let i = 0; i < this.length; i++) {
+            if (this.cells[i].hasSelect == true) {
+              this.cells[i].input.remove();
+              if (this.cells[i].type != T_GOTO){
+                this.cells[i].varLabeldiv.remove();
+              }
+              this.cells[i].buildDivs();
+            }
+          }
+        }
       } else {
         // move
         if (mdown === true && this.cells[this.activeIndex].mode == M_MOVE) {
@@ -210,6 +229,7 @@ class Cells {
       }
     }
     let blocks = [];
+    this.map = {};
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].type in this.map) {
         this.map[this.cells[i].type].add(i);
@@ -218,12 +238,12 @@ class Cells {
         this.map[this.cells[i].type].add(i);
       }
 
-      blocks.push('');
+      blocks.push('none');
       // make pretty
       this.cells[i].reshape();
       // read from block names
       if (this.cells[i].type == T_BLOCK && this.cells[i].mode != M_SELECTED) {
-        blocks[i] = this.cells[i].input.value();
+        blocks.push(this.cells[i].input.value());
         this.cells[i].updateoutletHandleSH(blocks[i]);
       }
     }

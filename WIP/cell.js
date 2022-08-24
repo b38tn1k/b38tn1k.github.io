@@ -88,7 +88,12 @@ class Cell {
     this.outletValueSH;
     this.outletHandleSH;
     this.trackingSH;
+    this.hasSelect = false;
+    this.hasHandle = false;
     // labels, tools, setup
+    if (type == T_BLOCK || type == T_INPUT || type == T_OUTLET) {
+      this.hasHandle = true;
+    }
     this.indexLabeldiv = createDiv(this.textLabel);
     this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y + this.childYBorder);
     this.indexLabeldiv.style('font-size', '16px');
@@ -96,12 +101,30 @@ class Cell {
     this.indexLabeldiv.show();
     this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size')) + this.childYBorder;
     this.height += this.yHeaderEnd;
-    if (type == T_BLOCK || type == T_INPUT || type == T_GOTO || type == T_VAR) {
-      if (type == T_BLOCK || type == T_INPUT) {
+    this.startHeight = this.height;
+    this.startWidth = this.width;
+    this.buildDivs();
+  }
+
+  get pos() {
+    return [this.x, this.y]
+  }
+
+  get size() {
+    return [this.width, this.height]
+  }
+
+  buildDivs() {
+    this.height = this.startHeight;
+    this.width = this.startWidth;
+    this.ySpacer = 0;
+    if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
+      if (this.type == T_BLOCK || this.type == T_INPUT) {
         this.input = createInput();
       }
-      if (type == T_GOTO || type == T_VAR){
+      if (this.type == T_GOTO || this.type == T_VAR){
         this.input = createSelect();
+        this.hasSelect = true;
       }
       this.input.style('font-size', '16px');
       let h = this.input.size().height;
@@ -111,14 +134,14 @@ class Cell {
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
       this.input.style('border', 0);
-      this.input.position(x + this.childXBorder, y + this.yHeaderEnd);
+      this.input.position(this.x + this.childXBorder, this.y + this.yHeaderEnd);
 
       this.width = this.input.size().width + 3*this.childXBorder;
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
-      if (type == T_VAR) {
+      if (this.type == T_VAR) {
         this.varLabeldiv = createDiv("empty");
-        this.varLabeldiv.position(x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
+        this.varLabeldiv.position(this.x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
         this.height += this.childYBorder + this.ySpacer;
         this.minHeight = this.height;
         this.varLabeldiv.style('font-size', '16px');
@@ -126,14 +149,6 @@ class Cell {
         this.varLabeldiv.show();
       }
     }
-  }
-
-  get pos() {
-    return [this.x, this.y]
-  }
-
-  get size() {
-    return [this.width, this.height]
   }
 
   updateoutletHandleSH(value) {

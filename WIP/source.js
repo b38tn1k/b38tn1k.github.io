@@ -9,23 +9,6 @@ var lowlights = [];
 var c;
 var menu;
 
-function keyPressed() {
-  if (key == 'n') {
-    // cells.addCell(mouseX, mouseY, int(random(1, c.length)));
-  }
-  if (keyCode == DOWN_ARROW){
-  return;
-  }  else if (keyCode == LEFT_ARROW){
-
-  return;
-  }  else if (keyCode == UP_ARROW){
-
-  return;
-  }  else if (keyCode == RIGHT_ARROW){
-  return;
-  }
-}
-
 function deviceTurned() {
   setupScreen();
 }

@@ -3,6 +3,7 @@ var M_MOVE = 1;
 var M_RESIZE = 2;
 var M_DELETE = 3;
 var M_SELECTED = 4;
+var M_EXPAND_OR_COLLAPSE = 5;
 
 var T_BLOCK = 23;
 var T_VAR = 45;
@@ -74,6 +75,8 @@ class Cell {
     this.offX = this.childXBorder;
     this.offY = this.childYBorder;
     this.varID;
+    this.hide = false;
+    this.shrink = false;
     // handles
     this.handleW = 1.5*r;
     this.handleH = 1.5*r;
@@ -148,41 +151,56 @@ class Cell {
   }
 
   draw(canvas=null) {
-    if (canvas === null) {
-      // body
-      if (this.highlight === true && this.type != T_INPUT && this.type != T_VAR && this.type != T_IF && this.type != T_WHILE) {
-        fill(this.colors[2]);
-      } else {
-        fill(this.colors[0]);
-      }
-      if ((this.highlight === true) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
-        this.input.hide();
-      }
-      if ((this.highlight === false) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
-        this.input.show();
-      }
-      stroke(this.colors[1]);
-      rect(this.x, this.y, this.width, this.height, this.radius);
+    if (this.shrink == false){
 
-      // resize handle
-      rect(this.x + this.width - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
-
-      if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
-        // move handle
-        fill(this.colors[1]);
-        rect(this.x, this.y, this.handleW, this.handleH);
-        // delete handle
-        fill(this.colors[3]);
-        stroke(this.colors[3]);
-        rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
-      }
     }
-    for (let i = 0; i < this.children.length; i++) {
-      this.children[i].draw();
+    if (this.hide === false){
+      if (canvas === null) {
+        // body
+        if (this.highlight === true && this.type != T_INPUT && this.type != T_VAR && this.type != T_IF && this.type != T_WHILE) {
+          fill(this.colors[2]);
+        } else {
+          fill(this.colors[0]);
+        }
+        if ((this.highlight === true) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
+          this.input.hide();
+        }
+        if ((this.highlight === false) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
+          this.input.show();
+        }
+        stroke(this.colors[1]);
+        rect(this.x, this.y, this.width, this.height, this.radius);
+
+        // resize handle
+        rect(this.x + this.width - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
+
+        if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
+          // move handle
+          fill(this.colors[1]);
+          rect(this.x, this.y, this.handleW, this.handleH);
+          // shrinkHandle
+          rect(this.x + this.width/2 - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
+          // delete handle
+          fill(this.colors[3]);
+          stroke(this.colors[3]);
+          rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
+
+        }
+      }
+      for (let i = 0; i < this.children.length; i++) {
+        this.children[i].draw();
+      }
+    } else {
+      this.hideDivs();
+    }
+    if (this.shrink === true) {
+      this.hideDivs();
     }
   }
 
   moveC(x, y) {
+    x = max(x, this.handleW);
+    y = max(y, this.handleH);
     this.x = x;
     this.y = y;
     if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
@@ -238,6 +256,10 @@ class Cell {
     if (reshape == true) {
       this.height = this.minHeight;
     }
+    if (this.shrink === true) {
+      this.height = this.yHeaderEnd;
+      this.minHeight = this.height;
+    }
     this.moveC(this.x, this.y);
   }
 
@@ -266,28 +288,38 @@ class Cell {
 
   checkButtons(x, y) {
     let breaker = false;
-    let fudge = 2;
-    //resize handle?
-    if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
-      if (y > this.y + this.height - this.handleH - fudge && y < this.y + this.height + fudge) {
-        this.mode = M_RESIZE;
-        breaker = true;
-      }
-    }
-
-    if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
-      // move handle?
-      if (x > this.x - fudge && x < this.x + this.handleW + fudge) {
-        if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
-          this.mode = M_MOVE;
+    if (this.hide === false) {
+      let fudge = 2;
+      //resize handle?
+      if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
+        if (y > this.y + this.height - this.handleH - fudge && y < this.y + this.height + fudge) {
+          this.mode = M_RESIZE;
           breaker = true;
         }
       }
-      // delete
-      if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
-        if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
-          this.mode = M_DELETE;
-          breaker = true;
+      if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
+        // move handle?
+        if (x > this.x - fudge && x < this.x + this.handleW + fudge) {
+          if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
+            this.mode = M_MOVE;
+            breaker = true;
+          }
+        }
+
+        if (x > this.x + this.width/2 - this.handleW && x < this.x + this.width/2) {
+          if (y > this.y + this.height - this.handleH && y < this.y + this.height) {
+            this.mode = M_EXPAND_OR_COLLAPSE;
+            breaker = true;
+          }
+        }
+
+
+        // delete
+        if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
+          if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
+            this.mode = M_DELETE;
+            breaker = true;
+          }
         }
       }
     }
@@ -325,12 +357,77 @@ class Cell {
     this.reshape(true);
   }
 
+  expandOrCollapse() {
+    if (this.shrink === true) {
+      this.expandBlock();
+    } else {
+      this.shrinkBlock();
+    }
+    this.mode = M_IDLE
+  }
+
+  hideDivs() {
+    if (this.type == T_VAR) {
+      this.varLabeldiv.hide();
+    }
+    if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
+      this.input.hide();
+    }
+  }
+
+  hideBlock() {
+    for (let i = 0; i < this.children.length; i++) {
+      this.children[i].hideBlock();
+    }
+    this.hide = true;
+    this.hideDivs();
+    this.indexLabeldiv.hide();
+  }
+
+  showDivs() {
+    if (this.type == T_VAR) {
+      this.varLabeldiv.show();
+    }
+    if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
+      this.input.show();
+    }
+  }
+
+  showBlock() {
+    for (let i = 0; i < this.children.length; i++) {
+      this.children[i].showBlock();
+    }
+    this.hide = false;
+    this.showDivs();
+    this.indexLabeldiv.show();
+  }
+
+  shrinkBlock() {
+    for (let i = 0; i < this.children.length; i++) {
+      this.children[i].hideBlock();
+    }
+    this.shrink = true;
+    this.hideDivs();
+  }
+
+  expandBlock() {
+    for (let i = 0; i < this.children.length; i++) {
+      this.children[i].showBlock();
+    }
+    this.shrink = false;
+    this.showDivs();
+    this.minHeight = 0;
+    this.reshape();
+  }
+
   inArea(x, y) {
     let breaker = false;
-    let fudge = 2;
-    if (x > this.x - fudge && x < this.x + this.width + fudge) {
-      if (y > this.y - fudge && y < this.y + this.height + fudge) {
-        breaker = true;
+    if (this.hide === false) {
+      let fudge = 2;
+      if (x > this.x - fudge && x < this.x + this.width + fudge) {
+        if (y > this.y - fudge && y < this.y + this.height + fudge) {
+          breaker = true;
+        }
       }
     }
     return breaker;

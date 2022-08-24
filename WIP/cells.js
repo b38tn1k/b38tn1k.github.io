@@ -179,6 +179,9 @@ class Cells {
         if (mdown === true && this.cells[this.activeIndex].mode == M_RESIZE) {
           this.cells[this.activeIndex].resizeC(x, y);
         }
+        if (mdown === true && this.cells[this.activeIndex].mode == M_EXPAND_OR_COLLAPSE) {
+          this.cells[this.activeIndex].expandOrCollapse();
+        }
         // drop indicator
         let pParentIndex = -1;
         for (let i = 0; i < this.length; i++) {

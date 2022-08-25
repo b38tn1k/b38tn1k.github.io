@@ -38,7 +38,11 @@ class Cells {
     if (type == T_START) {
       c = [this.colors[type], this.highlights[type], this.colors[49], this.inverted[type], this.dualtone[type]];
     }
-    this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, c, this.dRadius));
+    width = this.dWidth;
+    if (type == T_CONSOLE) {
+      width *= 2;
+    }
+    this.cells.push(new Cell(type, x, y, width, this.dHeight, c, this.dRadius));
     let pIndex = this.length - 1;
     if (type == T_INPUT) {
       let tempID = this.getID(4);
@@ -132,7 +136,6 @@ class Cells {
         myStr+='\n'
       }
     }
-    console.log(myStr + '\n');
   }
 
   startStop(x, y, mdown) {
@@ -197,7 +200,6 @@ class Cells {
     }
     this.activeIndex = -1;
     if (rebuildFlag === true) {
-      console.log(delHandle);
       for (let i = 0; i < this.length; i++) {
         if (this.cells[i].hasSelect == true) {
           this.cells[i].input.remove();
@@ -247,9 +249,11 @@ class Cells {
           this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
           this.cells[this.activeIndex].removeParent();
         }
-        this.cells[pParentIndex].addChild(this.activeIndex, this.cells[this.activeIndex]);
-        this.cells[this.activeIndex].addParent(pParentIndex, this.cells[pParentIndex]);
-        this.cells[pParentIndex].moveC(this.cells[pParentIndex].x, this.cells[pParentIndex].y);
+        let ok = this.cells[pParentIndex].addChild(this.activeIndex, this.cells[this.activeIndex]);
+        if (ok == true) {
+          this.cells[this.activeIndex].addParent(pParentIndex, this.cells[pParentIndex]);
+          this.cells[pParentIndex].moveC(this.cells[pParentIndex].x, this.cells[pParentIndex].y);
+        }
       }
       this.cells[this.activeIndex].mode = M_IDLE;
       this.activeIndex = -1;

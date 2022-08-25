@@ -29,6 +29,7 @@ var T_DO = 101;
 var T_OUTLET = 104;
 var T_ASSIGN = 42;
 var T_CONSOLE = 2;
+var T_PRINT = 27;
 
 var blockLabels = {};
 blockLabels[T_BLOCK] = "block";
@@ -54,6 +55,7 @@ blockLabels[T_START] = "start";
 blockLabels[T_STOP] = "stop";
 blockLabels[T_ASSIGN] = "assign";
 blockLabels[T_CONSOLE] = "console";
+blockLabels[T_PRINT] = "print";
 
 function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
@@ -100,6 +102,7 @@ class Cell {
     // colors
     this.colors = c;
     // divs
+    this.lineNumber = 0;
     this.indexLabeldiv = createDiv(this.textLabel);
     this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y + this.childYBorder);
     this.indexLabeldiv.style('font-size', '16px');
@@ -113,6 +116,7 @@ class Cell {
     this.startHeight = this.height;
     this.startWidth = this.width;
     this.buildDivs();
+    this.resizeConsole();
   }
 
   get pos() {
@@ -121,6 +125,13 @@ class Cell {
 
   get size() {
     return [this.width, this.height]
+  }
+
+  resizeConsole() {
+    if (this.type == T_CONSOLE) {
+      this.indexLabeldiv.size(this.width - this.childXBorder, this.height - this.childYBorder);
+      this.indexLabeldiv.style('overflow', "auto");
+    }
   }
 
   buildDivs() {
@@ -162,6 +173,7 @@ class Cell {
 
   updateFuncHandleSH(value) {
     this.funcHandleSH = value;
+    this.dataSH = value; //what could go wrong :-P
   }
 
   updateDataSH(value) {
@@ -208,7 +220,7 @@ class Cell {
           rect(this.x, this.y, this.handleW, this.handleH);
           // shrinkHandle
           rect(this.x + this.width/2 - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
-          if (this.type != T_START && this.type != T_CONSOLE) {
+          if (this.type != T_START) {
             // delete handle
             fill(this.colors[3]);
             stroke(this.colors[3]);
@@ -225,7 +237,7 @@ class Cell {
     if (this.shrink === true) {
       this.hideDivs();
     }
-    if (this.type == T_START) {
+    if (this.type == T_START && this.shrink == false) {
       stroke(this.colors[1]);
       fill(this.colors[0]);
       rect(this.x + this.width/2 - 1.5*this.handleW, this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH), 3*this.handleW, 3 * this.handleH);
@@ -273,6 +285,7 @@ class Cell {
     if (this.type == T_VAR || this.type == T_INPUT || this.type == T_BLOCK || this.type == T_GOTO) {
       this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
     }
+    this.resizeConsole();
 
   }
 
@@ -339,7 +352,7 @@ class Cell {
   }
 
   startButtonHighlight(x, y){
-    if (this.type == T_START && this.mode != M_START) {
+    if (this.type == T_START && this.mode != M_START && this.shrink == false) {
       let xMin = this.x + this.width/2 - 1.5*this.handleW;
       let xMax = xMin + 3*this.handleW;
       if (x > xMin && x < xMax) {
@@ -362,18 +375,6 @@ class Cell {
   checkButtons(x, y) {
     let breaker = false;
     if (this.hide === false) {
-      if (this.type == T_START) {
-        let xMin = this.x + this.width/2 - 1.5*this.handleW;
-        let xMax = xMin + 3*this.handleW;
-        if (x > xMin && x < xMax) {
-          let yMin = this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH);
-          let yMax = yMin + 3*this.handleH;
-          if (y > yMin && y < yMax) {
-            this.mode = M_START;
-            breaker = true;
-          }
-        }
-      }
       let fudge = 2;
       //resize handle?
       if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
@@ -397,13 +398,37 @@ class Cell {
             breaker = true;
           }
         }
+        if (this.type != T_START) {
 
-
+        }
         // delete
         if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
           if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
-            this.mode = M_DELETE;
-            breaker = true;
+            if (this.type != T_CONSOLE) {
+              this.mode = M_DELETE;
+              breaker = true;
+            } else {
+              this.indexLabeldiv.html(this.textLabel);
+              this.lineNumber = 0;
+            }
+          }
+        }
+        if (this.type == T_START) {
+          if (this.mode == M_DELETE) {
+            this.mode == M_IDLE;
+            breaker = false;
+          }
+          if (this.mode != M_MOVE && this.shrink == false) {
+            let xMin = this.x + this.width/2 - 1.5*this.handleW;
+            let xMax = xMin + 3*this.handleW;
+            if (x > xMin && x < xMax) {
+              let yMin = this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH);
+              let yMax = yMin + 3*this.handleH;
+              if (y > yMin && y < yMax) {
+                this.mode = M_START;
+                breaker = true;
+              }
+            }
           }
         }
       }
@@ -412,8 +437,17 @@ class Cell {
   }
 
   addChild(ind, child, force=false) {
-    if (this.type == T_ASSIGN && (this.children.length == 2)) {
-      return;
+    if (child.type == T_START) {
+      return false;
+    }
+    if ((this.type == T_ASSIGN) && (this.children.length == 2)) {
+      return false;
+    }
+    if ((this.type == T_PRINT) && (this.children.length == 1)) {
+      return false;
+    }
+    if ((this.type == T_OUTLET || this.type == T_VAR || this.type == T_INPUT || this.type == T_IF || this.type == T_WHILE || this.type == T_CONSOLE)) {
+      return false;
     }
     if ((this.type != T_OUTLET && this.type != T_VAR && this.type != T_INPUT && this.type != T_IF && this.type != T_WHILE && this.type != T_CONSOLE) || force == true) {
       if (this.childIndicies.indexOf(ind) == -1) {
@@ -421,10 +455,14 @@ class Cell {
         this.childIndicies.push(ind);
       }
     }
+    return true;
   }
 
   addParent(ind, parent) {
     this.parent = ind;
+    if (this.type == T_START) {
+      this.parent = -1;
+    }
   }
 
   removeParent() {
@@ -507,7 +545,7 @@ class Cell {
   }
 
   selfDescribe(short=false) {
-    console.log(blockLabels[this.type]);
+    console.log('TYPE', blockLabels[this.type]);
     if (short = false) {
       console.log('FUNCTION NAME', this.funcHandleSH);
       console.log('DATA',this.dataSH);
@@ -527,6 +565,8 @@ class Cell {
         console.log('OUTLET', this.outletHandleSH);
       }
     }
+    console.log('PARENT', this.parent);
+    console.log('CHILDREN', this.childIndicies);
     console.log('\n');
   }
 

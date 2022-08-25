@@ -25,7 +25,7 @@ class Cells {
     let y = 17;
     let width = this.dWidth;
     for (let i = 0; i < this.length; i++) {
-      if (this.cells[i].inArea(x, y) == true) {
+      if (this.cells[i].inArea(x, y) == true || this.cells[i].inArea(x-5, y-5) == true) {
         if (y < windowHeight*0.7) {
           y += this.cells[i].height + 20;
         } else {
@@ -42,7 +42,7 @@ class Cells {
     let pIndex = this.length - 1;
     if (type == T_INPUT) {
       let tempID = this.getID(4);
-      this.cells[pIndex].varNameSH= tempID;
+      this.cells[pIndex].outletHandleSH= tempID;
       this.cells[pIndex].textLabel += ' ' + tempID;
       this.cells[pIndex].indexLabeldiv.html(this.cells[pIndex].textLabel);
       this.varHandles.push(tempID);
@@ -70,11 +70,15 @@ class Cells {
       this.cells[pIndex].addChild(pIndex + 1, this.cells[pIndex + 1]);
       this.cells[pIndex + 1].addParent(pIndex, this.cells[pIndex]);
       let tempID = this.getID(4);
-      this.cells[pIndex + 1].varNameSH= tempID;
+      this.cells[pIndex + 1].outletHandleSH= tempID;
       this.cells[pIndex + 1].textLabel += ' ' + tempID;
       this.cells[pIndex + 1].indexLabeldiv.html(this.cells[pIndex + 1].textLabel);
-      this.cells[pIndex + 1].updateoutletValueSH('unset');
+      this.cells[pIndex + 1].updateDataSH('unset');
       this.varHandles.push(tempID);
+    }
+    if (type == T_BLOCK) {
+      this.cells[pIndex].input.value(this.getID(1) + " block", this.getID(1) + " block");
+      this.cells[pIndex].funcHandleSH = this.cells[pIndex].input.value();
     }
   }
 
@@ -137,15 +141,15 @@ class Cells {
     this.cells[this.activeIndex].toggleStartForm(this.run);
   }
 
+  stop() {
+    this.run = false;
+    this.cells[0].mode = M_IDLE;
+    this.cells[0].toggleStartForm(false);
+  }
+
   doDelete(x, y, mdown) {
-    // let rebuildFlag = this.cells[this.activeIndex].hasHandle;
-    //
-    // let varNameSH;
-    // if (rebuildFlag == true) {
-    //   varNameSH = this.cells[this.activeIndex].varNameSH;
-    // }
-    // console.log(rebuildFlag, varNameSH);
     let rebuildFlag = false;
+    let delHandle = [];
     if (this.length == 1) { // last cell
       this.cells[0].cleanForDeletionSafe();
       this.cells = [];
@@ -159,7 +163,12 @@ class Cells {
         } else {
           if (this.cells[i].hasHandle == true) {
             rebuildFlag = true;
-            this.varHandles.splice(this.varHandles.indexOf(this.cells[i].varNameSH), 1);
+            if (this.cells[i].type == T_BLOCK) {
+              delHandle.push(this.cells[i].funcHandleSH);
+            } else {
+              delHandle.push(this.cells[i].outletHandleSH);
+            }
+            this.varHandles.splice(this.varHandles.indexOf(this.cells[i].outletHandleSH), 1);
           }
         }
         // remove parent / child links and divs for those in delete mode
@@ -188,6 +197,7 @@ class Cells {
     }
     this.activeIndex = -1;
     if (rebuildFlag === true) {
+      console.log(delHandle);
       for (let i = 0; i < this.length; i++) {
         if (this.cells[i].hasSelect == true) {
           this.cells[i].input.remove();
@@ -195,6 +205,14 @@ class Cells {
             this.cells[i].varLabeldiv.remove();
           }
           this.cells[i].buildDivs();
+        }
+      }
+      for (let i = 0; i < this.length; i++) {
+        if (this.cells[i].hasSelect == true) {
+          if (delHandle.indexOf(this.cells[i].inletHandleSH) == -1) {
+            this.cells[i].input.option(this.cells[i].inletHandleSH);
+            this.cells[i].input.selected(this.cells[i].inletHandleSH);
+          }
         }
       }
     }
@@ -253,8 +271,11 @@ class Cells {
       this.cells[i].reshape();
       // read from block names
       if (this.cells[i].type == T_BLOCK && this.cells[i].mode != M_SELECTED) {
-        blocks.push(this.cells[i].input.value());
-        this.cells[i].updateoutletHandleSH(blocks[i]);
+        let v = this.cells[i].input.value();
+        if (v.length > 0) {
+          blocks.push(v);
+          this.cells[i].updateFuncHandleSH(v);
+        }
       }
     }
     // linking (oof)
@@ -262,29 +283,32 @@ class Cells {
       if (key == T_GOTO) {
         for (let i of this.map[key]) {
           for (let j = 0; j < blocks.length; j++) {
-            this.cells[i].input.option(blocks[j]);
+            this.cells[i].input.option(blocks[j], blocks[j]);
           }
+          this.cells[i].inletHandleSH = this.cells[i].input.value();
+          this.cells[i].outletHandleSH = this.cells[i].input.value();
         }
+
       }
       if (key == T_VAR) {
         for (let vi of this.map[key]) {
           for (let j = 0; j < this.varHandles.length; j++) {
             this.cells[vi].input.option(this.varHandles[j], this.varHandles[j]);
           }
-          this.cells[vi].trackingSH = this.cells[vi].input.value();
+          this.cells[vi].inletHandleSH = this.cells[vi].input.value();
           for (key in this.map) {
             if (key == T_INPUT) {
               for (let ii of this.map[key]) {
-                if (this.cells[vi].trackingSH == this.cells[ii].varNameSH) {
-                  this.cells[vi].updateoutletValueSH(this.cells[ii].input.value());
+                if (this.cells[vi].inletHandleSH == this.cells[ii].outletHandleSH) {
+                  this.cells[vi].updateDataSH(this.cells[ii].input.value());
                 }
               }
             }
 
             if (key == T_OUTLET) {
               for (let oi of this.map[key]) {
-                if (this.cells[vi].trackingSH == this.cells[oi].varNameSH) {
-                  this.cells[vi].updateoutletValueSH(this.cells[oi].outletValueSH);
+                if (this.cells[vi].inletHandleSH == this.cells[oi].outletHandleSH) {
+                  this.cells[vi].updateDataSH(this.cells[oi].dataSH);
                 }
               }
             }

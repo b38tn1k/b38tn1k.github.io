@@ -65,15 +65,26 @@ class Cell {
     this.children = [];
     this.childIndicies = [];
     this.parent = -1;
-    // heirachy interface
+    // control etc
+    this.funcHandleSH;
+    this.dataSH;
+    this.inletHandleSH;
+    this.outletHandleSH;
+    this.type = type
+    this.textLabel = blockLabels[type];
+    this.hasSelect = false;
+    this.hasHandle = false;
+    // labels, tools, setup
+    if (type == T_BLOCK || type == T_INPUT || type == T_OUTLET) {
+      this.hasHandle = true;
+    }
+    this.mode = M_IDLE;
+    this.highlight = false;
+    this.flash = false;
+    this.toggleShape = false;
+    // geometry
     this.childYBorder = 2*r;
     this.childXBorder = 1.5 * r;
-    // control interface
-    this.mode = M_IDLE;
-    // graphical interface
-    this.highlight = false;
-    this.toggleShape = false;
-    // body
     this.ySpacer = 0;
     this.width = w;
     this.height = h;
@@ -82,26 +93,13 @@ class Cell {
     this.radius = r;
     this.x = x;
     this.y = y;
-    this.varNameSH;
     this.hide = false;
     this.shrink = false;
-    // handles
     this.handleW = 1.5*r;
     this.handleH = 1.5*r;
     // colors
     this.colors = c;
-    // specifics
-    this.type = type
-    this.textLabel = blockLabels[type];
-    this.outletValueSH;
-    this.outletHandleSH;
-    this.trackingSH;
-    this.hasSelect = false;
-    this.hasHandle = false;
-    // labels, tools, setup
-    if (type == T_BLOCK || type == T_INPUT || type == T_OUTLET) {
-      this.hasHandle = true;
-    }
+    // divs
     this.indexLabeldiv = createDiv(this.textLabel);
     this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y + this.childYBorder);
     this.indexLabeldiv.style('font-size', '16px');
@@ -162,14 +160,14 @@ class Cell {
     }
   }
 
-  updateoutletHandleSH(value) {
-    this.outletHandleSH = value;
+  updateFuncHandleSH(value) {
+    this.funcHandleSH = value;
   }
 
-  updateoutletValueSH(value) {
-    this.outletValueSH = value;
+  updateDataSH(value) {
+    this.dataSH = value;
     if (this.type != T_VAR) {
-      let htmlString = this.textLabel + '<br><br>' + String(this.outletValueSH);
+      let htmlString = this.textLabel + '<br><br>' + String(this.dataSH);
       this.indexLabeldiv.html(htmlString);
     } else {
       this.varLabeldiv.html(value);
@@ -191,6 +189,13 @@ class Cell {
         if ((this.highlight === false) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
           this.input.show();
         }
+        if (this.flash == true) {
+          fill(this.colors[2]);
+          this.flash = false;
+        } else {
+          fill(this.colors[0]);
+        }
+
         stroke(this.colors[1]);
         rect(this.x, this.y, this.width, this.height, this.radius);
 
@@ -501,12 +506,37 @@ class Cell {
     this.reshape();
   }
 
+  selfDescribe(short=false) {
+    console.log(blockLabels[this.type]);
+    if (short = false) {
+      console.log('FUNCTION NAME', this.funcHandleSH);
+      console.log('DATA',this.dataSH);
+      console.log('INLET', this.inletHandleSH);
+      console.log('OUTLET', this.outletHandleSH);
+    } else {
+      if (this.funcHandleSH != null) {
+        console.log('FUNCTION NAME', this.funcHandleSH);
+      }
+      if (this.dataSH != null) {
+        console.log('DATA',this.dataSH);
+      }
+      if (this.inletHandleSH != null) {
+        console.log('INLET', this.inletHandleSH);
+      }
+      if (this.outletHandleSH != null) {
+        console.log('OUTLET', this.outletHandleSH);
+      }
+    }
+    console.log('\n');
+  }
+
   inArea(x, y) {
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;
       if (x > this.x - fudge && x < this.x + this.width + fudge) {
         if (y > this.y - fudge && y < this.y + this.height + fudge) {
+          // this.selfDescribe();
           breaker = true;
         }
       }

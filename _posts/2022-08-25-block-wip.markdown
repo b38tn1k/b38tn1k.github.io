@@ -7,4 +7,6 @@ image: 'https://b38tn1k.com/images/previews/summerBlocks.png'
 link: 'https://b38tn1k.com/WIP/'
 ---
 
-[description]<strong>I am still building on this and will try to indicate which parts work. Probably won't work on mobile.</strong> Thinking about Miro + Scratch.io squished together; an infinite scrolling scripting canvas. Drag and drop blocks to make functions etc. [description]
+[description]<strong>I am still building on this and will try to indicate which parts work. Functionality on mobile will be limited for a while.</strong> This is a weird one.
+
+I am thinking about Miro + Scratch.io squished together; an infinite scrolling canvas for writing scripts. Drag and drop blocks to make functions etc. [description]

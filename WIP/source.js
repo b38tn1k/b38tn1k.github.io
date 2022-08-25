@@ -8,6 +8,8 @@ var highlights = [];
 var lowlights = [];
 var c;
 var menu;
+var examples;
+var wait = false;
 
 function deviceTurned() {
   setupScreen();
@@ -34,6 +36,7 @@ function newCell(type) {
 
 function preload() {
   c = loadStrings('nintendo-entertainment-system.hex');
+  examples = loadJSON('my.json');
 }
 
 function colorSetup() {
@@ -59,28 +62,69 @@ function colorSetup() {
   }
 }
 
+function saveCells() {
+  cells.mapAndLink();
+  let map = {}
+  for (let i = 0; i < cells.length; i++) {
+    map[i] = {};
+    map[i]['x'] = cells.cells[i].x;
+    map[i]['y'] = cells.cells[i].y;
+    map[i]['type'] = cells.cells[i].type;
+    map[i]['width'] = cells.cells[i].width;
+    map[i]['height'] = cells.cells[i].height;
+    map[i]['minwidth'] = cells.cells[i].minWidth;
+    map[i]['minheight'] = cells.cells[i].minHeight;
+    map[i]['hide'] = cells.cells[i].hide;
+    map[i]['shrink'] = cells.cells[i].shrink;
+    map[i]['colors'] = cells.cells[i].colors;
+    map[i]['radius'] = cells.cells[i].radius;
+    map[i]['funcHandleSH'] = cells.cells[i].funcHandleSH;
+    map[i]['dataSH'] = cells.cells[i].dataSH;
+    map[i]['inletHandleSH'] = cells.cells[i].inletHandleSH;
+    map[i]['outletHandleSH'] = cells.cells[i].outletHandleSH;
+    map[i]['parent'] = cells.cells[i].parent;
+    map[i]['childIndicies'] = cells.cells[i].childIndicies;
+  }
+  save(map, 'my.json', true);
+}
+
+function loadCells() {
+  wait = true;
+  cells.cells[0].indexLabeldiv.remove();
+  cells.cells[1].indexLabeldiv.remove();
+  cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
+  for (key in Object.keys(examples)) {
+    cells.addCellWithInfo(examples[key]);
+  }
+  console.log(cells.length);
+  // cells.cleanUpAfterLoad();
+  wait = false;
+}
+
 function setup() {
   colorSetup();
   setupScreen();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
   controller = new Controller();
-  menu = createDiv('<a href="javascript:void(0)" onclick="newCell(' + T_BLOCK + ')"> + block</a><br>');
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_INPUT + ')"> + input</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_VAR + ')"> + variable</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_IF + ')"> + if</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_WHILE + ')"> + while</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_NOT + ')"> + not</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_EQUAL + ')"> + equal</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_LESS + ')"> + less</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_GREATER + ')"> + greater</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_ADD + ')"> + add</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_SUBTRACT + ')"> + subtract</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_MULT + ')"> + multiply</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_DIV + ')"> + divide</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_MOD + ')"> + modulus</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_GOTO + ')"> + goto</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_ASSIGN + ')"> + assign</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_PRINT + ')"> + print</a><br>', true);
+  menu = createDiv('<a href="javascript:void(0)" onclick="newCell(' + T_BLOCK + ')">+ block</a><br>');
+  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_INPUT + ')">+ input</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_VAR + ')">+ variable</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_IF + ')">+ if</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_WHILE + ')">+ while</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_NOT + ')">+ not</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_EQUAL + ')">+ equal</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_LESS + ')">+ less</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_GREATER + ')">+ greater</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_ADD + ')">+ add</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_SUBTRACT + ')">+ subtract</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_MULT + ')">+ multiply</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_DIV + ')">+ divide</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_MOD + ')">+ modulus</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_GOTO + ')">+ goto</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_ASSIGN + ')">+ assign</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_PRINT + ')">+ print</a><br>', true);
+  menu.html('<br><a class="bad" href="javascript:void(0)" onclick="saveCells()">save</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="loadCells()">load</a><br>', true);
   menu.position(10, 10);
   menu.style('font-size', '16px');
   menu.show();
@@ -90,7 +134,9 @@ function setup() {
 
 function draw() {
   clear();
-  cells.draw();
-  cells.update(mouseX, mouseY, mouseIsPressed);
-  controller.update(cells);
+  if (wait == false) {
+    cells.draw();
+    cells.update(mouseX, mouseY, mouseIsPressed);
+    controller.update(cells);
+  }
 }

@@ -20,6 +20,52 @@ class Cells {
     return this.cells.length;
   }
 
+  addCellWithInfo(info) {
+    let colors = [];
+    console.log("hi");
+    for (let i = 0; i < info.colors.length; i++) {
+      colors.push(color(info.colors[i].levels));
+    }
+    let newCell = this.length;
+    this.cells.push(new Cell(info.type, info.x, info.y, info.width, info.height, colors, info.radius));
+    // this.cells[newCell].x = info.x;
+    // this.cells[newCell].y = info.y;
+    // this.cells[newCell].type = info.type;
+    // this.cells[newCell].width = info.width;
+    // this.cells[newCell].height = info.height;
+    this.cells[newCell].minWidth = info.minwidth;
+    this.cells[newCell].minHeight = info.minheight;
+    this.cells[newCell].hide = info.hide;
+    this.cells[newCell].shrink = info.shrink;
+    // this.cells[newCell].radius = info.radius;
+    this.cells[newCell].funcHandleSH = info.funcHandleSH;
+    this.cells[newCell].dataSH = info.dataSH;
+    this.cells[newCell].inletHandleSH = info.inletHandleSH;
+    this.cells[newCell].outletHandleSH = info.outletHandleSH;
+    this.cells[newCell].parent = info.parent;
+    this.cells[newCell].childIndicies = info.childIndicies;
+  }
+
+  cleanUpAfterLoad() {
+    console.log("ahhh")
+    for (let i = 0; i < this.length; i++) {
+      console.log("INDEX", i);
+      this.cells[i].selfDescribe();
+      let childCount = this.cells[i].childIndicies.length;
+      if (childCount != 0) {
+        console.log("CHILDREN COUNT:",this.cells[i].childIndicies.length, childCount);
+        for (let j = 0; j < childCount; i++) {
+          console.log(this.cells[i].childIndicies[j]);
+        }
+      }
+      //   console.log(i);
+      //   for (let j = 0; j < this.cells[i].childIndicies.length; j++ ){
+      //     this.cells[i].children.push(this.cells[j]);
+      //   }
+      // }
+    }
+  }
+
   addCell(type, startX) {
     let x = startX;//0.15 * windowWidth;
     let y = 17;

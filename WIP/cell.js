@@ -440,7 +440,7 @@ class Cell {
     if ((this.type == T_PRINT) && (this.children.length == 1)) {
       return false;
     }
-    if ((this.type == T_OUTLET || this.type == T_VAR || this.type == T_INPUT || this.type == T_IF || this.type == T_WHILE || this.type == T_CONSOLE)) {
+    if (force == false && (this.type == T_OUTLET || this.type == T_VAR || this.type == T_INPUT || this.type == T_IF || this.type == T_WHILE || this.type == T_CONSOLE)) {
       return false;
     }
     if ((this.type != T_OUTLET && this.type != T_VAR && this.type != T_INPUT && this.type != T_IF && this.type != T_WHILE && this.type != T_CONSOLE) || force == true) {

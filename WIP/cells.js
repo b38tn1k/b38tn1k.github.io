@@ -13,7 +13,6 @@ class Cells {
     this.varNames = 'abcdefghijklmnopqrstuvwxyz';
     this.varHandles = ['none'];
     this.map = {};
-    this.addCell(T_START);
     this.run = false;
   }
 
@@ -21,21 +20,18 @@ class Cells {
     return this.cells.length;
   }
 
-  addCell(type) {
-    let x = 0.15 * windowWidth;
-    let y = 20;
+  addCell(type, startX) {
+    let x = startX;//0.15 * windowWidth;
+    let y = 17;
     let width = this.dWidth;
     for (let i = 0; i < this.length; i++) {
-      if (this.cells[i].y < this.dHeight + y && this.cells[i].x < x + width) {
-        if (this.cells[i].parent == -1) {
-          y += this.cells[i].height + 10;
+      if (this.cells[i].inArea(x, y) == true) {
+        if (y < windowHeight*0.7) {
+          y += this.cells[i].height + 20;
+        } else {
+          y = 17;
+          x += this.cells[i].width + 20;
         }
-        width = max(width, this.cells[i].width + 10);
-      }
-      if (y > windowHeight*0.7) {
-        y = 20;
-        x += width;
-        width = this.dWidth;
       }
     }
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
@@ -62,7 +58,7 @@ class Cells {
       this.cells[pIndex].moveC(this.cells[pIndex].x, this.cells[pIndex].y);
     }
 
-    let theOnesWithOutlets = [T_EQUAL,T_LESS,T_GREATER,T_ADD,T_SUBTRACT,T_MULT,T_DIV,T_MOD];
+    let theOnesWithOutlets = [T_ASSIGN, T_EQUAL,T_LESS,T_GREATER,T_ADD,T_SUBTRACT,T_MULT,T_DIV,T_MOD];
     let thisOneHasAnOutlet = false;
     for (let i = 0; i < theOnesWithOutlets.length; i++) {
       if (type == theOnesWithOutlets[i]) {

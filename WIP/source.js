@@ -28,7 +28,7 @@ function setupScreen() {
 }
 
 function newCell(type) {
-  cells.addCell(type);
+  cells.addCell(type, 1.5 * menu.size().width);
 }
 
 
@@ -79,9 +79,12 @@ function setup() {
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_DIV + ')"> + divide</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_MOD + ')"> + modulus</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_GOTO + ')"> + goto</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_ASSIGN + ')"> + assign</a><br>', true);
   menu.position(10, 10);
   menu.style('font-size', '16px');
   menu.show();
+  cells.addCell(T_START, 1.5 * menu.size().width);
+  cells.addCell(T_CONSOLE, windowWidth - 1.5 * cells.dWidth);
 }
 
 function draw() {

@@ -27,6 +27,8 @@ var T_CONDITION = 103;
 var T_ELSE = 102;
 var T_DO = 101;
 var T_OUTLET = 104;
+var T_ASSIGN = 42;
+var T_CONSOLE = 2;
 
 var blockLabels = {};
 blockLabels[T_BLOCK] = "block";
@@ -50,6 +52,8 @@ blockLabels[T_DO] = "do";
 blockLabels[T_OUTLET] = "out";
 blockLabels[T_START] = "start";
 blockLabels[T_STOP] = "stop";
+blockLabels[T_ASSIGN] = "assign";
+blockLabels[T_CONSOLE] = "console";
 
 function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
@@ -176,7 +180,7 @@ class Cell {
     if (this.hide === false){
       if (canvas === null) {
         // body
-        if (this.highlight === true && this.type != T_INPUT && this.type != T_VAR && this.type != T_IF && this.type != T_WHILE) {
+        if (this.highlight === true && this.type != T_CONSOLE && this.type != T_INPUT && this.type != T_VAR && this.type != T_IF && this.type != T_WHILE && this.type != T_OUTLET && !(this.type == T_ASSIGN && (this.children.length == 2))) {
           fill(this.colors[2]);
         } else {
           fill(this.colors[0]);
@@ -199,7 +203,7 @@ class Cell {
           rect(this.x, this.y, this.handleW, this.handleH);
           // shrinkHandle
           rect(this.x + this.width/2 - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
-          if (this.type != T_START) {
+          if (this.type != T_START && this.type != T_CONSOLE) {
             // delete handle
             fill(this.colors[3]);
             stroke(this.colors[3]);
@@ -403,7 +407,10 @@ class Cell {
   }
 
   addChild(ind, child, force=false) {
-    if ((this.type != T_VAR && this.type != T_INPUT && this.type != T_IF && this.type != T_WHILE) || force == true) {
+    if (this.type == T_ASSIGN && (this.children.length == 2)) {
+      return;
+    }
+    if ((this.type != T_OUTLET && this.type != T_VAR && this.type != T_INPUT && this.type != T_IF && this.type != T_WHILE && this.type != T_CONSOLE) || force == true) {
       if (this.childIndicies.indexOf(ind) == -1) {
         this.children.push(child);
         this.childIndicies.push(ind);

@@ -46,7 +46,7 @@ class Cells {
     let pIndex = this.length - 1;
     if (type == T_INPUT) {
       let tempID = this.getID(4);
-      this.cells[pIndex].varID= tempID;
+      this.cells[pIndex].varNameSH= tempID;
       this.cells[pIndex].textLabel += ' ' + tempID;
       this.cells[pIndex].indexLabeldiv.html(this.cells[pIndex].textLabel);
       this.varHandles.push(tempID);
@@ -74,7 +74,7 @@ class Cells {
       this.cells[pIndex].addChild(pIndex + 1, this.cells[pIndex + 1]);
       this.cells[pIndex + 1].addParent(pIndex, this.cells[pIndex]);
       let tempID = this.getID(4);
-      this.cells[pIndex + 1].varID= tempID;
+      this.cells[pIndex + 1].varNameSH= tempID;
       this.cells[pIndex + 1].textLabel += ' ' + tempID;
       this.cells[pIndex + 1].indexLabeldiv.html(this.cells[pIndex + 1].textLabel);
       this.cells[pIndex + 1].updateoutletValueSH('unset');
@@ -142,13 +142,14 @@ class Cells {
   }
 
   doDelete(x, y, mdown) {
-    let rebuildFlag = this.cells[this.activeIndex].hasHandle;
-
-    let varID;
-    if (rebuildFlag == true) {
-      varID = this.cells[this.activeIndex].varID;
-    }
-    console.log(rebuildFlag, varID);
+    // let rebuildFlag = this.cells[this.activeIndex].hasHandle;
+    //
+    // let varNameSH;
+    // if (rebuildFlag == true) {
+    //   varNameSH = this.cells[this.activeIndex].varNameSH;
+    // }
+    // console.log(rebuildFlag, varNameSH);
+    let rebuildFlag = false;
     if (this.length == 1) { // last cell
       this.cells[0].cleanForDeletionSafe();
       this.cells = [];
@@ -159,6 +160,11 @@ class Cells {
       for (let i = 0; i < this.length; i++) {
         if (this.cells[i].mode != M_DELETE){
           map.push(i); // find all cells that will not be deleted
+        } else {
+          if (this.cells[i].hasHandle == true) {
+            rebuildFlag = true;
+            this.varHandles.splice(this.varHandles.indexOf(this.cells[i].varNameSH), 1);
+          }
         }
         // remove parent / child links and divs for those in delete mode
         let parent = this.cells[i].cleanForDeletionSafe();
@@ -186,11 +192,6 @@ class Cells {
     }
     this.activeIndex = -1;
     if (rebuildFlag === true) {
-      // fix this to work with children!
-      console.log('fix me for children of equal / less / etc..')
-      if (this.varHandles.indexOf(varID) != -1) {
-        this.varHandles.splice(this.varHandles.indexOf(varID), 1);
-      }
       for (let i = 0; i < this.length; i++) {
         if (this.cells[i].hasSelect == true) {
           this.cells[i].input.remove();
@@ -278,7 +279,7 @@ class Cells {
           for (key in this.map) {
             if (key == T_INPUT) {
               for (let ii of this.map[key]) {
-                if (this.cells[vi].trackingSH == this.cells[ii].varID) {
+                if (this.cells[vi].trackingSH == this.cells[ii].varNameSH) {
                   this.cells[vi].updateoutletValueSH(this.cells[ii].input.value());
                 }
               }
@@ -286,7 +287,7 @@ class Cells {
 
             if (key == T_OUTLET) {
               for (let oi of this.map[key]) {
-                if (this.cells[vi].trackingSH == this.cells[oi].varID) {
+                if (this.cells[vi].trackingSH == this.cells[oi].varNameSH) {
                   this.cells[vi].updateoutletValueSH(this.cells[oi].outletValueSH);
                 }
               }

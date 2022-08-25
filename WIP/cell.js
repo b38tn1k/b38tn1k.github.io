@@ -78,7 +78,7 @@ class Cell {
     this.radius = r;
     this.x = x;
     this.y = y;
-    this.varID;
+    this.varNameSH;
     this.hide = false;
     this.shrink = false;
     // handles

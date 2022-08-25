@@ -7,4 +7,6 @@ image: 'https://b38tn1k.com/images/previews/triz.png'
 link: 'https://b38tn1k.com/triz/'
 ---
 
-[description]<strong>Work In Progress, results may vary.</strong> TRIZ (Russian: Theory of Inventive Problem Solving) is an engineering problem approach tool created by a USSR engineer and sci-fi writer Genrikh Altshuller. It works by generalizing engineering problems and then using the generalized patterns to map design contradictions to solutions.  Altshuller was married to another brilliant sci-fi author Valentina Zhuravlyova, I was reading one of her stories and remembered touching on TRIZ in a first-year engineering course. I figured it would be fun to make a card-based TRIZ matrix with little animations.[description]
+[description]<strong>Work In Progress, results may vary.</strong> TRIZ (Russian: Theory of Inventive Problem Solving) is an engineering problem approach tool created by a USSR engineer and sci-fi writer Genrikh Altshuller. It works by generalizing engineering problems and then using the generalized patterns to map design contradictions to solutions.
+
+Altshuller was married to another brilliant sci-fi author Valentina Zhuravlyova, I was reading one of her stories and remembered touching on TRIZ in a first-year engineering course. I figured it would be fun to make a card-based TRIZ matrix with little animations.[description]

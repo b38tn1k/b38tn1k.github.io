@@ -5,6 +5,7 @@ var M_DELETE = 3;
 var M_SELECTED = 4;
 var M_EXPAND_OR_COLLAPSE = 5;
 var M_START = 6;
+var M_NEW = 7;
 
 var T_START = 1;
 var T_STOP = 0;

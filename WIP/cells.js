@@ -23,22 +23,12 @@ class Cells {
   addCell(type, startX) {
     let x = startX;//0.15 * windowWidth;
     let y = 17;
-    let width = this.dWidth;
-    for (let i = 0; i < this.length; i++) {
-      if (this.cells[i].inArea(x, y) == true || this.cells[i].inArea(x-5, y-5) == true) {
-        if (y < windowHeight*0.7) {
-          y += this.cells[i].height + 20;
-        } else {
-          y = 17;
-          x += this.cells[i].width + 20;
-        }
-      }
-    }
+    // let width = this.dWidth;
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
     if (type == T_START) {
       c = [this.colors[type], this.highlights[type], this.colors[49], this.inverted[type], this.dualtone[type]];
     }
-    width = this.dWidth;
+    let width = this.dWidth;
     if (type == T_CONSOLE) {
       width *= 2;
     }
@@ -83,6 +73,11 @@ class Cells {
     if (type == T_BLOCK) {
       this.cells[pIndex].input.value(this.getID(1) + " block", this.getID(1) + " block");
       this.cells[pIndex].funcHandleSH = this.cells[pIndex].input.value();
+    }
+    this.cells[pIndex].reshape();
+    if (type != T_START && type != T_CONSOLE) {
+      this.cells[pIndex].mode = M_NEW;
+      this.activeIndex = pIndex;
     }
   }
 
@@ -239,7 +234,6 @@ class Cells {
         }
       }
     }
-
     // release
     if (mdown === false && this.cells[this.activeIndex].mode == M_MOVE) {
       // create parent/child link and initial align
@@ -327,6 +321,16 @@ class Cells {
     if (this.run == false) {
       // active cell
       if (this.activeIndex != -1) {
+        if (this.cells[this.activeIndex].mode == M_NEW){
+          if (mdown == false) {
+            this.doMove(x, y, true);
+          }
+          if (mdown == true) {
+            this.cells[this.activeIndex].mode = M_IDLE;
+            this.activeIndex = -1;
+          }
+
+        }
         if (this.cells[this.activeIndex].mode == M_START){
           this.startStop(x, y, mdown);
         }

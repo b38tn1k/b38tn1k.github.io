@@ -126,7 +126,7 @@ class Controller {
         } else {
           this.index = parIndex;
           this.activeCell = parent;
-          moveByParent();
+          this.moveByParent();
         }
       }
     }

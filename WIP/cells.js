@@ -146,7 +146,6 @@ class Cells {
 
   stop() {
     this.run = false;
-    this.cells[0].mode = M_IDLE;
     this.cells[0].toggleStartForm(false);
   }
 

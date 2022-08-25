@@ -398,26 +398,20 @@ class Cell {
             breaker = true;
           }
         }
-        if (this.type != T_START) {
-
-        }
         // delete
         if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
           if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
-            if (this.type != T_CONSOLE) {
+            if (this.type != T_CONSOLE && this.type != T_START) {
               this.mode = M_DELETE;
               breaker = true;
-            } else {
+            }
+            if (this.type == T_CONSOLE) {
               this.indexLabeldiv.html(this.textLabel);
               this.lineNumber = 0;
             }
           }
         }
         if (this.type == T_START) {
-          if (this.mode == M_DELETE) {
-            this.mode == M_IDLE;
-            breaker = false;
-          }
           if (this.mode != M_MOVE && this.shrink == false) {
             let xMin = this.x + this.width/2 - 1.5*this.handleW;
             let xMax = xMin + 3*this.handleW;

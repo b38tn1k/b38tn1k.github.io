@@ -1,0 +1,10 @@
+---
+layout: post
+title:  "WIP: Untitled Block Scripting Environment"
+date:   2022-08-25
+tags: demo
+image: 'https://b38tn1k.com/images/previews/summerBlocks.png'
+link: 'https://b38tn1k.com/WIP/'
+---
+
+[description]<strong>I am still building on this and will try to indicate which parts work. Probably won't work on mobile.</strong> Thinking about Miro + Scratch.io squished together; an infinite scrolling scripting canvas. Drag and drop blocks to make functions etc. [description]

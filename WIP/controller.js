@@ -23,7 +23,7 @@ class Controller {
       this.terminate = this.script.length + 1;
       this.stack = [];
       for (let i = 0; i < cells.length; i++) {
-        if (this.script[i].type == T_VAR) {
+        if (this.script[i].type == T_VAR || this.script[i].type == T_OUTLET) {
           if (!(this.script[i].handleSH in this.varMap)) {
             this.varMap[this.script[i].handleSH] = [];
           }
@@ -167,7 +167,45 @@ class Controller {
     }
   }
   t_math() {
-    let output;
-
+    let onlyNums = true;
+    let vals = [];
+    let res;
+    for (let i = 1; i < this.activeCell.children.length; i++) {
+      vals.push(this.activeCell.children[i].dataSH);
+      if (/^\d+\.\d+$/.test(vals[i-1]) == false && /^\d+$/.test(vals[i-1]) == false) {
+        onlyNums = false;
+      }
+    }
+    if (onlyNums) {
+      res = parseFloat(vals[0]);
+      for (let i = 1; i < vals.length; i++) {
+        if (this.activeCell.type == T_ADD) {
+          res += parseFloat(vals[i]);
+        }
+        if (this.activeCell.type == T_SUBTRACT) {
+          res -= parseFloat(vals[i]);
+        }
+        if (this.activeCell.type == T_MULT) {
+          res *= parseFloat(vals[i]);
+        }
+        if (this.activeCell.type == T_DIV) {
+          res /= parseFloat(vals[i]);
+        }
+        if (this.activeCell.type == T_MOD) {
+          res %= parseFloat(vals[i]);
+        }
+      }
+    } else {
+      if ([T_MULT, T_MOD, T_DIV].indexOf(this.activeCell.type) != -1) {
+        res = 'error'
+        // cat strings
+        // if a string and minus, remove substrings
+        // make result 'error'
+      }
+    }
+    let output = this.activeCell.children[0].handleSH;
+    for (let i = 0; i < this.varMap[output].length; i++) {
+      this.varMap[output][i].updateDataSH(res);
+    }
   }
 };

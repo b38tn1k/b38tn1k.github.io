@@ -43,26 +43,28 @@ class Controller {
       this.running = false;
     }
   }
-  update(cells) {
+  update(cells, flash) {
     this.startStop(cells);
     if (this.run == true) {
-      this.step();
+      this.step(flash);
     }
   }
   HCF() {
     this.index = this.terminate;
+    this.run = false;
   }
-  step () {
-    // for (let i = 0; i < cells.length; i++) {
-    //   console.log("INDEX", i);
-    //   this.script[i].selfDescribe()
-    // }
+  step (flash) {
     if (this.index < this.script.length) {
+
       this.stack.push(this.index);
       this.activeCell = this.script[this.index];
-      this.activeCell.flash = true;
-      // console.log('INDEX',this.index);
-      // this.activeCell.selfDescribe(true);
+      if (flash == true) {
+        this.activeCell.flash = true;
+        if (this.stack.length > 1) {
+          this.script[this.stack[this.stack.length-2]].flash = false;
+        }
+      }
+
       switch(this.activeCell.type) {
         case T_START:
           this.t_start();
@@ -84,7 +86,6 @@ class Controller {
           break;
       }
     } else {
-      // console.log(this.stack);
       this.run = false;
     }
   }
@@ -99,6 +100,7 @@ class Controller {
   }
 
   t_goto() {
+    console.log(this.activeCell.flash);
     let next = this.activeCell.inletHandleSH;
     this.index = this.terminate;
     for (let i = 0; i < this.script.length; i++) {

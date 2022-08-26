@@ -208,8 +208,9 @@ class Cell {
           this.input.show();
         }
         if (this.flash == true) {
+          // console.log(this.textLabel);
           fill(this.colors[2]);
-          this.flash = false;
+          // this.flash = false;
         } else {
           fill(this.colors[0]);
         }

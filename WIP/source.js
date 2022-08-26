@@ -9,6 +9,7 @@ var showBlockMenu = false;
 var showDemoMenu = false;
 var shareLinkGenerated = false;
 var slowMode = false;
+var flash = true;
 
 function deviceTurned() {
   setupScreen();
@@ -123,6 +124,12 @@ function toggleSlow() {
   createMenuDiv();
 }
 
+function toggleFlash() {
+  flash = !flash;
+  menu.html('');
+  createMenuDiv();
+}
+
 function createMenuDiv() {
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
@@ -158,6 +165,11 @@ function createMenuDiv() {
   } else {
     menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">normal mode</a><br>', true);
   }
+  if (flash == false) {
+    menu.html('<a href="javascript:void(0)" onclick="toggleFlash()">flash on</a><br>', true);
+  } else {
+    menu.html('<a href="javascript:void(0)" onclick="toggleFlash()">flash off</a><br>', true);
+  }
   menu.html('<br><a href="javascript:void(0)" onclick="saveCells()">save</a><br>', true);
   if (shareLinkGenerated == true) {
     menu.html('<a href="javascript:void(0)" onclick="shareLink()">reshare</a><br>', true);
@@ -191,9 +203,9 @@ function draw() {
   clear();
   cells.draw();
   cells.update(mouseX, mouseY, mouseIsPressed);
-  controller.update(cells);
+  controller.update(cells, flash);
   if (cells.run == true && slowMode == true) {
-    frameRate(5);
+    frameRate(2);
   } else {
     frameRate(100);
   }

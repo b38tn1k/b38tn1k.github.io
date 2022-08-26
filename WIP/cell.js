@@ -76,6 +76,7 @@ class Cell {
     this.type = type
     this.textLabel = blockLabels[type];
     this.hasSelect = false;
+    this.hasInput = false;
     this.hasHandle = false;
     // labels, tools, setup
     if (type == T_BLOCK || type == T_INPUT || type == T_OUTLET) {
@@ -142,6 +143,7 @@ class Cell {
     if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
       if (this.type == T_BLOCK || this.type == T_INPUT) {
         this.input = createInput();
+        this.hasInput = true;
       }
       if (this.type == T_GOTO || this.type == T_VAR){
         this.input = createSelect();
@@ -150,7 +152,7 @@ class Cell {
       this.input.style('font-size', '16px');
       let h = this.input.size().height;
       this.standardInputHeight = h;
-      this.input.size(this.width, h);
+      this.input.size(this.width - 3*this.childXBorder, h);
       this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
@@ -353,6 +355,7 @@ class Cell {
   }
 
   startButtonHighlight(x, y){
+    stroke(this.colors[1]);
     if (this.type == T_START && this.mode != M_START && this.shrink == false) {
       let xMin = this.x + this.width/2 - 1.5*this.handleW;
       let xMax = xMin + 3*this.handleW;
@@ -546,6 +549,7 @@ class Cell {
       console.log('DATA',this.dataSH);
       console.log('INLET', this.inletHandleSH);
       console.log('OUTLET', this.outletHandleSH);
+      console.log('CHILDREN', this.childIndicies);
     } else {
       if (this.funcHandleSH != null) {
         console.log('FUNCTION NAME', this.funcHandleSH);
@@ -559,9 +563,11 @@ class Cell {
       if (this.outletHandleSH != null) {
         console.log('OUTLET', this.outletHandleSH);
       }
+      if (this.childIndicies.length > 0) {
+        console.log('CHILDREN', this.childIndicies);
+      }
     }
     console.log('PARENT', this.parent);
-    console.log('CHILDREN', this.childIndicies);
     console.log('\n');
   }
 

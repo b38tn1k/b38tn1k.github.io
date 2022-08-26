@@ -28,41 +28,31 @@ class Cells {
     }
     let newCell = this.length;
     this.cells.push(new Cell(info.type, info.x, info.y, info.width, info.height, colors, info.radius));
-    // this.cells[newCell].x = info.x;
-    // this.cells[newCell].y = info.y;
-    // this.cells[newCell].type = info.type;
-    // this.cells[newCell].width = info.width;
-    // this.cells[newCell].height = info.height;
     this.cells[newCell].minWidth = info.minwidth;
     this.cells[newCell].minHeight = info.minheight;
     this.cells[newCell].hide = info.hide;
     this.cells[newCell].shrink = info.shrink;
-    // this.cells[newCell].radius = info.radius;
     this.cells[newCell].funcHandleSH = info.funcHandleSH;
     this.cells[newCell].dataSH = info.dataSH;
     this.cells[newCell].inletHandleSH = info.inletHandleSH;
     this.cells[newCell].outletHandleSH = info.outletHandleSH;
     this.cells[newCell].parent = info.parent;
-    this.cells[newCell].childIndicies = info.childIndicies;
+    // this.cells[newCell].childIndicies = info.childIndicies;
+    this.cells[newCell].textLabel = info.textLabel;
+    this.cells[newCell].indexLabeldiv.html(info.indexLabeldivhtml);
+    if (this.cells[newCell].hasSelect == true) {
+      this.cells[newCell].input.option(info.inletHandleSH);
+      this.cells[newCell].input.selected(info.inletHandleSH);
+    }
+    if (this.cells[newCell].hasInput == true) {
+      this.cells[newCell].input.value(info.dataSH);
+    }
   }
 
-  cleanUpAfterLoad() {
-    console.log("ahhh")
-    for (let i = 0; i < this.length; i++) {
-      console.log("INDEX", i);
-      this.cells[i].selfDescribe();
-      let childCount = this.cells[i].childIndicies.length;
-      if (childCount != 0) {
-        console.log("CHILDREN COUNT:",this.cells[i].childIndicies.length, childCount);
-        for (let j = 0; j < childCount; i++) {
-          console.log(this.cells[i].childIndicies[j]);
-        }
-      }
-      //   console.log(i);
-      //   for (let j = 0; j < this.cells[i].childIndicies.length; j++ ){
-      //     this.cells[i].children.push(this.cells[j]);
-      //   }
-      // }
+  linkChildren(ind, info) {
+    let id = parseInt(ind);
+    for (let i = 0; i < info.childIndicies.length; i++) {
+      this.cells[id].addChild(info.childIndicies[i], this.cells[info.childIndicies[i]], true);
     }
   }
 
@@ -347,6 +337,7 @@ class Cells {
           for (key in this.map) {
             if (key == T_INPUT) {
               for (let ii of this.map[key]) {
+                this.cells[ii].dataSH = this.cells[ii].input.value();
                 if (this.varHandles.indexOf(this.cells[ii].outletHandleSH) == -1) {
                   this.varHandles.push(this.cells[ii].outletHandleSH);
                 }

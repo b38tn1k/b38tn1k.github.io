@@ -573,6 +573,7 @@ class Cell {
   expandBlock() {
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].showBlock();
+      this.children[i].expandBlock();
     }
     this.shrink = false;
     this.showDivs();

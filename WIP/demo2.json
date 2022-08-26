@@ -1,0 +1,176 @@
+{
+  "0": {
+    "x": 106,
+    "y": 113,
+    "t": 1,
+    "h": false,
+    "s": false,
+    "p": -1,
+    "c": [
+      12
+    ],
+    "tL": "start",
+    "L": "start"
+  },
+  "1": {
+    "x": 423,
+    "y": 175,
+    "t": 2,
+    "h": false,
+    "s": false,
+    "p": -1,
+    "c": [],
+    "tL": "console",
+    "L": "console"
+  },
+  "2": {
+    "x": 106,
+    "y": 17,
+    "t": 47,
+    "h": false,
+    "s": false,
+    "d": "YES",
+    "o": "thcu",
+    "p": -1,
+    "c": [],
+    "tL": "value thcu",
+    "L": "value thcu"
+  },
+  "3": {
+    "x": 245,
+    "y": 139,
+    "t": 47,
+    "h": false,
+    "s": false,
+    "d": "NO",
+    "o": "yfxt",
+    "p": 7,
+    "c": [],
+    "tL": "value yfxt",
+    "L": "value yfxt"
+  },
+  "4": {
+    "x": 121,
+    "y": 403,
+    "t": 45,
+    "h": false,
+    "s": false,
+    "d": "YES",
+    "i": "thcu",
+    "p": 6,
+    "c": [],
+    "tL": "variable",
+    "L": "variable"
+  },
+  "5": {
+    "x": 106,
+    "y": 281,
+    "t": 23,
+    "h": false,
+    "s": false,
+    "f": "d block",
+    "d": "d block",
+    "p": -1,
+    "c": [
+      6,
+      10
+    ],
+    "tL": "block",
+    "L": "block"
+  },
+  "6": {
+    "x": 113.5,
+    "y": 357,
+    "t": 27,
+    "h": false,
+    "s": false,
+    "p": 5,
+    "c": [
+      4
+    ],
+    "tL": "print",
+    "L": "print"
+  },
+  "7": {
+    "x": 237.5,
+    "y": 93,
+    "t": 42,
+    "h": false,
+    "s": false,
+    "p": 9,
+    "c": [
+      3,
+      8
+    ],
+    "tL": "assign",
+    "L": "assign"
+  },
+  "8": {
+    "x": 245,
+    "y": 235,
+    "t": 45,
+    "h": false,
+    "s": false,
+    "d": "YES",
+    "i": "thcu",
+    "p": 7,
+    "c": [],
+    "tL": "variable",
+    "L": "variable"
+  },
+  "9": {
+    "x": 230,
+    "y": 17,
+    "t": 23,
+    "h": false,
+    "s": false,
+    "f": "j block",
+    "d": "j block",
+    "p": -1,
+    "c": [
+      7,
+      11
+    ],
+    "tL": "block",
+    "L": "block"
+  },
+  "10": {
+    "x": 113.5,
+    "y": 530,
+    "t": 16,
+    "h": false,
+    "s": false,
+    "i": "j block",
+    "o": "j block",
+    "p": 5,
+    "c": [],
+    "tL": "goto",
+    "L": "goto"
+  },
+  "11": {
+    "x": 237.5,
+    "y": 362,
+    "t": 16,
+    "h": false,
+    "s": false,
+    "i": "d block",
+    "o": "d block",
+    "p": 9,
+    "c": [],
+    "tL": "goto",
+    "L": "goto"
+  },
+  "12": {
+    "x": 113.5,
+    "y": 174,
+    "t": 16,
+    "h": false,
+    "s": false,
+    "i": "d block",
+    "o": "d block",
+    "p": 0,
+    "c": [],
+    "tL": "goto",
+    "L": "goto"
+  }
+}

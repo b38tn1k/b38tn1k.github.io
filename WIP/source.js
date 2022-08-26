@@ -1,19 +1,14 @@
 
-var widthOnTwo, heightOnTwo;
-var cells;
+var widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, demo0, demo1, demo2;
 var colors = [];
 var icolors = [];
 var dtcolors = [];
 var highlights = [];
 var lowlights = [];
-var c;
-var menu;
-var demo0;
-var demo1;
 var showBlockMenu = false;
 var showDemoMenu = false;
 var shareLinkGenerated = false;
-var shareLinkString;
+var slowMode = false;
 
 function deviceTurned() {
   setupScreen();
@@ -46,6 +41,7 @@ function preload() {
   c = loadStrings('nintendo-entertainment-system.hex');
   demo0 = loadJSON('helloworld.json');
   demo1 = loadJSON('demo1.json');
+  demo2 = loadJSON('demo2.json');
 }
 
 function colorSetup() {
@@ -121,6 +117,12 @@ function clearCells() {
   }
 }
 
+function toggleSlow() {
+  slowMode = !slowMode;
+  menu.html('');
+  createMenuDiv();
+}
+
 function createMenuDiv() {
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
@@ -146,10 +148,16 @@ function createMenuDiv() {
   if (showDemoMenu == true) {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo0)">hello world</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo1)">gotos & blocks</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demo2)">assigning</a><br>', true);
   }
 
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
+  if (slowMode == false) {
+    menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">slow mode</a><br>', true);
+  } else {
+    menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">normal mode</a><br>', true);
+  }
   menu.html('<br><a href="javascript:void(0)" onclick="saveCells()">save</a><br>', true);
   if (shareLinkGenerated == true) {
     menu.html('<a href="javascript:void(0)" onclick="shareLink()">reshare</a><br>', true);
@@ -184,4 +192,9 @@ function draw() {
   cells.draw();
   cells.update(mouseX, mouseY, mouseIsPressed);
   controller.update(cells);
+  if (cells.run == true && slowMode == true) {
+    frameRate(5);
+  } else {
+    frameRate(100);
+  }
 }

@@ -148,7 +148,7 @@ function createMenuDiv() {
     menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_DIV + ')">+ divide</a><br>', true);
     menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_MOD + ')">+ modulus</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_GOTO + ')">+ goto</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_ASSIGN + ')">+ assign</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_ASSIGN + ')">+ assign</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_PRINT + ')">+ print</a><br>', true);
   }
   menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);

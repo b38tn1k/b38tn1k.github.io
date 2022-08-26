@@ -76,10 +76,15 @@ class Cells {
 
   addCellWithInfo(info) {
     let type = info.t;
+    if (type > this.colors.length){
+      type = this.cells[info.p].type;
+    }
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
     if (type == T_START) {
       c = [this.colors[type], this.highlights[type], this.colors[49], this.inverted[type], this.dualtone[type]];
     }
+    console.log("parent", info.p);
+    console.log(c);
 
     let newCell = this.length;
     this.cells.push(new Cell(info.t, info.x, info.y, this.dWidth, this.dHeight, c, this.radius));
@@ -124,6 +129,9 @@ class Cells {
       for (key in Object.keys(myLoaderMap)) {
         cells.linkChildren(key, myLoaderMap[key]);
       }
+      for (let i = 0; i < this.length; i++) {
+        this.cells[i].reshape(true);
+      }
     } catch (e) {
       console.log('failed to load');
       return false;
@@ -134,7 +142,7 @@ class Cells {
   linkChildren(ind, info) {
     let id = parseInt(ind);
     for (let i = 0; i < info.c.length; i++) {
-      this.cells[id].addChild(info.c[i], this.cells[info.c[i]], true);
+      this.cells[id].forcefullyAddChildren(info.c[i], this.cells[info.c[i]], true);
     }
   }
 

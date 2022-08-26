@@ -467,6 +467,10 @@ class Cell {
       // this.selfDescribe();
     }
   }
+  forcefullyAddChildren(ind, child) {
+    this.childIndicies.push(ind);
+    this.children.push(child);
+  }
 
   addChild(ind, child, force=false) {
     if (child.type == T_START) {
@@ -578,7 +582,7 @@ class Cell {
 
   selfDescribe(short=false) {
     console.log('TYPE', blockLabels[this.type]);
-    if (short = false) {
+    if (short == false) {
       console.log('FUNCTION NAME', this.funcHandleSH);
       console.log('DATA',this.dataSH);
       console.log('INLET', this.inletHandleSH);
@@ -611,7 +615,7 @@ class Cell {
       let fudge = 2;
       if (x > this.x - fudge && x < this.x + this.width + fudge) {
         if (y > this.y - fudge && y < this.y + this.height + fudge) {
-          // this.selfDescribe();
+          this.selfDescribe(false);
           breaker = true;
         }
       }

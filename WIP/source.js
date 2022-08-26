@@ -73,7 +73,7 @@ function colorSetup() {
 
 function saveCells() {
   let map = cells.saveCells();
-  save(map, 'my.json', true);
+  save(map, 'my.json', false);
 }
 
 function shareLink() {
@@ -174,6 +174,8 @@ function setup() {
   if (loaded == false) {
     cells.addCell(T_START, 1.5 * menu.size().width);
     cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
+  } else {
+    tidy();
   }
 }
 

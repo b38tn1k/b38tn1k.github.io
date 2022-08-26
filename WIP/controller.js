@@ -77,9 +77,14 @@ class Controller {
           break;
         case T_PRINT:
           this.t_print();
+          this.moveByParent();
           break;
         case T_ASSIGN:
           this.t_assign();
+          this.moveByParent();
+          break;
+        case T_ADD:
+          this.t_math();
           this.moveByParent();
           break;
         default:
@@ -126,7 +131,6 @@ class Controller {
     this.script[1].indexLabeldiv.html(myOutput, true);
     this.script[1].lineNumber += 1;
     this.script[1].indexLabeldiv.elt.scrollTop = 100 * this.script[1].lineNumber;
-    this.moveByParent();
   }
 
   moveByParent() {
@@ -161,5 +165,9 @@ class Controller {
         }
       }
     }
+  }
+  t_math() {
+    let output;
+
   }
 };

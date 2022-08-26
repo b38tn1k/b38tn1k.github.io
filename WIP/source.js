@@ -173,7 +173,7 @@ function createMenuDiv() {
   menu.html('<br><a href="javascript:void(0)" onclick="saveCells()">save</a><br>', true);
   if (shareLinkGenerated == true) {
     menu.html('<a href="javascript:void(0)" onclick="shareLink()">reshare</a><br>', true);
-    menu.html('<a href="' +shareLinkString +'">share link</a><br>', true);
+    menu.html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
 
   } else {
     menu.html('<a href="javascript:void(0)" onclick="shareLink()">share</a><br>', true);

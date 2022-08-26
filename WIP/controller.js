@@ -55,7 +55,6 @@ class Controller {
   }
   step (flash) {
     if (this.index < this.script.length) {
-
       this.stack.push(this.index);
       this.activeCell = this.script[this.index];
       if (flash == true) {
@@ -84,6 +83,22 @@ class Controller {
           this.moveByParent();
           break;
         case T_ADD:
+          this.t_math();
+          this.moveByParent();
+          break;
+        case T_SUBTRACT:
+          this.t_math();
+          this.moveByParent();
+          break;
+        case T_MULT:
+          this.t_math();
+          this.moveByParent();
+          break;
+        case T_DIV:
+          this.t_math();
+          this.moveByParent();
+          break;
+        case T_MOD:
           this.t_math();
           this.moveByParent();
           break;

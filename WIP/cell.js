@@ -196,7 +196,7 @@ class Cell {
     if (this.hide === false){
       if (canvas === null) {
         // body
-        if (this.highlight === true && this.type != T_CONSOLE && this.type != T_INPUT && this.type != T_VAR && this.type != T_IF && this.type != T_WHILE && this.type != T_OUTLET && !(this.type == T_ASSIGN && (this.children.length == 2))) {
+        if (this.highlight === true && this.type != T_CONSOLE && this.type != T_INPUT && this.type != T_VAR && this.type != T_IF && this.type != T_WHILE && this.type != T_OUTLET) {
           fill(this.colors[2]);
         } else {
           fill(this.colors[0]);
@@ -476,13 +476,13 @@ class Cell {
     if (child.type == T_START) {
       return false;
     }
-    if ((this.type == T_ASSIGN) && (this.children.length == 2)) {
+    if ((this.type == T_ASSIGN) && child.type != T_VAR && child.type != T_INPUT) {
       return false;
     }
     if ((this.type == T_PRINT) && (this.children.length == 1)) {
       return false;
     }
-    if (force == false && (this.type == T_OUTLET || this.type == T_VAR || this.type == T_INPUT || this.type == T_IF || this.type == T_WHILE || this.type == T_CONSOLE)) {
+    if (force == false && (this.type == T_OUTLET || this.type == T_VAR || this.type == T_INPUT || this.type == T_IF || this.type == T_WHILE || this.type == T_CONSOLE || this.type == T_GOTO)) {
       return false;
     }
     if ((this.type != T_OUTLET && this.type != T_VAR && this.type != T_INPUT && this.type != T_IF && this.type != T_WHILE && this.type != T_CONSOLE) || force == true) {
@@ -615,7 +615,7 @@ class Cell {
       let fudge = 2;
       if (x > this.x - fudge && x < this.x + this.width + fudge) {
         if (y > this.y - fudge && y < this.y + this.height + fudge) {
-          this.selfDescribe(false);
+          // this.selfDescribe(false);
           breaker = true;
         }
       }

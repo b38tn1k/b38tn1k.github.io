@@ -8,6 +8,8 @@ class Controller {
     this.activeCell = null;
     this.running = false;
     this.prevIndex = -1;
+    this.varTable = {};
+    this.varMap = {};
   }
 
   startStop(cells) {
@@ -20,7 +22,15 @@ class Controller {
       this.script = cells.cells;
       this.terminate = this.script.length + 1;
       this.stack = [];
-      console.clear();
+      for (let i = 0; i < cells.length; i++) {
+        if (this.script[i].type == T_VAR) {
+          if (!(this.script[i].inletHandleSH in this.varMap)) {
+            this.varMap[this.script[i].inletHandleSH] = [];
+          }
+          this.varMap[this.script[i].inletHandleSH].push(this.script[i]);
+        }
+      }
+      // console.clear();
     }
     // stop by cells
     if (cells.run == false) {
@@ -39,7 +49,14 @@ class Controller {
       this.step();
     }
   }
+  HCF() {
+    this.index = this.terminate;
+  }
   step () {
+    // for (let i = 0; i < cells.length; i++) {
+    //   console.log("INDEX", i);
+    //   this.script[i].selfDescribe()
+    // }
     if (this.index < this.script.length) {
       this.stack.push(this.index);
       this.activeCell = this.script[this.index];
@@ -50,9 +67,6 @@ class Controller {
         case T_START:
           this.t_start();
           break;
-        case T_CONSOLE:
-          this.t_console();
-          break;
         case T_GOTO:
           this.t_goto();
           break;
@@ -61,6 +75,11 @@ class Controller {
           break;
         case T_PRINT:
           this.t_print();
+          break;
+        case T_ASSIGN:
+          this.t_assign();
+          this.moveByParent();
+          break;
         default:
           break;
       }
@@ -77,10 +96,6 @@ class Controller {
     } else {
       this.index = this.activeCell.childIndicies[0];
     }
-  }
-
-  t_console() {
-    // do nothing I can think of
   }
 
   t_goto() {
@@ -127,6 +142,20 @@ class Controller {
           this.index = parIndex;
           this.activeCell = parent;
           this.moveByParent();
+        }
+      }
+    }
+  }
+
+  t_assign() {
+    if (this.activeCell.children.length > 1) {
+      let assigner = this.activeCell.children[0];
+      let data = assigner.dataSH;
+      let cI = this.activeCell.childIndicies;
+      for (let i = 1; i < cI.length; i++) {
+        let key = this.script[cI[i]].inletHandleSH;
+        for (let i = 0; i < this.varMap[key].length; i++) {
+          this.varMap[key][i].updateDataSH(data);
         }
       }
     }

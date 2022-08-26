@@ -83,9 +83,6 @@ class Cells {
     if (type == T_START) {
       c = [this.colors[type], this.highlights[type], this.colors[49], this.inverted[type], this.dualtone[type]];
     }
-    console.log("parent", info.p);
-    console.log(c);
-
     let newCell = this.length;
     this.cells.push(new Cell(info.t, info.x, info.y, this.dWidth, this.dHeight, c, this.radius));
     this.cells[newCell].hide = info.h;
@@ -173,7 +170,7 @@ class Cells {
       this.cells[pIndex].moveC(this.cells[pIndex].x, this.cells[pIndex].y);
     }
 
-    let theOnesWithOutlets = [T_ASSIGN, T_EQUAL,T_LESS,T_GREATER,T_ADD,T_SUBTRACT,T_MULT,T_DIV,T_MOD];
+    let theOnesWithOutlets = [T_EQUAL,T_LESS,T_GREATER,T_ADD,T_SUBTRACT,T_MULT,T_DIV,T_MOD];
     let thisOneHasAnOutlet = false;
     for (let i = 0; i < theOnesWithOutlets.length; i++) {
       if (type == theOnesWithOutlets[i]) {
@@ -488,6 +485,12 @@ class Cells {
       // stop button
       if (this.cells[0].mode == M_START){
         this.startStop(x, y, mdown);
+      }
+      
+      for (let i = 0; i < this.length; i++) {
+        if (this.cells[i].parent == T_PRINT) {
+          this.cells[i].selfDescribe();
+        }
       }
       // and NOTHING ELSE CAUSE I SHOULD MAKE A NEW THING!
     }

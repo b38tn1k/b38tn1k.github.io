@@ -71,8 +71,7 @@ class Cell {
     // control etc
     this.funcHandleSH;
     this.dataSH;
-    this.inletHandleSH;
-    this.outletHandleSH;
+    this.handleSH;
     this.type = type
     this.textLabel = blockLabels[type];
     this.hasSelect = false;
@@ -453,11 +452,10 @@ class Cell {
           this.dataSH = this.input.value(); //what could go wrong :-P
           break;
         case T_GOTO:
-        this.inletHandleSH = this.input.value();
-        this.outletHandleSH = this.input.value();
+        this.handleSH = this.input.value();
           break;
         case T_VAR:
-          this.inletHandleSH = this.input.value();
+          this.handleSH = this.input.value();
           break;
         case T_INPUT:
           this.dataSH = this.input.value();
@@ -587,8 +585,7 @@ class Cell {
     if (short == false) {
       console.log('FUNCTION NAME', this.funcHandleSH);
       console.log('DATA',this.dataSH);
-      console.log('INLET', this.inletHandleSH);
-      console.log('OUTLET', this.outletHandleSH);
+      console.log('HANDLE', this.handleSH);
       console.log('CHILDREN', this.childIndicies);
     } else {
       if (this.funcHandleSH != null) {
@@ -597,11 +594,8 @@ class Cell {
       if (this.dataSH != null) {
         console.log('DATA',this.dataSH);
       }
-      if (this.inletHandleSH != null) {
-        console.log('INLET', this.inletHandleSH);
-      }
-      if (this.outletHandleSH != null) {
-        console.log('OUTLET', this.outletHandleSH);
+      if (this.handleSH != null) {
+        console.log('HANDLE', this.handleSH);
       }
       if (this.childIndicies.length > 0) {
         console.log('CHILDREN', this.childIndicies);

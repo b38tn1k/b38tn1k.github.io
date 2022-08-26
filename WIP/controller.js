@@ -24,10 +24,10 @@ class Controller {
       this.stack = [];
       for (let i = 0; i < cells.length; i++) {
         if (this.script[i].type == T_VAR) {
-          if (!(this.script[i].inletHandleSH in this.varMap)) {
-            this.varMap[this.script[i].inletHandleSH] = [];
+          if (!(this.script[i].handleSH in this.varMap)) {
+            this.varMap[this.script[i].handleSH] = [];
           }
-          this.varMap[this.script[i].inletHandleSH].push(this.script[i]);
+          this.varMap[this.script[i].handleSH].push(this.script[i]);
         }
       }
       // console.clear();
@@ -106,7 +106,7 @@ class Controller {
 
   t_goto() {
     console.log(this.activeCell.flash);
-    let next = this.activeCell.inletHandleSH;
+    let next = this.activeCell.handleSH;
     this.index = this.terminate;
     for (let i = 0; i < this.script.length; i++) {
       if (next == this.script[i].funcHandleSH) {
@@ -159,7 +159,7 @@ class Controller {
       let data = assigner.dataSH;
       let cI = this.activeCell.childIndicies;
       for (let i = 1; i < cI.length; i++) {
-        let key = this.script[cI[i]].inletHandleSH;
+        let key = this.script[cI[i]].handleSH;
         for (let i = 0; i < this.varMap[key].length; i++) {
           this.varMap[key][i].updateDataSH(data);
         }

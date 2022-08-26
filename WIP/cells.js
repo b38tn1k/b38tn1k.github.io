@@ -64,8 +64,7 @@ class Cells {
       snapshot[i]['s'] = this.cells[i].shrink;
       snapshot[i]['f'] = this.cells[i].funcHandleSH;
       snapshot[i]['d'] = this.cells[i].dataSH;
-      snapshot[i]['i'] = this.cells[i].inletHandleSH;
-      snapshot[i]['o'] = this.cells[i].outletHandleSH;
+      snapshot[i]['i'] = this.cells[i].handleSH;
       snapshot[i]['p'] = this.cells[i].parent;
       snapshot[i]['c'] = this.cells[i].childIndicies;
       snapshot[i]['tL'] = this.cells[i].textLabel;
@@ -89,8 +88,7 @@ class Cells {
     this.cells[newCell].shrink = info.s;
     this.cells[newCell].funcHandleSH = info.f;
     this.cells[newCell].dataSH = info.d;
-    this.cells[newCell].inletHandleSH = info.i;
-    this.cells[newCell].outletHandleSH = info.o;
+    this.cells[newCell].handleSH = info.i;
     this.cells[newCell].parent = info.p;
     this.cells[newCell].textLabel = info.tL;
     this.cells[newCell].indexLabeldiv.html(info.L);
@@ -154,7 +152,7 @@ class Cells {
     let pIndex = this.length - 1;
     if (type == T_INPUT) {
       let tempID = this.getID(4);
-      this.cells[pIndex].outletHandleSH= tempID;
+      this.cells[pIndex].handleSH= tempID;
       this.cells[pIndex].textLabel += ' ' + tempID;
       this.cells[pIndex].indexLabeldiv.html(this.cells[pIndex].textLabel);
       this.varHandles.push(tempID);
@@ -182,7 +180,7 @@ class Cells {
       this.cells[pIndex].addChild(pIndex + 1, this.cells[pIndex + 1]);
       this.cells[pIndex + 1].addParent(pIndex, this.cells[pIndex]);
       let tempID = this.getID(4);
-      this.cells[pIndex + 1].outletHandleSH= tempID;
+      this.cells[pIndex + 1].handleSH= tempID;
       this.cells[pIndex + 1].textLabel += ' ' + tempID;
       this.cells[pIndex + 1].indexLabeldiv.html(this.cells[pIndex + 1].textLabel);
       this.cells[pIndex + 1].updateDataSH('unset');
@@ -280,9 +278,9 @@ class Cells {
             if (this.cells[i].type == T_BLOCK) {
               delHandle.push(this.cells[i].funcHandleSH);
             } else {
-              delHandle.push(this.cells[i].outletHandleSH);
+              delHandle.push(this.cells[i].handleSH);
             }
-            this.varHandles.splice(this.varHandles.indexOf(this.cells[i].outletHandleSH), 1);
+            this.varHandles.splice(this.varHandles.indexOf(this.cells[i].handleSH), 1);
           }
         }
         // remove parent / child links and divs for those in delete mode
@@ -322,9 +320,9 @@ class Cells {
       }
       for (let i = 0; i < this.length; i++) {
         if (this.cells[i].hasSelect == true) {
-          if (delHandle.indexOf(this.cells[i].inletHandleSH) == -1) {
-            this.cells[i].input.option(this.cells[i].inletHandleSH);
-            this.cells[i].input.selected(this.cells[i].inletHandleSH);
+          if (delHandle.indexOf(this.cells[i].handleSH) == -1) {
+            this.cells[i].input.option(this.cells[i].handleSH);
+            this.cells[i].input.selected(this.cells[i].handleSH);
           }
         }
       }
@@ -401,8 +399,8 @@ class Cells {
           for (let j = 0; j < blocks.length; j++) {
             this.cells[i].input.option(blocks[j], blocks[j]);
           }
-          this.cells[i].inletHandleSH = this.cells[i].input.value();
-          this.cells[i].outletHandleSH = this.cells[i].input.value();
+          this.cells[i].handleSH = this.cells[i].input.value();
+          this.cells[i].handleSH = this.cells[i].input.value();
         }
 
       }
@@ -411,20 +409,20 @@ class Cells {
           for (let j = 0; j < this.varHandles.length; j++) {
             this.cells[vi].input.option(this.varHandles[j], this.varHandles[j]);
           }
-          this.cells[vi].inletHandleSH = this.cells[vi].input.value();
+          this.cells[vi].handleSH = this.cells[vi].input.value();
           //
-          if (this.varHandles.indexOf(this.cells[vi].inletHandleSH) == -1) {
-            this.varHandles.push(this.cells[vi].inletHandleSH);
+          if (this.varHandles.indexOf(this.cells[vi].handleSH) == -1) {
+            this.varHandles.push(this.cells[vi].handleSH);
           }
           //
           for (key in this.map) {
             if (key == T_INPUT) {
               for (let ii of this.map[key]) {
                 this.cells[ii].dataSH = this.cells[ii].input.value();
-                if (this.varHandles.indexOf(this.cells[ii].outletHandleSH) == -1) {
-                  this.varHandles.push(this.cells[ii].outletHandleSH);
+                if (this.varHandles.indexOf(this.cells[ii].handleSH) == -1) {
+                  this.varHandles.push(this.cells[ii].handleSH);
                 }
-                if (this.cells[vi].inletHandleSH == this.cells[ii].outletHandleSH) {
+                if (this.cells[vi].handleSH == this.cells[ii].handleSH) {
                   this.cells[vi].updateDataSH(this.cells[ii].input.value());
                 }
               }
@@ -432,7 +430,7 @@ class Cells {
 
             if (key == T_OUTLET) {
               for (let oi of this.map[key]) {
-                if (this.cells[vi].inletHandleSH == this.cells[oi].outletHandleSH) {
+                if (this.cells[vi].handleSH == this.cells[oi].handleSH) {
                   this.cells[vi].updateDataSH(this.cells[oi].dataSH);
                 }
               }
@@ -486,7 +484,7 @@ class Cells {
       if (this.cells[0].mode == M_START){
         this.startStop(x, y, mdown);
       }
-      
+
       for (let i = 0; i < this.length; i++) {
         if (this.cells[i].parent == T_PRINT) {
           this.cells[i].selfDescribe();

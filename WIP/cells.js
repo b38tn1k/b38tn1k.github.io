@@ -20,6 +20,38 @@ class Cells {
     return this.cells.length;
   }
 
+  tidy(xMin, yMin) {
+    let bigBlocks = [];
+    for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].parent == -1) {
+        this.cells[i].reshape(true);
+        bigBlocks.push(this.cells[i]);
+      }
+    }
+    bigBlocks.sort(function(a, b) {return a.width - b.width});
+    let x = xMin;
+    let y = yMin;
+    let offset = 0;
+    let newPos = [];
+    for (let i = 0; i < bigBlocks.length; i++) {
+      if (y + bigBlocks[i].height > windowHeight) {
+        x += offset + bigBlocks[i].childXBorder;
+        y = yMin;
+        offset = 0;
+      }
+      newPos.push([x, y]);
+      bigBlocks[i].reshape();
+      if (bigBlocks[i].width > offset) {
+        offset = bigBlocks[i].width;
+      }
+      y += bigBlocks[i].height + bigBlocks[i].childYBorder;
+    }
+    for (let i = 0; i < bigBlocks.length; i++) {
+      bigBlocks[i].x = newPos[i][0];
+      bigBlocks[i].y = newPos[i][1];
+    }
+  }
+
   saveCells() {
     this.mapAndLink();
     let snapshot = {}

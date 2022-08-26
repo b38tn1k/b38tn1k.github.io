@@ -37,6 +37,10 @@ function newCell(type) {
   cells.addCell(type, 1.5 * menu.size().width);
 }
 
+function tidy() {
+  let xOffset = 2*menu.x + menu.size().width;
+  cells.tidy(xOffset, 17);
+}
 
 function preload() {
   c = loadStrings('nintendo-entertainment-system.hex');
@@ -93,6 +97,8 @@ function loadCells(myLoaderMap) {
   for (key in Object.keys(myLoaderMap)) {
     cells.linkChildren(key, myLoaderMap[key]);
   }
+  let xOffset = 2*menu.x + menu.size().width;
+  cells.tidy(xOffset, 17);
 }
 
 function showHideBlockMenu() {
@@ -141,9 +147,10 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo0)">hello world</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo1)">gotos & blocks</a><br>', true);
   }
-  menu.html('<br><a href="javascript:void(0)" onclick="saveCells()">save</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
 
+  menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
+  menu.html('<br><a href="javascript:void(0)" onclick="saveCells()">save</a><br>', true);
   if (shareLinkGenerated == true) {
     menu.html('<a href="javascript:void(0)" onclick="shareLink()">reshare</a><br>', true);
     menu.html('<a href="' +shareLinkString +'">share link</a><br>', true);

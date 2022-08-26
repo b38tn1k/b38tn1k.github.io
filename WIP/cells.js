@@ -20,43 +20,6 @@ class Cells {
     return this.cells.length;
   }
 
-  addCellWithInfo(info) {
-    let colors = [];
-    console.log("hi");
-    for (let i = 0; i < info.colors.length; i++) {
-      colors.push(color(info.colors[i].levels));
-    }
-    let newCell = this.length;
-    this.cells.push(new Cell(info.type, info.x, info.y, this.dWidth, this.dHeight, colors, info.radius));
-    this.cells[newCell].minWidth = info.minWidth;
-    this.cells[newCell].minHeight = info.minHeight;
-    this.cells[newCell].hide = info.hide;
-    this.cells[newCell].shrink = info.shrink;
-    this.cells[newCell].funcHandleSH = info.funcHandleSH;
-    this.cells[newCell].dataSH = info.dataSH;
-    this.cells[newCell].inletHandleSH = info.inletHandleSH;
-    this.cells[newCell].outletHandleSH = info.outletHandleSH;
-    this.cells[newCell].parent = info.parent;
-    // this.cells[newCell].childIndicies = info.childIndicies;
-    this.cells[newCell].textLabel = info.textLabel;
-    this.cells[newCell].indexLabeldiv.html(info.indexLabeldivhtml);
-    if (this.cells[newCell].hasSelect == true) {
-      this.cells[newCell].input.option(info.inletHandleSH);
-      this.cells[newCell].input.selected(info.inletHandleSH);
-    }
-    if (this.cells[newCell].hasInput == true) {
-      this.cells[newCell].input.value(info.dataSH);
-    }
-
-  }
-
-  linkChildren(ind, info) {
-    let id = parseInt(ind);
-    for (let i = 0; i < info.childIndicies.length; i++) {
-      this.cells[id].addChild(info.childIndicies[i], this.cells[info.childIndicies[i]], true);
-    }
-  }
-
   saveCells() {
     this.mapAndLink();
     let snapshot = {}
@@ -64,25 +27,83 @@ class Cells {
       snapshot[i] = {};
       snapshot[i]['x'] = this.cells[i].x;
       snapshot[i]['y'] = this.cells[i].y;
-      snapshot[i]['type'] = this.cells[i].type;
-      snapshot[i]['width'] = this.cells[i].width;
-      snapshot[i]['height'] = this.cells[i].height;
-      snapshot[i]['minWidth'] = this.cells[i].minWidth;
-      snapshot[i]['minHeight'] = this.cells[i].minHeight;
-      snapshot[i]['hide'] = this.cells[i].hide;
-      snapshot[i]['shrink'] = this.cells[i].shrink;
-      snapshot[i]['colors'] = this.cells[i].colors;
-      snapshot[i]['radius'] = this.cells[i].radius;
-      snapshot[i]['funcHandleSH'] = this.cells[i].funcHandleSH;
-      snapshot[i]['dataSH'] = this.cells[i].dataSH;
-      snapshot[i]['inletHandleSH'] = this.cells[i].inletHandleSH;
-      snapshot[i]['outletHandleSH'] = this.cells[i].outletHandleSH;
-      snapshot[i]['parent'] = this.cells[i].parent;
-      snapshot[i]['childIndicies'] = this.cells[i].childIndicies;
-      snapshot[i]['textLabel'] = this.cells[i].textLabel;
-      snapshot[i]['indexLabeldivhtml'] = this.cells[i].indexLabeldiv.html();
+      snapshot[i]['t'] = this.cells[i].type;
+      snapshot[i]['h'] = this.cells[i].hide;
+      snapshot[i]['s'] = this.cells[i].shrink;
+      snapshot[i]['f'] = this.cells[i].funcHandleSH;
+      snapshot[i]['d'] = this.cells[i].dataSH;
+      snapshot[i]['i'] = this.cells[i].inletHandleSH;
+      snapshot[i]['o'] = this.cells[i].outletHandleSH;
+      snapshot[i]['p'] = this.cells[i].parent;
+      snapshot[i]['c'] = this.cells[i].childIndicies;
+      snapshot[i]['tL'] = this.cells[i].textLabel;
+      snapshot[i]['L'] = this.cells[i].indexLabeldiv.html();
     }
     return snapshot;
+  }
+
+  addCellWithInfo(info) {
+    let type = info.t;
+    let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
+    if (type == T_START) {
+      c = [this.colors[type], this.highlights[type], this.colors[49], this.inverted[type], this.dualtone[type]];
+    }
+
+    let newCell = this.length;
+    this.cells.push(new Cell(info.t, info.x, info.y, this.dWidth, this.dHeight, c, this.radius));
+    this.cells[newCell].hide = info.h;
+    this.cells[newCell].shrink = info.s;
+    this.cells[newCell].funcHandleSH = info.f;
+    this.cells[newCell].dataSH = info.d;
+    this.cells[newCell].inletHandleSH = info.i;
+    this.cells[newCell].outletHandleSH = info.o;
+    this.cells[newCell].parent = info.p;
+    this.cells[newCell].textLabel = info.tL;
+    this.cells[newCell].indexLabeldiv.html(info.L);
+    if (this.cells[newCell].hasSelect == true) {
+      this.cells[newCell].input.option(info.i);
+      this.cells[newCell].input.selected(info.i);
+    }
+    if (this.cells[newCell].hasInput == true) {
+      this.cells[newCell].input.value(info.d);
+    }
+  }
+
+  putInAddyBar() {
+    let myURL = getURL();
+    if (myURL.indexOf('#') != -1) {
+      myURL = myURL.slice(0, myURL.indexOf('#'));
+    }
+    let myString = myURL + '#' + encodeURIComponent(JSON.stringify(this.saveCells()));
+    return myString;
+  }
+
+  makeFromAddyBar(myString=getURL()) {
+    if (myString.indexOf('#') == -1) {
+      return false;
+    }
+    try {
+      let myURI = myString.slice(myString.indexOf('#')+1)
+      let myJSONString = decodeURIComponent(myURI);
+      let myLoaderMap = JSON.parse(myJSONString);
+      for (key in Object.keys(myLoaderMap)) {
+        cells.addCellWithInfo(myLoaderMap[key]);
+      }
+      for (key in Object.keys(myLoaderMap)) {
+        cells.linkChildren(key, myLoaderMap[key]);
+      }
+    } catch (e) {
+      console.log('failed to load');
+      return false;
+    }
+    return true;
+  }
+
+  linkChildren(ind, info) {
+    let id = parseInt(ind);
+    for (let i = 0; i < info.c.length; i++) {
+      this.cells[id].addChild(info.c[i], this.cells[info.c[i]], true);
+    }
   }
 
   addCell(type, startX) {
@@ -149,7 +170,6 @@ class Cells {
     if (this.varHandles.indexOf(tempID) != -1) {
       tempID = this.getID();
     }
-
     return tempID;
   }
 

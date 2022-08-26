@@ -339,9 +339,17 @@ class Cells {
             this.cells[vi].input.option(this.varHandles[j], this.varHandles[j]);
           }
           this.cells[vi].inletHandleSH = this.cells[vi].input.value();
+          //
+          if (this.varHandles.indexOf(this.cells[vi].inletHandleSH) == -1) {
+            this.varHandles.push(this.cells[vi].inletHandleSH);
+          }
+          //
           for (key in this.map) {
             if (key == T_INPUT) {
               for (let ii of this.map[key]) {
+                if (this.varHandles.indexOf(this.cells[ii].outletHandleSH) == -1) {
+                  this.varHandles.push(this.cells[ii].outletHandleSH);
+                }
                 if (this.cells[vi].inletHandleSH == this.cells[ii].outletHandleSH) {
                   this.cells[vi].updateDataSH(this.cells[ii].input.value());
                 }

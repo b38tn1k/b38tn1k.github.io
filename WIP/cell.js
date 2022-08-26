@@ -35,7 +35,7 @@ var T_PRINT = 27;
 var blockLabels = {};
 blockLabels[T_BLOCK] = "block";
 blockLabels[T_VAR] = "variable";
-blockLabels[T_INPUT] = "input";
+blockLabels[T_INPUT] = "value";
 blockLabels[T_IF] = "if";
 blockLabels[T_WHILE] = "while";
 blockLabels[T_EQUAL] = "equal";
@@ -87,6 +87,9 @@ class Cell {
     this.flash = false;
     this.toggleShape = false;
     // geometry
+    if (type == T_CONSOLE) {
+      w *= 2;
+    }
     this.childYBorder = 2*r;
     this.childXBorder = 1.5 * r;
     this.ySpacer = 0;
@@ -317,6 +320,13 @@ class Cell {
       this.height = this.yHeaderEnd;
       this.minHeight = this.height;
     }
+    if (this.width < this.indexLabeldiv.size().width + 3 * this.childXBorder) {
+      this.width = this.indexLabeldiv.size().width + 3 * this.childXBorder;
+    }
+    if (this.hasInput == true || this.hasSelect == true) {
+      let h = this.input.size().height;
+      this.input.size(this.width - 3 * this.childXBorder);
+    }
     this.moveC(this.x, this.y);
   }
 
@@ -432,6 +442,30 @@ class Cell {
       }
     }
     return breaker;
+  }
+
+  updateSHs() {
+    if ((this.hasInput == true) || (this.hasSelect == true)) {
+      switch (this.type) {
+        case T_BLOCK:
+          this.funcHandleSH = this.input.value();
+          this.dataSH = this.input.value(); //what could go wrong :-P
+          break;
+        case T_GOTO:
+        this.inletHandleSH = this.input.value();
+        this.outletHandleSH = this.input.value();
+          break;
+        case T_VAR:
+          this.inletHandleSH = this.input.value();
+          break;
+        case T_INPUT:
+          this.dataSH = this.input.value();
+          break;
+        default:
+          break;
+      }
+      // this.selfDescribe();
+    }
   }
 
   addChild(ind, child, force=false) {

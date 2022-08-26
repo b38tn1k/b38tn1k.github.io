@@ -8,6 +8,7 @@ var highlights = [];
 var lowlights = [];
 var c;
 var menu;
+var demo0;
 var demo1;
 var wait = false;
 
@@ -36,7 +37,8 @@ function newCell(type) {
 
 function preload() {
   c = loadStrings('nintendo-entertainment-system.hex');
-  demo1 = loadJSON('my.json');
+  demo0 = loadJSON('helloworld.json');
+  demo1 = loadJSON('demo1.json');
 }
 
 function colorSetup() {
@@ -63,34 +65,11 @@ function colorSetup() {
 }
 
 function saveCells() {
-  cells.mapAndLink();
-  let map = {}
-  for (let i = 0; i < cells.length; i++) {
-    map[i] = {};
-    map[i]['x'] = cells.cells[i].x;
-    map[i]['y'] = cells.cells[i].y;
-    map[i]['type'] = cells.cells[i].type;
-    map[i]['width'] = cells.cells[i].width;
-    map[i]['height'] = cells.cells[i].height;
-    map[i]['minWidth'] = cells.cells[i].minWidth;
-    map[i]['minHeight'] = cells.cells[i].minHeight;
-    map[i]['hide'] = cells.cells[i].hide;
-    map[i]['shrink'] = cells.cells[i].shrink;
-    map[i]['colors'] = cells.cells[i].colors;
-    map[i]['radius'] = cells.cells[i].radius;
-    map[i]['funcHandleSH'] = cells.cells[i].funcHandleSH;
-    map[i]['dataSH'] = cells.cells[i].dataSH;
-    map[i]['inletHandleSH'] = cells.cells[i].inletHandleSH;
-    map[i]['outletHandleSH'] = cells.cells[i].outletHandleSH;
-    map[i]['parent'] = cells.cells[i].parent;
-    map[i]['childIndicies'] = cells.cells[i].childIndicies;
-    map[i]['textLabel'] = cells.cells[i].textLabel;
-    map[i]['indexLabeldivhtml'] = cells.cells[i].indexLabeldiv.html();
-  }
+  let map = cells.saveCells();
   save(map, 'my.json', true);
 }
 
-function loadCells() {
+function loadCells(myLoaderMap) {
   wait = true;
   for (let i = 0; i < cells.length; i++) {
     cells.cells[i].mode = M_DELETE;
@@ -100,11 +79,11 @@ function loadCells() {
   cells.cells[1].indexLabeldiv.remove();
 
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
-  for (key in Object.keys(demo1)) {
-    cells.addCellWithInfo(demo1[key]);
+  for (key in Object.keys(myLoaderMap)) {
+    cells.addCellWithInfo(myLoaderMap[key]);
   }
-  for (key in Object.keys(demo1)) {
-    cells.linkChildren(key, demo1[key]);
+  for (key in Object.keys(myLoaderMap)) {
+    cells.linkChildren(key, myLoaderMap[key]);
   }
 
   wait = false;
@@ -116,7 +95,7 @@ function setup() {
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
   controller = new Controller();
   menu = createDiv('<a href="javascript:void(0)" onclick="newCell(' + T_BLOCK + ')">+ block</a><br>');
-  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_INPUT + ')">+ input</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_INPUT + ')">+ value</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_VAR + ')">+ variable</a><br>', true);
   menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_IF + ')">+ if</a><br>', true);
   menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_WHILE + ')">+ while</a><br>', true);
@@ -133,6 +112,7 @@ function setup() {
   menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_ASSIGN + ')">+ assign</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_PRINT + ')">+ print</a><br>', true);
   menu.html('<br><a class="bad" href="javascript:void(0)" onclick="saveCells()">save</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="loadCells(demo0)">hello world</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="loadCells(demo1)">demo 1</a><br>', true);
   menu.position(10, 10);
   menu.style('font-size', '16px');

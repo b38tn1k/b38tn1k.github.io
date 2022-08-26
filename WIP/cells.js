@@ -27,9 +27,9 @@ class Cells {
       colors.push(color(info.colors[i].levels));
     }
     let newCell = this.length;
-    this.cells.push(new Cell(info.type, info.x, info.y, info.width, info.height, colors, info.radius));
-    this.cells[newCell].minWidth = info.minwidth;
-    this.cells[newCell].minHeight = info.minheight;
+    this.cells.push(new Cell(info.type, info.x, info.y, this.dWidth, this.dHeight, colors, info.radius));
+    this.cells[newCell].minWidth = info.minWidth;
+    this.cells[newCell].minHeight = info.minHeight;
     this.cells[newCell].hide = info.hide;
     this.cells[newCell].shrink = info.shrink;
     this.cells[newCell].funcHandleSH = info.funcHandleSH;
@@ -47,6 +47,7 @@ class Cells {
     if (this.cells[newCell].hasInput == true) {
       this.cells[newCell].input.value(info.dataSH);
     }
+
   }
 
   linkChildren(ind, info) {
@@ -56,19 +57,42 @@ class Cells {
     }
   }
 
+  saveCells() {
+    this.mapAndLink();
+    let snapshot = {}
+    for (let i = 0; i < cells.length; i++) {
+      snapshot[i] = {};
+      snapshot[i]['x'] = this.cells[i].x;
+      snapshot[i]['y'] = this.cells[i].y;
+      snapshot[i]['type'] = this.cells[i].type;
+      snapshot[i]['width'] = this.cells[i].width;
+      snapshot[i]['height'] = this.cells[i].height;
+      snapshot[i]['minWidth'] = this.cells[i].minWidth;
+      snapshot[i]['minHeight'] = this.cells[i].minHeight;
+      snapshot[i]['hide'] = this.cells[i].hide;
+      snapshot[i]['shrink'] = this.cells[i].shrink;
+      snapshot[i]['colors'] = this.cells[i].colors;
+      snapshot[i]['radius'] = this.cells[i].radius;
+      snapshot[i]['funcHandleSH'] = this.cells[i].funcHandleSH;
+      snapshot[i]['dataSH'] = this.cells[i].dataSH;
+      snapshot[i]['inletHandleSH'] = this.cells[i].inletHandleSH;
+      snapshot[i]['outletHandleSH'] = this.cells[i].outletHandleSH;
+      snapshot[i]['parent'] = this.cells[i].parent;
+      snapshot[i]['childIndicies'] = this.cells[i].childIndicies;
+      snapshot[i]['textLabel'] = this.cells[i].textLabel;
+      snapshot[i]['indexLabeldivhtml'] = this.cells[i].indexLabeldiv.html();
+    }
+    return snapshot;
+  }
+
   addCell(type, startX) {
     let x = startX;//0.15 * windowWidth;
     let y = 17;
-    // let width = this.dWidth;
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
     if (type == T_START) {
       c = [this.colors[type], this.highlights[type], this.colors[49], this.inverted[type], this.dualtone[type]];
     }
-    let width = this.dWidth;
-    if (type == T_CONSOLE) {
-      width *= 2;
-    }
-    this.cells.push(new Cell(type, x, y, width, this.dHeight, c, this.dRadius));
+    this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, c, this.dRadius));
     let pIndex = this.length - 1;
     if (type == T_INPUT) {
       let tempID = this.getID(4);
@@ -291,15 +315,18 @@ class Cells {
 
   mapAndLink() {
     let blocks = [];
+    blocks.push('none');
     this.map = {};
     for (let i = 0; i < this.length; i++) {
+
       if (this.cells[i].type in this.map) {
         this.map[this.cells[i].type].add(i);
       } else {
         this.map[this.cells[i].type] = new Set();
         this.map[this.cells[i].type].add(i);
       }
-      blocks.push('none');
+      // grab everything
+      this.cells[i].updateSHs();
       // make pretty
       this.cells[i].reshape();
       // read from block names
@@ -307,7 +334,6 @@ class Cells {
         let v = this.cells[i].input.value();
         if (v.length > 0) {
           blocks.push(v);
-          this.cells[i].updateFuncHandleSH(v);
         }
       }
     }

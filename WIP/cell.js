@@ -619,7 +619,7 @@ class Cell {
       if (x > this.x - fudge && x < this.x + this.width + fudge) {
         if (y > this.y - fudge && y < this.y + this.height + fudge) {
           // this.selfDescribe(false);
-          this.unsetData()
+          // this.unsetData()
           breaker = true;
         }
       }

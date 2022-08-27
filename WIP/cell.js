@@ -86,9 +86,6 @@ class Cell {
     this.flash = false;
     this.toggleShape = false;
     // geometry
-    if (type == T_CONSOLE) {
-      w *= 2;
-    }
     this.childYBorder = 2*r;
     this.childXBorder = 1.5 * r;
     this.ySpacer = 0;
@@ -115,6 +112,8 @@ class Cell {
     this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size')) + this.childYBorder;
     if (this.type == T_START) {
       this.yHeaderEnd += 2 * this.handleH;
+    } else {
+      this.yHeaderEnd -= 2 * this.handleH;
     }
     this.height += this.yHeaderEnd;
     this.startHeight = this.height;
@@ -184,7 +183,7 @@ class Cell {
   updateDataSH(value) {
     this.dataSH = value;
     if (this.type != T_VAR) {
-      let htmlString = this.textLabel + '<br><br>' + String(this.dataSH);
+      let htmlString = this.textLabel + '<br>' + String(this.dataSH);
       this.indexLabeldiv.html(htmlString);
     } else {
       this.varLabeldiv.html(value);
@@ -312,6 +311,9 @@ class Cell {
     if (heightSum > this.height) {
       this.height = heightSum;
       this.minHeight = this.height;
+    }
+    if (this.height < this.indexLabeldiv.size().height) {
+      this.minHeight = this.y - this.indexLabeldiv.position().y + this.indexLabeldiv.size().height + this.childYBorder;
     }
     if (reshape == true) {
       this.height = this.minHeight;
@@ -605,6 +607,11 @@ class Cell {
     console.log('\n');
   }
 
+  unsetData(){
+    let nothing;
+    this.dataSH = nothing;
+  }
+
   inArea(x, y) {
     let breaker = false;
     if (this.hide === false) {
@@ -612,6 +619,7 @@ class Cell {
       if (x > this.x - fudge && x < this.x + this.width + fudge) {
         if (y > this.y - fudge && y < this.y + this.height + fudge) {
           // this.selfDescribe(false);
+          this.unsetData()
           breaker = true;
         }
       }

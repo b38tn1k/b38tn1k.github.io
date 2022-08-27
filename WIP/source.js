@@ -1,5 +1,5 @@
 
-var widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, demo0, demo1, demo2;
+var widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, demo0, demo1, demo2, demo3;
 var colors = [];
 var icolors = [];
 var dtcolors = [];
@@ -43,6 +43,7 @@ function preload() {
   demo0 = loadJSON('helloworld.json');
   demo1 = loadJSON('demo1.json');
   demo2 = loadJSON('demo2.json');
+  demo3 = loadJSON('demo3.json');
 }
 
 function colorSetup() {
@@ -156,8 +157,8 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo0)">hello world</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo1)">gotos & blocks</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo2)">assigning</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demo3)">basic math</a><br>', true);
   }
-
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
   if (slowMode == false) {

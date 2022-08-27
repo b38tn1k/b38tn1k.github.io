@@ -22,20 +22,25 @@ class Cells {
 
   tidy(xMin, yMin) {
     let bigBlocks = [];
+    let consol, start;
     for (let i = 0; i < this.length; i++) {
-      if (this.cells[i].parent == -1) {
+      if (this.cells[i].parent == -1 && this.cells[i].type != T_START && this.cells[i].type != T_CONSOLE) {
         this.cells[i].reshape(true);
         bigBlocks.push(this.cells[i]);
       }
     }
+    this.cells[1].width = this.cells[0].width;
+    this.cells[1].height = 5 * this.dHeight;
+    this.cells[1].resizeConsole();
     bigBlocks.sort(function(a, b) {return a.width - b.width});
+    bigBlocks.unshift(this.cells[0], this.cells[1]);
     let x = xMin;
     let y = yMin;
     let offset = 0;
     let newPos = [];
     for (let i = 0; i < bigBlocks.length; i++) {
       if (y + bigBlocks[i].height > windowHeight) {
-        x += offset + bigBlocks[i].childXBorder;
+        x += offset + bigBlocks[i].childXBorder * 3;
         y = yMin;
         offset = 0;
       }
@@ -142,6 +147,7 @@ class Cells {
   }
 
   addCell(type, startX) {
+    this.mapAndLink();
     let x = startX;//0.15 * windowWidth;
     let y = 17;
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
@@ -338,12 +344,12 @@ class Cells {
   }
 
   doParentDrop(x, y, mdown) {
-    let pParentIndex = -1;
+    let pParentIndexes = [];
     if (this.cells[this.activeIndex].type != T_START) {
       for (let i = 0; i < this.length; i++) {
         if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
           this.cells[i].highlight = mdown;
-          pParentIndex = i;
+          pParentIndexes.push(i);
         } else {
           this.cells[i].highlight = false;
         }
@@ -352,7 +358,16 @@ class Cells {
     // release
     if (mdown === false && this.cells[this.activeIndex].mode == M_MOVE) {
       // create parent/child link and initial align
-      if (pParentIndex != -1) {
+      if (pParentIndexes.length != 0) {
+        let pParentIndex = pParentIndexes[0];
+        for (let i = 0; i < pParentIndexes.length; i++) {
+          let current = this.cells[pParentIndexes[i]];
+          for (let j = 0; j < pParentIndexes.length; j++) {
+            if (pParentIndexes[j] == current.parent) {
+              pParentIndex = pParentIndexes[i];
+            }
+          }
+        }
         if (this.cells[this.activeIndex].parent != -1) {
           this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
           this.cells[this.activeIndex].removeParent();
@@ -399,7 +414,6 @@ class Cells {
           for (let j = 0; j < blocks.length; j++) {
             this.cells[i].input.option(blocks[j], blocks[j]);
           }
-          this.cells[i].handleSH = this.cells[i].input.value();
           this.cells[i].handleSH = this.cells[i].input.value();
         }
 

@@ -30,6 +30,13 @@ class Controller {
           this.varMap[this.script[i].handleSH].push(this.script[i]);
         }
       }
+      for (key in this.varMap) {
+        if (cells.varHandles.indexOf(key) == -1) {
+          cells.varHandles.push(key);
+          cells.mapAndLink();
+          this.startStop(cells);
+        }
+      }
       // console.clear();
     }
     // stop by cells
@@ -57,11 +64,9 @@ class Controller {
     if (this.index < this.script.length) {
       this.stack.push(this.index);
       this.activeCell = this.script[this.index];
-      if (flash == true) {
+      if (flash == true && this.stack.length > 1) {
         this.activeCell.flash = true;
-        if (this.stack.length > 1) {
-          this.script[this.stack[this.stack.length-2]].flash = false;
-        }
+        this.script[this.stack[this.stack.length-2]].flash = false;
       }
 
       switch(this.activeCell.type) {
@@ -111,6 +116,7 @@ class Controller {
   }
 
   t_start() {
+    console.log(this.activeCell.children.length);
     if (this.activeCell.children.length == 0) {
       this.run = false;
       this.index = this.terminate;

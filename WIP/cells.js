@@ -14,6 +14,8 @@ class Cells {
     this.varHandles = ['none'];
     this.map = {};
     this.run = false;
+    this.viewX = 0;
+    this.viewY = 0;
   }
 
   get length() {
@@ -99,12 +101,24 @@ class Cells {
       this.cells[newCell].textLabel = info.tL;
       this.cells[newCell].indexLabeldiv.html(info.L);
     }
-    if (this.cells[newCell].hasSelect == true) {
+    if (blockConfig[this.cells[newCell].type]['input type'] == I_SELECT) {
       this.cells[newCell].input.option(info.i);
       this.cells[newCell].input.selected(info.i);
     }
-    if (this.cells[newCell].hasInput == true) {
+    if (blockConfig[this.cells[newCell].type]['input type'] == I_TEXT || blockConfig[this.cells[newCell].type]['input type'] == I_TEXT_AREA) {
       this.cells[newCell].input.value(info.d);
+    }
+  }
+
+  nudgeX(x) {
+    let nudgeVal = 0;
+    for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].x < x) {
+        nudgeVal = max(nudgeVal, x - this.cells[i].x);
+      }
+    }
+    for (let i = 0; i < this.length; i++) {
+      this.cells[i].moveC(this.cells[i].x + nudgeVal, this.cells[i].y);
     }
   }
 
@@ -222,6 +236,7 @@ class Cells {
         this.cells[i].mode = M_SELECTED;
         if (this.cells[i].checkButtons(x, y) === true) {
           this.activeIndex = i;
+          return true;
           break;
         }
       } else {
@@ -229,6 +244,7 @@ class Cells {
         this.activeIndex = -1;
       }
     }
+    return false;
   }
 
   pprint(myStr) {
@@ -318,7 +334,7 @@ class Cells {
     this.activeIndex = -1;
     if (rebuildFlag === true) {
       for (let i = 0; i < this.length; i++) {
-        if (this.cells[i].hasSelect == true) {
+        if (blockConfig[this.cells[i].type]['input type'] == I_SELECT) {
           this.cells[i].input.remove();
           if (this.cells[i].type != T_GOTO){
             this.cells[i].varLabeldiv.remove();
@@ -327,7 +343,7 @@ class Cells {
         }
       }
       for (let i = 0; i < this.length; i++) {
-        if (this.cells[i].hasSelect == true) {
+        if (blockConfig[this.cells[i].type]['input type'] == I_SELECT) {
           if (delHandle.indexOf(this.cells[i].handleSH) == -1) {
             this.cells[i].input.option(this.cells[i].handleSH);
             this.cells[i].input.selected(this.cells[i].handleSH);
@@ -418,7 +434,11 @@ class Cells {
           }
           this.cells[i].handleSH = this.cells[i].input.value();
         }
-
+      }
+      if (key == T_COMMENT) {
+        for (let i of this.map[key]) {
+          this.cells[i].dataSH = this.cells[i].input.value();
+        }
       }
       if (key == T_VAR) {
         for (let vi of this.map[key]) {
@@ -471,7 +491,6 @@ class Cells {
             this.cells[this.activeIndex].mode = M_IDLE;
             this.activeIndex = -1;
           }
-
         }
         if (this.cells[this.activeIndex].mode == M_START){
           this.startStop(x, y, mdown);
@@ -510,12 +529,29 @@ class Cells {
     }
   }
 
+  updateView(xPos, yPos) {
+    // this.viewX = xPos;
+    // this.viewY = yPos;
+
+  }
+
+  cellInView(cell) {
+    let inview = false;
+    if (cell.x > this.viewX && cell.x < windowWidth + this.viewX) {
+      if (cell.y > this.viewY && cell.y < windowHeight + this.viewY) {
+        inview = true;
+      }
+    }
+    // return inview;
+    return true;
+
+  }
+
   draw(canvas = null) {
     for (let i = 0; i < this.length; i++) {
-      this.cells[i].draw();
-    }
-    if (this.activeIndex != -1) {
-      this.cells[this.activeIndex].draw();
+      if (this.cellInView(this.cells[i]) == true) {
+        this.cells[i].draw(this.viewX, this.viewY);
+      }
     }
   }
 

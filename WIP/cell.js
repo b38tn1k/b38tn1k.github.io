@@ -1,95 +1,9 @@
-var M_IDLE = 0;
-var M_MOVE = 1;
-var M_RESIZE = 2;
-var M_DELETE = 3;
-var M_SELECTED = 4;
-var M_EXPAND_OR_COLLAPSE = 5;
-var M_START = 6;
-var M_NEW = 7;
-
-var T_START = 1;
-var T_STOP = 0;
-var T_COMMENT = 3;
-var T_BLOCK = 23;
-var T_VAR = 45;
-var T_INPUT = 47;
-var T_IF = 30;
-var T_WHILE = 7;
-var T_EQUAL = 48;
-var T_LESS = 9;
-var T_GREATER = 38;
-var T_ADD = 11;
-var T_SUBTRACT = 52;
-var T_MULT = 13;
-var T_DIV = 14;
-var T_MOD = 32;
-var T_GOTO = 16;
-var T_NOT = 28;
-var T_CONDITION = 103;
-var T_ELSE = 102;
-var T_DO = 101;
-var T_OUTLET = 104;
-var T_ASSIGN = 42;
-var T_CONSOLE = 2;
-var T_PRINT = 27;
-
-var blockLabels = {};
-blockLabels[T_BLOCK] = "set block";
-blockLabels[T_GOTO] = "block";
-blockLabels[T_VAR] = "variable";
-blockLabels[T_INPUT] = "set variable";
-blockLabels[T_IF] = "if";
-blockLabels[T_WHILE] = "while";
-blockLabels[T_EQUAL] = "equal";
-blockLabels[T_LESS] = "less";
-blockLabels[T_GREATER] = "greater";
-blockLabels[T_ADD] = "add";
-blockLabels[T_SUBTRACT] = "subtract";
-blockLabels[T_MULT] = "multiply";
-blockLabels[T_DIV] = "divide";
-blockLabels[T_MOD] = "modulus";
-blockLabels[T_NOT] = "not";
-blockLabels[T_CONDITION] = "condition";
-blockLabels[T_ELSE] = "else";
-blockLabels[T_DO] = "do";
-blockLabels[T_OUTLET] = "out";
-blockLabels[T_START] = "start";
-blockLabels[T_STOP] = "stop";
-blockLabels[T_ASSIGN] = "assign";
-blockLabels[T_CONSOLE] = "console";
-blockLabels[T_PRINT] = "print";
-blockLabels[T_COMMENT] = "//";
-
-var notStartOrConsole = [T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT];
-var acceptChild = {};
-acceptChild[T_BLOCK] = notStartOrConsole;
-acceptChild[T_VAR] = []; //nothing
-acceptChild[T_INPUT] = []; //nothing
-acceptChild[T_IF] = [T_CONDITION, T_DO, T_ELSE];
-acceptChild[T_WHILE] = [T_CONDITION, T_DO, T_ELSE];
-acceptChild[T_EQUAL] = [T_VAR, T_INPUT];
-acceptChild[T_LESS] = [T_VAR, T_INPUT];
-acceptChild[T_GREATER] = [T_VAR, T_INPUT];
-acceptChild[T_ADD] = [T_VAR, T_INPUT];
-acceptChild[T_SUBTRACT] = [T_VAR, T_INPUT];
-acceptChild[T_MULT] = [T_VAR, T_INPUT];
-acceptChild[T_DIV] = [T_VAR, T_INPUT];
-acceptChild[T_MOD] = [T_VAR, T_INPUT];
-acceptChild[T_GOTO] = [];
-acceptChild[T_NOT] = [T_VAR, T_INPUT];
-acceptChild[T_CONDITION] = [T_LESS, T_GREATER, T_NOT, T_EQUAL];
-acceptChild[T_ELSE] = notStartOrConsole;
-acceptChild[T_DO] = notStartOrConsole;
-acceptChild[T_OUTLET] = [];
-acceptChild[T_START] = notStartOrConsole;
-acceptChild[T_STOP] = [];
-acceptChild[T_ASSIGN] = [T_VAR, T_INPUT];
-acceptChild[T_CONSOLE] = [];
-acceptChild[T_PRINT] = [T_VAR, T_INPUT];
-acceptChild[T_COMMENT] = [];
-
 function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
+}
+
+function tempDisableMouse(){
+  mouseIsPressed = false;
 }
 
 class Cell {
@@ -103,9 +17,7 @@ class Cell {
     this.dataSH;
     this.handleSH;
     this.type = type
-    this.textLabel = blockLabels[type];
-    this.hasSelect = false;
-    this.hasInput = false;
+    this.textLabel = blockConfig[this.type]['block label'];
     this.hasHandle = false;
     // labels, tools, setup
     if (type == T_BLOCK || type == T_INPUT || type == T_OUTLET) {
@@ -171,19 +83,17 @@ class Cell {
     this.height = this.startHeight;
     this.width = this.startWidth;
     this.ySpacer = 0;
-    if (this.type == T_BLOCK || this.type == T_COMMENT || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
-      if (this.type == T_BLOCK || this.type == T_INPUT) {
-        this.input = createInput();
-        this.hasInput = true;
-      }
-      if (this.type == T_COMMENT) {
-        this.input = createElement('textarea');
-        this.hasInput = true;
-      }
-      if (this.type == T_GOTO || this.type == T_VAR){
-        this.input = createSelect();
-        this.hasSelect = true;
-      }
+    if (blockConfig[this.type]['input type'] == I_TEXT) {
+      this.input = createInput();
+    }
+    if (blockConfig[this.type]['input type'] == I_TEXT_AREA) {
+      this.input = createElement('textarea');
+    }
+    if (blockConfig[this.type]['input type'] == I_SELECT) {
+      this.input = createSelect();
+      this.input.changed(tempDisableMouse);
+    }
+    if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.style('font-size', '16px');
       let h = this.input.size().height;
       this.standardInputHeight = h;
@@ -193,7 +103,6 @@ class Cell {
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
       this.input.style('border', 0);
       this.input.position(this.x + this.childXBorder, this.y + this.yHeaderEnd);
-
       this.width = this.input.size().width + 3*this.childXBorder;
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
@@ -224,7 +133,9 @@ class Cell {
     }
   }
 
-  draw(canvas=null) {
+  draw(xOff, yOff, canvas=null) {
+    let x = this.x;
+    let y = this.y;
     if (this.hide === false){
       if (canvas === null) {
         // body
@@ -237,34 +148,30 @@ class Cell {
             fill(this.colors[0]);
           }
         }
-
-
         if ((this.highlight === true) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
           this.input.hide();
         }
         if ((this.highlight === false) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
           this.input.show();
         }
-
-
         stroke(this.colors[1]);
-        rect(this.x, this.y, this.width, this.height, this.radius);
-
-        // resize handle
-        rect(this.x + this.width - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
-
-        if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
-          // move handle
+        rect(x, y, this.width, this.height, this.radius);
+        if (blockConfig[this.type]['handles']['move'] == true) {
           fill(this.colors[1]);
-          rect(this.x, this.y, this.handleW, this.handleH);
-          // shrinkHandle
-          rect(this.x + this.width/2 - this.handleW, this.y + this.height - this.handleH, this.handleW, this.handleH);
-          if (this.type != T_START) {
-            // delete handle
-            fill(this.colors[3]);
-            stroke(this.colors[3]);
-            rect(this.x + this.width - this.handleW, this.y, this.handleW, this.handleH);
-          }
+          rect(x, y, this.handleW, this.handleH);
+        }
+        if (blockConfig[this.type]['handles']['resize'] == true) {
+          fill(this.colors[1]);
+          rect(x + this.width - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
+        }
+        if (blockConfig[this.type]['handles']['expand'] == true) {
+          fill(this.colors[1]);
+          rect(x + this.width/2 - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
+        }
+        if (blockConfig[this.type]['handles']['delete'] == true) {
+          fill(this.colors[3]);
+          stroke(this.colors[3]);
+          rect(x + this.width - this.handleW, y, this.handleW, this.handleH);
         }
       }
       for (let i = 0; i < this.children.length; i++) {
@@ -279,14 +186,13 @@ class Cell {
     if (this.type == T_START && this.shrink == false) {
       stroke(this.colors[1]);
       fill(this.colors[0]);
-      rect(this.x + this.width/2 - 1.5*this.handleW, this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH), 3*this.handleW, 3 * this.handleH);
+      rect(x + this.width/2 - 1.5*this.handleW, y + this.yHeaderEnd - 2 * (1.25 * this.handleH), 3*this.handleW, 3 * this.handleH);
       fill(this.colors[2]);
       if (this.toggleShape === true) {
-        rect(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.handleW * 2, this.handleH * 2);
+        rect(x + this.width/2 - this.handleW, y + this.yHeaderEnd - 2 * this.handleH, this.handleW * 2, this.handleH * 2);
       } else {
-        triangle(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd, this.x + this.width/2 + this.handleW, this.y + this.yHeaderEnd - this.handleH);
+        triangle(x + this.width/2 - this.handleW, y + this.yHeaderEnd - 2 * this.handleH, x + this.width/2 - this.handleW, y + this.yHeaderEnd, x + this.width/2 + this.handleW, y + this.yHeaderEnd - this.handleH);
       }
-
     }
   }
 
@@ -295,7 +201,8 @@ class Cell {
     y = max(y, this.handleH);
     this.x = x;
     this.y = y;
-    if (this.hasInput == true || this.hasSelect == true) {
+    if (blockConfig[this.type]['input type'] != I_NONE) {
+    // if (this.hasInput == true || this.hasSelect == true) {
       this.input.position(this.x + this.childXBorder, this.y + this.childYBorder + this.yHeaderEnd);
     }
     if (this.type == T_VAR) {
@@ -367,7 +274,7 @@ class Cell {
     if (this.width < this.indexLabeldiv.size().width + 3 * this.childXBorder) {
       this.width = this.indexLabeldiv.size().width + 3 * this.childXBorder;
     }
-    if (this.hasInput == true || this.hasSelect == true) {
+    if (blockConfig[this.type]['input type'] != I_NONE) {
       let h = this.input.size().height;
       this.input.size(this.width - 3 * this.childXBorder);
     }
@@ -387,7 +294,7 @@ class Cell {
       this.indexLabeldiv.remove();
       par = this.parent;
       this.removeParent();
-      if (this.hasSelect == true || this.hasInput == true) {
+      if (blockConfig[this.type]['input type'] != I_NONE) {
         this.input.remove();
       }
       if (this.type == T_VAR) {
@@ -400,10 +307,10 @@ class Cell {
   toggleStartForm(myBool){
     this.toggleShape = myBool;
     if (myBool == true) {
-      this.textLabel = blockLabels[T_STOP];
+      this.textLabel = blockConfig[T_STOP]['block label'];
       this.indexLabeldiv.html(this.textLabel);
     } else {
-      this.textLabel = blockLabels[T_START];
+      this.textLabel = blockConfig[T_START]['block label'];
       this.indexLabeldiv.html(this.textLabel);
     }
   }
@@ -434,52 +341,55 @@ class Cell {
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;
-      //resize handle?
-      if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
-        if (y > this.y + this.height - this.handleH - fudge && y < this.y + this.height + fudge) {
-          this.mode = M_RESIZE;
-          breaker = true;
-        }
-      }
-      if (this.type != T_CONDITION && this.type != T_ELSE && this.type != T_DO && this.type != T_OUTLET) {
-        // move handle?
+      if (blockConfig[this.type]['handles']['move'] == true) {
         if (x > this.x - fudge && x < this.x + this.handleW + fudge) {
           if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
             this.mode = M_MOVE;
             breaker = true;
           }
         }
+      }
+      if (blockConfig[this.type]['handles']['resize'] == true) {
+        if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
+          if (y > this.y + this.height - this.handleH - fudge && y < this.y + this.height + fudge) {
+            this.mode = M_RESIZE;
+            breaker = true;
+          }
+        }
 
+      }
+      if (blockConfig[this.type]['handles']['expand'] == true) {
         if (x > this.x + this.width/2 - this.handleW && x < this.x + this.width/2) {
           if (y > this.y + this.height - this.handleH && y < this.y + this.height) {
             this.mode = M_EXPAND_OR_COLLAPSE;
             breaker = true;
           }
         }
-        // delete
+
+      }
+      if (blockConfig[this.type]['handles']['delete'] == true) {
         if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
           if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
-            if (this.type != T_CONSOLE && this.type != T_START) {
-              this.mode = M_DELETE;
-              breaker = true;
-            }
             if (this.type == T_CONSOLE) {
               this.indexLabeldiv.html(this.textLabel);
               this.lineNumber = 0;
+            } else {
+              this.mode = M_DELETE;
+              breaker = true;
             }
           }
         }
-        if (this.type == T_START) {
-          if (this.mode != M_MOVE && this.shrink == false) {
-            let xMin = this.x + this.width/2 - 1.5*this.handleW;
-            let xMax = xMin + 3*this.handleW;
-            if (x > xMin && x < xMax) {
-              let yMin = this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH);
-              let yMax = yMin + 3*this.handleH;
-              if (y > yMin && y < yMax) {
-                this.mode = M_START;
-                breaker = true;
-              }
+      }
+      if (this.type == T_START) {
+        if (this.mode != M_MOVE && this.shrink == false) {
+          let xMin = this.x + this.width/2 - 1.5*this.handleW;
+          let xMax = xMin + 3*this.handleW;
+          if (x > xMin && x < xMax) {
+            let yMin = this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH);
+            let yMax = yMin + 3*this.handleH;
+            if (y > yMin && y < yMax) {
+              this.mode = M_START;
+              breaker = true;
             }
           }
         }
@@ -489,7 +399,7 @@ class Cell {
   }
 
   updateSHs() {
-    if ((this.hasInput == true) || (this.hasSelect == true)) {
+    if (blockConfig[this.type]['input type'] != I_NONE) {
       switch (this.type) {
         case T_BLOCK:
           this.funcHandleSH = this.input.value();
@@ -516,7 +426,7 @@ class Cell {
   }
 
   acceptsChild(type) {
-    return (acceptChild[this.type].indexOf(type) != -1)
+    return (blockConfig[this.type]['accept child'].indexOf(type) != -1)
   }
 
   addChild(ind, child, force=false) {
@@ -565,7 +475,7 @@ class Cell {
     if (this.type == T_VAR) {
       this.varLabeldiv.hide();
     }
-    if (this.hasInput == true || this.hasSelect == true) {
+    if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.hide();
     }
   }
@@ -583,7 +493,7 @@ class Cell {
     if (this.type == T_VAR) {
       this.varLabeldiv.show();
     }
-    if (this.hasInput == true || this.hasSelect == true) {
+    if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.show();
     }
   }
@@ -617,7 +527,7 @@ class Cell {
   }
 
   selfDescribe(short=false) {
-    console.log('TYPE', blockLabels[this.type]);
+    console.log('TYPE', blockConfig[this.type]['block label']);
     if (short == false) {
       console.log('FUNCTION NAME', this.funcHandleSH);
       console.log('DATA',this.dataSH);

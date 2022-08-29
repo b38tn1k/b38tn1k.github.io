@@ -1,5 +1,6 @@
 
-var widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, demo0, demo1, demo2, demo3;
+var bgGrid, widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, demo0, demo1, demo2, demo3;
+var xPos, yPos, xStart, yStart, xOff, yOff, doMouseDrag;
 var colors = [];
 var icolors = [];
 var dtcolors = [];
@@ -10,6 +11,7 @@ var showDemoMenu = false;
 var shareLinkGenerated = false;
 var slowMode = false;
 var flash = true;
+var gridSize = 20;
 
 function deviceTurned() {
   setupScreen();
@@ -20,13 +22,11 @@ function windowResized() {
 }
 
 function mousePressed() {
-  cells.checkSelected(mouseX, mouseY);
-}
-
-function setupScreen() {
-  createCanvas(windowWidth, windowHeight);
-  widthOnTwo = windowWidth / 2;
-  heightOnTwo = windowHeight / 2;
+  doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
+  if (doMouseDrag == true){
+    xStart = mouseX;
+    yStart = mouseY;
+  }
 }
 
 function newCell(type) {
@@ -35,7 +35,7 @@ function newCell(type) {
 
 function tidy() {
   let xOffset = 2*menu.x + menu.size().width;
-  cells.tidy(xOffset, 17);
+  cells.tidy(round(xOffset/(gridSize/2))*(gridSize/2), gridSize);
 }
 
 function preload() {
@@ -96,7 +96,8 @@ function loadCells(myLoaderMap) {
     cells.linkChildren(key, myLoaderMap[key]);
   }
   let xOffset = 2*menu.x + menu.size().width;
-  cells.tidy(xOffset, 17);
+  cells.nudgeX(xOffset);
+  // tidy();
 }
 
 function showHideBlockMenu() {
@@ -131,6 +132,39 @@ function toggleFlash() {
   createMenuDiv();
 }
 
+function showAll() {
+  let userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
+  for (let i = 0; i < userBlocks.length; i++) {
+    cells.addCell(userBlocks[i], 1.5 * menu.size().width);
+    cells.cells[cells.activeIndex].mode = M_IDLE;
+  }
+  tidy();
+}
+
+function drawGrid() {
+  // console.log(xPos, yPos);
+  for (let x = 0; x < windowWidth; x+=bgGrid.width) {
+    for (let y = 0; y < windowHeight; y+= bgGrid.height) {
+      image(bgGrid, x + xPos%20, y + yPos%20);
+    }
+  }
+}
+
+function mouseDrag() {
+  if (mouseIsPressed == false) {
+    doMouseDrag = false;
+  }
+  if (doMouseDrag == true) {
+    xOff = xStart - mouseX;
+    yOff = yStart - mouseY;
+    xPos -= xOff * 0.02;
+    yPos -= yOff  * 0.02;
+  } else {
+    xOff = 0;
+    yOff = 0;
+  }
+}
+
 function createMenuDiv() {
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
@@ -138,11 +172,12 @@ function createMenuDiv() {
     let bad = [T_IF, T_WHILE, T_NOT, T_EQUAL, T_GREATER, T_LESS, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD];
     for (let i = 0; i < userBlocks.length; i++) {
       if (bad.indexOf(userBlocks[i]) == -1) {
-        menu.html('<a href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockLabels[userBlocks[i]] + '</a><br>', true);
+        menu.html('<a href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockConfig[userBlocks[i]]['block label'] + '</a><br>', true);
       } else {
-        menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockLabels[userBlocks[i]] + '</a><br>', true);
+        menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockConfig[userBlocks[i]]['block label'] + '</a><br>', true);
       }
     }
+    menu.html('<a class="bad" href="javascript:void(0)" onclick="showAll()">show all</a><br>', true);
   }
   menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
   if (showDemoMenu == true) {
@@ -173,7 +208,23 @@ function createMenuDiv() {
   }
   menu.position(10, 10);
   menu.style('font-size', '16px');
+  menu.style('background-color', 'DimGray');
+  menu.style('padding', '10px');
+  menu.style('outline', '1px solid black')
   menu.show();
+}
+
+function setupScreen() {
+  createCanvas(windowWidth, windowHeight);
+  let gs2 = gridSize**2;
+  bgGrid = createGraphics(gs2, gs2);
+  for (let i = gridSize/2; i < gs2; i += gridSize) {
+    for (let j = gridSize/2; j < gs2; j+= gridSize) {
+      bgGrid.point(i, j);
+    }
+  }
+  widthOnTwo = windowWidth / 2;
+  heightOnTwo = windowHeight / 2;
 }
 
 function setup() {
@@ -183,16 +234,24 @@ function setup() {
   controller = new Controller();
   menu = createDiv();
   createMenuDiv();
+  xOff = 0;
+  yOff = 0;
+  xPos = 0;
+  yPos = 0;
   let loaded = cells.makeFromAddyBar();
   if (loaded == false) {
     cells.addCell(T_START, 1.5 * menu.size().width);
     cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
+    tidy();
   }
-  tidy();
+
 }
 
 function draw() {
   clear();
+  mouseDrag();
+  drawGrid();
+  cells.updateView(xPos, yPos);
   cells.draw();
   cells.update(mouseX, mouseY, mouseIsPressed);
   controller.update(cells, flash);

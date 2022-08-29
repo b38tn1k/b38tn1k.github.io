@@ -33,12 +33,21 @@
       user-select: none;
       background-color: DimGray;
      }
-     ::-moz-selection {
-       /* background: rgba(0, 0, 0, 0); */
+           .noselect {
+        -webkit-touch-callout: none; /* iOS Safari */
+          -webkit-user-select: none; /* Safari */
+           -khtml-user-select: none; /* Konqueror HTML */
+             -moz-user-select: none; /* Old versions of Firefox */
+              -ms-user-select: none; /* Internet Explorer/Edge */
+                  user-select: none; /* Non-prefixed version, currently
+                                        supported by Chrome, Edge, Opera and Firefox */
+      }
+   /* ::-moz-selection {
+       background: rgba(0, 0, 0, 0);
      }
-     ::selection {
-      /* background: rgba(0, 0, 0, 0); */
-    }
+   ::selection {
+      background: rgba(0, 0, 0, 0);
+    } */
      a:link {
       color: white;
       background-color: transparent;
@@ -65,10 +74,11 @@
    </style>
   </head>
 
-  <body scroll="no" style="overflow: hidden">
+  <body class="noselect" scroll="no" style="overflow: hidden">
     <main>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
     <script src="source.js"></script>
+    <script src="config.js"></script>
     <script src="cell.js"></script>
     <script src="cells.js"></script>
     <script src="controller.js"></script>

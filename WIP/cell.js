@@ -132,8 +132,8 @@ class Cell {
   }
 
   draw(xOff, yOff, canvas=null) {
-    let x = this.x;
-    let y = this.y;
+    let x = this.x// + xOff;
+    let y = this.y// + yOff;
     if (this.hide === false){
       if (canvas === null) {
         // body

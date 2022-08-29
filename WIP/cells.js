@@ -364,7 +364,7 @@ class Cells {
     let pParentIndexes = [];
     if (this.cells[this.activeIndex].type != T_START) {
       for (let i = 0; i < this.length; i++) {
-        if (this.cells[i].inArea(x, y) === true) {
+        if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
           this.cells[i].underneath = mdown || this.cells[this.activeIndex].mode == M_NEW;
         } else {
           this.cells[i].underneath = false;
@@ -491,25 +491,33 @@ class Cells {
   }
 
   updateView(xPos, yPos) {
-    // this.viewX = xPos;
-    // this.viewY = yPos;
+    this.viewX = xPos;
+    this.viewY = yPos;
 
   }
 
   cellInView(cell) {
     let inview = false;
-    if (cell.x > this.viewX && cell.x < windowWidth + this.viewX) {
-      if (cell.y > this.viewY && cell.y < windowHeight + this.viewY) {
+    let xActual = cell.x + this.viewX;
+    let yActual = cell.y + this.viewY;
+    if (-1*cell.width < xActual && xActual < windowWidth) {
+      if (-1*cell.height < yActual && yActual < windowHeight) {
         inview = true;
       }
     }
-    return inview;
+    // return inview;
+    return true;
   }
 
   draw(canvas = null) {
     for (let i = 0; i < this.length; i++) {
       if (this.cellInView(this.cells[i]) == true) {
         this.cells[i].draw(this.viewX, this.viewY);
+        if (this.cells[i].hide == false) {
+          this.cells[i].showDivs();
+        }
+      } else {
+        this.cells[i].hideDivs();
       }
     }
     if (this.activeIndex != -1) {

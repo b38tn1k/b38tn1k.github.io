@@ -2,8 +2,11 @@ function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
 }
 
-function tempDisableMouse(){
-  mouseIsPressed = false;
+var doMouseStuff = true;
+var selectChanged = true;
+function selectChangedCallback(){
+  selectChanged = true;
+  doMouseStuff = false;
 }
 
 class Cell {
@@ -13,7 +16,6 @@ class Cell {
     this.childIndicies = [];
     this.parent = -1;
     // control etc
-    this.funcHandleSH;
     this.dataSH;
     this.handleSH;
     this.type = type
@@ -25,6 +27,7 @@ class Cell {
     }
     this.mode = M_IDLE;
     this.highlight = false;
+    this.underneath = false;
     this.flash = false;
     this.toggleShape = false;
     // geometry
@@ -91,7 +94,7 @@ class Cell {
     }
     if (blockConfig[this.type]['input type'] == I_SELECT) {
       this.input = createSelect();
-      this.input.changed(tempDisableMouse);
+      this.input.changed(selectChangedCallback);
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.style('font-size', '16px');
@@ -116,11 +119,6 @@ class Cell {
         this.varLabeldiv.show();
       }
     }
-  }
-
-  updateFuncHandleSH(value) {
-    this.funcHandleSH = value;
-    this.dataSH = value; //what could go wrong :-P
   }
 
   updateDataSH(value) {
@@ -148,11 +146,19 @@ class Cell {
             fill(this.colors[0]);
           }
         }
-        if ((this.highlight === true) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
-          this.input.hide();
+        if (this.underneath === true) {
+          if (blockConfig[this.type]['input type'] != I_NONE) {
+            this.input.hide();
+          }
+          this.indexLabeldiv.hide();
+
         }
-        if ((this.highlight === false) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
-          this.input.show();
+        if (this.underneath === false) {
+          if (blockConfig[this.type]['input type'] != I_NONE) {
+            this.input.show();
+          }
+          this.indexLabeldiv.show();
+
         }
         stroke(this.colors[1]);
         rect(x, y, this.width, this.height, this.radius);
@@ -235,7 +241,7 @@ class Cell {
     }
 
     this.height = max(this.minHeight, this.height);
-    if (this.type == T_VAR || this.type == T_INPUT || this.type == T_BLOCK || this.type == T_GOTO) {
+    if (blockConfig[this.type]['input type'] != I_NONE && blockConfig[this.type]['input type'] != I_TEXT_AREA && this.type != T_CONSOLE) {
       this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
     }
 
@@ -402,16 +408,24 @@ class Cell {
     if (blockConfig[this.type]['input type'] != I_NONE) {
       switch (this.type) {
         case T_BLOCK:
-          this.funcHandleSH = this.input.value();
-          this.dataSH = this.input.value(); //what could go wrong :-P
+          if (this.mode != M_SELECTED) {
+            this.handleSH = this.input.value();
+            this.dataSH = this.input.value();
+          }
           break;
         case T_GOTO:
-        this.handleSH = this.input.value();
+          this.handleSH = this.input.value();
+          this.handleSH = this.input.value();
           break;
         case T_VAR:
           this.handleSH = this.input.value();
           break;
         case T_INPUT:
+          if (this.mode != M_SELECTED) {
+            this.dataSH = this.input.value();
+          }
+          break;
+        case T_COMMENT:
           this.dataSH = this.input.value();
           break;
         default:
@@ -420,6 +434,15 @@ class Cell {
       // this.selfDescribe();
     }
   }
+
+  updateOptions(options) {
+    if (blockConfig[this.type]['input type'] == I_SELECT) {
+      for (let i = 0; i < options[this.type].length; i++){
+        this.input.option(options[this.type][i], options[this.type][i]);
+      }
+    }
+  }
+
   forcefullyAddChildren(ind, child) {
     this.childIndicies.push(ind);
     this.children.push(child);
@@ -529,14 +552,10 @@ class Cell {
   selfDescribe(short=false) {
     console.log('TYPE', blockConfig[this.type]['block label']);
     if (short == false) {
-      console.log('FUNCTION NAME', this.funcHandleSH);
       console.log('DATA',this.dataSH);
       console.log('HANDLE', this.handleSH);
       console.log('CHILDREN', this.childIndicies);
     } else {
-      if (this.funcHandleSH != null) {
-        console.log('FUNCTION NAME', this.funcHandleSH);
-      }
       if (this.dataSH != null) {
         console.log('DATA',this.dataSH);
       }

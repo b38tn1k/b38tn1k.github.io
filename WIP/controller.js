@@ -18,7 +18,7 @@ class Controller {
       this.run = true;
       this.running = true;
       this.index = 0;
-      cells.mapAndLink(); // freeze the thing
+      cells.mapAndLink(true); // freeze the thing
       this.script = cells.cells;
       this.terminate = this.script.length + 1;
       this.stack = [];
@@ -116,7 +116,6 @@ class Controller {
   }
 
   t_start() {
-    console.log(this.activeCell.children.length);
     if (this.activeCell.children.length == 0) {
       this.run = false;
       this.index = this.terminate;
@@ -126,11 +125,10 @@ class Controller {
   }
 
   t_goto() {
-    console.log(this.activeCell.flash);
     let next = this.activeCell.handleSH;
     this.index = this.terminate;
     for (let i = 0; i < this.script.length; i++) {
-      if (next == this.script[i].funcHandleSH) {
+      if (next == this.script[i].handleSH && this.script[i].type != T_GOTO) {
         this.index = i;
       }
     }

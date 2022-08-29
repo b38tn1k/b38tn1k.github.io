@@ -16,6 +16,7 @@ class Cells {
     this.run = false;
     this.viewX = 0;
     this.viewY = 0;
+    this.oldMouse = true;
   }
 
   get length() {
@@ -69,7 +70,6 @@ class Cells {
       snapshot[i]['t'] = this.cells[i].type;
       snapshot[i]['h'] = this.cells[i].hide;
       snapshot[i]['s'] = this.cells[i].shrink;
-      snapshot[i]['f'] = this.cells[i].funcHandleSH;
       snapshot[i]['d'] = this.cells[i].dataSH;
       snapshot[i]['i'] = this.cells[i].handleSH;
       snapshot[i]['p'] = this.cells[i].parent;
@@ -93,7 +93,6 @@ class Cells {
     this.cells.push(new Cell(info.t, info.x, info.y, this.dWidth, this.dHeight, c, this.radius));
     this.cells[newCell].hide = info.h;
     this.cells[newCell].shrink = info.s;
-    this.cells[newCell].funcHandleSH = info.f;
     this.cells[newCell].dataSH = info.d;
     this.cells[newCell].handleSH = info.i;
     this.cells[newCell].parent = info.p;
@@ -106,7 +105,11 @@ class Cells {
       this.cells[newCell].input.selected(info.i);
     }
     if (blockConfig[this.cells[newCell].type]['input type'] == I_TEXT || blockConfig[this.cells[newCell].type]['input type'] == I_TEXT_AREA) {
-      this.cells[newCell].input.value(info.d);
+      if (this.cells[newCell].type == T_BLOCK) {
+        this.cells[newCell].input.value(info.i);
+      } else {
+        this.cells[newCell].input.value(info.d);
+      }
     }
   }
 
@@ -210,7 +213,7 @@ class Cells {
     }
     if (type == T_BLOCK) {
       this.cells[pIndex].input.value(this.getID(1) + " block", this.getID(1) + " block");
-      this.cells[pIndex].funcHandleSH = this.cells[pIndex].input.value();
+      this.cells[pIndex].handleSH = this.cells[pIndex].input.value();
     }
     this.cells[pIndex].reshape();
     if (type != T_START && type != T_CONSOLE) {
@@ -299,11 +302,7 @@ class Cells {
         } else {
           if (this.cells[i].hasHandle == true) {
             rebuildFlag = true;
-            if (this.cells[i].type == T_BLOCK) {
-              delHandle.push(this.cells[i].funcHandleSH);
-            } else {
-              delHandle.push(this.cells[i].handleSH);
-            }
+            delHandle.push(this.cells[i].handleSH);
             this.varHandles.splice(this.varHandles.indexOf(this.cells[i].handleSH), 1);
           }
         }
@@ -365,6 +364,11 @@ class Cells {
     let pParentIndexes = [];
     if (this.cells[this.activeIndex].type != T_START) {
       for (let i = 0; i < this.length; i++) {
+        if (this.cells[i].inArea(x, y) === true) {
+          this.cells[i].underneath = mdown || this.cells[this.activeIndex].mode == M_NEW;
+        } else {
+          this.cells[i].underneath = false;
+        }
         if (this.cells[i].inArea(x, y) === true && i != this.activeIndex && this.cells[i].acceptsChild(this.cells[this.activeIndex].type)) {
           this.cells[i].highlight = mdown || this.cells[this.activeIndex].mode == M_NEW;
           pParentIndexes.push(i);
@@ -401,78 +405,30 @@ class Cells {
     }
   }
 
-  mapAndLink() {
-    let blocks = [];
-    blocks.push('none');
-    this.map = {};
+  mapAndLink(reset = false) {
+    let map = {};
+    map[T_GOTO] = ['none'];
+    map[T_VAR] = ['none'];
+    let varTable = {};
     for (let i = 0; i < this.length; i++) {
-
-      if (this.cells[i].type in this.map) {
-        this.map[this.cells[i].type].add(i);
-      } else {
-        this.map[this.cells[i].type] = new Set();
-        this.map[this.cells[i].type].add(i);
-      }
       // grab everything
       this.cells[i].updateSHs();
+      // create variable map
+      if ((this.cells[i].type == T_OUTLET || this.cells[i].type == T_INPUT) && this.cells[i].mode != M_SELECTED) {
+        map[T_VAR].push(this.cells[i].handleSH);
+        varTable[this.cells[i].handleSH] = this.cells[i].dataSH;
+      }
+      // read from block names
+      if (this.cells[i].type == T_BLOCK) {
+        map[T_GOTO].push(this.cells[i].handleSH);
+      }
       // make pretty
       this.cells[i].reshape();
-      // read from block names
-      if (this.cells[i].type == T_BLOCK && this.cells[i].mode != M_SELECTED) {
-        let v = this.cells[i].input.value();
-        if (v.length > 0) {
-          blocks.push(v);
-        }
-      }
     }
-    // linking (oof)
-    for (key in this.map) {
-      if (key == T_GOTO) {
-        for (let i of this.map[key]) {
-          for (let j = 0; j < blocks.length; j++) {
-            this.cells[i].input.option(blocks[j], blocks[j]);
-          }
-          this.cells[i].handleSH = this.cells[i].input.value();
-        }
-      }
-      if (key == T_COMMENT) {
-        for (let i of this.map[key]) {
-          this.cells[i].dataSH = this.cells[i].input.value();
-        }
-      }
-      if (key == T_VAR) {
-        for (let vi of this.map[key]) {
-          for (let j = 0; j < this.varHandles.length; j++) {
-            this.cells[vi].input.option(this.varHandles[j], this.varHandles[j]);
-          }
-          this.cells[vi].handleSH = this.cells[vi].input.value();
-          //
-          if (this.varHandles.indexOf(this.cells[vi].handleSH) == -1) {
-            this.varHandles.push(this.cells[vi].handleSH);
-          }
-          //
-          for (key in this.map) {
-            if (key == T_INPUT) {
-              for (let ii of this.map[key]) {
-                this.cells[ii].dataSH = this.cells[ii].input.value();
-                if (this.varHandles.indexOf(this.cells[ii].handleSH) == -1) {
-                  this.varHandles.push(this.cells[ii].handleSH);
-                }
-                if (this.cells[vi].handleSH == this.cells[ii].handleSH) {
-                  this.cells[vi].updateDataSH(this.cells[ii].input.value());
-                }
-              }
-            }
-
-            if (key == T_OUTLET) {
-              for (let oi of this.map[key]) {
-                if (this.cells[vi].handleSH == this.cells[oi].handleSH) {
-                  this.cells[vi].updateDataSH(this.cells[oi].dataSH);
-                }
-              }
-            }
-          }
-        }
+    for (let i = 0; i < this.length; i++) {
+      this.cells[i].updateOptions(map);
+      if (this.cells[i].type == T_VAR) {
+        this.cells[i].dataSH = varTable[this.cells[i].handleSH];
       }
     }
   }
@@ -513,7 +469,12 @@ class Cells {
           this.doParentDrop(x, y, mdown)
         }
       }
-      this.mapAndLink();
+
+      if (this.oldMouse != mdown || selectChanged == true) {
+        this.mapAndLink();
+        this.oldMouse = mdown;
+        selectChanged = false;
+      }
     } else { // RUN MODE!!!
       // stop button
       if (this.cells[0].mode == M_START){
@@ -542,9 +503,7 @@ class Cells {
         inview = true;
       }
     }
-    // return inview;
-    return true;
-
+    return inview;
   }
 
   draw(canvas = null) {
@@ -553,6 +512,9 @@ class Cells {
         this.cells[i].draw(this.viewX, this.viewY);
       }
     }
+    if (this.activeIndex != -1) {
+     this.cells[this.activeIndex].draw();
+   }
   }
 
 };

@@ -23,6 +23,7 @@ function windowResized() {
 
 function mousePressed() {
   doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
+  doMouseStuff = true;
   if (doMouseDrag == true){
     xStart = mouseX;
     yStart = mouseY;
@@ -151,6 +152,9 @@ function drawGrid() {
 }
 
 function mouseDrag() {
+  if (doMouseStuff == false) {
+    doMouseDrag = false;
+  }
   if (mouseIsPressed == false) {
     doMouseDrag = false;
   }
@@ -228,6 +232,7 @@ function setupScreen() {
 }
 
 function setup() {
+  pixelDensity(1);
   colorSetup();
   setupScreen();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);

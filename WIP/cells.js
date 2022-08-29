@@ -95,8 +95,10 @@ class Cells {
     this.cells[newCell].dataSH = info.d;
     this.cells[newCell].handleSH = info.i;
     this.cells[newCell].parent = info.p;
-    this.cells[newCell].textLabel = info.tL;
-    this.cells[newCell].indexLabeldiv.html(info.L);
+    if (info.t == T_OUTLET || info.t == T_VAR || info.t == T_INPUT){
+      this.cells[newCell].textLabel = info.tL;
+      this.cells[newCell].indexLabeldiv.html(info.L);
+    }
     if (this.cells[newCell].hasSelect == true) {
       this.cells[newCell].input.option(info.i);
       this.cells[newCell].input.selected(info.i);
@@ -347,8 +349,8 @@ class Cells {
     let pParentIndexes = [];
     if (this.cells[this.activeIndex].type != T_START) {
       for (let i = 0; i < this.length; i++) {
-        if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
-          this.cells[i].highlight = mdown;
+        if (this.cells[i].inArea(x, y) === true && i != this.activeIndex && this.cells[i].acceptsChild(this.cells[this.activeIndex].type)) {
+          this.cells[i].highlight = mdown || this.cells[this.activeIndex].mode == M_NEW;
           pParentIndexes.push(i);
         } else {
           this.cells[i].highlight = false;

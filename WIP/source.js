@@ -134,28 +134,20 @@ function toggleFlash() {
 function createMenuDiv() {
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
-    menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_BLOCK + ')">+ block</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_INPUT + ')">+ value</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_VAR + ')">+ variable</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_IF + ')">+ if</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_WHILE + ')">+ while</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_NOT + ')">+ not</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_EQUAL + ')">+ equal</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_LESS + ')">+ less</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_GREATER + ')">+ greater</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_ADD + ')">+ add</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_SUBTRACT + ')">+ subtract</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_MULT + ')">+ multiply</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_DIV + ')">+ divide</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + T_MOD + ')">+ modulus</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_GOTO + ')">+ goto</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_ASSIGN + ')">+ assign</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="newCell(' + T_PRINT + ')">+ print</a><br>', true);
+    let userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
+    let bad = [T_IF, T_WHILE, T_NOT, T_EQUAL, T_GREATER, T_LESS, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD];
+    for (let i = 0; i < userBlocks.length; i++) {
+      if (bad.indexOf(userBlocks[i]) == -1) {
+        menu.html('<a href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockLabels[userBlocks[i]] + '</a><br>', true);
+      } else {
+        menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockLabels[userBlocks[i]] + '</a><br>', true);
+      }
+    }
   }
   menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
   if (showDemoMenu == true) {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo0)">hello world</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demo1)">gotos & blocks</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demo1)">blocks</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo2)">assigning</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo3)">basic math</a><br>', true);
   }
@@ -195,9 +187,8 @@ function setup() {
   if (loaded == false) {
     cells.addCell(T_START, 1.5 * menu.size().width);
     cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
-  } else {
-    tidy();
   }
+  tidy();
 }
 
 function draw() {

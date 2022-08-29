@@ -9,6 +9,7 @@ var M_NEW = 7;
 
 var T_START = 1;
 var T_STOP = 0;
+var T_COMMENT = 3;
 var T_BLOCK = 23;
 var T_VAR = 45;
 var T_INPUT = 47;
@@ -33,9 +34,10 @@ var T_CONSOLE = 2;
 var T_PRINT = 27;
 
 var blockLabels = {};
-blockLabels[T_BLOCK] = "block";
+blockLabels[T_BLOCK] = "set block";
+blockLabels[T_GOTO] = "block";
 blockLabels[T_VAR] = "variable";
-blockLabels[T_INPUT] = "value";
+blockLabels[T_INPUT] = "set variable";
 blockLabels[T_IF] = "if";
 blockLabels[T_WHILE] = "while";
 blockLabels[T_EQUAL] = "equal";
@@ -46,7 +48,6 @@ blockLabels[T_SUBTRACT] = "subtract";
 blockLabels[T_MULT] = "multiply";
 blockLabels[T_DIV] = "divide";
 blockLabels[T_MOD] = "modulus";
-blockLabels[T_GOTO] = "goto";
 blockLabels[T_NOT] = "not";
 blockLabels[T_CONDITION] = "condition";
 blockLabels[T_ELSE] = "else";
@@ -57,6 +58,35 @@ blockLabels[T_STOP] = "stop";
 blockLabels[T_ASSIGN] = "assign";
 blockLabels[T_CONSOLE] = "console";
 blockLabels[T_PRINT] = "print";
+blockLabels[T_COMMENT] = "//";
+
+var notStartOrConsole = [T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT];
+var acceptChild = {};
+acceptChild[T_BLOCK] = notStartOrConsole;
+acceptChild[T_VAR] = []; //nothing
+acceptChild[T_INPUT] = []; //nothing
+acceptChild[T_IF] = [T_CONDITION, T_DO, T_ELSE];
+acceptChild[T_WHILE] = [T_CONDITION, T_DO, T_ELSE];
+acceptChild[T_EQUAL] = [T_VAR, T_INPUT];
+acceptChild[T_LESS] = [T_VAR, T_INPUT];
+acceptChild[T_GREATER] = [T_VAR, T_INPUT];
+acceptChild[T_ADD] = [T_VAR, T_INPUT];
+acceptChild[T_SUBTRACT] = [T_VAR, T_INPUT];
+acceptChild[T_MULT] = [T_VAR, T_INPUT];
+acceptChild[T_DIV] = [T_VAR, T_INPUT];
+acceptChild[T_MOD] = [T_VAR, T_INPUT];
+acceptChild[T_GOTO] = [];
+acceptChild[T_NOT] = [T_VAR, T_INPUT];
+acceptChild[T_CONDITION] = [T_LESS, T_GREATER, T_NOT, T_EQUAL];
+acceptChild[T_ELSE] = notStartOrConsole;
+acceptChild[T_DO] = notStartOrConsole;
+acceptChild[T_OUTLET] = [];
+acceptChild[T_START] = notStartOrConsole;
+acceptChild[T_STOP] = [];
+acceptChild[T_ASSIGN] = [T_VAR, T_INPUT];
+acceptChild[T_CONSOLE] = [];
+acceptChild[T_PRINT] = [T_VAR, T_INPUT];
+acceptChild[T_COMMENT] = [];
 
 function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
@@ -141,9 +171,13 @@ class Cell {
     this.height = this.startHeight;
     this.width = this.startWidth;
     this.ySpacer = 0;
-    if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
+    if (this.type == T_BLOCK || this.type == T_COMMENT || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
       if (this.type == T_BLOCK || this.type == T_INPUT) {
         this.input = createInput();
+        this.hasInput = true;
+      }
+      if (this.type == T_COMMENT) {
+        this.input = createElement('textarea');
         this.hasInput = true;
       }
       if (this.type == T_GOTO || this.type == T_VAR){
@@ -194,24 +228,24 @@ class Cell {
     if (this.hide === false){
       if (canvas === null) {
         // body
-        if (this.highlight === true && this.type != T_CONSOLE && this.type != T_INPUT && this.type != T_VAR && this.type != T_IF && this.type != T_WHILE && this.type != T_OUTLET) {
+        if (this.flash == true) {
           fill(this.colors[2]);
         } else {
-          fill(this.colors[0]);
+          if (this.highlight === true) {
+            fill(this.colors[2]);
+          } else {
+            fill(this.colors[0]);
+          }
         }
+
+
         if ((this.highlight === true) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
           this.input.hide();
         }
         if ((this.highlight === false) && (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR)) {
           this.input.show();
         }
-        if (this.flash == true) {
-          // console.log(this.textLabel);
-          fill(this.colors[2]);
-          // this.flash = false;
-        } else {
-          fill(this.colors[0]);
-        }
+
 
         stroke(this.colors[1]);
         rect(this.x, this.y, this.width, this.height, this.radius);
@@ -261,7 +295,7 @@ class Cell {
     y = max(y, this.handleH);
     this.x = x;
     this.y = y;
-    if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
+    if (this.hasInput == true || this.hasSelect == true) {
       this.input.position(this.x + this.childXBorder, this.y + this.childYBorder + this.yHeaderEnd);
     }
     if (this.type == T_VAR) {
@@ -285,11 +319,19 @@ class Cell {
     if (nh > 2*this.handleH) {
       this.height = nh;
     }
-    this.width = max(this.minWidth, this.width);
+    if (this.type == T_COMMENT) {
+      this.input.size(this.width - 3*this.childXBorder, this.height - 4*this.childYBorder);
+      this.minHeight = this.height;
+      this.minWidth = this.minWidth;
+    } else {
+      this.width = max(this.minWidth, this.width);
+    }
+
     this.height = max(this.minHeight, this.height);
     if (this.type == T_VAR || this.type == T_INPUT || this.type == T_BLOCK || this.type == T_GOTO) {
       this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
     }
+
     this.resizeConsole();
 
   }
@@ -319,7 +361,7 @@ class Cell {
       this.height = this.minHeight;
     }
     if (this.shrink === true) {
-      this.height = this.yHeaderEnd;
+      this.height = this.yHeaderEnd * 3;
       this.minHeight = this.height;
     }
     if (this.width < this.indexLabeldiv.size().width + 3 * this.childXBorder) {
@@ -345,7 +387,7 @@ class Cell {
       this.indexLabeldiv.remove();
       par = this.parent;
       this.removeParent();
-      if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
+      if (this.hasSelect == true || this.hasInput == true) {
         this.input.remove();
       }
       if (this.type == T_VAR) {
@@ -473,20 +515,12 @@ class Cell {
     this.children.push(child);
   }
 
+  acceptsChild(type) {
+    return (acceptChild[this.type].indexOf(type) != -1)
+  }
+
   addChild(ind, child, force=false) {
-    if (child.type == T_START) {
-      return false;
-    }
-    if ((this.type == T_ASSIGN) && child.type != T_VAR && child.type != T_INPUT) {
-      return false;
-    }
-    if ((this.type == T_PRINT) && (this.children.length == 1)) {
-      return false;
-    }
-    if (force == false && (this.type == T_OUTLET || this.type == T_VAR || this.type == T_INPUT || this.type == T_IF || this.type == T_WHILE || this.type == T_CONSOLE || this.type == T_GOTO)) {
-      return false;
-    }
-    if ((this.type != T_OUTLET && this.type != T_VAR && this.type != T_INPUT && this.type != T_IF && this.type != T_WHILE && this.type != T_CONSOLE) || force == true) {
+    if (force == true|| this.acceptsChild(child.type) == true) {
       if (this.childIndicies.indexOf(ind) == -1) {
         this.children.push(child);
         this.childIndicies.push(ind);
@@ -531,7 +565,7 @@ class Cell {
     if (this.type == T_VAR) {
       this.varLabeldiv.hide();
     }
-    if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
+    if (this.hasInput == true || this.hasSelect == true) {
       this.input.hide();
     }
   }
@@ -549,7 +583,7 @@ class Cell {
     if (this.type == T_VAR) {
       this.varLabeldiv.show();
     }
-    if (this.type == T_BLOCK || this.type == T_INPUT || this.type == T_GOTO || this.type == T_VAR) {
+    if (this.hasInput == true || this.hasSelect == true) {
       this.input.show();
     }
   }

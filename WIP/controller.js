@@ -110,6 +110,9 @@ class Controller {
           this.t_math();
           this.moveByParent();
           break;
+        case T_COMMENT:
+          this.moveByParent();
+        break;
         default:
           break;
       }
@@ -128,7 +131,6 @@ class Controller {
   }
 
   t_goto() {
-    console.log('hi!')
     let myIndex = this.index;
     let next = this.activeCell.handleSH;
     this.index = this.terminate;
@@ -138,7 +140,6 @@ class Controller {
       }
     }
     this.script[this.index].parent = myIndex;
-    // make this block the parent
   }
 
   t_block() {
@@ -153,7 +154,9 @@ class Controller {
   t_print() {
     let myOutput = '<br>' + this.script[1].lineNumber + ' > ';
     for (let j = 0; j < this.activeCell.children.length; j++) {
-      myOutput += this.script[this.activeCell.childIndicies[j]].dataSH;
+      if (this.activeCell.children[j].type != T_COMMENT) {
+        myOutput += this.script[this.activeCell.childIndicies[j]].dataSH;
+      }
     }
     this.script[1].indexLabeldiv.html(myOutput, true);
     this.script[1].lineNumber += 1;
@@ -198,9 +201,11 @@ class Controller {
     let vals = [];
     let res;
     for (let i = 1; i < this.activeCell.children.length; i++) {
-      vals.push(this.activeCell.children[i].dataSH);
-      if (/^\d+\.\d+$/.test(vals[i-1]) == false && /^\d+$/.test(vals[i-1]) == false) {
-        onlyNums = false;
+      if (this.activeCell.children[i].type != T_COMMENT) {
+        vals.push(this.activeCell.children[i].dataSH);
+        if (/^\d+\.\d+$/.test(vals[i-1]) == false && /^\d+$/.test(vals[i-1]) == false) {
+          onlyNums = false;
+        }
       }
     }
     if (onlyNums) {
@@ -236,5 +241,3 @@ class Controller {
     }
   }
 };
-
-//http://127.0.0.1:4000/WIP/#%7B%220%22%3A%7B%22x%22%3A138%2C%22y%22%3A32%2C%22t%22%3A1%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A-1%2C%22c%22%3A%5B10%2C18%5D%2C%22tL%22%3A%22start%22%2C%22L%22%3A%22start%22%7D%2C%221%22%3A%7B%22x%22%3A129%2C%22y%22%3A296%2C%22t%22%3A2%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A-1%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22console%22%2C%22L%22%3A%22console%22%7D%2C%222%22%3A%7B%22x%22%3A130%2C%22y%22%3A529%2C%22t%22%3A47%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%221%22%2C%22i%22%3A%22dsgk%22%2C%22p%22%3A-1%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22set%20variable%20dsgk%22%2C%22L%22%3A%22set%20variable%20dsgk%22%7D%2C%223%22%3A%7B%22x%22%3A130%2C%22y%22%3A456%2C%22t%22%3A47%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%22%2B%22%2C%22i%22%3A%22wdrt%22%2C%22p%22%3A-1%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22set%20variable%20wdrt%22%2C%22L%22%3A%22set%20variable%20wdrt%22%7D%2C%224%22%3A%7B%22x%22%3A130%2C%22y%22%3A383%2C%22t%22%3A47%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%222%22%2C%22i%22%3A%22sian%22%2C%22p%22%3A-1%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22set%20variable%20sian%22%2C%22L%22%3A%22set%20variable%20sian%22%7D%2C%225%22%3A%7B%22x%22%3A274%2C%22y%22%3A35%2C%22t%22%3A23%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%22printBlock%22%2C%22i%22%3A%22printBlock%22%2C%22p%22%3A-1%2C%22c%22%3A%5B6%5D%2C%22tL%22%3A%22set%20block%22%2C%22L%22%3A%22set%20block%22%7D%2C%226%22%3A%7B%22x%22%3A281.5%2C%22y%22%3A88%2C%22t%22%3A27%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A5%2C%22c%22%3A%5B7%2C8%2C9%2C11%2C12%5D%2C%22tL%22%3A%22print%22%2C%22L%22%3A%22print%22%7D%2C%227%22%3A%7B%22x%22%3A289%2C%22y%22%3A119%2C%22t%22%3A45%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%221%22%2C%22i%22%3A%22dsgk%22%2C%22p%22%3A6%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%22%7D%2C%228%22%3A%7B%22x%22%3A289%2C%22y%22%3A211%2C%22t%22%3A45%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%22%2B%22%2C%22i%22%3A%22wdrt%22%2C%22p%22%3A6%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%22%7D%2C%229%22%3A%7B%22x%22%3A289%2C%22y%22%3A303%2C%22t%22%3A45%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%222%22%2C%22i%22%3A%22sian%22%2C%22p%22%3A6%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%22%7D%2C%2210%22%3A%7B%22x%22%3A145.5%2C%22y%22%3A93%2C%22t%22%3A16%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22i%22%3A%22subtract%22%2C%22p%22%3A0%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22block%22%2C%22L%22%3A%22block%22%7D%2C%2211%22%3A%7B%22x%22%3A289%2C%22y%22%3A395%2C%22t%22%3A46%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%22%3D%22%2C%22p%22%3A6%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22constant%22%2C%22L%22%3A%22constant%22%7D%2C%2212%22%3A%7B%22x%22%3A289%2C%22y%22%3A468%2C%22t%22%3A45%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A-1%2C%22i%22%3A%22outlet%22%2C%22p%22%3A6%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%22%7D%2C%2213%22%3A%7B%22x%22%3A428.5%2C%22y%22%3A82%2C%22t%22%3A52%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A17%2C%22c%22%3A%5B14%2C15%2C16%5D%2C%22tL%22%3A%22subtract%22%2C%22L%22%3A%22subtract%22%7D%2C%2214%22%3A%7B%22x%22%3A436%2C%22y%22%3A113%2C%22t%22%3A104%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A-1%2C%22i%22%3A%22outlet%22%2C%22p%22%3A13%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22out%22%2C%22L%22%3A%22out%3Cbr%3E-1%22%7D%2C%2215%22%3A%7B%22x%22%3A436%2C%22y%22%3A164%2C%22t%22%3A45%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%221%22%2C%22i%22%3A%22dsgk%22%2C%22p%22%3A13%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%22%7D%2C%2216%22%3A%7B%22x%22%3A436%2C%22y%22%3A256%2C%22t%22%3A45%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%222%22%2C%22i%22%3A%22sian%22%2C%22p%22%3A13%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%22%7D%2C%2217%22%3A%7B%22x%22%3A421%2C%22y%22%3A29%2C%22t%22%3A23%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A%22subtract%22%2C%22i%22%3A%22subtract%22%2C%22p%22%3A-1%2C%22c%22%3A%5B13%2C19%5D%2C%22tL%22%3A%22set%20block%22%2C%22L%22%3A

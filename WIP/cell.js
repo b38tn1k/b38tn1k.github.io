@@ -51,7 +51,6 @@ class Cell {
     this.lineNumber = 0;
     this.indexLabeldiv = createDiv(this.textLabel);
     this.updateDivPosition(this.indexLabeldiv, this.x + 2*this.childXBorder, this.y + this.childYBorder);
-    // this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y + this.childYBorder);
     this.indexLabeldiv.style('font-size', '16px');
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
@@ -106,14 +105,12 @@ class Cell {
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
       this.input.style('border', 0);
-      // this.input.position(this.x + this.childXBorder, this.y + this.yHeaderEnd);
       this.updateDivPosition(this.input, this.x + this.childXBorder, this.y + this.yHeaderEnd);
       this.width = this.input.size().width + 3*this.childXBorder;
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
       if (this.type == T_VAR) {
         this.varLabeldiv = createDiv("empty");
-        // this.varLabeldiv.position(this.x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
         this.updateDivPosition(this.varLabeldiv, this.x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
         this.height += this.childYBorder + this.ySpacer;
         this.minHeight = this.height;
@@ -215,15 +212,12 @@ class Cell {
     this.x = x;
     this.y = y;
     if (blockConfig[this.type]['input type'] != I_NONE) {
-      // this.input.position(this.x + this.childXBorder, this.y + this.childYBorder + this.yHeaderEnd);
       this.updateDivPosition(this.input, this.x + this.childXBorder, this.y + this.childYBorder + this.yHeaderEnd);
     }
     if (this.type == T_VAR) {
       this.updateDivPosition(this.varLabeldiv, x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
-      // this.varLabeldiv.position(x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
     }
     this.updateDivPosition(this.indexLabeldiv, this.x + 2*this.childXBorder, this.y);
-    // this.indexLabeldiv.position(this.x + 2*this.childXBorder, this.y);
     let childX = x + this.childXBorder;
     let childY = this.y + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
     for (let i = 0; i < this.children.length; i++) {
@@ -277,7 +271,7 @@ class Cell {
       this.minHeight = this.height;
     }
     if (this.height < this.indexLabeldiv.size().height) {
-      this.minHeight = this.y - this.indexLabeldiv.position().y + this.indexLabeldiv.size().height + this.childYBorder;
+      this.minHeight = this.indexLabeldiv.size().height + 2*this.childYBorder;
     }
     if (reshape == true) {
       this.height = this.minHeight;

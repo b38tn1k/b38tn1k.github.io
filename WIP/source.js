@@ -256,7 +256,7 @@ function draw() {
   clear();
   mouseDrag();
   drawGrid();
-  cells.updateView(xPos, yPos);
+  cells.updateView(xPos, yPos, doMouseDrag);
   cells.draw();
   cells.update(mouseX, mouseY, mouseIsPressed);
   controller.update(cells, flash);

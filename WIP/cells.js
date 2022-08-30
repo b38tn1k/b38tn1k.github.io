@@ -435,7 +435,7 @@ class Cells {
   }
 
   update(x, y, mdown) {
-    this.cells[0].startButtonHighlight(x, y);
+    this.cells[0].startButtonUpdate(x, y);
     // build mode
     if (this.run == false) {
       // active cell
@@ -506,20 +506,19 @@ class Cells {
         inview = true;
       }
     }
-    // return inview;
-    return true;
+    return inview;
   }
 
   draw(canvas = null) {
     for (let i = 0; i < this.length; i++) {
-      if (this.cellInView(this.cells[i]) == true) {
-        this.cells[i].draw(this.viewX, this.viewY);
-        if (this.cells[i].hide == false) {
-          this.cells[i].showDivs();
-        }
-      } else {
-        this.cells[i].hideDivs();
-      }
+      // if (this.cellInView(this.cells[i]) == true) {
+        this.cells[i].draw();
+      //   if (this.cells[i].hide == false) {
+      //     this.cells[i].showDivs();
+      //   }
+      // } else {
+      //   this.cells[i].hideDivs();
+      // }
     }
     if (this.activeIndex != -1) {
      this.cells[this.activeIndex].draw();

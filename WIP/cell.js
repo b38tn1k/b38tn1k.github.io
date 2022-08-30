@@ -29,7 +29,7 @@ class Cell {
     this.highlight = false;
     this.underneath = false;
     this.flash = false;
-    this.toggleShape = false;
+    this.startForm = false;
     // geometry
     this.childYBorder = 2*r;
     this.childXBorder = 1.5 * r;
@@ -47,10 +47,14 @@ class Cell {
     this.handleH = 1.5*r;
     // colors
     this.colors = c;
+    if (type == T_START) {
+      this.makeStartButtonOptions();
+      this.sbHighlight = false;
+    }
     // divs
     this.lineNumber = 0;
     this.indexLabeldiv = createDiv(this.textLabel);
-    this.updateDivPosition(this.indexLabeldiv, this.x + 2*this.childXBorder, this.y + this.childYBorder);
+    // this.updateDivPosition(this.indexLabeldiv, x + 2*this.childXBorder, y + this.childYBorder);
     this.indexLabeldiv.style('font-size', '16px');
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
@@ -65,10 +69,7 @@ class Cell {
     this.startWidth = this.width;
     this.buildDivs();
     this.resizeConsole();
-  }
-
-  get pos() {
-    return [this.x, this.y]
+    this.updateAllDivPositions();
   }
 
   get size() {
@@ -83,6 +84,8 @@ class Cell {
   }
 
   buildDivs() {
+    let xp = this.x;
+    let yp = this.y;
     this.height = this.startHeight;
     this.width = this.startWidth;
     this.ySpacer = 0;
@@ -105,19 +108,33 @@ class Cell {
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
       this.input.style('border', 0);
-      this.updateDivPosition(this.input, this.x + this.childXBorder, this.y + this.yHeaderEnd);
+      // this.updateDivPosition(this.input, xp + this.childXBorder, yp + this.yHeaderEnd);
       this.width = this.input.size().width + 3*this.childXBorder;
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
       if (this.type == T_VAR) {
         this.varLabeldiv = createDiv("empty");
-        this.updateDivPosition(this.varLabeldiv, this.x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
+        // this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
         this.height += this.childYBorder + this.ySpacer;
         this.minHeight = this.height;
         this.varLabeldiv.style('font-size', '16px');
         this.varLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
         this.varLabeldiv.show();
       }
+    }
+    this.updateAllDivPositions();
+  }
+
+  updateAllDivPositions() {
+    let xp = this.x;
+    let yp = this.y;
+    this.updateDivPosition(this.indexLabeldiv, xp + 2*this.childXBorder, yp);
+    if (this.type == T_VAR) {
+      this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
+    }
+    if (blockConfig[this.type]['input type'] != I_NONE) {
+      this.updateDivPosition(this.input, xp + this.childXBorder, yp + this.childYBorder + this.yHeaderEnd);
+
     }
   }
 
@@ -190,14 +207,69 @@ class Cell {
       this.hideDivs();
     }
     if (this.type == T_START && this.shrink == false) {
-      stroke(this.colors[1]);
-      fill(this.colors[0]);
-      rect(x + this.width/2 - 1.5*this.handleW, y + this.yHeaderEnd - 2 * (1.25 * this.handleH), 3*this.handleW, 3 * this.handleH);
-      fill(this.colors[2]);
-      if (this.toggleShape === true) {
-        rect(x + this.width/2 - this.handleW, y + this.yHeaderEnd - 2 * this.handleH, this.handleW * 2, this.handleH * 2);
-      } else {
-        triangle(x + this.width/2 - this.handleW, y + this.yHeaderEnd - 2 * this.handleH, x + this.width/2 - this.handleW, y + this.yHeaderEnd, x + this.width/2 + this.handleW, y + this.yHeaderEnd - this.handleH);
+      image(this.sbGraphics[int(this.startForm)][int(this.sbHighlight)], x + this.width/2 - 1.5*this.handleW, y + this.yHeaderEnd - 2 * (1.25 * this.handleH));
+    }
+  }
+
+  toggleStartForm(myBool){
+    this.startForm = myBool;
+    if (myBool == true) {
+      this.textLabel = blockConfig[T_STOP]['block label'];
+      this.indexLabeldiv.html(this.textLabel);
+    } else {
+      this.textLabel = blockConfig[T_START]['block label'];
+      this.indexLabeldiv.html(this.textLabel);
+    }
+  }
+
+  makeStartButtonOptions() {
+    this.sbGraphics = {};
+    this.sbGraphics[0] = {};
+    this.sbGraphics[1] = {};
+
+    this.sbGraphics[0][0] = createGraphics(3*this.handleW, 3*this.handleH);
+    this.sbGraphics[0][1] = createGraphics(3*this.handleW, 3*this.handleH);
+    this.sbGraphics[1][0] = createGraphics(3*this.handleW, 3*this.handleH);
+    this.sbGraphics[1][1] = createGraphics(3*this.handleW, 3*this.handleH);
+
+    this.sbGraphics[0][0].stroke(this.colors[1]);
+    this.sbGraphics[0][1].stroke(this.colors[1]);
+    this.sbGraphics[1][0].stroke(this.colors[1]);
+    this.sbGraphics[1][1].stroke(this.colors[1]);
+
+    this.sbGraphics[0][0].fill(this.colors[0]);
+    this.sbGraphics[0][1].fill(this.colors[2]);
+    this.sbGraphics[1][0].fill(this.colors[0]);
+    this.sbGraphics[1][1].fill(this.colors[2]);
+
+    this.sbGraphics[0][0].rect(1, 1, 3*this.handleW - 2, 3*this.handleH - 2);
+    this.sbGraphics[0][1].rect(1, 1, 3*this.handleW - 2, 3*this.handleH - 2);
+    this.sbGraphics[1][0].rect(1, 1, 3*this.handleW - 2, 3*this.handleH - 2);
+    this.sbGraphics[1][1].rect(1, 1, 3*this.handleW - 2, 3*this.handleH - 2);
+
+    this.sbGraphics[0][0].fill(this.colors[2]);
+    this.sbGraphics[0][1].fill(this.colors[0]);
+    this.sbGraphics[1][0].fill(this.colors[2]);
+    this.sbGraphics[1][1].fill(this.colors[0]);
+
+    this.sbGraphics[0][0].triangle(this.handleW * 0.5, this.handleH * 0.5, this.handleW * 0.5, 2.5*this.handleH, this.handleW*2.5, this.handleH*1.5);
+    this.sbGraphics[0][1].triangle(this.handleW * 0.5, this.handleH * 0.5, this.handleW * 0.5, 2.5*this.handleH, this.handleW*2.5, this.handleH*1.5);
+    this.sbGraphics[1][0].rect(this.handleW * 0.5, this.handleH * 0.5, this.handleW * 2, this.handleH * 2);
+    this.sbGraphics[1][1].rect(this.handleW * 0.5, this.handleH * 0.5, this.handleW * 2, this.handleH * 2);
+  }
+
+  startButtonUpdate(x, y) {
+    let xp = this.x;
+    let yp = this.y;
+    let xMin = xp + this.width/2 - 1.5*this.handleW;
+    let xMax = xMin + 3*this.handleW;
+    this.sbHighlight = false;
+    if (x > xMin && x < xMax) {
+      let yMin = yp + this.yHeaderEnd - 2 * (1.25 * this.handleH);
+      let yMax = yMin + 3*this.handleH;
+      if (y > yMin && y < yMax) {
+        this.sbHighlight = true;
+
       }
     }
   }
@@ -211,15 +283,18 @@ class Cell {
     y = max(y, this.handleH);
     this.x = x;
     this.y = y;
+    let xp = this.x;
+    let yp = this.y;
     if (blockConfig[this.type]['input type'] != I_NONE) {
-      this.updateDivPosition(this.input, this.x + this.childXBorder, this.y + this.childYBorder + this.yHeaderEnd);
+      // this.updateDivPosition(this.input, xp + this.childXBorder, yp + this.childYBorder + this.yHeaderEnd);
     }
     if (this.type == T_VAR) {
-      this.updateDivPosition(this.varLabeldiv, x + this.childXBorder, this.y + this.yHeaderEnd + 2*this.ySpacer);
+      // this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
     }
-    this.updateDivPosition(this.indexLabeldiv, this.x + 2*this.childXBorder, this.y);
+    // this.updateDivPosition(this.indexLabeldiv, xp + 2*this.childXBorder, yp);
     let childX = x + this.childXBorder;
-    let childY = this.y + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
+    let childY = yp + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
+    this.updateAllDivPositions();
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].moveC(childX, childY);
       childY += this.childYBorder + this.children[i].height;
@@ -253,6 +328,8 @@ class Cell {
   }
 
   reshape(reshape=false) {
+    let xp = this.x;
+    let yp = this.y;
     for (let i = 0; i < this.children.length; i++) {
       if (this.children[i].mode == M_IDLE) {
         this.children[i].reshape();
@@ -287,7 +364,7 @@ class Cell {
       let h = this.input.size().height;
       this.input.size(this.width - 3 * this.childXBorder);
     }
-    this.moveC(this.x, this.y);
+    this.moveC(xp, yp);
   }
 
   markForDeletion() {
@@ -313,54 +390,23 @@ class Cell {
     return par;
   }
 
-  toggleStartForm(myBool){
-    this.toggleShape = myBool;
-    if (myBool == true) {
-      this.textLabel = blockConfig[T_STOP]['block label'];
-      this.indexLabeldiv.html(this.textLabel);
-    } else {
-      this.textLabel = blockConfig[T_START]['block label'];
-      this.indexLabeldiv.html(this.textLabel);
-    }
-  }
-
-  startButtonHighlight(x, y){
-    stroke(this.colors[1]);
-    if (this.type == T_START && this.mode != M_START && this.shrink == false) {
-      let xMin = this.x + this.width/2 - 1.5*this.handleW;
-      let xMax = xMin + 3*this.handleW;
-      if (x > xMin && x < xMax) {
-        let yMin = this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH);
-        let yMax = yMin + 3*this.handleH;
-        if (y > yMin && y < yMax) {
-          fill(this.colors[2]);
-          rect(this.x + this.width/2 - 1.5*this.handleW, this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH), 3*this.handleW, 3 * this.handleH);
-          fill(this.colors[0]);
-          if (this.toggleShape === true) {
-            rect(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.handleW * 2, this.handleH * 2);
-          } else {
-            triangle(this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd - 2 * this.handleH, this.x + this.width/2 - this.handleW, this.y + this.yHeaderEnd, this.x + this.width/2 + this.handleW, this.y + this.yHeaderEnd - this.handleH);
-          }
-        }
-      }
-    }
-  }
-
   checkButtons(x, y) {
+    let xp = this.x;
+    let yp = this.y;
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;
       if (blockConfig[this.type]['handles']['move'] == true) {
-        if (x > this.x - fudge && x < this.x + this.handleW + fudge) {
-          if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
+        if (x > xp - fudge && x < xp + this.handleW + fudge) {
+          if (y > yp - fudge && y < yp + this.handleH + fudge) {
             this.mode = M_MOVE;
             breaker = true;
           }
         }
       }
       if (blockConfig[this.type]['handles']['resize'] == true) {
-        if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
-          if (y > this.y + this.height - this.handleH - fudge && y < this.y + this.height + fudge) {
+        if (x > xp + this.width - this.handleW - fudge && x < xp + this.width + fudge) {
+          if (y > yp + this.height - this.handleH - fudge && y < yp + this.height + fudge) {
             this.mode = M_RESIZE;
             breaker = true;
           }
@@ -368,8 +414,8 @@ class Cell {
 
       }
       if (blockConfig[this.type]['handles']['expand'] == true) {
-        if (x > this.x + this.width/2 - this.handleW && x < this.x + this.width/2) {
-          if (y > this.y + this.height - this.handleH && y < this.y + this.height) {
+        if (x > xp + this.width/2 - this.handleW && x < xp + this.width/2) {
+          if (y > yp + this.height - this.handleH && y < yp + this.height) {
             this.mode = M_EXPAND_OR_COLLAPSE;
             breaker = true;
           }
@@ -377,8 +423,8 @@ class Cell {
 
       }
       if (blockConfig[this.type]['handles']['delete'] == true) {
-        if (x > this.x + this.width - this.handleW - fudge && x < this.x + this.width + fudge) {
-          if (y > this.y - fudge && y < this.y + this.handleH + fudge) {
+        if (x > xp + this.width - this.handleW - fudge && x < xp + this.width + fudge) {
+          if (y > yp - fudge && y < yp + this.handleH + fudge) {
             if (this.type == T_CONSOLE) {
               this.indexLabeldiv.html(this.textLabel);
               this.lineNumber = 0;
@@ -391,10 +437,10 @@ class Cell {
       }
       if (this.type == T_START) {
         if (this.mode != M_MOVE && this.shrink == false) {
-          let xMin = this.x + this.width/2 - 1.5*this.handleW;
+          let xMin = xp + this.width/2 - 1.5*this.handleW;
           let xMax = xMin + 3*this.handleW;
           if (x > xMin && x < xMax) {
-            let yMin = this.y + this.yHeaderEnd - 2 * (1.25 * this.handleH);
+            let yMin = yp + this.yHeaderEnd - 2 * (1.25 * this.handleH);
             let yMax = yMin + 3*this.handleH;
             if (y > yMin && y < yMax) {
               this.mode = M_START;
@@ -579,11 +625,13 @@ class Cell {
   }
 
   inArea(x, y) {
+    let xp = this.x;
+    let yp = this.y;
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;
-      if (x > this.x - fudge && x < this.x + this.width + fudge) {
-        if (y > this.y - fudge && y < this.y + this.height + fudge) {
+      if (x > xp - fudge && x < xp + this.width + fudge) {
+        if (y > yp - fudge && y < yp + this.height + fudge) {
           // this.selfDescribe(false);
           // this.unsetData()
           breaker = true;

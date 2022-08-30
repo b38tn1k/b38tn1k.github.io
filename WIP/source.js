@@ -252,6 +252,7 @@ function setup() {
     cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
     tidy();
   }
+  cells.cells[1].resizeConsole();
 
 }
 

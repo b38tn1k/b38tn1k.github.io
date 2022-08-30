@@ -53,6 +53,7 @@ function preload() {
   demos.push(loadJSON('demo2.json'));
   demos.push(loadJSON('demo3.json'));
   demos.push(loadJSON('demo4.json'));
+  demos.push(loadJSON('demo5.json'));
 }
 
 function colorSetup() {
@@ -195,6 +196,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[2])">assigning</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[3])">basic math</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">string math</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">comparisons</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a class="bad" href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);

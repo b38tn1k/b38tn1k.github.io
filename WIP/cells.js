@@ -112,6 +112,10 @@ class Cells {
       }
     }
     this.cells[newCell].moveC(this.cells[newCell].x, this.cells[newCell].y);
+    if (this.cells[newCell].hide == true) {
+      this.cells[newCell].hideBlock();
+      console.log(this.cells[newCell].textLabel);
+    }
   }
 
   nudgeX(x) {

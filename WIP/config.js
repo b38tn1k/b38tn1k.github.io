@@ -173,6 +173,6 @@ blockConfig[T_START]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : 
 blockConfig[T_STOP]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : false, 'copy' : false};
 blockConfig[T_ASSIGN]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : false, 'copy' : true};
 blockConfig[T_CONSOLE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : false, 'mutate' : false, 'copy' : false};
-blockConfig[T_PRINT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : false, 'copy' : false};
+blockConfig[T_PRINT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : false, 'copy' : true};
 blockConfig[T_COMMENT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : false, 'mutate' : false, 'copy' : false};
 blockConfig[T_CONST]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : false, 'copy' : true};

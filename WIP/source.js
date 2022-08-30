@@ -1,5 +1,5 @@
 
-var bgGrid, widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, demo0, demo1, demo2, demo3;
+var bgGrid, widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString;
 var xPos, yPos, xStart, yStart, xOff, yOff, doMouseDrag;
 var colors = [];
 var icolors = [];
@@ -12,6 +12,7 @@ var shareLinkGenerated = false;
 var slowMode = false;
 var flash = true;
 var gridSize = 20;
+var demos = [];
 
 function deviceTurned() {
   setupScreen();
@@ -47,10 +48,11 @@ function tidy() {
 
 function preload() {
   c = loadStrings('nintendo-entertainment-system.hex');
-  demo0 = loadJSON('helloworld.json');
-  demo1 = loadJSON('demo1.json');
-  demo2 = loadJSON('demo2.json');
-  demo3 = loadJSON('demo3.json');
+  demos.push(loadJSON('helloworld.json'));
+  demos.push(loadJSON('demo1.json'));
+  demos.push(loadJSON('demo2.json'));
+  demos.push(loadJSON('demo3.json'));
+  demos.push(loadJSON('demo4.json'));
 }
 
 function colorSetup() {
@@ -176,7 +178,7 @@ function createMenuDiv() {
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
     let userBlocks = [T_BLOCK, T_GOTO, T_CONST, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
-    let bad = [T_IF, T_WHILE, T_NOT, T_EQUAL, T_GREATER, T_LESS, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD];
+    let bad = [T_IF, T_WHILE, T_NOT, T_EQUAL, T_GREATER, T_LESS];
     for (let i = 0; i < userBlocks.length; i++) {
       if (bad.indexOf(userBlocks[i]) == -1) {
         menu.html('<a href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockConfig[userBlocks[i]]['block label'] + '</a><br>', true);
@@ -188,10 +190,11 @@ function createMenuDiv() {
   }
   menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
   if (showDemoMenu == true) {
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demo0)">hello world</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demo1)">blocks</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demo2)">assigning</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demo3)">basic math</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">hello world</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[1])">blocks</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[2])">assigning</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[3])">basic math</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">string math</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a class="bad" href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);

@@ -112,7 +112,16 @@ class Controller {
           break;
         case T_COMMENT:
           this.moveByParent();
-        break;
+          break;
+        case T_VAR:
+          this.moveByParent();
+          break;
+        case T_CONST:
+          this.moveByParent();
+          break;
+        case T_INPUT:
+          this.moveByParent();
+          break;
         default:
           break;
       }
@@ -199,12 +208,16 @@ class Controller {
   t_math() {
     let onlyNums = true;
     let vals = [];
+    let isNumbers = [];
     let res;
     for (let i = 1; i < this.activeCell.children.length; i++) {
       if (this.activeCell.children[i].type != T_COMMENT) {
         vals.push(this.activeCell.children[i].dataSH);
         if (/^\d+\.\d+$/.test(vals[i-1]) == false && /^\d+$/.test(vals[i-1]) == false) {
           onlyNums = false;
+          isNumbers.push(false);
+        } else {
+          isNumbers.push(true);
         }
       }
     }
@@ -228,11 +241,57 @@ class Controller {
         }
       }
     } else {
-      if ([T_MULT, T_MOD, T_DIV].indexOf(this.activeCell.type) != -1) {
-        res = 'error'
-        // cat strings
-        // if a string and minus, remove substrings
-        // make result 'error'
+
+
+      if (this.activeCell.type == T_MOD) {
+        res = 'error';
+      } else if (this.activeCell.type == T_ADD) { // concatenate
+        res = '';
+        for (let i = 0; i < vals.length; i++) {
+          res += vals[i];
+        }
+      } else if (this.activeCell.type == T_SUBTRACT) { // shorten or remove
+        res = vals[0];
+        console.log('hi');
+        for (let i = 1; i < vals.length; i++) {
+          if (isNumbers[i] == true) {
+            let myNumber = parseFloat(vals[i])
+            if (myNumber < res.length) {
+              res = res.substring(0, res.length - myNumber);
+            } else {
+              res = '';
+            }
+          } else {
+            let myIndexStart = res.indexOf(vals[i]);
+            let myIndexEnd = myIndexStart + vals[i].length;
+            if (myIndexStart != -1) {
+              let endCap = '';
+              if (myIndexEnd < res.length) {
+                endCap = res.substring(myIndexEnd, res.length);
+              }
+              res = res.substring(0, myIndexStart) + endCap;
+            }
+          }
+        }
+      } else if (this.activeCell.type == T_MULT) { // get index of substring
+        res = 'error';
+        if (vals.length >= 2) {
+          res = vals[0].indexOf(vals[1]);
+        }
+      } else if (this.activeCell.type == T_DIV) { //get char at index
+        let myIndex = 0;
+        let cando = false;
+        res = -1
+        for (let i = 1; i < isNumbers.length; i++) {
+          if (isNumbers[i] == true) {
+            myIndex = vals[i];
+            cando = true;
+            break;
+          }
+        }
+        if (cando == true && myIndex < vals[0].length) {
+          res = vals[0][myIndex];
+        }
       }
     }
     let output = this.activeCell.children[0].handleSH;

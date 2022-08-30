@@ -205,12 +205,14 @@ class Cells {
       this.cells.push(new Cell(T_OUTLET, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       this.cells[pIndex].addChild(pIndex + 1, this.cells[pIndex + 1]);
       this.cells[pIndex + 1].addParent(pIndex, this.cells[pIndex]);
-      let tempID = this.getID(4);
-      this.cells[pIndex + 1].handleSH= tempID;
-      this.cells[pIndex + 1].textLabel += ' ' + tempID;
+      // let tempID = this.getID(4);
+      this.cells[pIndex + 1].handleSH= 'outlet';//tempID;
+      // this.cells[pIndex + 1].textLabel += ' ' + tempID;
       this.cells[pIndex + 1].indexLabeldiv.html(this.cells[pIndex + 1].textLabel);
       this.cells[pIndex + 1].updateDataSH('unset');
-      this.varHandles.push(tempID);
+      if (this.varHandles.indexOf('outlet') == -1){
+        this.varHandles.push('outlet');
+      }
     }
     if (type == T_BLOCK) {
       this.cells[pIndex].input.value(this.getID(1) + " block", this.getID(1) + " block");
@@ -235,8 +237,10 @@ class Cells {
   }
 
   checkSelected(x, y) {
+    let inArea = false;
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].inArea(x, y) === true) {
+        inArea = true;
         this.cells[i].mode = M_SELECTED;
         if (this.cells[i].checkButtons(x, y) === true) {
           this.activeIndex = i;
@@ -248,7 +252,7 @@ class Cells {
         this.activeIndex = -1;
       }
     }
-    return false;
+    return inArea;
   }
 
   pprint(myStr) {
@@ -353,6 +357,38 @@ class Cells {
     }
   }
 
+  doCopy(){
+    let type = this.cells[this.activeIndex].type;
+    let x = this.cells[this.activeIndex].x;
+    let y = this.cells[this.activeIndex].y;
+    let c = this.cells[this.activeIndex].colors;
+    let handle = this.cells[this.activeIndex].handleSH;
+    let val = this.cells[this.activeIndex].dataSH;
+    let opts = this.cells[this.activeIndex].inputOptions;
+    this.cells[this.activeIndex].mode = M_IDLE;
+
+    // let w = this.cells[this.activeIndex].width;
+    // let h = this.cells[this.activeIndex].height;
+    this.activeIndex = this.length;
+    this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, c, this.dRadius));
+    this.cells[this.activeIndex].mode = M_NEW;
+    this.cells[this.activeIndex].handleSH = handle;
+    this.cells[this.activeIndex].dataSH = val;
+    console.log(val, this.cells[this.activeIndex].dataSH);
+    console.log(handle, this.cells[this.activeIndex].handleSH);
+    // if (type == T_VAR) {
+    if (blockConfig[type]['input type'] == I_SELECT) {
+      for (let i = 0; i < opts.length; i++) {
+        this.cells[this.activeIndex].inputOptions.push(opts[i]);
+      }
+      this.cells[this.activeIndex].input.selected(handle);
+    }
+    if (blockConfig[type]['input type'] == I_TEXT) {
+      this.cells[this.activeIndex].input.value(val, val);
+    }
+    // this.mapAndLink();
+  }
+
   doMove(x, y, mdown) {
     this.cells[this.activeIndex].moveC(x, y);
     if (this.cells[this.activeIndex].parent != -1) {
@@ -415,7 +451,7 @@ class Cells {
       // grab everything
       this.cells[i].updateSHs();
       // create variable map
-      if ((this.cells[i].type == T_OUTLET || this.cells[i].type == T_INPUT) && this.cells[i].mode != M_SELECTED) {
+      if ((this.cells[i].type == T_OUTLET || this.cells[i].type == T_INPUT)) { //this.cells[i].mode != M_SELECTED
         map[T_VAR].push(this.cells[i].handleSH);
         varTable[this.cells[i].handleSH] = this.cells[i].dataSH;
       }
@@ -431,6 +467,9 @@ class Cells {
       if (this.cells[i].type == T_VAR) {
         this.cells[i].dataSH = varTable[this.cells[i].handleSH];
       }
+      if (this.cells[i].mode == M_DELETE){
+        this.cells[i].cleanForDeletionSafe();
+      }
     }
   }
 
@@ -441,13 +480,7 @@ class Cells {
       // active cell
       if (this.activeIndex != -1) {
         if (this.cells[this.activeIndex].mode == M_NEW){
-          if (mdown == false) {
-            this.doMove(x, y, true);
-          }
-          if (mdown == true) {
-            this.cells[this.activeIndex].mode = M_IDLE;
-            this.activeIndex = -1;
-          }
+          this.doMove(x, y, true);
         }
         if (this.cells[this.activeIndex].mode == M_START){
           this.startStop(x, y, mdown);
@@ -467,6 +500,10 @@ class Cells {
           if (mdown === true && this.cells[this.activeIndex].mode == M_EXPAND_OR_COLLAPSE) {
             this.cells[this.activeIndex].expandOrCollapse();
           }
+
+          if (mdown === true && this.cells[this.activeIndex].mode == M_COPY) {
+            this.doCopy();
+          }
           this.doParentDrop(x, y, mdown)
         }
       }
@@ -480,12 +517,6 @@ class Cells {
       // stop button
       if (this.cells[0].mode == M_START){
         this.startStop(x, y, mdown);
-      }
-
-      for (let i = 0; i < this.length; i++) {
-        if (this.cells[i].parent == T_PRINT) {
-          this.cells[i].selfDescribe();
-        }
       }
       // and NOTHING ELSE CAUSE I SHOULD MAKE A NEW THING!
     }

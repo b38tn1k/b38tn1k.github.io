@@ -2,11 +2,9 @@ function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
 }
 
-var doMouseStuff = true;
 var selectChanged = true;
 function selectChangedCallback(){
   selectChanged = true;
-  doMouseStuff = false;
 }
 
 class Cell {
@@ -30,12 +28,19 @@ class Cell {
     this.underneath = false;
     this.flash = false;
     this.startForm = false;
+    this.inputOptions = [];
     // geometry
     this.childYBorder = 2*r;
     this.childXBorder = 1.5 * r;
     this.ySpacer = 0;
-    this.width = w;
-    this.height = h;
+    if (type == T_CONSOLE) {
+      this.width = 1.5*w;
+      this.height = 3*h;
+    } else {
+      this.width = w;
+      this.height = h;
+    }
+
     this.minWidth = w;
     this.minHeight = h;
     this.radius = r;
@@ -78,6 +83,8 @@ class Cell {
 
   resizeConsole() {
     if (this.type == T_CONSOLE) {
+      this.minWidth = max(100, this.minWidth);
+      this.minHeight = max(75, this.minHeight);
       this.indexLabeldiv.size(this.width - this.childXBorder, this.height - this.childYBorder);
       this.indexLabeldiv.style('overflow', "auto");
     }
@@ -91,25 +98,29 @@ class Cell {
     this.ySpacer = 0;
     if (blockConfig[this.type]['input type'] == I_TEXT) {
       this.input = createInput();
+      this.input.input(selectChangedCallback);
     }
     if (blockConfig[this.type]['input type'] == I_TEXT_AREA) {
       this.input = createElement('textarea');
+      this.input.input(selectChangedCallback);
     }
     if (blockConfig[this.type]['input type'] == I_SELECT) {
       this.input = createSelect();
       this.input.changed(selectChangedCallback);
+      this.width = max(this.width, 80);
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.style('font-size', '16px');
-      let h = this.input.size().height;
-      this.standardInputHeight = h;
-      this.input.size(this.width - 3*this.childXBorder, h);
       this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
       this.input.style('border', 0);
+      let h = this.input.size().height;
+      let w = this.width;
+      this.standardInputHeight = h;
+      this.input.size(w, h);
       // this.updateDivPosition(this.input, xp + this.childXBorder, yp + this.yHeaderEnd);
-      this.width = this.input.size().width + 3*this.childXBorder;
+      this.width = w + 3*this.childXBorder;
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
       if (this.type == T_VAR) {
@@ -122,6 +133,7 @@ class Cell {
         this.varLabeldiv.show();
       }
     }
+
     this.updateAllDivPositions();
   }
 
@@ -186,6 +198,10 @@ class Cell {
         if (blockConfig[this.type]['handles']['resize'] == true) {
           fill(this.colors[1]);
           rect(x + this.width - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
+        }
+        if (blockConfig[this.type]['handles']['copy'] == true) {
+          fill(this.colors[1]);
+          rect(x + this.width - this.handleW, y + this.height/2 - this.handleH, this.handleW, this.handleH);
         }
         if (blockConfig[this.type]['handles']['expand'] == true) {
           fill(this.colors[1]);
@@ -382,8 +398,10 @@ class Cell {
       this.removeParent();
       if (blockConfig[this.type]['input type'] != I_NONE) {
         this.input.remove();
+        this.input.remove();
       }
       if (this.type == T_VAR) {
+        this.varLabeldiv.remove();
         this.varLabeldiv.remove();
       }
     }
@@ -435,6 +453,19 @@ class Cell {
           }
         }
       }
+      // rect(x + this.width - this.handleW, y + this.height/2 - this.handleH, this.handleW, this.handleH);
+      if (blockConfig[this.type]['handles']['copy'] == true) {
+        let xMin = xp + this.width - this.handleW;
+        let yMin = yp + this.height/2 - this.handleH;
+        let xMax = xMin + this.handleW;
+        let yMax = yMin + this.handleH;
+        if (xMin - fudge < x && x < xMax + fudge) {
+          if (yMin - fudge < y && y < yMax + fudge) {
+            this.mode = M_COPY;
+            breaker = true;
+          }
+        }
+      }
       if (this.type == T_START) {
         if (this.mode != M_MOVE && this.shrink == false) {
           let xMin = xp + this.width/2 - 1.5*this.handleW;
@@ -454,7 +485,7 @@ class Cell {
   }
 
   updateSHs() {
-    if (blockConfig[this.type]['input type'] != I_NONE) {
+    if (blockConfig[this.type]['input type'] != I_NONE && this.mode != M_NEW) {
       switch (this.type) {
         case T_BLOCK:
           if (this.mode != M_SELECTED) {
@@ -467,7 +498,7 @@ class Cell {
           this.handleSH = this.input.value();
           break;
         case T_VAR:
-          this.handleSH = this.input.value();
+            this.handleSH = this.input.value();
           break;
         case T_INPUT:
           if (this.mode != M_SELECTED) {
@@ -475,6 +506,9 @@ class Cell {
           }
           break;
         case T_COMMENT:
+          this.dataSH = this.input.value();
+          break;
+        case T_CONST:
           this.dataSH = this.input.value();
           break;
         default:
@@ -486,8 +520,21 @@ class Cell {
 
   updateOptions(options) {
     if (blockConfig[this.type]['input type'] == I_SELECT) {
+      for (let i = 0; i < this.inputOptions.length; i++){
+        if (options[this.type].indexOf(this.inputOptions[i]) == -1) {
+          console.log(this.inputOptions[i], "is out!");
+          this.inputOptions = [];
+          this.input.remove();
+          this.buildDivs();
+          break
+        }
+      }
       for (let i = 0; i < options[this.type].length; i++){
         this.input.option(options[this.type][i], options[this.type][i]);
+        this.inputOptions.push(options[this.type][i]);
+      }
+      if (options[this.type].indexOf(this.handleSH) != -1){
+        this.input.selected(this.handleSH);
       }
     }
   }
@@ -604,6 +651,7 @@ class Cell {
       console.log('DATA',this.dataSH);
       console.log('HANDLE', this.handleSH);
       console.log('CHILDREN', this.childIndicies);
+      console.log('DIMS', this.width, this.height);
     } else {
       if (this.dataSH != null) {
         console.log('DATA',this.dataSH);

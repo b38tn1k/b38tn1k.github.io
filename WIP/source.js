@@ -23,12 +23,18 @@ function windowResized() {
 
 function mousePressed() {
   doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
-  doMouseStuff = true;
   if (doMouseDrag == true){
     xStart = mouseX;
     yStart = mouseY;
   }
 }
+
+// function keyTyped() {
+//   if (key === ' ') {
+//     tidy();
+//     tidy();
+//   }
+// }
 
 function newCell(type) {
   cells.addCell(type, 1.5 * menu.size().width);
@@ -72,7 +78,7 @@ function colorSetup() {
 
 function saveCells() {
   let map = cells.saveCells();
-  save(map, 'my.json', false);
+  save(map, 'my.json', true);
 }
 
 function shareLink() {
@@ -152,9 +158,6 @@ function drawGrid() {
 }
 
 function mouseDrag() {
-  if (doMouseStuff == false) {
-    doMouseDrag = false;
-  }
   if (mouseIsPressed == false) {
     doMouseDrag = false;
   }
@@ -172,7 +175,7 @@ function mouseDrag() {
 function createMenuDiv() {
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
-    let userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
+    let userBlocks = [T_BLOCK, T_GOTO, T_CONST, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
     let bad = [T_IF, T_WHILE, T_NOT, T_EQUAL, T_GREATER, T_LESS, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD];
     for (let i = 0; i < userBlocks.length; i++) {
       if (bad.indexOf(userBlocks[i]) == -1) {
@@ -191,7 +194,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demo3)">basic math</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
   if (slowMode == false) {
     menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">slow mode</a><br>', true);
   } else {

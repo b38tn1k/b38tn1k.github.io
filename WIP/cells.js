@@ -111,6 +111,7 @@ class Cells {
         this.cells[newCell].input.value(info.d);
       }
     }
+    this.cells[newCell].moveC(this.cells[newCell].x, this.cells[newCell].y);
   }
 
   nudgeX(x) {

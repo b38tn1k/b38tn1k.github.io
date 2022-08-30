@@ -179,7 +179,7 @@ function createMenuDiv() {
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
     let userBlocks = [T_BLOCK, T_GOTO, T_CONST, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
-    let bad = [T_IF, T_WHILE, T_NOT, T_EQUAL, T_GREATER, T_LESS];
+    let bad = [T_IF, T_WHILE, T_NOT];
     for (let i = 0; i < userBlocks.length; i++) {
       if (bad.indexOf(userBlocks[i]) == -1) {
         menu.html('<a href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockConfig[userBlocks[i]]['block label'] + '</a><br>', true);

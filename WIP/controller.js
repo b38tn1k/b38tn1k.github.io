@@ -49,17 +49,17 @@ class Controller {
       this.running = false;
     }
   }
-  update(cells, flash) {
+  update(cells, flash, fastMode) {
     this.startStop(cells);
     if (this.run == true) {
-      this.step(flash);
+      this.step(flash, fastMode);
     }
   }
   HCF() {
     this.index = this.terminate;
     this.run = false;
   }
-  step (flash) {
+  step (flash, fastMode) {
     if (this.index < this.script.length) {
       this.stack.push(this.index);
       this.activeCell = this.script[this.index];
@@ -136,6 +136,9 @@ class Controller {
         default:
           this.script[1].indexLabeldiv.html("Something is missing", true);
           break;
+      }
+      if (this.run == true && fastMode == true) {
+        this.step(flash, fastMode);
       }
     } else {
       this.run = false;

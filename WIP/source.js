@@ -10,6 +10,8 @@ var showBlockMenu = false;
 var showDemoMenu = false;
 var shareLinkGenerated = false;
 var slowMode = false;
+var fastMode = false;
+var speedMode = 0;
 var flash = true;
 var gridSize = 20;
 var demos = [];
@@ -183,9 +185,21 @@ function clearCells() {
   }
 }
 
-function toggleSlow() {
-  jlog('Main', 'toggleSlow');
-  slowMode = !slowMode;
+function toggleSpeedMode() {
+  jlog('Main', 'toggleSpeedMode');
+  speedMode += 1;
+  if (speedMode > 2) {
+    speedMode = 0;
+  }
+  slowMode = false;
+  fastMode = false;
+  console.log(speedMode)
+  if (speedMode == 2) {
+    slowMode = true;
+  }
+  if (speedMode == 1) {
+    fastMode = true;
+  }
   menu.html('');
   createMenuDiv();
 }
@@ -277,10 +291,13 @@ function createMenuDiv() {
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);
-  if (slowMode == false) {
-    menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">slow mode</a><br>', true);
-  } else {
-    menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">normal mode</a><br>', true);
+  if (speedMode == 0) {
+    menu.html('<a href="javascript:void(0)" onclick="toggleSpeedMode()">speed: 1</a><br>', true);
+  } else if (speedMode == 1){
+    menu.html('<a href="javascript:void(0)" onclick="toggleSpeedMode()">speed: 2</a><br>', true);
+    // menu.html('<a class="bad" href="javascript:void(0)" onclick="toggleSpeedMode()">may lock browser</a><br>', true);
+  } else if ( speedMode == 2) {
+    menu.html('<a href="javascript:void(0)" onclick="toggleSpeedMode()">speed: 3</a><br>', true);
   }
   if (flash == false) {
     menu.html('<a href="javascript:void(0)" onclick="toggleFlash()">flash on</a><br>', true);
@@ -370,9 +387,9 @@ function draw() {
   cells.updateView(xPos, yPos, doMouseDrag);
   cells.draw();
   cells.update(mouseX, mouseY, mouseIsPressed);
-  controller.update(cells, flash);
+  controller.update(cells, flash, fastMode);
   if (cells.run == true && slowMode == true) {
-    frameRate(2);
+    frameRate(5);
   } else {
     frameRate(100);
   }

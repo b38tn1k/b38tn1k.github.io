@@ -293,7 +293,7 @@ function createMenuDiv() {
   if (mobileHack == false) {
     menu.html('<br><a class="bad" href="javascript:void(0)" onclick="toggleMobileHack();">mobile hack</a><br>', true);
   } else {
-    menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">normal mode</a><br>', true);
+    menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">desktop</a><br>', true);
   }
   menu.position(10, 10);
   menu.style('font-size', '16px');
@@ -306,6 +306,9 @@ function createMenuDiv() {
 function setupScreen() {
   jlog('Main', 'setupScreen');
   createCanvas(windowWidth, windowHeight);
+  if (windowWidth < windowHeight) {
+    mobileHack = true;
+  }
   let gs2 = gridSize**2;
   bgGrid = createGraphics(gs2, gs2);
   for (let i = gridSize/2; i < gs2; i += gridSize) {

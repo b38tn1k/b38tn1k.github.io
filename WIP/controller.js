@@ -70,43 +70,43 @@ class Controller {
 
       switch(this.activeCell.type) {
         case T_START:
-          this.t_start();
+          this.t_start(this.activeCell);
           break;
         case T_GOTO:
-          this.t_goto();
+          this.t_goto(this.activeCell);
           break;
         case T_BLOCK:
-          let stillIn = this.t_block();
-          if (stillIn == false) {
+          let stillInBlock = this.t_block(this.activeCell);
+          if (stillInBlock == false) {
             this.moveByParent();
           }
           break;
         case T_PRINT:
-          this.t_print();
+          this.t_print(this.activeCell);
           this.moveByParent();
           break;
         case T_ASSIGN:
-          this.t_assign();
+          this.t_assign(this.activeCell);
           this.moveByParent();
           break;
         case T_ADD:
-          this.t_math();
+          this.t_math(this.activeCell);
           this.moveByParent();
           break;
         case T_SUBTRACT:
-          this.t_math();
+          this.t_math(this.activeCell);
           this.moveByParent();
           break;
         case T_MULT:
-          this.t_math();
+          this.t_math(this.activeCell);
           this.moveByParent();
           break;
         case T_DIV:
-          this.t_math();
+          this.t_math(this.activeCell);
           this.moveByParent();
           break;
         case T_MOD:
-          this.t_math();
+          this.t_math(this.activeCell);
           this.moveByParent();
           break;
         case T_COMMENT:
@@ -122,16 +122,22 @@ class Controller {
           this.moveByParent();
           break;
         case T_EQUAL:
-          this.t_compare();
+          this.t_compare(this.activeCell);
           this.moveByParent();
           break;
         case T_LESS:
-          this.t_compare();
+          this.t_compare(this.activeCell);
           this.moveByParent();
           break;
         case T_GREATER:
-          this.t_compare();
+          this.t_compare(this.activeCell);
           this.moveByParent();
+          break;
+        case T_IF:
+          let stillInIf = this.t_if(this.activeCell);
+          if (stillInIf == false) {
+            this.moveByParent();
+          }
           break;
         default:
           this.script[1].indexLabeldiv.html("Something is missing", true);
@@ -146,18 +152,18 @@ class Controller {
     }
   }
 
-  t_start() {
-    if (this.activeCell.children.length == 0) {
+  t_start(activeCell) {
+    if (activeCell.children.length == 0) {
       this.run = false;
       this.index = this.terminate;
     } else {
-      this.index = this.activeCell.childIndicies[0];
+      this.index = activeCell.childIndicies[0];
     }
   }
 
-  t_goto() {
+  t_goto(activeCell) {
     let myIndex = this.index;
-    let next = this.activeCell.handleSH;
+    let next = activeCell.handleSH;
     this.index = this.terminate;
     for (let i = 0; i < this.script.length; i++) {
       if (next == this.script[i].handleSH && this.script[i].type != T_GOTO) {
@@ -167,20 +173,20 @@ class Controller {
     this.script[this.index].parent = myIndex;
   }
 
-  t_block() {
+  t_block(activeCell) {
     let stillIn = false;
-    if (this.activeCell.children.length != 0) {
+    if (activeCell.children.length != 0) {
       stillIn = true;
-      this.index = this.activeCell.childIndicies[0];
+      this.index = activeCell.childIndicies[0];
     }
     return stillIn;
   }
 
-  t_print() {
+  t_print(activeCell) {
     let myOutput = '<br>' + this.script[1].lineNumber + ': ';
-    for (let j = 0; j < this.activeCell.children.length; j++) {
-      if (this.activeCell.children[j].type != T_COMMENT) {
-        let myString = String(this.script[this.activeCell.childIndicies[j]].dataSH);
+    for (let j = 0; j < activeCell.children.length; j++) {
+      if (activeCell.children[j].type != T_COMMENT) {
+        let myString = String(this.script[activeCell.childIndicies[j]].dataSH);
         myOutput += myString.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
       }
     }
@@ -210,11 +216,11 @@ class Controller {
     }
   }
 
-  t_assign() {
-    if (this.activeCell.children.length > 1) {
-      let assigner = this.activeCell.children[0];
+  t_assign(activeCell) {
+    if (activeCell.children.length > 1) {
+      let assigner = activeCell.children[0];
       let data = assigner.dataSH;
-      let cI = this.activeCell.childIndicies;
+      let cI = activeCell.childIndicies;
       for (let i = 1; i < cI.length; i++) {
         let key = this.script[cI[i]].handleSH;
         for (let i = 0; i < this.varMap[key].length; i++) {
@@ -223,14 +229,14 @@ class Controller {
       }
     }
   }
-  t_math() {
+  t_math(activeCell) {
     let onlyNums = true;
     let vals = [];
     let isNumbers = [];
     let res;
-    for (let i = 1; i < this.activeCell.children.length; i++) {
-      if (this.activeCell.children[i].type != T_COMMENT) {
-        vals.push(this.activeCell.children[i].dataSH);
+    for (let i = 1; i < activeCell.children.length; i++) {
+      if (activeCell.children[i].type != T_COMMENT) {
+        vals.push(activeCell.children[i].dataSH);
         if (/^\d+\.\d+$/.test(vals[i-1]) == false && /^\d+$/.test(vals[i-1]) == false) {
           onlyNums = false;
           isNumbers.push(false);
@@ -242,7 +248,7 @@ class Controller {
     if (onlyNums) {
       res = parseFloat(vals[0]);
       for (let i = 1; i < vals.length; i++) {
-        switch(this.activeCell.type) {
+        switch(activeCell.type) {
           case T_ADD:
             res += parseFloat(vals[i]);
             break;
@@ -261,14 +267,14 @@ class Controller {
           }
         }
     } else {
-      if (this.activeCell.type == T_MOD) {
+      if (activeCell.type == T_MOD) {
         res = 'error';
-      } else if (this.activeCell.type == T_ADD) { // concatenate
+      } else if (activeCell.type == T_ADD) { // concatenate
         res = '';
         for (let i = 0; i < vals.length; i++) {
           res += vals[i];
         }
-      } else if (this.activeCell.type == T_SUBTRACT) { // shorten or remove
+      } else if (activeCell.type == T_SUBTRACT) { // shorten or remove
         res = vals[0];
         for (let i = 1; i < vals.length; i++) {
           if (isNumbers[i] == true) {
@@ -290,12 +296,12 @@ class Controller {
             }
           }
         }
-      } else if (this.activeCell.type == T_MULT) { // get index of substring
+      } else if (activeCell.type == T_MULT) { // get index of substring
         res = 'error';
         if (vals.length >= 2) {
           res = vals[0].indexOf(vals[1]);
         }
-      } else if (this.activeCell.type == T_DIV) { //get char at index
+      } else if (activeCell.type == T_DIV) { //get char at index
         let myIndex = 0;
         let cando = false;
         res = -1
@@ -311,20 +317,26 @@ class Controller {
         }
       }
     }
-    let output = this.activeCell.children[0].handleSH;
+    let output = activeCell.children[0].handleSH;
     for (let i = 0; i < this.varMap[output].length; i++) {
       this.varMap[output][i].updateDataSH(res);
     }
   }
 
-  t_compare() {
+  t_compare(activeCell) {
     let onlyNums = true;
     let vals = [];
     let isNumbers = [];
     let res = true;
-    for (let i = 1; i < this.activeCell.children.length; i++) {
-      if (this.activeCell.children[i].type != T_COMMENT) {
-        vals.push(this.activeCell.children[i].dataSH);
+    for (let i = 1; i < activeCell.children.length; i++) {
+      if (activeCell.children[i].type != T_COMMENT) {
+        if ([T_DIV, T_ADD, T_SUBTRACT, T_MULT, T_MOD].indexOf(activeCell.children[i].type) != -1) {
+          this.t_math(activeCell.children[i]);
+          let newV = activeCell.children[i].children[0].dataSH;
+          vals.push(String(newV));
+        } else {
+          vals.push(activeCell.children[i].dataSH);
+        }
         if (/^\d+\.\d+$/.test(vals[i-1]) == false && /^\d+$/.test(vals[i-1]) == false) {
           onlyNums = false;
           isNumbers.push(false);
@@ -336,7 +348,7 @@ class Controller {
     if (onlyNums == true) {
       let prev = vals[0];
       for (let i = 1; i < vals.length; i++) {
-        switch(this.activeCell.type) {
+        switch(activeCell.type) {
           case T_EQUAL:
             if (prev != vals[i]) {
               res = false;
@@ -358,7 +370,7 @@ class Controller {
     } else {
       let prev = vals[0];
       for (let i = 1; i < vals.length; i++) {
-        switch(this.activeCell.type) {
+        switch(activeCell.type) {
           case T_EQUAL:
             if (prev != vals[i]) {
               res = false;
@@ -375,9 +387,21 @@ class Controller {
       }
     }
     // and return
-    let output = this.activeCell.children[0].handleSH;
+    let output = activeCell.children[0].handleSH;
     for (let i = 0; i < this.varMap[output].length; i++) {
       this.varMap[output][i].updateDataSH(res);
     }
+  }
+
+  t_if(activeCell) {
+    let stillIn = false;
+    let conditions = activeCell.children[0];
+    for (let i = 0; i < conditions.length; i++) {
+
+    }
+    let yes = activeCell.children[1];
+    let no = activeCell.children[2]
+
+    return stillIn
   }
 };

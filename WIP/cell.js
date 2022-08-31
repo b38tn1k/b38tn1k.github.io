@@ -416,6 +416,11 @@ class Cell {
     }
     if (this.shrink === true) {
       this.height = this.yHeaderEnd * 3;
+      if (this.type == T_START) {
+        this.height = this.yHeaderEnd;
+      } else {
+        this.height = this.yHeaderEnd * 3;
+      }
       this.minHeight = this.height;
     }
     if (this.width < this.indexLabeldiv.size().width + 3 * this.childXBorder && this.type != T_CONSOLE) {

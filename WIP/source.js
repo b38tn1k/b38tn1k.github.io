@@ -328,7 +328,7 @@ function createMenuDiv() {
 function setupScreen() {
   jlog('Main', 'setupScreen');
   createCanvas(windowWidth, windowHeight);
-  if (windowWidth < windowHeight) {
+  if (windowWidth/windowHeight < 10/16) {
     mobileHack = true;
   }
   let gs2 = gridSize**2;

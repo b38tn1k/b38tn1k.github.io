@@ -547,14 +547,16 @@ class Cells {
     }
   }
 
-  updateView(xPos, yPos) {
+  updateView(xPos, yPos, doDrag) {
     jlog('Cells', 'updateView');
     this.viewXdelta = xPos;
     this.viewYdelta = yPos;
     for (let i = 0; i < this.length; i++) {
       this.cells[i].updateView(this.viewXdelta, this.viewYdelta);
+      if (doDrag == true) {
+        this.cells[i].updateAllDivPositions();
+      }
     }
-
   }
 
   cellInView(cell) {

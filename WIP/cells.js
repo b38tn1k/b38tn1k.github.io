@@ -262,7 +262,8 @@ class Cells {
   checkSelected(x, y) {
     jlog('Cells', 'checkSelected');
     let inArea = false;
-    for (let i = 0; i < this.length; i++) {
+    for (let j = 0; j < this.cellsInView.length; j++) {
+      let i = this.cellsInView[j];
       if (this.cells[i].inArea(x, y) === true) {
         inArea = true;
         this.cells[i].mode = M_SELECTED;
@@ -429,7 +430,8 @@ class Cells {
     jlog('Cells', 'doParentDrop');
     let pParentIndexes = [];
     if (this.cells[this.activeIndex].type != T_START) {
-      for (let i = 0; i < this.length; i++) { // potentially breaking
+      for (let j = 0; j < this.cellsInView.length; j++) {
+        let i = this.cellsInView[j];
 
         if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
           this.cells[i].underneath = mdown || this.cells[this.activeIndex].mode == M_NEW;
@@ -568,10 +570,9 @@ class Cells {
         if (blockConfig[parType]['accept child'].indexOf(cType) == -1) {
           this.cells[i].updateView(this.viewXdelta, this.viewYdelta);
         }
-        // console.log;
       }
 
-      if (doDrag == true) {
+      if (doDrag == true && this.cellsInView.indexOf(i) != -1) {
         this.cells[i].updateAllDivPositions();
         this.cells[i].refresh();
       }
@@ -585,8 +586,6 @@ class Cells {
     let xMax = windowWidth;
     let yMin = -1*cell.height;
     let yMax = windowHeight;
-    // testing
-    // xMax = windowWidth/2;
     if (xMin < cell.viewX && cell.viewX < xMax) {
       if ( yMin < cell.viewY && cell.viewY < yMax) {
         inview = true;

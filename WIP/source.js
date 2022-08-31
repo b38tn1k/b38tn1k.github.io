@@ -194,8 +194,8 @@ function mouseDrag() {
   if (doMouseDrag == true) {
     xOff = xStart - mouseX;
     yOff = yStart - mouseY;
-    xPos -= xOff * 0.02;
-    yPos -= yOff  * 0.02;
+    xPos -= xOff * 0.03;
+    yPos -= yOff  * 0.03;
   } else {
     xOff = 0;
     yOff = 0;

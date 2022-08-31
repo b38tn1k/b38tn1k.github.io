@@ -15,14 +15,17 @@ var gridSize = 20;
 var demos = [];
 
 function deviceTurned() {
+  jlog('Main', 'deviceTurned');
   setupScreen();
 }
 
 function windowResized() {
+  jlog('Main', 'windowResized');
   setupScreen();
 }
 
 function mousePressed() {
+  jlog('Main', 'mousePressed');
   doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
   if (doMouseDrag == true){
     xStart = mouseX;
@@ -38,15 +41,18 @@ function mousePressed() {
 // }
 
 function newCell(type) {
+  jlog('Main', 'newCell');
   cells.addCell(type, 1.5 * menu.size().width);
 }
 
 function tidy() {
+  jlog('Main', 'tidy');
   let xOffset = 2*menu.x + menu.size().width;
   cells.tidy(round(xOffset/(gridSize/2))*(gridSize/2), gridSize);
 }
 
 function preload() {
+  jlog('Main', 'preload');
   c = loadStrings('nintendo-entertainment-system.hex');
   demos.push(loadJSON('helloworld.json'));
   demos.push(loadJSON('demo1.json'));
@@ -57,6 +63,7 @@ function preload() {
 }
 
 function colorSetup() {
+  jlog('Main', 'colorSetup');
   for (let i = 0; i < c.length; i++) {
     colors.push(color('#' + c[i]));
   }
@@ -80,11 +87,13 @@ function colorSetup() {
 }
 
 function saveCells() {
+  jlog('Main', 'saveCells');
   let map = cells.saveCells();
   save(map, 'my.json', true);
 }
 
 function shareLink() {
+  jlog('Main', 'shareLink');
   shareLinkString = cells.putInAddyBar();
   shareLinkGenerated = true;
   menu.html('');
@@ -92,6 +101,11 @@ function shareLink() {
 }
 
 function loadCells(myLoaderMap) {
+  jlog('Main', 'loadCells');
+  xOff = 0;
+  yOff = 0;
+  xPos = 0;
+  yPos = 0;
   for (let i = 0; i < cells.length; i++) {
     cells.cells[i].mode = M_DELETE;
     cells.cells[i].cleanForDeletionSafe();
@@ -111,18 +125,21 @@ function loadCells(myLoaderMap) {
 }
 
 function showHideBlockMenu() {
+  jlog('Main', 'showHideBlockMenu');
   showBlockMenu = ! showBlockMenu;
   menu.html('');
   createMenuDiv();
 }
 
 function showHideDemoMenu() {
+  jlog('Main', 'showHideDemoMenu');
   showDemoMenu = ! showDemoMenu;
   menu.html('');
   createMenuDiv();
 }
 
 function clearCells() {
+  jlog('Main', 'clearCells');
   while (cells.cells.length > 2) {
     cells.activeIndex = 2;
     cells.cells[2].mode = M_DELETE;
@@ -131,18 +148,21 @@ function clearCells() {
 }
 
 function toggleSlow() {
+  jlog('Main', 'toggleSlow');
   slowMode = !slowMode;
   menu.html('');
   createMenuDiv();
 }
 
 function toggleFlash() {
+  jlog('Main', 'toggleFlash');
   flash = !flash;
   menu.html('');
   createMenuDiv();
 }
 
 function showAll() {
+  jlog('Main', 'showAll');
   let userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
   for (let i = 0; i < userBlocks.length; i++) {
     cells.addCell(userBlocks[i], 1.5 * menu.size().width);
@@ -152,6 +172,7 @@ function showAll() {
 }
 
 function drawGrid() {
+  jlog('Main', 'drawGrid');
   // console.log(xPos, yPos);
   for (let x = 0; x < windowWidth; x+=bgGrid.width) {
     for (let y = 0; y < windowHeight; y+= bgGrid.height) {
@@ -161,6 +182,7 @@ function drawGrid() {
 }
 
 function mouseDrag() {
+  jlog('Main', 'mouseDrag');
   if (mouseIsPressed == false) {
     doMouseDrag = false;
   }
@@ -176,6 +198,7 @@ function mouseDrag() {
 }
 
 function createMenuDiv() {
+  jlog('Main', 'createMenuDiv');
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
     let userBlocks = [T_BLOCK, T_GOTO, T_CONST, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
@@ -227,6 +250,7 @@ function createMenuDiv() {
 }
 
 function setupScreen() {
+  jlog('Main', 'setupScreen');
   createCanvas(windowWidth, windowHeight);
   let gs2 = gridSize**2;
   bgGrid = createGraphics(gs2, gs2);
@@ -240,6 +264,7 @@ function setupScreen() {
 }
 
 function setup() {
+  jlog('Main', 'setup');
   pixelDensity(1);
   colorSetup();
   setupScreen();

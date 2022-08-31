@@ -1,5 +1,6 @@
 class Cells {
   constructor(c, h, l, i, dt) {
+    jlog('Cells', 'constructor');
     this.cells = [];
     this.dWidth = 80;
     this.dHeight = 40;
@@ -14,16 +15,18 @@ class Cells {
     this.varHandles = ['none'];
     this.map = {};
     this.run = false;
-    this.viewX = 0;
-    this.viewY = 0;
+    this.viewXdelta = 0;
+    this.viewYdelta = 0;
     this.oldMouse = true;
   }
 
   get length() {
+    jlog('Cells', 'length');
     return this.cells.length;
   }
 
   tidy(xMin, yMin) {
+    jlog('Cells', 'tidy');
     let bigBlocks = [];
     let consol, start;
     for (let i = 0; i < this.length; i++) {
@@ -61,6 +64,7 @@ class Cells {
   }
 
   saveCells() {
+    jlog('Cells', 'saveCells');
     this.mapAndLink();
     let snapshot = {}
     for (let i = 0; i < cells.length; i++) {
@@ -81,6 +85,7 @@ class Cells {
   }
 
   addCellWithInfo(info) {
+    jlog('Cells', 'addCellWithInfo');
     let type = info.t;
     if (type > this.colors.length){
       type = this.cells[info.p].type;
@@ -119,6 +124,7 @@ class Cells {
   }
 
   nudgeX(x) {
+    jlog('Cells', 'nudgeX');
     let nudgeVal = 0;
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].x < x) {
@@ -131,6 +137,7 @@ class Cells {
   }
 
   putInAddyBar() {
+    jlog('Cells', 'putInAddyBar');
     let myURL = getURL();
     if (myURL.indexOf('#') != -1) {
       myURL = myURL.slice(0, myURL.indexOf('#'));
@@ -140,6 +147,7 @@ class Cells {
   }
 
   makeFromAddyBar(myString=getURL()) {
+    jlog('Cells', 'makeFromAddyBar');
     if (myString.indexOf('#') == -1) {
       return false;
     }
@@ -164,6 +172,7 @@ class Cells {
   }
 
   linkChildren(ind, info) {
+    jlog('Cells', 'linkChildren');
     let id = parseInt(ind);
     for (let i = 0; i < info.c.length; i++) {
       this.cells[id].forcefullyAddChildren(info.c[i], this.cells[info.c[i]], true);
@@ -171,6 +180,7 @@ class Cells {
   }
 
   addCell(type, startX) {
+    jlog('Cells', 'addCell');
     this.mapAndLink();
     let x = startX;//0.15 * windowWidth;
     let y = 17;
@@ -230,6 +240,7 @@ class Cells {
   }
 
   getID(count) {
+    jlog('Cells', 'getID');
     let tempID = '';
     for (let i = 0; i < count; i++) {
       tempID += this.varNames[floor(random(0, this.varNames.length))];
@@ -241,6 +252,7 @@ class Cells {
   }
 
   checkSelected(x, y) {
+    jlog('Cells', 'checkSelected');
     let inArea = false;
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].inArea(x, y) === true) {
@@ -260,6 +272,7 @@ class Cells {
   }
 
   pprint(myStr) {
+    jlog('Cells', 'pprint');
     myStr += '\ncell:     \t'
     for (let i = 0; i < this.cells.length; i++){
       myStr += String(i) + '\t';
@@ -285,17 +298,20 @@ class Cells {
   }
 
   startStop(x, y, mdown) {
+    jlog('Cells', 'startStop');
     this.run = ! this.run;
     this.cells[this.activeIndex].mode = M_IDLE;
     this.cells[this.activeIndex].toggleStartForm(this.run);
   }
 
   stop() {
+    jlog('Cells', 'stop');
     this.run = false;
     this.cells[0].toggleStartForm(false);
   }
 
   doDelete(x, y, mdown) {
+    jlog('Cells', 'doDelete');
     let rebuildFlag = false;
     let delHandle = [];
     if (this.length == 1) { // last cell
@@ -362,6 +378,7 @@ class Cells {
   }
 
   doCopy(){
+    jlog('Cells', 'doCopy');
     let type = this.cells[this.activeIndex].type;
     let x = this.cells[this.activeIndex].x;
     let y = this.cells[this.activeIndex].y;
@@ -394,6 +411,7 @@ class Cells {
   }
 
   doMove(x, y, mdown) {
+    jlog('Cells', 'doMove');
     this.cells[this.activeIndex].moveC(x, y);
     if (this.cells[this.activeIndex].parent != -1) {
       this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
@@ -402,6 +420,7 @@ class Cells {
   }
 
   doParentDrop(x, y, mdown) {
+    jlog('Cells', 'doParentDrop');
     let pParentIndexes = [];
     if (this.cells[this.activeIndex].type != T_START) {
       for (let i = 0; i < this.length; i++) {
@@ -447,6 +466,7 @@ class Cells {
   }
 
   mapAndLink(reset = false) {
+    jlog('Cells', 'mapAndLink');
     let map = {};
     map[T_GOTO] = ['none'];
     map[T_VAR] = ['none'];
@@ -478,6 +498,7 @@ class Cells {
   }
 
   update(x, y, mdown) {
+    jlog('Cells', 'update');
     this.cells[0].startButtonUpdate(x, y);
     // build mode
     if (this.run == false) {
@@ -527,27 +548,36 @@ class Cells {
   }
 
   updateView(xPos, yPos) {
-    this.viewX = xPos;
-    this.viewY = yPos;
+    jlog('Cells', 'updateView');
+    this.viewXdelta = xPos;
+    this.viewYdelta = yPos;
+    for (let i = 0; i < this.length; i++) {
+      this.cells[i].updateView(this.viewXdelta, this.viewYdelta);
+    }
 
   }
 
   cellInView(cell) {
+    jlog('Cells', 'cellInView');
     let inview = false;
-    let xActual = cell.x + this.viewX;
-    let yActual = cell.y + this.viewY;
-    if (-1*cell.width < xActual && xActual < windowWidth) {
-      if (-1*cell.height < yActual && yActual < windowHeight) {
+    // console.log(cell.viewX, cell.x);
+    // console.log(cell.viewY, cell.y);
+    if (-1*cell.width < cell.viewX && cell.viewX < windowWidth) {
+      if (-1*cell.height < cell.viewY && cell.viewY < windowHeight) {
         inview = true;
       }
     }
-    return inview;
+    // return inview;
+    return true;
   }
 
   draw(canvas = null) {
+    jlog('Cells', 'draw');
     for (let i = 0; i < this.length; i++) {
-      // if (this.cellInView(this.cells[i]) == true) {
+      this.cellInView(this.cells[i]);
+      if (this.cellInView(this.cells[i]) == true) {
         this.cells[i].draw();
+      }
       //   if (this.cells[i].hide == false) {
       //     this.cells[i].showDivs();
       //   }

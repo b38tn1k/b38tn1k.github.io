@@ -3,12 +3,18 @@ function colorToHTMLRGB(color) {
 }
 
 var selectChanged = true;
+
 function selectChangedCallback(){
   selectChanged = true;
 }
 
+function jlog(classname, label) {
+  // console.debug(classname, label)
+}
+
 class Cell {
   constructor(type, x, y, w, h, c, r=5) {
+    jlog('Cell', 'constructor');
     // heirachy
     this.children = [];
     this.childIndicies = [];
@@ -46,6 +52,8 @@ class Cell {
     this.radius = r;
     this.x = x;
     this.y = y;
+    this.viewX = x;
+    this.viewY = y;
     this.hide = false;
     this.shrink = false;
     this.handleW = 1.5*r;
@@ -78,10 +86,12 @@ class Cell {
   }
 
   get size() {
+    jlog('Cell', 'size');
     return [this.width, this.height]
   }
 
   resizeConsole() {
+    jlog('Cell', 'resizeConsole');
     if (this.type == T_CONSOLE) {
       this.minWidth = max(100, this.minWidth);
       this.minHeight = max(75, this.minHeight);
@@ -91,6 +101,7 @@ class Cell {
   }
 
   buildDivs() {
+    jlog('Cell', 'buildDivs');
     let xp = this.x;
     let yp = this.y;
     this.height = this.startHeight;
@@ -138,6 +149,7 @@ class Cell {
   }
 
   updateAllDivPositions() {
+    jlog('Cell', 'updateAllDivPositions');
     let xp = this.x;
     let yp = this.y;
     this.updateDivPosition(this.indexLabeldiv, xp + 2*this.childXBorder, yp);
@@ -146,11 +158,11 @@ class Cell {
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.updateDivPosition(this.input, xp + this.childXBorder, yp + this.childYBorder + this.yHeaderEnd);
-
     }
   }
 
   updateDataSH(value) {
+    jlog('Cell', 'updateDataSH');
     this.dataSH = value;
     if (this.type != T_VAR) {
       let htmlString = this.textLabel + '<br>' + String(this.dataSH);
@@ -160,7 +172,13 @@ class Cell {
     }
   }
 
+  updateView(xOff, yOff) {
+    this.viewX = this.x + xOff;
+    this.viewY = this.y + yOff;
+  }
+
   draw(xOff, yOff, canvas=null) {
+    jlog('Cell', 'draw');
     let x = this.x// + xOff;
     let y = this.y// + yOff;
     if (this.hide === false){
@@ -228,6 +246,7 @@ class Cell {
   }
 
   toggleStartForm(myBool){
+    jlog('Cell', 'toggleStartForm');
     this.startForm = myBool;
     if (myBool == true) {
       this.textLabel = blockConfig[T_STOP]['block label'];
@@ -239,6 +258,7 @@ class Cell {
   }
 
   makeStartButtonOptions() {
+    jlog('Cell', 'makeStartButtonOptions');
     this.sbGraphics = {};
     this.sbGraphics[0] = {};
     this.sbGraphics[1] = {};
@@ -275,6 +295,7 @@ class Cell {
   }
 
   startButtonUpdate(x, y) {
+    jlog('Cell', 'startButtonUpdate');
     let xp = this.x;
     let yp = this.y;
     let xMin = xp + this.width/2 - 1.5*this.handleW;
@@ -291,10 +312,12 @@ class Cell {
   }
 
   updateDivPosition(div, x, y){
+    jlog('Cell', 'updateDivPosition');
     div.position(x, y);
   }
 
   moveC(x, y) {
+    jlog('Cell', 'moveC');
     x = max(x, this.handleW);
     y = max(y, this.handleH);
     this.x = x;
@@ -318,6 +341,7 @@ class Cell {
   }
 
   resizeC(x, y) {
+    jlog('Cell', 'resize');
     let nw = x - this.x;
     let nh = y - this.y;
     if (nw > 2*this.handleW) {
@@ -344,6 +368,7 @@ class Cell {
   }
 
   reshape(reshape=false) {
+    jlog('Cell', 'reshape');
     let xp = this.x;
     let yp = this.y;
     for (let i = 0; i < this.children.length; i++) {
@@ -384,6 +409,7 @@ class Cell {
   }
 
   markForDeletion() {
+    jlog('Cell', 'markForDeletion');
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].markForDeletion();
     }
@@ -391,6 +417,7 @@ class Cell {
   }
 
   cleanForDeletionSafe() {
+    jlog('Cell', 'cleanForDeletionSafe');
     let par = -1;
     if (this.mode == M_DELETE) {
       this.indexLabeldiv.remove();
@@ -409,6 +436,7 @@ class Cell {
   }
 
   checkButtons(x, y) {
+    jlog('Cell', 'checkButtons');
     let xp = this.x;
     let yp = this.y;
     let breaker = false;
@@ -485,6 +513,7 @@ class Cell {
   }
 
   updateSHs() {
+    jlog('Cell', 'updateSHs');
     if (blockConfig[this.type]['input type'] != I_NONE && this.mode != M_NEW) {
       switch (this.type) {
         case T_BLOCK:
@@ -519,6 +548,7 @@ class Cell {
   }
 
   updateOptions(options) {
+    jlog('Cell', 'updateOptions');
     if (blockConfig[this.type]['input type'] == I_SELECT) {
       for (let i = 0; i < this.inputOptions.length; i++){
         if (options[this.type].indexOf(this.inputOptions[i]) == -1) {
@@ -540,15 +570,18 @@ class Cell {
   }
 
   forcefullyAddChildren(ind, child) {
+    jlog('Cell', 'forcefullyAddChildren');
     this.childIndicies.push(ind);
     this.children.push(child);
   }
 
   acceptsChild(type) {
+    jlog('Cell', 'acceptsChild');
     return (blockConfig[this.type]['accept child'].indexOf(type) != -1)
   }
 
   addChild(ind, child, force=false) {
+    jlog('Cell', 'addChild');
     if (force == true|| this.acceptsChild(child.type) == true) {
       if (this.childIndicies.indexOf(ind) == -1) {
         this.children.push(child);
@@ -559,6 +592,7 @@ class Cell {
   }
 
   addParent(ind, parent) {
+    jlog('Cell', 'addParent');
     this.parent = ind;
     if (this.type == T_START) {
       this.parent = -1;
@@ -566,10 +600,12 @@ class Cell {
   }
 
   removeParent() {
+    jlog('Cell', 'removeParent');
     this.parent = -1;
   }
 
   removeChild(ind) {
+    jlog('Cell', 'removeChild');
     if (this.type != T_VAR && this.type != T_INPUT) {
       let ci = this.childIndicies.indexOf(ind);
       if (ci != -1) {
@@ -582,6 +618,7 @@ class Cell {
   }
 
   expandOrCollapse() {
+    jlog('Cell', 'expandOrCollapse');
     if (this.shrink === true) {
       this.expandBlock();
     } else {
@@ -591,6 +628,7 @@ class Cell {
   }
 
   hideDivs() {
+    jlog('Cell', 'hideDivs');
     if (this.type == T_VAR) {
       this.varLabeldiv.hide();
     }
@@ -600,6 +638,7 @@ class Cell {
   }
 
   hideBlock() {
+    jlog('Cell', 'hideBlock');
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].hideBlock();
     }
@@ -609,6 +648,7 @@ class Cell {
   }
 
   showDivs() {
+    jlog('Cell', 'showDivs');
     if (this.type == T_VAR) {
       this.varLabeldiv.show();
     }
@@ -618,6 +658,7 @@ class Cell {
   }
 
   showBlock() {
+    jlog('Cell', 'showBlock');
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].showBlock();
     }
@@ -627,6 +668,7 @@ class Cell {
   }
 
   shrinkBlock() {
+    jlog('Cell', 'shrinkBlock');
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].hideBlock();
     }
@@ -635,6 +677,7 @@ class Cell {
   }
 
   expandBlock() {
+    jlog('Cell', 'expandBlock');
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].showBlock();
       this.children[i].expandBlock();
@@ -646,6 +689,7 @@ class Cell {
   }
 
   selfDescribe(short=false) {
+    jlog('Cell', 'selfDescribe');
     console.log('TYPE', blockConfig[this.type]['block label']);
     if (short == false) {
       console.log('DATA',this.dataSH);
@@ -668,11 +712,13 @@ class Cell {
   }
 
   unsetData(){
+    jlog('Cell', 'unsetData');
     let nothing;
     this.dataSH = nothing;
   }
 
   inArea(x, y) {
+    jlog('Cell', 'inArea');
     let xp = this.x;
     let yp = this.y;
     let breaker = false;

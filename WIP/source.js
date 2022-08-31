@@ -281,10 +281,21 @@ function setup() {
   yOff = 0;
   xPos = 0;
   yPos = 0;
-  let loaded = cells.makeFromAddyBar();
+  let loaded = false;
+  let demoIndex = -1;
+  let myString = getURL();
+  if (myString.indexOf("#demo") != -1) {
+    let demo = myString.split("demo");
+    demoIndex = parseInt(demo[demo.length - 1]);
+  } else {
+    loaded = cells.makeFromAddyBar();
+  }
   if (loaded == false) {
     cells.addCell(T_START, 1.5 * menu.size().width);
     cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
+    if (demoIndex != -1 && demoIndex < demos.length) {
+      loadCells(demos[demoIndex]);
+    }
     tidy();
   }
   cells.cells[1].resizeConsole();

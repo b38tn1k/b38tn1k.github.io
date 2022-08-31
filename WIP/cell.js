@@ -54,6 +54,8 @@ class Cell {
     this.y = y;
     this.viewX = x;
     this.viewY = y;
+    this.deltaX = 0;
+    this.deltaY = 0;
     this.hide = false;
     this.shrink = false;
     this.handleW = 1.5*r;
@@ -102,8 +104,10 @@ class Cell {
 
   buildDivs() {
     jlog('Cell', 'buildDivs');
-    let xp = this.x;
-    let yp = this.y;
+    // let xp = this.x;
+    // let yp = this.y;
+    let xp = this.viewX;
+    let yp = this.viewY;
     this.height = this.startHeight;
     this.width = this.startWidth;
     this.ySpacer = 0;
@@ -150,8 +154,10 @@ class Cell {
 
   updateAllDivPositions() {
     jlog('Cell', 'updateAllDivPositions');
-    let xp = this.x;
-    let yp = this.y;
+    // let xp = this.x;
+    // let yp = this.y;
+    let xp = this.viewX;
+    let yp = this.viewY;
     this.updateDivPosition(this.indexLabeldiv, xp + 2*this.childXBorder, yp);
     if (this.type == T_VAR) {
       this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
@@ -177,10 +183,12 @@ class Cell {
     this.viewY = this.y + yOff;
   }
 
-  draw(xOff, yOff, canvas=null) {
+  draw(canvas=null) {
     jlog('Cell', 'draw');
-    let x = this.x// + xOff;
-    let y = this.y// + yOff;
+    // let x = this.x;
+    // let y = this.y;
+    let x = this.viewX;
+    let y = this.viewY;
     if (this.hide === false){
       if (canvas === null) {
         // body
@@ -296,8 +304,10 @@ class Cell {
 
   startButtonUpdate(x, y) {
     jlog('Cell', 'startButtonUpdate');
-    let xp = this.x;
-    let yp = this.y;
+    // let xp = this.x;
+    // let yp = this.y;
+    let xp = this.viewX;
+    let yp = this.viewY;
     let xMin = xp + this.width/2 - 1.5*this.handleW;
     let xMax = xMin + 3*this.handleW;
     this.sbHighlight = false;
@@ -316,34 +326,37 @@ class Cell {
     div.position(x, y);
   }
 
-  moveC(x, y) {
+  moveC(x, y, xdelta, ydelta) {
     jlog('Cell', 'moveC');
-    x = max(x, this.handleW);
-    y = max(y, this.handleH);
-    this.x = x;
-    this.y = y;
-    let xp = this.x;
-    let yp = this.y;
-    if (blockConfig[this.type]['input type'] != I_NONE) {
-      // this.updateDivPosition(this.input, xp + this.childXBorder, yp + this.childYBorder + this.yHeaderEnd);
-    }
-    if (this.type == T_VAR) {
-      // this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
-    }
-    // this.updateDivPosition(this.indexLabeldiv, xp + 2*this.childXBorder, yp);
-    let childX = x + this.childXBorder;
-    let childY = yp + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
+    // this.x = x;
+    // this.y = y;
+    // let xp = this.x;
+    // let yp = this.y;
+    this.viewX = x;
+    this.viewY = y;
+    this.x = this.viewX - xdelta;
+    this.y = this.viewY - ydelta;
+    this.refresh(xdelta, ydelta);
+  }
+
+  refresh(xdelta, ydelta) {
+    let childX = this.viewX + this.childXBorder;
+    let childY = this.viewY + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
     this.updateAllDivPositions();
     for (let i = 0; i < this.children.length; i++) {
-      this.children[i].moveC(childX, childY);
+      this.children[i].moveC(childX, childY, xdelta, ydelta);
       childY += this.childYBorder + this.children[i].height;
     }
   }
 
   resizeC(x, y) {
     jlog('Cell', 'resize');
-    let nw = x - this.x;
-    let nh = y - this.y;
+    // let xp = this.x;
+    // let yp = this.y;
+    let xp = this.viewX;
+    let yp = this.viewY;
+    let nw = x - xp;
+    let nh = y - yp;
     if (nw > 2*this.handleW) {
       this.width = nw;
     }
@@ -369,8 +382,10 @@ class Cell {
 
   reshape(reshape=false) {
     jlog('Cell', 'reshape');
-    let xp = this.x;
-    let yp = this.y;
+    // let xp = this.x;
+    // let yp = this.y;
+    let xp = this.viewX;
+    let yp = this.viewY;
     for (let i = 0; i < this.children.length; i++) {
       if (this.children[i].mode == M_IDLE) {
         this.children[i].reshape();
@@ -405,7 +420,7 @@ class Cell {
       let h = this.input.size().height;
       this.input.size(this.width - 3 * this.childXBorder);
     }
-    this.moveC(xp, yp);
+    this.refresh();
   }
 
   markForDeletion() {
@@ -437,14 +452,17 @@ class Cell {
 
   checkButtons(x, y) {
     jlog('Cell', 'checkButtons');
-    let xp = this.x;
-    let yp = this.y;
+    // let xp = this.x;
+    // let yp = this.y;
+    let xp = this.viewX;
+    let yp = this.viewY;
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;
       if (blockConfig[this.type]['handles']['move'] == true) {
         if (x > xp - fudge && x < xp + this.handleW + fudge) {
           if (y > yp - fudge && y < yp + this.handleH + fudge) {
+            console.log('move button pressed');
             this.mode = M_MOVE;
             breaker = true;
           }
@@ -453,6 +471,7 @@ class Cell {
       if (blockConfig[this.type]['handles']['resize'] == true) {
         if (x > xp + this.width - this.handleW - fudge && x < xp + this.width + fudge) {
           if (y > yp + this.height - this.handleH - fudge && y < yp + this.height + fudge) {
+            console.log('resize button pressed');
             this.mode = M_RESIZE;
             breaker = true;
           }
@@ -462,6 +481,7 @@ class Cell {
       if (blockConfig[this.type]['handles']['expand'] == true) {
         if (x > xp + this.width/2 - this.handleW && x < xp + this.width/2) {
           if (y > yp + this.height - this.handleH && y < yp + this.height) {
+            console.log('expand || collapse button pressed');
             this.mode = M_EXPAND_OR_COLLAPSE;
             breaker = true;
           }
@@ -471,6 +491,7 @@ class Cell {
       if (blockConfig[this.type]['handles']['delete'] == true) {
         if (x > xp + this.width - this.handleW - fudge && x < xp + this.width + fudge) {
           if (y > yp - fudge && y < yp + this.handleH + fudge) {
+            console.log('delete button pressed');
             if (this.type == T_CONSOLE) {
               this.indexLabeldiv.html(this.textLabel);
               this.lineNumber = 0;
@@ -489,6 +510,7 @@ class Cell {
         let yMax = yMin + this.handleH;
         if (xMin - fudge < x && x < xMax + fudge) {
           if (yMin - fudge < y && y < yMax + fudge) {
+            console.log('copy button pressed');
             this.mode = M_COPY;
             breaker = true;
           }
@@ -708,6 +730,8 @@ class Cell {
       }
     }
     console.log('PARENT', this.parent);
+    console.log('XY', this.x, this.y);
+    console.log('VIEW XY', this.viewX, this.viewY);
     console.log('\n');
   }
 
@@ -719,8 +743,10 @@ class Cell {
 
   inArea(x, y) {
     jlog('Cell', 'inArea');
-    let xp = this.x;
-    let yp = this.y;
+    // let xp = this.x;
+    // let yp = this.y;
+    let xp = this.viewX;
+    let yp = this.viewY;
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;

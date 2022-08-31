@@ -43,6 +43,9 @@ function mousePressed() {
 function newCell(type) {
   jlog('Main', 'newCell');
   cells.addCell(type, 1.5 * menu.size().width);
+  menu.remove();
+  menu = createDiv();
+  createMenuDiv();
 }
 
 function tidy() {
@@ -122,6 +125,9 @@ function loadCells(myLoaderMap) {
   let xOffset = 2*menu.x + menu.size().width;
   cells.nudgeX(xOffset);
   // tidy();
+  menu.remove();
+  menu = createDiv();
+  createMenuDiv();
 }
 
 function showHideBlockMenu() {
@@ -222,7 +228,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">comparisons</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
-  menu.html('<a class="bad" href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
+  // menu.html('<a class="bad" href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
   if (slowMode == false) {
     menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">slow mode</a><br>', true);
   } else {
@@ -283,10 +289,13 @@ function setup() {
     tidy();
   }
   cells.cells[1].resizeConsole();
-
+  menu.remove();
+  menu = createDiv();
+  createMenuDiv();
 }
 
 function draw() {
+  frameRate(5);
   clear();
   mouseDrag();
   drawGrid();

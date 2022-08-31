@@ -116,7 +116,7 @@ class Cells {
         this.cells[newCell].input.value(info.d);
       }
     }
-    this.cells[newCell].moveC(this.cells[newCell].x, this.cells[newCell].y);
+    this.cells[newCell].refresh(this.viewXdelta, this.viewYdelta);
     if (this.cells[newCell].hide == true) {
       this.cells[newCell].hideBlock();
       console.log(this.cells[newCell].textLabel);
@@ -132,7 +132,7 @@ class Cells {
       }
     }
     for (let i = 0; i < this.length; i++) {
-      this.cells[i].moveC(this.cells[i].x + nudgeVal, this.cells[i].y);
+      this.cells[i].moveC(this.cells[i].x + nudgeVal, this.cells[i].y, this.viewXdelta, this.viewYdelta);
     }
   }
 
@@ -205,7 +205,7 @@ class Cells {
         this.cells[pIndex].addChild(pIndex + i, this.cells[pIndex + i], true);
         this.cells[pIndex + i].addParent(pIndex, this.cells[pIndex], true);
       }
-      this.cells[pIndex].moveC(this.cells[pIndex].x, this.cells[pIndex].y);
+      this.cells[pIndex].refresh(this.viewXdelta, this.viewYdelta);
     }
 
     let theOnesWithOutlets = [T_EQUAL,T_LESS,T_GREATER,T_ADD,T_SUBTRACT,T_MULT,T_DIV,T_MOD];
@@ -412,7 +412,7 @@ class Cells {
 
   doMove(x, y, mdown) {
     jlog('Cells', 'doMove');
-    this.cells[this.activeIndex].moveC(x, y);
+    this.cells[this.activeIndex].moveC(x, y, this.viewXdelta, this.viewYdelta);
     if (this.cells[this.activeIndex].parent != -1) {
       this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
       this.cells[this.activeIndex].removeParent();
@@ -457,7 +457,7 @@ class Cells {
         let ok = this.cells[pParentIndex].addChild(this.activeIndex, this.cells[this.activeIndex]);
         if (ok == true) {
           this.cells[this.activeIndex].addParent(pParentIndex, this.cells[pParentIndex]);
-          this.cells[pParentIndex].moveC(this.cells[pParentIndex].x, this.cells[pParentIndex].y);
+          this.cells[pParentIndex].refresh(this.viewXdelta, this.viewYdelta);
         }
       }
       this.cells[this.activeIndex].mode = M_IDLE;
@@ -552,9 +552,12 @@ class Cells {
     this.viewXdelta = xPos;
     this.viewYdelta = yPos;
     for (let i = 0; i < this.length; i++) {
-      this.cells[i].updateView(this.viewXdelta, this.viewYdelta);
+      if (this.cells[i].parent == -1) {
+        this.cells[i].updateView(this.viewXdelta, this.viewYdelta);
+      }
       if (doDrag == true) {
         this.cells[i].updateAllDivPositions();
+        this.cells[i].refresh();
       }
     }
   }

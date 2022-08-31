@@ -352,7 +352,7 @@ class Cells {
         }
         // remove parent / child links and divs for those in delete mode
         let parent = this.cells[i].cleanForDeletionSafe();
-        if (parent != -1){
+        if (parent != -1 && this.cells[parent]){
           this.cells[parent].removeChild(i);
         }
       }

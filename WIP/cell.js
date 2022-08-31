@@ -582,7 +582,7 @@ class Cell {
     if (blockConfig[this.type]['input type'] == I_SELECT) {
       for (let i = 0; i < this.inputOptions.length; i++){
         if (options[this.type].indexOf(this.inputOptions[i]) == -1) {
-          console.log(this.inputOptions[i], "is out!");
+          // console.log(this.inputOptions[i], "is out!");
           this.inputOptions = [];
           this.input.remove();
           this.buildDivs();

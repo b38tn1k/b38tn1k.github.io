@@ -25,6 +25,7 @@ function deviceTurned() {
 function windowResized() {
   jlog('Main', 'windowResized');
   setupScreen();
+  cells.updateView(xPos, yPos, doMouseDrag);
 }
 
 function mousePressed() {
@@ -365,6 +366,7 @@ function draw() {
   }
   if (tidyFlag > 0) {
     tidy();
+    cells.updateView(xPos, yPos, true);
     tidyFlag -= 1;
   }
 }

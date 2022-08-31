@@ -69,7 +69,9 @@ class Cell {
     // divs
     this.lineNumber = 0;
     this.indexLabeldiv = createDiv(this.textLabel);
-    // this.updateDivPosition(this.indexLabeldiv, x + 2*this.childXBorder, y + this.childYBorder);
+    if (this.type == T_VAR) {
+      this.varLabeldiv = createDiv("empty");
+    }
     this.indexLabeldiv.style('font-size', '16px');
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
@@ -139,6 +141,7 @@ class Cell {
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
       if (this.type == T_VAR) {
+        this.varLabeldiv.remove();
         this.varLabeldiv = createDiv("empty");
         // this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
         this.height += this.childYBorder + this.ySpacer;

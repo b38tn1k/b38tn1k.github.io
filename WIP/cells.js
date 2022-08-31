@@ -552,7 +552,8 @@ class Cells {
     this.viewXdelta = xPos;
     this.viewYdelta = yPos;
     for (let i = 0; i < this.length; i++) {
-      if (this.cells[i].parent == -1) {
+      // might need to clean this up!
+      if (this.cells[i].parent == -1 || this.cells[this.cells[i].parent].type == T_GOTO) {
         this.cells[i].updateView(this.viewXdelta, this.viewYdelta);
       }
       if (doDrag == true) {

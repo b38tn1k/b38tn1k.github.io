@@ -33,12 +33,11 @@ function mousePressed() {
   }
 }
 
-// function keyTyped() {
-//   if (key === ' ') {
-//     tidy();
-//     tidy();
-//   }
-// }
+function keyTyped() {
+  if (key === ' ') {
+    tidy();
+  }
+}
 
 function newCell(type) {
   jlog('Main', 'newCell');
@@ -124,7 +123,7 @@ function loadCells(myLoaderMap) {
   }
   let xOffset = 2*menu.x + menu.size().width;
   cells.nudgeX(xOffset);
-  // tidy();
+  tidy();
   menu.remove();
   menu = createDiv();
   createMenuDiv();
@@ -228,7 +227,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">comparisons</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
-  // menu.html('<a class="bad" href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
+  menu.html('<a class="bad" href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
   if (slowMode == false) {
     menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">slow mode</a><br>', true);
   } else {

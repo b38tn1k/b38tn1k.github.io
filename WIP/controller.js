@@ -174,10 +174,11 @@ class Controller {
   }
 
   t_print() {
-    let myOutput = '<br>' + this.script[1].lineNumber + ' > ';
+    let myOutput = '<br>' + this.script[1].lineNumber + ': ';
     for (let j = 0; j < this.activeCell.children.length; j++) {
       if (this.activeCell.children[j].type != T_COMMENT) {
-        myOutput += this.script[this.activeCell.childIndicies[j]].dataSH;
+        let myString = String(this.script[this.activeCell.childIndicies[j]].dataSH);
+        myOutput += myString.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
       }
     }
     this.script[1].indexLabeldiv.html(myOutput, true);

@@ -30,9 +30,17 @@ class Cells {
     let bigBlocks = [];
     let consol, start;
     for (let i = 0; i < this.length; i++) {
-      if (this.cells[i].parent == -1 && this.cells[i].type != T_START && this.cells[i].type != T_CONSOLE) {
-        this.cells[i].reshape(true);
-        bigBlocks.push(this.cells[i]);
+      if (this.cells[i].parent == -1) {
+        if (this.cells[i].type != T_START && this.cells[i].type != T_CONSOLE) {
+          this.cells[i].reshape(true);
+          bigBlocks.push(this.cells[i]);
+        } // i hate this but..
+      } else {
+        let parType = this.cells[this.cells[i].parent].type;
+        let cType = this.cells[i].type;
+        if (blockConfig[parType]['accept child'].indexOf(cType) == -1) {
+          bigBlocks.push(this.cells[i]);
+        }
       }
     }
     this.cells[1].width = this.cells[0].width;
@@ -119,7 +127,6 @@ class Cells {
     this.cells[newCell].refresh(this.viewXdelta, this.viewYdelta);
     if (this.cells[newCell].hide == true) {
       this.cells[newCell].hideBlock();
-      console.log(this.cells[newCell].textLabel);
     }
   }
 
@@ -395,8 +402,6 @@ class Cells {
     this.cells[this.activeIndex].mode = M_NEW;
     this.cells[this.activeIndex].handleSH = handle;
     this.cells[this.activeIndex].dataSH = val;
-    console.log(val, this.cells[this.activeIndex].dataSH);
-    console.log(handle, this.cells[this.activeIndex].handleSH);
     // if (type == T_VAR) {
     if (blockConfig[type]['input type'] == I_SELECT) {
       for (let i = 0; i < opts.length; i++) {
@@ -553,9 +558,17 @@ class Cells {
     this.viewYdelta = yPos;
     for (let i = 0; i < this.length; i++) {
       // might need to clean this up!
-      if (this.cells[i].parent == -1 || this.cells[this.cells[i].parent].type == T_GOTO) {
+      if (this.cells[i].parent == -1) {// || blockConfig[this.cells[this.cells[i].parent].type]['accept child'].indexOf(this.cells[i].type == -1)) {
         this.cells[i].updateView(this.viewXdelta, this.viewYdelta);
+      } else {
+        let parType = this.cells[this.cells[i].parent].type;
+        let cType = this.cells[i].type;
+        if (blockConfig[parType]['accept child'].indexOf(cType) == -1) {
+          this.cells[i].updateView(this.viewXdelta, this.viewYdelta);
+        }
+        // console.log;
       }
+
       if (doDrag == true) {
         this.cells[i].updateAllDivPositions();
         this.cells[i].refresh();
@@ -566,8 +579,6 @@ class Cells {
   cellInView(cell) {
     jlog('Cells', 'cellInView');
     let inview = false;
-    // console.log(cell.viewX, cell.x);
-    // console.log(cell.viewY, cell.y);
     if (-1*cell.width < cell.viewX && cell.viewX < windowWidth) {
       if (-1*cell.height < cell.viewY && cell.viewY < windowHeight) {
         inview = true;

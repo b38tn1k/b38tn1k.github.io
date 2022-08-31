@@ -344,8 +344,10 @@ class Cell {
     let childY = this.viewY + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
     this.updateAllDivPositions();
     for (let i = 0; i < this.children.length; i++) {
-      this.children[i].moveC(childX, childY, xdelta, ydelta);
-      childY += this.childYBorder + this.children[i].height;
+      if (blockConfig[this.type]['accept child'].indexOf(this.children[i].type) != -1) {
+        this.children[i].moveC(childX, childY, xdelta, ydelta);
+        childY += this.childYBorder + this.children[i].height;
+      }
     }
   }
 

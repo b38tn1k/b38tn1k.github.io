@@ -15,6 +15,7 @@ var gridSize = 20;
 var demos = [];
 var mobileHType;
 var mobileHAddon = false;
+var tidyFlag = 0;
 
 function deviceTurned() {
   jlog('Main', 'deviceTurned');
@@ -41,7 +42,7 @@ function mousePressed() {
 
 function keyTyped() {
   if (key === ' ') {
-    tidy();
+    setTidyFlag();
   }
 }
 
@@ -66,6 +67,11 @@ function newCell(type, x =-1, y =-1) {
       mobileHAddon = true;
     }
   }
+}
+
+function setTidyFlag() {
+  jlog('Main', 'tidy');
+  tidyFlag = 2;
 }
 
 function tidy() {
@@ -144,8 +150,7 @@ function loadCells(myLoaderMap) {
   }
   let xOffset = 2*menu.x + menu.size().width;
   cells.nudgeX(xOffset);
-  tidy();
-  tidy(); // have to do twice?
+  setTidyFlag(); // have to do twice?
   menu.remove();
   menu = createDiv();
   createMenuDiv();
@@ -195,7 +200,7 @@ function showAll() {
     cells.addCell(userBlocks[i], 1.5 * menu.size().width);
     cells.cells[cells.activeIndex].mode = M_IDLE;
   }
-  tidy();
+  setTidyFlag();
 }
 
 function drawGrid() {
@@ -232,7 +237,9 @@ function toggleMobileHack() {
 
 function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
-  menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
+  if (showDemoMenu == false) {
+    menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
+  }
   if (showBlockMenu == true) {
     let userBlocks = [T_BLOCK, T_GOTO, T_CONST, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
     let bad = [T_IF, T_WHILE, T_NOT];
@@ -245,17 +252,22 @@ function createMenuDiv() {
     }
     menu.html('<a class="bad" href="javascript:void(0)" onclick="showAll()">show all</a><br>', true);
   }
-  menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
+  if (showBlockMenu == false && showDemoMenu == false) {
+    menu.html('<br>', true);
+  }
+  if (showBlockMenu == false) {
+    menu.html('<strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
+  }
   if (showDemoMenu == true) {
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">hello world</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[1])">blocks</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[2])">assigning</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[3])">basic math</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">silly string math</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">comparisons</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">+ hello world</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[1])">+ blocks</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[2])">+ assigning</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[3])">+ basic math</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">+ silly string math</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">+ comparisons</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);
   if (slowMode == false) {
     menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">slow mode</a><br>', true);
   } else {
@@ -329,7 +341,7 @@ function setup() {
     if (demoIndex != -1 && demoIndex < demos.length) {
       loadCells(demos[demoIndex]);
     }
-    tidy();
+    setTidyFlag();
   }
   cells.cells[1].resizeConsole();
   menu.remove();
@@ -350,5 +362,9 @@ function draw() {
     frameRate(2);
   } else {
     frameRate(100);
+  }
+  if (tidyFlag > 0) {
+    tidy();
+    tidyFlag -= 1;
   }
 }

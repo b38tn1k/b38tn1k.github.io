@@ -44,13 +44,10 @@ class Cells {
         }
       }
     }
-    // this.cells[1].width = this.cells[0].width;
-    // this.cells[1].height = 5 * this.dHeight;
     this.cells[1].resizeConsole();
     // bigBlocks.sort(function(a, b) {return a.width - b.width});
     // bigBlocks.sort(function(a, b) {return sqrt(a.x**2 + a.y**2) - sqrt(b.x**2 + b.y**2)});
     bigBlocks.sort(function(a, b) {return a.width * a.height - b.width * b.height});
-
     bigBlocks.unshift(this.cells[0], this.cells[1]);
     let x = xMin;
     let y = yMin;
@@ -72,7 +69,11 @@ class Cells {
     for (let i = 0; i < bigBlocks.length; i++) {
       bigBlocks[i].x = newPos[i][0];
       bigBlocks[i].y = newPos[i][1];
+      // bigBlocks[i].reshape();
+      bigBlocks[i].updateAllDivPositions();
     }
+    this.updateView(this.viewX, this.viewY, false);
+    this.mapAndLink();
   }
 
   saveCells() {

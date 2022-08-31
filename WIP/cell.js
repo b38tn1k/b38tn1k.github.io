@@ -415,7 +415,7 @@ class Cell {
       this.height = this.yHeaderEnd * 3;
       this.minHeight = this.height;
     }
-    if (this.width < this.indexLabeldiv.size().width + 3 * this.childXBorder) {
+    if (this.width < this.indexLabeldiv.size().width + 3 * this.childXBorder && this.type != T_CONSOLE) {
       this.width = this.indexLabeldiv.size().width + 3 * this.childXBorder;
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {

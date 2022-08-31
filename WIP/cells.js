@@ -17,6 +17,7 @@ class Cells {
     this.run = false;
     this.viewXdelta = 0;
     this.viewYdelta = 0;
+    this.cellsInView = [];
     this.oldMouse = true;
   }
 
@@ -428,7 +429,8 @@ class Cells {
     jlog('Cells', 'doParentDrop');
     let pParentIndexes = [];
     if (this.cells[this.activeIndex].type != T_START) {
-      for (let i = 0; i < this.length; i++) {
+      for (let i = 0; i < this.length; i++) { // potentially breaking
+
         if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
           this.cells[i].underneath = mdown || this.cells[this.activeIndex].mode == M_NEW;
         } else {
@@ -579,28 +581,29 @@ class Cells {
   cellInView(cell) {
     jlog('Cells', 'cellInView');
     let inview = false;
-    if (-1*cell.width < cell.viewX && cell.viewX < windowWidth) {
-      if (-1*cell.height < cell.viewY && cell.viewY < windowHeight) {
+    let xMin = -1*cell.width;
+    let xMax = windowWidth;
+    let yMin = -1*cell.height;
+    let yMax = windowHeight;
+    // testing
+    // xMax = windowWidth/2;
+    if (xMin < cell.viewX && cell.viewX < xMax) {
+      if ( yMin < cell.viewY && cell.viewY < yMax) {
         inview = true;
       }
     }
-    // return inview;
-    return true;
+    return inview;
   }
 
   draw(canvas = null) {
     jlog('Cells', 'draw');
+    this.cellsInView = [];
     for (let i = 0; i < this.length; i++) {
       this.cellInView(this.cells[i]);
       if (this.cellInView(this.cells[i]) == true) {
         this.cells[i].draw();
+        this.cellsInView.push(i);
       }
-      //   if (this.cells[i].hide == false) {
-      //     this.cells[i].showDivs();
-      //   }
-      // } else {
-      //   this.cells[i].hideDivs();
-      // }
     }
     if (this.activeIndex != -1) {
      this.cells[this.activeIndex].draw();

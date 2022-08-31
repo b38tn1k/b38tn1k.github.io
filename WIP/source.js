@@ -233,6 +233,11 @@ function mouseDrag() {
   }
 }
 
+function imlost() {
+  xPos = 0;
+  yPos = 0;
+}
+
 function toggleMobileHack() {
   mobileHack = ! mobileHack;
   menu.html('');
@@ -282,6 +287,7 @@ function createMenuDiv() {
   } else {
     menu.html('<a href="javascript:void(0)" onclick="toggleFlash()">flash off</a><br>', true);
   }
+  menu.html('<a href="javascript:void(0)" onclick="imlost()">center</a><br>', true);
   menu.html('<br><a href="javascript:void(0)" onclick="saveCells()">save</a><br>', true);
   if (shareLinkGenerated == true) {
     menu.html('<a href="javascript:void(0)" onclick="shareLink()">reshare</a><br>', true);

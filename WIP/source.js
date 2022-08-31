@@ -43,11 +43,11 @@ function mousePressed() {
   }
 }
 
-function keyTyped() {
-  if (key === ' ') {
-    setTidyFlag();
-  }
-}
+// function keyTyped() {
+//   if (key === ' ') {
+//     setTidyFlag();
+//   }
+// }
 
 function newCell(type, x =-1, y =-1) {
   jlog('Main', 'newCell');
@@ -193,7 +193,6 @@ function toggleSpeedMode() {
   }
   slowMode = false;
   fastMode = false;
-  console.log(speedMode)
   if (speedMode == 2) {
     slowMode = true;
   }

@@ -224,7 +224,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[1])">blocks</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[2])">assigning</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[3])">basic math</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">string math</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">silly string math</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">comparisons</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);

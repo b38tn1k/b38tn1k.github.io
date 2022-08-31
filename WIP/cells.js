@@ -44,17 +44,20 @@ class Cells {
         }
       }
     }
-    this.cells[1].width = this.cells[0].width;
-    this.cells[1].height = 5 * this.dHeight;
+    // this.cells[1].width = this.cells[0].width;
+    // this.cells[1].height = 5 * this.dHeight;
     this.cells[1].resizeConsole();
-    bigBlocks.sort(function(a, b) {return a.width - b.width});
+    // bigBlocks.sort(function(a, b) {return a.width - b.width});
+    // bigBlocks.sort(function(a, b) {return sqrt(a.x**2 + a.y**2) - sqrt(b.x**2 + b.y**2)});
+    bigBlocks.sort(function(a, b) {return a.width * a.height - b.width * b.height});
+
     bigBlocks.unshift(this.cells[0], this.cells[1]);
     let x = xMin;
     let y = yMin;
     let offset = 0;
     let newPos = [];
     for (let i = 0; i < bigBlocks.length; i++) {
-      if (y + bigBlocks[i].height > windowHeight) {
+      if (y + bigBlocks[i].height > windowHeight || i < 2) {
         x += offset + bigBlocks[i].childXBorder * 3;
         y = yMin;
         offset = 0;
@@ -187,11 +190,17 @@ class Cells {
     }
   }
 
-  addCell(type, startX) {
+  turnOffActiveIndex() {
+    if (this.activeIndex != -1) {
+      this.cells[this.activeIndex].mode = M_IDLE;
+      this.activeIndex = -1;
+    }
+  }
+
+  addCell(type, startX, y = 17) {
     jlog('Cells', 'addCell');
     this.mapAndLink();
     let x = startX;//0.15 * windowWidth;
-    let y = 17;
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
     if (type == T_START) {
       c = [this.colors[type], this.highlights[type], this.colors[49], this.inverted[type], this.dualtone[type]];
@@ -429,6 +438,7 @@ class Cells {
   doParentDrop(x, y, mdown) {
     jlog('Cells', 'doParentDrop');
     let pParentIndexes = [];
+    // let pMoveIndexes = [];
     if (this.cells[this.activeIndex].type != T_START) {
       for (let j = 0; j < this.cellsInView.length; j++) {
         let i = this.cellsInView[j];
@@ -438,9 +448,13 @@ class Cells {
         } else {
           this.cells[i].underneath = false;
         }
-        if (this.cells[i].inArea(x, y) === true && i != this.activeIndex && this.cells[i].acceptsChild(this.cells[this.activeIndex].type)) {
-          this.cells[i].highlight = mdown || this.cells[this.activeIndex].mode == M_NEW;
-          pParentIndexes.push(i);
+        if (this.cells[i].inArea(x, y) === true && i != this.activeIndex) {
+          if (this.cells[i].acceptsChild(this.cells[this.activeIndex].type)) {
+            this.cells[i].highlight = mdown || this.cells[this.activeIndex].mode == M_NEW;
+            pParentIndexes.push(i);
+          } else {
+            // pMoveIndexes.push(i);
+          }
         } else {
           this.cells[i].highlight = false;
         }
@@ -448,6 +462,11 @@ class Cells {
     }
     // release
     if (mdown === false && this.cells[this.activeIndex].mode == M_MOVE) {
+      // if (pMoveIndexes.length != 0) {
+      //   for (let i = 0; i < pMoveIndexes.length; i++) {
+      //     console.log(this.cells[pMoveIndexes[i]].textLabel);
+      //   }
+      // }
       // create parent/child link and initial align
       if (pParentIndexes.length != 0) {
         let pParentIndex = pParentIndexes[0];

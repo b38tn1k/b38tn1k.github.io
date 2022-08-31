@@ -461,6 +461,9 @@ class Cell {
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;
+      if (mobileHack == true) {
+        fudge = this.handleW;
+      }
       if (blockConfig[this.type]['handles']['move'] == true) {
         if (x > xp - fudge && x < xp + this.handleW + fudge) {
           if (y > yp - fudge && y < yp + this.handleH + fudge) {
@@ -754,7 +757,7 @@ class Cell {
       let fudge = 2;
       if (x > xp - fudge && x < xp + this.width + fudge) {
         if (y > yp - fudge && y < yp + this.height + fudge) {
-          this.selfDescribe(false);
+          // this.selfDescribe(false);
           // this.unsetData()
           breaker = true;
         }

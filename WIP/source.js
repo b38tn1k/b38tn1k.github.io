@@ -13,6 +13,8 @@ var slowMode = false;
 var flash = true;
 var gridSize = 20;
 var demos = [];
+var mobileHType;
+var mobileHAddon = false;
 
 function deviceTurned() {
   jlog('Main', 'deviceTurned');
@@ -26,10 +28,14 @@ function windowResized() {
 
 function mousePressed() {
   jlog('Main', 'mousePressed');
-  doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
-  if (doMouseDrag == true){
-    xStart = mouseX;
-    yStart = mouseY;
+  if (mobileHack == true && mobileHAddon == true) {
+    newCell(mobileHType, mouseX, mouseY);
+  } else {
+    doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
+    if (doMouseDrag == true){
+      xStart = mouseX;
+      yStart = mouseY;
+    }
   }
 }
 
@@ -39,12 +45,27 @@ function keyTyped() {
   }
 }
 
-function newCell(type) {
+function newCell(type, x =-1, y =-1) {
   jlog('Main', 'newCell');
-  cells.addCell(type, 1.5 * menu.size().width);
-  menu.remove();
-  menu = createDiv();
-  createMenuDiv();
+  if (mobileHack == false) {
+    cells.addCell(type, 1.5 * menu.size().width);
+    menu.remove();
+    menu = createDiv();
+    createMenuDiv();
+  } else {
+    if (mobileHAddon == true) {
+      cells.addCell(mobileHType, x, y);
+      // cells.turnOffActiveIndex();
+      mobileHAddon = false;
+      menu.remove();
+      menu = createDiv();
+      createMenuDiv();
+    } else {
+      console.log('mobileHack');
+      mobileHType = type;
+      mobileHAddon = true;
+    }
+  }
 }
 
 function tidy() {
@@ -124,6 +145,7 @@ function loadCells(myLoaderMap) {
   let xOffset = 2*menu.x + menu.size().width;
   cells.nudgeX(xOffset);
   tidy();
+  tidy(); // have to do twice?
   menu.remove();
   menu = createDiv();
   createMenuDiv();
@@ -202,6 +224,12 @@ function mouseDrag() {
   }
 }
 
+function toggleMobileHack() {
+  mobileHack = ! mobileHack;
+  menu.html('');
+  createMenuDiv();
+}
+
 function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
@@ -227,7 +255,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">comparisons</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
-  menu.html('<a class="bad" href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
+  menu.html('<a href="javascript:void(0)" onclick="tidy()">tidy</a><br>', true);
   if (slowMode == false) {
     menu.html('<a href="javascript:void(0)" onclick="toggleSlow()">slow mode</a><br>', true);
   } else {
@@ -245,6 +273,11 @@ function createMenuDiv() {
 
   } else {
     menu.html('<a href="javascript:void(0)" onclick="shareLink()">share</a><br>', true);
+  }
+  if (mobileHack == false) {
+    menu.html('<br><a class="bad" href="javascript:void(0)" onclick="toggleMobileHack();">mobile hack</a><br>', true);
+  } else {
+    menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">normal mode</a><br>', true);
   }
   menu.position(10, 10);
   menu.style('font-size', '16px');

@@ -35,6 +35,8 @@ var T_ASSIGN = 42;
 var T_CONSOLE = 2;
 var T_PRINT = 27;
 
+var mobileHack = false;
+
 var notStartOrConsole = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT];
 
 var blockConfig = {};

@@ -79,6 +79,9 @@ function tidy() {
   jlog('Main', 'tidy');
   let xOffset = 2*menu.x + menu.size().width;
   cells.tidy(round(xOffset/(gridSize/2))*(gridSize/2), gridSize);
+  if (mobileHack == true) {
+    cells.update(mouseX, mouseY, mouseIsPressed);
+  }
 }
 
 function preload() {

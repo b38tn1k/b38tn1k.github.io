@@ -20,6 +20,7 @@ var mobileHAddon = false;
 var tidyFlag = 0;
 let userBlocks = [];
 let subMenu = 0;
+let redrawCounter = 0;
 
 function deviceTurned() {
   jlog('Main', 'deviceTurned');
@@ -30,6 +31,7 @@ function windowResized() {
   jlog('Main', 'windowResized');
   setupScreen();
   cells.updateView(xPos, yPos, doMouseDrag);
+  redrawCounter = 2;
 }
 
 function mousePressed() {
@@ -412,11 +414,21 @@ function setup() {
 }
 
 function draw() {
-  clear();
+  if (redrawCounter != 0) {
+    clear();
+  }
   mouseDrag();
-  drawGrid();
   cells.updateView(xPos, yPos, doMouseDrag);
-  cells.draw();
+  if (redrawCounter != 0) {
+    drawGrid();
+  }
+  if (redrawCounter != 0) {
+    cells.draw();
+    redrawCounter -= 1;
+  }
+  if (cells.redrawFlag == true || cells.run == true){
+    redrawCounter = 2;
+  }
   cells.update(mouseX, mouseY, mouseIsPressed);
   controller.update(cells, flash, fastMode);
   if (cells.run == true && slowMode == true) {

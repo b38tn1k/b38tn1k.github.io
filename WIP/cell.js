@@ -203,10 +203,6 @@ class Cell {
 
   draw(canvas=null) {
     jlog('Cell', 'draw');
-    if (this.graphicUpdate == true) {
-      console.log('update');
-      this.graphicUpdate = false;
-    }
     // let x = this.x;
     // let y = this.y;
     let x = this.viewX;

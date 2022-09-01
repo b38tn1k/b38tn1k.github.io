@@ -375,7 +375,7 @@ class Controller {
     let res = true;
     for (let i = 1; i < activeCell.children.length; i++) {
       if (activeCell.children[i].type != T_COMMENT) {
-        this.stack.push(activeCell.children[i]);
+        this.stack.push(activeCell.childIndicies[i]);
         let result =  this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
         vals.push(result['data']);
         if (result['type'] == V_NUMBER) {

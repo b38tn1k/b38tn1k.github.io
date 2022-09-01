@@ -20,6 +20,7 @@ class Cells {
     this.cellsInView = [];
     this.oldMouse = true;
     this.rebuildMenuFlag = false;
+    this.redrawFlag = false;
   }
 
   get length() {
@@ -670,7 +671,12 @@ class Cells {
     jlog('Cells', 'updateView');
     this.viewXdelta = xPos;
     this.viewYdelta = yPos;
+    this.redrawFlag = false;
     for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].graphicUpdate == true) {
+        this.cells[i].graphicUpdate = false;
+        this.redrawFlag = true;
+      }
       // might need to clean this up!
       if (this.cells[i].parent == -1) {// || blockConfig[this.cells[this.cells[i].parent].type]['accept child'].indexOf(this.cells[i].type == -1)) {
         this.cells[i].updateView(this.viewXdelta, this.viewYdelta);

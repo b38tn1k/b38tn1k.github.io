@@ -225,10 +225,14 @@ class Cells {
       this.varHandles.push(tempID);
     }
     if (type == T_IF || type == T_WHILE) {
+      let counter = 2;
       this.cells.push(new Cell(T_CONDITION, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       this.cells.push(new Cell(T_DO, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
-      this.cells.push(new Cell(T_ELSE, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
-      for (let i = 1; i <= 3; i++) {
+      if(type == T_IF) {
+        this.cells.push(new Cell(T_ELSE, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+        counter += 1;
+      }
+      for (let i = 1; i <= counter; i++) {
         this.cells[pIndex].addChild(pIndex + i, this.cells[pIndex + i], true);
         this.cells[pIndex + i].addParent(pIndex, this.cells[pIndex], true);
       }
@@ -428,6 +432,14 @@ class Cells {
     // let w = this.cells[this.activeIndex].width;
     // let h = this.cells[this.activeIndex].height;
     this.activeIndex = this.length;
+    if (type == T_BLOCK){
+      type  = T_GOTO;
+      c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
+    }
+    if (type == T_INPUT){
+      type  = T_VAR;
+      c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
+    }
     this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, c, this.dRadius));
     this.cells[this.activeIndex].mode = M_NEW;
     this.cells[this.activeIndex].handleSH = handle;
@@ -590,10 +602,12 @@ class Cells {
       this.cells[this.activeIndex].handleSH= tempID;
       this.cells[this.activeIndex].textLabel += ' ' + tempID;
       this.cells[this.activeIndex].indexLabeldiv.html(this.cells[this.activeIndex].textLabel);
+      this.cells[this.activeIndex].input.value(data, data);
       this.varHandles.push(tempID);
     }
     this.cells[this.activeIndex].mode = M_IDLE;
     this.cells[this.activeIndex].reshape(this.viewXdelta, this.viewYdelta);
+
     if (pInd != -1) {
       parent.reshape(this.viewXdelta, this.viewYdelta);
     }

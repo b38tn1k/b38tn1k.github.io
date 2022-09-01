@@ -237,6 +237,7 @@ class Cell {
           fill(this.colors[3]);
           stroke(this.colors[3]);
           rect(x + this.width - this.handleW, y, this.handleW, this.handleH);
+          stroke(this.colors[1]);
         }
         if (blockConfig[this.type]['handles']['expand'] == true) {
           fill(this.colors[1]);

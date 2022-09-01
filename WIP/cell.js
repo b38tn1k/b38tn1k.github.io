@@ -60,6 +60,7 @@ class Cell {
     this.shrink = false;
     this.handleW = 1.5*r;
     this.handleH = 1.5*r;
+    this.graphicUpdate = true;
     // colors
     this.colors = c;
     if (type == T_START) {
@@ -102,6 +103,7 @@ class Cell {
 
   resizeConsole() {
     jlog('Cell', 'resizeConsole');
+    this.graphicUpdate = true;
     if (this.type == T_CONSOLE) {
       this.minWidth = max(100, this.minWidth);
       this.minHeight = max(75, this.minHeight);
@@ -112,6 +114,7 @@ class Cell {
 
   buildDivs() {
     jlog('Cell', 'buildDivs');
+    this.graphicUpdate = true;
     let xp = this.viewX;
     let yp = this.viewY;
     this.height = this.startHeight;
@@ -200,6 +203,10 @@ class Cell {
 
   draw(canvas=null) {
     jlog('Cell', 'draw');
+    if (this.graphicUpdate == true) {
+      console.log('update');
+      this.graphicUpdate = false;
+    }
     // let x = this.x;
     // let y = this.y;
     let x = this.viewX;
@@ -338,7 +345,6 @@ class Cell {
       let yMax = yMin + 3*this.handleH;
       if (y > yMin && y < yMax) {
         this.sbHighlight = true;
-
       }
     }
   }
@@ -362,6 +368,7 @@ class Cell {
   }
 
   refresh(xdelta, ydelta) {
+    this.graphicUpdate = true;
     let childX = this.viewX + this.childXBorder;
     let childY = this.viewY + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
     this.updateAllDivPositions();
@@ -375,6 +382,7 @@ class Cell {
 
   resizeC(x, y) {
     jlog('Cell', 'resize');
+    this.graphicUpdate = true;
     // let xp = this.x;
     // let yp = this.y;
     let xp = this.viewX;
@@ -406,6 +414,7 @@ class Cell {
 
   reshape(reshape=false) {
     jlog('Cell', 'reshape');
+    this.graphicUpdate = true;
     // let xp = this.x;
     // let yp = this.y;
     let xp = this.viewX;
@@ -635,6 +644,7 @@ class Cell {
 
   forcefullyAddChildren(ind, child) {
     jlog('Cell', 'forcefullyAddChildren');
+    this.graphicUpdate = true;
     this.childIndicies.push(ind);
     this.children.push(child);
   }
@@ -646,6 +656,7 @@ class Cell {
 
   addChild(ind, child, force=false) {
     jlog('Cell', 'addChild');
+    this.graphicUpdate = true;
     if (force == true|| this.acceptsChild(child.type) == true) {
       if (this.childIndicies.indexOf(ind) == -1) {
         this.children.push(child);
@@ -670,6 +681,7 @@ class Cell {
 
   removeChild(ind) {
     jlog('Cell', 'removeChild');
+    this.graphicUpdate = true;
     if (this.type != T_VAR && this.type != T_INPUT) {
       let ci = this.childIndicies.indexOf(ind);
       if (ci != -1) {
@@ -684,6 +696,7 @@ class Cell {
 
   expandOrCollapse() {
     jlog('Cell', 'expandOrCollapse');
+    this.graphicUpdate = true;
     if (this.shrink === true) {
       this.expandBlock();
     } else {
@@ -704,6 +717,7 @@ class Cell {
 
   hideBlock() {
     jlog('Cell', 'hideBlock');
+    this.graphicUpdate = true;
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].hideBlock();
     }
@@ -724,6 +738,7 @@ class Cell {
 
   showBlock() {
     jlog('Cell', 'showBlock');
+    this.graphicUpdate = true;
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].showBlock();
     }
@@ -734,6 +749,7 @@ class Cell {
 
   shrinkBlock() {
     jlog('Cell', 'shrinkBlock');
+    this.graphicUpdate = true;
     this.oldHeight = this.height;
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].hideBlock();
@@ -745,6 +761,7 @@ class Cell {
 
   expandBlock() {
     jlog('Cell', 'expandBlock');
+    this.graphicUpdate = true;
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].showBlock();
       this.children[i].expandBlock();

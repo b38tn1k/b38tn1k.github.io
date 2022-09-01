@@ -163,7 +163,7 @@ class Controller {
     } else {
       this.run = false;
       this.script[this.stack[this.stack.length - 2]].flash = false;
-      console.log(this.stack);
+      console.log("STACK", this.stack);
     }
   }
 
@@ -251,26 +251,11 @@ class Controller {
   }
   t_math(activeCell, index) {
     this.stack.push(index);
-    let onlyNums = true;
-    let vals = [];
-    let isNumbers = [];
     let res;
-    for (let i = 1; i < activeCell.children.length; i++) {
-      if (activeCell.children[i].type != T_COMMENT) {
-        this.stack.push(activeCell.childIndicies[i]);
-        let result =  this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
-        vals.push(result['data']);
-        if (result['type'] == V_NUMBER) {
-          isNumbers.push(true);
-        } else if (result['type'] == V_STRING) {
-          onlyNums = false;
-          isNumbers.push(false);
-        } else if (result['type'] == V_BOOL) {
-          onlyNums = false;
-          isNumbers.push(false);
-        }
-      }
-    }
+    let survey = this.lookAtChildren(activeCell, index);
+    let onlyNums = survey[0];
+    let vals = survey[1];
+    let isNumbers = survey[2];
     if (onlyNums) {
       res = parseFloat(vals[0]);
       if (activeCell.type == T_HYPOT) {
@@ -369,26 +354,11 @@ class Controller {
 
   t_compare(activeCell, index) {
     this.stack.push(index);
-    let onlyNums = true;
-    let vals = [];
-    let isNumbers = [];
+    let survey = this.lookAtChildren(activeCell, index);
+    let onlyNums = survey[0];
+    let vals = survey[1];
+    let isNumbers = survey[2];
     let res = true;
-    for (let i = 1; i < activeCell.children.length; i++) {
-      if (activeCell.children[i].type != T_COMMENT) {
-        this.stack.push(activeCell.childIndicies[i]);
-        let result =  this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
-        vals.push(result['data']);
-        if (result['type'] == V_NUMBER) {
-          isNumbers.push(true);
-        } else if (result['type'] == V_STRING) {
-          onlyNums = false;
-          isNumbers.push(result['false']);
-        } else if (result['type'] == V_BOOL) {
-          onlyNums = false;
-          isNumbers.push(result['false']);
-        }
-      }
-    }
     if (onlyNums == true) {
       let prev = vals[0];
       for (let i = 1; i < vals.length; i++) {
@@ -439,8 +409,11 @@ class Controller {
 
   t_not(activeCell, index) {
     this.stack.push(index);
-    let result = {};
-
+    let survey = this.lookAtChildren(activeCell, index);
+    let onlyNums = survey[0];
+    let vals = survey[1];
+    let isNumbers = survey[2];
+    let res = false;
   }
 
   t_if(activeCell, index) {
@@ -478,6 +451,27 @@ class Controller {
     }
     let result = {type: varType, data: data};
     return result;
-
+  }
+  lookAtChildren(activeCell, index) {
+    let onlyNums = true;
+    let vals = [];
+    let isNumbers = [];
+    for (let i = 1; i < activeCell.children.length; i++) {
+      if (activeCell.children[i].type != T_COMMENT) {
+        this.stack.push(activeCell.childIndicies[i]);
+        let result =  this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
+        vals.push(result['data']);
+        if (result['type'] == V_NUMBER) {
+          isNumbers.push(true);
+        } else if (result['type'] == V_STRING) {
+          onlyNums = false;
+          isNumbers.push(false);
+        } else if (result['type'] == V_BOOL) {
+          onlyNums = false;
+          isNumbers.push(false);
+        }
+      }
+    }
+    return [onlyNums, vals, isNumbers];
   }
 };

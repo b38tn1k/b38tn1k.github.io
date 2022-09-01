@@ -534,6 +534,56 @@ class Cells {
       }
     }
   }
+  doMutate() {
+    jlog('Cells', 'doMutate');
+    let ac = this.cells[this.activeIndex];
+    ac.mode = M_IDLE;
+    let type = blockConfig[ac.type]['handles']['mutate'];
+    let data = ac.dataSH;
+    let handle = ac.handleSH;
+    let pInd = ac.parent;
+    let parent = this.cells[ac.parent];
+    let children = ac.children;
+    let childIndicies = ac.childIndicies;
+    ac.indexLabeldiv.remove();
+    if (blockConfig[ac.type]['input type'] != I_NONE) {
+      ac.input.remove();
+      ac.input.remove();
+    }
+    if (ac.type == T_VAR) {
+      ac.varLabeldiv.remove();
+      ac.varLabeldiv.remove();
+    }
+    let inParentIndex = 0;
+    if (pInd != -1) {
+      inParentIndex = parent.childIndicies.indexOf(this.activeIndex);
+    }
+    ac.mode = M_IDLE;
+    let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
+    this.cells[this.activeIndex] = new Cell(type, ac.x, ac.y, this.dWidth, this.dHeight, c, this.radius);
+    this.cells[this.activeIndex].dataSH = data;
+    this.cells[this.activeIndex].handleSH = handle;
+    this.cells[this.activeIndex].children = children;
+    this.cells[this.activeIndex].childIndicies = childIndicies;
+    this.cells[this.activeIndex].parent = pInd;
+    if (pInd != -1) {
+      parent.children[inParentIndex] = this.cells[this.activeIndex];
+    }
+    for (let i = 0; i < this.cells[this.activeIndex].children.length; i++){
+      if ([T_CONDITION, T_ELSE, T_DO, T_OUTLET].indexOf(this.cells[this.activeIndex].children[i].type) != -1) {
+        this.cells[this.activeIndex].children[i].colors = c;
+        this.cells[this.activeIndex].children[i].reStyle();
+      }
+    }
+    if (type == T_INPUT) {
+      let tempID = this.getID(4);
+      this.cells[this.activeIndex].handleSH= tempID;
+      this.cells[this.activeIndex].textLabel += ' ' + tempID;
+      this.cells[this.activeIndex].indexLabeldiv.html(this.cells[this.activeIndex].textLabel);
+      this.varHandles.push(tempID);
+    }
+    this.cells[this.activeIndex].mode = M_IDLE;
+  }
 
   update(x, y, mdown) {
     jlog('Cells', 'update');
@@ -542,6 +592,9 @@ class Cells {
     if (this.run == false) {
       // active cell
       if (this.activeIndex != -1) {
+        if (this.cells[this.activeIndex].mode == M_MUTATE){
+          this.doMutate();
+        }
         if (this.cells[this.activeIndex].mode == M_NEW){
           this.doMove(x, y, true);
         }

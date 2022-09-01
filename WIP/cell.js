@@ -94,6 +94,12 @@ class Cell {
     return [this.width, this.height]
   }
 
+  reStyle() {
+    this.indexLabeldiv.style('font-size', '16px');
+    this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
+    this.indexLabeldiv.show();
+  }
+
   resizeConsole() {
     jlog('Cell', 'resizeConsole');
     if (this.type == T_CONSOLE) {
@@ -227,26 +233,28 @@ class Cell {
           fill(this.colors[1]);
           rect(x, y, this.handleW, this.handleH);
         }
-        if (blockConfig[this.type]['handles']['resize'] == true) {
-          fill(this.colors[1]);
-          rect(x + this.width - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
-        }
-        if (blockConfig[this.type]['handles']['copy'] == true) {
-          fill(this.colors[1]);
-          rect(x + this.width - this.handleW, y + this.height/2 - this.handleH, this.handleW, this.handleH);
+        if (blockConfig[this.type]['handles']['delete'] == true) {
+          fill(this.colors[3]);
+          stroke(this.colors[3]);
+          rect(x + this.width - this.handleW, y, this.handleW, this.handleH);
         }
         if (blockConfig[this.type]['handles']['expand'] == true) {
           fill(this.colors[1]);
           rect(x + this.width/2 - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
         }
-        // if (blockConfig[this.type]['handles']['mutate'] != -1) {
-        //   fill(this.colors[1]);
-        //   rect(x, y + this.height - this.handleH, this.handleW, this.handleH);
-        // }
-        if (blockConfig[this.type]['handles']['delete'] == true) {
-          fill(this.colors[3]);
-          stroke(this.colors[3]);
-          rect(x + this.width - this.handleW, y, this.handleW, this.handleH);
+        if (this.shrink == false) {
+          if (blockConfig[this.type]['handles']['resize'] == true) {
+            fill(this.colors[1]);
+            rect(x + this.width - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
+          }
+          if (blockConfig[this.type]['handles']['copy'] == true) {
+            fill(this.colors[1]);
+            rect(x + this.width - this.handleW, y + this.height/2 - this.handleH, this.handleW, this.handleH);
+          }
+          if (blockConfig[this.type]['handles']['mutate'] != -1) {
+            fill(this.colors[1]);
+            rect(x, y + this.height - this.handleH, this.handleW, this.handleH);
+          }
         }
       }
       for (let i = 0; i < this.children.length; i++) {
@@ -474,7 +482,7 @@ class Cell {
     let xp = this.viewX;
     let yp = this.viewY;
     let breaker = false;
-    if (this.hide === false) {
+    if (this.hide == false) {
       let fudge = 2;
       if (mobileHack == true) {
         fudge = this.handleW;
@@ -487,26 +495,6 @@ class Cell {
             breaker = true;
           }
         }
-      }
-      if (blockConfig[this.type]['handles']['resize'] == true) {
-        if (x > xp + this.width - this.handleW - fudge && x < xp + this.width + fudge) {
-          if (y > yp + this.height - this.handleH - fudge && y < yp + this.height + fudge) {
-            console.log('resize button pressed');
-            this.mode = M_RESIZE;
-            breaker = true;
-          }
-        }
-
-      }
-      if (blockConfig[this.type]['handles']['expand'] == true) {
-        if (x > xp + this.width/2 - this.handleW && x < xp + this.width/2) {
-          if (y > yp + this.height - this.handleH && y < yp + this.height) {
-            console.log('expand || collapse button pressed');
-            this.mode = M_EXPAND_OR_COLLAPSE;
-            breaker = true;
-          }
-        }
-
       }
       if (blockConfig[this.type]['handles']['delete'] == true) {
         if (x > xp + this.width - this.handleW - fudge && x < xp + this.width + fudge) {
@@ -522,30 +510,60 @@ class Cell {
           }
         }
       }
-      // rect(x + this.width - this.handleW, y + this.height/2 - this.handleH, this.handleW, this.handleH);
-      if (blockConfig[this.type]['handles']['copy'] == true) {
-        let xMin = xp + this.width - this.handleW;
-        let yMin = yp + this.height/2 - this.handleH;
-        let xMax = xMin + this.handleW;
-        let yMax = yMin + this.handleH;
-        if (xMin - fudge < x && x < xMax + fudge) {
-          if (yMin - fudge < y && y < yMax + fudge) {
-            console.log('copy button pressed');
-            this.mode = M_COPY;
+      if (blockConfig[this.type]['handles']['expand'] == true) {
+        if (x > xp + this.width/2 - this.handleW && x < xp + this.width/2) {
+          if (y > yp + this.height - this.handleH && y < yp + this.height) {
+            console.log('expand || collapse button pressed');
+            this.mode = M_EXPAND_OR_COLLAPSE;
             breaker = true;
           }
         }
       }
-      if (this.type == T_START) {
-        if (this.mode != M_MOVE && this.shrink == false) {
-          let xMin = xp + this.width/2 - 1.5*this.handleW;
-          let xMax = xMin + 3*this.handleW;
-          if (x > xMin && x < xMax) {
-            let yMin = yp + this.yHeaderEnd - 2 * (1.25 * this.handleH);
-            let yMax = yMin + 3*this.handleH;
-            if (y > yMin && y < yMax) {
-              this.mode = M_START;
+      if (this.shrink == false){
+        if (blockConfig[this.type]['handles']['resize'] == true) {
+          if (x > xp + this.width - this.handleW - fudge && x < xp + this.width + fudge) {
+            if (y > yp + this.height - this.handleH - fudge && y < yp + this.height + fudge) {
+              console.log('resize button pressed');
+              this.mode = M_RESIZE;
               breaker = true;
+            }
+          }
+        }
+
+        // rect(x + this.width - this.handleW, y + this.height/2 - this.handleH, this.handleW, this.handleH);
+        if (blockConfig[this.type]['handles']['copy'] == true) {
+          let xMin = xp + this.width - this.handleW;
+          let yMin = yp + this.height/2 - this.handleH;
+          let xMax = xMin + this.handleW;
+          let yMax = yMin + this.handleH;
+          if (xMin - fudge < x && x < xMax + fudge) {
+            if (yMin - fudge < y && y < yMax + fudge) {
+              console.log('copy button pressed');
+              this.mode = M_COPY;
+              breaker = true;
+            }
+          }
+        }
+        if (blockConfig[this.type]['handles']['mutate'] != -1) {
+          if (xp - fudge < x && x < xp+this.handleW + fudge) {
+            if (yp + this.height - this.handleH - fudge < y && y < yp + this.height + fudge){
+              console.log('mutate button pressed');
+              this.mode = M_MUTATE;
+              breaker = true;
+            }
+          }
+        }
+        if (this.type == T_START) {
+          if (this.mode != M_MOVE && this.shrink == false) {
+            let xMin = xp + this.width/2 - 1.5*this.handleW;
+            let xMax = xMin + 3*this.handleW;
+            if (x > xMin && x < xMax) {
+              let yMin = yp + this.yHeaderEnd - 2 * (1.25 * this.handleH);
+              let yMax = yMin + 3*this.handleH;
+              if (y > yMin && y < yMax) {
+                this.mode = M_START;
+                breaker = true;
+              }
             }
           }
         }
@@ -713,9 +731,9 @@ class Cell {
   shrinkBlock() {
     jlog('Cell', 'shrinkBlock');
     this.oldHeight = this.height;
-    console.log(this.height, this.oldHeight);
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].hideBlock();
+      this.children[i].shrinkBlock();
     }
     this.shrink = true;
     this.hideDivs();

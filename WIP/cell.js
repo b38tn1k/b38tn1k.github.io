@@ -8,10 +8,6 @@ function selectChangedCallback(){
   selectChanged = true;
 }
 
-function jlog(classname, label) {
-  // console.debug(classname, label)
-}
-
 class Cell {
   constructor(type, x, y, w, h, c, r=5) {
     jlog('Cell', 'constructor');
@@ -96,6 +92,7 @@ class Cell {
   }
 
   reStyle() {
+    jlog('Cell', 'reStyle');
     this.indexLabeldiv.style('font-size', '12px');
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
@@ -197,6 +194,7 @@ class Cell {
   }
 
   updateView(xOff, yOff) {
+    jlog('Cell', 'updateView');
     this.viewX = this.x + xOff;
     this.viewY = this.y + yOff;
   }
@@ -327,23 +325,24 @@ class Cell {
     this.sbGraphics[1][1].rect(this.handleW * 0.5, this.handleH * 0.5, this.handleW * 2, this.handleH * 2);
   }
 
-  startButtonUpdate(x, y) {
-    jlog('Cell', 'startButtonUpdate');
-    // let xp = this.x;
-    // let yp = this.y;
-    let xp = this.viewX;
-    let yp = this.viewY;
-    let xMin = xp + this.width/2 - 1.5*this.handleW;
-    let xMax = xMin + 3*this.handleW;
-    this.sbHighlight = false;
-    if (x > xMin && x < xMax) {
-      let yMin = yp + this.yHeaderEnd - 2 * (1.25 * this.handleH);
-      let yMax = yMin + 3*this.handleH;
-      if (y > yMin && y < yMax) {
-        this.sbHighlight = true;
-      }
-    }
-  }
+  // startButtonUpdate(x, y) {
+  //   jlog('Cell', 'startButtonUpdate');
+  //   // let xp = this.x;
+  //   // let yp = this.y;
+  //
+  //   let xp = this.viewX;
+  //   let yp = this.viewY;
+  //   let xMin = xp + this.width/2 - 1.5*this.handleW;
+  //   let xMax = xMin + 3*this.handleW;
+  //   this.sbHighlight = false;
+  //   if (x > xMin && x < xMax) {
+  //     let yMin = yp + this.yHeaderEnd - 2 * (1.25 * this.handleH);
+  //     let yMax = yMin + 3*this.handleH;
+  //     if (y > yMin && y < yMax) {
+  //       this.sbHighlight = true;
+  //     }
+  //   }
+  // }
 
   updateDivPosition(div, x, y){
     jlog('Cell', 'updateDivPosition');
@@ -365,6 +364,7 @@ class Cell {
   }
 
   refresh(xdelta, ydelta) {
+    jlog('Cell', 'refresh');
     this.graphicUpdate = true;
     let childX = this.viewX + this.childXBorder;
     let childY = this.viewY + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;

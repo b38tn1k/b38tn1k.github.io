@@ -82,7 +82,7 @@ class Cells {
     jlog('Cells', 'saveCells');
     this.mapAndLink();
     let snapshot = {}
-    for (let i = 0; i < cells.length; i++) {
+    for (let i = 0; i < this.length; i++) {
       snapshot[i] = {};
       snapshot[i]['x'] = this.cells[i].x;
       snapshot[i]['y'] = this.cells[i].y;
@@ -610,7 +610,7 @@ class Cells {
 
   update(x, y, mdown) {
     jlog('Cells', 'update');
-    this.cells[0].startButtonUpdate(x, y);
+    // this.cells[0].startButtonUpdate(x, y);
     // build mode
     if (this.run == false) {
       // active cell
@@ -687,7 +687,6 @@ class Cells {
           this.cells[i].updateView(this.viewXdelta, this.viewYdelta);
         }
       }
-
       if (doDrag == true && this.cellsInView.indexOf(i) != -1) {
         this.cells[i].updateAllDivPositions();
         this.cells[i].refresh();

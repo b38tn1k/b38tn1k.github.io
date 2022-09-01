@@ -1,3 +1,14 @@
+let logCounter = 0;
+
+function jlog(classname, label) {
+  // console.debug(classname, label);
+  // logCounter += 1;
+  // if (logCounter == 100) {
+  //   console.clear();
+  // }
+
+}
+
 var M_IDLE = 0;
 var M_MOVE = 1;
 var M_RESIZE = 2;

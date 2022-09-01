@@ -397,4 +397,10 @@ function draw() {
     cells.updateView(xPos, yPos, true);
     tidyFlag -= 1;
   }
+  if (cells.rebuildMenuFlag == true){
+    menu.remove();
+    menu = createDiv();
+    createMenuDiv();
+    cells.rebuildMenuFlag = false;
+  }
 }

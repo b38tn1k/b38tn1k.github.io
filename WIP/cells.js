@@ -19,6 +19,7 @@ class Cells {
     this.viewYdelta = 0;
     this.cellsInView = [];
     this.oldMouse = true;
+    this.rebuildMenuFlag = false;
   }
 
   get length() {
@@ -208,6 +209,14 @@ class Cells {
     }
     this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, c, this.dRadius));
     let pIndex = this.length - 1;
+    if (type == T_PRINT) {
+      c = [this.colors[T_VAR], this.highlights[T_VAR], this.lowlights[T_VAR], this.inverted[T_VAR], this.dualtone[T_VAR]];
+      this.cells.push(new Cell(T_VAR, x, y, this.dWidth, this.dHeight, c, this.dRadius));
+      this.cells[pIndex].addChild(pIndex+1, this.cells[pIndex+1])
+      this.cells[pIndex+1].addParent(pIndex, this.cells[pIndex]);
+      this.cells[pIndex+1].input.option('outlet', 'outlet');
+      this.cells[pIndex+1].input.selected('outlet');
+    }
     if (type == T_INPUT) {
       let tempID = this.getID(4);
       this.cells[pIndex].handleSH= tempID;
@@ -536,6 +545,7 @@ class Cells {
   }
   doMutate() {
     jlog('Cells', 'doMutate');
+    this.rebuildMenuFlag = true;
     let ac = this.cells[this.activeIndex];
     ac.mode = M_IDLE;
     let type = blockConfig[ac.type]['handles']['mutate'];
@@ -583,6 +593,10 @@ class Cells {
       this.varHandles.push(tempID);
     }
     this.cells[this.activeIndex].mode = M_IDLE;
+    this.cells[this.activeIndex].reshape(this.viewXdelta, this.viewYdelta);
+    if (pInd != -1) {
+      parent.reshape(this.viewXdelta, this.viewYdelta);
+    }
   }
 
   update(x, y, mdown) {

@@ -397,6 +397,7 @@ class Controller {
     let stillIn = false;
     let conditions = activeCell.children[0];
     for (let i = 0; i < conditions.length; i++) {
+       // send in and listen to dataSH, add them up and make a decision where to go next
 
     }
     let yes = activeCell.children[1];

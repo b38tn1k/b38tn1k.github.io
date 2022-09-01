@@ -46,7 +46,7 @@ class Cell {
       this.width = w;
       this.height = h;
     }
-
+    this.oldHeight = height;
     this.minWidth = w;
     this.minHeight = h;
     this.radius = r;
@@ -106,13 +106,14 @@ class Cell {
 
   buildDivs() {
     jlog('Cell', 'buildDivs');
-    // let xp = this.x;
-    // let yp = this.y;
     let xp = this.viewX;
     let yp = this.viewY;
     this.height = this.startHeight;
     this.width = this.startWidth;
     this.ySpacer = 0;
+    if (this.input) {
+      this.input.remove();
+    }
     if (blockConfig[this.type]['input type'] == I_TEXT) {
       this.input = createInput();
       this.input.input(selectChangedCallback);
@@ -141,7 +142,9 @@ class Cell {
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
       if (this.type == T_VAR) {
-        this.varLabeldiv.remove();
+        if (this.varLabeldiv) {
+          this.varLabeldiv.remove();
+        }
         this.varLabeldiv = createDiv("empty");
         // this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
         this.height += this.childYBorder + this.ySpacer;
@@ -236,6 +239,10 @@ class Cell {
           fill(this.colors[1]);
           rect(x + this.width/2 - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
         }
+        // if (blockConfig[this.type]['handles']['mutate'] != -1) {
+        //   fill(this.colors[1]);
+        //   rect(x, y + this.height - this.handleH, this.handleW, this.handleH);
+        // }
         if (blockConfig[this.type]['handles']['delete'] == true) {
           fill(this.colors[3]);
           stroke(this.colors[3]);
@@ -430,7 +437,7 @@ class Cell {
       let h = this.input.size().height;
       this.input.size(this.width - 3 * this.childXBorder);
     }
-    this.refresh();
+    this.refresh(0, 0);
   }
 
   markForDeletion() {
@@ -650,6 +657,7 @@ class Cell {
     }
     this.minHeight = 0;
     this.reshape(true);
+    return this.parent;
   }
 
   expandOrCollapse() {
@@ -704,6 +712,8 @@ class Cell {
 
   shrinkBlock() {
     jlog('Cell', 'shrinkBlock');
+    this.oldHeight = this.height;
+    console.log(this.height, this.oldHeight);
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].hideBlock();
     }
@@ -719,7 +729,8 @@ class Cell {
     }
     this.shrink = false;
     this.showDivs();
-    this.minHeight = 0;
+    this.minHeight = this.oldHeight;
+    this.height = this.oldHeight;
     this.reshape();
   }
 

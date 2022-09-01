@@ -353,7 +353,16 @@ class Cells {
         // remove parent / child links and divs for those in delete mode
         let parent = this.cells[i].cleanForDeletionSafe();
         if (parent != -1 && this.cells[parent]){
-          this.cells[parent].removeChild(i);
+          let pParent = this.cells[parent].removeChild(i);
+          while (pParent != -1) {
+            if (this.cells[pParent]) {
+              this.cells[pParent].minHeight = 0;
+              this.cells[pParent].reshape(true);
+              pParent = this.cells[pParent].parent;
+            }
+            console.log(this.cells[0].minHeight)
+          }
+          console.log(pParent);
         }
       }
       // reassign parent/child relationship
@@ -553,6 +562,14 @@ class Cells {
           }
           if (mdown === true && this.cells[this.activeIndex].mode == M_EXPAND_OR_COLLAPSE) {
             this.cells[this.activeIndex].expandOrCollapse();
+            if (this.cells[this.activeIndex].shrink == true) {
+              let parent = this.cells[this.activeIndex].parent;
+              while (parent != -1) {
+                this.cells[parent].minHeight = 0;
+                this.cells[parent].reshape(true);
+                parent = this.cells[parent].parent;
+              }
+            }
           }
 
           if (mdown === true && this.cells[this.activeIndex].mode == M_COPY) {

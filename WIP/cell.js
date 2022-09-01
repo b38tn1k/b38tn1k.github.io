@@ -352,6 +352,7 @@ class Cell {
 
   moveC(x, y, xdelta, ydelta) {
     jlog('Cell', 'moveC');
+    this.graphicUpdate = true;
     // this.x = x;
     // this.y = y;
     // let xp = this.x;

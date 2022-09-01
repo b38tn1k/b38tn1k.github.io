@@ -430,7 +430,9 @@ function draw() {
     redrawCounter = 2;
   }
   cells.update(mouseX, mouseY, mouseIsPressed);
-  controller.update(cells, flash, fastMode);
+  if (redrawCounter != 0) {
+    controller.update(cells, flash, fastMode);
+  }
   if (cells.run == true && slowMode == true) {
     frameRate(5);
   } else {

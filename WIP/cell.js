@@ -72,7 +72,7 @@ class Cell {
     if (this.type == T_VAR) {
       this.varLabeldiv = createDiv("empty");
     }
-    this.indexLabeldiv.style('font-size', '16px');
+    this.indexLabeldiv.style('font-size', '12px');
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
     this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size')) + this.childYBorder;
@@ -95,7 +95,7 @@ class Cell {
   }
 
   reStyle() {
-    this.indexLabeldiv.style('font-size', '16px');
+    this.indexLabeldiv.style('font-size', '12px');
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
   }
@@ -105,7 +105,7 @@ class Cell {
     if (this.type == T_CONSOLE) {
       this.minWidth = max(100, this.minWidth);
       this.minHeight = max(75, this.minHeight);
-      this.indexLabeldiv.size(this.width - this.childXBorder, this.height - this.childYBorder);
+      this.indexLabeldiv.size(this.width - 3*this.childXBorder, this.height - this.childYBorder);
       this.indexLabeldiv.style('overflow', "auto");
     }
   }
@@ -134,7 +134,7 @@ class Cell {
       this.width = max(this.width, 80);
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
-      this.input.style('font-size', '16px');
+      this.input.style('font-size', '12px');
       this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
@@ -155,7 +155,7 @@ class Cell {
         // this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
         this.height += this.childYBorder + this.ySpacer;
         this.minHeight = this.height;
-        this.varLabeldiv.style('font-size', '16px');
+        this.varLabeldiv.style('font-size', '12px');
         this.varLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
         this.varLabeldiv.show();
       }
@@ -182,8 +182,11 @@ class Cell {
   updateDataSH(value) {
     jlog('Cell', 'updateDataSH');
     this.dataSH = value;
+    if (/^\d+\.\d+$/.test(String(value)) == true) {
+      value = value.toFixed(3);
+    }
     if (this.type != T_VAR) {
-      let htmlString = this.textLabel + '<br>' + String(this.dataSH);
+      let htmlString = this.textLabel + '<br>' + value;
       this.indexLabeldiv.html(htmlString);
     } else {
       this.varLabeldiv.html(value);

@@ -18,6 +18,8 @@ var demos = [];
 var mobileHType;
 var mobileHAddon = false;
 var tidyFlag = 0;
+let userBlocks = [];
+let subMenu = 0;
 
 function deviceTurned() {
   jlog('Main', 'deviceTurned');
@@ -212,7 +214,6 @@ function toggleFlash() {
 
 function showAll() {
   jlog('Main', 'showAll');
-  let userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
   for (let i = 0; i < userBlocks.length; i++) {
     cells.addCell(userBlocks[i], 1.5 * menu.size().width);
     cells.cells[cells.activeIndex].mode = M_IDLE;
@@ -257,29 +258,54 @@ function toggleMobileHack() {
   createMenuDiv();
 }
 
+function addBlockMenuOption(type, bad){
+  if (bad.indexOf(type) == -1) {
+    menu.html('<a href="javascript:void(0)" onclick="newCell(' + type + ')">+ '+ blockConfig[type]['block label'] + '</a><br>', true);
+  } else {
+    menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + type + ')">+ '+ blockConfig[type]['block label'] + '</a><br>', true);
+  }
+}
+
+function addBlockMenuList(list, bad) {
+  for (let i = 0; i < list.length; i++) {
+    addBlockMenuOption(list[i], bad);
+  }
+}
+
 function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
-  if (showDemoMenu == false) {
-    menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
-  }
+  menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
-    let userBlocks = [T_BLOCK, T_GOTO, T_CONST, T_INPUT, T_VAR, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_ASSIGN, T_PRINT, T_COMMENT];
-    let bad = [T_IF, T_WHILE, T_NOT];
-    for (let i = 0; i < userBlocks.length; i++) {
-      if (bad.indexOf(userBlocks[i]) == -1) {
-        menu.html('<a href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockConfig[userBlocks[i]]['block label'] + '</a><br>', true);
-      } else {
-        menu.html('<a class="bad" href="javascript:void(0)" onclick="newCell(' + userBlocks[i] + ')">+ '+ blockConfig[userBlocks[i]]['block label'] + '</a><br>', true);
-      }
+    let bad = [T_IF, T_WHILE, T_NOT, T_AVERAGE, T_SQRT, T_HYPOT];
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">containers</a><br>', true);
+    if (subMenu == 1) {
+      addBlockMenuList(containers, bad);
+    }
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=2;createMenuDiv();">handles</a><br>', true);
+    if (subMenu == 2) {
+      addBlockMenuList(handles, bad);
+    }
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=3;createMenuDiv();">math</a><br>', true);
+    if (subMenu == 3) {
+      addBlockMenuList(mathFunctions, bad);
+    }
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=4;createMenuDiv();">comparison</a><br>', true);
+    if (subMenu == 4) {
+      addBlockMenuList(boolFunctions, bad);
+    }
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=5;createMenuDiv();">conditionals</a><br>', true);
+    if (subMenu == 5) {
+      addBlockMenuList(conditionals, bad);
+    }
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=6;createMenuDiv();">utilities</a><br>', true);
+    if (subMenu == 6) {
+      addBlockMenuList(utilities, bad);
     }
     menu.html('<a class="bad" href="javascript:void(0)" onclick="showAll()">show all</a><br>', true);
+  } else {
+    subMenu = 0;
   }
-  if (showBlockMenu == false && showDemoMenu == false) {
-    menu.html('<br>', true);
-  }
-  if (showBlockMenu == false) {
-    menu.html('<strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
-  }
+  menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
   if (showDemoMenu == true) {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">+ hello world</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[1])">+ blocks</a><br>', true);
@@ -317,11 +343,13 @@ function createMenuDiv() {
   } else {
     menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">desktop</a><br>', true);
   }
+  menu.html('<br><span style="color:LightGray"><small>version 0.1<br>refresh if zoomed</small></span>', true);
   menu.position(10, 10);
   menu.style('font-size', '16px');
   menu.style('background-color', 'DimGray');
   menu.style('padding', '10px');
-  menu.style('outline', '1px solid black')
+  menu.style('outline', '1px solid black');
+  menu.style('overflow', "auto");
   menu.show();
 }
 
@@ -342,19 +370,7 @@ function setupScreen() {
   heightOnTwo = windowHeight / 2;
 }
 
-function setup() {
-  jlog('Main', 'setup');
-  pixelDensity(1);
-  colorSetup();
-  setupScreen();
-  cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
-  controller = new Controller();
-  menu = createDiv();
-  createMenuDiv();
-  xOff = 0;
-  yOff = 0;
-  xPos = 0;
-  yPos = 0;
+function doLastBit(){
   let loaded = false;
   let demoIndex = -1;
   let myString = getURL();
@@ -378,8 +394,24 @@ function setup() {
   createMenuDiv();
 }
 
+function setup() {
+  jlog('Main', 'setup');
+  pixelDensity(1);
+  userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_CONST, T_ASSIGN, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_PRINT, T_COMMENT];
+  colorSetup();
+  setupScreen();
+  cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
+  controller = new Controller();
+  menu = createDiv();
+  createMenuDiv();
+  xOff = 0;
+  yOff = 0;
+  xPos = 0;
+  yPos = 0;
+  doLastBit();
+}
+
 function draw() {
-  frameRate(5);
   clear();
   mouseDrag();
   drawGrid();

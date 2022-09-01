@@ -134,6 +134,7 @@ class Cells {
     if (this.cells[newCell].hide == true) {
       this.cells[newCell].hideBlock();
     }
+    this.cells[newCell].updateAllDivPositions();
   }
 
   nudgeX(x) {
@@ -239,14 +240,7 @@ class Cells {
       this.cells[pIndex].refresh(this.viewXdelta, this.viewYdelta);
     }
 
-    let theOnesWithOutlets = [T_EQUAL,T_LESS,T_GREATER,T_ADD,T_SUBTRACT,T_MULT,T_DIV,T_MOD];
-    let thisOneHasAnOutlet = false;
-    for (let i = 0; i < theOnesWithOutlets.length; i++) {
-      if (type == theOnesWithOutlets[i]) {
-        thisOneHasAnOutlet = true;
-      }
-    }
-    if (thisOneHasAnOutlet == true) {
+    if (blockConfig[type]['accept child'].indexOf(T_OUTLET) != -1) {
       this.cells.push(new Cell(T_OUTLET, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       this.cells[pIndex].addChild(pIndex + 1, this.cells[pIndex + 1]);
       this.cells[pIndex + 1].addParent(pIndex, this.cells[pIndex]);
@@ -652,14 +646,12 @@ class Cells {
               }
             }
           }
-
           if (mdown === true && this.cells[this.activeIndex].mode == M_COPY) {
             this.doCopy();
           }
           this.doParentDrop(x, y, mdown)
         }
       }
-
       if (this.oldMouse != mdown || selectChanged == true) {
         this.mapAndLink();
         this.oldMouse = mdown;

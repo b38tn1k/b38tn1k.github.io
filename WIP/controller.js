@@ -148,10 +148,8 @@ class Controller {
           this.moveByParent();
           break;
         case T_IF:
-          let stillInIf = this.t_if(this.activeCell, this.index);
-          if (stillInIf == false) {
-            this.moveByParent();
-          }
+          this.t_if(this.activeCell, this.index);
+          this.moveByParent();
           break;
         default:
           this.script[1].indexLabeldiv.html("Something is missing", true);
@@ -253,9 +251,9 @@ class Controller {
     this.stack.push(index);
     let res;
     let survey = this.lookAtChildren(activeCell, index);
-    let onlyNums = survey[0];
-    let vals = survey[1];
-    let isNumbers = survey[2];
+    let onlyNums = survey['onlyNums'];
+    let vals = survey['vals'];
+    let isNumbers = survey['isNumbers'];
     if (onlyNums) {
       res = parseFloat(vals[0]);
       if (activeCell.type == T_HYPOT) {
@@ -355,10 +353,13 @@ class Controller {
   t_compare(activeCell, index) {
     this.stack.push(index);
     let survey = this.lookAtChildren(activeCell, index);
-    let onlyNums = survey[0];
-    let vals = survey[1];
-    let isNumbers = survey[2];
+    let onlyNums = survey['onlyNums'];
+    let vals = survey['vals'];
+    let isNumbers = survey['isNumbers'];
     let res = true;
+    if (vals.length == 0) {
+      res = false;
+    }
     if (onlyNums == true) {
       let prev = vals[0];
       for (let i = 1; i < vals.length; i++) {
@@ -407,27 +408,39 @@ class Controller {
     }
   }
 
+  evaluateCondition(onlyBools, onlyNums, vals) {
+    let res = true;
+    let myResult = 0;
+    if (onlyBools == true) {
+      for (let i = 0; i < vals.length; i++){
+        myResult += int(vals[i]);
+      }
+      res = (myResult == vals.length);
+    }
+    if (onlyNums == true) {
+      for (let i = 0; i < vals.length; i++){
+        if (vals[i] == 0) {
+          res = false;
+        }
+      }
+    }
+    return res;
+  }
+
   t_not(activeCell, index) {
     this.stack.push(index);
     let survey = this.lookAtChildren(activeCell, index);
-    let onlyNums = survey[0];
-    let vals = survey[1];
-    let isNumbers = survey[2];
-    let res = false;
-  }
-
-  t_if(activeCell, index) {
-    this.stack.push(index);
-    let stillIn = false;
-    let conditions = activeCell.children[0];
-    for (let i = 0; i < conditions.length; i++) {
-       // send in and listen to dataSH, add them up and make a decision where to go next
-
+    let onlyNums = survey['onlyNums'];
+    let vals = survey['vals'];
+    let containsString = survey['containsString'];
+    let isNumbers = survey['isNumbers'];
+    let onlyBools = survey['onlyBools'];
+    let res = this.evaluateCondition(onlyBools, onlyNums, vals);
+    res = !res;
+    let output = activeCell.children[0].handleSH;
+    for (let i = 0; i < this.varMap[output].length; i++) {
+      this.varMap[output][i].updateDataSH(res);
     }
-    let yes = activeCell.children[1];
-    let no = activeCell.children[2]
-
-    return stillIn
   }
 
   getValue(child, index) {
@@ -445,6 +458,9 @@ class Controller {
       data = child.dataSH;
       if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
         varType = V_NUMBER;
+      } else if (data == 'true' || data == 'false'){
+        varType = V_BOOL;
+        data = (data == 'true');
       } else {
         varType = V_STRING;
       }
@@ -452,8 +468,11 @@ class Controller {
     let result = {type: varType, data: data};
     return result;
   }
+
   lookAtChildren(activeCell, index) {
     let onlyNums = true;
+    let onlyBools = true;
+    let containsString = false;
     let vals = [];
     let isNumbers = [];
     for (let i = 1; i < activeCell.children.length; i++) {
@@ -462,9 +481,12 @@ class Controller {
         let result =  this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
         vals.push(result['data']);
         if (result['type'] == V_NUMBER) {
+          onlyBools = false;
           isNumbers.push(true);
         } else if (result['type'] == V_STRING) {
+          onlyBools = false;
           onlyNums = false;
+          containsString = true;
           isNumbers.push(false);
         } else if (result['type'] == V_BOOL) {
           onlyNums = false;
@@ -472,6 +494,24 @@ class Controller {
         }
       }
     }
-    return [onlyNums, vals, isNumbers];
+    let res = {};
+    res['onlyNums'] = onlyNums;
+    res['vals'] = vals;
+    res['isNumbers'] = isNumbers;
+    res['onlyBools'] = onlyBools;
+    res['containsString'] = containsString;
+    return res;
+  }
+
+  t_if(activeCell, index) {
+    this.stack.push(index);
+    let conditions = activeCell.children[0];
+    let survey = this.lookAtChildren(activeCell, index);
+    let res = this.evaluateCondition(survey['onlyBools'], survey['onlyNums'], survey['vals']);
+    console.log(res);
+
+    let yes = activeCell.children[1];
+    let no = activeCell.children[2]
+
   }
 };

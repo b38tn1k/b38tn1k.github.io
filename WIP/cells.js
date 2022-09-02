@@ -21,6 +21,7 @@ class Cells {
     this.oldMouse = true;
     this.rebuildMenuFlag = false;
     this.redrawFlag = false;
+    this.parentFlag = 0;
   }
 
   get length() {
@@ -495,21 +496,29 @@ class Cells {
       // }
       // create parent/child link and initial align
       if (pParentIndexes.length != 0) {
-        let pParentIndex = pParentIndexes[0];
+        // make parent trees
+        let parentTree = [];
         for (let i = 0; i < pParentIndexes.length; i++) {
-          let current = this.cells[pParentIndexes[i]];
-          for (let j = 0; j < pParentIndexes.length; j++) {
-            if (pParentIndexes[j] == current.parent) {
-              pParentIndex = pParentIndexes[i];
-            }
+          // let branch = [pParentIndexes[i]];
+          let branch = 1;
+
+          parent = this.cells[pParentIndexes[i]].parent;
+          console.log(this.cells[pParentIndexes[i]].textLabel);
+          while (parent != -1) {
+            // branch.push(parent);
+            branch += 1;
+            parent = this.cells[parent].parent
           }
+          parentTree.push(branch);
         }
+        let pParentIndex = pParentIndexes[parentTree.indexOf(max(parentTree))];
         if (this.cells[this.activeIndex].parent != -1) {
           this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
           this.cells[this.activeIndex].removeParent();
         }
         let ok = this.cells[pParentIndex].addChild(this.activeIndex, this.cells[this.activeIndex]);
         if (ok == true) {
+          this.parentFlag = 2;
           this.cells[this.activeIndex].addParent(pParentIndex, this.cells[pParentIndex]);
           this.cells[pParentIndex].refresh(this.viewXdelta, this.viewYdelta);
         }
@@ -612,6 +621,10 @@ class Cells {
     jlog('Cells', 'update');
     // this.cells[0].startButtonUpdate(x, y);
     // build mode
+    if (this.parentFlag != 0) {
+      this.reshapeAllInView();
+      this.parentFlag -= 1;
+    }
     if (this.run == false) {
       // active cell
       if (this.activeIndex != -1) {
@@ -664,6 +677,12 @@ class Cells {
         this.startStop(x, y, mdown);
       }
       // and NOTHING ELSE CAUSE I SHOULD MAKE A NEW THING!
+    }
+  }
+
+  reshapeAllInView(){
+    for (let i = 0; i < this.cellsInView.length; i++) {
+      this.cells[this.cellsInView[i]].reshape(this.viewX, this.viewY, false);
     }
   }
 

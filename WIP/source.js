@@ -278,7 +278,7 @@ function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
-    let bad = [T_IF, T_WHILE, T_NOT, T_AVERAGE, T_SQRT, T_HYPOT];
+    let bad = [T_IF, T_WHILE];
     menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">containers</a><br>', true);
     if (subMenu == 1) {
       addBlockMenuList(containers, bad);

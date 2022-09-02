@@ -2,14 +2,16 @@ class Controller {
   constructor() {
     this.script;
     this.index = 0;
-    this.stack = [];
+    this.stackTrace = [];
+    this.workingStack = [];
+    this.stackTraceDir = [];
     this.terminate;
     this.run = false;
     this.activeCell = null;
     this.running = false;
     this.prevIndex = -1;
-    this.varTable = {};
     this.varMap = {};
+    this.varRecord = [];
   }
 
   startStop(cells) {
@@ -21,7 +23,10 @@ class Controller {
       cells.mapAndLink(true); // freeze the thing
       this.script = cells.cells;
       this.terminate = this.script.length + 1;
-      this.stack = [];
+      this.stackTrace = [];
+      this.workingStack = [0];
+      this.stackTraceDir = [];
+      this.varRecord = [];
       for (let i = 0; i < cells.length; i++) {
         if (this.script[i].type == T_VAR || this.script[i].type == T_OUTLET) {
           if (!(this.script[i].handleSH in this.varMap)) {
@@ -40,6 +45,9 @@ class Controller {
     }
     // stop by cells
     if (cells.run == false) {
+      if (this.run == true) {
+        this.printStack();
+      }
       this.run = false;
       this.running = false;
     }
@@ -62,9 +70,9 @@ class Controller {
   step (flash, fastMode) {
     if (this.index < this.script.length) {
       this.activeCell = this.script[this.index];
-      if (flash == true && this.stack.length > 1) {
+      if (flash == true && this.stackTrace.length > 1) {
         this.activeCell.flash = true;
-        this.script[this.stack[this.stack.length-2]].flash = false;
+        this.script[this.stackTrace[this.stackTrace.length-2]].flash = false;
       }
       switch(this.activeCell.type) {
         case T_START:
@@ -148,8 +156,16 @@ class Controller {
           this.moveByParent();
           break;
         case T_IF:
-          this.t_if(this.activeCell, this.index);
-          this.moveByParent();
+          let stillInIf = this.t_if(this.activeCell, this.index);
+          if (stillInIf == false) {
+            this.moveByParent();
+          }
+          break;
+        case T_ELSE:
+          this.index = this.script[this.index].parent;
+          break;
+        case T_DO:
+          this.index = this.script[this.index].parent;
           break;
         default:
           this.script[1].indexLabeldiv.html("Something is missing", true);
@@ -160,13 +176,49 @@ class Controller {
       }
     } else {
       this.run = false;
-      this.script[this.stack[this.stack.length - 2]].flash = false;
-      console.log("STACK", this.stack);
+      this.script[this.stackTrace[this.stackTrace.length - 2]].flash = false;
+      this.printStack();
+
     }
   }
 
+  printStack(){
+    let readableStack = {};
+    for (let i = 0; i < this.stackTrace.length; i++) {
+      readableStack[i] = {};
+      readableStack[i]['block index'] = this.stackTrace[i];
+      readableStack[i]['block name'] = this.script[this.stackTrace[i]].textLabel;
+      readableStack[i]['handle'] = this.script[this.stackTrace[i]].handleSH;
+      readableStack[i]['data state'] = this.varRecord[i];
+      readableStack[i]['stack progress'] = (this.stackTraceDir[i] == 1) ? 'in' : 'out';
+    }
+    if (printStack == true) {
+      console.table(readableStack);
+    }
+  }
+
+  addToStack(index, dir=1) {
+    this.stackTrace.push(index);
+    this.stackTraceDir.push(dir);
+    if (dir == 1) {
+      this.workingStack.push(index);
+    }
+    let varRecAtom = '';
+    for (key in this.varMap) {
+      varRecAtom += String(key) + ": ";
+      for (let i = 0; i < this.varMap[key].length; i++) {
+        varRecAtom += this.varMap[key][i].dataSH;
+        if (i < this.varMap[key].length - 1) {
+          varRecAtom += ", ";
+        }
+      }
+      varRecAtom += "| ";
+    }
+    this.varRecord.push(varRecAtom);
+  }
+
   t_start(activeCell, index) {
-    this.stack.push(index);
+    this.addToStack(index);
     if (activeCell.children.length == 0) {
       this.run = false;
       this.index = this.terminate;
@@ -176,7 +228,7 @@ class Controller {
   }
 
   t_goto(activeCell, index) {
-    this.stack.push(index);
+    this.addToStack(index);
     let myIndex = this.index;
     let next = activeCell.handleSH;
     this.index = this.terminate;
@@ -189,7 +241,7 @@ class Controller {
   }
 
   t_block(activeCell, index) {
-    this.stack.push(index);
+    this.addToStack(index);
     let stillIn = false;
     if (activeCell.children.length != 0) {
       stillIn = true;
@@ -199,7 +251,7 @@ class Controller {
   }
 
   t_print(activeCell, index) {
-    this.stack.push(index);
+    this.addToStack(index);
     let myOutput = '<br>' + this.script[1].lineNumber + ': ';
     for (let j = 0; j < activeCell.children.length; j++) {
       if (activeCell.children[j].type != T_COMMENT) {
@@ -212,29 +264,8 @@ class Controller {
     this.script[1].indexLabeldiv.elt.scrollTop = 100 * this.script[1].lineNumber;
   }
 
-  moveByParent() {
-    let parIndex = this.activeCell.parent;
-    if (parIndex != -1) {
-      let parent = this.script[parIndex];
-      let posInSiblings = parent.childIndicies.indexOf(this.index);
-      let lastOne = (posInSiblings == parent.childIndicies.length - 1);
-      if (lastOne == false) {
-        this.index = parent.childIndicies[posInSiblings + 1];
-      } else {
-        if (parent.parent == -1) {
-          this.index = this.terminate;
-          this.stack.push(parIndex);
-        } else {
-          this.index = parIndex;
-          this.activeCell = parent;
-          this.moveByParent();
-        }
-      }
-    }
-  }
-
   t_assign(activeCell, index) {
-    this.stack.push(index);
+    this.addToStack(index);
     if (activeCell.children.length > 1) {
       let assigner = activeCell.children[0];
       let data = assigner.dataSH;
@@ -248,7 +279,7 @@ class Controller {
     }
   }
   t_math(activeCell, index) {
-    this.stack.push(index);
+    this.addToStack(index);
     let res;
     let survey = this.lookAtChildren(activeCell, index);
     let onlyNums = survey['onlyNums'];
@@ -284,6 +315,12 @@ class Controller {
             break;
           case T_SQRT:
             res = sqrt(parseFloat(vals[0]));
+            break;
+          case T_DO:
+            this.moveByParent();
+            break;
+          case T_ELSE:
+            this.moveByParent();
             break;
           }
         }
@@ -351,7 +388,7 @@ class Controller {
   }
 
   t_compare(activeCell, index) {
-    this.stack.push(index);
+    this.addToStack(index);
     let survey = this.lookAtChildren(activeCell, index);
     let onlyNums = survey['onlyNums'];
     let vals = survey['vals'];
@@ -428,7 +465,7 @@ class Controller {
   }
 
   t_not(activeCell, index) {
-    this.stack.push(index);
+    this.addToStack(index);
     let survey = this.lookAtChildren(activeCell, index);
     let onlyNums = survey['onlyNums'];
     let vals = survey['vals'];
@@ -438,9 +475,11 @@ class Controller {
     let res = this.evaluateCondition(onlyBools, onlyNums, vals);
     res = !res;
     let output = activeCell.children[0].handleSH;
+    activeCell.dataSH = res;
     for (let i = 0; i < this.varMap[output].length; i++) {
       this.varMap[output][i].updateDataSH(res);
     }
+
   }
 
   getValue(child, index) {
@@ -450,8 +489,12 @@ class Controller {
       this.t_math(child, index);
       data = child.children[0].dataSH;
       varType = V_NUMBER;
-    } else if (boolFunctions.indexOf(child.type) != -1) {
+    } else if (boolFunctions.indexOf(child.type) != -1 && (child.type != T_NOT))  {
       this.t_compare(child, index);
+      data = child.children[0].dataSH;
+      varType = V_BOOL;
+    } else if (child.type == T_NOT){
+      this.t_not(child, index);
       data = child.children[0].dataSH;
       varType = V_BOOL;
     } else {
@@ -469,15 +512,14 @@ class Controller {
     return result;
   }
 
-  lookAtChildren(activeCell, index) {
+  lookAtChildren(activeCell, index, start=1) {
     let onlyNums = true;
     let onlyBools = true;
     let containsString = false;
     let vals = [];
     let isNumbers = [];
-    for (let i = 1; i < activeCell.children.length; i++) {
+    for (let i = start; i < activeCell.children.length; i++) {
       if (activeCell.children[i].type != T_COMMENT) {
-        this.stack.push(activeCell.childIndicies[i]);
         let result =  this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
         vals.push(result['data']);
         if (result['type'] == V_NUMBER) {
@@ -504,14 +546,47 @@ class Controller {
   }
 
   t_if(activeCell, index) {
-    this.stack.push(index);
+    this.addToStack(index);
     let conditions = activeCell.children[0];
-    let survey = this.lookAtChildren(activeCell, index);
+    activeCell.dataSH = 0; // 0 = unknown, 1 = true, 2 = false (?)
+    this.addToStack(activeCell.childIndicies[0], 1);
+    let survey = this.lookAtChildren(conditions, index, 0);
     let res = this.evaluateCondition(survey['onlyBools'], survey['onlyNums'], survey['vals']);
-    console.log(res);
-
     let yes = activeCell.children[1];
-    let no = activeCell.children[2]
+    let no = activeCell.children[2];
+    let stillIn = false;
+    if (res == true) {
+      activeCell.dataSH = 1;
+      this.addToStack(activeCell.childIndicies[1]);
+      if (yes.children.length != 0){
+        this.index = yes.childIndicies[0];
+        stillIn = true;
+      }
+    } else {
+      activeCell.dataSH = 2;
+    }
+    return stillIn;
+  }
+  moveByParent() {
+    let currentI = this.workingStack.pop();
+    this.addToStack(currentI, 0);
+    if (this.script[currentI].type == T_CONDITION) {
+      let currentI = this.workingStack.pop();
+    }
+    if (this.workingStack.length < 1) {
+      this.index = this.terminate;
+    } else {
+      let callerI = this.workingStack[this.workingStack.length-1];
+      let callerC = this.script[callerI];
+      let curInCaller = callerC.childIndicies.indexOf(currentI);
+      if (curInCaller == -1 || curInCaller == callerC.childIndicies.length-1){
+        // let p = this.workingStack.pop()
+        // this.addToStack(p, 0);
+        this.moveByParent();
+      } else {
+        this.index = callerC.childIndicies[curInCaller + 1];
+      }
+    }
 
   }
 };

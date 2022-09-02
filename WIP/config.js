@@ -1,5 +1,5 @@
-let logCounter = 0;
-
+let printStack = true;
+var mobileHack = false;
 function jlog(classname, label) {
   // console.debug(classname, label);
   // logCounter += 1;
@@ -9,6 +9,8 @@ function jlog(classname, label) {
 
 }
 
+let logCounter = 0;
+let redrawCounter = 0;
 var M_IDLE = 0;
 var M_MOVE = 1;
 var M_RESIZE = 2;
@@ -54,7 +56,7 @@ var T_ASSIGN = 42;
 var T_CONSOLE = 2;
 var T_PRINT = 27;
 
-var mobileHack = false;
+
 
 var notStartOrConsole = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT];
 var notStartOrConsoleOrSpecial = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT];
@@ -65,7 +67,7 @@ var conditionallyOnes = boolyOnes.concat(numberyOnes);
 
 var mathFunctions = [T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT];
 var boolFunctions = [T_NOT, T_EQUAL, T_GREATER, T_LESS];
-var utilities = [T_COMMENT, T_PRINT];
+var utilities = [T_COMMENT, T_PRINT, T_ASSIGN];
 var conditionals = [T_IF, T_WHILE];
 var containers = [T_BLOCK, T_CONST, T_INPUT];
 var handles = [T_GOTO, T_VAR];

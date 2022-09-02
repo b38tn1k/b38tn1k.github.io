@@ -231,10 +231,10 @@ class Cells {
       let counter = 2;
       this.cells.push(new Cell(T_CONDITION, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       this.cells.push(new Cell(T_DO, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
-      if(type == T_IF) {
-        this.cells.push(new Cell(T_ELSE, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
-        counter += 1;
-      }
+      // if(type == T_IF) {
+      //   this.cells.push(new Cell(T_ELSE, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+      //   counter += 1;
+      // }
       for (let i = 1; i <= counter; i++) {
         this.cells[pIndex].addChild(pIndex + i, this.cells[pIndex + i], true);
         this.cells[pIndex + i].addParent(pIndex, this.cells[pIndex], true);
@@ -358,6 +358,11 @@ class Cells {
             delHandle.push(this.cells[i].handleSH);
             this.varHandles.splice(this.varHandles.indexOf(this.cells[i].handleSH), 1);
           }
+          let tdv = this.cellsInView.indexOf(i);
+          if (tdv != -1){
+            this.cellsInView.splice(tdv, 1);
+            this.parentFlag += 1;
+          }
         }
         // remove parent / child links and divs for those in delete mode
         let parent = this.cells[i].cleanForDeletionSafe();
@@ -369,9 +374,7 @@ class Cells {
               this.cells[pParent].reshape(true);
               pParent = this.cells[pParent].parent;
             }
-            console.log(this.cells[0].minHeight)
           }
-          console.log(pParent);
         }
       }
       // reassign parent/child relationship
@@ -503,11 +506,15 @@ class Cells {
           let branch = 1;
 
           parent = this.cells[pParentIndexes[i]].parent;
-          console.log(this.cells[pParentIndexes[i]].textLabel);
           while (parent != -1) {
             // branch.push(parent);
             branch += 1;
-            parent = this.cells[parent].parent
+            if (this.cells[parent].type == T_GOTO) { // UI and code logic are too close here :-/
+              parent = -1;
+            } else {
+              parent = this.cells[parent].parent
+            }
+
           }
           parentTree.push(branch);
         }
@@ -518,7 +525,7 @@ class Cells {
         }
         let ok = this.cells[pParentIndex].addChild(this.activeIndex, this.cells[this.activeIndex]);
         if (ok == true) {
-          this.parentFlag = 2;
+          this.parentFlag += 2;
           this.cells[this.activeIndex].addParent(pParentIndex, this.cells[pParentIndex]);
           this.cells[pParentIndex].refresh(this.viewXdelta, this.viewYdelta);
         }
@@ -619,10 +626,11 @@ class Cells {
 
   update(x, y, mdown) {
     jlog('Cells', 'update');
-    // this.cells[0].startButtonUpdate(x, y);
     // build mode
-    if (this.parentFlag != 0) {
-      this.reshapeAllInView();
+    if (this.parentFlag > 0) {
+      // this.reshapeAllInView();
+      // this.updateView(this.viewX, this.viewY, true);
+      // this.turnOffActiveIndex();
       this.parentFlag -= 1;
     }
     if (this.run == false) {
@@ -647,9 +655,11 @@ class Cells {
           }
           // resize
           if (mdown === true && this.cells[this.activeIndex].mode == M_RESIZE) {
+            this.parentFlag = 2;
             this.cells[this.activeIndex].resizeC(x, y);
           }
           if (mdown === true && this.cells[this.activeIndex].mode == M_EXPAND_OR_COLLAPSE) {
+            this.parentFlag = 2;
             this.cells[this.activeIndex].expandOrCollapse();
             if (this.cells[this.activeIndex].shrink == true) {
               let parent = this.cells[this.activeIndex].parent;
@@ -663,7 +673,9 @@ class Cells {
           if (mdown === true && this.cells[this.activeIndex].mode == M_COPY) {
             this.doCopy();
           }
-          this.doParentDrop(x, y, mdown)
+          if (this.redrawFlag == true) {
+            this.doParentDrop(x, y, mdown);
+          }
         }
       }
       if (this.oldMouse != mdown || selectChanged == true) {
@@ -682,7 +694,9 @@ class Cells {
 
   reshapeAllInView(){
     for (let i = 0; i < this.cellsInView.length; i++) {
-      this.cells[this.cellsInView[i]].reshape(this.viewX, this.viewY, false);
+      if (this.cells[this.cellsInView[i]] != null){
+        this.cells[this.cellsInView[i]].reshape(this.viewX, this.viewY, false);
+      }
     }
   }
 

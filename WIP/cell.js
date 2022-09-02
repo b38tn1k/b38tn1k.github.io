@@ -6,6 +6,7 @@ var selectChanged = true;
 
 function selectChangedCallback(){
   selectChanged = true;
+  redrawCounter = 2;
 }
 
 class Cell {
@@ -42,7 +43,7 @@ class Cell {
       this.width = w;
       this.height = h;
     }
-    this.oldHeight = height;
+    this.oldHeight = h;
     this.minWidth = w;
     this.minHeight = h;
     this.radius = r;
@@ -66,9 +67,9 @@ class Cell {
     // divs
     this.lineNumber = 0;
     this.indexLabeldiv = createDiv(this.textLabel);
-    if (this.type == T_VAR) {
-      this.varLabeldiv = createDiv("empty");
-    }
+    // if (this.type == T_VAR) {
+    //   this.varLabeldiv = createDiv("empty");
+    // }
     this.indexLabeldiv.style('font-size', '12px');
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
@@ -147,18 +148,19 @@ class Cell {
       this.width = w + 3*this.childXBorder;
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
-      if (this.type == T_VAR) {
-        if (this.varLabeldiv) {
-          this.varLabeldiv.remove();
-        }
-        this.varLabeldiv = createDiv("empty");
-        // this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
-        this.height += this.childYBorder + this.ySpacer;
-        this.minHeight = this.height;
-        this.varLabeldiv.style('font-size', '12px');
-        this.varLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
-        this.varLabeldiv.show();
-      }
+      // if (this.type == T_VAR) {
+        // if (this.varLabeldiv) {
+        //   this.varLabeldiv.remove();
+        // }
+        // this.varLabeldiv = createDiv("empty");
+        // // this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
+        // this.height += this.childYBorder + this.ySpacer;
+        // this.oldHeight = this.height;
+        // this.minHeight = this.height;
+        // this.varLabeldiv.style('font-size', '12px');
+        // this.varLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
+        // this.varLabeldiv.show();
+      // }
     }
 
     this.updateAllDivPositions();
@@ -171,9 +173,9 @@ class Cell {
     let xp = this.viewX;
     let yp = this.viewY;
     this.updateDivPosition(this.indexLabeldiv, xp + 2*this.childXBorder, yp);
-    if (this.type == T_VAR) {
-      this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
-    }
+    // if (this.type == T_VAR) {
+    //   this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
+    // }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.updateDivPosition(this.input, xp + this.childXBorder, yp + this.childYBorder + this.yHeaderEnd);
     }
@@ -188,9 +190,9 @@ class Cell {
     if (this.type != T_VAR) {
       let htmlString = this.textLabel + '<br>' + value;
       this.indexLabeldiv.html(htmlString);
-    } else {
-      this.varLabeldiv.html(value);
-    }
+    } //else {
+      // this.varLabeldiv.html(value);
+    // }
   }
 
   updateView(xOff, yOff) {
@@ -477,10 +479,10 @@ class Cell {
         this.input.remove();
         this.input.remove();
       }
-      if (this.type == T_VAR) {
-        this.varLabeldiv.remove();
-        this.varLabeldiv.remove();
-      }
+      // if (this.type == T_VAR) {
+      //   this.varLabeldiv.remove();
+      //   this.varLabeldiv.remove();
+      // }
     }
     return par;
   }
@@ -704,9 +706,9 @@ class Cell {
 
   hideDivs() {
     jlog('Cell', 'hideDivs');
-    if (this.type == T_VAR) {
-      this.varLabeldiv.hide();
-    }
+    // if (this.type == T_VAR) {
+    //   this.varLabeldiv.hide();
+    // }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.hide();
     }
@@ -725,9 +727,9 @@ class Cell {
 
   showDivs() {
     jlog('Cell', 'showDivs');
-    if (this.type == T_VAR) {
-      this.varLabeldiv.show();
-    }
+    // if (this.type == T_VAR) {
+    //   this.varLabeldiv.show();
+    // }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.show();
     }

@@ -20,7 +20,9 @@ var mobileHAddon = false;
 var tidyFlag = 0;
 let userBlocks = [];
 let subMenu = 0;
-let redrawCounter = 0;
+let currentTestIndex = 0;
+let testLoadTimer = 0;
+let runTest = false;
 
 function deviceTurned() {
   jlog('Main', 'deviceTurned');
@@ -99,6 +101,8 @@ function preload() {
   demos.push(loadJSON('demo3.json'));
   demos.push(loadJSON('demo4.json'));
   demos.push(loadJSON('demo5.json'));
+  demos.push(loadJSON('demo6.json'));
+  demos.push(loadJSON('demo7.json'));
 }
 
 function colorSetup() {
@@ -241,8 +245,8 @@ function mouseDrag() {
   if (doMouseDrag == true) {
     xOff = xStart - mouseX;
     yOff = yStart - mouseY;
-    xPos -= xOff * 0.03;
-    yPos -= yOff  * 0.03;
+    xPos -= xOff * 0.1;//0.03;
+    yPos -= yOff  * 0.1;//0.03;
   } else {
     xOff = 0;
     yOff = 0;
@@ -278,7 +282,7 @@ function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
-    let bad = [T_IF, T_WHILE];
+    let bad = [T_WHILE];
     menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">containers</a><br>', true);
     if (subMenu == 1) {
       addBlockMenuList(containers, bad);
@@ -309,12 +313,15 @@ function createMenuDiv() {
   }
   menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
   if (showDemoMenu == true) {
+    menu.html('<a href="javascript:void(0)" onclick="testAll()">+ test all</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">+ hello world</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[1])">+ blocks</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[2])">+ assigning</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[3])">+ basic math</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">+ silly string math</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">+ comparisons</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[6])">+ iffy if</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[6])">+ if not</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);
@@ -413,6 +420,12 @@ function setup() {
   doLastBit();
 }
 
+function testAll() {
+  runTest = true;
+  currentTestIndex = -1;
+  testLoadTimer = 101;
+}
+
 function draw() {
   if (redrawCounter != 0) {
     clear();
@@ -448,5 +461,17 @@ function draw() {
     menu = createDiv();
     createMenuDiv();
     cells.rebuildMenuFlag = false;
+  }
+  if (runTest == true && cells.run == false) {
+    testLoadTimer += 1;
+  }
+  if (runTest == true && cells.run == false && testLoadTimer > 100){
+    currentTestIndex += 1;
+    testLoadTimer = 0;
+    loadCells(demos[currentTestIndex]);
+    cells.run = true;
+    if (currentTestIndex == demos.length-1){
+      runTest = false;
+    }
   }
 }

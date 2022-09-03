@@ -354,7 +354,7 @@ function createMenuDiv() {
   } else {
     menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">desktop</a><br>', true);
   }
-  menu.html('<br><span style="color:LightGray"><small>version 0.1<br>refresh if zoomed</small></span>', true);
+  menu.html('<br><span style="color:LightGray"><small>version 0.1<br>refresh if zoomed<br>WIP - YMMV</small></span>', true);
   menu.position(10, 10);
   menu.style('font-size', '16px');
   menu.style('background-color', 'DimGray');

@@ -400,9 +400,9 @@ class Cells {
       for (let i = 0; i < this.length; i++) {
         if (blockConfig[this.cells[i].type]['input type'] == I_SELECT) {
           this.cells[i].input.remove();
-          if (this.cells[i].type != T_GOTO){
-            this.cells[i].varLabeldiv.remove();
-          }
+          // if (this.cells[i].type != T_GOTO){
+          //   this.cells[i].varLabeldiv.remove();
+          // }
           this.cells[i].buildDivs();
         }
       }
@@ -583,10 +583,10 @@ class Cells {
       ac.input.remove();
       ac.input.remove();
     }
-    if (ac.type == T_VAR) {
-      ac.varLabeldiv.remove();
-      ac.varLabeldiv.remove();
-    }
+    // if (ac.type == T_VAR) {
+    //   ac.varLabeldiv.remove();
+    //   ac.varLabeldiv.remove();
+    // }
     let inParentIndex = 0;
     if (pInd != -1) {
       inParentIndex = parent.childIndicies.indexOf(this.activeIndex);

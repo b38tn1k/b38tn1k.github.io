@@ -128,15 +128,19 @@ class Controller {
           this.moveByParent();
           break;
         case T_COMMENT:
+          this.addToStack(this.index);
           this.moveByParent();
           break;
         case T_VAR:
+          this.addToStack(this.index);
           this.moveByParent();
           break;
         case T_CONST:
+        this.addToStack(this.index);
           this.moveByParent();
           break;
         case T_INPUT:
+        this.addToStack(this.index);
           this.moveByParent();
           break;
         case T_EQUAL:
@@ -205,13 +209,13 @@ class Controller {
     }
     let varRecAtom = '';
     for (key in this.varMap) {
-      varRecAtom += String(key) + ": ";
-      for (let i = 0; i < this.varMap[key].length; i++) {
-        varRecAtom += this.varMap[key][i].dataSH;
-        if (i < this.varMap[key].length - 1) {
-          varRecAtom += ", ";
-        }
-      }
+      varRecAtom += String(key) + ": " + this.varMap[0] + '\n';
+      // for (let i = 0; i < this.varMap[key].length; i++) {
+      //   varRecAtom += this.varMap[key][i].dataSH;
+      //   if (i < this.varMap[key].length - 1) {
+      //     varRecAtom += ", ";
+      //   }
+      // }
       varRecAtom += "| ";
     }
     this.varRecord.push(varRecAtom);
@@ -439,6 +443,7 @@ class Controller {
       }
     }
     // and return
+    this.dataSH = res;
     let output = activeCell.children[0].handleSH;
     for (let i = 0; i < this.varMap[output].length; i++) {
       this.varMap[output][i].updateDataSH(res);
@@ -580,8 +585,6 @@ class Controller {
       let callerC = this.script[callerI];
       let curInCaller = callerC.childIndicies.indexOf(currentI);
       if (curInCaller == -1 || curInCaller == callerC.childIndicies.length-1){
-        // let p = this.workingStack.pop()
-        // this.addToStack(p, 0);
         this.moveByParent();
       } else {
         this.index = callerC.childIndicies[curInCaller + 1];

@@ -364,6 +364,7 @@ class Cells {
             this.parentFlag += 1;
           }
         }
+        console.log('how about here?') // yup
         // remove parent / child links and divs for those in delete mode
         let parent = this.cells[i].cleanForDeletionSafe();
         if (parent != -1 && this.cells[parent]){
@@ -374,9 +375,11 @@ class Cells {
               this.cells[pParent].reshape(true);
               pParent = this.cells[pParent].parent;
             }
+            console.log('in this lop?')
           }
         }
       }
+      console.log('made it this far')
       // reassign parent/child relationship
       for (let i = 0; i < this.length; i++) {
         for (let j = 0; j < this.cells[i].childIndicies.length; j++) {
@@ -388,6 +391,7 @@ class Cells {
           this.cells[i].childIndicies[j] = newCI;
         }
       }
+      // console.log('made it this far')// nope
       // recreate the cell list
       let newCells = [];
       for (let i = 0; i < map.length; i++) {

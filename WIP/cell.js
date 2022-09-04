@@ -814,8 +814,11 @@ class Cell {
       let fudge = 2;
       if (x > xp - fudge && x < xp + this.width + fudge) {
         if (y > yp - fudge && y < yp + this.height + fudge) {
-          // this.selfDescribe(false);
+          this.selfDescribe(false);
           // this.unsetData()
+          // this.children = [];
+          // this.parent = -1;
+          print('ok')
           breaker = true;
         }
       }

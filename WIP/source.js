@@ -76,6 +76,7 @@ function newCell(type, x =-1, y =-1) {
       mobileHAddon = true;
     }
   }
+  setTidyFlag();
 }
 
 function setTidyFlag() {
@@ -134,6 +135,7 @@ function saveCells() {
   jlog('Main', 'saveCells');
   let map = cells.saveCells();
   save(map, 'my.json', true);
+  setTidyFlag();
 }
 
 function shareLink() {
@@ -142,10 +144,12 @@ function shareLink() {
   shareLinkGenerated = true;
   menu.html('');
   createMenuDiv();
+  setTidyFlag();
 }
 
 function loadCells(myLoaderMap) {
   jlog('Main', 'loadCells');
+  imlost();
   xOff = 0;
   yOff = 0;
   xPos = 0;
@@ -169,6 +173,8 @@ function loadCells(myLoaderMap) {
   menu.remove();
   menu = createDiv();
   createMenuDiv();
+  cells.updateView(xPos, yPos, true);
+  setTidyFlag();
 }
 
 function showHideBlockMenu() {

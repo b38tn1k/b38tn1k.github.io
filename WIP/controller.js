@@ -233,7 +233,7 @@ class Controller {
 
   t_goto(activeCell, index) {
     this.addToStack(index);
-    let myIndex = this.index;
+    // let myIndex = this.index;
     let next = activeCell.handleSH;
     this.index = this.terminate;
     for (let i = 0; i < this.script.length; i++) {
@@ -241,7 +241,7 @@ class Controller {
         this.index = i;
       }
     }
-    this.script[this.index].parent = myIndex;
+    // this.script[this.index].parent = myIndex;
   }
 
   t_block(activeCell, index) {

@@ -575,9 +575,11 @@ class Controller {
   moveByParent() {
     let currentI = this.workingStack.pop();
     this.addToStack(currentI, 0);
+    this.script[currentI].flash = false;
     if (this.script[currentI].type == T_CONDITION) {
       let currentI = this.workingStack.pop();
     }
+    this.script[currentI].flash = false;
     if (this.workingStack.length < 1) {
       this.index = this.terminate;
     } else {

@@ -31,6 +31,7 @@ class Cells {
 
   tidy(xMin, yMin) {
     jlog('Cells', 'tidy');
+    console.log('hey')
     let bigBlocks = [];
     let consol, start;
     for (let i = 0; i < this.length; i++) {
@@ -117,7 +118,7 @@ class Cells {
     this.cells[newCell].dataSH = info.d;
     this.cells[newCell].handleSH = info.i;
     this.cells[newCell].parent = info.p;
-    if (info.t == T_OUTLET || info.t == T_VAR || info.t == T_INPUT){
+    if (info.t == T_OUTLET || info.t == T_VAR || info.t == T_INPUT || info.t == T_INLET){
       this.cells[newCell].textLabel = info.tL;
       this.cells[newCell].indexLabeldiv.html(info.L);
     }
@@ -231,10 +232,6 @@ class Cells {
       let counter = 2;
       this.cells.push(new Cell(T_CONDITION, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       this.cells.push(new Cell(T_DO, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
-      // if(type == T_IF) {
-      //   this.cells.push(new Cell(T_ELSE, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
-      //   counter += 1;
-      // }
       for (let i = 1; i <= counter; i++) {
         this.cells[pIndex].addChild(pIndex + i, this.cells[pIndex + i], true);
         this.cells[pIndex + i].addParent(pIndex, this.cells[pIndex], true);
@@ -263,6 +260,16 @@ class Cells {
     if (type != T_START && type != T_CONSOLE) {
       this.cells[pIndex].mode = M_NEW;
       this.activeIndex = pIndex;
+    }
+    if (type == T_TURTLE) {
+      let index = this.length;
+      for (let i = 0; i < turtleVars.length; i++) {
+        this.cells.push(new Cell(T_INLET, x, y, this.dWidth, this.dHeight, c, this.dRadius));
+        this.cells[index + i].updateHandleSH(turtleVars[i]);
+        this.cells[index + i].updateDataSH(0);
+        this.cells[pIndex].addChild(index + i, this.cells[index + i])
+        this.cells[index + i].addParent(pIndex, this.cells[pIndex]);
+      }
     }
   }
 
@@ -421,7 +428,7 @@ class Cells {
     }
   }
 
-  doCopy(){
+  doCopy(programatic = false){
     jlog('Cells', 'doCopy');
     let type = this.cells[this.activeIndex].type;
     let x = this.cells[this.activeIndex].x;
@@ -431,19 +438,35 @@ class Cells {
     let val = this.cells[this.activeIndex].dataSH;
     let opts = this.cells[this.activeIndex].inputOptions;
     this.cells[this.activeIndex].mode = M_IDLE;
+    const oldAI = this.activeIndex;
 
     // let w = this.cells[this.activeIndex].width;
     // let h = this.cells[this.activeIndex].height;
     this.activeIndex = this.length;
+    let iCanHasChild = true;
     if (type == T_BLOCK){
+      iCanHasChild = false;
       type  = T_GOTO;
       c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
     }
     if (type == T_INPUT){
+      iCanHasChild = false;
       type  = T_VAR;
       c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
     }
+    if (programatic == false) {
+      if (type == T_OUTLET){
+        iCanHasChild = false;
+        type  = T_VAR;
+        c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
+      }
+    }
+    if (type == T_INLET){
+      iCanHasChild = false;
+      type  = T_VAR;
+    }
     this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, c, this.dRadius));
+    let newAI = this.activeIndex;
     this.cells[this.activeIndex].mode = M_NEW;
     this.cells[this.activeIndex].handleSH = handle;
     this.cells[this.activeIndex].dataSH = val;
@@ -452,12 +475,31 @@ class Cells {
       for (let i = 0; i < opts.length; i++) {
         this.cells[this.activeIndex].inputOptions.push(opts[i]);
       }
-      this.cells[this.activeIndex].input.selected(handle);
+      this.cells[newAI].input.selected(this.cells[newAI].handleSH);
+      console.log(this.cells[newAI].textLabel);
+      console.log(this.cells[newAI].handleSH);
     }
     if (blockConfig[type]['input type'] == I_TEXT) {
       this.cells[this.activeIndex].input.value(val, val);
     }
-    // this.mapAndLink();
+
+    if (iCanHasChild == true) {
+      const childrenStart = this.length;
+      for (let i = 0; i < this.cells[oldAI].childIndicies.length; i++) {
+        this.activeIndex = this.cells[oldAI].childIndicies[i];
+        this.doCopy(true);
+      }
+      this.activeIndex = newAI;
+
+      for (let i = childrenStart; i < this.length; i++){
+        this.cells[i].mode = M_IDLE;
+        this.cells[this.activeIndex].addChild(i, this.cells[i]);
+        this.cells[i].addParent(this.activeIndex, this.cells[this.activeIndex]);
+      }
+      this.cells[this.activeIndex].mode = M_NEW;
+
+      this.mapAndLink();
+    }
   }
 
   doMove(x, y, mdown) {
@@ -549,7 +591,7 @@ class Cells {
       // grab everything
       this.cells[i].updateSHs();
       // create variable map
-      if ((this.cells[i].type == T_OUTLET || this.cells[i].type == T_INPUT)) { //this.cells[i].mode != M_SELECTED
+      if ((this.cells[i].type == T_OUTLET || this.cells[i].type == T_INPUT || this.cells[i].type == T_INLET)) { //this.cells[i].mode != M_SELECTED
         map[T_VAR].push(this.cells[i].handleSH);
         varTable[this.cells[i].handleSH] = this.cells[i].dataSH;
       }

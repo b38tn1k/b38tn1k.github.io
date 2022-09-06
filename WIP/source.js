@@ -76,7 +76,7 @@ function newCell(type, x =-1, y =-1) {
       mobileHAddon = true;
     }
   }
-  setTidyFlag();
+  // setTidyFlag();
 }
 
 function setTidyFlag() {
@@ -105,6 +105,7 @@ function preload() {
   demos.push(loadJSON('demo6.json'));
   demos.push(loadJSON('demo7.json'));
   demos.push(loadJSON('demo8.json'));
+  demos.push(loadJSON('demo9.json'));
 }
 
 function colorSetup() {
@@ -330,6 +331,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[6])">+ iffy if</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ if not</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ sleep sort(a)</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ star</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);

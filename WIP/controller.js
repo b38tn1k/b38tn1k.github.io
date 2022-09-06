@@ -12,6 +12,56 @@ class Controller {
     this.prevIndex = -1;
     this.varMap = {};
     this.varRecord = [];
+    this.weHaveATurtlePeople = false;
+    this.turtleIndex = -1;
+    this.tBuffX = [];
+    this.tChangeX = false;
+    this.tBuffY = [];
+    this.tChangeY = false;
+  }
+
+  updateTurtle() {
+    if (this.weHaveATurtlePeople == true){
+      if (this.tChangeX == true) {
+        this.tBuffX.push(parseFloat(this.varMap['turtleX'][0].dataSH));
+        this.tChangeX = false;
+      }
+      if (this.tChangeY == true) {
+        this.tBuffY.push(parseFloat(this.varMap['turtleY'][0].dataSH));
+        this.tChangeY = false;
+      }
+      if (Boolean(parseInt(this.varMap['turtleDraw'][0].dataSH)) == true) {
+        while (this.tBuffX.length < this.tBuffY.length) {
+          this.tBuffX.push(this.tBuffX[this.tBuffX.length-1]);
+        }
+        while(this.tBuffX.length > this.tBuffY.length) {
+          this.tBuffY.push(this.tBuffY[this.tBuffY.length-1]);
+        }
+        for (let i = 0; i < this.tBuffX.length - 1; i++) {
+          let x1 = this.tBuffX[i];
+          let x2 = this.tBuffX[i+1];
+          let y1 = this.tBuffY[i];
+          let y2 = this.tBuffY[i+1];
+          this.script[this.turtleIndex].canvas.line(x1, y1, x2, y2);
+        }
+        this.updateVarMap('turtleDraw', false);
+        this.tBuffX = [];
+        this.tBuffY = [];
+      }
+    }
+  }
+
+  updateVarMap(key, data) {
+    if (key == 'turtleX'){
+      this.tChangeX = true;
+    }
+    if (key == 'turtleY'){
+      this.tChangeY = true;
+    }
+    for (let i = 0; i < this.varMap[key].length; i++) {
+      this.varMap[key][i].updateDataSH(data);
+    }
+    this.updateTurtle();
   }
 
   startStop(cells) {
@@ -27,12 +77,19 @@ class Controller {
       this.workingStack = [0];
       this.stackTraceDir = [];
       this.varRecord = [];
+      this.tBuffX = [];
+      this.tBuffY = [];
+      this.varMap = {};
       for (let i = 0; i < cells.length; i++) {
-        if (this.script[i].type == T_VAR || this.script[i].type == T_OUTLET) {
+        if (this.script[i].type == T_VAR || this.script[i].type == T_OUTLET || this.script[i].type == T_INPUT) {
           if (!(this.script[i].handleSH in this.varMap)) {
             this.varMap[this.script[i].handleSH] = [];
           }
           this.varMap[this.script[i].handleSH].push(this.script[i]);
+        }
+        if (this.script[i].type == T_TURTLE) {
+          this.weHaveATurtlePeople = true;
+          this.turtleIndex = i;
         }
       }
       for (key in this.varMap) {
@@ -209,14 +266,7 @@ class Controller {
     }
     let varRecAtom = '';
     for (key in this.varMap) {
-      varRecAtom += String(key) + ": " + this.varMap[0] + '\n';
-      // for (let i = 0; i < this.varMap[key].length; i++) {
-      //   varRecAtom += this.varMap[key][i].dataSH;
-      //   if (i < this.varMap[key].length - 1) {
-      //     varRecAtom += ", ";
-      //   }
-      // }
-      varRecAtom += "| ";
+      varRecAtom += String(key) + ": " + this.varMap[key][0].dataSH + ' | ';
     }
     this.varRecord.push(varRecAtom);
   }
@@ -276,9 +326,7 @@ class Controller {
       let cI = activeCell.childIndicies;
       for (let i = 1; i < cI.length; i++) {
         let key = this.script[cI[i]].handleSH;
-        for (let i = 0; i < this.varMap[key].length; i++) {
-          this.varMap[key][i].updateDataSH(data);
-        }
+        this.updateVarMap(key, data);
       }
     }
   }
@@ -386,9 +434,10 @@ class Controller {
       }
     }
     let output = activeCell.children[0].handleSH;
-    for (let i = 0; i < this.varMap[output].length; i++) {
-      this.varMap[output][i].updateDataSH(res);
-    }
+    this.updateVarMap(output, res)
+    // for (let i = 0; i < this.varMap[output].length; i++) {
+    //   this.varMap[output][i].updateDataSH(res);
+    // }
   }
 
   t_compare(activeCell, index) {
@@ -445,9 +494,10 @@ class Controller {
     // and return
     this.dataSH = res;
     let output = activeCell.children[0].handleSH;
-    for (let i = 0; i < this.varMap[output].length; i++) {
-      this.varMap[output][i].updateDataSH(res);
-    }
+    this.updateVarMap(output, res);
+    // for (let i = 0; i < this.varMap[output].length; i++) {
+    //   this.varMap[output][i].updateDataSH(res);
+    // }
   }
 
   evaluateCondition(onlyBools, onlyNums, vals) {
@@ -481,9 +531,10 @@ class Controller {
     res = !res;
     let output = activeCell.children[0].handleSH;
     activeCell.dataSH = res;
-    for (let i = 0; i < this.varMap[output].length; i++) {
-      this.varMap[output][i].updateDataSH(res);
-    }
+    this.updateVarMap(output, res)
+    // for (let i = 0; i < this.varMap[output].length; i++) {
+    //   this.varMap[output][i].updateDataSH(res);
+    // }
 
   }
 
@@ -592,6 +643,7 @@ class Controller {
         this.index = callerC.childIndicies[curInCaller + 1];
       }
     }
-
   }
 };
+
+// http://127.0.0.1:4000/WIP/#%7B%220%22%3A%7B%22x%22%3A152.5%2C%22y%22%3A20%2C%22t%22%3A1%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A-1%2C%22c%22%3A%5B6%2C9%2C12%2C16%2C19%2C21%2C24%2C30%2C33%2C27%5D%2C%22tL%22%3A%22start%22%2C%22L%22%3A%22start%22%7D%2C%221%22%3A%7B%22x%22%3A307.5%2C%22y%22%3A20%2C%22t%22%3A2%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A-1%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22console%22%2C%22L%22%3A%22console%22%7D%2C%222%22%3A%7B%22x%22%3A439.40000000000003%2C%22y%22%3A58.79999999999987%2C%22t%22%3A0%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A-1%2C%22c%22%3A%5B3%2C4%2C5%5D%2C%22tL%22%3A%22turtle%22%2C%22L%22%3A%22turtle%22%7D%2C%223%22%3A%7B%22x%22%3A727.5%2C%22y%22%3A130.5%2C%22t%22%3A201%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A0%2C%22i%22%3A%22turtleX%22%2C%22p%22%3A2%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22inlet%22%2C%22L%22%3A%22inlet%22%7D%2C%224%22%3A%7B%22x%22%3A727.5%2C%22y%22%3A180.5%2C%22t%22%3A201%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A0%2C%22i%22%3A%22turtleY%22%2C%22p%22%3A2%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22inlet%22%2C%22L%22%3A%22inlet%22%7D%2C%225%22%3A%7B%22x%22%3A727.5%2C%22y%22%3A230.5%2C%22t%22%3A201%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A0%2C%22i%22%3A%22turtleDraw%22%2C%22p%22%3A2%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22inlet%22%2C%22L%22%3A%22inlet%22%7D%2C%226%22%3A%7B%22x%22%3A233.09999999999997%2C%22y%22%3A127.70000000000013%2C%22t%22%3A42%2C%22h%22%3Afalse%2C%22s%22%3Atrue%2C%22p%22%3A0%2C%22c%22%3A%5B8%2C7%5D%2C%22tL%22%3A%22assign%22%2C%22L%22%3A%22assign%22%7D%2C%227%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A185.70000000000013%2C%22t%22%3A45%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A0%2C%22i%22%3A%22turtleX%22%2C%22p%22%3A6%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%3Cbr%3E28%22%7D%2C%228%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A154.70000000000013%2C%22t%22%3A46%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A%2210%22%2C%22p%22%3A6%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22constant%22%2C%22L%22%3A%22constant%22%7D%2C%229%22%3A%7B%22x%22%3A233.09999999999997%2C%22y%22%3A158.70000000000013%2C%22t%22%3A42%2C%22h%22%3Afalse%2C%22s%22%3Atrue%2C%22p%22%3A0%2C%22c%22%3A%5B10%2C11%5D%2C%22tL%22%3A%22assign%22%2C%22L%22%3A%22assign%22%7D%2C%2210%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A185.70000000000013%2C%22t%22%3A46%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A%2210%22%2C%22p%22%3A9%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22constant%22%2C%22L%22%3A%22constant%22%7D%2C%2211%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A216.70000000000013%2C%22t%22%3A45%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A0%2C%22i%22%3A%22turtleY%22%2C%22p%22%3A9%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%3Cbr%3E50%22%7D%2C%2212%22%3A%7B%22x%22%3A233.09999999999997%2C%22y%22%3A189.70000000000013%2C%22t%22%3A42%2C%22h%22%3Afalse%2C%22s%22%3Atrue%2C%22p%22%3A0%2C%22c%22%3A%5B14%2C15%5D%2C%22tL%22%3A%22assign%22%2C%22L%22%3A%22assign%22%7D%2C%2213%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A278.70000000000016%2C%22t%22%3A45%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A0%2C%22i%22%3A%22turtleY%22%2C%22p%22%3A16%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%3Cbr%3E50%22%7D%2C%2214%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A216.70000000000013%2C%22t%22%3A46%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A%22100%22%2C%22p%22%3A12%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22constant%22%2C%22L%22%3A%22constant%22%7D%2C%2215%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A247.70000000000013%2C%22t%22%3A45%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A0%2C%22i%22%3A%22turtleX%22%2C%22p%22%3A12%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%3Cbr%3E28%22%7D%2C%2216%22%3A%7B%22x%22%3A233.09999999999997%2C%22y%22%3A220.70000000000013%2C%22t%22%3A42%2C%22h%22%3Afalse%2C%22s%22%3Atrue%2C%22p%22%3A0%2C%22c%22%3A%5B17%2C13%5D%2C%22tL%22%3A%22assign%22%2C%22L%22%3A%22assign%22%7D%2C%2217%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A247.70000000000013%2C%22t%22%3A46%2C%22h%22

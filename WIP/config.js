@@ -1,4 +1,4 @@
-let printStack = true;
+let printStack = false;
 var mobileHack = false;
 function jlog(classname, label) {
   // console.debug(classname, label);
@@ -27,7 +27,7 @@ var V_STRING = 1;
 var V_BOOL = 2;
 
 var T_START = 1;
-var T_STOP = 0;
+var T_STOP = 105;
 var T_COMMENT = 3;
 var T_BLOCK = 23;
 var T_VAR = 45;
@@ -55,8 +55,10 @@ var T_OUTLET = 104;
 var T_ASSIGN = 42;
 var T_CONSOLE = 2;
 var T_PRINT = 27;
+var T_TURTLE = 0;
+var T_INLET = 201;
 
-
+var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
 
 var notStartOrConsole = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT];
 var notStartOrConsoleOrSpecial = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT];
@@ -67,7 +69,7 @@ var conditionallyOnes = boolyOnes.concat(numberyOnes);
 
 var mathFunctions = [T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT];
 var boolFunctions = [T_NOT, T_EQUAL, T_GREATER, T_LESS];
-var utilities = [T_COMMENT, T_PRINT];
+var utilities = [T_COMMENT, T_PRINT, T_TURTLE];
 var conditionals = [T_IF, T_WHILE];
 var containers = [T_BLOCK, T_CONST, T_INPUT];
 var handles = [T_GOTO, T_VAR, T_ASSIGN];
@@ -103,6 +105,8 @@ blockConfig[T_CONSOLE] = {};
 blockConfig[T_PRINT] = {};
 blockConfig[T_COMMENT] = {};
 blockConfig[T_CONST] = {};
+blockConfig[T_TURTLE] = {};
+blockConfig[T_INLET] = {};
 
 blockConfig[T_BLOCK]['block label'] = "set block";
 blockConfig[T_GOTO]['block label'] = "block";
@@ -133,6 +137,8 @@ blockConfig[T_CONSOLE]['block label'] = "console";
 blockConfig[T_PRINT]['block label'] = "print";
 blockConfig[T_COMMENT]['block label'] = "//";
 blockConfig[T_CONST]['block label'] = "constant";
+blockConfig[T_TURTLE]['block label'] = "turtle 200x150";
+blockConfig[T_INLET]['block label'] = "inlet";
 
 blockConfig[T_BLOCK]['accept child'] = notStartOrConsoleOrSpecial;
 blockConfig[T_VAR]['accept child'] = [T_COMMENT]; //nothing
@@ -163,11 +169,14 @@ blockConfig[T_CONSOLE]['accept child'] = [];
 blockConfig[T_PRINT]['accept child'] = [T_VAR, T_INPUT, T_CONST, T_COMMENT];
 blockConfig[T_COMMENT]['accept child'] = [];
 blockConfig[T_CONST]['accept child'] = [T_COMMENT];
+blockConfig[T_TURTLE]['accept child'] = [T_INLET];
+blockConfig[T_INLET]['accept child'] = [];
 
 var I_NONE = 0;
 var I_TEXT = 1;
 var I_SELECT = 2;
 var I_TEXT_AREA = 3;
+var I_CANVAS = 0;
 blockConfig[T_BLOCK]['input type'] = I_TEXT;
 blockConfig[T_GOTO]['input type'] = I_SELECT;
 blockConfig[T_VAR]['input type'] = I_SELECT;
@@ -197,29 +206,31 @@ blockConfig[T_CONSOLE]['input type'] = I_NONE;
 blockConfig[T_PRINT]['input type'] = I_NONE;
 blockConfig[T_COMMENT]['input type'] = I_TEXT_AREA;
 blockConfig[T_CONST]['input type'] = I_TEXT;
+blockConfig[T_TURTLE]['input type'] = I_CANVAS;
+blockConfig[T_INLET]['input type'] = I_NONE;
 
 blockConfig[T_BLOCK]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_GOTO]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_VAR]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_CONST, 'copy' : true};
 blockConfig[T_INPUT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
-blockConfig[T_IF]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_WHILE, 'copy' : false};
-blockConfig[T_WHILE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_IF, 'copy' : false};
-blockConfig[T_EQUAL]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_LESS, 'copy' : false};
-blockConfig[T_LESS]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_GREATER, 'copy' : false};
-blockConfig[T_GREATER]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_EQUAL, 'copy' : false};
-blockConfig[T_ADD]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_SUBTRACT, 'copy' : false};
-blockConfig[T_SUBTRACT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_MULT, 'copy' : false};
-blockConfig[T_MULT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_DIV, 'copy' : false};
-blockConfig[T_DIV]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_MOD, 'copy' : false};
-blockConfig[T_MOD]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_AVERAGE, 'copy' : false};
-blockConfig[T_AVERAGE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_SQRT, 'copy' : false};
-blockConfig[T_SQRT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_HYPOT, 'copy' : false};
-blockConfig[T_HYPOT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_ADD, 'copy' : false};
-blockConfig[T_NOT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : false};
+blockConfig[T_IF]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_WHILE, 'copy' : true};
+blockConfig[T_WHILE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_IF, 'copy' : true};
+blockConfig[T_EQUAL]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_LESS, 'copy' : true};
+blockConfig[T_LESS]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_GREATER, 'copy' : true};
+blockConfig[T_GREATER]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_EQUAL, 'copy' : true};
+blockConfig[T_ADD]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_SUBTRACT, 'copy' : true};
+blockConfig[T_SUBTRACT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_MULT, 'copy' : true};
+blockConfig[T_MULT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_DIV, 'copy' : true};
+blockConfig[T_DIV]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_MOD, 'copy' : true};
+blockConfig[T_MOD]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_AVERAGE, 'copy' : true};
+blockConfig[T_AVERAGE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_SQRT, 'copy' : true};
+blockConfig[T_SQRT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_HYPOT, 'copy' : true};
+blockConfig[T_HYPOT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_ADD, 'copy' : true};
+blockConfig[T_NOT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_CONDITION]['handles'] = {'move' : false, 'resize'  : true, 'delete'  : false, 'expand'  : true, 'mutate' : -1, 'copy' : false};
 blockConfig[T_ELSE]['handles'] = {'move' : false, 'resize'  : true, 'delete'  : false, 'expand'  : true, 'mutate' : -1, 'copy' : false};
 blockConfig[T_DO]['handles'] = {'move' : false, 'resize'  : true, 'delete'  : false, 'expand'  : true, 'mutate' : -1, 'copy' : false};
-blockConfig[T_OUTLET]['handles'] = {'move' : false, 'resize'  : true, 'delete'  : false, 'expand'  : false, 'mutate' : -1, 'copy' : false};
+blockConfig[T_OUTLET]['handles'] = {'move' : false, 'resize'  : false, 'delete'  : false, 'expand'  : false, 'mutate' : -1, 'copy' : true};
 blockConfig[T_START]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : false, 'expand'  : true, 'mutate' : -1, 'copy' : false};
 blockConfig[T_STOP]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : false};
 blockConfig[T_ASSIGN]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
@@ -227,3 +238,5 @@ blockConfig[T_CONSOLE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  
 blockConfig[T_PRINT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_COMMENT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : false, 'mutate' : -1, 'copy' : true};
 blockConfig[T_CONST]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_INPUT, 'copy' : true};
+blockConfig[T_TURTLE]['handles'] = {'move' : true, 'resize'  : false, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : false};
+blockConfig[T_INLET]['handles'] = {'move' : false, 'resize'  : false, 'delete'  : false, 'expand'  : false, 'mutate' : -1, 'copy' : true};

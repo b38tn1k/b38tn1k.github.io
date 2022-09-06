@@ -82,6 +82,11 @@ class Cell {
     this.height += this.yHeaderEnd;
     this.startHeight = this.height;
     this.startWidth = this.width;
+    if (this.type == T_TURTLE){
+      this.canvas = createGraphics(200, 150);
+      this.canvas.pixelDensity(1);
+      this.canvas.background(255);
+    }
     this.buildDivs();
     this.resizeConsole();
     this.updateAllDivPositions();
@@ -90,6 +95,12 @@ class Cell {
   get size() {
     jlog('Cell', 'size');
     return [this.width, this.height]
+  }
+
+  updateHandleSH(newHandle) {
+    this.handleSH = newHandle;
+    this.textLabel += '<br>' + newHandle
+    this.indexLabeldiv.html(this.textLabel)
   }
 
   reStyle() {
@@ -144,23 +155,9 @@ class Cell {
       let w = this.width;
       this.standardInputHeight = h;
       this.input.size(w, h);
-      // this.updateDivPosition(this.input, xp + this.childXBorder, yp + this.yHeaderEnd);
       this.width = w + 3*this.childXBorder;
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
-      // if (this.type == T_VAR) {
-        // if (this.varLabeldiv) {
-        //   this.varLabeldiv.remove();
-        // }
-        // this.varLabeldiv = createDiv("empty");
-        // // this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
-        // this.height += this.childYBorder + this.ySpacer;
-        // this.oldHeight = this.height;
-        // this.minHeight = this.height;
-        // this.varLabeldiv.style('font-size', '12px');
-        // this.varLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
-        // this.varLabeldiv.show();
-      // }
     }
 
     this.updateAllDivPositions();
@@ -185,20 +182,20 @@ class Cell {
     jlog('Cell', 'updateDataSH');
     this.dataSH = value;
     if (/^\d+\.\d+$/.test(String(value)) == true) {
-      value = value.toFixed(3);
+      value = parseFloat(value).toFixed(3);
     }
-    if (this.type != T_VAR) {
-      let htmlString = this.textLabel + '<br>' + value;
+    if (this.type != T_VAR && this.type != T_INLET) {
+      let htmlString = this.textLabel + '<br>' + String(value);
       this.indexLabeldiv.html(htmlString);
-    } //else {
-      // this.varLabeldiv.html(value);
-    // }
+    }
   }
 
   updateView(xOff, yOff) {
     jlog('Cell', 'updateView');
-    this.viewX = this.x + xOff;
-    this.viewY = this.y + yOff;
+    if (this.parent == -1){
+      this.viewX = this.x + xOff;
+      this.viewY = this.y + yOff;
+    }
   }
 
   draw(canvas=null) {
@@ -208,64 +205,65 @@ class Cell {
     let x = this.viewX;
     let y = this.viewY;
     if (this.hide === false){
-      if (canvas === null) {
-        // body
-        if (this.flash == true) {
+      // body
+      if (this.flash == true) {
+        fill(this.colors[2]);
+      } else {
+        if (this.highlight === true) {
           fill(this.colors[2]);
         } else {
-          if (this.highlight === true) {
-            fill(this.colors[2]);
-          } else {
-            fill(this.colors[0]);
-          }
+          fill(this.colors[0]);
         }
-        if (this.underneath === true) {
-          if (blockConfig[this.type]['input type'] != I_NONE) {
-            this.input.hide();
-          }
-          this.indexLabeldiv.hide();
+      }
+      if (this.underneath === true) {
+        if (blockConfig[this.type]['input type'] != I_NONE) {
+          this.input.hide();
+        }
+        this.indexLabeldiv.hide();
 
+      }
+      if (this.underneath === false) {
+        if (blockConfig[this.type]['input type'] != I_NONE) {
+          this.input.show();
         }
-        if (this.underneath === false) {
-          if (blockConfig[this.type]['input type'] != I_NONE) {
-            this.input.show();
-          }
-          this.indexLabeldiv.show();
+        this.indexLabeldiv.show();
 
-        }
+      }
+      stroke(this.colors[1]);
+      rect(x, y, this.width, this.height, this.radius);
+      if (blockConfig[this.type]['handles']['move'] == true) {
+        fill(this.colors[1]);
+        rect(x, y, this.handleW, this.handleH);
+      }
+      if (blockConfig[this.type]['handles']['delete'] == true) {
+        fill(this.colors[3]);
+        stroke(this.colors[3]);
+        rect(x + this.width - this.handleW, y, this.handleW, this.handleH);
         stroke(this.colors[1]);
-        rect(x, y, this.width, this.height, this.radius);
-        if (blockConfig[this.type]['handles']['move'] == true) {
+      }
+      if (blockConfig[this.type]['handles']['expand'] == true) {
+        fill(this.colors[1]);
+        rect(x + this.width/2 - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
+      }
+      if (this.shrink == false) {
+        if (blockConfig[this.type]['handles']['resize'] == true) {
           fill(this.colors[1]);
-          rect(x, y, this.handleW, this.handleH);
+          rect(x + this.width - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
         }
-        if (blockConfig[this.type]['handles']['delete'] == true) {
-          fill(this.colors[3]);
-          stroke(this.colors[3]);
-          rect(x + this.width - this.handleW, y, this.handleW, this.handleH);
-          stroke(this.colors[1]);
-        }
-        if (blockConfig[this.type]['handles']['expand'] == true) {
+        if (blockConfig[this.type]['handles']['copy'] == true) {
           fill(this.colors[1]);
-          rect(x + this.width/2 - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
+          rect(x + this.width - this.handleW, y + this.height/2 - this.handleH, this.handleW, this.handleH);
         }
-        if (this.shrink == false) {
-          if (blockConfig[this.type]['handles']['resize'] == true) {
-            fill(this.colors[1]);
-            rect(x + this.width - this.handleW, y + this.height - this.handleH, this.handleW, this.handleH);
-          }
-          if (blockConfig[this.type]['handles']['copy'] == true) {
-            fill(this.colors[1]);
-            rect(x + this.width - this.handleW, y + this.height/2 - this.handleH, this.handleW, this.handleH);
-          }
-          if (blockConfig[this.type]['handles']['mutate'] != -1) {
-            fill(this.colors[1]);
-            rect(x, y + this.height - this.handleH, this.handleW, this.handleH);
-          }
+        if (blockConfig[this.type]['handles']['mutate'] != -1) {
+          fill(this.colors[1]);
+          rect(x, y + this.height - this.handleH, this.handleW, this.handleH);
         }
       }
       for (let i = 0; i < this.children.length; i++) {
         this.children[i].draw();
+      }
+      if (this.type == T_TURTLE){
+        image(this.canvas, x + this.handleW, y + 3*this.yHeaderEnd)
       }
     } else {
       this.hideDivs();
@@ -327,25 +325,6 @@ class Cell {
     this.sbGraphics[1][1].rect(this.handleW * 0.5, this.handleH * 0.5, this.handleW * 2, this.handleH * 2);
   }
 
-  // startButtonUpdate(x, y) {
-  //   jlog('Cell', 'startButtonUpdate');
-  //   // let xp = this.x;
-  //   // let yp = this.y;
-  //
-  //   let xp = this.viewX;
-  //   let yp = this.viewY;
-  //   let xMin = xp + this.width/2 - 1.5*this.handleW;
-  //   let xMax = xMin + 3*this.handleW;
-  //   this.sbHighlight = false;
-  //   if (x > xMin && x < xMax) {
-  //     let yMin = yp + this.yHeaderEnd - 2 * (1.25 * this.handleH);
-  //     let yMax = yMin + 3*this.handleH;
-  //     if (y > yMin && y < yMax) {
-  //       this.sbHighlight = true;
-  //     }
-  //   }
-  // }
-
   updateDivPosition(div, x, y){
     jlog('Cell', 'updateDivPosition');
     div.position(x, y);
@@ -370,6 +349,10 @@ class Cell {
     this.graphicUpdate = true;
     let childX = this.viewX + this.childXBorder;
     let childY = this.viewY + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
+    if (this.type == T_TURTLE){
+      childX += this.canvas.width + this.handleW;
+      childY = this.viewY + 3*this.yHeaderEnd;// + this.childYBorder + this.ySpacer + this.yHeaderEnd;
+    }
     this.updateAllDivPositions();
     for (let i = 0; i < this.children.length; i++) {
       if (blockConfig[this.type]['accept child'].indexOf(this.children[i].type) != -1) {
@@ -458,6 +441,13 @@ class Cell {
       this.input.size(this.width - 3 * this.childXBorder);
     }
     this.refresh(0, 0);
+    if (this.type == T_TURTLE){
+      this.height = this.canvas.height + this.yHeaderEnd + 4 * this.handleH;
+      this.width = this.canvas.width + 2 * this.handleW;
+      if (this.children[0]) {
+        this.width += this.children[0].width + this.handleW;
+      }
+    }
   }
 
   markForDeletion() {
@@ -695,12 +685,18 @@ class Cell {
 
   expandOrCollapse() {
     jlog('Cell', 'expandOrCollapse');
-    this.graphicUpdate = true;
-    if (this.shrink === true) {
-      this.expandBlock();
+    if (this.type == T_TURTLE) {
+      this.canvas.clear();
+      this.canvas.background(255);
+      this.shrink = false;
     } else {
-      this.shrinkBlock();
+      if (this.shrink === true) {
+        this.expandBlock();
+      } else {
+        this.shrinkBlock();
+      }
     }
+    this.graphicUpdate = true;
     this.mode = M_IDLE
   }
 
@@ -814,11 +810,10 @@ class Cell {
       let fudge = 2;
       if (x > xp - fudge && x < xp + this.width + fudge) {
         if (y > yp - fudge && y < yp + this.height + fudge) {
-          this.selfDescribe(false);
+          // this.selfDescribe(false);
           // this.unsetData()
           // this.children = [];
           // this.parent = -1;
-          print('ok')
           breaker = true;
         }
       }

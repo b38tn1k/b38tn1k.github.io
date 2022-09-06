@@ -67,10 +67,10 @@ var conditionallyOnes = boolyOnes.concat(numberyOnes);
 
 var mathFunctions = [T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT];
 var boolFunctions = [T_NOT, T_EQUAL, T_GREATER, T_LESS];
-var utilities = [T_COMMENT, T_PRINT, T_ASSIGN];
+var utilities = [T_COMMENT, T_PRINT];
 var conditionals = [T_IF, T_WHILE];
 var containers = [T_BLOCK, T_CONST, T_INPUT];
-var handles = [T_GOTO, T_VAR];
+var handles = [T_GOTO, T_VAR, T_ASSIGN];
 
 
 var blockConfig = {};

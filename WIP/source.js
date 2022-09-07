@@ -105,6 +105,7 @@ function preload() {
   demos.push(loadJSON('demo7.json'));
   demos.push(loadJSON('demo8.json'));
   demos.push(loadJSON('demo9.json'));
+  demos.push(loadJSON('demo10.json'));
 }
 
 function colorSetup() {
@@ -291,13 +292,17 @@ function createMenuDiv() {
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
     let bad = [];
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">containers</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">data containers</a><br>', true);
     if (subMenu == 1) {
       addBlockMenuList(containers, bad);
     }
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=2;createMenuDiv();">handles</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=2;createMenuDiv();">data handles</a><br>', true);
     if (subMenu == 2) {
       addBlockMenuList(handles, bad);
+    }
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=7;createMenuDiv();">arrays</a><br>', true);
+    if (subMenu == 7) {
+      addBlockMenuList(arrayTools, bad);
     }
     menu.html('<a href="javascript:void(0)" onclick="subMenu=3;createMenuDiv();">math</a><br>', true);
     if (subMenu == 3) {
@@ -332,6 +337,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ if not</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ sleep sort(a)</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ draw polygons</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[10])">+ array basics</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);

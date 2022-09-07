@@ -616,7 +616,6 @@ getValue(child, index) {
     if (vals.length == 0) {
       res = false;
     }
-    console.log(onlyNums);
     if (onlyNums == true) {
       let prev = vals[0];
       for (let i = 1; i < vals.length; i++) {
@@ -770,7 +769,6 @@ getValue(child, index) {
         }
       }
     }
-    console.log(activeCell.dataSH);
     let output = activeCell.children[0].handleSH;
     this.updateVarMap(output, activeCell.dataSH);
   }

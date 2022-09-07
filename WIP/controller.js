@@ -22,147 +22,150 @@ class Controller {
   }
 
   step (flash, fastMode) {
-    if (this.index < this.script.length) {
-      this.activeCell = this.script[this.index];
-      if (flash == true && this.stackTrace.length > 1) {
-        this.activeCell.flash = true;
-        this.script[this.stackTrace[this.stackTrace.length-2]].flash = false;
-      }
-      switch(this.activeCell.type) {
-        case T_START:
-          this.t_start(this.activeCell, this.index);
-          break;
-        case T_GOTO:
-          this.t_goto(this.activeCell, this.index);
-          break;
-        case T_BLOCK:
-          let stillInBlock = this.t_block(this.activeCell, this.index);
-          if (stillInBlock == false) {
+    try { // big try so I can put anything into the onscreen console
+      if (this.index < this.script.length) {
+        this.activeCell = this.script[this.index];
+        if (flash == true && this.stackTrace.length > 1) {
+          this.activeCell.flash = true;
+          this.script[this.stackTrace[this.stackTrace.length-2]].flash = false;
+        }
+        switch(this.activeCell.type) {
+          case T_START:
+            this.t_start(this.activeCell, this.index);
+            break;
+          case T_GOTO:
+            this.t_goto(this.activeCell, this.index);
+            break;
+          case T_BLOCK:
+            let stillInBlock = this.t_block(this.activeCell, this.index);
+            if (stillInBlock == false) {
+              this.moveByParent();
+            }
+            break;
+          case T_PRINT:
+            this.t_print(this.activeCell, this.index);
             this.moveByParent();
-          }
-          break;
-        case T_PRINT:
-          this.t_print(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_ASSIGN:
-          this.t_assign(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_ADD:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_SUBTRACT:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_MULT:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_DIV:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_MOD:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_AVERAGE:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_SQRT:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_HYPOT:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_SIN:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_COS:
-          this.t_math(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_COMMENT:
-          this.addToStack(this.index);
-          this.moveByParent();
-          break;
-        case T_VAR:
-          this.addToStack(this.index);
-          this.moveByParent();
-          break;
-        case T_CONST:
-          this.addToStack(this.index);
-          this.moveByParent();
-          break;
-        case T_INPUT:
-        this.addToStack(this.index);
-          this.moveByParent();
-          break;
-        case T_EQUAL:
-          this.t_compare(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_LESS:
-          this.t_compare(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_GREATER:
-          this.t_compare(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_NOT:
-          this.t_not(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_IF:
-          let stillInIf = this.t_if(this.activeCell, this.index);
-          if (stillInIf == false) {
+            break;
+          case T_ASSIGN:
+            this.t_assign(this.activeCell, this.index);
             this.moveByParent();
-          }
-          break;
-        case T_WHILE:
-          let stillInWhile = this.t_while(this.activeCell, this.index);
-          if (stillInWhile == false) {
+            break;
+          case T_ADD:
+            this.t_math(this.activeCell, this.index);
             this.moveByParent();
-          }
-          break;
-        case T_ELSE:
-          this.index = this.script[this.index].parent;
-          break;
-        case T_DO:
-          this.index = this.script[this.index].parent;
-          break;
-        case T_LEN:
-          this.t_len(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_GET:
-          this.t_get(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        case T_SET:
-          this.t_set(this.activeCell, this.index);
-          this.moveByParent();
-          break;
-        default:
-          this.script[1].indexLabeldiv.html("Something is missing", true);
-          break;
+            break;
+          case T_SUBTRACT:
+            this.t_math(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_MULT:
+            this.t_math(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_DIV:
+            this.t_math(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_MOD:
+            this.t_math(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_AVERAGE:
+            this.t_math(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_SQRT:
+            this.t_math(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_HYPOT:
+            this.t_math(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_SIN:
+            this.t_math(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_COS:
+            this.t_math(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_COMMENT:
+            this.addToStack(this.index);
+            this.moveByParent();
+            break;
+          case T_VAR:
+            this.addToStack(this.index);
+            this.moveByParent();
+            break;
+          case T_CONST:
+            this.addToStack(this.index);
+            this.moveByParent();
+            break;
+          case T_INPUT:
+          this.addToStack(this.index);
+            this.moveByParent();
+            break;
+          case T_EQUAL:
+            this.t_compare(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_LESS:
+            this.t_compare(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_GREATER:
+            this.t_compare(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_NOT:
+            this.t_not(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_IF:
+            let stillInIf = this.t_if(this.activeCell, this.index);
+            if (stillInIf == false) {
+              this.moveByParent();
+            }
+            break;
+          case T_WHILE:
+            let stillInWhile = this.t_while(this.activeCell, this.index);
+            if (stillInWhile == false) {
+              this.moveByParent();
+            }
+            break;
+          case T_ELSE:
+            this.index = this.script[this.index].parent;
+            break;
+          case T_DO:
+            this.index = this.script[this.index].parent;
+            break;
+          case T_LEN:
+            this.t_len(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_GET:
+            this.t_get(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_SET:
+            this.t_set(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          default:
+            this.script[1].indexLabeldiv.html("Something is missing", true);
+            break;
+        }
+        if (this.run == true && fastMode == true) {
+          this.step(flash, fastMode);
+        }
+      } else {
+        this.run = false;
+        this.script[this.stackTrace[this.stackTrace.length - 2]].flash = false;
+        this.printStack();
       }
-      if (this.run == true && fastMode == true) {
-        this.step(flash, fastMode);
-      }
-    } else {
-      this.run = false;
-      this.script[this.stackTrace[this.stackTrace.length - 2]].flash = false;
-      this.printStack();
-
+    } catch (error) {
+      this.script[1].indexLabeldiv.html('\n' + error, true);
     }
   }
 
@@ -180,6 +183,11 @@ class Controller {
   }
 
   moveByParent() {
+    if (this.workingStack.length > 100){
+      this.script[1].indexLabeldiv.html('\n uncomfortably deep stack, time to die', true);
+      this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
+      this.run = false;
+    }
     let currentI = this.workingStack.pop();
     this.addToStack(currentI, 0); // 0 means it adds to trace, not working stack
     this.script[currentI].flash = false;
@@ -273,7 +281,6 @@ getValue(child, index) {
     res['isNumbers'] = isNumbers;
     res['onlyBools'] = onlyBools;
     res['containsString'] = containsString;
-    console.log(res);
     return res;
   }
 
@@ -474,7 +481,7 @@ getValue(child, index) {
     }
     this.script[1].indexLabeldiv.html(myOutput, true);
     this.script[1].lineNumber += 1;
-    this.script[1].indexLabeldiv.elt.scrollTop = 100 * this.script[1].lineNumber;
+    this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
   }
 
   t_assign(activeCell, index) {

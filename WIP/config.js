@@ -1,4 +1,4 @@
-let printStack = true;
+let printStack = false;
 var mobileHack = false;
 function jlog(classname, label) {
   // console.debug(classname, label);

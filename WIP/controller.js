@@ -199,7 +199,7 @@ class Controller {
     if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_WHILE){
       let shrinkStack = this.workingStack.indexOf(this.script[currentI].parent);
       this.workingStack = this.workingStack.slice(0, shrinkStack+1);
-      this.addNote("working stack shrunk");
+      this.addNote("shrunk working stack");
       if (this.script[currentI].dataSH == B_FALSE){
         currentI = this.workingStack.pop();
         this.addToStack(currentI, 0);

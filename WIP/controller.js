@@ -25,12 +25,16 @@ class Controller {
       if (this.tChangeX == true) {
         this.tBuffX.push(parseFloat(this.varMap['turtleX'][0].dataSH));
         this.tChangeX = false;
+        console.log("X",this.tBuffX[this.tBuffX.length-1])
       }
       if (this.tChangeY == true) {
         this.tBuffY.push(parseFloat(this.varMap['turtleY'][0].dataSH));
         this.tChangeY = false;
+        console.log("Y",this.tBuffY[this.tBuffY.length-1])
       }
-      if (Boolean(parseInt(this.varMap['turtleDraw'][0].dataSH)) == true) {
+      console.log(this.varMap['turtleDraw'][0].dataSHasType["bool"]);
+      if (this.varMap['turtleDraw'][0].dataSHasType["bool"] == true) {
+        this.updateVarMap('turtleDraw', 0);
         while (this.tBuffX.length < this.tBuffY.length) {
           this.tBuffX.push(this.tBuffX[this.tBuffX.length-1]);
         }
@@ -44,7 +48,6 @@ class Controller {
           let y2 = this.tBuffY[i+1];
           this.script[this.turtleIndex].canvas.line(x1, y1, x2, y2);
         }
-        this.updateVarMap('turtleDraw', false);
         this.tBuffX = [];
         this.tBuffY = [];
       }
@@ -80,6 +83,7 @@ class Controller {
       this.tBuffX = [];
       this.tBuffY = [];
       this.varMap = {};
+      this.weHaveATurtlePeople = false;
       for (let i = 0; i < cells.length; i++) {
         if (this.script[i].type == T_VAR || this.script[i].type == T_OUTLET || this.script[i].type == T_INPUT) {
           if (!(this.script[i].handleSH in this.varMap)) {
@@ -181,6 +185,14 @@ class Controller {
           this.moveByParent();
           break;
         case T_HYPOT:
+          this.t_math(this.activeCell, this.index);
+          this.moveByParent();
+          break;
+        case T_SIN:
+          this.t_math(this.activeCell, this.index);
+          this.moveByParent();
+          break;
+        case T_COS:
           this.t_math(this.activeCell, this.index);
           this.moveByParent();
           break;
@@ -365,16 +377,18 @@ class Controller {
           case T_HYPOT:
             res += parseFloat(vals[i])**2;
             break;
-          case T_SQRT:
-            res = sqrt(parseFloat(vals[0]));
-            break;
-          case T_DO:
-            this.moveByParent();
-            break;
-          case T_ELSE:
-            this.moveByParent();
-            break;
           }
+        }
+        switch(activeCell.type) {
+          case T_SQRT:
+            res = sqrt(res);
+            break;
+          case T_SIN:
+            res = sin(res);
+            break;
+          case T_COS:
+            res = cos(res);
+            break;
         }
         if (activeCell.type == T_AVERAGE){
           res = res / vals.length;

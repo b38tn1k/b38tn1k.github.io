@@ -31,7 +31,6 @@ class Cells {
 
   tidy(xMin, yMin) {
     jlog('Cells', 'tidy');
-    console.log('hey')
     let bigBlocks = [];
     let consol, start;
     for (let i = 0; i < this.length; i++) {
@@ -428,7 +427,7 @@ class Cells {
     }
   }
 
-  doCopy(programatic = false){
+  doCopy(programatic = false, parent = -1){
     jlog('Cells', 'doCopy');
     let type = this.cells[this.activeIndex].type;
     let x = this.cells[this.activeIndex].x;
@@ -466,10 +465,14 @@ class Cells {
       type  = T_VAR;
     }
     this.cells.push(new Cell(type, x, y, this.dWidth, this.dHeight, c, this.dRadius));
+
     let newAI = this.activeIndex;
     this.cells[this.activeIndex].mode = M_NEW;
     this.cells[this.activeIndex].handleSH = handle;
     this.cells[this.activeIndex].dataSH = val;
+    if (parent != -1) {
+      this.cells[this.activeIndex].parent = parent;
+    }
     // if (type == T_VAR) {
     if (blockConfig[type]['input type'] == I_SELECT) {
       for (let i = 0; i < opts.length; i++) {
@@ -487,16 +490,23 @@ class Cells {
       const childrenStart = this.length;
       for (let i = 0; i < this.cells[oldAI].childIndicies.length; i++) {
         this.activeIndex = this.cells[oldAI].childIndicies[i];
-        this.doCopy(true);
+        this.doCopy(true, newAI);
       }
       this.activeIndex = newAI;
 
       for (let i = childrenStart; i < this.length; i++){
         this.cells[i].mode = M_IDLE;
-        this.cells[this.activeIndex].addChild(i, this.cells[i]);
-        this.cells[i].addParent(this.activeIndex, this.cells[this.activeIndex]);
+        let parentIndex = this.cells[i].parent;
+        this.cells[parentIndex].addChild(i, this.cells[i]);
+        this.cells[i].addParent(parentIndex, this.cells[parentIndex]);
       }
       this.cells[this.activeIndex].mode = M_NEW;
+      if (programatic == true) {
+        for (let i = this.length-1; i != newAI; i--){
+          this.cells[i].minHeight = 0;
+          this.cells[i].reshape(true);
+        }
+      }
 
       this.mapAndLink();
     }

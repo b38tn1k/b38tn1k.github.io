@@ -18,6 +18,7 @@ class Cell {
     this.parent = -1;
     // control etc
     this.dataSH;
+    this.dataSHasType = {};
     this.handleSH;
     this.type = type
     this.textLabel = blockConfig[this.type]['block label'];
@@ -188,6 +189,7 @@ class Cell {
       let htmlString = this.textLabel + '<br>' + String(value);
       this.indexLabeldiv.html(htmlString);
     }
+    this.unpackDataSH();
   }
 
   updateView(xOff, yOff) {
@@ -586,7 +588,6 @@ class Cell {
           break;
         case T_GOTO:
           this.handleSH = this.input.value();
-          this.handleSH = this.input.value();
           break;
         case T_VAR:
             this.handleSH = this.input.value();
@@ -605,7 +606,21 @@ class Cell {
         default:
           break;
       }
-      // this.selfDescribe();
+      this.unpackDataSH();
+    }
+  }
+
+  unpackDataSH() {
+    this.dataSHasType['string'] = this.dataSH;
+    this.dataSHasType['number'] = parseFloat(this.dataSH);
+    this.dataSHasType['isNumber'] = !(isNaN(this.dataSHasType['number']));
+    if (this.dataSH == 'false'){
+      this.dataSHasType['bool'] = false;
+    } else {
+      this.dataSHasType['bool'] = true;
+    }
+    if (/^\d+\.\d+$/.test(this.dataSH) == true || /^\d+$/.test(this.dataSH) == true) {
+      this.dataSHasType['bool'] = Boolean(parseInt(this.dataSH))
     }
   }
 
@@ -646,7 +661,7 @@ class Cell {
   addChild(ind, child, force=false) {
     jlog('Cell', 'addChild');
     this.graphicUpdate = true;
-    if (force == true|| this.acceptsChild(child.type) == true) {
+    if (force == true|| (this.acceptsChild(child.type) == true && this.children.length < blockConfig[this.type]['max children'])) {
       if (this.childIndicies.indexOf(ind) == -1) {
         this.children.push(child);
         this.childIndicies.push(ind);
@@ -771,22 +786,11 @@ class Cell {
   selfDescribe(short=false) {
     jlog('Cell', 'selfDescribe');
     console.log('TYPE', blockConfig[this.type]['block label']);
-    if (short == false) {
-      console.log('DATA',this.dataSH);
-      console.log('HANDLE', this.handleSH);
-      console.log('CHILDREN', this.childIndicies);
-      console.log('DIMS', this.width, this.height);
-    } else {
-      if (this.dataSH != null) {
-        console.log('DATA',this.dataSH);
-      }
-      if (this.handleSH != null) {
-        console.log('HANDLE', this.handleSH);
-      }
-      if (this.childIndicies.length > 0) {
-        console.log('CHILDREN', this.childIndicies);
-      }
-    }
+    console.log('DATA',this.dataSH);
+    console.log('DATAAS',this.dataSHasType);
+    console.log('HANDLE', this.handleSH);
+    console.log('CHILDREN', this.childIndicies);
+    console.log('DIMS', this.width, this.height);
     console.log('PARENT', this.parent);
     console.log('XY', this.x, this.y);
     console.log('VIEW XY', this.viewX, this.viewY);

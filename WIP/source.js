@@ -135,6 +135,7 @@ function colorSetup() {
 function saveCells() {
   jlog('Main', 'saveCells');
   let map = cells.saveCells();
+  console.log(JSON.stringify(map));
   save(map, 'my.json', true);
   setTidyFlag();
 }
@@ -331,7 +332,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[6])">+ iffy if</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ if not</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ sleep sort(a)</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ star</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ draw polygons</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);

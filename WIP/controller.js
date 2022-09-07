@@ -19,6 +19,7 @@ class Controller {
     this.tBuffY = [];
     this.tChangeY = false;
     this.stackNotes = [];
+    this.stackSizeRecord = [];
   }
 
   step (flash, fastMode) {
@@ -196,10 +197,13 @@ class Controller {
         this.addToStack(currentI, 0);
     }
     if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_WHILE){
-        if (this.script[currentI].dataSH == B_FALSE){
-          currentI = this.workingStack.pop();
-          this.addToStack(currentI, 0);
-        }
+      let shrinkStack = this.workingStack.indexOf(this.script[currentI].parent);
+      this.workingStack = this.workingStack.slice(0, shrinkStack+1);
+      this.addNote("working stack shrunk");
+      if (this.script[currentI].dataSH == B_FALSE){
+        currentI = this.workingStack.pop();
+        this.addToStack(currentI, 0);
+      }
     }
     this.script[currentI].flash = false;
     if (this.workingStack.length < 1) {
@@ -322,6 +326,7 @@ getValue(child, index) {
       this.varMap = {};
       this.weHaveATurtlePeople = false;
       this.stackNotes = [];
+      this.stackSizeRecord = [];
       for (let i = 0; i < cells.length; i++) {
         if (this.script[i].type == T_VAR || this.script[i].type == T_OUTLET || this.script[i].type == T_INPUT) {
           if (!(this.script[i].handleSH in this.varMap)) {
@@ -373,6 +378,7 @@ getValue(child, index) {
     let readableStack = {};
     for (let i = 0; i < this.stackTrace.length; i++) {
       readableStack[i] = {};
+      readableStack[i]['stack depth'] = this.stackSizeRecord[i];
       readableStack[i]['block index'] = this.stackTrace[i];
       readableStack[i]['name'] = this.script[this.stackTrace[i]].textLabel;
       readableStack[i]['handle'] = this.script[this.stackTrace[i]].handleSH;
@@ -394,6 +400,7 @@ getValue(child, index) {
   }
 
   addToStack(index, dir=1) {
+    this.stackSizeRecord.push(this.workingStack.length);
     this.stackTrace.push(index);
     this.stackTraceDir.push(dir);
     if (dir == 1) {
@@ -501,7 +508,6 @@ getValue(child, index) {
     this.addToStack(index);
     let res;
     let survey = this.lookAtChildren(activeCell, index);
-    console.log(survey);
     let onlyNums = survey['onlyNums'];
     let vals = survey['vals'];
     let isNumbers = survey['isNumbers'];

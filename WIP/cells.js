@@ -22,6 +22,7 @@ class Cells {
     this.rebuildMenuFlag = false;
     this.redrawFlag = false;
     this.parentFlag = 0;
+    this.parentWidthRecord = [-1, 0];
   }
 
   get length() {
@@ -478,8 +479,6 @@ class Cells {
         this.cells[this.activeIndex].inputOptions.push(opts[i]);
       }
       this.cells[newAI].input.selected(this.cells[newAI].handleSH);
-      console.log(this.cells[newAI].textLabel);
-      console.log(this.cells[newAI].handleSH);
     }
     if (blockConfig[type]['input type'] == I_TEXT) {
       this.cells[this.activeIndex].input.value(val, val);
@@ -580,9 +579,11 @@ class Cells {
         }
         let ok = this.cells[pParentIndex].addChild(this.activeIndex, this.cells[this.activeIndex]);
         if (ok == true) {
-          this.parentFlag += 2;
+          this.parentFlag += 1;
           this.cells[this.activeIndex].addParent(pParentIndex, this.cells[pParentIndex]);
           this.cells[pParentIndex].refresh(this.viewXdelta, this.viewYdelta);
+          this.parentWidthRecord = [pParentIndex, this.cells[pParentIndex].width]
+
         }
       }
       this.cells[this.activeIndex].mode = M_IDLE;
@@ -684,9 +685,17 @@ class Cells {
     jlog('Cells', 'update');
     // build mode
     if (this.parentFlag > 0) {
-      // this.reshapeAllInView();
-      // this.updateView(this.viewX, this.viewY, true);
-      // this.turnOffActiveIndex();
+      this.reshapeAllInView();
+      if (this.parentWidthRecord[0] != -1) {
+        let delta = this.cells[this.parentWidthRecord[0]].width - this.parentWidthRecord[1]
+        for (let i = 0; i < this.length; i++) {
+          if (this.cells[i].x > this.cells[this.parentWidthRecord[0]].x){
+            this.cells[i].pushX(delta);
+          }
+        }
+        this.reshapeAllInView();
+      }
+      this.parentWidthRecord = [-1, 0]
       this.parentFlag -= 1;
     }
     if (this.run == false) {

@@ -18,7 +18,6 @@ var demos = [];
 var mobileHType;
 var mobileHAddon = false;
 var tidyFlag = 0;
-let userBlocks = [];
 let subMenu = 0;
 let currentTestIndex = 0;
 let testLoadTimer = 0;
@@ -291,7 +290,7 @@ function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
-    let bad = [T_WHILE];
+    let bad = [];
     menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">containers</a><br>', true);
     if (subMenu == 1) {
       addBlockMenuList(containers, bad);
@@ -417,7 +416,7 @@ function doLastBit(){
 function setup() {
   jlog('Main', 'setup');
   pixelDensity(1);
-  userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_CONST, T_ASSIGN, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_PRINT, T_COMMENT];
+
   colorSetup();
   setupScreen();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);

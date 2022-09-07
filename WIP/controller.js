@@ -18,114 +18,9 @@ class Controller {
     this.tChangeX = false;
     this.tBuffY = [];
     this.tChangeY = false;
+    this.stackNotes = [];
   }
 
-  updateTurtle() {
-    if (this.weHaveATurtlePeople == true){
-      if (this.tChangeX == true) {
-        this.tBuffX.push(parseFloat(this.varMap['turtleX'][0].dataSH));
-        this.tChangeX = false;
-      }
-      if (this.tChangeY == true) {
-        this.tBuffY.push(parseFloat(this.varMap['turtleY'][0].dataSH));
-        this.tChangeY = false;
-      }
-      if (this.varMap['turtleDraw'][0].dataSHasType["bool"] == true) {
-        this.updateVarMap('turtleDraw', 0);
-        while (this.tBuffX.length < this.tBuffY.length) {
-          this.tBuffX.push(this.tBuffX[this.tBuffX.length-1]);
-        }
-        while(this.tBuffX.length > this.tBuffY.length) {
-          this.tBuffY.push(this.tBuffY[this.tBuffY.length-1]);
-        }
-        for (let i = 0; i < this.tBuffX.length - 1; i++) {
-          let x1 = this.tBuffX[i];
-          let x2 = this.tBuffX[i+1];
-          let y1 = this.tBuffY[i];
-          let y2 = this.tBuffY[i+1];
-          this.script[this.turtleIndex].canvas.line(x1, y1, x2, y2);
-        }
-        this.tBuffX = [];
-        this.tBuffY = [];
-      }
-    }
-  }
-
-  updateVarMap(key, data) {
-    if (key == 'turtleX'){
-      this.tChangeX = true;
-    }
-    if (key == 'turtleY'){
-      this.tChangeY = true;
-    }
-    for (let i = 0; i < this.varMap[key].length; i++) {
-      this.varMap[key][i].updateDataSH(data);
-    }
-    this.updateTurtle();
-  }
-
-  startStop(cells) {
-    // started
-    if (cells.run == true && this.running == false) {
-      this.run = true;
-      this.running = true;
-      this.index = 0;
-      cells.mapAndLink(); // freeze the thing
-      cells.mapAndLink(); // do it twice for fun
-      this.script = cells.cells;
-      this.terminate = this.script.length + 1;
-      this.stackTrace = [];
-      this.workingStack = [0];
-      this.stackTraceDir = [];
-      this.varRecord = [];
-      this.tBuffX = [];
-      this.tBuffY = [];
-      this.varMap = {};
-      this.weHaveATurtlePeople = false;
-      for (let i = 0; i < cells.length; i++) {
-        if (this.script[i].type == T_VAR || this.script[i].type == T_OUTLET || this.script[i].type == T_INPUT) {
-          if (!(this.script[i].handleSH in this.varMap)) {
-            this.varMap[this.script[i].handleSH] = [];
-          }
-          this.varMap[this.script[i].handleSH].push(this.script[i]);
-        }
-        if (this.script[i].type == T_TURTLE) {
-          this.weHaveATurtlePeople = true;
-          this.turtleIndex = i;
-        }
-      }
-      for (key in this.varMap) {
-        if (cells.varHandles.indexOf(key) == -1) {
-          cells.varHandles.push(key);
-          cells.mapAndLink();
-          this.startStop(cells);
-        }
-      }
-    }
-    // stop by cells
-    if (cells.run == false) {
-      if (this.run == true) {
-        this.printStack();
-      }
-      this.run = false;
-      this.running = false;
-    }
-    // stop by controller
-    if (this.run == false) {
-      cells.stop();
-      this.running = false;
-    }
-  }
-  update(cells, flash, fastMode) {
-    this.startStop(cells);
-    if (this.run == true) {
-      this.step(flash, fastMode);
-    }
-  }
-  HCF() {
-    this.index = this.terminate;
-    this.run = false;
-  }
   step (flash, fastMode) {
     if (this.index < this.script.length) {
       this.activeCell = this.script[this.index];
@@ -232,6 +127,13 @@ class Controller {
             this.moveByParent();
           }
           break;
+        case T_WHILE:
+          // this.t_while(this.activeCell, this.index);
+          let stillInWhile = this.t_while(this.activeCell, this.index);
+          if (stillInWhile == false) {
+            this.moveByParent();
+          }
+          break;
         case T_ELSE:
           this.index = this.script[this.index].parent;
           break;
@@ -253,19 +155,219 @@ class Controller {
     }
   }
 
+  updateVarMap(key, data) {
+    if (key == 'turtleX'){
+      this.tChangeX = true;
+    }
+    if (key == 'turtleY'){
+      this.tChangeY = true;
+    }
+    for (let i = 0; i < this.varMap[key].length; i++) {
+      this.varMap[key][i].updateDataSH(data);
+    }
+    this.updateTurtle();
+  }
+
+  moveByParent() {
+    let currentI = this.workingStack.pop();
+    this.addToStack(currentI, 0); // 0 means it adds to trace, not working stack
+    this.script[currentI].flash = false;
+    if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_IF){
+        currentI = this.workingStack.pop();
+        this.addToStack(currentI, 0);
+    }
+    if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_WHILE){
+        if (this.script[currentI].dataSH == B_FALSE){
+          currentI = this.workingStack.pop();
+          this.addToStack(currentI, 0);
+        }
+    }
+    this.script[currentI].flash = false;
+    if (this.workingStack.length < 1) {
+      this.index = this.terminate;
+    } else {
+      let callerI = this.workingStack[this.workingStack.length-1];
+      let callerC = this.script[callerI];
+      let curInCaller = callerC.childIndicies.indexOf(currentI);
+      if (curInCaller == -1 || curInCaller == callerC.childIndicies.length-1){
+        this.addToStack(callerI, 0);
+        this.moveByParent();
+      } else {
+        this.index = callerC.childIndicies[curInCaller + 1];
+      }
+    }
+}
+
+getValue(child, index) {
+  let data;
+  let varType = -1;
+  if (mathFunctions.indexOf(child.type) != -1) {
+    this.t_math(child, index);
+    data = child.children[0].dataSH;
+    varType = V_NUMBER;
+  } else if (boolFunctions.indexOf(child.type) != -1 && (child.type != T_NOT))  {
+    this.t_compare(child, index);
+    data = child.children[0].dataSH;
+    varType = V_BOOL;
+  } else if (child.type == T_NOT){
+    this.t_not(child, index);
+    data = child.children[0].dataSH;
+    varType = V_BOOL;
+  } else {
+    data = child.dataSH;
+    if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
+      varType = V_NUMBER;
+    } else if (data == 'true' || data == 'false'){
+      varType = V_BOOL;
+      data = (data == 'true');
+    } else {
+      varType = V_STRING;
+    }
+  }
+  let result = {type: varType, data: data};
+  return result;
+  }
+
+  lookAtChildren(activeCell, index, start=1) {
+    let onlyNums = true;
+    let onlyBools = true;
+    let containsString = false;
+    let vals = [];
+    let isNumbers = [];
+    for (let i = start; i < activeCell.children.length; i++) {
+      if (activeCell.children[i].type != T_COMMENT) {
+        let result =  this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
+        vals.push(result['data']);
+        if (result['type'] == V_NUMBER) {
+          onlyBools = false;
+          isNumbers.push(true);
+        } else if (result['type'] == V_STRING) {
+          onlyBools = false;
+          onlyNums = false;
+          containsString = true;
+          isNumbers.push(false);
+        } else if (result['type'] == V_BOOL) {
+          onlyNums = false;
+          isNumbers.push(false);
+        }
+      }
+    }
+    let res = {};
+    res['onlyNums'] = onlyNums;
+    res['vals'] = vals;
+    res['isNumbers'] = isNumbers;
+    res['onlyBools'] = onlyBools;
+    res['containsString'] = containsString;
+    return res;
+  }
+
+  evaluateCondition(onlyBools, onlyNums, vals) {
+    let res = true;
+    let myResult = 0;
+    if (onlyBools == true) {
+      for (let i = 0; i < vals.length; i++){
+        myResult += int(vals[i]);
+      }
+      res = (myResult == vals.length);
+    }
+    if (onlyNums == true) {
+      for (let i = 0; i < vals.length; i++){
+        if (vals[i] == 0) {
+          res = false;
+        }
+      }
+    }
+    return res;
+  }
+
+  startStop(cells) {
+    // started
+    if (cells.run == true && this.running == false) {
+      this.run = true;
+      this.running = true;
+      this.index = 0;
+      cells.mapAndLink(); // freeze the thing
+      cells.mapAndLink(); // do it twice for fun
+      this.script = cells.cells;
+      this.terminate = this.script.length + 1;
+      this.stackTrace = [];
+      this.workingStack = [0];
+      this.stackTraceDir = [];
+      this.varRecord = [];
+      this.tBuffX = [];
+      this.tBuffY = [];
+      this.varMap = {};
+      this.weHaveATurtlePeople = false;
+      this.stackNotes = [];
+      for (let i = 0; i < cells.length; i++) {
+        if (this.script[i].type == T_VAR || this.script[i].type == T_OUTLET || this.script[i].type == T_INPUT) {
+          if (!(this.script[i].handleSH in this.varMap)) {
+            this.varMap[this.script[i].handleSH] = [];
+          }
+          this.varMap[this.script[i].handleSH].push(this.script[i]);
+        }
+        if (this.script[i].type == T_TURTLE) {
+          this.weHaveATurtlePeople = true;
+          this.turtleIndex = i;
+        }
+      }
+      for (key in this.varMap) {
+        if (cells.varHandles.indexOf(key) == -1) {
+          cells.varHandles.push(key);
+          cells.mapAndLink();
+          this.startStop(cells);
+        }
+      }
+    }
+    // stop by cells
+    if (cells.run == false) {
+      if (this.run == true) {
+        this.printStack();
+      }
+      this.run = false;
+      this.running = false;
+    }
+    // stop by controller
+    if (this.run == false) {
+      cells.stop();
+      this.running = false;
+    }
+  }
+
+  update(cells, flash, fastMode) {
+    this.startStop(cells);
+    if (this.run == true) {
+      this.step(flash, fastMode);
+    }
+  }
+
+  HCF() {
+    this.index = this.terminate;
+    this.run = false;
+  }
+
   printStack(){
     let readableStack = {};
     for (let i = 0; i < this.stackTrace.length; i++) {
       readableStack[i] = {};
       readableStack[i]['block index'] = this.stackTrace[i];
-      readableStack[i]['block name'] = this.script[this.stackTrace[i]].textLabel;
+      readableStack[i]['name'] = this.script[this.stackTrace[i]].textLabel;
       readableStack[i]['handle'] = this.script[this.stackTrace[i]].handleSH;
       readableStack[i]['data state'] = this.varRecord[i];
-      readableStack[i]['stack progress'] = (this.stackTraceDir[i] == 1) ? 'in' : 'out';
+      readableStack[i]['dir'] = (this.stackTraceDir[i] == 1) ? 'in' : 'out';
+      readableStack[i]['stack notes'] = ""
+    }
+    for (let i = 0; i < this.stackNotes.length; i++) {
+      let note = this.stackNotes[i];
+      readableStack[note[0]]['stack notes'] = note[1];
+
     }
     if (printStack == true) {
       console.table(readableStack);
     }
+  }
+  addNote(myString){
+    this.stackNotes.push([this.stackTrace.length - 1, myString]);
   }
 
   addToStack(index, dir=1) {
@@ -279,6 +381,37 @@ class Controller {
       varRecAtom += String(key) + ": " + this.varMap[key][0].dataSH + ' | ';
     }
     this.varRecord.push(varRecAtom);
+  }
+
+  updateTurtle() {
+    if (this.weHaveATurtlePeople == true){
+      if (this.tChangeX == true) {
+        this.tBuffX.push(parseFloat(this.varMap['turtleX'][0].dataSH));
+        this.tChangeX = false;
+      }
+      if (this.tChangeY == true) {
+        this.tBuffY.push(parseFloat(this.varMap['turtleY'][0].dataSH));
+        this.tChangeY = false;
+      }
+      if (this.varMap['turtleDraw'][0].dataSHasType["bool"] == true) {
+        this.updateVarMap('turtleDraw', 0);
+        while (this.tBuffX.length < this.tBuffY.length) {
+          this.tBuffX.push(this.tBuffX[this.tBuffX.length-1]);
+        }
+        while(this.tBuffX.length > this.tBuffY.length) {
+          this.tBuffY.push(this.tBuffY[this.tBuffY.length-1]);
+        }
+        for (let i = 0; i < this.tBuffX.length - 1; i++) {
+          let x1 = this.tBuffX[i];
+          let x2 = this.tBuffX[i+1];
+          let y1 = this.tBuffY[i];
+          let y2 = this.tBuffY[i+1];
+          this.script[this.turtleIndex].canvas.line(x1, y1, x2, y2);
+        }
+        this.tBuffX = [];
+        this.tBuffY = [];
+      }
+    }
   }
 
   t_start(activeCell, index) {
@@ -340,13 +473,13 @@ class Controller {
       }
     }
   }
+
   t_math(activeCell, index) {
     this.addToStack(index);
     let res;
     let survey = this.lookAtChildren(activeCell, index);
     let onlyNums = survey['onlyNums'];
     let vals = survey['vals'];
-    console.log(activeCell.textLabel, vals);
     let isNumbers = survey['isNumbers'];
     if (onlyNums) {
       res = parseFloat(vals[0]);
@@ -513,25 +646,6 @@ class Controller {
     // }
   }
 
-  evaluateCondition(onlyBools, onlyNums, vals) {
-    let res = true;
-    let myResult = 0;
-    if (onlyBools == true) {
-      for (let i = 0; i < vals.length; i++){
-        myResult += int(vals[i]);
-      }
-      res = (myResult == vals.length);
-    }
-    if (onlyNums == true) {
-      for (let i = 0; i < vals.length; i++){
-        if (vals[i] == 0) {
-          res = false;
-        }
-      }
-    }
-    return res;
-  }
-
   t_not(activeCell, index) {
     this.addToStack(index);
     let survey = this.lookAtChildren(activeCell, index);
@@ -551,112 +665,70 @@ class Controller {
 
   }
 
-  getValue(child, index) {
-    let data;
-    let varType = -1;
-    if (mathFunctions.indexOf(child.type) != -1) {
-      this.t_math(child, index);
-      data = child.children[0].dataSH;
-      varType = V_NUMBER;
-    } else if (boolFunctions.indexOf(child.type) != -1 && (child.type != T_NOT))  {
-      this.t_compare(child, index);
-      data = child.children[0].dataSH;
-      varType = V_BOOL;
-    } else if (child.type == T_NOT){
-      this.t_not(child, index);
-      data = child.children[0].dataSH;
-      varType = V_BOOL;
-    } else {
-      data = child.dataSH;
-      if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
-        varType = V_NUMBER;
-      } else if (data == 'true' || data == 'false'){
-        varType = V_BOOL;
-        data = (data == 'true');
-      } else {
-        varType = V_STRING;
-      }
-    }
-    let result = {type: varType, data: data};
-    return result;
-  }
-
-  lookAtChildren(activeCell, index, start=1) {
-    let onlyNums = true;
-    let onlyBools = true;
-    let containsString = false;
-    let vals = [];
-    let isNumbers = [];
-    for (let i = start; i < activeCell.children.length; i++) {
-      if (activeCell.children[i].type != T_COMMENT) {
-        let result =  this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
-        vals.push(result['data']);
-        if (result['type'] == V_NUMBER) {
-          onlyBools = false;
-          isNumbers.push(true);
-        } else if (result['type'] == V_STRING) {
-          onlyBools = false;
-          onlyNums = false;
-          containsString = true;
-          isNumbers.push(false);
-        } else if (result['type'] == V_BOOL) {
-          onlyNums = false;
-          isNumbers.push(false);
-        }
-      }
-    }
-    let res = {};
-    res['onlyNums'] = onlyNums;
-    res['vals'] = vals;
-    res['isNumbers'] = isNumbers;
-    res['onlyBools'] = onlyBools;
-    res['containsString'] = containsString;
-    return res;
-  }
-
   t_if(activeCell, index) {
     this.addToStack(index);
     let conditions = activeCell.children[0];
-    activeCell.dataSH = 0; // 0 = unknown, 1 = true, 2 = false (?)
-    this.addToStack(activeCell.childIndicies[0], 1);
-    let survey = this.lookAtChildren(conditions, index, 0);
-    let res = this.evaluateCondition(survey['onlyBools'], survey['onlyNums'], survey['vals']);
+    activeCell.dataSH = B_UNSET; // 0 = unknown, 1 = true, 2 = false (?)
+    this.t_condition(conditions, activeCell.childIndicies[0]);
+    let res = false;
+    if (conditions.dataSH == B_TRUE) {
+      res = true;
+    }
     let yes = activeCell.children[1];
     let no = activeCell.children[2];
     let stillIn = false;
     if (res == true) {
-      activeCell.dataSH = 1;
+      activeCell.dataSH = B_TRUE;
       this.addToStack(activeCell.childIndicies[1]);
       if (yes.children.length != 0){
         this.index = yes.childIndicies[0];
         stillIn = true;
       }
     } else {
-      activeCell.dataSH = 2;
+      activeCell.dataSH = B_FALSE;
     }
     return stillIn;
   }
-  moveByParent() {
-    let currentI = this.workingStack.pop();
-    this.addToStack(currentI, 0);
-    this.script[currentI].flash = false;
-    if (this.script[currentI].type == T_CONDITION) {
-      let currentI = this.workingStack.pop();
-    }
-    this.script[currentI].flash = false;
-    if (this.workingStack.length < 1) {
-      this.index = this.terminate;
+
+  t_condition(activeCell, index) {
+    this.addToStack(index);
+    activeCell.dataSH = B_UNSET;
+    let survey = this.lookAtChildren(activeCell, index, 0);
+    let res = this.evaluateCondition(survey['onlyBools'], survey['onlyNums'], survey['vals']);
+    if (res == true) {
+      activeCell.dataSH = B_TRUE;
     } else {
-      let callerI = this.workingStack[this.workingStack.length-1];
-      let callerC = this.script[callerI];
-      let curInCaller = callerC.childIndicies.indexOf(currentI);
-      if (curInCaller == -1 || curInCaller == callerC.childIndicies.length-1){
-        this.moveByParent();
-      } else {
-        this.index = callerC.childIndicies[curInCaller + 1];
-      }
+      activeCell.dataSH = B_FALSE;
     }
   }
-};
 
-// http://127.0.0.1:4000/WIP/#%7B%220%22%3A%7B%22x%22%3A152.5%2C%22y%22%3A20%2C%22t%22%3A1%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A-1%2C%22c%22%3A%5B6%2C9%2C12%2C16%2C19%2C21%2C24%2C30%2C33%2C27%5D%2C%22tL%22%3A%22start%22%2C%22L%22%3A%22start%22%7D%2C%221%22%3A%7B%22x%22%3A307.5%2C%22y%22%3A20%2C%22t%22%3A2%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A-1%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22console%22%2C%22L%22%3A%22console%22%7D%2C%222%22%3A%7B%22x%22%3A439.40000000000003%2C%22y%22%3A58.79999999999987%2C%22t%22%3A0%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22p%22%3A-1%2C%22c%22%3A%5B3%2C4%2C5%5D%2C%22tL%22%3A%22turtle%22%2C%22L%22%3A%22turtle%22%7D%2C%223%22%3A%7B%22x%22%3A727.5%2C%22y%22%3A130.5%2C%22t%22%3A201%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A0%2C%22i%22%3A%22turtleX%22%2C%22p%22%3A2%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22inlet%22%2C%22L%22%3A%22inlet%22%7D%2C%224%22%3A%7B%22x%22%3A727.5%2C%22y%22%3A180.5%2C%22t%22%3A201%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A0%2C%22i%22%3A%22turtleY%22%2C%22p%22%3A2%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22inlet%22%2C%22L%22%3A%22inlet%22%7D%2C%225%22%3A%7B%22x%22%3A727.5%2C%22y%22%3A230.5%2C%22t%22%3A201%2C%22h%22%3Afalse%2C%22s%22%3Afalse%2C%22d%22%3A0%2C%22i%22%3A%22turtleDraw%22%2C%22p%22%3A2%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22inlet%22%2C%22L%22%3A%22inlet%22%7D%2C%226%22%3A%7B%22x%22%3A233.09999999999997%2C%22y%22%3A127.70000000000013%2C%22t%22%3A42%2C%22h%22%3Afalse%2C%22s%22%3Atrue%2C%22p%22%3A0%2C%22c%22%3A%5B8%2C7%5D%2C%22tL%22%3A%22assign%22%2C%22L%22%3A%22assign%22%7D%2C%227%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A185.70000000000013%2C%22t%22%3A45%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A0%2C%22i%22%3A%22turtleX%22%2C%22p%22%3A6%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%3Cbr%3E28%22%7D%2C%228%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A154.70000000000013%2C%22t%22%3A46%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A%2210%22%2C%22p%22%3A6%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22constant%22%2C%22L%22%3A%22constant%22%7D%2C%229%22%3A%7B%22x%22%3A233.09999999999997%2C%22y%22%3A158.70000000000013%2C%22t%22%3A42%2C%22h%22%3Afalse%2C%22s%22%3Atrue%2C%22p%22%3A0%2C%22c%22%3A%5B10%2C11%5D%2C%22tL%22%3A%22assign%22%2C%22L%22%3A%22assign%22%7D%2C%2210%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A185.70000000000013%2C%22t%22%3A46%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A%2210%22%2C%22p%22%3A9%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22constant%22%2C%22L%22%3A%22constant%22%7D%2C%2211%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A216.70000000000013%2C%22t%22%3A45%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A0%2C%22i%22%3A%22turtleY%22%2C%22p%22%3A9%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%3Cbr%3E50%22%7D%2C%2212%22%3A%7B%22x%22%3A233.09999999999997%2C%22y%22%3A189.70000000000013%2C%22t%22%3A42%2C%22h%22%3Afalse%2C%22s%22%3Atrue%2C%22p%22%3A0%2C%22c%22%3A%5B14%2C15%5D%2C%22tL%22%3A%22assign%22%2C%22L%22%3A%22assign%22%7D%2C%2213%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A278.70000000000016%2C%22t%22%3A45%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A0%2C%22i%22%3A%22turtleY%22%2C%22p%22%3A16%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%3Cbr%3E50%22%7D%2C%2214%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A216.70000000000013%2C%22t%22%3A46%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A%22100%22%2C%22p%22%3A12%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22constant%22%2C%22L%22%3A%22constant%22%7D%2C%2215%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A247.70000000000013%2C%22t%22%3A45%2C%22h%22%3Atrue%2C%22s%22%3Atrue%2C%22d%22%3A0%2C%22i%22%3A%22turtleX%22%2C%22p%22%3A12%2C%22c%22%3A%5B%5D%2C%22tL%22%3A%22variable%22%2C%22L%22%3A%22variable%3Cbr%3E28%22%7D%2C%2216%22%3A%7B%22x%22%3A233.09999999999997%2C%22y%22%3A220.70000000000013%2C%22t%22%3A42%2C%22h%22%3Afalse%2C%22s%22%3Atrue%2C%22p%22%3A0%2C%22c%22%3A%5B17%2C13%5D%2C%22tL%22%3A%22assign%22%2C%22L%22%3A%22assign%22%7D%2C%2217%22%3A%7B%22x%22%3A240.59999999999997%2C%22y%22%3A247.70000000000013%2C%22t%22%3A46%2C%22h%22
+  t_while(activeCell, index) {
+    this.addToStack(index);
+    let conditions = activeCell.children[0];
+    activeCell.dataSH = B_UNSET; // 0 = unknown, 1 = true, 2 = false (?)
+    this.t_condition(conditions, activeCell.childIndicies[0]);
+    let res = false;
+    if (conditions.dataSH == B_TRUE) {
+      res = true;
+    }
+
+    // this.addToStack(activeCell.childIndicies[0], 1);
+    // let survey = this.lookAtChildren(conditions, index, 0);
+    // let res = this.evaluateCondition(survey['onlyBools'], survey['onlyNums'], survey['vals']);
+
+    let yes = activeCell.children[1];
+    let stillIn = false;
+    if (res == true) {
+      activeCell.dataSH = B_TRUE;
+      this.addToStack(activeCell.childIndicies[1]);
+      if (yes.children.length != 0){
+        this.index = yes.childIndicies[0];
+        stillIn = true;
+      }
+    } else {
+      activeCell.dataSH = B_FALSE;
+      stillIn = false;
+    }
+    return stillIn;
+  }
+};

@@ -803,6 +803,11 @@ class Cell {
     this.dataSH = nothing;
   }
 
+  pushX(x) {
+    this.viewX += x;
+    this.x += x;
+  }
+
   inArea(x, y) {
     jlog('Cell', 'inArea');
     // let xp = this.x;

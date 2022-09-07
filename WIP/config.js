@@ -11,6 +11,11 @@ function jlog(classname, label) {
 
 let logCounter = 0;
 let redrawCounter = 0;
+
+var B_UNSET = 0;
+var B_TRUE = 1;
+var B_FALSE = 2;
+
 var M_IDLE = 0;
 var M_MOVE = 1;
 var M_RESIZE = 2;
@@ -61,7 +66,7 @@ var T_TURTLE = 0;
 var T_INLET = 201;
 
 var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
-
+var userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_CONST, T_ASSIGN, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_PRINT, T_COMMENT, T_COS, T_SIN, T_TURTLE];
 var notStartOrConsole = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS];
 var notStartOrConsoleOrSpecial = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS];
 var notStartOrConsoleOrOutlet = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS];
@@ -208,7 +213,7 @@ blockConfig[T_START]['max children'] = 100;
 blockConfig[T_STOP]['max children'] = 100;
 blockConfig[T_ASSIGN]['max children'] = 100;
 blockConfig[T_CONSOLE]['max children'] = 0;
-blockConfig[T_PRINT]['max children'] = 0;
+blockConfig[T_PRINT]['max children'] = 100;
 blockConfig[T_COMMENT]['max children'] = 0;
 blockConfig[T_CONST]['max children'] = 0;
 blockConfig[T_TURTLE]['max children'] = 0;

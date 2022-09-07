@@ -68,9 +68,6 @@ class Cell {
     // divs
     this.lineNumber = 0;
     this.indexLabeldiv = createDiv(this.textLabel);
-    // if (this.type == T_VAR) {
-    //   this.varLabeldiv = createDiv("empty");
-    // }
     this.indexLabeldiv.style('font-size', '12px');
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
@@ -171,9 +168,6 @@ class Cell {
     let xp = this.viewX;
     let yp = this.viewY;
     this.updateDivPosition(this.indexLabeldiv, xp + 2*this.childXBorder, yp);
-    // if (this.type == T_VAR) {
-    //   this.updateDivPosition(this.varLabeldiv, xp + this.childXBorder, yp + this.yHeaderEnd + 2*this.ySpacer);
-    // }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.updateDivPosition(this.input, xp + this.childXBorder, yp + this.childYBorder + this.yHeaderEnd);
     }
@@ -471,10 +465,6 @@ class Cell {
         this.input.remove();
         this.input.remove();
       }
-      // if (this.type == T_VAR) {
-      //   this.varLabeldiv.remove();
-      //   this.varLabeldiv.remove();
-      // }
     }
     return par;
   }
@@ -590,6 +580,9 @@ class Cell {
           this.handleSH = this.input.value();
           break;
         case T_VAR:
+            this.handleSH = this.input.value();
+          break;
+        case T_OUTLET:
             this.handleSH = this.input.value();
           break;
         case T_INPUT:
@@ -717,9 +710,6 @@ class Cell {
 
   hideDivs() {
     jlog('Cell', 'hideDivs');
-    // if (this.type == T_VAR) {
-    //   this.varLabeldiv.hide();
-    // }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.hide();
     }
@@ -738,9 +728,6 @@ class Cell {
 
   showDivs() {
     jlog('Cell', 'showDivs');
-    // if (this.type == T_VAR) {
-    //   this.varLabeldiv.show();
-    // }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.show();
     }

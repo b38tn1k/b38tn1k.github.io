@@ -243,11 +243,11 @@ class Cells {
       this.cells.push(new Cell(T_OUTLET, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       this.cells[pIndex].addChild(pIndex + 1, this.cells[pIndex + 1]);
       this.cells[pIndex + 1].addParent(pIndex, this.cells[pIndex]);
-      // let tempID = this.getID(4);
       this.cells[pIndex + 1].handleSH= 'outlet';//tempID;
-      // this.cells[pIndex + 1].textLabel += ' ' + tempID;
       this.cells[pIndex + 1].indexLabeldiv.html(this.cells[pIndex + 1].textLabel);
       this.cells[pIndex + 1].updateDataSH('unset');
+      this.cells[pIndex + 1].input.option('outlet', 'outlet');
+      this.cells[pIndex + 1].input.selected('outlet');
       if (this.varHandles.indexOf('outlet') == -1){
         this.varHandles.push('outlet');
       }
@@ -595,7 +595,8 @@ class Cells {
     jlog('Cells', 'mapAndLink');
     let map = {};
     map[T_GOTO] = ['none'];
-    map[T_VAR] = ['none'];
+    map[T_VAR] = ['none', 'outlet'];
+    map[T_OUTLET] = ['none', 'outlet'];
     let varTable = {};
     for (let i = 0; i < this.length; i++) {
       // grab everything
@@ -603,6 +604,7 @@ class Cells {
       // create variable map
       if ((this.cells[i].type == T_OUTLET || this.cells[i].type == T_INPUT || this.cells[i].type == T_INLET)) { //this.cells[i].mode != M_SELECTED
         map[T_VAR].push(this.cells[i].handleSH);
+        map[T_OUTLET].push(this.cells[i].handleSH);
         varTable[this.cells[i].handleSH] = this.cells[i].dataSH;
       }
       // read from block names

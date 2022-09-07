@@ -51,6 +51,9 @@ function mousePressed() {
 // function keyTyped() {
 //   if (key === ' ') {
 //     setTidyFlag();
+//   } else
+//   if (key == 's') {
+//     save();
 //   }
 // }
 

@@ -216,7 +216,7 @@ blockConfig[T_CONSOLE]['max children'] = 0;
 blockConfig[T_PRINT]['max children'] = 100;
 blockConfig[T_COMMENT]['max children'] = 0;
 blockConfig[T_CONST]['max children'] = 0;
-blockConfig[T_TURTLE]['max children'] = 0;
+blockConfig[T_TURTLE]['max children'] = 3;
 blockConfig[T_INLET]['max children'] = 0;
 
 var I_NONE = 0;

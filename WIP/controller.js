@@ -346,6 +346,7 @@ class Controller {
     let survey = this.lookAtChildren(activeCell, index);
     let onlyNums = survey['onlyNums'];
     let vals = survey['vals'];
+    console.log(activeCell.textLabel, vals);
     let isNumbers = survey['isNumbers'];
     if (onlyNums) {
       res = parseFloat(vals[0]);

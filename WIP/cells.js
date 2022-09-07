@@ -361,8 +361,10 @@ class Cells {
         } else {
           if (this.cells[i].hasHandle == true) {
             rebuildFlag = true;
-            delHandle.push(this.cells[i].handleSH);
-            this.varHandles.splice(this.varHandles.indexOf(this.cells[i].handleSH), 1);
+            if (this.cells[i].handleSH != 'outlet') {
+              delHandle.push(this.cells[i].handleSH);
+              this.varHandles.splice(this.varHandles.indexOf(this.cells[i].handleSH), 1);
+            }
           }
           let tdv = this.cellsInView.indexOf(i);
           if (tdv != -1){
@@ -370,7 +372,6 @@ class Cells {
             this.parentFlag += 1;
           }
         }
-        console.log('how about here?') // yup
         // remove parent / child links and divs for those in delete mode
         let parent = this.cells[i].cleanForDeletionSafe();
         if (parent != -1 && this.cells[parent]){
@@ -381,11 +382,9 @@ class Cells {
               this.cells[pParent].reshape(true);
               pParent = this.cells[pParent].parent;
             }
-            console.log('in this lop?')
           }
         }
       }
-      console.log('made it this far')
       // reassign parent/child relationship
       for (let i = 0; i < this.length; i++) {
         for (let j = 0; j < this.cells[i].childIndicies.length; j++) {
@@ -705,6 +704,7 @@ class Cells {
         // deleting
         if (this.cells[this.activeIndex].mode == M_DELETE){
           this.doDelete(x, y, mdown);
+          this.mapAndLink();
         } else {
           // move
           if (mdown === true && this.cells[this.activeIndex].mode == M_MOVE) {

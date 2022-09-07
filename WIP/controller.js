@@ -501,6 +501,7 @@ getValue(child, index) {
     this.addToStack(index);
     let res;
     let survey = this.lookAtChildren(activeCell, index);
+    console.log(survey);
     let onlyNums = survey['onlyNums'];
     let vals = survey['vals'];
     let isNumbers = survey['isNumbers'];

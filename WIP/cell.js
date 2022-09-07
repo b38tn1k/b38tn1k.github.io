@@ -583,7 +583,12 @@ class Cell {
             this.handleSH = this.input.value();
           break;
         case T_OUTLET:
-            this.handleSH = this.input.value();
+            let tempHandle = this.input.value();
+            if (this.handleSH != tempHandle){
+              this.unsetData();
+              this.handleSH = tempHandle;
+            }
+            // this.handleSH = this.input.value();
           break;
         case T_INPUT:
           if (this.mode != M_SELECTED) {

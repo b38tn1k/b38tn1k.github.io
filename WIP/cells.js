@@ -591,7 +591,7 @@ class Cells {
     }
   }
 
-  mapAndLink(reset = false) {
+  mapAndLink() {
     jlog('Cells', 'mapAndLink');
     let map = {};
     map[T_GOTO] = ['none'];
@@ -622,6 +622,7 @@ class Cells {
       }
     }
   }
+
   doMutate() {
     jlog('Cells', 'doMutate');
     this.rebuildMenuFlag = true;

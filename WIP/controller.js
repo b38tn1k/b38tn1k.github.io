@@ -70,7 +70,8 @@ class Controller {
       this.run = true;
       this.running = true;
       this.index = 0;
-      cells.mapAndLink(true); // freeze the thing
+      cells.mapAndLink(); // freeze the thing
+      cells.mapAndLink(); // do it twice for fun
       this.script = cells.cells;
       this.terminate = this.script.length + 1;
       this.stackTrace = [];

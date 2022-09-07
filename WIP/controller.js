@@ -25,14 +25,11 @@ class Controller {
       if (this.tChangeX == true) {
         this.tBuffX.push(parseFloat(this.varMap['turtleX'][0].dataSH));
         this.tChangeX = false;
-        console.log("X",this.tBuffX[this.tBuffX.length-1])
       }
       if (this.tChangeY == true) {
         this.tBuffY.push(parseFloat(this.varMap['turtleY'][0].dataSH));
         this.tChangeY = false;
-        console.log("Y",this.tBuffY[this.tBuffY.length-1])
       }
-      console.log(this.varMap['turtleDraw'][0].dataSHasType["bool"]);
       if (this.varMap['turtleDraw'][0].dataSHasType["bool"] == true) {
         this.updateVarMap('turtleDraw', 0);
         while (this.tBuffX.length < this.tBuffY.length) {

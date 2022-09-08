@@ -149,7 +149,11 @@ class Cell {
       if (this.showHandleInput == true) {
         this.input.style('background-color', colorToHTMLRGB(this.colors[1]));
       } else {
-        this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
+        if (this.type == T_CONST){
+          this.input.style('background-color', colorToHTMLRGB(color(255)));
+        } else {
+          this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
+        }
       }
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));

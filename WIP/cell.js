@@ -97,7 +97,6 @@ class Cell {
       this.updateAllDivPositions();
       this.refresh();
     }
-    console.log(newHandle);
     if (newHandle){
       this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
     }

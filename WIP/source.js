@@ -300,7 +300,7 @@ function createMenuDiv() {
     if (subMenu == 1) {
       addBlockMenuList(containers, bad);
     }
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=2;createMenuDiv();">data handles</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=2;createMenuDiv();">data references</a><br>', true);
     if (subMenu == 2) {
       addBlockMenuList(handles, bad);
     }

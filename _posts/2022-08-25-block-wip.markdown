@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Untitled Block Scripting Environment"
+title:  "Untitled Block Thing"
 date:   2022-08-25
 tags: demo
 image: 'https://b38tn1k.com/images/previews/summerBlocks.png'
@@ -9,7 +9,7 @@ link: 'https://b38tn1k.com/WIP/'
 
 [description]This is a weird one.
 
-I am thinking about Miro + Scratch.io squished together; an infinite scrolling canvas for writing scripts. Drag and drop blocks to make functions and/or arrays, then run your script in the browser!
+I am thinking about Miro + Scratch.io squished together; an infinite scrolling canvas for making small software processes. Drag and drop blocks to make functions and/or arrays, then run your process in the browser!
 
 ### Example Scripts
 - [Hello World](https://b38tn1k.com/WIP/#demo0)

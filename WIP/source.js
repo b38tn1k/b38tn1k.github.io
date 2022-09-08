@@ -372,7 +372,9 @@ function createMenuDiv() {
   } else {
     menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">desktop</a><br>', true);
   }
-  menu.html('<br><span style="color:LightGray"><small>version 0.1<br>refresh if zoomed<br>WIP - YMMV</small></span>', true);
+  menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br>refresh if zoomed</small></span>', true);
+  menu.html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
+
   menu.position(10, 10);
   menu.style('font-size', '16px');
   menu.style('background-color', 'DimGray');

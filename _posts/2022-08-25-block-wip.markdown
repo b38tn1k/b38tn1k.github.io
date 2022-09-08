@@ -23,5 +23,4 @@ I am thinking about Miro + Scratch.io squished together; an infinite scrolling c
 - [Sleep Sort](https://b38tn1k.com/WIP/#demo8)
 - [Drawing Polygons](https://b38tn1k.com/WIP/#demo9)
 - [Array Basics & While](https://b38tn1k.com/WIP/#demo10)
-
-Update Aug 31: [A quick demo video](https://youtu.be/raH8681pZL4). [description]
+[description]

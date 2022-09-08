@@ -36,6 +36,7 @@ function windowResized() {
 }
 
 function mousePressed() {
+  frameRate(100);
   jlog('Main', 'mousePressed');
   if (mobileHack == true && mobileHAddon == true) {
     newCell(mobileHType, mouseX, mouseY);
@@ -468,7 +469,11 @@ function draw() {
   if (cells.run == true && slowMode == true) {
     frameRate(5);
   } else {
-    frameRate(100);
+    if (redrawCounter != 0) {
+      frameRate(100);
+    } else {
+      frameRate(30);
+    }
   }
   if (tidyFlag > 0) {
     tidy();

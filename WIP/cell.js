@@ -1,9 +1,3 @@
-function colorToHTMLRGB(color) {
-  return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
-}
-
-var selectChanged = true;
-
 function selectChangedCallback(){
   selectChanged = true;
   redrawCounter = 2;
@@ -22,16 +16,16 @@ class Cell {
     this.handleSH;
     this.type = type
     this.textLabel = blockConfig[this.type]['block label'];
-    this.hasHandle = false;
-    // labels, tools, setup
-    if (type == T_BLOCK || type == T_INPUT || type == T_OUTLET) {
-      this.hasHandle = true;
+    if (this.type == T_BLOCK){
+      this.textLabel = '<a href="javascript:void(0)" onclick="toggleInput("")">' + this.textLabel + '</a>';
     }
+    // labels, tools, setup
     this.mode = M_IDLE;
     this.highlight = false;
     this.underneath = false;
     this.flash = false;
     this.startForm = false;
+    this.showHandleInput = false;
     this.inputOptions = [];
     // geometry
     this.childYBorder = 2*r;
@@ -97,8 +91,16 @@ class Cell {
 
   updateHandleSH(newHandle) {
     this.handleSH = newHandle;
-    this.textLabel += '<br>' + newHandle
-    this.indexLabeldiv.html(this.textLabel)
+    if (this.type == T_BLOCK || this.type == T_INPUT){
+      this.textLabel = '<strong><a href="javascript:void(0)" onclick="toggleInput(\''+String(this.handleSH)+'\',' + String(this.type) + ')">' + blockConfig[this.type]['block label'] + '</a></strong>';
+      this.updateView(this.viewX - this.x, this.viewY - this.y);
+      this.updateAllDivPositions();
+      this.refresh();
+    }
+    console.log(newHandle);
+    if (newHandle){
+      this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
+    }
   }
 
   reStyle() {
@@ -145,7 +147,11 @@ class Cell {
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.style('font-size', '12px');
-      this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
+      if (this.showHandleInput == true) {
+        this.input.style('background-color', colorToHTMLRGB(this.colors[1]));
+      } else {
+        this.input.style('background-color', colorToHTMLRGB(this.colors[2]));
+      }
       this.input.style('border-color', colorToHTMLRGB(this.colors[1]));
       this.input.style('color', colorToHTMLRGB(this.colors[4]));
       this.input.style('border', 0);
@@ -179,10 +185,10 @@ class Cell {
     if (/^\d+\.\d+$/.test(String(value)) == true) {
       value = parseFloat(value).toFixed(3);
     }
-    if (this.type != T_VAR && this.type != T_INLET) {
-      let htmlString = this.textLabel + '<br>' + String(value);
-      this.indexLabeldiv.html(htmlString);
-    }
+    // if (this.type != T_INLET) {
+    //   let htmlString = this.textLabel + ' ' + this.handleSH + String(value);
+    //   this.indexLabeldiv.html(htmlString);
+    // }
     this.unpackDataSH();
   }
 
@@ -220,7 +226,15 @@ class Cell {
       }
       if (this.underneath === false) {
         if (blockConfig[this.type]['input type'] != I_NONE) {
-          this.input.show();
+          if (this.type == T_BLOCK) {
+            if (this.showHandleInput == true) {
+              this.input.show();
+            } else {
+              this.input.hide();
+            }
+          } else {
+            this.input.show();
+          }
         }
         this.indexLabeldiv.show();
 
@@ -345,6 +359,9 @@ class Cell {
     this.graphicUpdate = true;
     let childX = this.viewX + this.childXBorder;
     let childY = this.viewY + 2*this.childYBorder + this.ySpacer + this.yHeaderEnd;
+    if (this.showHandleInput == false && this.type == T_BLOCK){
+      childY -= this.standardInputHeight;
+    }
     if (this.type == T_TURTLE){
       childX += this.canvas.width + this.handleW;
       childY = this.viewY + 3*this.yHeaderEnd;// + this.childYBorder + this.ySpacer + this.yHeaderEnd;
@@ -441,7 +458,9 @@ class Cell {
       this.height = this.canvas.height + this.yHeaderEnd + 4 * this.handleH;
       this.width = this.canvas.width + 2 * this.handleW;
       if (this.children[0]) {
-        this.width += this.children[0].width + this.handleW;
+        if (this.children[0].mode != M_DELETE){
+          this.width += this.children[2].width + this.handleW;
+        }
       }
     }
   }
@@ -572,34 +591,38 @@ class Cell {
       switch (this.type) {
         case T_BLOCK:
           if (this.mode != M_SELECTED) {
-            this.handleSH = this.input.value();
-            this.dataSH = this.input.value();
+            this.updateHandleSH(this.input.value());
           }
           break;
         case T_GOTO:
-          this.handleSH = this.input.value();
+          this.updateHandleSH(this.input.value());
+          // this.handleSH = this.input.value();
           break;
         case T_VAR:
-            this.handleSH = this.input.value();
+          this.updateHandleSH(this.input.value());
+            // this.handleSH = this.input.value();
           break;
         case T_OUTLET:
             let tempHandle = this.input.value();
             if (this.handleSH != tempHandle){
               this.unsetData();
-              this.handleSH = tempHandle;
+              // this.handleSH = tempHandle;
+              this.updateHandleSH(tempHandle);
             }
-            // this.handleSH = this.input.value();
           break;
         case T_INPUT:
           if (this.mode != M_SELECTED) {
-            this.dataSH = this.input.value();
+            if (this.showHandleInput == false){
+              this.updateDataSH(this.input.value());
+            }
           }
           break;
         case T_COMMENT:
           this.dataSH = this.input.value();
           break;
         case T_CONST:
-          this.dataSH = this.input.value();
+          // this.dataSH = this.input.value();
+          this.updateDataSH(this.input.value());
           break;
         default:
           break;
@@ -734,7 +757,15 @@ class Cell {
   showDivs() {
     jlog('Cell', 'showDivs');
     if (blockConfig[this.type]['input type'] != I_NONE) {
-      this.input.show();
+      if (this.type == T_BLOCK) {
+        if (this.showHandleInput == true) {
+          this.input.show();
+        } else {
+          this.input.hide();
+        }
+      } else {
+        this.input.show();
+      }
     }
   }
 

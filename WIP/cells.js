@@ -78,6 +78,7 @@ class Cells {
     }
     this.updateView(this.viewX, this.viewY, false);
     this.mapAndLink();
+    this.rebuildMenuFlag = true;
   }
 
   saveCells() {
@@ -115,12 +116,16 @@ class Cells {
     this.cells.push(new Cell(info.t, info.x, info.y, this.dWidth, this.dHeight, c, this.radius));
     this.cells[newCell].hide = info.h;
     this.cells[newCell].shrink = info.s;
-    this.cells[newCell].dataSH = info.d;
-    this.cells[newCell].handleSH = info.i;
+    // this.cells[newCell].dataSH = info.d;
+    this.cells[newCell].updateDataSH(info.d);
+    // this.cells[newCell].handleSH = info.i;
+    this.cells[newCell].updateHandleSH(info.i);
     this.cells[newCell].parent = info.p;
     if (info.t == T_OUTLET || info.t == T_VAR || info.t == T_INPUT || info.t == T_INLET){
       this.cells[newCell].textLabel = info.tL;
       this.cells[newCell].indexLabeldiv.html(info.L);
+      this.cells[newCell].updateHandleSH(info.i);
+      this.cells[newCell].updateDataSH(info.d);
     }
     if (blockConfig[this.cells[newCell].type]['input type'] == I_SELECT) {
       this.cells[newCell].input.option(info.i);
@@ -138,6 +143,7 @@ class Cells {
       this.cells[newCell].hideBlock();
     }
     this.cells[newCell].updateAllDivPositions();
+    this.rebuildMenuFlag = true;
   }
 
   nudgeX(x) {
@@ -205,6 +211,7 @@ class Cells {
 
   addCell(type, startX, y = 17) {
     jlog('Cells', 'addCell');
+    this.rebuildMenuFlag = true;
     this.mapAndLink();
     let x = startX;//0.15 * windowWidth;
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
@@ -223,9 +230,9 @@ class Cells {
     }
     if (type == T_INPUT) {
       let tempID = this.getID(4);
-      this.cells[pIndex].handleSH= tempID;
-      this.cells[pIndex].textLabel += ' ' + tempID;
-      this.cells[pIndex].indexLabeldiv.html(this.cells[pIndex].textLabel);
+      this.cells[pIndex].updateHandleSH(tempID);
+      // this.cells[pIndex].textLabel += ' ' + tempID;
+      // this.cells[pIndex].indexLabeldiv.html(this.cells[pIndex].textLabel);
       this.varHandles.push(tempID);
     }
     if (type == T_IF || type == T_WHILE) {
@@ -253,8 +260,10 @@ class Cells {
       }
     }
     if (type == T_BLOCK) {
-      this.cells[pIndex].input.value(this.getID(1) + " block", this.getID(1) + " block");
-      this.cells[pIndex].handleSH = this.cells[pIndex].input.value();
+      let tempID = this.getID(2);
+      this.cells[pIndex].updateHandleSH(tempID);
+      this.cells[pIndex].input.value(tempID, tempID);
+    //   this.cells[pIndex].handleSH = this.cells[pIndex].input.value();
     }
     this.cells[pIndex].reshape();
     if (type != T_START && type != T_CONSOLE) {
@@ -360,7 +369,7 @@ class Cells {
         if (this.cells[i].mode != M_DELETE){
           map.push(i); // find all cells that will not be deleted
         } else {
-          if (this.cells[i].hasHandle == true) {
+          if (this.cells[i].handleSH) {
             rebuildFlag = true;
             if (this.cells[i].handleSH != 'outlet') {
               delHandle.push(this.cells[i].handleSH);
@@ -669,9 +678,9 @@ class Cells {
     }
     if (type == T_INPUT) {
       let tempID = this.getID(4);
-      this.cells[this.activeIndex].handleSH= tempID;
-      this.cells[this.activeIndex].textLabel += ' ' + tempID;
-      this.cells[this.activeIndex].indexLabeldiv.html(this.cells[this.activeIndex].textLabel);
+      this.cells[this.activeIndex].updateHandleSH(tempID);
+      // this.cells[this.activeIndex].textLabel += ' ' + tempID;
+      // this.cells[this.activeIndex].indexLabeldiv.html(this.cells[this.activeIndex].textLabel);
       this.cells[this.activeIndex].input.value(data, data);
       this.varHandles.push(tempID);
     }

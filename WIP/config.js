@@ -1,5 +1,6 @@
 let printStack = true;
 var mobileHack = false;
+var selectChanged = true;
 function jlog(classname, label) {
   // console.debug(classname, label);
   // logCounter += 1;
@@ -240,6 +241,7 @@ var I_TEXT = 1;
 var I_SELECT = 2;
 var I_TEXT_AREA = 3;
 var I_CANVAS = 0;
+
 blockConfig[T_BLOCK]['input type'] = I_TEXT;
 blockConfig[T_GOTO]['input type'] = I_SELECT;
 blockConfig[T_VAR]['input type'] = I_SELECT;
@@ -313,3 +315,39 @@ blockConfig[T_INLET]['handles'] = {'move' : false, 'resize'  : false, 'delete'  
 blockConfig[T_LEN]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_GET]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_SET]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
+
+function colorToHTMLRGB(color) {
+  return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
+}
+
+function toggleInput(cID, type){
+  for (let i = 0; i < cells.length; i++){
+    if (type == cells.cells[i].type && (cells.cells[i].handleSH == cID)){
+      cells.cells[i].showHandleInput = !cells.cells[i].showHandleInput;
+    }
+
+    if (cells.cells[i].type == T_BLOCK && (cells.cells[i].handleSH == cID)) {
+      if (cells.cells[i].showHandleInput == true && cells.cells[i].hide == false){
+        cells.cells[i].input.show();
+        cells.cells[i].refresh();
+      }
+      if (cells.cells[i].showHandleInput == false) {
+        cells.cells[i].input.hide();
+        cells.cells[i].refresh();
+      }
+      break;
+    } else if (cells.cells[i].type == T_INPUT && (cells.cells[i].handleSH == cID)) {
+      console.log('var stuff');
+      if (cells.cells[i].showHandleInput == true) {
+        console.log("hey!");
+        cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[3]));
+        cells.cells[i].input.value(cells.cells[i].handleSH);
+      } else {
+        cells.cells[i].updateHandleSH(cells.cells[i].input.value());
+        cells.cells[i].input.value(cells.cells[i].dataSH);
+        cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[2]));
+      }
+      break;
+    }
+  }
+}

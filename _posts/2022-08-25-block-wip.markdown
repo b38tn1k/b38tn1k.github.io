@@ -11,4 +11,17 @@ link: 'https://b38tn1k.com/WIP/'
 
 I am thinking about Miro + Scratch.io squished together; an infinite scrolling canvas for writing scripts. Drag and drop blocks to make functions and/or arrays, then run your script in the browser!
 
-Update Aug 31: [A quick demo video](https://youtu.be/raH8681pZL4) and a live [demo](https://b38tn1k.com/WIP/#demo3) of the math instruction set. [description]
+### Example Scripts
+- [Hello World](https://b38tn1k.com/WIP/#demo0)
+- [Blocks](https://b38tn1k.com/WIP/#demo1)
+- [Assigning](https://b38tn1k.com/WIP/#demo2)
+- [Basic Math](https://b38tn1k.com/WIP/#demo3)
+- [Silly String Math](https://b38tn1k.com/WIP/#demo4)
+- [Comparisons & Function Mutation](https://b38tn1k.com/WIP/#demo5)
+- [If](https://b38tn1k.com/WIP/#demo6)
+- [If & Not](https://b38tn1k.com/WIP/#demo7)
+- [Sleep Sort](https://b38tn1k.com/WIP/#demo8)
+- [Drawing Polygons](https://b38tn1k.com/WIP/#demo9)
+- [Array Basics & While](https://b38tn1k.com/WIP/#demo10)
+
+Update Aug 31: [A quick demo video](https://youtu.be/raH8681pZL4). [description]

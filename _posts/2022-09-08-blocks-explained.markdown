@@ -11,12 +11,6 @@ sitemap:
   exclude: 'yes'
 ---
 
-# Introduction
-
-[Untitled Block Thing]({{ site.url }}/WIP) (UBT) is a dynamic-ish visual scripting environment that allows small software processes to be graphically constructed and run with minimal use of a computer keyboard. UBT is inspired by [Scratch](http://scratch.mit.edu/) and various white-board applications.
-
-![screenshot of UBT with a process to draw a 9 sided polygon]({{ site.url }}/images/blocks-polygon.png)
-
 # Contents
 - [Introduction](#introduction)
 - [The Basics](#the-basics)
@@ -24,25 +18,102 @@ sitemap:
 - [Data types](#data)
 - [Under The Hood](#under-the-hood)
 
+# Introduction
+
+[Untitled Block Thing]({{ site.url }}/WIP) (UBT) is a dynamic-ish visual scripting environment that allows small software processes to be graphically constructed and run with minimal use of a computer keyboard. UBT is inspired by [Scratch](http://scratch.mit.edu/) and various white-board applications.
+
+![screenshot of UBT with a process to draw a 9 sided polygon]({{ site.url }}/images/blocks-polygon.png)
+
 # The Basics
-The UBT interface includes a menu and a scrolling canvas upon which blocks can be arranged.
+The UBT interface includes a menu and a scrolling canvas upon which blocks can be arranged. A new UBT project always includes a start block and a console block - these components cannot be duplicated or deleted from a project.
+![an empty project]({{ site.url }}/images/newblocks.png)
 <details>
 <summary>Menu information</summary>
-<strong>blocks menu</strong> is where new blocks can be selected to add to the project.<br>
-<strong>demo menu</strong> provides a list of examples that can be loaded, run, and modified.<br>
-<strong>clear</strong> removes all user-added blocks and start a new project.<br>
-<strong>tidy</strong> rearranges all blocks to be equally spaced near the center of the scrollable canvas.<br>
-<strong>speed</strong> changes the rate at which the interpreter runs upon pressing start. There are 3 speed modes: 1: normal, 2: turbo, 3: slow.<br>
-<strong>flash off</strong> toggles the blocks from flashing when the code is being run.<br>
-<strong>center</strong> returns the view to canvas origin.<br>
-<strong>save</strong> downloads the project as JSON, not very useful without an upload option.<br>
-<strong>share</strong> converts the project into a URI string that can be used as a link.<br>
-<strong>mobile</strong> tries to make things easier on mobile devices and small screens.<br>
+<table style="width:100%">
+<tr>
+<th>
+<strong>blocks menu</strong>
+</th>
+<th>
+is where new blocks can be selected to add to the project.
+</th>
+</tr>
+<tr>
+<th>
+<strong>demo menu</strong>
+</th>
+<th>
+provides a list of examples that can be loaded, run, and modified.
+</th>
+</tr>
+<tr>
+<th>
+<strong>clear</strong>
+</th>
+<th>
+removes all user-added blocks and start a new project.
+</th>
+</tr>
+<tr>
+<th>
+<strong>tidy</strong>
+</th>
+<th>
+rearranges all blocks to be equally spaced near the center of the scrollable canvas.
+</th>
+</tr>
+<tr>
+<th>
+<strong>speed</strong>
+</th>
+<th>
+changes the rate at which the interpreter runs upon pressing start. There are 3 speed modes: 1: normal, 2: turbo, 3: slow.
+</th>
+</tr>
+<tr>
+<th>
+<strong>flash off</strong>
+</th>
+<th>
+toggles the blocks from flashing when the code is being run.
+</th>
+</tr>
+<tr>
+<th>
+<strong>center</strong>
+</th>
+<th>
+returns the view to canvas origin.
+</th>
+</tr>
+<tr>
+<th>
+<strong>save</strong>
+</th>
+<th>
+downloads the project as JSON, not very useful without an upload option.
+</th>
+</tr>
+<tr>
+<th>
+<strong>share</strong>
+</th>
+<th>
+converts the project into a URI string that can be used as a link.
+</th>
+</tr>
+<tr>
+<th>
+<strong>mobile</strong>
+</th>
+<th>
+tries to make things easier on mobile devices and small screens.
+</th>
+</tr>
+</table>
 </details>
 
-
-A new UBT project always includes a start block and a console block - these components cannot be duplicated or deleted from a project.
-![an empty project]({{ site.url }}/images/newblocks.png)
+## Blocks
 Blocks have clickable square handles arranged in the corners and on some edges. Depending on the type of block, different handles may be available. The handles functions are linked to their position in space.
 ![a constant block]({{ site.url }}/images/constblockhello.png)
 Beginning at pink handle in the top right corner and moving clockwise around the block, the handle functions are:
@@ -53,14 +124,19 @@ Beginning at pink handle in the top right corner and moving clockwise around the
 - mutate (bottom left)
 - move (top left)
 
+### Move
 Using the move handle, blocks can be dragged over other blocks. If the blocks are compatible, the inactive block will change color and the dragged block can be dropped to create a parent/child relationship. When two blocks are not compatible, the relationship will not be made.
 ![drag drop animation]({{ site.url }}/images/shortdrop.gif)
 
 **Dragging and dropping blocks onto other blocks is how processes are created in UBT.**
 
+
+### Copy
 The copy handle functionality changes depending on the type of block being copied. A data container block will copy to a block referencing this container. A functional or reference block will copy to a duplicate, including any children.
 ![copy animation]({{ site.url }}/images/copy.gif)
 
+
+### Mutate
 The mutate handle allows parent blocks to be quickly swapped out for different blocks with similar functionality. A data container block will not mutate.
 ![mutate animation]({{ site.url }}/images/mutate.gif)
 

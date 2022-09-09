@@ -15,7 +15,7 @@ sitemap:
 - [Introduction](#introduction)
 - [The Basics](#the-basics)
 - [Hello, World!](#hello-world)
-- [Data types](#data)
+- [Data Stuff](#data-stuff)
 - [Under The Hood](#under-the-hood)
 
 # Introduction
@@ -145,7 +145,7 @@ In a [new]({{ site.url }}/WIP) UBT project, select the blocks menu / utilities /
 ![hello world block]({{ site.url }}/images/helloworldblocks.png)
 Check out the Demos menu to learn more!
 
-# Data
+# Data Stuff
 UBT has three data types:
 - Variables,
 - Constants,

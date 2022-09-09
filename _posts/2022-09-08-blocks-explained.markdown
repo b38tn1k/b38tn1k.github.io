@@ -13,7 +13,7 @@ sitemap:
 
 # Introduction
 
-[Untitled Block Thing]({{ site.url }}/WIP) (UBT) is a high level visual programming environment that allows small software processes to be graphically constructed and run with minimal use of a computer keyboard. UBT is inspired by [Scratch](http://scratch.mit.edu/) and various white-board applications.
+[Untitled Block Thing]({{ site.url }}/WIP) (UBT) is a dynamic-ish visual scripting environment that allows small software processes to be graphically constructed and run with minimal use of a computer keyboard. UBT is inspired by [Scratch](http://scratch.mit.edu/) and various white-board applications.
 
 ![screenshot of UBT with a process to draw a 9 sided polygon]({{ site.url }}/images/blocks-polygon.png)
 
@@ -29,7 +29,7 @@ The UBT interface includes a menu and a scrolling canvas upon which blocks can b
 <details>
 <summary>Menu information</summary>
 <strong>blocks menu</strong> is where new blocks can be selected to add to the project.<br>
-<strong>demo menu</strong> provides a list of example programs that can be loaded, run, and modified.<br>
+<strong>demo menu</strong> provides a list of examples that can be loaded, run, and modified.<br>
 <strong>clear</strong> removes all user-added blocks and start a new project.<br>
 <strong>tidy</strong> rearranges all blocks to be equally spaced near the center of the scrollable canvas.<br>
 <strong>speed</strong> changes the rate at which the interpreter runs upon pressing start. There are 3 speed modes: 1: normal, 2: turbo, 3: slow.<br>
@@ -56,7 +56,7 @@ Beginning at pink handle in the top right corner and moving clockwise around the
 Using the move handle, blocks can be dragged over other blocks. If the blocks are compatible, the inactive block will change color and the dragged block can be dropped to create a parent/child relationship. When two blocks are not compatible, the relationship will not be made.
 ![drag drop animation]({{ site.url }}/images/shortdrop.gif)
 
-**Dragging and dropping blocks onto other blocks is how programs are created in UBT.**
+**Dragging and dropping blocks onto other blocks is how processes are created in UBT.**
 
 The copy handle functionality changes depending on the type of block being copied. A data container block will copy to a block referencing this container. A functional or reference block will copy to a duplicate, including any children.
 ![copy animation]({{ site.url }}/images/copy.gif)
@@ -75,7 +75,7 @@ UBT has three data types:
 - Constants,
 - and Blocks.
 
-Variables and Constants can both hold one 'piece' of data which can be used in a few different ways.
+Data types are dynamic; Variables and Constants can both hold one 'piece' of data which can be used in a few different ways.
 
 *For example, the word 'false' is both a string and the boolean opposite of 'true', the number 123 is also a string '123'.*
 

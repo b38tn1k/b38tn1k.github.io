@@ -44,6 +44,7 @@ class Cell {
     this.radius = r;
     this.x = x;
     this.y = y;
+    this.deletable = true;
     this.viewX = x;
     this.viewY = y;
     this.deltaX = 0;
@@ -89,6 +90,10 @@ class Cell {
     return [this.width, this.height]
   }
 
+  disableDelete(){
+    this.deletable = false;
+  }
+
   updateHandleSH(newHandle) {
     this.handleSH = newHandle;
     if (this.type == T_BLOCK || this.type == T_INPUT){
@@ -96,6 +101,15 @@ class Cell {
       this.updateView(this.viewX - this.x, this.viewY - this.y);
       this.updateAllDivPositions();
       this.refresh();
+    }
+    if (this.type == T_BLOCK) {
+      this.input.value(newHandle);
+    }
+    if (this.type == T_VAR) {
+      this.input.selected(newHandle);
+    }
+    if (this.type == T_GOTO) {
+      this.input.selected(newHandle);
     }
     if (newHandle){
       this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
@@ -427,7 +441,10 @@ class Cell {
       if (this.children[i].width + this.childXBorder * 2 > this.width) {
         this.width = this.children[i].width + this.childXBorder * 2;
       }
-      heightSum += this.children[i].height + this.childYBorder;
+      if (this.children[i].hide == false){
+        heightSum += this.children[i].height + this.childYBorder;
+      }
+
     }
     heightSum += 2 * this.childYBorder;
     if (heightSum > this.height) {
@@ -473,6 +490,7 @@ class Cell {
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].markForDeletion();
     }
+
     this.mode = M_DELETE;
   }
 
@@ -520,7 +538,9 @@ class Cell {
               this.indexLabeldiv.html(this.textLabel);
               this.lineNumber = 0;
             } else {
-              this.mode = M_DELETE;
+              if (this.deletable == true){
+                this.mode = M_DELETE;
+              }
               breaker = true;
             }
           }

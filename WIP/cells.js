@@ -676,6 +676,19 @@ class Cells {
         this.cells[this.activeIndex].children[i].reStyle();
       }
     }
+    if (type == T_SQRT) {
+      for (let i = 2; i < this.cells[this.activeIndex].children.length; i++){
+        this.cells[this.activeIndex].children[i].hideBlock();
+      }
+      this.cells[this.activeIndex].minHeight = 0;
+      this.cells[this.activeIndex].reshape();
+
+
+    } else {
+      for (let i = 2; i < this.cells[this.activeIndex].children.length; i++){
+        this.cells[this.activeIndex].children[i].showBlock();
+      }
+    }
     if (type == T_INPUT) {
       let tempID = this.getID(4);
       this.cells[this.activeIndex].updateHandleSH(tempID);

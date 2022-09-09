@@ -481,9 +481,16 @@ getValue(child, index) {
     this.addToStack(index);
     let myOutput = '<br>' + this.script[1].lineNumber + ': ';
     for (let j = 0; j < activeCell.children.length; j++) {
-      if (activeCell.children[j].type != T_COMMENT) {
+      if (activeCell.children[j].type != T_COMMENT && activeCell.children[j].type != T_GOTO) {
         let myString = String(this.script[activeCell.childIndicies[j]].dataSH);
         myOutput += myString.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+      }
+      if (activeCell.children[j].type == T_GOTO) {
+        let block = this.findBlock(activeCell.children[j].handleSH);
+        for (let i = 0; i < this.script[block].children.length; i++){
+          let myString = String(this.script[block].children[i].dataSH);
+          myOutput += myString.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;") + '<br>';
+        }
       }
     }
     this.script[1].indexLabeldiv.html(myOutput, true);

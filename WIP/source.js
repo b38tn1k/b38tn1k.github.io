@@ -610,7 +610,7 @@ function doTutorials(loaded) {
 
 function setup() {
   jlog('Main', 'setup');
-  pixelDensity(1);
+  // pixelDensity(1);
   colorSetup();
   setupScreen();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
@@ -690,6 +690,7 @@ function draw() {
         demoIndex = 0;
         break;
       case '#tutorialHandles':
+        console.log(mouseX, mouseY);
         if (cells.length < 3){
           cells.cells[0].x = windowWidth * 2;
           cells.cells[1].x = windowWidth * 2;

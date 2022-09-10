@@ -63,7 +63,7 @@ class Cell {
     // divs
     this.lineNumber = 0;
     this.indexLabeldiv = createDiv(this.textLabel);
-    this.indexLabeldiv.style('font-size', '12px');
+    this.indexLabeldiv.style('font-size', fontSizeString);
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
     this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size')) + this.childYBorder;
@@ -118,7 +118,7 @@ class Cell {
 
   reStyle() {
     jlog('Cell', 'reStyle');
-    this.indexLabeldiv.style('font-size', '12px');
+    this.indexLabeldiv.style('font-size', fontSizeString);
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
   }
@@ -129,7 +129,7 @@ class Cell {
     if (this.type == T_CONSOLE) {
       this.minWidth = max(100, this.minWidth);
       this.minHeight = max(75, this.minHeight);
-      this.indexLabeldiv.size(this.width - 3*this.childXBorder, this.height - this.childYBorder);
+      this.indexLabeldiv.size((this.width - 3*this.childXBorder)/pixelDensity(), (this.height - this.childYBorder)/pixelDensity());
       this.indexLabeldiv.style('overflow', "auto");
     }
   }
@@ -159,7 +159,7 @@ class Cell {
       this.width = max(this.width, 80);
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
-      this.input.style('font-size', '12px');
+      this.input.style('font-size', fontSizeString);
       if (this.showHandleInput == true) {
         this.input.style('background-color', colorToHTMLRGB(this.colors[1]));
       } else {
@@ -175,8 +175,8 @@ class Cell {
       let h = this.input.size().height;
       let w = this.width;
       this.standardInputHeight = h;
-      this.input.size(w, h);
-      this.width = w + 3*this.childXBorder;
+      this.input.size(w/pixelDensity(), h/pixelDensity());
+      this.width = w/pixelDensity() + 3*this.childXBorder;
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
     }
@@ -408,7 +408,7 @@ class Cell {
       this.height = nh;
     }
     if (this.type == T_COMMENT) {
-      this.input.size(this.width - 3*this.childXBorder, this.height - 4*this.childYBorder);
+      this.input.size((this.width - 3*this.childXBorder)/pixelDensity(), (this.height - 4*this.childYBorder)/pixelDensity());
       this.minHeight = this.height;
       this.minWidth = this.minWidth;
     } else {
@@ -417,7 +417,7 @@ class Cell {
 
     this.height = max(this.minHeight, this.height);
     if (blockConfig[this.type]['input type'] != I_NONE && blockConfig[this.type]['input type'] != I_TEXT_AREA && this.type != T_CONSOLE) {
-      this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
+      this.input.size((this.width - 3*this.childXBorder)/pixelDensity(), (this.standardInputHeight)/pixelDensity());
     }
 
     this.resizeConsole();
@@ -451,8 +451,8 @@ class Cell {
       this.height = heightSum;
       this.minHeight = this.height;
     }
-    if (this.height < this.indexLabeldiv.size().height) {
-      this.minHeight = this.indexLabeldiv.size().height + 2*this.childYBorder;
+    if (this.height < this.indexLabeldiv.size().height/pixelDensity()) {
+      this.minHeight = this.indexLabeldiv.size().height/pixelDensity() + 2*this.childYBorder;
     }
     if (reshape == true) {
       this.height = this.minHeight;
@@ -466,12 +466,12 @@ class Cell {
       }
       this.minHeight = this.height;
     }
-    if (this.width < this.indexLabeldiv.size().width + 3 * this.childXBorder && this.type != T_CONSOLE) {
-      this.width = this.indexLabeldiv.size().width + 3 * this.childXBorder;
+    if (this.width < (this.indexLabeldiv.size().width)/pixelDensity() + 3 * this.childXBorder && this.type != T_CONSOLE) {
+      this.width = (this.indexLabeldiv.size().width)/pixelDensity() + 3 * this.childXBorder;
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       let h = this.input.size().height;
-      this.input.size(this.width - 3 * this.childXBorder);
+      this.input.size((this.width - 3 * this.childXBorder)/pixelDensity());
     }
     this.refresh(0, 0);
     if (this.type == T_TURTLE){

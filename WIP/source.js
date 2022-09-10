@@ -463,22 +463,21 @@ function doTutorials(loaded) {
       case '#tutorialHandles':
         cells.addCell(T_START, 1.5 * menu.size().width);
         cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
-        // cells.cells[0].x = windowWidth * 2;
-        // cells.cells[1].x = windowWidth * 2;
+        cells.cells[0].x = windowWidth * 2;
+        cells.cells[1].x = windowWidth * 2;
         cells.addCell(T_CONST, 1.5 * menu.size().width);
         cells.cells[2].mode = M_IDLE;
         cells.cells[2].x = (windowWidth / 2 ) - cells.cells[2].width/2;
         loaded = true;
         hideMenu = true;
-        setTidyFlag();
-        // disableDrag = true;
+        disableDrag = true;
         break;
       case '#tutorialMove':
         cells.addCell(T_START, 1.5 * menu.size().width);
         cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
         hideMenu = true;
         loaded = true;
-        // disableDrag = true;
+        disableDrag = true;
         cells.addCell(T_COMMENT, windowWidth * 0.25);
         cells.addCell(T_BLOCK, windowWidth * 0.75);
         cells.addCell(T_CONST, windowWidth * 0.5);
@@ -496,16 +495,15 @@ function doTutorials(loaded) {
         cells.cells[2].disableDelete();
         cells.cells[3].disableDelete();
         cells.cells[4].disableDelete();
-        setTidyFlag();
         break;
       case '#tutorialMutate':
         cells.addCell(T_START, 1.5 * menu.size().width);
         cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
-        // cells.cells[0].x = windowWidth * 2;
-        // cells.cells[1].x = windowWidth * 2;
+        cells.cells[0].x = windowWidth * 2;
+        cells.cells[1].x = windowWidth * 2;
         hideMenu = true;
         loaded = true;
-        // disableDrag = true;
+        disableDrag = true;
         cells.addCell(T_ADD, windowWidth * 0.5);
         cells.cells[2].x -= cells.cells[2].width/2;
         cells.addCell(T_CONST, windowWidth * 0.5);
@@ -526,46 +524,46 @@ function doTutorials(loaded) {
         }
         break;
       case '#tutorialCopy':
-        cells.addCell(T_START, 1.5 * menu.size().width);
-        cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
-        cells.cells[0].x = windowWidth * 2;
-        cells.cells[1].x = windowWidth * 2;
-        hideMenu = true;
-        loaded = true;
-        // disableDrag = true;
-        cells.addCell(T_SUBTRACT, windowWidth * 0.7);
-        cells.cells[2].x -= cells.cells[2].width/2;
-        cells.addCell(T_CONST, windowWidth * 0.5);
-        cells.cells[4].input.value(1);
-        cells.addCell(T_CONST, windowWidth * 0.5);
-        cells.cells[5].input.value(2);
-        cells.addCell(T_CONST, windowWidth * 0.5);
-        cells.cells[6].input.value(3);
-        cells.cells[2].addChild(4, cells.cells[4]);
-        cells.cells[2].addChild(5, cells.cells[5]);
-        cells.cells[2].addChild(6, cells.cells[6]);
-        cells.cells[4].addParent(2, cells.cells[2]);
-        cells.cells[5].addParent(2, cells.cells[2]);
-        cells.cells[6].addParent(2, cells.cells[2]);
-        cells.addCell(T_INPUT, windowWidth * 0.1);
-        cells.cells[7].updateHandleSH("Reference me!");
-        cells.cells[7].x -= cells.cells[7].width * 0.5;
-        cells.addCell(T_CONST, windowWidth * 0.1);
-        cells.cells[8].input.value("Copy me!");
-        cells.cells[8].x -= cells.cells[8].width  * 0.5;
-        cells.cells[8].y += cells.cells[7].height + cells.cells[7].handleH*2;
-        cells.addCell(T_BLOCK, windowWidth * 0.1);
-        cells.cells[9].updateHandleSH("Reference me!");
-        cells.cells[9].x -= cells.cells[9].width  * 0.5;
-        cells.cells[9].y += cells.cells[8].y + cells.cells[8].height + cells.cells[8].handleH*2;
-        cells.addCell(T_CONST, windowWidth * 0.25);
-        cells.cells[9].addChild(10, cells.cells[10]);
-        cells.cells[10].addParent(9, cells.cells[9]);
-        cells.cells[10].input.value("inside a block")
-        for (let i = 0; i < cells.length; i++){
-          cells.cells[i].disableDelete();
-          cells.cells[i].mode = M_IDLE;
-        }
+      cells.addCell(T_START, 1.5 * menu.size().width);
+      cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
+      cells.cells[0].x = windowWidth * 2;
+      cells.cells[1].x = windowWidth * 2;
+      hideMenu = true;
+      loaded = true;
+      disableDrag = true;
+      cells.addCell(T_SUBTRACT, windowWidth * 0.7);
+      cells.cells[2].x -= cells.cells[2].width/2;
+      cells.addCell(T_CONST, windowWidth * 0.5);
+      cells.cells[4].input.value(1);
+      cells.addCell(T_CONST, windowWidth * 0.5);
+      cells.cells[5].input.value(2);
+      cells.addCell(T_CONST, windowWidth * 0.5);
+      cells.cells[6].input.value(3);
+      cells.cells[2].addChild(4, cells.cells[4]);
+      cells.cells[2].addChild(5, cells.cells[5]);
+      cells.cells[2].addChild(6, cells.cells[6]);
+      cells.cells[4].addParent(2, cells.cells[2]);
+      cells.cells[5].addParent(2, cells.cells[2]);
+      cells.cells[6].addParent(2, cells.cells[2]);
+      cells.addCell(T_INPUT, windowWidth * 0.1);
+      cells.cells[7].updateHandleSH("Reference me!");
+      cells.cells[7].x -= cells.cells[7].width * 0.5;
+      cells.addCell(T_CONST, windowWidth * 0.1);
+      cells.cells[8].input.value("Copy me!");
+      cells.cells[8].x -= cells.cells[8].width  * 0.5;
+      cells.cells[8].y += cells.cells[7].height + cells.cells[7].handleH*2;
+      cells.addCell(T_BLOCK, windowWidth * 0.1);
+      cells.cells[9].updateHandleSH("Reference me!");
+      cells.cells[9].x -= cells.cells[9].width  * 0.5;
+      cells.cells[9].y += cells.cells[8].y + cells.cells[8].height + cells.cells[8].handleH*2;
+      cells.addCell(T_CONST, windowWidth * 0.25);
+      cells.cells[9].addChild(10, cells.cells[10]);
+      cells.cells[10].addParent(9, cells.cells[9]);
+      cells.cells[10].input.value("inside a block")
+      for (let i = 0; i < cells.length; i++){
+        cells.cells[i].disableDelete();
+        cells.cells[i].mode = M_IDLE;
+      }
       break;
     case '#tutorialData':
       cells.addCell(T_START, 10);
@@ -595,23 +593,18 @@ function doTutorials(loaded) {
       cells.cells[0].addChild(cells.length-2, cells.cells[cells.length-2]);
       cells.cells[cells.length-2].addChild(blockIndex + 1, cells.cells[cells.length-2]);
       cells.activeIndex = cells.length-1;
-      cells.cells[printIndex].removeChild(cells.length-1);
       cells.doDelete();
+      cells.mapAndLink();
       cells.cells[printIndex].addChild(blockIndex + 1, cells.cells[blockIndex + 1]);
-      cells.cells[blockIndex + 1].addParent(printIndex, cells.cells[printIndex]);
-      cells.cells[printIndex].reshape();
+      cells.cells[blockIndex].addParent(printIndex, cells.cells[printIndex]);
       for (let i = 0; i < cells.length; i++){
         cells.cells[i].disableDelete();
         cells.cells[i].mode = M_IDLE;
-        cells.cells[i].refresh();
-        cells.cells[i].reshape();
       }
-      cells.updateView(0, 0, true);
-      cells.mapAndLink();
+      cells.tidy(0, 10);
       break;
     }
   }
-  setTidyFlag();
   return loaded;
 }
 

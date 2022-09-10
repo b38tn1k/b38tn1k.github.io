@@ -487,7 +487,17 @@ function doTutorials(loaded) {
         cells.addCell(T_START, 1.5 * menu.size().width);
         cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
         loadCells(demos[0]);
-        setTidyFlag();
+        cells.cells[0].reshape();
+        cells.cells[0].refresh();
+
+        if (mobileHack == true){
+          tidyFlag = 0;
+          cells.cells[1].x = cells.cells[0].x;
+          cells.cells[1].y = cells.cells[0].y + cells.cells[0].height + cells.cells[0].handleH*2;
+        } else {
+          setTidyFlag();
+        }
+        cells.run = true;
         loaded = true;
         break;
       case '#tutorialHandles':

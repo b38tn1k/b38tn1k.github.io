@@ -52,7 +52,6 @@ class Cell {
     this.hide = false;
     this.shrink = false;
     this.handleW = 1.5*r;
-    console.log(this.handleW);
     this.handleH = 1.5*r;
     this.graphicUpdate = true;
     // colors

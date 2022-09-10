@@ -676,10 +676,10 @@ function testAll() {
 }
 
 function draw() {
-  // if (mobileHack == true){
-  //   mainDiv.scrollTop = 0;
-  //   mainDiv.scrollLeft = 0;
-  // }
+  if (mobileHack == true && cells.activeIndex == -1){
+    mainDiv.scrollTop = 0;
+    mainDiv.scrollLeft = 0;
+  }
   if (redrawCounter != 0) {
     clear();
   }

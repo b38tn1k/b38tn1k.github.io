@@ -600,7 +600,7 @@ function doTutorials(loaded) {
       cells.doDelete();
       cells.mapAndLink();
       cells.cells[printIndex].addChild(blockIndex + 1, cells.cells[blockIndex + 1]);
-      cells.cells[blockIndex].addParent(printIndex, cells.cells[printIndex]);
+      cells.cells[blockIndex + 1].addParent(printIndex, cells.cells[printIndex]);
       for (let i = 0; i < cells.length; i++){
         cells.cells[i].disableDelete();
         cells.cells[i].mode = M_IDLE;

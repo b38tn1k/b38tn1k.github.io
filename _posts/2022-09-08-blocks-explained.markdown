@@ -150,7 +150,7 @@ The mutate handle allows parent blocks to be quickly swapped out for different b
 
 # Hello, World!
 In a new UBT project, select the blocks menu / utilities / print. Drag and drop it onto the start block. The print block initializes with a variable block as child. By clicking the bottom left handle, you can mutate this variable reference block into a green constant block. In the text field, type "hello world". Press the start button to see 'hello world' in the Console block output. Try it out below or find it in the demos menu.
-<iframe style="width:100%; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialblank"></iframe>
+<iframe style="width:100%; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/"></iframe>
 <!-- ![hello world block]({{ site.url }}/images/helloworldblocks.png) -->
 
 

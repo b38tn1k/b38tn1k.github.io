@@ -12,7 +12,6 @@ function jlog(classname, label) {
 
 let logCounter = 0;
 let redrawCounter = 0;
-let fontSizeString = '12px';
 
 var B_UNSET = 0;
 var B_TRUE = 1;

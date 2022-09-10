@@ -22,7 +22,7 @@ sitemap:
 
 [Untitled Block Thing]({{ site.url }}/WIP) (UBT) is a dynamic-ish visual scripting environment that allows small software processes to be graphically constructed and run with minimal use of a computer keyboard. UBT is inspired by [Scratch](http://scratch.mit.edu/) and various white-board applications.
 
-<iframe style="width:100%; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialHello"></iframe>
+<iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialHello"></iframe>
 <!--
 ![screenshot of UBT with a process to draw a 9 sided polygon]({{ site.url }}/images/blocks-polygon.png) -->
 
@@ -119,7 +119,7 @@ tries to make things easier on mobile devices and small screens.
 ## Blocks
 Blocks have clickable square handles arranged in the corners and on some edges. Depending on the type of block, different handles may be available. The handles functions are linked to their position in space.
 
-<iframe style="width:100%; height:100px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialHandles"></iframe>
+<iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:100px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialHandles"></iframe>
 <!-- ![a constant block]({{ site.url }}/images/constblockhello.png) -->
 
 Beginning at pink handle in the top right corner and moving clockwise around the block, the handle functions are:
@@ -133,7 +133,7 @@ Beginning at pink handle in the top right corner and moving clockwise around the
 ### Move
 Using the move handle, blocks can be dragged over other blocks. If the blocks are compatible, the inactive block will change color and the dragged block can be dropped to create a parent/child relationship. When two blocks are not compatible, the relationship will not be made. Try it out below!
 <!-- ![drag drop animation]({{ site.url }}/images/shortdrop.gif) -->
-<iframe style="width:100%; height:200px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialMove"></iframe>
+<iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:200px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialMove"></iframe>
 
 **Dragging and dropping blocks onto other blocks is how processes are created in UBT.**
 
@@ -141,16 +141,17 @@ Using the move handle, blocks can be dragged over other blocks. If the blocks ar
 ### Copy
 The copy handle functionality changes depending on the type of block being copied. A data container block (Set Block or Set Variable) will copy to a block referencing this container. A functional or reference block will copy to a duplicate, including any children. Try it out below: press the middle square handle on the right side of the block.
 <!-- ![copy animation]({{ site.url }}/images/copy.gif) -->
-<iframe style="width:100%; height:350px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialCopy"></iframe>
+<iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:350px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialCopy"></iframe>
 
 ### Mutate
 The mutate handle allows parent blocks to be quickly swapped out for different blocks with similar functionality. A data container block will not mutate. Try it out below!
 <!-- ![mutate animation]({{ site.url }}/images/mutate.gif) -->
-<iframe style="width:100%; height:350px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialMutate"></iframe>
+<iframe style="width:100%; zoom:1.0; height:350px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialMutate"></iframe>
+<!-- <iframe class='embeddedblocks' style="width:100%; height:350px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialMutate"></iframe> -->
 
 # Hello, World!
 In a new UBT project, select the blocks menu / utilities / print. Drag and drop it onto the start block. The print block initializes with a variable block as child. By clicking the bottom left handle, you can mutate this variable reference block into a green constant block. In the text field, type "hello world". Press the start button to see 'hello world' in the Console block output. Try it out below or find it in the demos menu.
-<iframe style="width:100%; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialblank"></iframe>
+<iframe style="width:100%; zoom:1.0; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialblank"></iframe>
 <!-- ![hello world block]({{ site.url }}/images/helloworldblocks.png) -->
 
 
@@ -168,7 +169,7 @@ The only difference between Constants and Variables is that Variables can be set
 
 Blocks are ordered collections of other blocks (including other Blocks). They can act as arrays (get, set) or be used to define how logic flows. A Block is similar to a Variable in that once it is set, it can be called upon later in the process using a Block reference. See blocks, variables and constants in action below:
 
-<iframe style="width:100%; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialData"></iframe>
+<iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialData"></iframe>
 
 Blocks and Variables can be renamed by clicking on the title of the related Set block.
 
@@ -183,3 +184,22 @@ Graphical elements are rendered using p5.js, leaning on basic html divs and widg
 A stack and variable map are generated every time the process is run. Instructions for each block are very simple javascript methods that are triggered based on their position in the stack. The stack is not exhaustive and may skip some child processes if possible, or shrink itself upon repeated operations.
 
 A stack trace is provided in the browser console after running a process.
+
+<script>
+if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+  console.log('phone');
+}
+//const myIFrames = document.querySelectorAll('embeddedblocks');
+//myIFrames.forEach(element => {
+//  console.log(element.style.zoom)
+//  element.style.zoom = ;
+//  console.log(element.style.zoom)
+//  })
+
+
+//let article = document.querySelector('article');
+//let width = article.offsetWidth;
+//let height = article.offsetHeight;
+//console.log({ width, height });
+
+</script>

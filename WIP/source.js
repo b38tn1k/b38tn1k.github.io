@@ -384,7 +384,11 @@ function createMenuDiv() {
   menu.html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
 
   menu.position(10, 10);
-  menu.style('font-size', '16px');
+  if (mobileHack == false){
+    menu.style('font-size', '16px');
+  } else {
+    menu.style('font-size', '12px');
+  }
   menu.style('background-color', 'DimGray');
   menu.style('padding', '10px');
   menu.style('outline', '1px solid black');
@@ -404,6 +408,11 @@ function createMenuDiv() {
 
 function setupScreen() {
   jlog('Main', 'setupScreen');
+  pixelDensity(1);
+  if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+    mobileHack = true;
+    console.log(mainDiv.style.zoom);
+  }
   createCanvas(windowWidth, windowHeight);
   if (windowWidth/windowHeight < 10/16) {
     mobileHack = true;
@@ -619,6 +628,12 @@ function setup() {
   colorSetup();
   setupScreen();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
+  if (mobileHack == true){
+    cells.dWidth = cells.dWidth/2;
+    cells.dHeight = cells.dHeight/2;
+    fontSizeString = '6px'
+
+  }
   controller = new Controller();
   menu = createDiv();
   createMenuDiv();

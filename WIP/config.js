@@ -1,6 +1,7 @@
 let printStack = true;
 var mobileHack = false;
 var selectChanged = true;
+var fontSizeString = '12px';
 function jlog(classname, label) {
   // console.debug(classname, label);
   // logCounter += 1;

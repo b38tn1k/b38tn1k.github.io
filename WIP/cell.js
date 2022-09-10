@@ -63,7 +63,7 @@ class Cell {
     // divs
     this.lineNumber = 0;
     this.indexLabeldiv = createDiv(this.textLabel);
-    this.indexLabeldiv.style('font-size', '12px');
+    this.indexLabeldiv.style('font-size', fontSizeString);
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
     this.yHeaderEnd = parseInt(this.indexLabeldiv.style('font-size')) + this.childYBorder;
@@ -118,7 +118,7 @@ class Cell {
 
   reStyle() {
     jlog('Cell', 'reStyle');
-    this.indexLabeldiv.style('font-size', '12px');
+    this.indexLabeldiv.style('font-size', fontSizeString);
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
   }
@@ -159,7 +159,7 @@ class Cell {
       this.width = max(this.width, 80);
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
-      this.input.style('font-size', '12px');
+      this.input.style('font-size', fontSizeString);
       if (this.showHandleInput == true) {
         this.input.style('background-color', colorToHTMLRGB(this.colors[1]));
       } else {

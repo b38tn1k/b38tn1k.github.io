@@ -583,6 +583,9 @@ function doTutorials(loaded) {
       cells.addCell(T_GOTO, windowWidth * 0.5);
       cells.addCell(T_CONST, 0);
       cells.addCell(T_CONST, 0);
+      cells.mapAndLink();
+      cells.cells[5].updateHandleSH(cells.cells[3].handleSH);
+      cells.cells[7].updateHandleSH(cells.cells[6].handleSH);
       cells.cells[blockIndex].addChild(blockIndex+2, cells.cells[blockIndex+2]);
       cells.cells[blockIndex+2].addParent(blockIndex, cells.cells[blockIndex]);
       cells.cells[blockIndex].addChild(blockIndex+3, cells.cells[blockIndex+3]);

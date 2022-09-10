@@ -18,14 +18,15 @@ var demos = [];
 var mobileHType;
 var mobileHAddon = false;
 var tidyFlag = 0;
-let subMenu = 0;
-let currentTestIndex = 0;
-let testLoadTimer = 0;
-let runTest = false;
-let tutorial = false;
-let tutorialstring = '';
-let hideMenu = false;
-let disableDrag = false;
+var subMenu = 0;
+var currentTestIndex = 0;
+var testLoadTimer = 0;
+var runTest = false;
+var tutorial = false;
+var tutorialstring = '';
+var hideMenu = false;
+var disableDrag = false;
+var mainDiv;
 
 function deviceTurned() {
   jlog('Main', 'deviceTurned');
@@ -611,6 +612,7 @@ function doTutorials(loaded) {
 function setup() {
   jlog('Main', 'setup');
   pixelDensity(1);
+  mainDiv = document.getElementById('main');
   colorSetup();
   setupScreen();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
@@ -631,6 +633,9 @@ function testAll() {
 }
 
 function draw() {
+  if (mobileHack == true){
+    mainDiv.scrollBy(0, 0);
+  }
   if (redrawCounter != 0) {
     clear();
   }

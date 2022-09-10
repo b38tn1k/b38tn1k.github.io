@@ -755,7 +755,7 @@ function draw() {
         }
         break;
       case '#tutorialData':
-        if (millis() < 5000){
+        if (millis() < 10000){
           cells.cells[5].updateHandleSH(cells.cells[3].handleSH);
           cells.cells[7].updateHandleSH(cells.cells[6].handleSH);
         }

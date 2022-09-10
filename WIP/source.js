@@ -281,6 +281,26 @@ function imlost() {
 
 function toggleMobileHack() {
   mobileHack = ! mobileHack;
+  if (mobileHack == true){
+    fontSizeString = '8px';
+    cells.dWidth = cells.dWidth/2;
+    cells.dHeight = cells.dHeight/2;
+    for (let i = 0; i < cells.length; i++){
+      cells.cells[i].reStyle();
+      cells.cells[i].width = int(cells.cells[i].width/2);
+      cells.cells[i].height = int(cells.cells[i].height/2);
+      cells.cells[i].reshape();
+    }
+  } else {
+    cells.dWidth = 80;
+    cells.dHeight = 40;
+    fontSizeString = '12px';
+    for (let i = 0; i < cells.length; i++){
+      cells.cells[i].reStyle();
+      cells.cells[i].reshape();
+    }
+  }
+
   menu.html('');
   createMenuDiv();
 }
@@ -631,8 +651,7 @@ function setup() {
   if (mobileHack == true){
     cells.dWidth = cells.dWidth/2;
     cells.dHeight = cells.dHeight/2;
-    fontSizeString = '6px'
-
+    fontSizeString = '8px'
   }
   controller = new Controller();
   menu = createDiv();

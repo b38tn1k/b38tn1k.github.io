@@ -121,6 +121,11 @@ class Cell {
     this.indexLabeldiv.style('font-size', fontSizeString);
     this.indexLabeldiv.style('color', colorToHTMLRGB(this.colors[4]));
     this.indexLabeldiv.show();
+    this.buildDivs();
+    // if (blockConfig[this.type]['input type'] != I_NONE) {
+    //   this.input.style('font-size', fontSizeString);
+    // }
+
   }
 
   resizeConsole() {

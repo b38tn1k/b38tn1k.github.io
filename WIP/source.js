@@ -18,15 +18,14 @@ var demos = [];
 var mobileHType;
 var mobileHAddon = false;
 var tidyFlag = 0;
-var subMenu = 0;
-var currentTestIndex = 0;
-var testLoadTimer = 0;
-var runTest = false;
-var tutorial = false;
-var tutorialstring = '';
-var hideMenu = false;
-var disableDrag = false;
-var mainDiv;
+let subMenu = 0;
+let currentTestIndex = 0;
+let testLoadTimer = 0;
+let runTest = false;
+let tutorial = false;
+let tutorialstring = '';
+let hideMenu = false;
+let disableDrag = false;
 
 function deviceTurned() {
   jlog('Main', 'deviceTurned');
@@ -405,7 +404,6 @@ function createMenuDiv() {
 function setupScreen() {
   jlog('Main', 'setupScreen');
   createCanvas(windowWidth, windowHeight);
-  mainDiv = document.getElementById('main');
   if (windowWidth/windowHeight < 10/16) {
     mobileHack = true;
   }
@@ -632,14 +630,7 @@ function testAll() {
   testLoadTimer = 101;
 }
 
-
 function draw() {
-  if (mobileHack == true){
-    mainDiv.scrollTo(0, 0);
-    // console.log();
-
-
-  }
   if (redrawCounter != 0) {
     clear();
   }

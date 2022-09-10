@@ -172,6 +172,17 @@ function loadCells(myLoaderMap) {
   cells.cells[0].indexLabeldiv.remove();
   cells.cells[1].indexLabeldiv.remove();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
+  if (mobileHack == true){
+    fontSizeString = '8px';
+    cells.dWidth = 40;
+    cells.dHeight = 20;
+    cells.dRadius = 3;
+  } else {
+    cells.dWidth = 80;
+    cells.dHeight = 40;
+    cells.dRadius = 5;
+    fontSizeString = '12px';
+  }
   for (key in Object.keys(myLoaderMap)) {
     cells.addCellWithInfo(myLoaderMap[key]);
   }
@@ -186,6 +197,7 @@ function loadCells(myLoaderMap) {
   createMenuDiv();
   cells.updateView(xPos, yPos, true);
   setTidyFlag();
+  redrawCounter = 4;
 }
 
 function showHideBlockMenu() {
@@ -281,26 +293,11 @@ function imlost() {
 
 function toggleMobileHack() {
   mobileHack = ! mobileHack;
-  if (mobileHack == true){
-    fontSizeString = '8px';
-    cells.dWidth = cells.dWidth/2;
-    cells.dHeight = cells.dHeight/2;
-    for (let i = 0; i < cells.length; i++){
-      cells.cells[i].reStyle();
-      cells.cells[i].width = int(cells.cells[i].width/2);
-      cells.cells[i].height = int(cells.cells[i].height/2);
-      cells.cells[i].reshape();
-    }
-  } else {
-    cells.dWidth = 80;
-    cells.dHeight = 40;
-    fontSizeString = '12px';
-    for (let i = 0; i < cells.length; i++){
-      cells.cells[i].reStyle();
-      cells.cells[i].reshape();
-    }
-  }
-
+  // back up everything
+  // reset font and max width sizes
+  // recreate everything
+  let currentLayout = cells.saveCells();
+  loadCells(currentLayout);
   menu.html('');
   createMenuDiv();
 }

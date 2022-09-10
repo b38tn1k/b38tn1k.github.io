@@ -4,7 +4,7 @@ function selectChangedCallback(){
 }
 
 class Cell {
-  constructor(type, x, y, w, h, c, r=5) {
+  constructor(type, x, y, w, h, c, r) {
     jlog('Cell', 'constructor');
     // heirachy
     this.children = [];
@@ -52,6 +52,7 @@ class Cell {
     this.hide = false;
     this.shrink = false;
     this.handleW = 1.5*r;
+    console.log(this.handleW);
     this.handleH = 1.5*r;
     this.graphicUpdate = true;
     // colors

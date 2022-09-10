@@ -113,7 +113,7 @@ class Cells {
       c = [this.colors[type], this.highlights[type], this.colors[49], this.inverted[type], this.dualtone[type]];
     }
     let newCell = this.length;
-    this.cells.push(new Cell(info.t, info.x, info.y, this.dWidth, this.dHeight, c, this.radius));
+    this.cells.push(new Cell(info.t, info.x, info.y, this.dWidth, this.dHeight, c, this.dRadius));
     this.cells[newCell].hide = info.h;
     this.cells[newCell].shrink = info.s;
     // this.cells[newCell].dataSH = info.d;
@@ -661,7 +661,7 @@ class Cells {
     }
     ac.mode = M_IDLE;
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
-    this.cells[this.activeIndex] = new Cell(type, ac.x, ac.y, this.dWidth, this.dHeight, c, this.radius);
+    this.cells[this.activeIndex] = new Cell(type, ac.x, ac.y, this.dWidth, this.dHeight, c, this.dRadius);
     this.cells[this.activeIndex].dataSH = data;
     this.cells[this.activeIndex].handleSH = handle;
     this.cells[this.activeIndex].children = children;

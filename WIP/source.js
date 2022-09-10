@@ -612,6 +612,9 @@ function doTutorials(loaded) {
 
 function setup() {
   jlog('Main', 'setup');
+  if (pixelDensity != 1){
+    fontSizeString = String(12/pixelDensity()) + 'px';
+  }
   // pixelDensity(1);
   colorSetup();
   setupScreen();

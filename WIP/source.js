@@ -172,17 +172,7 @@ function loadCells(myLoaderMap) {
   cells.cells[0].indexLabeldiv.remove();
   cells.cells[1].indexLabeldiv.remove();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
-  if (mobileHack == true){
-    fontSizeString = '8px';
-    cells.dWidth = 40;
-    cells.dHeight = 20;
-    cells.dRadius = 3;
-  } else {
-    cells.dWidth = 80;
-    cells.dHeight = 40;
-    cells.dRadius = 5;
-    fontSizeString = '12px';
-  }
+  mobileSettings();
   for (key in Object.keys(myLoaderMap)) {
     cells.addCellWithInfo(myLoaderMap[key]);
   }
@@ -198,6 +188,20 @@ function loadCells(myLoaderMap) {
   cells.updateView(xPos, yPos, true);
   setTidyFlag();
   redrawCounter = 4;
+}
+
+function mobileSettings() {
+  if (mobileHack == true){
+    fontSizeString = '8px';
+    cells.dWidth = 40;
+    cells.dHeight = 20;
+    cells.dRadius = 3;
+  } else {
+    cells.dWidth = 80;
+    cells.dHeight = 40;
+    cells.dRadius = 5;
+    fontSizeString = '12px';
+  }
 }
 
 function showHideBlockMenu() {
@@ -486,7 +490,6 @@ function doTutorials(loaded) {
         loadCells(demos[0]);
         cells.cells[0].reshape();
         cells.cells[0].refresh();
-
         if (mobileHack == true){
           tidyFlag = 0;
           cells.cells[1].x = cells.cells[0].x;
@@ -655,11 +658,7 @@ function setup() {
   colorSetup();
   setupScreen();
   cells = new Cells(colors, highlights, lowlights, icolors, dtcolors);
-  if (mobileHack == true){
-    cells.dWidth = cells.dWidth/2;
-    cells.dHeight = cells.dHeight/2;
-    fontSizeString = '8px'
-  }
+  mobileSettings()
   controller = new Controller();
   menu = createDiv();
   createMenuDiv();

@@ -637,7 +637,8 @@ function testAll() {
 
 function draw() {
   if (mobileHack == true){
-    mainDiv.scrollBy(0, 0);
+    mainDiv.scrollTop = 0;
+    mainDiv.scrollLeft = 0;
   }
   if (redrawCounter != 0) {
     clear();

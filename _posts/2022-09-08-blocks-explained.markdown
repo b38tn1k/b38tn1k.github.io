@@ -107,10 +107,10 @@ converts the project into a URI string that can be used as a link.
 </tr>
 <tr>
 <th>
-<strong>mobile</strong>
+<strong>zoom out / in</strong>
 </th>
 <th>
-tries to make things easier on mobile devices and small screens.
+tries to make things easier on mobile devices and small screens. Tries.
 </th>
 </tr>
 </table>

@@ -161,7 +161,7 @@ class Cell {
     if (blockConfig[this.type]['input type'] == I_SELECT) {
       this.input = createSelect();
       this.input.changed(selectChangedCallback);
-      this.width = max(this.width, 80);
+      this.width = max(this.width, this.startWidth);
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       this.input.style('font-size', fontSizeString);

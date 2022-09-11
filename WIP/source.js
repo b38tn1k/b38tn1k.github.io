@@ -192,10 +192,10 @@ function loadCells(myLoaderMap) {
 
 function mobileSettings() {
   if (mobileHack == true){
-    fontSizeString = '8px';
+    fontSizeString = '10px';
     cells.dWidth = 40;
     cells.dHeight = 20;
-    cells.dRadius = 3;
+    cells.dRadius = 4;
   } else {
     cells.dWidth = 80;
     cells.dHeight = 40;
@@ -432,7 +432,6 @@ function setupScreen() {
   pixelDensity(1);
   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
     mobileHack = true;
-    console.log(mainDiv.style.zoom);
   }
   createCanvas(windowWidth, windowHeight);
   if (windowWidth/windowHeight < 10/16) {

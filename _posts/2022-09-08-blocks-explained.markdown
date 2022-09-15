@@ -156,7 +156,7 @@ In a new UBT project, select the blocks menu / utilities / print. Drag and drop 
 
 
 # Data Stuff
-UBT has three data types:
+UBT has three data containers:
 - Variables,
 - Constants,
 - and Blocks.
@@ -165,7 +165,7 @@ Data types are dynamic; Variables and Constants can both hold one 'piece' of dat
 
 *For example, the word 'false' is both a string and the boolean opposite of 'true', the number 123 is also a string '123'.*
 
-The only difference between Constants and Variables is that Variables can be set and then called later in the process using a Variable block, whereas Constants exist only in the block they are defined in.
+The main difference between Constants and Variables is that Variables can be set and then called later in the process using a Variable reference block, whereas Constants exist only in the block they are defined in. Variables also provide access to useful data sources such as Data and Time elements, and random numbers.
 
 Blocks are ordered collections of other blocks (including other Blocks). They can act as arrays (get, set) or be used to define how logic flows. A Block is similar to a Variable in that once it is set, it can be called upon later in the process using a Block reference. See blocks, variables and constants in action below:
 

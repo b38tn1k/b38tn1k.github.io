@@ -90,6 +90,49 @@ class Cell {
     return [this.width, this.height]
   }
 
+  getDataSH() {
+    let result;
+    const d = new Date();
+
+    switch(this.handleSH) {
+      case 'random':
+        this.dataSH = random();
+        break;
+      case 'year':
+        this.dataSH = d.getFullYear();
+        break;
+      case 'month#':
+        this.dataSH = d.getMonth() + 1;
+        break;
+      case 'monthS':
+        const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        this.dataSH = month[d.getMonth()];
+        break;
+      case 'day#':
+        this.dataSH = d.getDate();
+        break;
+      case 'dayS':
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        this.dataSH = days[d.getDay()];
+        break;
+      case 'hour':
+        this.dataSH = d.getHours();
+        break;
+      case 'minute':
+        this.dataSH = d.getMinutes();
+        break;
+      case 'second':
+        this.dataSH = d.getSeconds();
+        break;
+      case 'millis':
+        this.dataSH = d.getMilliseconds();
+        break;
+      default:
+        break;
+    }
+    return this.dataSH;
+  }
+
   disableDelete(){
     this.deletable = false;
   }

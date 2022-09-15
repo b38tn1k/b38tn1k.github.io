@@ -603,9 +603,9 @@ class Cells {
   mapAndLink() {
     jlog('Cells', 'mapAndLink');
     let map = {};
-    map[T_GOTO] = [];
-    map[T_VAR] = [];
-    map[T_OUTLET] = [];
+    map[T_GOTO] = ['none'];
+    map[T_VAR] = ['none', 'outlet'];
+    map[T_OUTLET] = ['none', 'outlet'];
     let varTable = {};
     for (let i = 0; i < this.length; i++) {
       // grab everything
@@ -623,10 +623,6 @@ class Cells {
       // make pretty
       this.cells[i].reshape();
     }
-    map[T_VAR] = map[T_VAR].concat(['outlet', 'random', 'year', 'month#', 'monthS', 'day#', 'dayS', 'hour', 'minute', 'second', 'millis']);
-    map[T_OUTLET].push('outlet');
-    map[T_GOTO].push('none');
-
     for (let i = 0; i < this.length; i++) {
       this.cells[i].updateOptions(map);
       if (this.cells[i].type == T_VAR) {

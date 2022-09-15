@@ -2,13 +2,15 @@ let printStack = true;
 var mobileHack = false;
 var selectChanged = true;
 var fontSizeString = '12px';
+var doJLOG = false;
 function jlog(classname, label) {
-  // console.debug(classname, label);
-  // logCounter += 1;
-  // if (logCounter == 100) {
-  //   console.clear();
-  // }
-
+  if (doJLOG == true) {
+    console.debug(classname, label);
+    logCounter += 1;
+    if (logCounter == 100) {
+      console.clear();
+    }
+  }
 }
 
 let logCounter = 0;

@@ -93,7 +93,6 @@ class Cell {
   getDataSH() {
     let result;
     const d = new Date();
-
     switch(this.handleSH) {
       case 'random':
         this.dataSH = random();
@@ -247,9 +246,10 @@ class Cell {
   updateDataSH(value) {
     jlog('Cell', 'updateDataSH');
     this.dataSH = value;
-    if (/^\d+\.\d+$/.test(String(value)) == true) {
-      value = parseFloat(value).toFixed(3);
-    }
+    // if (/^\d+\.\d+$/.test(String(value)) == true) {
+    //   value = parseFloat(value).toFixed(3);
+    // }
+
     // if (this.type != T_INLET) {
     //   let htmlString = this.textLabel + ' ' + this.handleSH + String(value);
     //   this.indexLabeldiv.html(htmlString);
@@ -736,6 +736,8 @@ class Cell {
         this.input.selected(this.handleSH);
       }
     }
+    let tempSet = new Set(this.inputOptions);
+    this.inputOptions = Array.from(tempSet);
   }
 
   forcefullyAddChildren(ind, child) {
@@ -913,7 +915,7 @@ class Cell {
       let fudge = 2;
       if (x > xp - fudge && x < xp + this.width + fudge) {
         if (y > yp - fudge && y < yp + this.height + fudge) {
-          this.selfDescribe(false);
+          // this.selfDescribe(false);
           // this.unsetData()
           // this.children = [];
           // this.parent = -1;

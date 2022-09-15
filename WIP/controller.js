@@ -23,7 +23,7 @@ class Controller {
   }
 
   step (flash, fastMode) {
-    try { // big try so I can put anything into the onscreen console
+    try { // big try so I can put anything into the onscreen c onsole
       if (this.index < this.script.length) {
         this.activeCell = this.script[this.index];
         if (flash == true && this.stackTrace.length > 1) {
@@ -188,41 +188,41 @@ class Controller {
   }
 
   moveByParent() {
-    if (this.workingStack.length > 100){
-      this.script[1].indexLabeldiv.html('\n uncomfortably deep stack, time to die', true);
-      this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
-      this.run = false;
+  if (this.workingStack.length > 100){
+    this.script[1].indexLabeldiv.html('\n uncomfortably deep stack, time to die', true);
+    this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
+    this.run = false;
+  }
+  let currentI = this.workingStack.pop();
+  this.addToStack(currentI, 0); // 0 means it adds to trace, not working stack
+  this.script[currentI].flash = false;
+  if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_IF){
+      currentI = this.workingStack.pop();
+      this.addToStack(currentI, 0);
+  }
+  if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_WHILE){
+    let shrinkStack = this.workingStack.indexOf(this.script[currentI].parent);
+    this.workingStack = this.workingStack.slice(0, shrinkStack+1);
+    this.addNote("shrunk working stack");
+    if (this.script[currentI].getDataSH() == B_FALSE){
+      currentI = this.workingStack.pop();
+      this.addToStack(currentI, 0);
     }
-    let currentI = this.workingStack.pop();
-    this.addToStack(currentI, 0); // 0 means it adds to trace, not working stack
-    this.script[currentI].flash = false;
-    if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_IF){
-        currentI = this.workingStack.pop();
-        this.addToStack(currentI, 0);
-    }
-    if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_WHILE){
-      let shrinkStack = this.workingStack.indexOf(this.script[currentI].parent);
-      this.workingStack = this.workingStack.slice(0, shrinkStack+1);
-      this.addNote("shrunk working stack");
-      if (this.script[currentI].getDataSH() == B_FALSE){
-        currentI = this.workingStack.pop();
-        this.addToStack(currentI, 0);
-      }
-    }
-    this.script[currentI].flash = false;
-    if (this.workingStack.length < 1) {
-      this.index = this.terminate;
+  }
+  this.script[currentI].flash = false;
+  if (this.workingStack.length < 1) {
+    this.index = this.terminate;
+  } else {
+    let callerI = this.workingStack[this.workingStack.length-1];
+    let callerC = this.script[callerI];
+    let curInCaller = callerC.childIndicies.indexOf(currentI);
+    if (curInCaller == -1 || curInCaller == callerC.childIndicies.length-1){
+      this.addToStack(callerI, 0);
+      this.moveByParent();
     } else {
-      let callerI = this.workingStack[this.workingStack.length-1];
-      let callerC = this.script[callerI];
-      let curInCaller = callerC.childIndicies.indexOf(currentI);
-      if (curInCaller == -1 || curInCaller == callerC.childIndicies.length-1){
-        this.addToStack(callerI, 0);
-        this.moveByParent();
-      } else {
-        this.index = callerC.childIndicies[curInCaller + 1];
-      }
+      this.index = callerC.childIndicies[curInCaller + 1];
     }
+  }
 }
 
 getValue(child, index) {
@@ -346,7 +346,7 @@ getValue(child, index) {
       for (key in this.varMap) {
         if (cells.varHandles.indexOf(key) == -1) {
           cells.varHandles.push(key);
-          cells.mapAndLink();
+          // cells.mapAndLink();
           this.startStop(cells);
         }
       }
@@ -682,9 +682,6 @@ getValue(child, index) {
     this.dataSH = res;
     let output = activeCell.children[0].handleSH;
     this.updateVarMap(output, res);
-    // for (let i = 0; i < this.varMap[output].length; i++) {
-    //   this.varMap[output][i].updateDataSH(res);
-    // }
   }
 
   t_not(activeCell, index) {
@@ -737,6 +734,11 @@ getValue(child, index) {
     } else {
       activeCell.dataSH = B_FALSE;
     }
+    // if (activeCell.dataSH == B_TRUE) {
+    //   this.updateVarMap(activeCell.handleSH, true);
+    // } else if (activeCell.dataSH == B_FALSE) {
+    //   this.updateVarMap(activeCell.handleSH, false);
+    // }
   }
 
   t_while(activeCell, index) {

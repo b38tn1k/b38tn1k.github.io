@@ -156,7 +156,7 @@ In a new UBT project, select the blocks menu / utilities / print. Drag and drop 
 
 
 # Data Stuff
-UBT has three data types:
+UBT has three data containers:
 - Variables,
 - Constants,
 - and Blocks.

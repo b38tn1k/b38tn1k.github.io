@@ -572,11 +572,11 @@ function doTutorials(loaded) {
       disableDrag = true;
       cells.addCell(T_SUBTRACT, windowWidth * 0.7);
       cells.cells[2].x -= cells.cells[2].width/2;
-      cells.addCell(T_CONST, windowWidth * 0.5);
+      cells.addCell(T_CONST, windowWidth * 0.1);
       cells.cells[4].input.value(1);
-      cells.addCell(T_CONST, windowWidth * 0.5);
+      cells.addCell(T_CONST, windowWidth * 0.1);
       cells.cells[5].input.value(2);
-      cells.addCell(T_CONST, windowWidth * 0.5);
+      cells.addCell(T_CONST, windowWidth * 0.1);
       cells.cells[6].input.value(3);
       cells.cells[2].addChild(4, cells.cells[4]);
       cells.cells[2].addChild(5, cells.cells[5]);

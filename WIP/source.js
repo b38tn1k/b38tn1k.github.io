@@ -494,7 +494,7 @@ function doTutorials(loaded) {
       let myDiv = createDiv('<a onclick="history.back()"> back to tutorial </a>');
       myDiv.style('font-size', '16px');
       textSize(16);
-      myDiv.position(windowWidth - textWidth(' back to tutorial '), windowHeight - 20);
+      myDiv.position(windowWidth - textWidth(' back to tutorial '), windowHeight - 40);
     }
     switch(tutorialstring) {
       case '#tutorialBlank':

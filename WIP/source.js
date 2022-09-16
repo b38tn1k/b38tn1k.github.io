@@ -436,6 +436,7 @@ function setupScreen() {
   pixelDensity(1);
   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
     mobileHack = true;
+    mobileHackActual = true;
   }
   createCanvas(windowWidth, windowHeight);
   if (windowWidth/windowHeight < 10/16) {

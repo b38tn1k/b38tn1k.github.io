@@ -224,6 +224,9 @@ class Cell {
       this.standardInputHeight = h;
       this.input.size(w, h);
       this.width = w + 3*this.childXBorder;
+      if (mobileHackActual == true) {
+        this.width += this.handleW;
+      }
       this.ySpacer += this.input.height;
       this.minWidth = this.width;
     }
@@ -456,7 +459,11 @@ class Cell {
       this.height = nh;
     }
     if (this.type == T_COMMENT) {
-      this.input.size(this.width - 3*this.childXBorder, this.height - 4*this.childYBorder);
+      if (mobileHackActual == true) {
+        this.input.size(this.width - 3*this.childXBorder - this.handleW, this.height - 4*this.childYBorder);
+      } else {
+        this.input.size(this.width - 3*this.childXBorder, this.height - 4*this.childYBorder);
+      }
       this.minHeight = this.height;
       this.minWidth = this.minWidth;
     } else {
@@ -465,7 +472,11 @@ class Cell {
 
     this.height = max(this.minHeight, this.height);
     if (blockConfig[this.type]['input type'] != I_NONE && blockConfig[this.type]['input type'] != I_TEXT_AREA && this.type != T_CONSOLE) {
-      this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
+      if (mobileHackActual == true) {
+        this.input.size(this.width - 3*this.childXBorder - this.handleW, this.standardInputHeight);
+      } else {
+        this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
+      }
     }
 
     this.resizeConsole();
@@ -519,7 +530,12 @@ class Cell {
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       let h = this.input.size().height;
-      this.input.size(this.width - 3 * this.childXBorder);
+      if (mobileHackActual == true) {
+        this.input.size(this.width - 3 * this.childXBorder - this.handleW);
+      } else {
+        this.input.size(this.width - 3 * this.childXBorder);
+      }
+
     }
     this.refresh(0, 0);
     if (this.type == T_TURTLE){

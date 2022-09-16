@@ -1,6 +1,7 @@
 let printStack = true;
 printStack = false;
 var mobileHack = false;
+var mobileHackActual = false;
 var selectChanged = true;
 var fontSizeString = '12px';
 var doJLOG = false;

@@ -484,8 +484,18 @@ function doLastBit(){
 
 function doTutorials(loaded) {
   if (tutorial == true){
+    let makeMobileLink = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let myDiv = createDiv();
+    myDiv.style('font-size', '16px');
+    textSize(16);
+    myDiv.position(windowWidth - textWidth(" open in new tab "), windowHeight - 20);
+    myDiv.hide();
     switch(tutorialstring) {
       case '#tutorialBlank':
+        if (makeMobileLink == true){
+          myDiv.html("<a href='https://b38tn1k.com/WIP/'> open in new tab </a>");
+          myDiv.show();
+        }
         break;
       case '#tutorialHello':
         cells.addCell(T_START, 1.5 * menu.size().width);
@@ -502,6 +512,10 @@ function doTutorials(loaded) {
         }
         cells.run = true;
         loaded = true;
+        if (makeMobileLink == true){
+          myDiv.html("<a href='https://b38tn1k.com/WIP/#tutorialHello'> open in new tab </a>");
+          myDiv.show();
+        }
         break;
       case '#tutorialHandles':
         cells.addCell(T_START, 1.5 * menu.size().width);
@@ -514,6 +528,10 @@ function doTutorials(loaded) {
         loaded = true;
         hideMenu = true;
         disableDrag = true;
+        if (makeMobileLink == true){
+          myDiv.html("<a href='https://b38tn1k.com/WIP/#tutorialHandles'> open in new tab </a>");
+          myDiv.show();
+        }
         break;
       case '#tutorialMove':
         cells.addCell(T_START, 1.5 * menu.size().width);
@@ -538,6 +556,10 @@ function doTutorials(loaded) {
         cells.cells[2].disableDelete();
         cells.cells[3].disableDelete();
         cells.cells[4].disableDelete();
+        if (makeMobileLink == true){
+          myDiv.html("<a href='https://b38tn1k.com/WIP/#tutorialMove'> open in new tab </a>");
+          myDiv.show();
+        }
         break;
       case '#tutorialMutate':
         cells.addCell(T_START, 1.5 * menu.size().width);
@@ -564,6 +586,10 @@ function doTutorials(loaded) {
         for (let i = 0; i < cells.length; i++){
           cells.cells[i].disableDelete();
           cells.cells[i].mode = M_IDLE;
+        }
+        if (makeMobileLink == true){
+          myDiv.html("<a href='https://b38tn1k.com/WIP/#tutorialMutate'> open in new tab </a>");
+          myDiv.show();
         }
         break;
       case '#tutorialCopy':
@@ -607,6 +633,10 @@ function doTutorials(loaded) {
         cells.cells[i].disableDelete();
         cells.cells[i].mode = M_IDLE;
       }
+      if (makeMobileLink == true){
+        myDiv.html("<a href='https://b38tn1k.com/WIP/#tutorialCopy'> open in new tab </a>");
+        myDiv.show();
+      }
       break;
     case '#tutorialData':
       cells.addCell(T_START, 10);
@@ -648,6 +678,10 @@ function doTutorials(loaded) {
         cells.cells[i].mode = M_IDLE;
       }
       cells.tidy(0, 10);
+      if (makeMobileLink == true){
+        myDiv.html("<a href='https://b38tn1k.com/WIP/#tutorialData'> open in new tab </a>");
+        myDiv.show();
+      }
       break;
     }
   }

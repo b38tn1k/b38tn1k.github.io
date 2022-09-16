@@ -753,8 +753,6 @@ function draw() {
           break;
       }
     }
-
-    console.log(testTimer, testPaceSettings[testTimer]);
   }
 
   if (tutorial == true){

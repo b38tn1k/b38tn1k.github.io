@@ -23,6 +23,7 @@ var currentTestIndex = 0;
 var testPacer = 0;
 var testPaceSettings = [0, 0, 0, 1000, 2000];
 var testTimer = TST_OFF;
+var testLoop = false;
 var tutorial = false;
 var tutorialstring = '';
 var hideMenu = false;
@@ -730,7 +731,11 @@ function draw() {
         case TST_LOAD:
           currentTestIndex += 1;
           if (currentTestIndex == demos.length){
-            testTimer = TST_OFF;
+            if (testLoop == true) {
+              currentTestIndex = 0;
+            } else {
+              testTimer = TST_OFF;
+            }
           } else {
             testPacer = millis();
             loadCells(demos[currentTestIndex]);

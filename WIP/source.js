@@ -492,7 +492,7 @@ function doTutorials(loaded) {
       noIframe = true;
     }
     if (noIframe == true) {
-      let myDiv = createDiv('<a onclick="history.back()"> back to tutorial </a>');
+      let myDiv = createDiv('<a onclick="window.history.back()"> back to tutorial </a>');
       myDiv.style('font-size', '16px');
       textSize(16);
       myDiv.position(windowWidth - textWidth(' back to tutorial '), windowHeight - 40);

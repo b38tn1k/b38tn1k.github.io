@@ -1,4 +1,5 @@
 let printStack = true;
+printStack = false;
 var mobileHack = false;
 var selectChanged = true;
 var fontSizeString = '12px';
@@ -34,6 +35,12 @@ var M_MUTATE = 9;
 var V_NUMBER = 0;
 var V_STRING = 1;
 var V_BOOL = 2;
+
+var TST_OFF = 0;
+var TST_LOAD = 1;
+var TST_TIDY = 2;
+var TST_RUN = 3;
+var TST_PAUSE = 4;
 
 var T_START = 1;
 var T_STOP = 105;

@@ -20,8 +20,9 @@ var mobileHAddon = false;
 var tidyFlag = 0;
 var subMenu = 0;
 var currentTestIndex = 0;
-var testLoadTimer = 0;
-var runTest = false;
+var testPacer = 0;
+var testPaceSettings = [0, 0, 0, 1000, 2000];
+var testTimer = TST_OFF;
 var tutorial = false;
 var tutorialstring = '';
 var hideMenu = false;
@@ -574,11 +575,11 @@ function doTutorials(loaded) {
       disableDrag = true;
       cells.addCell(T_SUBTRACT, windowWidth * 0.7);
       cells.cells[2].x -= cells.cells[2].width/2;
-      cells.addCell(T_CONST, windowWidth * 0.1);
+      cells.addCell(T_CONST, windowWidth * 0.2);
       cells.cells[4].input.value(1);
-      cells.addCell(T_CONST, windowWidth * 0.1);
+      cells.addCell(T_CONST, windowWidth * 0.2);
       cells.cells[5].input.value(2);
-      cells.addCell(T_CONST, windowWidth * 0.1);
+      cells.addCell(T_CONST, windowWidth * 0.2);
       cells.cells[6].input.value(3);
       cells.cells[2].addChild(4, cells.cells[4]);
       cells.cells[2].addChild(5, cells.cells[5]);
@@ -586,14 +587,14 @@ function doTutorials(loaded) {
       cells.cells[4].addParent(2, cells.cells[2]);
       cells.cells[5].addParent(2, cells.cells[2]);
       cells.cells[6].addParent(2, cells.cells[2]);
-      cells.addCell(T_INPUT, windowWidth * 0.1);
+      cells.addCell(T_INPUT, windowWidth * 0.2);
       cells.cells[7].updateHandleSH("Reference me!");
       cells.cells[7].x -= cells.cells[7].width * 0.5;
-      cells.addCell(T_CONST, windowWidth * 0.1);
+      cells.addCell(T_CONST, windowWidth * 0.2);
       cells.cells[8].input.value("Copy me!");
       cells.cells[8].x -= cells.cells[8].width  * 0.5;
       cells.cells[8].y += cells.cells[7].height + cells.cells[7].handleH*2;
-      cells.addCell(T_BLOCK, windowWidth * 0.1);
+      cells.addCell(T_BLOCK, windowWidth * 0.2);
       cells.cells[9].updateHandleSH("Reference me!");
       cells.cells[9].x -= cells.cells[9].width  * 0.5;
       cells.cells[9].y += cells.cells[8].y + cells.cells[8].height + cells.cells[8].handleH*2;
@@ -671,9 +672,9 @@ function setup() {
 }
 
 function testAll() {
-  runTest = true;
+  testTimer = TST_LOAD;
   currentTestIndex = -1;
-  testLoadTimer = 101;
+  testPacer = millis();
 }
 
 function draw() {
@@ -721,18 +722,41 @@ function draw() {
     createMenuDiv();
     cells.rebuildMenuFlag = false;
   }
-  if (runTest == true && cells.run == false) {
-    testLoadTimer += 1;
-  }
-  if (runTest == true && cells.run == false && testLoadTimer > 30){
-    currentTestIndex += 1;
-    testLoadTimer = 0;
-    loadCells(demos[currentTestIndex]);
-    cells.run = true;
-    if (currentTestIndex == demos.length-1){
-      runTest = false;
+
+  if (testTimer != TST_OFF) {
+    let readyToStep = (millis() - testPacer > testPaceSettings[testTimer]);
+    if (cells.run == false && readyToStep == true) {
+      switch(testTimer) {
+        case TST_LOAD:
+          currentTestIndex += 1;
+          if (currentTestIndex == demos.length){
+            testTimer = TST_OFF;
+          } else {
+            testPacer = millis();
+            loadCells(demos[currentTestIndex]);
+            setTidyFlag();
+            testTimer = TST_TIDY;
+          }
+          break;
+        case TST_TIDY:
+          testPacer = millis();
+          testTimer = TST_RUN;
+          break;
+        case TST_RUN:
+          testPacer = millis();
+          cells.run = true;
+          testTimer = TST_PAUSE;
+          break;
+        case TST_PAUSE:
+          testPacer = millis();
+          testTimer = TST_LOAD;
+          break;
+      }
     }
+
+    console.log(testTimer, testPaceSettings[testTimer]);
   }
+
   if (tutorial == true){
     switch(tutorialstring) {
       case '#tutorialBlank':

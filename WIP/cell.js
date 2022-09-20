@@ -13,7 +13,7 @@ class Cell {
     // control etc
     this.dataSH;
     this.dataSHasType = {};
-    this.handleSH;
+    this.handleSH = 'unset';
     this.type = type
     this.textLabel = blockConfig[this.type]['block label'];
     if (this.type == T_BLOCK){
@@ -92,7 +92,6 @@ class Cell {
   }
 
   getDataSH() {
-    let result;
     const d = new Date();
     switch(this.handleSH) {
       case 'random':
@@ -131,6 +130,14 @@ class Cell {
         break;
     }
     return this.dataSH;
+  }
+
+  getDataSHForPrint() {
+    let res = this.getDataSH();
+    if (String(res) == 'undefined') {
+      res = this.textLabel;
+    }
+    return res;
   }
 
   disableDelete(){
@@ -689,11 +696,21 @@ class Cell {
           break;
         case T_GOTO:
           this.updateHandleSH(this.input.value());
-          // this.handleSH = this.input.value();
           break;
         case T_VAR:
           this.updateHandleSH(this.input.value());
-            // this.handleSH = this.input.value();
+          break;
+        case T_GET:
+          this.updateHandleSH(this.input.value());
+          break;
+        case T_SET:
+          this.updateHandleSH(this.input.value());
+          break;
+        case T_PUSH:
+          this.updateHandleSH(this.input.value());
+          break;
+        case T_DELETE:
+          this.updateHandleSH(this.input.value());
           break;
         case T_OUTLET:
             let tempHandle = this.input.value();

@@ -12,7 +12,7 @@ class Cells {
     this.inverted = i;
     this.dualtone = dt;
     this.varNames = 'abcdefghijklmnopqrstuvwxyz';
-    this.varHandles = ['none'];
+    this.varHandles = ['unset'];
     this.map = {};
     this.run = false;
     this.viewXdelta = 0;
@@ -120,6 +120,7 @@ class Cells {
     this.cells[newCell].updateDataSH(info.d);
     // this.cells[newCell].handleSH = info.i;
     this.cells[newCell].updateHandleSH(info.i);
+    this.varHandles.push(info.i);
     this.cells[newCell].parent = info.p;
     if (info.t == T_OUTLET || info.t == T_VAR || info.t == T_INPUT || info.t == T_INLET){
       this.cells[newCell].textLabel = info.tL;
@@ -606,6 +607,8 @@ class Cells {
     map[T_GOTO] = [];
     map[T_PUSH] = [];
     map[T_DELETE] = [];
+    map[T_GET] = [];
+    map[T_SET] = [];
     map[T_VAR] = [];
     map[T_OUTLET] = [];
     let varTable = {};
@@ -620,6 +623,10 @@ class Cells {
       if (this.cells[i].type == T_INPUT) { //this.cells[i].mode != M_SELECTED
         map[T_VAR].push(this.cells[i].handleSH);
         map[T_OUTLET].push(this.cells[i].handleSH);
+        map[T_PUSH].push(this.cells[i].handleSH);
+        map[T_DELETE].push(this.cells[i].handleSH);
+        map[T_GET].push(this.cells[i].handleSH);
+        map[T_SET].push(this.cells[i].handleSH);
         varTable[this.cells[i].handleSH] = this.cells[i].getDataSH();
       }
       // read from block names
@@ -627,15 +634,19 @@ class Cells {
         map[T_GOTO].push(this.cells[i].handleSH);
         map[T_PUSH].push(this.cells[i].handleSH);
         map[T_DELETE].push(this.cells[i].handleSH);
+        map[T_GET].push(this.cells[i].handleSH);
+        map[T_SET].push(this.cells[i].handleSH);
       }
       // make pretty
       this.cells[i].reshape();
     }
     map[T_VAR] = map[T_VAR].concat(['outlet', 'random', 'year', 'month#', 'monthS', 'day#', 'dayS', 'hour', 'minute', 'second', 'millis']);
     map[T_OUTLET].push('outlet');
-    map[T_GOTO].push('none');
-    map[T_PUSH].push('none');
-    map[T_DELETE].push('none');
+    map[T_GOTO].push('unset');
+    map[T_PUSH].push('unset');
+    map[T_DELETE].push('unset');
+    map[T_GET].push('unset');
+    map[T_SET].push('unset');
 
     for (let i = 0; i < this.length; i++) {
       this.cells[i].updateOptions(map);

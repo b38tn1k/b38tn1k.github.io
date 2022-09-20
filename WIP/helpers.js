@@ -330,8 +330,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ if not</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ sleep sort(a)</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ draw polygons</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[10])">+ array basics</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="loadCells(demos[11])">+ dumbzone</a><br>', true);
+    menu.html('<a class="bad" href="javascript:void(0)" onclick="loadCells(demos[10])">+ dumbzone</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);

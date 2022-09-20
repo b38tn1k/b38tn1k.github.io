@@ -22,15 +22,15 @@ class Controller {
     this.stackSizeRecord = [];
   }
 
-  step (flash, fastMode) {
+  step(flash, fastMode) {
     try { // big try so I can put anything into the onscreen c onsole
       if (this.index < this.script.length) {
         this.activeCell = this.script[this.index];
         if (flash == true && this.stackTrace.length > 1) {
           this.activeCell.flash = true;
-          this.script[this.stackTrace[this.stackTrace.length-2]].flash = false;
+          this.script[this.stackTrace[this.stackTrace.length - 2]].flash = false;
         }
-        switch(this.activeCell.type) {
+        switch (this.activeCell.type) {
           case T_START:
             this.t_start(this.activeCell, this.index);
             break;
@@ -108,7 +108,7 @@ class Controller {
             this.moveByParent();
             break;
           case T_INPUT:
-          this.addToStack(this.index);
+            this.addToStack(this.index);
             this.moveByParent();
             break;
           case T_EQUAL:
@@ -157,6 +157,14 @@ class Controller {
             this.t_set(this.activeCell, this.index);
             this.moveByParent();
             break;
+          case T_PUSH:
+            this.t_push(this.activeCell, this.index);
+            this.moveByParent();
+            break;
+          case T_DELETE:
+            this.t_delete(this.activeCell, this.index);
+            this.moveByParent();
+            break;
           default:
             this.script[1].indexLabeldiv.html("Something is missing", true);
             break;
@@ -175,10 +183,10 @@ class Controller {
   }
 
   updateVarMap(key, data) {
-    if (key == 'turtleX'){
+    if (key == 'turtleX') {
       this.tChangeX = true;
     }
-    if (key == 'turtleY'){
+    if (key == 'turtleY') {
       this.tChangeY = true;
     }
     for (let i = 0; i < this.varMap[key].length; i++) {
@@ -188,78 +196,92 @@ class Controller {
   }
 
   moveByParent() {
-  if (this.workingStack.length > 100){
-    this.script[1].indexLabeldiv.html('\n uncomfortably deep stack, time to die', true);
-    this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
-    this.run = false;
-  }
-  let currentI = this.workingStack.pop();
-  this.addToStack(currentI, 0); // 0 means it adds to trace, not working stack
-  this.script[currentI].flash = false;
-  if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_IF){
-      currentI = this.workingStack.pop();
-      this.addToStack(currentI, 0);
-  }
-  if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_WHILE){
-    let shrinkStack = this.workingStack.indexOf(this.script[currentI].parent);
-    this.workingStack = this.workingStack.slice(0, shrinkStack+1);
-    this.addNote("shrunk working stack");
-    if (this.script[currentI].getDataSH() == B_FALSE){
+    if (this.workingStack.length > 100) {
+      this.script[1].indexLabeldiv.html('\n uncomfortably deep stack, time to die', true);
+      this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
+      this.run = false;
+    }
+    let currentI = this.workingStack.pop();
+    this.addToStack(currentI, 0); // 0 means it adds to trace, not working stack
+    this.script[currentI].flash = false;
+    if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_IF) {
       currentI = this.workingStack.pop();
       this.addToStack(currentI, 0);
     }
-  }
-  this.script[currentI].flash = false;
-  if (this.workingStack.length < 1) {
-    this.index = this.terminate;
-  } else {
-    let callerI = this.workingStack[this.workingStack.length-1];
-    let callerC = this.script[callerI];
-    let curInCaller = callerC.childIndicies.indexOf(currentI);
-    if (curInCaller == -1 || curInCaller == callerC.childIndicies.length-1){
-      this.addToStack(callerI, 0);
-      this.moveByParent();
+    if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_WHILE) {
+      let shrinkStack = this.workingStack.indexOf(this.script[currentI].parent);
+      this.workingStack = this.workingStack.slice(0, shrinkStack + 1);
+      this.addNote("shrunk working stack");
+      if (this.script[currentI].getDataSH() == B_FALSE) {
+        currentI = this.workingStack.pop();
+        this.addToStack(currentI, 0);
+      }
+    }
+    this.script[currentI].flash = false;
+    if (this.workingStack.length < 1) {
+      this.index = this.terminate;
     } else {
-      this.index = callerC.childIndicies[curInCaller + 1];
+      let callerI = this.workingStack[this.workingStack.length - 1];
+      let callerC = this.script[callerI];
+      let curInCaller = callerC.childIndicies.indexOf(currentI);
+      if (curInCaller == -1 || curInCaller == callerC.childIndicies.length - 1) {
+        this.addToStack(callerI, 0);
+        this.moveByParent();
+      } else {
+        this.index = callerC.childIndicies[curInCaller + 1];
+      }
     }
   }
-}
 
-getValue(child, index) {
-  let data;
-  let varType = -1;
-  if (mathFunctions.indexOf(child.type) != -1) {
-    this.t_math(child, index);
-    data = child.children[0].getDataSH();
-    varType = V_NUMBER;
-  } else if (boolFunctions.indexOf(child.type) != -1 && (child.type != T_NOT))  {
-    this.t_compare(child, index);
-    data = child.children[0].getDataSH();
-    varType = V_BOOL;
-  } else if (child.type == T_LEN){
-    this.t_len(child, index);
-    data = String(child.getDataSH());
-    varType = V_NUMBER;
-  } else if (child.type == T_NOT){
-    this.t_not(child, index);
-    data = child.children[0].getDataSH();
-    varType = V_BOOL;
-  } else {
-    data = child.getDataSH();
-    if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
+  findBlock(handle) {
+    let block;
+    for (let i = 0; i < this.script.length; i++) {
+      if (this.script[i].type == T_BLOCK && this.script[i].handleSH == handle) {
+        block = i;
+        break;
+      }
+    }
+    return block;
+  }
+
+  getValue(child, index) {
+    let data;
+    let varType = -1;
+    if (mathFunctions.indexOf(child.type) != -1) {
+      this.t_math(child, index);
+      data = child.children[0].getDataSH();
       varType = V_NUMBER;
-    } else if (data == 'true' || data == 'false'){
+    } else if (boolFunctions.indexOf(child.type) != -1 && (child.type != T_NOT)) {
+      this.t_compare(child, index);
+      data = child.children[0].getDataSH();
       varType = V_BOOL;
-      data = (data == 'true');
+    } else if (child.type == T_LEN) {
+      this.t_len(child, index);
+      data = String(child.getDataSH());
+      varType = V_NUMBER;
+    } else if (child.type == T_NOT) {
+      this.t_not(child, index);
+      data = child.children[0].getDataSH();
+      varType = V_BOOL;
     } else {
-      varType = V_STRING;
+      data = child.getDataSH();
+      if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
+        varType = V_NUMBER;
+      } else if (data == 'true' || data == 'false') {
+        varType = V_BOOL;
+        data = (data == 'true');
+      } else {
+        varType = V_STRING;
+      }
     }
-  }
-  let result = {type: varType, data: data};
-  return result;
+    let result = {
+      type: varType,
+      data: data
+    };
+    return result;
   }
 
-  lookAtChildren(activeCell, index, start=1) {
+  lookAtChildren(activeCell, index, start = 1) {
     let onlyNums = true;
     let onlyBools = true;
     let containsString = false;
@@ -267,7 +289,7 @@ getValue(child, index) {
     let isNumbers = [];
     for (let i = start; i < activeCell.children.length; i++) {
       if (activeCell.children[i].type != T_COMMENT) {
-        let result =  this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
+        let result = this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
         vals.push(result['data']);
         if (result['type'] == V_NUMBER) {
           onlyBools = false;
@@ -296,13 +318,13 @@ getValue(child, index) {
     let res = true;
     let myResult = 0;
     if (onlyBools == true) {
-      for (let i = 0; i < vals.length; i++){
+      for (let i = 0; i < vals.length; i++) {
         myResult += int(vals[i]);
       }
       res = (myResult == vals.length);
     }
     if (onlyNums == true) {
-      for (let i = 0; i < vals.length; i++){
+      for (let i = 0; i < vals.length; i++) {
         if (vals[i] == 0) {
           res = false;
         }
@@ -378,7 +400,7 @@ getValue(child, index) {
     this.run = false;
   }
 
-  printStack(){
+  printStack() {
     let readableStack = {};
     for (let i = 0; i < this.stackTrace.length; i++) {
       readableStack[i] = {};
@@ -399,11 +421,11 @@ getValue(child, index) {
       console.table(readableStack);
     }
   }
-  addNote(myString){
+  addNote(myString) {
     this.stackNotes.push([this.stackTrace.length - 1, myString]);
   }
 
-  addToStack(index, dir=1) {
+  addToStack(index, dir = 1) {
     this.stackSizeRecord.push(this.workingStack.length);
     this.stackTrace.push(index);
     this.stackTraceDir.push(dir);
@@ -418,7 +440,7 @@ getValue(child, index) {
   }
 
   updateTurtle() {
-    if (this.weHaveATurtlePeople == true){
+    if (this.weHaveATurtlePeople == true) {
       if (this.tChangeX == true) {
         this.tBuffX.push(parseFloat(this.varMap['turtleX'][0].getDataSH()));
         this.tChangeX = false;
@@ -430,16 +452,16 @@ getValue(child, index) {
       if (this.varMap['turtleDraw'][0].dataSHasType["bool"] == true) {
         this.updateVarMap('turtleDraw', 0);
         while (this.tBuffX.length < this.tBuffY.length) {
-          this.tBuffX.push(this.tBuffX[this.tBuffX.length-1]);
+          this.tBuffX.push(this.tBuffX[this.tBuffX.length - 1]);
         }
-        while(this.tBuffX.length > this.tBuffY.length) {
-          this.tBuffY.push(this.tBuffY[this.tBuffY.length-1]);
+        while (this.tBuffX.length > this.tBuffY.length) {
+          this.tBuffY.push(this.tBuffY[this.tBuffY.length - 1]);
         }
         for (let i = 0; i < this.tBuffX.length - 1; i++) {
           let x1 = this.tBuffX[i];
-          let x2 = this.tBuffX[i+1];
+          let x2 = this.tBuffX[i + 1];
           let y1 = this.tBuffY[i];
-          let y2 = this.tBuffY[i+1];
+          let y2 = this.tBuffY[i + 1];
           this.script[this.turtleIndex].canvas.line(x1, y1, x2, y2);
         }
         this.tBuffX = [];
@@ -491,7 +513,7 @@ getValue(child, index) {
       }
       if (activeCell.children[j].type == T_GOTO) {
         let block = this.findBlock(activeCell.children[j].handleSH);
-        for (let i = 0; i < this.script[block].children.length; i++){
+        for (let i = 0; i < this.script[block].children.length; i++) {
           let myString = String(this.script[block].children[i].getDataSH());
           myOutput += myString.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;") + '<br>';
         }
@@ -525,10 +547,10 @@ getValue(child, index) {
     if (onlyNums) {
       res = parseFloat(vals[0]);
       if (activeCell.type == T_HYPOT) {
-        res = res**2;
+        res = res ** 2;
       }
       for (let i = 1; i < vals.length; i++) {
-        switch(activeCell.type) {
+        switch (activeCell.type) {
           case T_ADD:
             res += parseFloat(vals[i]);
             break;
@@ -548,30 +570,30 @@ getValue(child, index) {
             res += parseFloat(vals[i]);
             break;
           case T_HYPOT:
-            res += parseFloat(vals[i])**2;
-            break;
-          }
-        }
-        switch(activeCell.type) {
-          case T_SQRT:
-            res = sqrt(res);
-            break;
-          case T_SIN:
-            res = sin(res);
-            break;
-          case T_COS:
-            res = cos(res);
-            break;
-          case T_ROUND:
-            res = round(res);
+            res += parseFloat(vals[i]) ** 2;
             break;
         }
-        if (activeCell.type == T_AVERAGE){
-          res = res / vals.length;
-        }
-        if (activeCell.type == T_HYPOT){
+      }
+      switch (activeCell.type) {
+        case T_SQRT:
           res = sqrt(res);
-        }
+          break;
+        case T_SIN:
+          res = sin(res);
+          break;
+        case T_COS:
+          res = cos(res);
+          break;
+        case T_ROUND:
+          res = round(res);
+          break;
+      }
+      if (activeCell.type == T_AVERAGE) {
+        res = res / vals.length;
+      }
+      if (activeCell.type == T_HYPOT) {
+        res = sqrt(res);
+      }
     } else {
       if (activeCell.type == T_ADD) { // concatenate
         res = '';
@@ -640,7 +662,7 @@ getValue(child, index) {
     if (onlyNums == true) {
       let prev = vals[0];
       for (let i = 1; i < vals.length; i++) {
-        switch(activeCell.type) {
+        switch (activeCell.type) {
           case T_EQUAL:
             if (prev != vals[i]) {
               res = false;
@@ -656,13 +678,13 @@ getValue(child, index) {
               res = false;
             }
             break;
-          }
-          prev = vals[i];
+        }
+        prev = vals[i];
       }
     } else {
       let prev = vals[0];
       for (let i = 1; i < vals.length; i++) {
-        switch(activeCell.type) {
+        switch (activeCell.type) {
           case T_EQUAL:
             if (prev != vals[i]) {
               res = false;
@@ -674,8 +696,8 @@ getValue(child, index) {
           case T_LESS:
             res = false
             break;
-          }
-          prev = vals[i];
+        }
+        prev = vals[i];
       }
     }
     // and return
@@ -714,7 +736,7 @@ getValue(child, index) {
     if (res == true) {
       activeCell.dataSH = B_TRUE;
       this.addToStack(activeCell.childIndicies[1]);
-      if (yes.children.length != 0){
+      if (yes.children.length != 0) {
         this.index = yes.childIndicies[0];
         stillIn = true;
       }
@@ -755,7 +777,7 @@ getValue(child, index) {
     if (res == true) {
       activeCell.dataSH = B_TRUE;
       this.addToStack(activeCell.childIndicies[1]);
-      if (yes.children.length != 0){
+      if (yes.children.length != 0) {
         this.index = yes.childIndicies[0];
         stillIn = true;
       }
@@ -766,22 +788,11 @@ getValue(child, index) {
     return stillIn;
   }
 
-  findBlock(handle){
-    let block;
-    for (let i = 0; i < this.script.length; i++) {
-      if (this.script[i].type == T_BLOCK && this.script[i].handleSH == handle){
-        block = i;
-        break;
-      }
-    }
-    return block;
-  }
-
-  t_len(activeCell, index){
+  t_len(activeCell, index) {
     this.addToStack(index);
     activeCell.dataSH = -1;
     if (activeCell.children.length == 2) {
-      if (activeCell.children[1].type == T_GOTO){
+      if (activeCell.children[1].type == T_GOTO) {
         let block = this.findBlock(activeCell.children[1].handleSH);
         activeCell.dataSH = this.script[block].children.length;
       } else if (activeCell.children[1].type == T_BLOCK) {
@@ -796,17 +807,23 @@ getValue(child, index) {
     this.updateVarMap(output, activeCell.getDataSH());
   }
 
-  t_get(activeCell, index){
+  t_get(activeCell, index) {
     this.addToStack(index);
     activeCell.dataSH = -1;
     let getIndex = 0;
     if (activeCell.children.length == 3) {
+      // test this
+      activeCell.updateHandleSH(activeCell.children[2].handleSH);
+      // test this
       if (activeCell.children[2].dataSHasType['isNumber'] == true) {
         getIndex = int(activeCell.children[2].dataSHasType['number']);
       }
     }
     if (activeCell.children.length >= 2) {
-      if (activeCell.children[1].type == T_GOTO){
+      if (activeCell.children[1].type == T_GOTO) {
+        // test this
+        activeCell.updateHandleSH(activeCell.children[1].handleSH);
+        // test this
         let block = this.findBlock(activeCell.children[1].handleSH);
         if (this.script[block].children.length > getIndex) {
           activeCell.dataSH = this.script[block].children[getIndex].getDataSH();
@@ -827,7 +844,7 @@ getValue(child, index) {
     this.updateVarMap(output, activeCell.getDataSH());
   }
 
-  t_set(activeCell, index){
+  t_set(activeCell, index) {
     this.addToStack(index);
     activeCell.dataSH = -1;
     let setIndex = 0;
@@ -838,7 +855,7 @@ getValue(child, index) {
       if (activeCell.children[1].dataSHasType['isNumber'] == true) {
         setIndex = int(activeCell.children[1].dataSHasType['number']);
       }
-      if (activeCell.children[0].type == T_GOTO){
+      if (activeCell.children[0].type == T_GOTO) {
         let block = this.findBlock(activeCell.children[0].handleSH);
         if (this.script[block].children.length > setIndex) {
           this.script[block].children[setIndex].updateDataSH(newValue);
@@ -858,10 +875,10 @@ getValue(child, index) {
             let updatedValue;
             if (setIndex == 0) {
               updatedValue = newValue + oldV.slice(1, oldV.length);
-            } else if (setIndex == oldV.length-1) {
+            } else if (setIndex == oldV.length - 1) {
               updatedValue = oldV.slice(0, setIndex) + newValue;
             } else {
-              updatedValue = oldV.slice(0, setIndex) + newValue + oldV.slice(setIndex+1, oldV.length);
+              updatedValue = oldV.slice(0, setIndex) + newValue + oldV.slice(setIndex + 1, oldV.length);
             }
             this.script[block].updateDataSH(updatedValue);
             handle = this.script[block].handleSH;
@@ -874,4 +891,13 @@ getValue(child, index) {
       this.updateVarMap(handle, newValue);
     }
   }
+
+  t_push(activeCell, index) {
+    this.addToStack(index);
+  }
+
+  t_delete(activeCell, index) {
+    this.addToStack(index);
+  }
+
 };

@@ -121,16 +121,19 @@ tries to make things easier on mobile devices and small screens. Tries.
 Blocks have clickable square handles arranged in the corners and on some edges. Depending on the type of block, different handles may be available. The handles functions are linked to their position in space.
 
 <div id="handles">
-<iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:100px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialHandles"></iframe>
+<iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:200px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialHandles"></iframe>
 </div>
 
 Beginning at pink handle in the top right corner and moving clockwise around the block, the handle functions are:
 - delete
 - copy
-- resize (bottom right)
+- resize
 - expand/collapse
-- mutate (bottom left)
-- move (top left)
+- mutate
+- move
+
+**Some block types do not have some handles.**
+
 
 ### Move
 Using the move handle, blocks can be dragged over other blocks. If the blocks are compatible, the inactive block will change color and the dragged block can be dropped to create a parent/child relationship. When two blocks are not compatible, the relationship will not be made. Try it out below!

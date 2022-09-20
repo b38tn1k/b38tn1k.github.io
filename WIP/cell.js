@@ -54,6 +54,7 @@ class Cell {
     this.handleW = 1.5*r;
     this.handleH = 1.5*r;
     this.graphicUpdate = true;
+    this.specialLayer = null;
     // colors
     this.colors = c;
     if (type == T_START) {
@@ -274,6 +275,11 @@ class Cell {
     // let y = this.y;
     let x = this.viewX;
     let y = this.viewY;
+    if (this.specialLayer) {
+      let sx = x - (this.specialLayer.width - this.width)/2;
+      let sy = y - (this.specialLayer.height - this.height)/2;
+      image(this.specialLayer, int(sx), int(sy));
+    }
     if (this.hide === false){
       // body
       if (this.flash == true) {

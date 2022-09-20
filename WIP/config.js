@@ -80,11 +80,13 @@ var T_PRINT = 27;
 var T_TURTLE = 0;
 var T_INLET = 201;
 var T_ROUND = 4;
+var T_PUSH = 41;
+var T_DELETE = 44;
 
 
 
 var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
-// var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND];
+// var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND, T_PUSH, T_DELETE];
 // for (let i = 0; i < 55; i++) {
 //   if (everyone.indexOf(i) == -1){
 //     console.log('FREE:', i);
@@ -94,7 +96,7 @@ var userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_CONST, T_ASSIGN, T_IF, T_WH
 var notStartOrConsole = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND];
 var notStartOrConsoleOrSpecial = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND];
 var notStartOrConsoleOrOutlet = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND];
-var numberyOnes = [T_COMMENT, T_OUTLET, T_CONST, T_VAR, T_INPUT, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_COS, T_SIN, T_LEN, T_GET, T_ROUND];
+var numberyOnes = [T_OUTLET, T_COMMENT, T_CONST, T_VAR, T_INPUT, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_COS, T_SIN, T_LEN, T_GET, T_ROUND];
 var boolyOnes = [T_COMMENT, T_OUTLET, T_NOT, T_EQUAL, T_GREATER, T_LESS];
 var conditionallyOnes = boolyOnes.concat(numberyOnes);
 
@@ -104,7 +106,7 @@ var utilities = [T_COMMENT, T_PRINT, T_TURTLE];
 var conditionals = [T_IF, T_WHILE];
 var containers = [T_BLOCK, T_CONST, T_INPUT];
 var handles = [T_GOTO, T_VAR, T_ASSIGN];
-var arrayTools = [T_LEN, T_GET, T_SET];
+var arrayTools = [T_LEN, T_GET, T_SET, T_PUSH, T_DELETE];
 
 
 var blockConfig = {};
@@ -145,6 +147,8 @@ blockConfig[T_LEN] = {};
 blockConfig[T_GET] = {};
 blockConfig[T_SET] = {};
 blockConfig[T_ROUND] = {};
+blockConfig[T_PUSH] = {};
+blockConfig[T_DELETE] = {};
 
 
 blockConfig[T_BLOCK]['block label'] = "set block";
@@ -181,9 +185,11 @@ blockConfig[T_INLET]['block label'] = "inlet";
 blockConfig[T_SIN]['block label'] = "sin";
 blockConfig[T_COS]['block label'] = "cos";
 blockConfig[T_LEN]['block label'] = "length";
-blockConfig[T_GET]['block label'] = "get index value";
-blockConfig[T_SET]['block label'] = "set index value";
+blockConfig[T_GET]['block label'] = "get";
+blockConfig[T_SET]['block label'] = "set";
 blockConfig[T_ROUND]['block label'] = "round";
+blockConfig[T_PUSH]['block label'] = "push";
+blockConfig[T_DELETE]['block label'] = "delete";
 
 blockConfig[T_BLOCK]['accept child'] = notStartOrConsoleOrSpecial;
 blockConfig[T_VAR]['accept child'] = [T_COMMENT]; //nothing
@@ -222,6 +228,8 @@ blockConfig[T_INLET]['accept child'] = [];
 blockConfig[T_LEN]['accept child'] = [T_OUTLET, T_BLOCK, T_GOTO, T_CONST, T_VAR, T_INPUT];
 blockConfig[T_GET]['accept child'] = [T_OUTLET, T_BLOCK, T_GOTO, T_CONST, T_VAR, T_INPUT];
 blockConfig[T_SET]['accept child'] = [T_BLOCK, T_GOTO, T_VAR, T_INPUT, T_CONST];
+blockConfig[T_PUSH]['accept child'] = numberyOnes.slice(1);
+blockConfig[T_DELETE]['accept child'] = numberyOnes.slice(1);
 
 blockConfig[T_BLOCK]['max children'] = 100;
 blockConfig[T_GOTO]['max children'] = 0;
@@ -260,6 +268,8 @@ blockConfig[T_INLET]['max children'] = 2;
 blockConfig[T_LEN]['max children'] = 2;
 blockConfig[T_GET]['max children'] = 3;
 blockConfig[T_SET]['max children'] = 3;
+blockConfig[T_PUSH]['max children'] = 1;
+blockConfig[T_DELETE]['max children'] = 1;
 
 var I_NONE = 0;
 var I_TEXT = 1;
@@ -304,6 +314,8 @@ blockConfig[T_INLET]['input type'] = I_NONE;
 blockConfig[T_LEN]['input type'] = I_NONE;
 blockConfig[T_GET]['input type'] = I_NONE;
 blockConfig[T_SET]['input type'] = I_NONE;
+blockConfig[T_PUSH]['input type'] = I_SELECT;
+blockConfig[T_DELETE]['input type'] = I_SELECT;
 
 blockConfig[T_BLOCK]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_GOTO]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
@@ -342,6 +354,8 @@ blockConfig[T_INLET]['handles'] = {'move' : false, 'resize'  : false, 'delete'  
 blockConfig[T_LEN]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_GET]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_SET]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
+blockConfig[T_PUSH]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
+blockConfig[T_DELETE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 
 function colorToHTMLRGB(color) {
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";

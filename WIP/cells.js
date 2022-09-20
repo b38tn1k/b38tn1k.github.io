@@ -604,6 +604,8 @@ class Cells {
     jlog('Cells', 'mapAndLink');
     let map = {};
     map[T_GOTO] = [];
+    map[T_PUSH] = [];
+    map[T_DELETE] = [];
     map[T_VAR] = [];
     map[T_OUTLET] = [];
     let varTable = {};
@@ -623,6 +625,8 @@ class Cells {
       // read from block names
       if (this.cells[i].type == T_BLOCK) {
         map[T_GOTO].push(this.cells[i].handleSH);
+        map[T_PUSH].push(this.cells[i].handleSH);
+        map[T_DELETE].push(this.cells[i].handleSH);
       }
       // make pretty
       this.cells[i].reshape();
@@ -630,6 +634,8 @@ class Cells {
     map[T_VAR] = map[T_VAR].concat(['outlet', 'random', 'year', 'month#', 'monthS', 'day#', 'dayS', 'hour', 'minute', 'second', 'millis']);
     map[T_OUTLET].push('outlet');
     map[T_GOTO].push('none');
+    map[T_PUSH].push('none');
+    map[T_DELETE].push('none');
 
     for (let i = 0; i < this.length; i++) {
       this.cells[i].updateOptions(map);

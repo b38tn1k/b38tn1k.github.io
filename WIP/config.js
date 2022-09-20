@@ -1,5 +1,5 @@
 let printStack = true;
-printStack = false;
+// printStack = false;
 var backupObject;
 var mobileHack = false;
 var mobileHackActual = false;

@@ -357,6 +357,8 @@ class Cells {
 
   doDelete(x, y, mdown) {
     jlog('Cells', 'doDelete');
+    this.rebuildMenuFlag = true;
+    let gotoVarHandleCatcher = [];
     let rebuildFlag = false;
     let delHandle = [];
     if (this.length == 1) { // last cell
@@ -372,6 +374,9 @@ class Cells {
         } else {
           if (this.cells[i].handleSH) {
             rebuildFlag = true;
+            if (this.cells[i].type == T_VAR || this.cells[i].type == T_GOTO){
+              gotoVarHandleCatcher.push(this.cells[i].handleSH);
+            }
             if (this.cells[i].handleSH != 'outlet') {
               delHandle.push(this.cells[i].handleSH);
               this.varHandles.splice(this.varHandles.indexOf(this.cells[i].handleSH), 1);
@@ -426,11 +431,16 @@ class Cells {
           this.cells[i].buildDivs();
         }
       }
+      for (let i = 0; i < gotoVarHandleCatcher.length; i++){
+        delHandle.push(gotoVarHandleCatcher[i]);
+      }
       for (let i = 0; i < this.length; i++) {
         if (blockConfig[this.cells[i].type]['input type'] == I_SELECT) {
           if (delHandle.indexOf(this.cells[i].handleSH) == -1) {
             this.cells[i].input.option(this.cells[i].handleSH);
             this.cells[i].input.selected(this.cells[i].handleSH);
+          } else {
+            this.cells[i].input.option('unset');
           }
         }
       }

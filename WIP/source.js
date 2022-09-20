@@ -47,6 +47,7 @@ function preload() {
   demos.push(loadJSON('assets/demo8.json'));
   demos.push(loadJSON('assets/demo9.json'));
   demos.push(loadJSON('assets/demo10.json'));
+  demos.push(loadJSON('assets/demo11.json'));
 }
 
 function setup() {

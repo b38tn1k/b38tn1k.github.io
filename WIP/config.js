@@ -96,7 +96,7 @@ var userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_CONST, T_ASSIGN, T_IF, T_WH
 var notStartOrConsole = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND];
 var notStartOrConsoleOrSpecial = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND];
 var notStartOrConsoleOrOutlet = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND];
-var numberyOnes = [T_OUTLET, T_COMMENT, T_CONST, T_VAR, T_INPUT, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_COS, T_SIN, T_LEN, T_GET, T_ROUND];
+var numberyOnes = [T_OUTLET, T_COMMENT, T_CONST, T_VAR, T_INPUT, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_COS, T_SIN, T_LEN, T_GET, T_ROUND, T_LEN];
 var boolyOnes = [T_COMMENT, T_OUTLET, T_NOT, T_EQUAL, T_GREATER, T_LESS];
 var conditionallyOnes = boolyOnes.concat(numberyOnes);
 
@@ -220,7 +220,7 @@ blockConfig[T_START]['accept child'] = notStartOrConsoleOrSpecial;
 blockConfig[T_STOP]['accept child'] = [];
 blockConfig[T_ASSIGN]['accept child'] = [T_VAR, T_INPUT, T_CONST, T_COMMENT];
 blockConfig[T_CONSOLE]['accept child'] = [];
-blockConfig[T_PRINT]['accept child'] = [T_VAR, T_INPUT, T_CONST, T_COMMENT, T_GOTO, T_BLOCK];
+blockConfig[T_PRINT]['accept child'] = [T_VAR, T_INPUT, T_CONST, T_COMMENT, T_GOTO, T_BLOCK, T_GET];
 blockConfig[T_COMMENT]['accept child'] = [];
 blockConfig[T_CONST]['accept child'] = [T_COMMENT];
 blockConfig[T_TURTLE]['accept child'] = [T_INLET];

@@ -237,7 +237,7 @@ class Controller {
   findBlock(handle) {
     let block;
     for (let i = 0; i < this.script.length; i++) {
-      if (this.script[i].type == T_BLOCK && this.script[i].handleSH == handle) {
+      if ((this.script[i].type == T_BLOCK || this.script[i].type == T_INPUT) && this.script[i].handleSH == handle) {
         block = i;
         break;
       }
@@ -507,15 +507,30 @@ class Controller {
   buildPrintString(activeCell, depth){
     depth += 1;
     if (depth > 20) {
-      return 'arg exceeds maximum depth';
+      return 'max depth';
     }
     let myOutput = '';
     for (let j = 0; j < activeCell.children.length; j++) {
-      if (activeCell.children[j].type == T_GOTO || activeCell.children[j].type == T_BLOCK) {
+      if (activeCell.children[j].type == T_GET) {
+        this.t_arrayOp(activeCell.children[j], activeCell.childIndicies[j]);
+        if (activeCell.children[j].dataSH.indexOf('object:') == -1){
+          myOutput += activeCell.children[j].dataSH;
+        } else {
+          let myInd = this.unpackGet(activeCell.children[j]);
+          console.log(myInd);
+          if (this.script[myInd].type == T_BLOCK || this.script[myInd].type == T_GOTO){
+            myOutput += '[';
+            myOutput += this.buildPrintString(this.script[myInd], depth);
+            myOutput += ']';
+          } else {
+            myOutput += this.script[myInd].getDataSHForPrint();
+          }
+        }
+      } else if (activeCell.children[j].type == T_GOTO || activeCell.children[j].type == T_BLOCK) {
         let block = this.findBlock(activeCell.children[j].handleSH);
-        myOutput += '['
+        myOutput += '[';
         myOutput += this.buildPrintString(this.script[block], depth);
-        myOutput += ']'
+        myOutput += ']';
       } else if (activeCell.children[j].type != T_COMMENT) {
         myOutput += String(this.script[activeCell.childIndicies[j]].getDataSHForPrint());
       }
@@ -817,8 +832,38 @@ class Controller {
     this.updateVarMap(output, activeCell.getDataSH());
   }
 
+  unpackGet(getBlock){
+    if (getBlock.dataSH.indexOf('object:') != -1){
+      let index = parseInt(getBlock.dataSH.slice('object:'.length));
+      if (String(this.script[index].handleSH) == 'undefined') {
+        return index;
+      } else {
+        return this.findBlock(this.script[index].handleSH);
+      }
+    } else {
+      return getBlock.dataSH;
+    }
+  }
+
   t_arrayOp(activeCell, index) {
     this.addToStack(index);
+    let blockIndex = this.findBlock(activeCell.handleSH);
+    let myInd = parseInt(activeCell.children[0].dataSH);
+    if (activeCell.type == T_GET) {
+      if (this.script[blockIndex].type == T_INPUT){
+        let target = String(this.script[blockIndex].dataSH);
+        let dataval = target[myInd % target.length];
+        activeCell.updateDataSH(dataval);
+      } else {
+        let target = this.script[blockIndex].children;
+        let child = target[myInd % target.length];
+        if (String(child.dataSH) != 'undefined') {
+          activeCell.updateDataSH(child.dataSH);
+        } else {
+          activeCell.updateDataSH("object:" + this.script[blockIndex].childIndicies[myInd % target.length]);
+        }
+      }
+    }
   }
 
 };

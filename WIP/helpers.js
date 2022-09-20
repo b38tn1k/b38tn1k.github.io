@@ -108,6 +108,26 @@ function saveCells() {
   setTidyFlag();
 }
 
+function loadBackup() {
+  jlog('Main', 'loadBackup');
+  console.log(backupObject);
+  clearCells();
+  cells.cells[0].indexLabeldiv.remove();
+  cells.cells[1].indexLabeldiv.remove();
+  cells.cells = [];
+  let myLoaderMap = JSON.parse(backupObject);
+  for (key in Object.keys(myLoaderMap)) {
+    cells.addCellWithInfo(myLoaderMap[key]);
+  }
+  for (key in Object.keys(myLoaderMap)) {
+    cells.linkChildren(key, myLoaderMap[key]);
+  }
+  for (let i = 0; i < this.length; i++) {
+    this.cells[i].reshape(true);
+  }
+  setTidyFlag();
+}
+
 function shareLink() {
   jlog('Main', 'shareLink');
   shareLinkString = cells.putInAddyBar();
@@ -331,7 +351,7 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ sleep sort(a)</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ draw polygons</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[10])">+ array get</a><br>', true);
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="loadCells(demos[11])">+ dumbzone</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[11])">+ array push</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);

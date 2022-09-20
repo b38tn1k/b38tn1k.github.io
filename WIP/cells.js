@@ -210,6 +210,22 @@ class Cells {
     }
   }
 
+  pushChild(myBlockIndex, myBlock, childData){
+    let type = T_CONST; // for now :-/
+    let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
+    let child = new Cell(T_CONST, myBlock.viewX, myBlock.viewY, this.dWidth, this.dHeight, c, this.dRadius);
+    child.updateDataSH(childData);
+    child.updateHandleSH('newData');
+    child.input.value(childData, childData);
+    myBlock.addChild(this.length, child);
+    child.addParent(myBlockIndex, myBlock);
+    this.cells.push(child);
+    this.rebuildMenuFlag = true;
+    myBlock.reshape();
+
+    return child;
+  }
+
   addCell(type, startX, y = 17) {
     jlog('Cells', 'addCell');
     this.rebuildMenuFlag = true;
@@ -236,9 +252,14 @@ class Cells {
       // this.cells[pIndex].indexLabeldiv.html(this.cells[pIndex].textLabel);
       this.varHandles.push(tempID);
     }
-    if (type == T_IF || type == T_WHILE) {
+    if (type == T_IF || type == T_WHILE || type == T_FOR) {
       let counter = 2;
-      this.cells.push(new Cell(T_CONDITION, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+      if (type == T_FOR) {
+        this.cells.push(new Cell(T_RANGE, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+        this.cells[pIndex + 1].updateHandleSH('outlet');
+      } else {
+        this.cells.push(new Cell(T_CONDITION, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+      }
       this.cells.push(new Cell(T_DO, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       for (let i = 1; i <= counter; i++) {
         this.cells[pIndex].addChild(pIndex + i, this.cells[pIndex + i], true);
@@ -621,11 +642,12 @@ class Cells {
     map[T_SET] = [];
     map[T_VAR] = [];
     map[T_OUTLET] = [];
+    map[T_RANGE] = [];
     let varTable = {};
     for (let i = 0; i < this.length; i++) {
       // grab everything
       this.cells[i].updateSHs();
-      if ((this.cells[i].type == T_WHILE) || this.cells[i].type == T_IF || this.cells[i].type == T_CONDITION) {
+      if ((this.cells[i].type == T_WHILE) || this.cells[i].type == T_IF || this.cells[i].type == T_FOR || this.cells[i].type == T_CONDITION || this.cells[i].type == T_RANGE) {
         this.cells[i].dataSH = B_UNSET;
       }
       // create variable map
@@ -637,6 +659,7 @@ class Cells {
         map[T_DELETE].push(this.cells[i].handleSH);
         map[T_GET].push(this.cells[i].handleSH);
         map[T_SET].push(this.cells[i].handleSH);
+        map[T_RANGE].push(this.cells[i].handleSH);
         varTable[this.cells[i].handleSH] = this.cells[i].getDataSH();
       }
       // read from block names
@@ -652,6 +675,7 @@ class Cells {
     }
     map[T_VAR] = map[T_VAR].concat(['outlet', 'random', 'year', 'month#', 'monthS', 'day#', 'dayS', 'hour', 'minute', 'second', 'millis']);
     map[T_OUTLET].push('outlet');
+    map[T_RANGE].push('outlet');
     map[T_GOTO].push('unset');
     map[T_PUSH].push('unset');
     map[T_DELETE].push('unset');

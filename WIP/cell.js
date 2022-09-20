@@ -14,6 +14,9 @@ class Cell {
     this.dataSH;
     this.dataSHasType = {};
     this.handleSH = 'unset';
+    if (type == T_VAR || type == T_OUTLET || type == T_RANGE) {
+      this.handleSH = 'outlet';
+    }
     this.type = type
     this.textLabel = blockConfig[this.type]['block label'];
     if (this.type == T_BLOCK){
@@ -148,6 +151,7 @@ class Cell {
     this.handleSH = newHandle;
     if (this.type == T_BLOCK || this.type == T_INPUT){
       this.textLabel = '<strong><a href="javascript:void(0)" onclick="toggleInput(\''+String(this.handleSH)+'\',' + String(this.type) + ')">' + blockConfig[this.type]['block label'] + '</a></strong>';
+      this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
       this.updateView(this.viewX - this.x, this.viewY - this.y);
       this.updateAllDivPositions();
       this.refresh();
@@ -157,13 +161,16 @@ class Cell {
     }
     if (this.type == T_VAR) {
       this.input.selected(newHandle);
+      this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
     }
     if (this.type == T_GOTO) {
       this.input.selected(newHandle);
-    }
-    if (newHandle){
       this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
     }
+
+    // if (newHandle != 'unset' && String(newHandle) != 'undefined'){
+    //   this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
+    // }
   }
 
   reStyle() {
@@ -704,6 +711,9 @@ class Cell {
           this.updateHandleSH(this.input.value());
           break;
         case T_SET:
+          this.updateHandleSH(this.input.value());
+          break;
+        case T_RANGE:
           this.updateHandleSH(this.input.value());
           break;
         case T_PUSH:

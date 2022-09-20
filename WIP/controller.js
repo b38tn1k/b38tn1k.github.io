@@ -1,6 +1,7 @@
 class Controller {
   constructor() {
     this.script;
+    this.envChanged = false;
     this.index = 0;
     this.stackTrace = [];
     this.workingStack = [];
@@ -139,6 +140,12 @@ class Controller {
               this.moveByParent();
             }
             break;
+          case T_FOR:
+            let stillInFor = this.t_for(this.activeCell, this.index);
+            if (stillInFor == false) {
+              this.moveByParent();
+            }
+            break;
           case T_ELSE:
             this.index = this.script[this.index].parent;
             break;
@@ -176,6 +183,9 @@ class Controller {
         this.run = false;
         this.script[this.stackTrace[this.stackTrace.length - 2]].flash = false;
         this.printStack();
+        if (this.envChanged == true) {
+          this.d_print('Your environment was updated. Click <a style="color: blue;" href="javascript:void(0)" onclick="loadBackup();">here</a> to reset, or do nothing to continue.<br>')
+        }
       }
     } catch (error) {
       this.script[1].indexLabeldiv.html('\n' + error, true);
@@ -209,6 +219,15 @@ class Controller {
       currentI = this.workingStack.pop();
       this.addToStack(currentI, 0);
     }
+    if (this.script[currentI].type == T_RANGE && this.script[this.script[currentI].parent].type == T_FOR) {
+      let target = this.script[currentI].dataSHasType['number'];
+      let counter = this.script[this.script[currentI].parent].dataSHasType['number'];
+      if (target < counter) {
+        this.script[this.script[currentI].parent].updateDataSH(B_UNSET);
+        currentI = this.workingStack.pop();
+        this.addToStack(currentI, 0);
+      }
+    }
     if (this.script[currentI].type == T_CONDITION && this.script[this.script[currentI].parent].type == T_WHILE) {
       let shrinkStack = this.workingStack.indexOf(this.script[currentI].parent);
       this.workingStack = this.workingStack.slice(0, shrinkStack + 1);
@@ -221,6 +240,7 @@ class Controller {
     this.script[currentI].flash = false;
     if (this.workingStack.length < 1) {
       this.index = this.terminate;
+      return;
     } else {
       let callerI = this.workingStack[this.workingStack.length - 1];
       let callerC = this.script[callerI];
@@ -342,6 +362,8 @@ class Controller {
       this.index = 0;
       cells.mapAndLink(); // freeze the thing
       cells.mapAndLink(); // do it twice for fun
+      backupObject = JSON.stringify(cells.saveCells());
+      this.envChanged = false;
       this.script = cells.cells;
       this.terminate = this.script.length + 1;
       this.stackTrace = [];
@@ -351,6 +373,7 @@ class Controller {
       this.tBuffX = [];
       this.tBuffY = [];
       this.varMap = {};
+      this.varMap['outlet'] = [];
       this.weHaveATurtlePeople = false;
       this.stackNotes = [];
       this.stackSizeRecord = [];
@@ -435,7 +458,11 @@ class Controller {
     }
     let varRecAtom = '';
     for (key in this.varMap) {
-      varRecAtom += String(key) + ": " + this.varMap[key][0].getDataSH() + ' | ';
+      if (this.varMap[key].length > 0) {
+        varRecAtom += String(key) + ": " + this.varMap[key][0].getDataSH() + ' | ';
+      } else {
+        varRecAtom += String(key);
+      }
     }
     this.varRecord.push(varRecAtom);
   }
@@ -517,7 +544,6 @@ class Controller {
           myOutput += activeCell.children[j].dataSH;
         } else {
           let myInd = this.unpackGet(activeCell.children[j]);
-          console.log(myInd);
           if (this.script[myInd].type == T_BLOCK || this.script[myInd].type == T_GOTO){
             myOutput += '[';
             myOutput += this.buildPrintString(this.script[myInd], depth);
@@ -539,6 +565,12 @@ class Controller {
       }
     }
     return myOutput;
+  }
+
+  d_print(myString){
+    this.script[1].indexLabeldiv.html('<br>' + myString + '<br>', true);
+    this.script[1].lineNumber += 1;
+    this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
   }
 
   t_print(activeCell, index) {
@@ -788,6 +820,28 @@ class Controller {
     }
   }
 
+  t_for(activeCell, index) {
+    this.addToStack(index);
+    let stillIn = false;
+    if (activeCell.children[0].children.length > 0) {
+      this.addToStack(activeCell.childIndicies[0]);
+      let repeats = activeCell.children[0].children[0].dataSHasType['number'];
+      activeCell.children[0].updateDataSH(repeats);
+      activeCell.updateDataSH(activeCell.dataSHasType['number'] + 1);
+      if (activeCell.dataSH <= repeats) {
+        stillIn = true;
+      }
+      this.updateVarMap(activeCell.children[0].handleSH, activeCell.getDataSH());
+    }
+    if (stillIn == true) {
+      if (activeCell.children[1].children.length > 0) {
+        this.addToStack(activeCell.childIndicies[1]);
+        this.index = activeCell.children[1].childIndicies[0];
+      }
+    }
+    return stillIn;
+  }
+
   t_while(activeCell, index) {
     this.addToStack(index);
     let conditions = activeCell.children[0];
@@ -863,6 +917,20 @@ class Controller {
           activeCell.updateDataSH("object:" + this.script[blockIndex].childIndicies[myInd % target.length]);
         }
       }
+    } else if (activeCell.type == T_PUSH) {
+      this.envChanged = true;
+      let childData = 0;
+      if (activeCell.children.length > 0){
+        childData = activeCell.children[0].getDataSH();
+      }
+      let newChild = cells.pushChild(blockIndex, this.script[blockIndex], childData);
+      this.script.push(newChild);// = cells.cells;
+      this.addToStack(blockIndex);
+      this.terminate = this.script.length + 1;
+
+      // console.log(this.script.length);
+      // this.script.push(newChild);
+      // console.log(this.script.length);
     }
   }
 

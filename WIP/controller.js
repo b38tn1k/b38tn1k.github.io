@@ -179,6 +179,7 @@ class Controller {
       }
     } catch (error) {
       this.script[1].indexLabeldiv.html('\n' + error, true);
+      console.log(error);
     }
   }
 
@@ -503,23 +504,37 @@ class Controller {
     return stillIn;
   }
 
-  t_print(activeCell, index) {
-    this.addToStack(index);
-    let myOutput = '<br>' + this.script[1].lineNumber + ': ';
+  buildPrintString(activeCell, depth){
+    depth += 1;
+    if (depth > 20) {
+      return 'arg exceeds maximum depth';
+    }
+    let myOutput = '';
     for (let j = 0; j < activeCell.children.length; j++) {
-      if (activeCell.children[j].type != T_COMMENT && activeCell.children[j].type != T_GOTO) {
-        let myString = String(this.script[activeCell.childIndicies[j]].getDataSH());
-        myOutput += myString.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-      }
-      if (activeCell.children[j].type == T_GOTO) {
+      if (activeCell.children[j].type == T_GOTO || activeCell.children[j].type == T_BLOCK) {
         let block = this.findBlock(activeCell.children[j].handleSH);
-        for (let i = 0; i < this.script[block].children.length; i++) {
-          let myString = String(this.script[block].children[i].getDataSH());
-          myOutput += myString.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;") + '<br>';
+        myOutput += '['
+        myOutput += this.buildPrintString(this.script[block], depth);
+        myOutput += ']'
+      } else if (activeCell.children[j].type != T_COMMENT) {
+        myOutput += String(this.script[activeCell.childIndicies[j]].getDataSH());
+        if (j < activeCell.children.length-1) {
+          myOutput += ', ';
         }
       }
     }
-    this.script[1].indexLabeldiv.html(myOutput, true);
+    return myOutput;
+  }
+
+  t_print(activeCell, index) {
+    this.addToStack(index);
+    let myOutput = this.script[1].lineNumber + ': '
+    if (this.script[1].lineNumber == 0) {
+      myOutput = '<br>' + this.script[1].lineNumber + ': ';
+    }
+
+    let myString = this.buildPrintString(activeCell, 0);
+    this.script[1].indexLabeldiv.html(myOutput + myString.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;") + '<br>', true);
     this.script[1].lineNumber += 1;
     this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
   }

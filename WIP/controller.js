@@ -963,7 +963,7 @@ class Controller {
         console.log(childData);
       }
       if (blockType == T_INPUT) {
-        this.script[blockIndex].updateDataSH(this.script[blockIndex].dataSHasType['string'] + String(childData));
+        this.script[blockIndex].updateDataSH(this.script[blockIndex].dataSHasType['string'] + String(childData), true);
         console.log(this.script[blockIndex].dataSH);
       } else {
         let newChild = cells.pushChild(blockIndex, this.script[blockIndex], childData);

@@ -72,11 +72,6 @@ function setup() {
 var notIdle = true;
 function draw() {
   notIdle = (focused == true || cells.redrawFlag == true || cells.run==true || controller.tidyFlag == true || testTimer != TST_OFF || tidyFlag > 0 || millis() < 10000);
-  // if (mobileHack == true && cells.activeIndex == -1){
-  //   mainDiv.scrollTop = 0;
-  //   mainDiv.scrollLeft = 0;
-  // }
-  // doJLOG = cells.run;
   if (showFPS == true){
     controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
   }

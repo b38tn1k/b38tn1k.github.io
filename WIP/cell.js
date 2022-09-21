@@ -261,10 +261,10 @@ class Cell {
     }
   }
 
-  updateDataSH(value) {
+  updateDataSH(value, hard=false) {
     jlog('Cell', 'updateDataSH');
     this.dataSH = value;
-    if (this.type == T_INPUT){
+    if (this.type == T_INPUT && hard==true){
       this.input.value(value, value);
     }
     // if (/^\d+\.\d+$/.test(String(value)) == true) {

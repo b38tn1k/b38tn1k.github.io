@@ -831,7 +831,7 @@ class Controller {
       if (activeCell.dataSH <= repeats) {
         stillIn = true;
       }
-      this.updateVarMap(activeCell.children[0].handleSH, activeCell.getDataSH());
+      this.updateVarMap(activeCell.children[0].handleSH, activeCell.dataSHasType['number'] -1);
     }
     if (stillIn == true) {
       if (activeCell.children[1].children.length > 0) {

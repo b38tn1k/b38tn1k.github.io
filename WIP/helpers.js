@@ -306,7 +306,7 @@ function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
-    let bad = [T_PUSH, T_DELETE, T_SET, T_GET];
+    let bad = [T_DELETE, T_SET];
     menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">data containers</a><br>', true);
     if (subMenu == 1) {
       addBlockMenuList(containers, bad);

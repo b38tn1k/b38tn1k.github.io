@@ -1,5 +1,5 @@
 let printStack = true;
-printStack = false;
+let clickDebug = false;
 var backupObject;
 var mobileHack = false;
 var mobileHackActual = false;
@@ -8,7 +8,7 @@ var fontSizeString = '12px';
 var doJLOG = false;
 function jlog(classname, label) {
   if (doJLOG == true) {
-    console.debug(classname, label);
+    console.debug(classname, label, (millis()/1000).toFixed(1));
     logCounter += 1;
     if (logCounter == 100) {
       console.clear();

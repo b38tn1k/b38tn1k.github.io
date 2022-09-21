@@ -582,10 +582,23 @@ class Controller {
     return myOutput;
   }
 
-  d_print(myString){
-    this.script[1].indexLabeldiv.html('<br>' + myString + '<br>', true);
-    this.script[1].lineNumber += 1;
-    this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
+  d_print(myString, inplace=false, flagString=''){
+    if (!this.script){
+      this.script = cells.cells;
+    }
+    if (inplace == true) {
+      let htmlString = this.script[1].indexLabeldiv.html();
+      if (htmlString.indexOf(flagString) != -1){
+        htmlString = htmlString.slice(0, htmlString.indexOf(flagString))
+
+      }
+      htmlString += flagString + myString;
+      this.script[1].indexLabeldiv.html(htmlString);
+    } else {
+      this.script[1].indexLabeldiv.html('<br>' + myString + '<br>', true);
+      this.script[1].lineNumber += 1;
+      this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
+    }
   }
 
   t_print(activeCell, index) {

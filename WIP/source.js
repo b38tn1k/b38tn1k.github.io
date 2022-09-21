@@ -60,6 +60,7 @@ function setup() {
   mobileSettings()
   controller = new Controller();
   menu = createDiv();
+  devDiv = createDiv();
   createMenuDiv();
   xOff = 0;
   yOff = 0;
@@ -68,17 +69,29 @@ function setup() {
   doLastBit();
 }
 
+var notIdle = true;
 function draw() {
+  notIdle = (focused == true || cells.redrawFlag == true || cells.run==true || controller.tidyFlag == true || testTimer != TST_OFF);
   // if (mobileHack == true && cells.activeIndex == -1){
   //   mainDiv.scrollTop = 0;
   //   mainDiv.scrollLeft = 0;
   // }
   // doJLOG = cells.run;
+  if (showFPS == true){
+    controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
+  }
+  if (notIdle == true){
+    fpsSetValue = 30;
+  } else {
+    fpsSetValue = 5;
+  }
   if (redrawCounter != 0) {
     clear();
   }
-  mouseDrag();
-  cells.updateView(xPos, yPos, doMouseDrag);
+  if (notIdle == true) {
+    mouseDrag();
+    cells.updateView(xPos, yPos, doMouseDrag);
+  }
   if (redrawCounter != 0) {
     drawGrid();
     cells.draw();
@@ -87,7 +100,9 @@ function draw() {
   if (cells.redrawFlag == true || cells.run == true){
     redrawCounter = 2;
   }
-  cells.update(mouseX, mouseY, mouseIsPressed);
+  if (notIdle == true) {
+    cells.update(mouseX, mouseY, mouseIsPressed);
+  }
   if (redrawCounter != 0) {
     controller.update(cells, flash, fastMode);
   }
@@ -101,7 +116,7 @@ function draw() {
     if (redrawCounter != 0) {
       frameRate(100);
     } else {
-      frameRate(30);
+      frameRate(fpsSetValue);
     }
   }
   if (tidyFlag > 0) {

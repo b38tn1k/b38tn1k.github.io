@@ -1,4 +1,4 @@
-var bgGrid, widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString;
+var bgGrid, widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, devDiv;
 var xPos, yPos, xStart, yStart, xOff, yOff, doMouseDrag;
 var allColors = {};
 var showBlockMenu = false;
@@ -24,6 +24,8 @@ var tutorialstring = '';
 var hideMenu = false;
 var disableDrag = false;
 var mainDiv;
+var showDev = false;
+var showFPS = false;
 
 function newCell(type, x =-1, y =-1) {
   jlog('Main', 'newCell');
@@ -369,11 +371,9 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="toggleFlash()">flash off</a><br>', true);
   }
   menu.html('<a href="javascript:void(0)" onclick="imlost()">center</a><br>', true);
-  menu.html('<br><a href="javascript:void(0)" onclick="saveCells()">save</a><br>', true);
   if (shareLinkGenerated == true) {
     menu.html('<a href="javascript:void(0)" onclick="shareLink()">reshare</a><br>', true);
     menu.html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
-
   } else {
     menu.html('<a href="javascript:void(0)" onclick="shareLink()">share</a><br>', true);
   }
@@ -382,8 +382,10 @@ function createMenuDiv() {
   } else {
     menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">zoom in</a><br>', true);
   }
-  menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br>refresh if zoomed</small></span>', true);
+  menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br><a href="javascript:void(0)" onclick="showDevDiv();">dev div</a><br>refresh if zoomed</small></span>', true);
+  menu.html('', true);
   menu.html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
+
 
   menu.position(10, 10);
   if (mobileHack == false){
@@ -406,6 +408,27 @@ function createMenuDiv() {
   } else {
     menu.show();
   }
+}
+
+function showDevDiv(){
+  showDev = ! showDev;
+  if (showDev == false){
+    devDiv.remove();
+    return;
+  }
+  devDiv = createDiv();
+  devDiv.style('font-size', '12px');
+  devDiv.style('background-color', 'DimGray');
+  devDiv.style('padding', '10px');
+  devDiv.style('outline', '1px solid black');
+  // devDiv.style('overflow', "auto");
+  devDiv.html('<a href="javascript:void(0)" onclick="saveCells()">save json</a><br>', true);
+  devDiv.html('<a href="javascript:void(0)" onclick="showFPS = !showFPS;">show FPS</a><br>', true);
+  devDiv.html('<a href="javascript:void(0)" onclick="clickDebug = !clickDebug;console.log(\'click debug\', clickDebug)">click log</a><br>', true);
+  devDiv.html('<a href="javascript:void(0)" onclick="printStack = !printStack;console.log(\'print stack\', printStack)">stack log</a><br>', true);
+  devDiv.html('<a href="javascript:void(0)" onclick="doJLOG = !doJLOG;">all the logs</a><br>', true);
+
+  devDiv.position(windowWidth - (30 + devDiv.size().width), 10);
 }
 
 function setupScreen() {

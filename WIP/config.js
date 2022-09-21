@@ -6,16 +6,34 @@ var mobileHackActual = false;
 var selectChanged = true;
 var fontSizeString = '12px';
 var doJLOG = false;
-function jlog(classname, label) {
-  if (doJLOG == true) {
-    console.debug(classname, label, (millis()/1000).toFixed(1));
-    logCounter += 1;
-    if (logCounter == 100) {
-      console.clear();
-    }
-  }
-}
-
+var bgGrid, widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, devDiv;
+var xPos, yPos, xStart, yStart, xOff, yOff, doMouseDrag;
+var allColors = {};
+var showBlockMenu = false;
+var showDemoMenu = false;
+var shareLinkGenerated = false;
+var slowMode = false;
+var fastMode = false;
+var speedMode = 0;
+var flash = true;
+var gridSize = 20;
+var demos = [];
+var mobileHType;
+var mobileHAddon = false;
+var tidyFlag = 0;
+var subMenu = 0;
+var currentTestIndex = 0;
+var testPacer = 0;
+var testPaceSettings = [0, 0, 0, 1000, 2000];
+var testTimer = TST_OFF;
+var testLoop = false;
+var tutorial = false;
+var tutorialstring = '';
+var hideMenu = false;
+var disableDrag = false;
+var mainDiv;
+var showDev = false;
+var showFPS = false;
 let logCounter = 0;
 let redrawCounter = 0;
 
@@ -89,17 +107,12 @@ var T_FOR = 51;
 
 
 var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
-// var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND, T_PUSH, T_DELETE, T_FOR];
-// for (let i = 0; i < 55; i++) {
-//   if (everyone.indexOf(i) == -1){
-//     console.log('FREE:', i);
-//   }
-// }
+var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND, T_PUSH, T_DELETE, T_FOR];
 var userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_CONST, T_ASSIGN, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_PRINT, T_COMMENT, T_COS, T_SIN, T_TURTLE, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
 var notStartOrConsole = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
 var notStartOrConsoleOrSpecial = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
 var notStartOrConsoleOrOutlet = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
-var numberyOnes = [T_OUTLET, T_COMMENT, T_CONST, T_VAR, T_INPUT, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_COS, T_SIN, T_LEN, T_GET, T_ROUND, T_LEN];
+var numberyOnes = [T_OUTLET, T_COMMENT, T_CONST, T_VAR, T_INPUT, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_COS, T_SIN, T_LEN, T_GET, T_ROUND];
 var boolyOnes = [T_COMMENT, T_OUTLET, T_NOT, T_EQUAL, T_GREATER, T_LESS];
 var conditionallyOnes = boolyOnes.concat(numberyOnes);
 
@@ -235,8 +248,8 @@ blockConfig[T_CONST]['accept child'] = [T_COMMENT];
 blockConfig[T_TURTLE]['accept child'] = [T_INLET];
 blockConfig[T_INLET]['accept child'] = [];
 blockConfig[T_LEN]['accept child'] = [T_OUTLET, T_BLOCK, T_GOTO, T_CONST, T_VAR, T_INPUT];
-blockConfig[T_GET]['accept child'] = [T_BLOCK, T_GOTO, T_CONST, T_VAR, T_INPUT];
-blockConfig[T_SET]['accept child'] = [T_BLOCK, T_GOTO, T_VAR, T_INPUT, T_CONST];
+blockConfig[T_GET]['accept child'] = numberyOnes.slice(1);
+blockConfig[T_SET]['accept child'] = numberyOnes.slice(1);
 blockConfig[T_PUSH]['accept child'] = numberyOnes.slice(1);
 blockConfig[T_DELETE]['accept child'] = numberyOnes.slice(1);
 
@@ -278,7 +291,7 @@ blockConfig[T_TURTLE]['max children'] = 3;
 blockConfig[T_INLET]['max children'] = 2;
 blockConfig[T_LEN]['max children'] = 2;
 blockConfig[T_GET]['max children'] = 1;
-blockConfig[T_SET]['max children'] = 1;
+blockConfig[T_SET]['max children'] = 2;
 blockConfig[T_PUSH]['max children'] = 1;
 blockConfig[T_DELETE]['max children'] = 1;
 
@@ -345,8 +358,8 @@ blockConfig[T_SUBTRACT]['handles'] = {'move' : true, 'resize'  : true, 'delete' 
 blockConfig[T_MULT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_DIV, 'copy' : true};
 blockConfig[T_DIV]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_MOD, 'copy' : true};
 blockConfig[T_MOD]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_AVERAGE, 'copy' : true};
-blockConfig[T_AVERAGE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_SQRT, 'copy' : true};
-blockConfig[T_SQRT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_HYPOT, 'copy' : true};
+blockConfig[T_AVERAGE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_HYPOT, 'copy' : true};
+blockConfig[T_SQRT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_HYPOT]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_ROUND, 'copy' : true};
 blockConfig[T_ROUND]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_ADD, 'copy' : true};
 blockConfig[T_SIN]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_COS, 'copy' : true};
@@ -367,43 +380,7 @@ blockConfig[T_CONST]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : 
 blockConfig[T_TURTLE]['handles'] = {'move' : true, 'resize'  : false, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : false};
 blockConfig[T_INLET]['handles'] = {'move' : false, 'resize'  : false, 'delete'  : false, 'expand'  : false, 'mutate' : -1, 'copy' : true};
 blockConfig[T_LEN]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
-blockConfig[T_GET]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
+blockConfig[T_GET]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_DELETE, 'copy' : true};
 blockConfig[T_SET]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_PUSH]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
-blockConfig[T_DELETE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
-
-function colorToHTMLRGB(color) {
-  return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
-}
-
-function toggleInput(cID, type){
-  for (let i = 0; i < cells.length; i++){
-    if (type == cells.cells[i].type && (cells.cells[i].handleSH == cID)){
-      cells.cells[i].showHandleInput = !cells.cells[i].showHandleInput;
-    }
-
-    if (cells.cells[i].type == T_BLOCK && (cells.cells[i].handleSH == cID)) {
-      if (cells.cells[i].showHandleInput == true && cells.cells[i].hide == false){
-        cells.cells[i].input.show();
-        cells.cells[i].refresh();
-      }
-      if (cells.cells[i].showHandleInput == false) {
-        cells.cells[i].input.hide();
-        cells.cells[i].refresh();
-      }
-      break;
-    } else if (cells.cells[i].type == T_INPUT && (cells.cells[i].handleSH == cID)) {
-      console.log('var stuff');
-      if (cells.cells[i].showHandleInput == true) {
-        console.log("hey!");
-        cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[3]));
-        cells.cells[i].input.value(cells.cells[i].handleSH);
-      } else {
-        cells.cells[i].updateHandleSH(cells.cells[i].input.value());
-        cells.cells[i].input.value(cells.cells[i].dataSH);
-        cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[2]));
-      }
-      break;
-    }
-  }
-}
+blockConfig[T_DELETE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_GET, 'copy' : true};

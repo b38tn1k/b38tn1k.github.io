@@ -215,7 +215,7 @@ class Cells {
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
     let child = new Cell(T_CONST, myBlock.viewX, myBlock.viewY, this.dWidth, this.dHeight, c, this.dRadius);
     child.updateDataSH(childData);
-    child.updateHandleSH('newData');
+    // child.updateHandleSH('newData');
     child.input.value(childData, childData);
     myBlock.addChild(this.length, child);
     child.addParent(myBlockIndex, myBlock);

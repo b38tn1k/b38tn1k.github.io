@@ -48,6 +48,8 @@ function preload() {
   demos.push(loadJSON('assets/demo9.json'));
   demos.push(loadJSON('assets/demo10.json'));
   demos.push(loadJSON('assets/demo11.json'));
+
+  demos.push(loadJSON('assets/wip-demo.json'));
 }
 
 function setup() {
@@ -67,6 +69,8 @@ function setup() {
   xPos = 0;
   yPos = 0;
   doLastBit();
+  showDev = ! showDev; //lazy
+  showDevDiv();
 }
 
 var notIdle = true;

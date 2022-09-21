@@ -1,32 +1,3 @@
-var bgGrid, widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, devDiv;
-var xPos, yPos, xStart, yStart, xOff, yOff, doMouseDrag;
-var allColors = {};
-var showBlockMenu = false;
-var showDemoMenu = false;
-var shareLinkGenerated = false;
-var slowMode = false;
-var fastMode = false;
-var speedMode = 0;
-var flash = true;
-var gridSize = 20;
-var demos = [];
-var mobileHType;
-var mobileHAddon = false;
-var tidyFlag = 0;
-var subMenu = 0;
-var currentTestIndex = 0;
-var testPacer = 0;
-var testPaceSettings = [0, 0, 0, 1000, 2000];
-var testTimer = TST_OFF;
-var testLoop = false;
-var tutorial = false;
-var tutorialstring = '';
-var hideMenu = false;
-var disableDrag = false;
-var mainDiv;
-var showDev = false;
-var showFPS = false;
-
 function newCell(type, x =-1, y =-1) {
   jlog('Main', 'newCell');
   if (mobileHack == false) {
@@ -408,6 +379,7 @@ function createMenuDiv() {
   } else {
     menu.show();
   }
+
 }
 
 function showDevDiv(){
@@ -427,6 +399,9 @@ function showDevDiv(){
   devDiv.html('<a href="javascript:void(0)" onclick="clickDebug = !clickDebug;console.log(\'click debug\', clickDebug)">click log</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="printStack = !printStack;console.log(\'print stack\', printStack)">stack log</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="doJLOG = !doJLOG;">all the logs</a><br>', true);
+  devDiv.html('<a href="javascript:void(0)" onclick="whatsLeft();">free colors</a><br>', true);
+  devDiv.html('<a href="javascript:void(0)" onclick="loadCells(demos[demos.length-1])">current tester</a><br>', true);
+
 
   devDiv.position(windowWidth - (30 + devDiv.size().width), 10);
 }
@@ -785,4 +760,58 @@ function testAll() {
   testTimer = TST_LOAD;
   currentTestIndex = -1;
   testPacer = millis();
+}
+
+function colorToHTMLRGB(color) {
+  return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
+}
+
+function toggleInput(cID, type){
+  for (let i = 0; i < cells.length; i++){
+    if (type == cells.cells[i].type && (cells.cells[i].handleSH == cID)){
+      cells.cells[i].showHandleInput = !cells.cells[i].showHandleInput;
+    }
+
+    if (cells.cells[i].type == T_BLOCK && (cells.cells[i].handleSH == cID)) {
+      if (cells.cells[i].showHandleInput == true && cells.cells[i].hide == false){
+        cells.cells[i].input.show();
+        cells.cells[i].refresh();
+      }
+      if (cells.cells[i].showHandleInput == false) {
+        cells.cells[i].input.hide();
+        cells.cells[i].refresh();
+      }
+      break;
+    } else if (cells.cells[i].type == T_INPUT && (cells.cells[i].handleSH == cID)) {
+      console.log('var stuff');
+      if (cells.cells[i].showHandleInput == true) {
+        console.log("hey!");
+        cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[3]));
+        cells.cells[i].input.value(cells.cells[i].handleSH);
+      } else {
+        cells.cells[i].updateHandleSH(cells.cells[i].input.value());
+        cells.cells[i].input.value(cells.cells[i].dataSH);
+        cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[2]));
+      }
+      break;
+    }
+  }
+}
+
+function jlog(classname, label) {
+  if (doJLOG == true) {
+    console.debug(classname, label, (millis()/1000).toFixed(1));
+    logCounter += 1;
+    if (logCounter == 100) {
+      console.clear();
+    }
+  }
+}
+
+function whatsLeft(){
+  for (let i = 0; i < 55; i++) {
+    if (everyone.indexOf(i) == -1){
+      console.log('FREE:', i);
+    }
+  }
 }

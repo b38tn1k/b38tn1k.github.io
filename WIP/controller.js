@@ -933,11 +933,11 @@ class Controller {
   t_arrayOp(activeCell, index) {
     this.addToStack(index);
     let blockIndex = this.findBlock(activeCell.handleSH);
-    if (blockIndex == -1) {
+    if (blockIndex == -1 || activeCell.children.length < 1) {
       return;
     }
     let blockType = this.script[blockIndex].type;
-    this.addToStack(blockIndex);
+    // this.addToStack(blockIndex);
     let myInd = parseInt(activeCell.children[0].dataSH);
     if (activeCell.type == T_GET) {
       if (blockType == T_INPUT){
@@ -964,11 +964,34 @@ class Controller {
       }
       if (blockType == T_INPUT) {
         this.script[blockIndex].updateDataSH(this.script[blockIndex].dataSHasType['string'] + String(childData), true);
-        console.log(this.script[blockIndex].dataSH);
+        // need to update globally too
+        let output = this.script[blockIndex].handleSH;
+        this.updateVarMap(output, this.script[blockIndex].getDataSH());
       } else {
         let newChild = cells.pushChild(blockIndex, this.script[blockIndex], childData);
         this.script.push(newChild);// = cells.cells;
         this.terminate = this.script.length + 1;
+      }
+    } else if (activeCell.type == T_SET && activeCell.children.length >= 2) {
+      this.envChanged = true;
+      let newVal = String(activeCell.children[1].getDataSH());
+      if (blockType == T_INPUT) {
+        newVal = newVal[0];
+        let oldData = this.script[blockIndex].dataSHasType['string'];
+        myInd = myInd % oldData.length;
+        let newData = oldData.substring(0, myInd) + newVal + oldData.substring(myInd+1)
+        this.script[blockIndex].updateDataSH(newData, true);
+        let output = this.script[blockIndex].handleSH;
+        this.updateVarMap(output, this.script[blockIndex].getDataSH());
+      } else {
+        let sourceHandle = activeCell.children[1].handleSH;
+        let sourceData = activeCell.children[1].getDataSH();
+        myInd = myInd % this.script[blockIndex].children.length
+        let target = this.script[blockIndex].children[myInd];
+        let targetI = this.script[blockIndex].childIndicies[myInd];
+        console.log(sourceHandle, sourceData, myInd, target.dataSH, target.handleSH, targetI);
+        // change to type: keep handle change data, add handle and data, addData ?
+
       }
     }
   }

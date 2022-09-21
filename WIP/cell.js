@@ -14,9 +14,9 @@ class Cell {
     this.dataSH;
     this.dataSHasType = {};
     this.handleSH = 'unset';
-    if (type == T_VAR || type == T_OUTLET || type == T_RANGE) {
-      this.handleSH = 'outlet';
-    }
+    // if (type == T_VAR || type == T_OUTLET || type == T_RANGE) {
+    //   this.handleSH = 'unset';
+    // }
     this.type = type
     this.textLabel = blockConfig[this.type]['block label'];
     if (this.type == T_BLOCK){
@@ -264,6 +264,9 @@ class Cell {
   updateDataSH(value) {
     jlog('Cell', 'updateDataSH');
     this.dataSH = value;
+    if (this.type == T_INPUT){
+      this.input.value(value, value);
+    }
     // if (/^\d+\.\d+$/.test(String(value)) == true) {
     //   value = parseFloat(value).toFixed(3);
     // }

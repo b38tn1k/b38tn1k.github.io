@@ -21,9 +21,12 @@ class Controller {
     this.tChangeY = false;
     this.stackNotes = [];
     this.stackSizeRecord = [];
+    this.objectWideFlashFlag = true;
+    this.tidyFlag = false;
   }
 
   step(flash, fastMode) {
+    this.objectWideFlashFlag = flash;
     try { // big try so I can put anything into the onscreen c onsole
       if (this.index < this.script.length) {
         this.activeCell = this.script[this.index];
@@ -181,9 +184,13 @@ class Controller {
         }
       } else {
         this.run = false;
-        this.script[this.stackTrace[this.stackTrace.length - 2]].flash = false;
+        // this.script[this.stackTrace[this.stackTrace.length - 2]].flash = false;
+        for (let i = 0; i < cells.length; i++){
+          cells.cells[i].flash = false;
+        }
         this.printStack();
         if (this.envChanged == true) {
+          this.tidyFlag = true;
           this.d_print('Your environment was updated. Click <a style="color: blue;" href="javascript:void(0)" onclick="loadBackup();">here</a> to reset, or do nothing to continue.<br>')
         }
       }
@@ -255,12 +262,15 @@ class Controller {
   }
 
   findBlock(handle) {
-    let block;
+    let block = -1;
     for (let i = 0; i < this.script.length; i++) {
       if ((this.script[i].type == T_BLOCK || this.script[i].type == T_INPUT) && this.script[i].handleSH == handle) {
         block = i;
         break;
       }
+    }
+    if (handle == 'unset') {
+      return -1;
     }
     return block;
   }
@@ -455,6 +465,7 @@ class Controller {
     this.stackTraceDir.push(dir);
     if (dir == 1) {
       this.workingStack.push(index);
+      this.script[index].flash = this.objectWideFlashFlag;
     }
     let varRecAtom = '';
     for (key in this.varMap) {
@@ -555,7 +566,11 @@ class Controller {
       } else if (activeCell.children[j].type == T_GOTO || activeCell.children[j].type == T_BLOCK) {
         let block = this.findBlock(activeCell.children[j].handleSH);
         myOutput += '[';
-        myOutput += this.buildPrintString(this.script[block], depth);
+        if (block == -1) {
+          myOutput += 'unset';
+        } else {
+          myOutput += this.buildPrintString(this.script[block], depth);
+        }
         myOutput += ']';
       } else if (activeCell.children[j].type != T_COMMENT) {
         myOutput += String(this.script[activeCell.childIndicies[j]].getDataSHForPrint());
@@ -873,6 +888,9 @@ class Controller {
     if (activeCell.children.length == 2) {
       if (activeCell.children[1].type == T_GOTO) {
         let block = this.findBlock(activeCell.children[1].handleSH);
+        if (block == -1){
+          return;
+        }
         activeCell.dataSH = this.script[block].children.length;
       } else if (activeCell.children[1].type == T_BLOCK) {
         activeCell.dataSH = activeCell.children[1].children.length;
@@ -902,15 +920,21 @@ class Controller {
   t_arrayOp(activeCell, index) {
     this.addToStack(index);
     let blockIndex = this.findBlock(activeCell.handleSH);
+    if (blockIndex == -1) {
+      return;
+    }
+    let blockType = this.script[blockIndex].type;
+    this.addToStack(blockIndex);
     let myInd = parseInt(activeCell.children[0].dataSH);
     if (activeCell.type == T_GET) {
-      if (this.script[blockIndex].type == T_INPUT){
+      if (blockType == T_INPUT){
         let target = String(this.script[blockIndex].dataSH);
         let dataval = target[myInd % target.length];
         activeCell.updateDataSH(dataval);
       } else {
         let target = this.script[blockIndex].children;
         let child = target[myInd % target.length];
+        this.addToStack(this.script[blockIndex].childIndicies[myInd % target.length]);
         if (String(child.dataSH) != 'undefined') {
           activeCell.updateDataSH(child.dataSH);
         } else {
@@ -919,18 +943,20 @@ class Controller {
       }
     } else if (activeCell.type == T_PUSH) {
       this.envChanged = true;
+      this.tidyFlag = true;
       let childData = 0;
       if (activeCell.children.length > 0){
         childData = activeCell.children[0].getDataSH();
+        console.log(childData);
       }
-      let newChild = cells.pushChild(blockIndex, this.script[blockIndex], childData);
-      this.script.push(newChild);// = cells.cells;
-      this.addToStack(blockIndex);
-      this.terminate = this.script.length + 1;
-
-      // console.log(this.script.length);
-      // this.script.push(newChild);
-      // console.log(this.script.length);
+      if (blockType == T_INPUT) {
+        this.script[blockIndex].updateDataSH(this.script[blockIndex].dataSHasType['string'] + String(childData));
+        console.log(this.script[blockIndex].dataSH);
+      } else {
+        let newChild = cells.pushChild(blockIndex, this.script[blockIndex], childData);
+        this.script.push(newChild);// = cells.cells;
+        this.terminate = this.script.length + 1;
+      }
     }
   }
 

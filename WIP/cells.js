@@ -242,8 +242,8 @@ class Cells {
       this.cells.push(new Cell(T_VAR, x, y, this.dWidth, this.dHeight, c, this.dRadius));
       this.cells[pIndex].addChild(pIndex+1, this.cells[pIndex+1])
       this.cells[pIndex+1].addParent(pIndex, this.cells[pIndex]);
-      this.cells[pIndex+1].input.option('outlet', 'outlet');
-      this.cells[pIndex+1].input.selected('outlet');
+      this.cells[pIndex+1].input.option('unset', 'unset');
+      this.cells[pIndex+1].input.selected('unset');
     }
     if (type == T_INPUT) {
       let tempID = this.getID(4);
@@ -256,7 +256,7 @@ class Cells {
       let counter = 2;
       if (type == T_FOR) {
         this.cells.push(new Cell(T_RANGE, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
-        this.cells[pIndex + 1].updateHandleSH('outlet');
+        this.cells[pIndex + 1].updateHandleSH('unset');
       } else {
         this.cells.push(new Cell(T_CONDITION, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       }
@@ -272,13 +272,13 @@ class Cells {
       this.cells.push(new Cell(T_OUTLET, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       this.cells[pIndex].addChild(pIndex + 1, this.cells[pIndex + 1]);
       this.cells[pIndex + 1].addParent(pIndex, this.cells[pIndex]);
-      this.cells[pIndex + 1].handleSH= 'outlet';//tempID;
+      this.cells[pIndex + 1].handleSH= 'unset';//tempID;
       this.cells[pIndex + 1].indexLabeldiv.html(this.cells[pIndex + 1].textLabel);
       this.cells[pIndex + 1].updateDataSH('unset');
-      this.cells[pIndex + 1].input.option('outlet', 'outlet');
-      this.cells[pIndex + 1].input.selected('outlet');
-      if (this.varHandles.indexOf('outlet') == -1){
-        this.varHandles.push('outlet');
+      this.cells[pIndex + 1].input.option('unset', 'unset');
+      this.cells[pIndex + 1].input.selected('unset');
+      if (this.varHandles.indexOf('unset') == -1){
+        this.varHandles.push('unset');
       }
     }
     if (type == T_BLOCK) {
@@ -398,7 +398,7 @@ class Cells {
             if (this.cells[i].type == T_VAR || this.cells[i].type == T_GOTO){
               gotoVarHandleCatcher.push(this.cells[i].handleSH);
             }
-            if (this.cells[i].handleSH != 'outlet') {
+            if (this.cells[i].handleSH != 'unset') {
               delHandle.push(this.cells[i].handleSH);
               this.varHandles.splice(this.varHandles.indexOf(this.cells[i].handleSH), 1);
             }
@@ -452,16 +452,14 @@ class Cells {
           this.cells[i].buildDivs();
         }
       }
-      for (let i = 0; i < gotoVarHandleCatcher.length; i++){
-        delHandle.push(gotoVarHandleCatcher[i]);
-      }
+
       for (let i = 0; i < this.length; i++) {
         if (blockConfig[this.cells[i].type]['input type'] == I_SELECT) {
-          if (delHandle.indexOf(this.cells[i].handleSH) == -1) {
+          if (delHandle.indexOf(this.cells[i].handleSH) != -1 && gotoVarHandleCatcher.indexOf(this.cells[i].handleSH) == -1) {
+            this.cells[i].input.option('unset');
+          } else {
             this.cells[i].input.option(this.cells[i].handleSH);
             this.cells[i].input.selected(this.cells[i].handleSH);
-          } else {
-            this.cells[i].input.option('unset');
           }
         }
       }
@@ -673,9 +671,9 @@ class Cells {
       // make pretty
       this.cells[i].reshape();
     }
-    map[T_VAR] = map[T_VAR].concat(['outlet', 'random', 'year', 'month#', 'monthS', 'day#', 'dayS', 'hour', 'minute', 'second', 'millis']);
-    map[T_OUTLET].push('outlet');
-    map[T_RANGE].push('outlet');
+    map[T_VAR] = map[T_VAR].concat(['unset', 'random', 'year', 'month#', 'monthS', 'day#', 'dayS', 'hour', 'minute', 'second', 'millis']);
+    map[T_OUTLET].push('unset');
+    map[T_RANGE].push('unset');
     map[T_GOTO].push('unset');
     map[T_PUSH].push('unset');
     map[T_DELETE].push('unset');

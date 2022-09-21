@@ -91,6 +91,10 @@ function draw() {
   if (redrawCounter != 0) {
     controller.update(cells, flash, fastMode);
   }
+  if (controller.tidyFlag == true) {
+    setTidyFlag();
+    controller.tidyFlag = false;
+  }
   if (cells.run == true && slowMode == true) {
     frameRate(5);
   } else {

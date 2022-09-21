@@ -71,7 +71,7 @@ function setup() {
 
 var notIdle = true;
 function draw() {
-  notIdle = (focused == true || cells.redrawFlag == true || cells.run==true || controller.tidyFlag == true || testTimer != TST_OFF);
+  notIdle = (focused == true || cells.redrawFlag == true || cells.run==true || controller.tidyFlag == true || testTimer != TST_OFF || tidyFlag > 0 || millis() < 10000);
   // if (mobileHack == true && cells.activeIndex == -1){
   //   mainDiv.scrollTop = 0;
   //   mainDiv.scrollLeft = 0;

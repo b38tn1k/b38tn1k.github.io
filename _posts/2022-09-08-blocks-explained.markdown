@@ -90,14 +90,14 @@ toggles the blocks from flashing when the code is being run.
 returns the view to canvas origin.
 </th>
 </tr>
-<tr>
+<!-- <tr>
 <th>
 <strong>save</strong>
 </th>
 <th>
 downloads the project as JSON, not very useful without an upload option.
 </th>
-</tr>
+</tr> -->
 <tr>
 <th>
 <strong>share</strong>

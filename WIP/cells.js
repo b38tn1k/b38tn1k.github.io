@@ -211,6 +211,7 @@ class Cells {
   }
 
   pushChild(type, myBlockIndex, myBlock, childData){
+    jlog('Cells', 'pushChild');
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
     let child = new Cell(type, myBlock.viewX, myBlock.viewY, this.dWidth, this.dHeight, c, this.dRadius);
     child.updateDataSH(childData);
@@ -225,15 +226,20 @@ class Cells {
     return child;
   }
 
-  replaceWithVar(parent, currentChild, targetIndex, handleSH){
-    let type = T_VAR; // for now :-/
+  replaceWithType(type, parent, oldBlock, targetIndex, source){
+    jlog('Cells', 'replaceWithType');
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
-    let child = new Cell(type, myBlock.viewX, myBlock.viewY, this.dWidth, this.dHeight, c, this.dRadius);
-    child.updateHandleSH(handleSH);
-    child.parent = currentChild.parent;
+    let child = new Cell(type, oldBlock.viewX, oldBlock.viewY, this.dWidth, this.dHeight, c, this.dRadius);
+    child.parent = oldBlock.parent;
     let indexInParent = parent.childIndicies.indexOf(targetIndex);
     parent.children[indexInParent] = child;
+    oldBlock.mode = M_DELETE;
+    oldBlock.cleanForDeletionSafe();
+    oldBlock.mode = M_IDLE;
     this.cells[targetIndex] = child;
+    this.mapAndLink();
+    this.cells[targetIndex].updateDataSH(source.dataSH, true);
+    this.cells[targetIndex].updateHandleSH(source.handleSH);
     return child;
   }
 
@@ -659,6 +665,10 @@ class Cells {
       if ((this.cells[i].type == T_WHILE) || this.cells[i].type == T_IF || this.cells[i].type == T_FOR || this.cells[i].type == T_CONDITION || this.cells[i].type == T_RANGE) {
         this.cells[i].dataSH = B_UNSET;
       }
+      if (this.cells[i].type == T_CONST) {
+        let nothing;
+        this.cells[i].handleSH = nothing;
+      }
       // create variable map
       // if ((this.cells[i].type == T_OUTLET || this.cells[i].type == T_INPUT || this.cells[i].type == T_INLET)) { //this.cells[i].mode != M_SELECTED
       if (this.cells[i].type == T_INPUT) { //this.cells[i].mode != M_SELECTED
@@ -690,7 +700,6 @@ class Cells {
     map[T_DELETE].push('unset');
     map[T_GET].push('unset');
     map[T_SET].push('unset');
-
     for (let i = 0; i < this.length; i++) {
       this.cells[i].updateOptions(map);
       if (this.cells[i].type == T_VAR) {
@@ -851,6 +860,7 @@ class Cells {
   }
 
   reshapeAllInView(){
+    jlog('Cells', 'reshapeAllInView');
     for (let i = 0; i < this.cellsInView.length; i++) {
       if (this.cells[this.cellsInView[i]] != null){
         this.cells[this.cellsInView[i]].reshape(this.viewX, this.viewY, false);

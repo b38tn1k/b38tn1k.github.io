@@ -932,6 +932,7 @@ class Controller {
 
   t_arrayOp(activeCell, index) {
     this.addToStack(index);
+    this.tidyFlag = true;
     let blockIndex = this.findBlock(activeCell.handleSH);
     if (blockIndex == -1 || activeCell.children.length < 1) {
       return;
@@ -940,6 +941,7 @@ class Controller {
     // this.addToStack(blockIndex);
     let myInd = parseInt(activeCell.children[0].dataSH);
     if (activeCell.type == T_GET) {
+      this.tidyFlag = false;
       if (blockType == T_INPUT){
         let target = String(this.script[blockIndex].dataSH);
         let dataval = target[myInd % target.length];
@@ -956,7 +958,6 @@ class Controller {
       }
     } else if (activeCell.type == T_PUSH) {
       this.envChanged = true;
-      this.tidyFlag = true;
       let childData = 0;
       if (activeCell.children.length > 0){
         childData = activeCell.children[0].getDataSH();
@@ -991,25 +992,21 @@ class Controller {
         this.updateVarMap(output, this.script[blockIndex].getDataSH());
       } else {
         let sourceType = activeCell.children[1].type;
-        let sourceHandle = activeCell.children[1].handleSH;
-        let sourceData = activeCell.children[1].getDataSH();
         myInd = myInd % this.script[blockIndex].children.length
         let target = this.script[blockIndex].children[myInd];
         let targetI = this.script[blockIndex].childIndicies[myInd];
-        console.log(sourceHandle, sourceData, myInd, target.dataSH, target.handleSH, targetI);
         // change to type: keep handle change data, add handle and data, addData ?
-        if (sourceType == T_VAR || sourceType == T_INPUT) {
-          console.log('var or input');
-
-        } else if (sourceType == T_BLOCK || sourceType == T_GOTO) {
-          console.log('block or goto');
-
-        } else {
-          console.log('something else');
-
-        }
-        // cells.replaceWithVar(parent, currentChild, targetIndex, handleSH)
-
+        cells.replaceWithType(sourceType, this.script[blockIndex], target, targetI, activeCell.children[1]);
+        this.script = cells.cells;
+        // if (sourceType == T_VAR) {
+        //   console.log('var or input');
+        //   // replace with T_VAR
+        // } else if (sourceType == T_BLOCK) {
+        //   console.log('block or goto');
+        //   // replace with T_BLOCK
+        // } else if (sourceType == T_CONST) {
+        //   cells.replaceWithType(sourceType, this.script[blockIndex], target, targetI, activeCell.children[1])
+        // }
       }
     }
   }

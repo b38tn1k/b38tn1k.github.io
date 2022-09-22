@@ -379,7 +379,8 @@ function createMenuDiv() {
   } else {
     menu.show();
   }
-
+  showDev = ! showDev;
+  showDevDiv();
 }
 
 function showDevDiv(){
@@ -388,6 +389,7 @@ function showDevDiv(){
     devDiv.remove();
     return;
   }
+  devDiv.remove();
   devDiv = createDiv();
   devDiv.style('font-size', '12px');
   devDiv.style('background-color', 'DimGray');
@@ -424,6 +426,8 @@ function setupScreen() {
   }
   widthOnTwo = windowWidth / 2;
   heightOnTwo = windowHeight / 2;
+  showDev = ! showDev;
+  showDevDiv();
 }
 
 function doLastBit(){

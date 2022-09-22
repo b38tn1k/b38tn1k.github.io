@@ -264,7 +264,7 @@ class Cell {
   updateDataSH(value, hard=false) {
     jlog('Cell', 'updateDataSH');
     this.dataSH = value;
-    if (this.type == T_INPUT && hard==true){
+    if (blockConfig[this.type]['input type'] == I_TEXT && hard==true){
       this.input.value(value, value);
     }
     // if (/^\d+\.\d+$/.test(String(value)) == true) {
@@ -773,7 +773,6 @@ class Cell {
     if (blockConfig[this.type]['input type'] == I_SELECT) {
       for (let i = 0; i < this.inputOptions.length; i++){
         if (options[this.type].indexOf(this.inputOptions[i]) == -1) {
-          // console.log(this.inputOptions[i], "is out!");
           this.inputOptions = [];
           this.input.remove();
           this.buildDivs();

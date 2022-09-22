@@ -254,6 +254,7 @@ blockConfig[T_INLET]['accept child'] = [];
 blockConfig[T_LEN]['accept child'] = [T_OUTLET, T_BLOCK, T_GOTO, T_CONST, T_VAR, T_INPUT];
 blockConfig[T_GET]['accept child'] = numberyOnes.slice(1);
 blockConfig[T_SET]['accept child'] = numberyOnes.slice(1);
+blockConfig[T_SET]['accept child'].push(T_GOTO);
 blockConfig[T_PUSH]['accept child'] = numberyOnes.slice(1);
 blockConfig[T_PUSH]['accept child'].push(T_GOTO);
 blockConfig[T_DELETE]['accept child'] = numberyOnes.slice(1);

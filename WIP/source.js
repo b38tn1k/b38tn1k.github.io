@@ -56,13 +56,14 @@ function setup() {
   jlog('Main', 'setup');
   pixelDensity(1);
   mainDiv = document.getElementById('main');
+  devDiv = createDiv();
   colorSetup();
   setupScreen();
   cells = new Cells(allColors['colors'], allColors['highlights'], allColors['lowlights'], allColors['icolors'], allColors['dtcolors']);
   mobileSettings()
   controller = new Controller();
   menu = createDiv();
-  devDiv = createDiv();
+
   createMenuDiv();
   xOff = 0;
   yOff = 0;
@@ -127,8 +128,6 @@ function draw() {
     menu = createDiv();
     createMenuDiv();
     cells.rebuildMenuFlag = false;
-    showDev = ! showDev;
-    showDevDiv();
   }
 
   if (testTimer != TST_OFF) {

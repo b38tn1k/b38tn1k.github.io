@@ -398,12 +398,12 @@ function showDevDiv(){
   devDiv.html('<a href="javascript:void(0)" onclick="showFPS = !showFPS;">show FPS</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="clickDebug = !clickDebug;console.log(\'click debug\', clickDebug)">click log</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="printStack = !printStack;console.log(\'print stack\', printStack)">stack log</a><br>', true);
-  devDiv.html('<a href="javascript:void(0)" onclick="doJLOG = !doJLOG;">all the logs</a><br>', true);
+  devDiv.html('<a href="javascript:void(0)" onclick="doJLOG = !doJLOG;">TMI</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="whatsLeft();">free colors</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="loadCells(demos[demos.length-1])">current tester</a><br>', true);
 
 
-  devDiv.position(windowWidth - (30 + devDiv.size().width), 10);
+  devDiv.position(windowWidth - (40 + devDiv.size().width), 10);
 }
 
 function setupScreen() {

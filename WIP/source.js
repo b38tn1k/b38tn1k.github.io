@@ -73,9 +73,8 @@ function setup() {
   showDevDiv();
 }
 
-var notIdle = true;
 function draw() {
-  // notIdle = (focused == true || cells.redrawFlag == true || cells.run==true || controller.tidyFlag == true || testTimer != TST_OFF || tidyFlag > 0 || millis() < 10000);
+  notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
   if (showFPS == true){
     controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
   }
@@ -128,6 +127,8 @@ function draw() {
     menu = createDiv();
     createMenuDiv();
     cells.rebuildMenuFlag = false;
+    showDev = ! showDev;
+    showDevDiv();
   }
 
   if (testTimer != TST_OFF) {

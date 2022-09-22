@@ -73,11 +73,15 @@ function colorSetup() {
   allColors['lowlights'] = lowlights;
 }
 
-function saveCells() {
+function saveCells(wip=false) {
   jlog('Main', 'saveCells');
   let map = cells.saveCells();
   console.log(JSON.stringify(map));
-  save(map, 'my.json', true);
+  let name = 'demo' + String(demos.length-1) + '.json';
+  if (wip == true) {
+    name = 'wip-demo.json'
+  }
+  save(map, name, true);
   setTidyFlag();
 }
 
@@ -399,6 +403,7 @@ function showDevDiv(){
   devDiv.style('outline', '1px solid black');
   // devDiv.style('overflow', "auto");
   devDiv.html('<a href="javascript:void(0)" onclick="saveCells()">save json</a><br>', true);
+  devDiv.html('<a href="javascript:void(0)" onclick="saveCells(true)">save WIP</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="showFPS = !showFPS;">show FPS</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="clickDebug = !clickDebug;console.log(\'click debug\', clickDebug)">click log</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="printStack = !printStack;console.log(\'print stack\', printStack)">stack log</a><br>', true);

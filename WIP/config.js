@@ -4,7 +4,7 @@ var showDev = true;
 var showFPS = true;
 printStack = false;
 clickDebug = false;
-// showDev = false;
+showDev = false;
 showFPS = false;
 
 var B_UNSET = 0;

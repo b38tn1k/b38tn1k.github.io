@@ -48,6 +48,7 @@ function preload() {
   demos.push(loadJSON('assets/demo9.json'));
   demos.push(loadJSON('assets/demo10.json'));
   demos.push(loadJSON('assets/demo11.json'));
+  demos.push(loadJSON('assets/demo12.json'));
 
   demos.push(loadJSON('assets/wip-demo.json'));
 }

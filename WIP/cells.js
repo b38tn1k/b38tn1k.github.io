@@ -210,10 +210,9 @@ class Cells {
     }
   }
 
-  pushChild(myBlockIndex, myBlock, childData){
-    let type = T_CONST; // for now :-/
+  pushChild(type, myBlockIndex, myBlock, childData){
     let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
-    let child = new Cell(T_CONST, myBlock.viewX, myBlock.viewY, this.dWidth, this.dHeight, c, this.dRadius);
+    let child = new Cell(type, myBlock.viewX, myBlock.viewY, this.dWidth, this.dHeight, c, this.dRadius);
     child.updateDataSH(childData);
     // child.updateHandleSH('newData');
     child.input.value(childData, childData);
@@ -223,6 +222,18 @@ class Cells {
     this.rebuildMenuFlag = true;
     myBlock.reshape();
 
+    return child;
+  }
+
+  replaceWithVar(parent, currentChild, targetIndex, handleSH){
+    let type = T_VAR; // for now :-/
+    let c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
+    let child = new Cell(type, myBlock.viewX, myBlock.viewY, this.dWidth, this.dHeight, c, this.dRadius);
+    child.updateHandleSH(handleSH);
+    child.parent = currentChild.parent;
+    let indexInParent = parent.childIndicies.indexOf(targetIndex);
+    parent.children[indexInParent] = child;
+    this.cells[targetIndex] = child;
     return child;
   }
 

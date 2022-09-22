@@ -401,8 +401,6 @@ function showDevDiv(){
   devDiv.html('<a href="javascript:void(0)" onclick="doJLOG = !doJLOG;">TMI</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="whatsLeft();">free colors</a><br>', true);
   devDiv.html('<a href="javascript:void(0)" onclick="loadCells(demos[demos.length-1])">current tester</a><br>', true);
-
-
   devDiv.position(windowWidth - (40 + devDiv.size().width), 10);
 }
 

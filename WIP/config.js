@@ -1,3 +1,12 @@
+var printStack = true;
+var clickDebug = true;
+var showDev = true;
+var showFPS = true;
+printStack = false;
+clickDebug = false;
+// showDev = false;
+showFPS = false;
+
 var B_UNSET = 0;
 var B_TRUE = 1;
 var B_FALSE = 2;
@@ -65,8 +74,6 @@ var T_PUSH = 41;
 var T_DELETE = 44;
 var T_FOR = 51;
 
-var printStack = true;
-var clickDebug = false;
 var backupObject;
 var mobileHack = false;
 var mobileHackActual = false;
@@ -99,10 +106,6 @@ var tutorialstring = '';
 var hideMenu = false;
 var disableDrag = false;
 var mainDiv;
-var showDev = true;
-var showFPS = true;
-showDev = false;
-showFPS = false;
 let logCounter = 0;
 var redrawCounter = 0;
 var notIdle = true;
@@ -110,10 +113,9 @@ var notIdle = true;
 var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
 var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND, T_PUSH, T_DELETE, T_FOR];
 var userBlocks = [T_BLOCK, T_GOTO, T_INPUT, T_VAR, T_CONST, T_ASSIGN, T_IF, T_WHILE, T_NOT, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_PRINT, T_COMMENT, T_COS, T_SIN, T_TURTLE, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
-var notStartOrConsole = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
-var notStartOrConsoleOrSpecial = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
-var notStartOrConsoleOrOutlet = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
-var numberyOnes = [T_OUTLET, T_COMMENT, T_CONST, T_VAR, T_INPUT, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_COS, T_SIN, T_LEN, T_GET, T_ROUND];
+var notStartOrConsole = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
+var notStartOrConsoleOrSpecial = [T_COMMENT, T_CONST, T_VAR, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_ROUND, T_PUSH, T_DELETE, T_FOR];
+var numberyOnes = [T_OUTLET, T_COMMENT, T_CONST, T_VAR, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_COS, T_SIN, T_LEN, T_GET, T_ROUND];
 var boolyOnes = [T_COMMENT, T_OUTLET, T_NOT, T_EQUAL, T_GREATER, T_LESS];
 var conditionallyOnes = boolyOnes.concat(numberyOnes);
 
@@ -240,6 +242,7 @@ blockConfig[T_ELSE]['accept child'] = notStartOrConsole;
 blockConfig[T_DO]['accept child'] = notStartOrConsole;
 blockConfig[T_OUTLET]['accept child'] = [T_COMMENT];
 blockConfig[T_START]['accept child'] = notStartOrConsoleOrSpecial;
+blockConfig[T_START]['accept child'].push(T_BLOCK);
 blockConfig[T_STOP]['accept child'] = [];
 blockConfig[T_ASSIGN]['accept child'] = [T_VAR, T_INPUT, T_CONST, T_COMMENT];
 blockConfig[T_CONSOLE]['accept child'] = [];
@@ -252,6 +255,7 @@ blockConfig[T_LEN]['accept child'] = [T_OUTLET, T_BLOCK, T_GOTO, T_CONST, T_VAR,
 blockConfig[T_GET]['accept child'] = numberyOnes.slice(1);
 blockConfig[T_SET]['accept child'] = numberyOnes.slice(1);
 blockConfig[T_PUSH]['accept child'] = numberyOnes.slice(1);
+blockConfig[T_PUSH]['accept child'].push(T_GOTO);
 blockConfig[T_DELETE]['accept child'] = numberyOnes.slice(1);
 
 blockConfig[T_BLOCK]['max children'] = 100;

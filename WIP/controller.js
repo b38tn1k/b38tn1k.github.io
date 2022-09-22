@@ -960,7 +960,6 @@ class Controller {
       let childData = 0;
       if (activeCell.children.length > 0){
         childData = activeCell.children[0].getDataSH();
-        console.log(childData);
       }
       if (blockType == T_INPUT) {
         this.script[blockIndex].updateDataSH(this.script[blockIndex].dataSHasType['string'] + String(childData), true);
@@ -968,7 +967,14 @@ class Controller {
         let output = this.script[blockIndex].handleSH;
         this.updateVarMap(output, this.script[blockIndex].getDataSH());
       } else {
-        let newChild = cells.pushChild(blockIndex, this.script[blockIndex], childData);
+        let type = T_CONST;
+        if (activeCell.children[0].type == T_GOTO) {
+          type = T_GOTO;
+        }
+        let newChild = cells.pushChild(type, blockIndex, this.script[blockIndex], childData);
+        if (type == T_GOTO) {
+          newChild.updateHandleSH(activeCell.children[0].handleSH);
+        }
         this.script.push(newChild);// = cells.cells;
         this.terminate = this.script.length + 1;
       }
@@ -984,6 +990,7 @@ class Controller {
         let output = this.script[blockIndex].handleSH;
         this.updateVarMap(output, this.script[blockIndex].getDataSH());
       } else {
+        let sourceType = activeCell.children[1].type;
         let sourceHandle = activeCell.children[1].handleSH;
         let sourceData = activeCell.children[1].getDataSH();
         myInd = myInd % this.script[blockIndex].children.length
@@ -991,6 +998,17 @@ class Controller {
         let targetI = this.script[blockIndex].childIndicies[myInd];
         console.log(sourceHandle, sourceData, myInd, target.dataSH, target.handleSH, targetI);
         // change to type: keep handle change data, add handle and data, addData ?
+        if (sourceType == T_VAR || sourceType == T_INPUT) {
+          console.log('var or input');
+
+        } else if (sourceType == T_BLOCK || sourceType == T_GOTO) {
+          console.log('block or goto');
+
+        } else {
+          console.log('something else');
+
+        }
+        // cells.replaceWithVar(parent, currentChild, targetIndex, handleSH)
 
       }
     }

@@ -318,19 +318,19 @@ function createMenuDiv() {
   if (showDemoMenu == true) {
     menu.html('<a href="javascript:void(0)" onclick="testAll()">+ test all</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">+ hello world</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ sleep sort(a)</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ draw polygons</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ sleep sort(a)</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ draw polygons</a><br>', true);
     menu.html('<span style="color:LightGray">block usage:</span><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[1])">+ blocks</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[2])">+ assigning</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[3])">+ basic math</a><br>', true);
     // menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">+ silly string math</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">+ comparisons</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[6])">+ if</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ if not</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[10])">+ array get</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[11])">+ array/string push</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[12])">+ array/string set</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">+ comparisons</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">+ if</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[6])">+ if not</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ array get</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[10])">+ array/string push</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[11])">+ array/string set</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);

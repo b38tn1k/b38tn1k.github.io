@@ -40,7 +40,7 @@ function preload() {
   demos.push(loadJSON('assets/demo1.json'));
   demos.push(loadJSON('assets/demo2.json'));
   demos.push(loadJSON('assets/demo3.json'));
-  demos.push(loadJSON('assets/demo4.json'));
+  // demos.push(loadJSON('assets/demo4.json'));
   demos.push(loadJSON('assets/demo5.json'));
   demos.push(loadJSON('assets/demo6.json'));
   demos.push(loadJSON('assets/demo7.json'));

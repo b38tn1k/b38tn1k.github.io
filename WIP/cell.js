@@ -724,6 +724,9 @@ class Cell {
         case T_DELETE:
           this.updateHandleSH(this.input.value());
           break;
+        case T_LEN:
+          this.updateHandleSH(this.input.value());
+          break;
         case T_OUTLET:
             let tempHandle = this.input.value();
             if (this.handleSH != tempHandle){

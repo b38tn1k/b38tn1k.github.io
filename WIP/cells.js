@@ -521,7 +521,7 @@ class Cells {
       type  = T_GOTO;
       c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
     }
-    if (type == T_INPUT){
+    if (type == T_INPUT || type == T_RANGE){
       iCanHasChild = false;
       type  = T_VAR;
       c = [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]];
@@ -672,6 +672,7 @@ class Cells {
     map[T_DELETE] = [];
     map[T_GET] = [];
     map[T_SET] = [];
+    map[T_LEN] = [];
     map[T_VAR] = [];
     map[T_OUTLET] = [];
     map[T_RANGE] = [];
@@ -696,6 +697,7 @@ class Cells {
         map[T_GET].push(this.cells[i].handleSH);
         map[T_SET].push(this.cells[i].handleSH);
         map[T_RANGE].push(this.cells[i].handleSH);
+        map[T_LEN].push(this.cells[i].handleSH);
         varTable[this.cells[i].handleSH] = this.cells[i].getDataSH();
       }
       // read from block names
@@ -705,6 +707,7 @@ class Cells {
         map[T_DELETE].push(this.cells[i].handleSH);
         map[T_GET].push(this.cells[i].handleSH);
         map[T_SET].push(this.cells[i].handleSH);
+        map[T_LEN].push(this.cells[i].handleSH);
       }
       // make pretty
       this.cells[i].reshape();
@@ -717,6 +720,7 @@ class Cells {
     map[T_DELETE].push('unset');
     map[T_GET].push('unset');
     map[T_SET].push('unset');
+    map[T_LEN].push('unset');
     for (let i = 0; i < this.length; i++) {
       this.cells[i].updateOptions(map);
       if (this.cells[i].type == T_VAR) {

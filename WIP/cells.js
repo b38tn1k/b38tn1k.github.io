@@ -87,8 +87,8 @@ class Cells {
     let snapshot = {}
     for (let i = 0; i < this.length; i++) {
       snapshot[i] = {};
-      snapshot[i]['x'] = this.cells[i].x;
-      snapshot[i]['y'] = this.cells[i].y;
+      snapshot[i]['x'] = int(this.cells[i].x);
+      snapshot[i]['y'] = int(this.cells[i].y);
       snapshot[i]['t'] = this.cells[i].type;
       snapshot[i]['h'] = this.cells[i].hide;
       snapshot[i]['s'] = this.cells[i].shrink;

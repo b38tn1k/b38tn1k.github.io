@@ -284,7 +284,7 @@ class Controller {
       varType = V_NUMBER;
     } else if (boolFunctions.indexOf(child.type) != -1 && (child.type != T_NOT)) {
       this.t_compare(child, index);
-      data = child.children[0].getDataSH();
+      data = child.getDataSH();
       varType = V_BOOL;
     } else if (child.type == T_LEN) {
       this.t_len(child, index);
@@ -292,7 +292,7 @@ class Controller {
       varType = V_NUMBER;
     } else if (child.type == T_NOT) {
       this.t_not(child, index);
-      data = child.children[0].getDataSH();
+      data = child.getDataSH();
       varType = V_BOOL;
     } else {
       data = child.getDataSH();
@@ -312,12 +312,13 @@ class Controller {
     return result;
   }
 
-  lookAtChildren(activeCell, index, start = 1) {
+  lookAtChildren(activeCell, index, start = 0) {
     let onlyNums = true;
     let onlyBools = true;
     let containsString = false;
     let vals = [];
     let isNumbers = [];
+    // this.runChildren(activeCell.children, activeCell.childIndicies);
     for (let i = start; i < activeCell.children.length; i++) {
       if (activeCell.children[i].type != T_COMMENT) {
         let result = this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
@@ -630,7 +631,7 @@ class Controller {
   t_math(activeCell, index) {
     this.addToStack(index);
     let res;
-    let survey = this.lookAtChildren(activeCell, index);
+    let survey = this.lookAtChildren(activeCell, index, 1);
     let onlyNums = survey['onlyNums'];
     let vals = survey['vals'];
     let isNumbers = survey['isNumbers'];
@@ -684,56 +685,6 @@ class Controller {
       if (activeCell.type == T_HYPOT) {
         res = sqrt(res);
       }
-    } else {
-      if (activeCell.type == T_ADD) { // concatenate
-        res = '';
-        for (let i = 0; i < vals.length; i++) {
-          res += vals[i];
-        }
-      } else if (activeCell.type == T_SUBTRACT) { // shorten or remove
-        res = vals[0];
-        for (let i = 1; i < vals.length; i++) {
-          if (isNumbers[i] == true) {
-            let myNumber = parseFloat(vals[i])
-            if (myNumber < res.length) {
-              res = res.substring(0, res.length - myNumber);
-            } else {
-              res = '';
-            }
-          } else {
-            let myIndexStart = res.indexOf(vals[i]);
-            let myIndexEnd = myIndexStart + vals[i].length;
-            if (myIndexStart != -1) {
-              let endCap = '';
-              if (myIndexEnd < res.length) {
-                endCap = res.substring(myIndexEnd, res.length);
-              }
-              res = res.substring(0, myIndexStart) + endCap;
-            }
-          }
-        }
-      } else if (activeCell.type == T_MULT) { // get index of substring
-        res = 'error';
-        if (vals.length >= 2) {
-          res = vals[0].indexOf(vals[1]);
-        }
-      } else if (activeCell.type == T_DIV) { //get char at index
-        let myIndex = 0;
-        let cando = false;
-        res = -1
-        for (let i = 1; i < isNumbers.length; i++) {
-          if (isNumbers[i] == true) {
-            myIndex = vals[i];
-            cando = true;
-            break;
-          }
-        }
-        if (cando == true && myIndex < vals[0].length) {
-          res = vals[0][myIndex];
-        }
-      } else {
-        res = '';
-      }
     }
     let output = activeCell.children[0].handleSH;
     this.updateVarMap(output, res)
@@ -741,7 +692,7 @@ class Controller {
 
   t_compare(activeCell, index) {
     this.addToStack(index);
-    let survey = this.lookAtChildren(activeCell, index);
+    let survey = this.lookAtChildren(activeCell, index, 0);
     let onlyNums = survey['onlyNums'];
     let vals = survey['vals'];
     let isNumbers = survey['isNumbers'];
@@ -791,14 +742,12 @@ class Controller {
       }
     }
     // and return
-    this.dataSH = res;
-    let output = activeCell.children[0].handleSH;
-    this.updateVarMap(output, res);
+    activeCell.dataSH = res;
   }
 
   t_not(activeCell, index) {
     this.addToStack(index);
-    let survey = this.lookAtChildren(activeCell, index);
+    let survey = this.lookAtChildren(activeCell, index, 0);
     let onlyNums = survey['onlyNums'];
     let vals = survey['vals'];
     let containsString = survey['containsString'];
@@ -806,9 +755,9 @@ class Controller {
     let onlyBools = survey['onlyBools'];
     let res = this.evaluateCondition(onlyBools, onlyNums, vals);
     res = !res;
-    let output = activeCell.children[0].handleSH;
+    // let output = activeCell.children[0].handleSH;
     activeCell.dataSH = res;
-    this.updateVarMap(output, res)
+    // this.updateVarMap(output, res)
   }
 
   t_if(activeCell, index) {
@@ -834,6 +783,27 @@ class Controller {
       activeCell.dataSH = B_FALSE;
     }
     return stillIn;
+  }
+
+  runChildren(childs, indix){ //arays but used sequentially
+    for (let i = 0; i < childs.length; i++){
+      switch(childs[i].type){
+        case T_EQUAL:
+          this.t_compare(childs[i], indix[i]);
+          break;
+        case T_LESS:
+          this.t_compare(childs[i], indix[i]);
+          break;
+        case T_GREATER:
+          this.t_compare(childs[i], indix[i]);
+          break;
+        case T_NOT:
+          this.t_not(childs[i], indix[i]);
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   t_condition(activeCell, index) {
@@ -998,15 +968,6 @@ class Controller {
         // change to type: keep handle change data, add handle and data, addData ?
         cells.replaceWithType(sourceType, this.script[blockIndex], target, targetI, activeCell.children[1]);
         this.script = cells.cells;
-        // if (sourceType == T_VAR) {
-        //   console.log('var or input');
-        //   // replace with T_VAR
-        // } else if (sourceType == T_BLOCK) {
-        //   console.log('block or goto');
-        //   // replace with T_BLOCK
-        // } else if (sourceType == T_CONST) {
-        //   cells.replaceWithType(sourceType, this.script[blockIndex], target, targetI, activeCell.children[1])
-        // }
       }
     }
   }

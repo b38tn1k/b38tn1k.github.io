@@ -908,7 +908,6 @@ class Controller {
     this.addToStack(index);
     this.tidyFlag = true;
     let blockIndex = this.findBlock(activeCell.handleSH);
-    console.log(activeCell.handleSH == 'unset')
     if (blockIndex == -1 || activeCell.children.length < 1 || activeCell.handleSH == 'unset') {
       activeCell.updateDataSH(-1);
       return;
@@ -921,11 +920,10 @@ class Controller {
     if (activeCell.type == T_GET) {
       this.tidyFlag = false;
       if (blockType == T_INPUT){
-        console.log("heyyy")
         let target = String(this.script[blockIndex].dataSH);
         let dataval = target[myInd % target.length];
-        console.log(dataval);
         activeCell.updateDataSH(dataval);
+        // console.log(activeCell.dataSH);
       } else {
         let target = this.script[blockIndex].children;
         let child = target[myInd % target.length];

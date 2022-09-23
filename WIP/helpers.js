@@ -809,9 +809,7 @@ function toggleInput(cID, type){
       }
       break;
     } else if (cells.cells[i].type == T_INPUT && (cells.cells[i].handleSH == cID)) {
-      console.log('var stuff');
       if (cells.cells[i].showHandleInput == true) {
-        console.log("hey!");
         cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[3]));
         cells.cells[i].input.value(cells.cells[i].handleSH);
       } else {

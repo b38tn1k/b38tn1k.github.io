@@ -285,6 +285,19 @@ class Cells {
       this.cells[pIndex].refresh(this.viewXdelta, this.viewYdelta);
     }
 
+    if (blockConfig[type]['accept child'].indexOf(T_INDEX) != -1) {
+      this.cells.push(new Cell(T_INDEX, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+      let cIndex = this.length-1;
+      this.cells[pIndex].addChild(cIndex, this.cells[cIndex]);
+      this.cells[cIndex].addParent(pIndex, this.cells[pIndex]);
+    }
+    if (blockConfig[type]['accept child'].indexOf(T_REF) != -1) {
+      this.cells.push(new Cell(T_REF, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
+      let cIndex = this.length-1;
+      this.cells[pIndex].addChild(cIndex, this.cells[cIndex]);
+      this.cells[cIndex].addParent(pIndex, this.cells[pIndex]);
+    }
+
     if (blockConfig[type]['accept child'].indexOf(T_OUTLET) != -1) {
       this.cells.push(new Cell(T_OUTLET, x, y, this.dWidth, this.dHeight, [this.colors[type], this.highlights[type], this.lowlights[type], this.inverted[type], this.dualtone[type]], this.dRadius));
       this.cells[pIndex].addChild(pIndex + 1, this.cells[pIndex + 1]);
@@ -748,7 +761,7 @@ class Cells {
       parent.children[inParentIndex] = this.cells[this.activeIndex];
     }
     for (let i = 0; i < this.cells[this.activeIndex].children.length; i++){
-      if ([T_CONDITION, T_ELSE, T_DO, T_OUTLET].indexOf(this.cells[this.activeIndex].children[i].type) != -1) {
+      if ([T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_INDEX, T_REF].indexOf(this.cells[this.activeIndex].children[i].type) != -1) {
         this.cells[this.activeIndex].children[i].colors = c;
         this.cells[this.activeIndex].children[i].reStyle();
       }

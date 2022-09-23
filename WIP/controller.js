@@ -908,8 +908,10 @@ class Controller {
       return;
     }
     let blockType = this.script[blockIndex].type;
-    // this.addToStack(blockIndex);
-    let myInd = parseInt(activeCell.children[0].dataSH);
+    if (activeCell.children[0].children.length == 0){
+      return;
+    }
+    let myInd = parseInt(activeCell.children[0].children[0].dataSH);
     if (activeCell.type == T_GET) {
       this.tidyFlag = false;
       if (blockType == T_INPUT){
@@ -929,8 +931,8 @@ class Controller {
     } else if (activeCell.type == T_PUSH) {
       this.envChanged = true;
       let childData = 0;
-      if (activeCell.children.length > 0){
-        childData = activeCell.children[0].getDataSH();
+      if (activeCell.children[0].children.length > 0){
+        childData = activeCell.children[0].children[0].getDataSH();
       }
       if (blockType == T_INPUT) {
         this.script[blockIndex].updateDataSH(this.script[blockIndex].dataSHasType['string'] + String(childData), true);
@@ -939,19 +941,19 @@ class Controller {
         this.updateVarMap(output, this.script[blockIndex].getDataSH());
       } else {
         let type = T_CONST;
-        if (activeCell.children[0].type == T_GOTO) {
+        if (activeCell.children[0].children[0].type == T_GOTO) {
           type = T_GOTO;
         }
         let newChild = cells.pushChild(type, blockIndex, this.script[blockIndex], childData);
         if (type == T_GOTO) {
-          newChild.updateHandleSH(activeCell.children[0].handleSH);
+          newChild.updateHandleSH(activeCell.children[0].children[0].handleSH);
         }
         this.script.push(newChild);// = cells.cells;
         this.terminate = this.script.length + 1;
       }
-    } else if (activeCell.type == T_SET && activeCell.children.length >= 2) {
+    } else if (activeCell.type == T_SET) {
       this.envChanged = true;
-      let newVal = String(activeCell.children[1].getDataSH());
+      let newVal = String(activeCell.children[1].children[0].getDataSH());
       if (blockType == T_INPUT) {
         newVal = newVal[0];
         let oldData = this.script[blockIndex].dataSHasType['string'];
@@ -961,12 +963,12 @@ class Controller {
         let output = this.script[blockIndex].handleSH;
         this.updateVarMap(output, this.script[blockIndex].getDataSH());
       } else {
-        let sourceType = activeCell.children[1].type;
+        let sourceType = activeCell.children[1].children[0].type;
         myInd = myInd % this.script[blockIndex].children.length
         let target = this.script[blockIndex].children[myInd];
         let targetI = this.script[blockIndex].childIndicies[myInd];
         // change to type: keep handle change data, add handle and data, addData ?
-        cells.replaceWithType(sourceType, this.script[blockIndex], target, targetI, activeCell.children[1]);
+        cells.replaceWithType(sourceType, this.script[blockIndex], target, targetI, activeCell.children[1].children[0]);
         this.script = cells.cells;
       }
     }

@@ -2,7 +2,7 @@ var printStack = true;
 var clickDebug = true;
 var showDev = true;
 var showFPS = true;
-printStack = false;
+// printStack = false;
 clickDebug = false;
 showDev = false;
 showFPS = false;
@@ -73,6 +73,8 @@ var T_ROUND = 4;
 var T_PUSH = 41;
 var T_DELETE = 44;
 var T_FOR = 51;
+var T_INDEX = 222;
+var T_REF = 223;
 
 var backupObject;
 var mobileHack = false;
@@ -170,6 +172,8 @@ blockConfig[T_ROUND] = {};
 blockConfig[T_PUSH] = {};
 blockConfig[T_DELETE] = {};
 blockConfig[T_FOR] = {};
+blockConfig[T_INDEX] = {};
+blockConfig[T_REF] = {};
 
 
 blockConfig[T_BLOCK]['block label'] = "set block";
@@ -213,6 +217,8 @@ blockConfig[T_ROUND]['block label'] = "round";
 blockConfig[T_PUSH]['block label'] = "push";
 blockConfig[T_DELETE]['block label'] = "delete";
 blockConfig[T_FOR]['block label'] = "repeat";
+blockConfig[T_INDEX]['block label'] = "index";
+blockConfig[T_REF]['block label'] = "value";
 
 blockConfig[T_BLOCK]['accept child'] = [...notStartOrConsoleOrSpecial];
 blockConfig[T_VAR]['accept child'] = [T_COMMENT]; //nothing
@@ -253,12 +259,13 @@ blockConfig[T_CONST]['accept child'] = [T_COMMENT];
 blockConfig[T_TURTLE]['accept child'] = [T_INLET];
 blockConfig[T_INLET]['accept child'] = [];
 blockConfig[T_LEN]['accept child'] = [T_OUTLET, T_BLOCK, T_GOTO, T_CONST, T_VAR, T_INPUT];
-blockConfig[T_GET]['accept child'] = numberyOnes.slice(1);
-blockConfig[T_SET]['accept child'] = numberyOnes.slice(1);
-blockConfig[T_SET]['accept child'].push(T_GOTO);
-blockConfig[T_PUSH]['accept child'] = numberyOnes.slice(1);
-blockConfig[T_PUSH]['accept child'].push(T_GOTO);
-blockConfig[T_DELETE]['accept child'] = numberyOnes.slice(1);
+blockConfig[T_GET]['accept child'] = [T_INDEX];
+blockConfig[T_SET]['accept child'] = [T_INDEX, T_REF];
+blockConfig[T_PUSH]['accept child'] = [T_REF];
+blockConfig[T_DELETE]['accept child'] = [T_INDEX];
+blockConfig[T_INDEX]['accept child'] = numberyOnes.slice(1);
+blockConfig[T_REF]['accept child'] = numberyOnes.slice(1);
+blockConfig[T_REF]['accept child'].push(T_GOTO);
 
 blockConfig[T_BLOCK]['max children'] = 100;
 blockConfig[T_GOTO]['max children'] = 0;
@@ -301,6 +308,8 @@ blockConfig[T_GET]['max children'] = 1;
 blockConfig[T_SET]['max children'] = 2;
 blockConfig[T_PUSH]['max children'] = 1;
 blockConfig[T_DELETE]['max children'] = 1;
+blockConfig[T_INDEX]['max children'] = 1;
+blockConfig[T_REF]['max children'] = 1;
 
 var I_NONE = 0;
 var I_TEXT = 1;
@@ -349,6 +358,8 @@ blockConfig[T_GET]['input type'] = I_SELECT;
 blockConfig[T_SET]['input type'] = I_SELECT;
 blockConfig[T_PUSH]['input type'] = I_SELECT;
 blockConfig[T_DELETE]['input type'] = I_SELECT;
+blockConfig[T_INDEX]['input type'] = I_NONE;
+blockConfig[T_REF]['input type'] = I_NONE;
 
 blockConfig[T_BLOCK]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_GOTO]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
@@ -376,7 +387,7 @@ blockConfig[T_CONDITION]['handles'] = {'move' : false, 'resize'  : true, 'delete
 blockConfig[T_RANGE]['handles'] = {'move' : false, 'resize'  : true, 'delete'  : false, 'expand'  : true, 'mutate' : -1, 'copy' : false};
 blockConfig[T_ELSE]['handles'] = {'move' : false, 'resize'  : true, 'delete'  : false, 'expand'  : true, 'mutate' : -1, 'copy' : false};
 blockConfig[T_DO]['handles'] = {'move' : false, 'resize'  : true, 'delete'  : false, 'expand'  : true, 'mutate' : -1, 'copy' : false};
-blockConfig[T_OUTLET]['handles'] = {'move' : false, 'resize'  : false, 'delete'  : true, 'expand'  : false, 'mutate' : -1, 'copy' : true};
+blockConfig[T_OUTLET]['handles'] = {'move' : false, 'resize'  : false, 'delete'  : false, 'expand'  : false, 'mutate' : -1, 'copy' : true};
 blockConfig[T_START]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : false, 'expand'  : true, 'mutate' : -1, 'copy' : false};
 blockConfig[T_STOP]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : false};
 blockConfig[T_ASSIGN]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
@@ -391,3 +402,5 @@ blockConfig[T_GET]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : tr
 blockConfig[T_SET]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_PUSH]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_DELETE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_GET, 'copy' : true};
+blockConfig[T_INDEX]['handles'] = {'move' : false, 'resize'  : false, 'delete'  : false, 'expand'  : false, 'mutate' : -1, 'copy' : false};
+blockConfig[T_REF]['handles'] = {'move' : false, 'resize'  : false, 'delete'  : false, 'expand'  : false, 'mutate' : -1, 'copy' : false};

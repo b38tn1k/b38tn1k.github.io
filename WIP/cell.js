@@ -35,12 +35,11 @@ class Cell {
     this.childXBorder = 1.5 * r;
     this.ySpacer = 0;
     if (type == T_CONSOLE) {
-      this.width = 1.5*w;
-      this.height = 3*h;
-    } else {
-      this.width = w;
-      this.height = h;
+      w = 1.5*w;
+      h = 5*h;
     }
+    this.width = w;
+    this.height = h;
     this.oldHeight = h;
     this.minWidth = w;
     this.minHeight = h;

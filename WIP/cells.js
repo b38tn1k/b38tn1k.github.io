@@ -96,7 +96,11 @@ class Cells {
       snapshot[i]['i'] = this.cells[i].handleSH;
       snapshot[i]['p'] = this.cells[i].parent;
       snapshot[i]['c'] = this.cells[i].childIndicies;
-      snapshot[i]['tL'] = this.cells[i].textLabel;
+      if (i == 1){
+        snapshot[i]['tL'] = blockConfig[T_CONSOLE]['block label'];
+      } else {
+        snapshot[i]['tL'] = this.cells[i].textLabel;
+      }
       snapshot[i]['L'] = this.cells[i].indexLabeldiv.html();
     }
     return snapshot;

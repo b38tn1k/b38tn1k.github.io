@@ -40,7 +40,7 @@ function preload() {
   demos.push(loadJSON('assets/demo1.json'));
   demos.push(loadJSON('assets/demo2.json'));
   demos.push(loadJSON('assets/demo3.json'));
-  // demos.push(loadJSON('assets/demo4.json'));
+  demos.push(loadJSON('assets/demo4.json'));
   demos.push(loadJSON('assets/demo5.json'));
   demos.push(loadJSON('assets/demo6.json'));
   demos.push(loadJSON('assets/demo7.json'));
@@ -49,6 +49,8 @@ function preload() {
   demos.push(loadJSON('assets/demo10.json'));
   demos.push(loadJSON('assets/demo11.json'));
   demos.push(loadJSON('assets/demo12.json'));
+  demos.push(loadJSON('assets/demo13.json'));
+  // demos.push(loadJSON('assets/demo14.json'));
 
   demos.push(loadJSON('assets/wip-demo.json'));
 }
@@ -137,7 +139,7 @@ function draw() {
       switch(testTimer) {
         case TST_LOAD:
           currentTestIndex += 1;
-          if (currentTestIndex == demos.length){
+          if (currentTestIndex == demos.length-1){
             if (testLoop == true) {
               currentTestIndex = 0;
             } else {

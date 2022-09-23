@@ -77,7 +77,7 @@ function saveCells(wip=false) {
   jlog('Main', 'saveCells');
   let map = cells.saveCells();
   console.log(JSON.stringify(map));
-  let name = 'demo' + String(demos.length-1) + '.json';
+  let name = 'demo' + String(demos.length) + '.json';
   if (wip == true) {
     name = 'wip-demo.json'
   }
@@ -257,8 +257,13 @@ function toggleMobileHack() {
   // back up everything
   // reset font and max width sizes
   // recreate everything
+  let consoleTextLabel = cells.cells[1].indexLabeldiv.html();;
+  let lineNumber = cells.cells[1].lineNumber;
   let currentLayout = cells.saveCells();
   loadCells(currentLayout);
+  cells.cells[1].indexLabeldiv.html(consoleTextLabel);
+  cells.cells[1].lineNumber = lineNumber;
+  cells.cells[1].indexLabeldiv.elt.scrollTop = 1000 * cells.cells[1].lineNumber;
   menu.html('');
   createMenuDiv();
 }
@@ -281,7 +286,7 @@ function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
   if (showBlockMenu == true) {
-    let bad = [T_DELETE, T_SET];
+    let bad = [T_DELETE];
     menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">data containers</a><br>', true);
     if (subMenu == 1) {
       addBlockMenuList(containers, bad);
@@ -290,7 +295,7 @@ function createMenuDiv() {
     if (subMenu == 2) {
       addBlockMenuList(handles, bad);
     }
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=7;createMenuDiv();">arrays</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="subMenu=7;createMenuDiv();">array tools</a><br>', true);
     if (subMenu == 7) {
       addBlockMenuList(arrayTools, bad);
     }
@@ -316,7 +321,6 @@ function createMenuDiv() {
   }
   menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
   if (showDemoMenu == true) {
-    menu.html('<a href="javascript:void(0)" onclick="testAll()">+ test all</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">+ hello world</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ sleep sort(a)</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ draw polygons</a><br>', true);
@@ -328,9 +332,12 @@ function createMenuDiv() {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">+ comparisons</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">+ if</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[6])">+ if not</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ array get</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ while & array get</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[10])">+ array/string push</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[11])">+ array/string set</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[12])">+ string delete</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[13])">+ array delete</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="testAll()">+ test all</a><br>', true);
   }
   menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
   menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);
@@ -766,6 +773,9 @@ function checkAnOrUpdateTutorial() {
 }
 
 function testAll() {
+  while (speedMode != 1) {
+    toggleSpeedMode();
+  }
   testTimer = TST_LOAD;
   currentTestIndex = -1;
   testPacer = millis();

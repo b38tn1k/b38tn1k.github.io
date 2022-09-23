@@ -100,7 +100,7 @@ var tidyFlag = 0;
 var subMenu = 0;
 var currentTestIndex = 0;
 var testPacer = 0;
-var testPaceSettings = [0, 0, 0, 1000, 2000];
+var testPaceSettings = [0, 0, 0, 500, 2000];
 var testTimer = TST_OFF;
 var testLoop = false;
 var tutorial = false;
@@ -125,7 +125,7 @@ var mathFunctions = [T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT,
 var boolFunctions = [T_NOT, T_EQUAL, T_GREATER, T_LESS];
 var utilities = [T_COMMENT, T_PRINT, T_TURTLE];
 var conditionals = [T_IF, T_WHILE, T_FOR];
-var containers = [T_BLOCK, T_CONST, T_INPUT];
+var containers = [T_BLOCK, T_INPUT, T_CONST,];
 var handles = [T_GOTO, T_VAR, T_ASSIGN];
 var arrayTools = [T_LEN, T_GET, T_SET, T_PUSH, T_DELETE];
 

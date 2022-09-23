@@ -16,12 +16,11 @@ I am thinking about Miro + Scratch.io squished together; an infinite scrolling c
 - [Blocks](https://b38tn1k.com/WIP/#demo1)
 - [Assigning](https://b38tn1k.com/WIP/#demo2)
 - [Basic Math](https://b38tn1k.com/WIP/#demo3)
-- [Silly String Math](https://b38tn1k.com/WIP/#demo4)
-- [Comparisons & Function Mutation](https://b38tn1k.com/WIP/#demo5)
-- [If](https://b38tn1k.com/WIP/#demo6)
-- [If & Not](https://b38tn1k.com/WIP/#demo7)
-- [Sleep Sort](https://b38tn1k.com/WIP/#demo8)
-- [Drawing Polygons](https://b38tn1k.com/WIP/#demo9)
-- [Array Basics & While](https://b38tn1k.com/WIP/#demo10)
+- [Comparisons & Function Mutation](https://b38tn1k.com/WIP/#demo4)
+- [If](https://b38tn1k.com/WIP/#demo5)
+- [If & Not](https://b38tn1k.com/WIP/#demo6)
+- [Sleep Sort](https://b38tn1k.com/WIP/#demo7)
+- [Drawing Polygons](https://b38tn1k.com/WIP/#demo8)
+- [Array Basics & While](https://b38tn1k.com/WIP/#demo9)
 
 [description]

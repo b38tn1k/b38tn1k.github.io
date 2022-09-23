@@ -3,9 +3,8 @@ class Controller {
     this.script;
     this.envChanged = false;
     this.index = 0;
-    this.stackTrace = [];
+    this.stackTrace = {};
     this.workingStack = [];
-    this.stackTraceDir = [];
     this.terminate;
     this.run = false;
     this.activeCell = null;
@@ -176,7 +175,8 @@ class Controller {
             this.moveByParent();
             break;
           default:
-            this.script[1].indexLabeldiv.html("Something is missing", true);
+            this.script[1].indexLabeldiv.html("<br>Something is missing", true);
+            this.HCF();
             break;
         }
         if (this.run == true && fastMode == true) {
@@ -377,9 +377,12 @@ class Controller {
       this.envChanged = false;
       this.script = cells.cells;
       this.terminate = this.script.length + 1;
-      this.stackTrace = [];
+      this.stackTrace = {};
+      this.stackTrace['index'] = [];
+      this.stackTrace['dir'] = [];
+      this.stackTrace['label'] = [];
+      this.stackTrace['handle'] = [];
       this.workingStack = [0];
-      this.stackTraceDir = [];
       this.varRecord = [];
       this.tBuffX = [];
       this.tBuffY = [];
@@ -437,33 +440,34 @@ class Controller {
 
   printStack() {
     let readableStack = {};
-    for (let i = 0; i < this.stackTrace.length; i++) {
+    for (let i = 0; i < this.stackTrace['index'].length; i++) {
       readableStack[i] = {};
       readableStack[i]['stack depth'] = this.stackSizeRecord[i];
-      readableStack[i]['block index'] = this.stackTrace[i];
-      readableStack[i]['name'] = this.script[this.stackTrace[i]].textLabel;
-      readableStack[i]['handle'] = this.script[this.stackTrace[i]].handleSH;
+      readableStack[i]['block index'] = this.stackTrace['index'][i];
+      readableStack[i]['name'] = this.stackTrace['label'][i];
+      readableStack[i]['handle'] = this.stackTrace['handle'][i];
       readableStack[i]['data state'] = this.varRecord[i];
-      readableStack[i]['dir'] = (this.stackTraceDir[i] == 1) ? 'in' : 'out';
+      readableStack[i]['dir'] = (this.stackTrace['dir'][i] == 1) ? 'in' : 'out';
       readableStack[i]['stack notes'] = ""
     }
     for (let i = 0; i < this.stackNotes.length; i++) {
       let note = this.stackNotes[i];
       readableStack[note[0]]['stack notes'] = note[1];
-
     }
     if (printStack == true) {
       console.table(readableStack);
     }
   }
   addNote(myString) {
-    this.stackNotes.push([this.stackTrace.length - 1, myString]);
+    this.stackNotes.push([this.stackTrace['index'].length - 1, myString]);
   }
 
   addToStack(index, dir = 1) {
     this.stackSizeRecord.push(this.workingStack.length);
-    this.stackTrace.push(index);
-    this.stackTraceDir.push(dir);
+    this.stackTrace['index'].push(index);
+    this.stackTrace['dir'].push(dir);
+    this.stackTrace['label'].push(this.script[index].textLabel);
+    this.stackTrace['handle'].push(this.script[index].handleSH);
     if (dir == 1) {
       this.workingStack.push(index);
       this.script[index].flash = this.objectWideFlashFlag;
@@ -473,7 +477,7 @@ class Controller {
       if (this.varMap[key].length > 0) {
         varRecAtom += String(key) + ": " + this.varMap[key][0].getDataSH() + ' | ';
       } else {
-        varRecAtom += String(key);
+        varRecAtom += String(key) + " ";
       }
     }
     this.varRecord.push(varRecAtom);
@@ -526,7 +530,7 @@ class Controller {
     let next = activeCell.handleSH;
     this.index = this.terminate;
     for (let i = 0; i < this.script.length; i++) {
-      if (next == this.script[i].handleSH && this.script[i].type != T_GOTO) {
+      if (next == this.script[i].handleSH && this.script[i].type == T_BLOCK) {
         this.index = i;
       }
     }
@@ -970,6 +974,39 @@ class Controller {
         // change to type: keep handle change data, add handle and data, addData ?
         cells.replaceWithType(sourceType, this.script[blockIndex], target, targetI, activeCell.children[1].children[0]);
         this.script = cells.cells;
+      }
+    } else if (activeCell.type == T_DELETE) {
+      this.envChanged = true;
+      if (blockType == T_INPUT) {
+        let data = this.script[blockIndex].dataSHasType['string'];
+        myInd = myInd % data.length;
+        let newData = data.slice(0, myInd) + data.slice(myInd + 1);
+        this.script[blockIndex].updateDataSH(newData, true);
+        this.updateVarMap(this.script[blockIndex].handleSH, this.script[blockIndex].getDataSH());
+      } else {
+        if (this.script[blockIndex].children.length == 0) {
+          return;
+        }
+        myInd = myInd % this.script[blockIndex].children.length;
+        let indexToDelete = this.script[blockIndex].childIndicies[myInd];
+        cells.cells[indexToDelete].markForDeletion();
+        let deleted = [];
+        for (let i = 0; i < cells.length; i++){
+          if (cells.cells[i].mode == M_DELETE){
+            deleted.push(i);
+          }
+        }
+        cells.activeIndex = indexToDelete;
+        cells.doDelete();
+        this.script = cells.cells;
+        this.terminate -= deleted.length;
+        for (let j = 0; j < deleted.length; j++) {
+          for (let i = 0; i < this.workingStack.length; i++){
+            if (this.workingStack[i] > deleted[j]) {
+              this.workingStack[i] -= 1;
+            }
+          }
+        }
       }
     }
   }

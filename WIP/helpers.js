@@ -88,6 +88,10 @@ function saveCells(wip=false) {
 function loadBackup() {
   jlog('Main', 'loadBackup');
   // console.log(backupObject);
+
+  let consoleTextLabel = cells.cells[1].indexLabeldiv.html();;
+  let lineNumber = cells.cells[1].lineNumber;
+  let currentLayout = cells.saveCells();
   clearCells();
   cells.cells[0].indexLabeldiv.remove();
   cells.cells[1].indexLabeldiv.remove();
@@ -102,6 +106,9 @@ function loadBackup() {
   for (let i = 0; i < this.length; i++) {
     this.cells[i].reshape(true);
   }
+  cells.cells[1].indexLabeldiv.html(consoleTextLabel);
+  cells.cells[1].lineNumber = lineNumber;
+  cells.cells[1].indexLabeldiv.elt.scrollTop = 1000 * cells.cells[1].lineNumber;
   setTidyFlag();
 }
 

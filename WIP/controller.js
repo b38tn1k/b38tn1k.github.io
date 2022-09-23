@@ -289,16 +289,15 @@ class Controller {
     } else if (child.type == T_LEN) {
       this.t_len(child, index);
       data = child.getDataSH();
-      console.log(data);
       varType = V_NUMBER;
     } else if (child.type == T_NOT) {
       this.t_not(child, index);
       data = child.getDataSH();
       varType = V_BOOL;
-    } else if (child.type == T_LEN) {
-      this.t_len(child, index);
+    } else if (child.type == T_GET) {
+      this.t_arrayOp(child, index);
       data = child.getDataSH();
-      varType = V_NUMBER;
+      varType = V_STRING;
     } else {
       data = child.getDataSH();
       if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
@@ -906,16 +905,16 @@ class Controller {
 
   t_arrayOp(activeCell, index) {
     this.addToStack(index);
-    this.tidyFlag = true;
+    if (activeCell.children[0].children.length == 0){
+      return;
+    }
     let blockIndex = this.findBlock(activeCell.handleSH);
     if (blockIndex == -1 || activeCell.children.length < 1 || activeCell.handleSH == 'unset') {
       activeCell.updateDataSH(-1);
       return;
     }
+    this.tidyFlag = true;
     let blockType = this.script[blockIndex].type;
-    if (activeCell.children[0].children.length == 0){
-      return;
-    }
     let myInd = parseInt(activeCell.children[0].children[0].dataSH);
     if (activeCell.type == T_GET) {
       this.tidyFlag = false;
@@ -923,7 +922,6 @@ class Controller {
         let target = String(this.script[blockIndex].dataSH);
         let dataval = target[myInd % target.length];
         activeCell.updateDataSH(dataval);
-        // console.log(activeCell.dataSH);
       } else {
         let target = this.script[blockIndex].children;
         let child = target[myInd % target.length];
@@ -935,6 +933,7 @@ class Controller {
         }
       }
     } else if (activeCell.type == T_PUSH) {
+      this.lookAtChildren(activeCell.children[0], activeCell.childIndicies[0], 0);
       this.envChanged = true;
       let childData = 0;
       if (activeCell.children[0].children.length > 0){
@@ -958,6 +957,7 @@ class Controller {
         this.terminate = this.script.length + 1;
       }
     } else if (activeCell.type == T_SET) {
+      this.lookAtChildren(activeCell.children[0], activeCell.childIndicies[0], 0);
       this.envChanged = true;
       let newVal = String(activeCell.children[1].children[0].getDataSH());
       if (blockType == T_INPUT) {

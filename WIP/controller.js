@@ -162,6 +162,13 @@ class Controller {
             this.t_arrayOp(this.activeCell, this.index);
             this.moveByParent();
             break;
+          case T_RUN:
+            let tempInd = this.index;
+            this.t_arrayOp(this.activeCell, this.index);
+            if (tempInd == this.index) {
+              this.moveByParent();
+            }
+            break;
           case T_SET:
             this.t_arrayOp(this.activeCell, this.index);
             this.moveByParent();
@@ -195,6 +202,7 @@ class Controller {
         }
       }
     } catch (error) {
+      this.HCF();
       this.script[1].indexLabeldiv.html('\n' + error, true);
       console.log(error);
     }
@@ -916,20 +924,29 @@ class Controller {
     this.tidyFlag = true;
     let blockType = this.script[blockIndex].type;
     let myInd = parseInt(activeCell.children[0].children[0].dataSH);
-    if (activeCell.type == T_GET) {
+    if (activeCell.type == T_GET || activeCell.type == T_RUN) {
       this.tidyFlag = false;
       if (blockType == T_INPUT){
         let target = String(this.script[blockIndex].dataSH);
         let dataval = target[myInd % target.length];
         activeCell.updateDataSH(dataval);
       } else {
-        let target = this.script[blockIndex].children;
-        let child = target[myInd % target.length];
-        this.addToStack(this.script[blockIndex].childIndicies[myInd % target.length]);
+        let children = this.script[blockIndex].children;
+        let child = children[myInd % children.length];
+        while (myInd < 0) {
+          myInd += children.length;
+        }
+        myInd = myInd % children.length;
+        let childInd = this.script[blockIndex].childIndicies[myInd];
+        if (activeCell.type == T_RUN && (child.type == T_BLOCK || child.type == T_GOTO)){
+          this.index = childInd;
+          return;
+        }
+        this.addToStack(childInd);
         if (String(child.dataSH) != 'undefined') {
           activeCell.updateDataSH(child.dataSH);
         } else {
-          activeCell.updateDataSH("object:" + this.script[blockIndex].childIndicies[myInd % target.length]);
+          activeCell.updateDataSH("object:" + this.script[blockIndex].childIndicies[myInd]);
         }
       }
     } else if (activeCell.type == T_PUSH) {
@@ -956,8 +973,9 @@ class Controller {
         this.script.push(newChild);// = cells.cells;
         this.terminate = this.script.length + 1;
       }
-    } else if (activeCell.type == T_SET) {
+    } else if (activeCell.type == T_SET) { // might not work with T_GET
       this.lookAtChildren(activeCell.children[0], activeCell.childIndicies[0], 0);
+      this.lookAtChildren(activeCell.children[1], activeCell.childIndicies[1], 0);
       this.envChanged = true;
       let newVal = String(activeCell.children[1].children[0].getDataSH());
       if (blockType == T_INPUT) {

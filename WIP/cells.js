@@ -23,6 +23,7 @@ class Cells {
     this.redrawFlag = false;
     this.parentFlag = 0;
     this.parentWidthRecord = [-1, 0];
+    this.partialUpdate = [];
   }
 
   get length() {
@@ -664,6 +665,14 @@ class Cells {
     }
   }
 
+  clean() {
+    for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].parent != -1){
+        console.log(this.cells[this.cells[i].parent].childIndicies.indexOf(i));
+      }
+    }
+  }
+
   mapAndLink() {
     jlog('Cells', 'mapAndLink');
     let map = {};
@@ -671,6 +680,7 @@ class Cells {
     map[T_PUSH] = [];
     map[T_DELETE] = [];
     map[T_GET] = [];
+    map[T_RUN] = [];
     map[T_SET] = [];
     map[T_LEN] = [];
     map[T_VAR] = [];
@@ -698,7 +708,9 @@ class Cells {
         map[T_SET].push(this.cells[i].handleSH);
         map[T_RANGE].push(this.cells[i].handleSH);
         map[T_LEN].push(this.cells[i].handleSH);
-        varTable[this.cells[i].handleSH] = this.cells[i].getDataSH();
+        if (this.run == false) {
+          varTable[this.cells[i].handleSH] = this.cells[i].getDataSH();
+        }
       }
       // read from block names
       if (this.cells[i].type == T_BLOCK) {
@@ -706,12 +718,14 @@ class Cells {
         map[T_PUSH].push(this.cells[i].handleSH);
         map[T_DELETE].push(this.cells[i].handleSH);
         map[T_GET].push(this.cells[i].handleSH);
+        map[T_RUN].push(this.cells[i].handleSH);
         map[T_SET].push(this.cells[i].handleSH);
         map[T_LEN].push(this.cells[i].handleSH);
       }
       // make pretty
       this.cells[i].reshape();
     }
+
     map[T_VAR] = map[T_VAR].concat(['unset', 'random', 'year', 'month#', 'monthS', 'day#', 'dayS', 'hour', 'minute', 'second', 'millis']);
     map[T_OUTLET].push('unset');
     map[T_RANGE].push('unset');
@@ -719,15 +733,18 @@ class Cells {
     map[T_PUSH].push('unset');
     map[T_DELETE].push('unset');
     map[T_GET].push('unset');
+    map[T_RUN].push('unset');
     map[T_SET].push('unset');
     map[T_LEN].push('unset');
     for (let i = 0; i < this.length; i++) {
-      this.cells[i].updateOptions(map);
-      if (this.cells[i].type == T_VAR) {
-        this.cells[i].dataSH = varTable[this.cells[i].handleSH];
-      }
-      if (this.cells[i].mode == M_DELETE){
-        this.cells[i].cleanForDeletionSafe();
+      if (this.run == false || this.partialUpdate.indexOf(i) != -1) {
+        this.cells[i].updateOptions(map);
+        if (this.cells[i].type == T_VAR) {
+          this.cells[i].dataSH = varTable[this.cells[i].handleSH];
+        }
+        if (this.cells[i].mode == M_DELETE){
+          this.cells[i].cleanForDeletionSafe();
+        }
       }
     }
   }

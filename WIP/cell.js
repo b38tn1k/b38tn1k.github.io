@@ -167,6 +167,10 @@ class Cell {
       this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
     }
 
+    if (blockConfig[this.type]['input type'] == I_SELECT) {
+      this.input.selected(newHandle);
+    }
+
     // if (newHandle != 'unset' && String(newHandle) != 'undefined'){
     //   this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
     // }
@@ -712,6 +716,9 @@ class Cell {
         case T_GET:
           this.updateHandleSH(this.input.value());
           break;
+        case T_RUN:
+          this.updateHandleSH(this.input.value());
+          break;
         case T_SET:
           this.updateHandleSH(this.input.value());
           break;
@@ -746,7 +753,6 @@ class Cell {
           this.dataSH = this.input.value();
           break;
         case T_CONST:
-          // this.dataSH = this.input.value();
           this.updateDataSH(this.input.value());
           break;
         default:

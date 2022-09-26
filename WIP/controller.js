@@ -305,7 +305,14 @@ class Controller {
     } else if (child.type == T_GET) {
       this.t_arrayOp(child, index);
       data = child.getDataSH();
-      varType = V_STRING;
+      if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
+        varType = V_NUMBER;
+      } else if (data == 'true' || data == 'false') {
+        varType = V_BOOL;
+        data = (data == 'true');
+      } else {
+        varType = V_STRING;
+      }
     } else {
       data = child.getDataSH();
       if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
@@ -633,6 +640,7 @@ class Controller {
 
   t_assign(activeCell, index) {
     this.addToStack(index);
+    this.lookAtChildren(activeCell, index);
     if (activeCell.children.length > 1) {
       let assigner = activeCell.children[0];
       let data = assigner.getDataSH();

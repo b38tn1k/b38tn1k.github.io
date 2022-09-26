@@ -254,7 +254,7 @@ blockConfig[T_OUTLET]['accept child'] = [T_COMMENT];
 blockConfig[T_START]['accept child'] = notStartOrConsoleOrSpecial;
 blockConfig[T_START]['accept child'].push(T_BLOCK);
 blockConfig[T_STOP]['accept child'] = [];
-blockConfig[T_ASSIGN]['accept child'] = [T_VAR, T_CONST, T_COMMENT];
+blockConfig[T_ASSIGN]['accept child'] = [T_VAR, T_CONST, T_COMMENT, T_GET];
 blockConfig[T_CONSOLE]['accept child'] = [];
 blockConfig[T_PRINT]['accept child'] = [T_VAR, T_INPUT, T_CONST, T_COMMENT, T_GOTO, T_BLOCK, T_GET];
 blockConfig[T_COMMENT]['accept child'] = [];

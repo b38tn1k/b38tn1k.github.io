@@ -430,7 +430,7 @@ class Cells {
         } else {
           if (this.cells[i].handleSH) {
             rebuildFlag = true;
-            if (this.cells[i].type == T_VAR || this.cells[i].type == T_GOTO){
+            if (this.cells[i].type != T_INPUT && this.cells[i].type != T_BLOCK){
               gotoVarHandleCatcher.push(this.cells[i].handleSH);
             }
             if (this.cells[i].handleSH != 'unset') {

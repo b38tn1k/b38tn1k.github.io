@@ -198,7 +198,7 @@ class Controller {
         this.printStack();
         if (this.envChanged == true) {
           this.tidyFlag = true;
-          this.d_print('Your environment was updated. Click <a style="color: blue;" href="javascript:void(0)" onclick="loadBackup();">here</a> to reset, or do nothing to continue.<br>')
+          this.d_print('<small>Your environment was updated. Click <a style="color: blue;" href="javascript:void(0)" onclick="loadBackup();">here</a> to reset, or do nothing to continue.<br></small>')
         }
       }
     } catch (error) {

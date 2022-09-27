@@ -98,6 +98,7 @@ var demos = [];
 var mobileHType;
 var mobileHAddon = false;
 var tidyFlag = 0;
+var expandMenu = true;
 var subMenu = 0;
 var currentTestIndex = 0;
 var testPacer = 0;
@@ -112,6 +113,7 @@ var mainDiv;
 let logCounter = 0;
 var redrawCounter = 0;
 var notIdle = true;
+var noClickZone = [0, 0, 0, 0];
 
 var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
 var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND, T_PUSH, T_DELETE, T_FOR, T_RUN];

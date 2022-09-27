@@ -291,95 +291,99 @@ function addBlockMenuList(list, bad) {
 
 function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
-  menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>');
-  if (showBlockMenu == true) {
-    let bad = [T_DELETE];
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">data containers</a><br>', true);
-    if (subMenu == 1) {
-      addBlockMenuList(containers, bad);
+  menu.remove();
+  menu = createDiv();
+  menu.html('<div class="expander2";><a href="javascript:void(0)" onclick="expandMenu = !expandMenu; createMenuDiv();">  -  </a></div>');
+  if (expandMenu == true) {
+    menu.html('<div class="expander";><a href="javascript:void(0)" onclick="expandMenu = !expandMenu; createMenuDiv();">-</a></div>');
+    menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>', true);
+    if (showBlockMenu == true) {
+      let bad = [T_DELETE];
+      menu.html('<a href="javascript:void(0)" onclick="subMenu=1;createMenuDiv();">data containers</a><br>', true);
+      if (subMenu == 1) {
+        addBlockMenuList(containers, bad);
+      }
+      menu.html('<a href="javascript:void(0)" onclick="subMenu=2;createMenuDiv();">data references</a><br>', true);
+      if (subMenu == 2) {
+        addBlockMenuList(handles, bad);
+      }
+      menu.html('<a href="javascript:void(0)" onclick="subMenu=7;createMenuDiv();">array tools</a><br>', true);
+      if (subMenu == 7) {
+        addBlockMenuList(arrayTools, bad);
+      }
+      menu.html('<a href="javascript:void(0)" onclick="subMenu=3;createMenuDiv();">math</a><br>', true);
+      if (subMenu == 3) {
+        addBlockMenuList(mathFunctions, bad);
+      }
+      menu.html('<a href="javascript:void(0)" onclick="subMenu=4;createMenuDiv();">comparison</a><br>', true);
+      if (subMenu == 4) {
+        addBlockMenuList(boolFunctions, bad);
+      }
+      menu.html('<a href="javascript:void(0)" onclick="subMenu=5;createMenuDiv();">conditionals</a><br>', true);
+      if (subMenu == 5) {
+        addBlockMenuList(conditionals, bad);
+      }
+      menu.html('<a href="javascript:void(0)" onclick="subMenu=6;createMenuDiv();">utilities</a><br>', true);
+      if (subMenu == 6) {
+        addBlockMenuList(utilities, bad);
+      }
+      menu.html('<a class="bad" href="javascript:void(0)" onclick="showAll()">show all</a><br>', true);
+    } else {
+      subMenu = 0;
     }
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=2;createMenuDiv();">data references</a><br>', true);
-    if (subMenu == 2) {
-      addBlockMenuList(handles, bad);
+    menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
+    if (showDemoMenu == true) {
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">+ hello world</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[14])">+ Turing bit flip</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[15])">+ Programmable TM <br>& binary counter</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ sleep sort(a)</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ draw polygons</a><br>', true);
+      menu.html('<span style="color:LightGray">block usage:</span><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[1])">+ blocks</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[2])">+ assigning</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[3])">+ basic math</a><br>', true);
+      // menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">+ silly string math</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">+ comparisons</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">+ if</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[6])">+ if not</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ while & array get</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[10])">+ array/string push</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[11])">+ array/string set</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[12])">+ string delete</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[13])">+ array delete</a><br>', true);
+      menu.html('<a href="javascript:void(0)" onclick="testAll()">+ test all</a><br>', true);
     }
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=7;createMenuDiv();">array tools</a><br>', true);
-    if (subMenu == 7) {
-      addBlockMenuList(arrayTools, bad);
+    menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);
+    if (speedMode == 0) {
+      menu.html('<a href="javascript:void(0)" onclick="toggleSpeedMode()">speed: 1</a><br>', true);
+    } else if (speedMode == 1){
+      menu.html('<a href="javascript:void(0)" onclick="toggleSpeedMode()">speed: 2</a><br>', true);
+      // menu.html('<a class="bad" href="javascript:void(0)" onclick="toggleSpeedMode()">may lock browser</a><br>', true);
+    } else if ( speedMode == 2) {
+      menu.html('<a href="javascript:void(0)" onclick="toggleSpeedMode()">speed: 3</a><br>', true);
     }
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=3;createMenuDiv();">math</a><br>', true);
-    if (subMenu == 3) {
-      addBlockMenuList(mathFunctions, bad);
+    if (flash == false) {
+      menu.html('<a href="javascript:void(0)" onclick="toggleFlash()">flash on</a><br>', true);
+    } else {
+      menu.html('<a href="javascript:void(0)" onclick="toggleFlash()">flash off</a><br>', true);
     }
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=4;createMenuDiv();">comparison</a><br>', true);
-    if (subMenu == 4) {
-      addBlockMenuList(boolFunctions, bad);
+    menu.html('<a href="javascript:void(0)" onclick="imlost()">center</a><br>', true);
+    if (shareLinkGenerated == true) {
+      menu.html('<a href="javascript:void(0)" onclick="shareLink()">reshare</a><br>', true);
+      menu.html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
+    } else {
+      menu.html('<a href="javascript:void(0)" onclick="shareLink()">share</a><br>', true);
     }
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=5;createMenuDiv();">conditionals</a><br>', true);
-    if (subMenu == 5) {
-      addBlockMenuList(conditionals, bad);
+    if (mobileHack == false) {
+      menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">zoom out</a><br>', true);
+    } else {
+      menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">zoom in</a><br>', true);
     }
-    menu.html('<a href="javascript:void(0)" onclick="subMenu=6;createMenuDiv();">utilities</a><br>', true);
-    if (subMenu == 6) {
-      addBlockMenuList(utilities, bad);
-    }
-    menu.html('<a class="bad" href="javascript:void(0)" onclick="showAll()">show all</a><br>', true);
-  } else {
-    subMenu = 0;
+    menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br><a href="javascript:void(0)" onclick="showDevDiv();">dev div</a><br>refresh if zoomed</small></span>', true);
+    menu.html('', true);
+    menu.html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
   }
-  menu.html('<br><strong><a href="javascript:void(0)" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
-  if (showDemoMenu == true) {
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">+ hello world</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[14])">+ Turing bit flip</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[15])">+ Programmable TM <br>& binary counter</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ sleep sort(a)</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ draw polygons</a><br>', true);
-    menu.html('<span style="color:LightGray">block usage:</span><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[1])">+ blocks</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[2])">+ assigning</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[3])">+ basic math</a><br>', true);
-    // menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">+ silly string math</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[4])">+ comparisons</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[5])">+ if</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[6])">+ if not</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[9])">+ while & array get</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[10])">+ array/string push</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[11])">+ array/string set</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[12])">+ string delete</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[13])">+ array delete</a><br>', true);
-    menu.html('<a href="javascript:void(0)" onclick="testAll()">+ test all</a><br>', true);
-  }
-  menu.html('<br><a href="javascript:void(0)" onclick="clearCells()">clear</a><br>', true);
-  menu.html('<a href="javascript:void(0)" onclick="setTidyFlag()">tidy</a><br>', true);
-  if (speedMode == 0) {
-    menu.html('<a href="javascript:void(0)" onclick="toggleSpeedMode()">speed: 1</a><br>', true);
-  } else if (speedMode == 1){
-    menu.html('<a href="javascript:void(0)" onclick="toggleSpeedMode()">speed: 2</a><br>', true);
-    // menu.html('<a class="bad" href="javascript:void(0)" onclick="toggleSpeedMode()">may lock browser</a><br>', true);
-  } else if ( speedMode == 2) {
-    menu.html('<a href="javascript:void(0)" onclick="toggleSpeedMode()">speed: 3</a><br>', true);
-  }
-  if (flash == false) {
-    menu.html('<a href="javascript:void(0)" onclick="toggleFlash()">flash on</a><br>', true);
-  } else {
-    menu.html('<a href="javascript:void(0)" onclick="toggleFlash()">flash off</a><br>', true);
-  }
-  menu.html('<a href="javascript:void(0)" onclick="imlost()">center</a><br>', true);
-  if (shareLinkGenerated == true) {
-    menu.html('<a href="javascript:void(0)" onclick="shareLink()">reshare</a><br>', true);
-    menu.html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
-  } else {
-    menu.html('<a href="javascript:void(0)" onclick="shareLink()">share</a><br>', true);
-  }
-  if (mobileHack == false) {
-    menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">zoom out</a><br>', true);
-  } else {
-    menu.html('<br><a href="javascript:void(0)" onclick="toggleMobileHack();">zoom in</a><br>', true);
-  }
-  menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br><a href="javascript:void(0)" onclick="showDevDiv();">dev div</a><br>refresh if zoomed</small></span>', true);
-  menu.html('', true);
-  menu.html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
-
-
   menu.position(10, 10);
   if (mobileHack == false){
     menu.style('font-size', '16px');
@@ -396,6 +400,7 @@ function createMenuDiv() {
     menu.size(null, null);
   }
   menu.style('overflow', "auto");
+  noClickZone = [10, menu.size().width + 10, 10, menu.size().height + 10];
   if (hideMenu == true){
     menu.hide();
   } else {

@@ -10,13 +10,27 @@ function windowResized() {
   redrawCounter = 2;
 }
 
+function inClickableZone() {
+  let res = true;
+  if (mouseX > noClickZone[0] && mouseX < noClickZone[1]){
+    if (mouseY > noClickZone[2] && mouseY < noClickZone[3]){
+      res = false;
+    }
+  }
+  return res;
+}
+
 function mousePressed() {
   frameRate(100);
   jlog('Main', 'mousePressed');
   if (mobileHack == true && mobileHAddon == true) {
     newCell(mobileHType, mouseX, mouseY);
   } else {
-    doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
+    if (inClickableZone() === true) {
+      doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
+    } else {
+      doMouseDrag = false;
+    }
     if (doMouseDrag == true){
       xStart = mouseX;
       yStart = mouseY;
@@ -79,6 +93,10 @@ function setup() {
 }
 
 function draw() {
+  if (scrollX != 0 || scrollY != 0) {
+    window.scrollTo(0, 0);
+    setTidyFlag();
+  }
   notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
   if (showFPS == true){
     controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');

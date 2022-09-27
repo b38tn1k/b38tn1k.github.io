@@ -272,6 +272,9 @@ function toggleMobileHack() {
   cells.cells[1].lineNumber = lineNumber;
   cells.cells[1].indexLabeldiv.elt.scrollTop = 1000 * cells.cells[1].lineNumber;
   menu.html('');
+  for (let i = 0; i < cells.length; i++){
+    cells.cells[i].resetDims();
+  }
   createMenuDiv();
 }
 

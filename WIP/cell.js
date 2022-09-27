@@ -35,7 +35,7 @@ class Cell {
     this.childXBorder = 1.5 * r;
     this.ySpacer = 0;
     if (type == T_CONSOLE) {
-      w = 1.5*w;
+      w = 2*w;
       h = 5*h;
     }
     this.width = w;
@@ -91,6 +91,11 @@ class Cell {
   get size() {
     jlog('Cell', 'size');
     return [this.width, this.height]
+  }
+
+  resetDims() {
+    this.minWidth = this.width;
+    this.minHeight = this.height;
   }
 
   getDataSH() {
@@ -969,9 +974,13 @@ class Cell {
     // let yp = this.y;
     let xp = this.viewX;
     let yp = this.viewY;
+
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;
+      if (mobileHack == true) {
+        fudge = this.handleW;
+      }
       if (x > xp - fudge && x < xp + this.width + fudge) {
         if (y > yp - fudge && y < yp + this.height + fudge) {
           if (clickDebug == true) {

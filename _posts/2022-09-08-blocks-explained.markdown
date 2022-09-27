@@ -194,6 +194,21 @@ A stack and variable map are generated every time the process is run. Instructio
 
 A stack trace is provided in the browser console after running a process.
 
+A proof of Turing completeness is provided [here.](https://b38tn1k.com/WIP/#demo15)
+
+# Thoughts & Credits
+I made a Turing Machine that shows UBT is Turing complete (as much as anything else), I've made myself a celebratory drink, and I'm feeling pretty happy. So here are some TL/DR thoughts.
+
+Implementing array operations (get, set, delete, push, run) has made me appreciate the work and minds of van Rossum, Peters, and everyone else who contributed to Python. When I think about code, I think in Python. It's my 'internal dialogue programming language'. My (probably still incomplete) approach to array operations was directly inspired by how easy Python lists work.
+
+If you check the [source](https://github.com/b38tn1k/b38tn1k.github.io/tree/master/WIP), you might see some weird non-idiomatic javascript. I learnt javascript to convert some of my Processing PDE sketches to p5.js. I learnt Processing PDE because it appeared similar to Arduino, but unlocked the screen as something I could play with. Most of my coding xp is robot facing - not UI or screen elements. I'm sure there are more structured approaches to writing javascript but I'm doing this for fun.
+
+Proving this idea out sent me down a couple Wikipedia rabbit holes. Turing is a giant who deserved better. Gödel was a good troublemaker. von Neumann was a massive nerd.
+
+All to say, I built this using tools and knowledge from a lot of different awesome people.
+
+A big thank you to Hamish for being my human TODO list and sounding board.
+
 <script>
 if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
   const iframes = document.getElementsByTagName("iframe");

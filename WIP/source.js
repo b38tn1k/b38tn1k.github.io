@@ -93,7 +93,7 @@ function setup() {
 }
 
 function draw() {
-  if (scrollX != 0 || scrollY != 0) {
+  if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
     window.scrollTo(0, 0);
     setTidyFlag();
   }

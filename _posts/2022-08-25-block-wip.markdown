@@ -9,9 +9,9 @@ link: 'https://b38tn1k.com/WIP/'
 
 [description]This is a weird one.
 
-I am thinking about Miro + Scratch.io squished together; an infinite scrolling canvas for making small software processes. Drag and drop blocks to make functions and/or arrays, then run your process in the browser! This is an ongoing project with a couple UI and logic bugs on the TODO list. A basic [Turing Machine bit flip program](https://b38tn1k.com/WIP/#demo14) demonstrates current status.
+I am thinking about Miro + Scratch.io squished together; an infinite scrolling canvas for making small software processes. Drag and drop blocks to make functions and/or arrays, then run your process in the browser! This is an ongoing project with a couple UI and logic bugs on the TODO list. A basic [Turing Machine bit flip program](https://b38tn1k.com/WIP/#demo14) and [programmable Turing Machine running a binary counter program](https://b38tn1k.com/WIP/#demo15) demonstrate current status.
 
-### Example Scripts
+### Other Example Scripts
 - [Hello World](https://b38tn1k.com/WIP/#demo0)
 - [Blocks](https://b38tn1k.com/WIP/#demo1)
 - [Assigning](https://b38tn1k.com/WIP/#demo2)

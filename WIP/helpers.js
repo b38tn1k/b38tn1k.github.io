@@ -406,6 +406,7 @@ function createMenuDiv() {
   noClickZone = [10, menu.size().width + 10, 10, menu.size().height + 10];
   if (hideMenu == true){
     menu.hide();
+    noClickZone = [-1, -1, -1, -1];
   } else {
     menu.show();
   }

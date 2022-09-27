@@ -305,7 +305,7 @@ class Controller {
     } else if (child.type == T_GET) {
       this.t_arrayOp(child, index);
       data = child.getDataSH();
-      if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
+      if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true || /^\-+\d+$/.test(data) == true || /^\-+\d+\.+\d+$/.test(data) == true) {
         varType = V_NUMBER;
       } else if (data == 'true' || data == 'false') {
         varType = V_BOOL;
@@ -315,7 +315,7 @@ class Controller {
       }
     } else {
       data = child.getDataSH();
-      if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true) {
+      if (/^\d+\.\d+$/.test(data) == true || /^\d+$/.test(data) == true || /^\-+\d+$/.test(data) == true || /^\-+\d+\.+\d+$/.test(data) == true) {
         varType = V_NUMBER;
       } else if (data == 'true' || data == 'false') {
         varType = V_BOOL;
@@ -996,6 +996,13 @@ class Controller {
         this.updateVarMap(output, this.script[blockIndex].getDataSH());
       } else {
         let sourceType = activeCell.children[1].children[0].type;
+        if (sourceType == T_GET) {
+          // let getHandle = activeCell.children[1].children[0].handleSH;
+          // let getIndex = activeCell.children[1].children[0].children[0].children[0].getDataSH();
+          // let getBlock = this.findBlock(getHandle);
+          // sourceType = this.script[getBlock].children[getIndex%this.script[getBlock].children.length];
+          sourceType = T_CONST;
+        }
         myInd = myInd % this.script[blockIndex].children.length
         let target = this.script[blockIndex].children[myInd];
         let targetI = this.script[blockIndex].childIndicies[myInd];

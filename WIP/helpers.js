@@ -330,6 +330,7 @@ function createMenuDiv() {
   if (showDemoMenu == true) {
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[0])">+ hello world</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[14])">+ Turing bit flip</a><br>', true);
+    menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[15])">+ Programmable TM <br>& binary counter</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[7])">+ sleep sort(a)</a><br>', true);
     menu.html('<a href="javascript:void(0)" onclick="loadCells(demos[8])">+ draw polygons</a><br>', true);
     menu.html('<span style="color:LightGray">block usage:</span><br>', true);

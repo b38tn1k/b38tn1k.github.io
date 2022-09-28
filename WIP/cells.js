@@ -906,6 +906,22 @@ class Cells {
     }
   }
 
+  hideAllDivs(){
+    for (let i = 0; i < this.length; i++){
+      this.cells[i].indexLabeldiv.hide();
+      this.cells[i].hideDivs();
+    }
+  }
+
+  showAllDivs(){
+    for (let i = 0; i < this.length; i++){
+      if (this.cells[i].hide == false) {
+        this.cells[i].indexLabeldiv.show();
+        this.cells[i].showDivs();
+      }
+    }
+  }
+
   updateView(xPos, yPos, doDrag) {
     jlog('Cells', 'updateView');
     this.viewXdelta = xPos;

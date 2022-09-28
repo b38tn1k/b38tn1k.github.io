@@ -26,11 +26,11 @@ function mousePressed() {
   if (mobileHack == true && mobileHAddon == true) {
     newCell(mobileHType, mouseX, mouseY);
   } else {
-    if (inClickableZone() === true) {
+    // if (inClickableZone() === true) {
       doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
-    } else {
-      doMouseDrag = false;
-    }
+    // } else {
+    //   doMouseDrag = false;
+    // }
     if (doMouseDrag == true){
       xStart = mouseX;
       yStart = mouseY;
@@ -87,16 +87,17 @@ function setup() {
   yOff = 0;
   xPos = 0;
   yPos = 0;
-  doLastBit();
   showDev = ! showDev; //lazy
   showDevDiv();
+  doLastBit();
 }
 
 function draw() {
-  // if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
-  //   window.scrollTo(0, 0);
-  //   setTidyFlag();
-  // }
+  if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
+    window.scrollTo(0, 0);
+    cells.updateView(xPos, yPos, false);
+  }
+
   notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
   if (showFPS == true){
     controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');

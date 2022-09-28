@@ -549,6 +549,7 @@ class Cell {
     }
     if (this.shrink === true) {
       this.height = this.yHeaderEnd * 3;
+      this.width = this.startWidth;
       if (this.type == T_START) {
         this.height = this.yHeaderEnd;
       } else {
@@ -686,11 +687,11 @@ class Cell {
         }
         if (this.type == T_START) {
           if (this.mode != M_MOVE && this.shrink == false) {
-            let xMin = xp + this.width/2 - 1.5*this.handleW;
-            let xMax = xMin + 3*this.handleW;
+            let xMin = xp + this.width/2 - 1.5*this.handleW - fudge;
+            let xMax = xMin + 3*this.handleW + fudge;
             if (x > xMin && x < xMax) {
-              let yMin = yp + this.yHeaderEnd - 2 * (1.25 * this.handleH);
-              let yMax = yMin + 3*this.handleH;
+              let yMin = yp + this.yHeaderEnd - 2 * (1.25 * this.handleH) - fudge;
+              let yMax = yMin + 3*this.handleH + fudge;
               if (y > yMin && y < yMax) {
                 this.mode = M_START;
                 breaker = true;
@@ -926,6 +927,7 @@ class Cell {
       this.children[i].shrinkBlock();
     }
     this.shrink = true;
+    this.width = this.startWidth;
     this.hideDivs();
   }
 

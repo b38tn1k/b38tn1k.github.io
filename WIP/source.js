@@ -93,10 +93,11 @@ function setup() {
 }
 
 function draw() {
-  // if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
-  //   window.scrollTo(0, 0);
-  //   setTidyFlag();
-  // }
+  if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
+    window.scrollTo(0, 0);
+    cells.updateView(xPos, yPos, true);
+    setTidyFlag();
+  }
   notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
   if (showFPS == true){
     controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
@@ -120,6 +121,9 @@ function draw() {
   }
   if (cells.redrawFlag == true || cells.run == true){
     redrawCounter = 2;
+    if (cells.redrawFlag == true) {
+      setTidyFlag();
+    }
   }
   if (notIdle == true) {
     cells.update(mouseX, mouseY, mouseIsPressed);
@@ -143,6 +147,9 @@ function draw() {
   if (tidyFlag > 0) {
     tidy();
     cells.updateView(xPos, yPos, true);
+    menu.remove();
+    menu = createDiv();
+    createMenuDiv();
     tidyFlag -= 1;
   }
   if (cells.rebuildMenuFlag == true){

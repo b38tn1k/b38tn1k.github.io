@@ -24,8 +24,7 @@ function newCell(type, x =-1, y =-1) {
 
 function setTidyFlag() {
   jlog('Main', 'tidy');
-  tidyFlag = 4;
-  cells.updateView(xPos, yPos, false);
+  tidyFlag = 2;
 }
 
 function tidy() {
@@ -150,11 +149,7 @@ function loadCells(myLoaderMap) {
   menu.remove();
   menu = createDiv();
   createMenuDiv();
-  imlost();
-  cells.updateView(xPos, yPos, false);
-  menu.remove();
-  menu = createDiv();
-  createMenuDiv();
+  cells.updateView(xPos, yPos, true);
   setTidyFlag();
   redrawCounter = 4;
 }
@@ -262,7 +257,6 @@ function mouseDrag() {
 function imlost() {
   xPos = 0;
   yPos = 0;
-  cells.updateView(xPos, yPos, false);
 }
 
 function toggleMobileHack() {
@@ -302,7 +296,7 @@ function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   menu.remove();
   menu = createDiv();
-  menu.html('<div class="expander2";><a href="javascript:void(0)" onclick="expandMenu = !expandMenu; createMenuDiv();"> menu </a></div>');
+  menu.html('<div class="expander2";><a href="javascript:void(0)" onclick="expandMenu = !expandMenu; createMenuDiv();">  -  </a></div>');
   if (expandMenu == true) {
     menu.html('<div class="expander";><a href="javascript:void(0)" onclick="expandMenu = !expandMenu; createMenuDiv();">-</a></div>');
     menu.html('<strong><a href="javascript:void(0)" onclick="showHideBlockMenu();">blocks menu</a></strong><br>', true);
@@ -392,9 +386,8 @@ function createMenuDiv() {
     menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br><a href="javascript:void(0)" onclick="showDevDiv();">dev div</a><br>refresh if zoomed</small></span>', true);
     menu.html('', true);
     menu.html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
-  } else {
-    noClickZone = [-1, -1, -1, -1];
   }
+  menu.position(10, 10);
   if (mobileHack == false){
     menu.style('font-size', '16px');
   } else {
@@ -410,11 +403,6 @@ function createMenuDiv() {
     menu.size(null, null);
   }
   menu.style('overflow', "auto");
-  if (expandMenu == true) {
-    menu.position(10, 10);
-  } else {
-    menu.position(10, windowHeight - 2 * menu.size().height);
-  }
   noClickZone = [10, menu.size().width + 10, 10, menu.size().height + 10];
   if (hideMenu == true){
     menu.hide();

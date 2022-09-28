@@ -184,11 +184,8 @@ function showHideDemoMenu() {
 
 function clearCells() {
   jlog('Main', 'clearCells');
-  while (cells.cells.length > 2) {
-    cells.activeIndex = 2;
-    cells.cells[2].mode = M_DELETE;
-    cells.update();
-  }
+  controller.d_print('Clearing...');
+  clearCellFlag = 2;
 }
 
 function toggleSpeedMode() {
@@ -278,105 +275,123 @@ function toggleMobileHack() {
   createMenuDiv();
 }
 
-function addBlockMenuOption(type, bad){
-  if (bad.indexOf(type) == -1) {
-    menu.html('<a href="javascript:void(0);" onclick="newCell(' + type + ');createMenuDiv();">+ '+ blockConfig[type]['block label'] + '</a><br>', true);
-  } else {
-    menu.html('<a class="bad" href="javascript:void(0);" onclick="newCell(' + type + ');createMenuDiv();">+ '+ blockConfig[type]['block label'] + '</a><br>', true);
+function newCellFromButtonClick(button) {
+  type = button.srcElement.value;
+  newCell(type);
+  createMenuDiv();
+}
+
+function addBlockMenuOption(type){
+  button = createButton('+ ' + blockConfig[type]['block label'], type);
+  button.parent(menu);
+  button.mousePressed(newCellFromButtonClick);
+  menu.html('<br>', true);
+  // menu.html('<a href="javascript:void(0);" onclick="newCell(' + type + ');createMenuDiv();">+ '+ blockConfig[type]['block label'] + '</a><br>', true);
+}
+
+function addBlockMenuList(list) {
+  for (let i = 0; i < list.length; i++) {
+    addBlockMenuOption(list[i]);
   }
 }
 
-function addBlockMenuList(list, bad) {
-  for (let i = 0; i < list.length; i++) {
-    addBlockMenuOption(list[i], bad);
+function loadCellsFromButtonClick(button) {
+  index = parseInt(button.srcElement.value);
+  loadCells(demos[index]);
+  createMenuDiv();
+}
+
+function showBlockSubMenu(button) {
+  subMenu = parseInt(button.srcElement.value);
+  createMenuDiv();
+}
+
+function addButtonToMainDiv(name, value=0, callback=0){
+  let button = createButton(name, String(value));
+  button.parent(menu);
+  if (callback != 0) {
+    button.mousePressed(callback);
   }
+  menu.html('<br>', true);
 }
 
 function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   menu.remove();
   menu = createDiv();
-  menu.html('<strong><a href="javascript:void(0);" onclick="showHideBlockMenu();">blocks menu</a></strong><br>', true);
+  addButtonToMainDiv('blocks menu', 0, showHideBlockMenu);
   if (showBlockMenu == true) {
-    let bad = [];
-    menu.html('<a href="javascript:void(0);" onclick="subMenu=1;createMenuDiv();">data containers</a><br>', true);
+    addButtonToMainDiv('data containers', 1, showBlockSubMenu);
     if (subMenu == 1) {
-      addBlockMenuList(containers, bad);
+      addBlockMenuList(containers);
     }
-    menu.html('<a href="javascript:void(0);" onclick="subMenu=2;createMenuDiv();">data references</a><br>', true);
+    addButtonToMainDiv('data references', 2, showBlockSubMenu);
     if (subMenu == 2) {
-      addBlockMenuList(handles, bad);
+      addBlockMenuList(handles);
     }
-    menu.html('<a href="javascript:void(0);" onclick="subMenu=7;createMenuDiv();">array tools</a><br>', true);
+    addButtonToMainDiv('array tools', 7, showBlockSubMenu);
     if (subMenu == 7) {
-      addBlockMenuList(arrayTools, bad);
+      addBlockMenuList(arrayTools);
     }
-    menu.html('<a href="javascript:void(0);" onclick="subMenu=3;createMenuDiv();">math</a><br>', true);
+    addButtonToMainDiv('math', 3, showBlockSubMenu);
     if (subMenu == 3) {
-      addBlockMenuList(mathFunctions, bad);
+      addBlockMenuList(mathFunctions);
     }
-    menu.html('<a href="javascript:void(0);" onclick="subMenu=4;createMenuDiv();">comparison</a><br>', true);
+    addButtonToMainDiv('comparison', 4, showBlockSubMenu);
     if (subMenu == 4) {
-      addBlockMenuList(boolFunctions, bad);
+      addBlockMenuList(boolFunctions);
     }
-    menu.html('<a href="javascript:void(0);" onclick="subMenu=5;createMenuDiv();">conditionals</a><br>', true);
+    addButtonToMainDiv('conditionals', 5, showBlockSubMenu);
     if (subMenu == 5) {
-      addBlockMenuList(conditionals, bad);
+      addBlockMenuList(conditionals);
     }
-    menu.html('<a href="javascript:void(0);" onclick="subMenu=6;createMenuDiv();">utilities</a><br>', true);
+    addButtonToMainDiv('utilities', 6, showBlockSubMenu);
     if (subMenu == 6) {
-      addBlockMenuList(utilities, bad);
+      addBlockMenuList(utilities);
     }
-    menu.html('<a class="bad" href="javascript:void(0);" onclick="showAll();createMenuDiv();">show all</a><br>', true);
+    addButtonToMainDiv('show all', 6, showAll);
   } else {
     subMenu = 0;
   }
-  menu.html('<br><strong><a href="javascript:void(0);" onclick="showHideDemoMenu();">demo menu</a></strong><br>', true);
+  addButtonToMainDiv('demo menu', 6, showHideDemoMenu);
   if (showDemoMenu == true) {
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[0]);createMenuDiv();">+ hello world</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[14]);createMenuDiv();">+ Turing bit flip</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[15]);createMenuDiv();">+ Programmable TM <br>& binary counter</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[7]);createMenuDiv();">+ sleep sort(a)</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[8]);createMenuDiv();">+ draw polygons</a><br>', true);
+    addButtonToMainDiv('+ Hello, World!', 0, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ Turing bit flip', 14, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ Programmable TM', 15, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ Sleep Sort', 7, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ Draw Polygons', 8, loadCellsFromButtonClick);
     menu.html('<span style="color:LightGray">block usage:</span><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[1]);createMenuDiv();">+ blocks</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[2]);createMenuDiv();">+ assigning</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[3]);createMenuDiv();">+ basic math</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[4]);createMenuDiv();">+ comparisons</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[5]);createMenuDiv();">+ if</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[6]);createMenuDiv();">+ if not</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[9]);createMenuDiv();">+ while & array get</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[10]);createMenuDiv();">+ array/string push</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[11]);createMenuDiv();">+ array/string set</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[12]);createMenuDiv();">+ string delete</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="loadCells(demos[13]);createMenuDiv();">+ array delete</a><br>', true);
-    menu.html('<a href="javascript:void(0);" onclick="testAll();createMenuDiv();">+ test all</a><br>', true);
+    addButtonToMainDiv('+ blocks', 1, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ assigning', 2, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ basic math', 3, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ comparisons', 4, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ if', 5, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ if not', 6, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ while and array get', 9, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ array/string push', 10, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ array/string set', 11, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ string delete', 12, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ array delete', 13, loadCellsFromButtonClick);
+    addButtonToMainDiv('+ test all', 13, testAll);
   }
-  menu.html('<br><a href="javascript:void(0);" onclick="clearCells();createMenuDiv();">clear</a><br>', true);
-  menu.html('<a href="javascript:void(0);" onclick="setTidyFlag();createMenuDiv();">tidy</a><br>', true);
-  if (speedMode == 0) {
-    menu.html('<a href="javascript:void(0);" onclick="toggleSpeedMode();createMenuDiv();">speed: 1</a><br>', true);
-  } else if (speedMode == 1){
-    menu.html('<a href="javascript:void(0);" onclick="toggleSpeedMode();createMenuDiv();">speed: 2</a><br>', true);
-  } else if ( speedMode == 2) {
-    menu.html('<a href="javascript:void(0);" onclick="toggleSpeedMode();createMenuDiv();">speed: 3</a><br>', true);
-  }
-  if (flash == false) {
-    menu.html('<a href="javascript:void(0);" onclick="toggleFlash();createMenuDiv();">flash on</a><br>', true);
-  } else {
-    menu.html('<a href="javascript:void(0);" onclick="toggleFlash();createMenuDiv();">flash off</a><br>', true);
-  }
-  menu.html('<a href="javascript:void(0);" onclick="imlost();createMenuDiv();">center</a><br>', true);
+  menu.html("<br>", true);
+  addButtonToMainDiv('clear', 13, clearCells);
+  addButtonToMainDiv('tidy', 13, setTidyFlag);
+  addButtonToMainDiv('speed: ' + String(speedMode+1), 13, toggleSpeedMode);
+  addButtonToMainDiv('flash: ' + String(flash), 13, toggleFlash);
+  addButtonToMainDiv('center', 13, imlost);
   if (shareLinkGenerated == true) {
-    menu.html('<a href="javascript:void(0);" onclick="shareLink();createMenuDiv();">reshare</a><br>', true);
+    addButtonToMainDiv('reshare', 13, shareLink);
     menu.html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
   } else {
-    menu.html('<a href="javascript:void(0);" onclick="shareLink();createMenuDiv();">share</a><br>', true);
+    addButtonToMainDiv('share', 13, shareLink);
   }
   if (mobileHack == false) {
-    menu.html('<br><a href="javascript:void(0);" onclick="toggleMobileHack();createMenuDiv();">zoom out</a><br>', true);
+    addButtonToMainDiv('zoom out', 13, toggleMobileHack);
+    // menu.html('<br><a href="javascript:void(0);" onclick="toggleMobileHack();createMenuDiv();">zoom out</a><br>', true);
   } else {
-    menu.html('<br><a href="javascript:void(0);" onclick="toggleMobileHack();createMenuDiv();">zoom in</a><br>', true);
+    // menu.html('<br><a href="javascript:void(0);" onclick="toggleMobileHack();createMenuDiv();">zoom in</a><br>', true);
+    addButtonToMainDiv('zoom in', 13, toggleMobileHack);
   }
   menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br><a href="javascript:void(0);" onclick="showDevDiv();createMenuDiv();">dev div</a><br>refresh if zoomed</small></span>', true);
   menu.html('', true);

@@ -557,7 +557,6 @@ class Cells {
     if (blockConfig[type]['input type'] == I_TEXT) {
       this.cells[this.activeIndex].input.value(val, val);
     }
-
     if (iCanHasChild == true) {
       const childrenStart = this.length;
       for (let i = 0; i < this.cells[oldAI].childIndicies.length; i++) {

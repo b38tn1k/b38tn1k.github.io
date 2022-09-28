@@ -96,6 +96,7 @@ function draw() {
   if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
     window.scrollTo(0, 0);
     cells.updateView(xPos, yPos, false);
+    cells.rebuildMenuFlag = true;
   }
 
   notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
@@ -151,6 +152,17 @@ function draw() {
     menu = createDiv();
     createMenuDiv();
     cells.rebuildMenuFlag = false;
+  }
+  if (clearCellFlag == 1) {
+    while (cells.cells.length > 2) {
+      cells.activeIndex = 2;
+      cells.cells[2].mode = M_DELETE;
+      cells.update();
+    }
+    clearCellFlag = 0;
+  }
+  if (clearCellFlag == 2) {
+    clearCellFlag = 1;
   }
 
   if (testTimer != TST_OFF) {

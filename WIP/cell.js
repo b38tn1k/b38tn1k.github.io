@@ -548,7 +548,6 @@ class Cell {
       this.height = this.minHeight;
     }
     if (this.shrink === true) {
-      this.width = this.startWidth;
       this.height = this.yHeaderEnd * 3;
       if (this.type == T_START) {
         this.height = this.yHeaderEnd;

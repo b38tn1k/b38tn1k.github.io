@@ -120,9 +120,6 @@ function draw() {
   }
   if (cells.redrawFlag == true || cells.run == true){
     redrawCounter = 2;
-    if (cells.redrawFlag == true){
-      setTidyFlag();
-    }
   }
   if (notIdle == true) {
     cells.update(mouseX, mouseY, mouseIsPressed);

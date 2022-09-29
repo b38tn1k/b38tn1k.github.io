@@ -339,6 +339,21 @@ class Cells {
     }
   }
 
+  quickClear(){
+    for (let i = 2; i < this.length; i++){
+      this.cells[i].indexLabeldiv.remove();
+      if (this.cells[i].input) {
+        this.cells[i].input.remove();
+      }
+    }
+    this.cells[0].children = [];
+    this.cells[0].resetDims(true);
+    this.cells[0].childIndicies = [];
+    this.cells[1].reshape(true);
+    this.cells.splice(2);
+
+  }
+
   getID(count) {
     jlog('Cells', 'getID');
     let tempID = '';

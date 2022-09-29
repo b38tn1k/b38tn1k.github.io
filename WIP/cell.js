@@ -93,7 +93,11 @@ class Cell {
     return [this.width, this.height]
   }
 
-  resetDims() {
+  resetDims(full=false) {
+    if (full == true) {
+      this.height = this.startHeight;
+      this.width = this.startWidth;
+    }
     this.minWidth = this.width;
     this.minHeight = this.height;
   }
@@ -702,6 +706,13 @@ class Cell {
       }
     }
     return breaker;
+  }
+
+  clearConsole(){
+    if (this.type == T_CONSOLE) {
+      this.indexLabeldiv.html(this.textLabel);
+      this.lineNumber = 0;
+    }
   }
 
   updateSHs() {

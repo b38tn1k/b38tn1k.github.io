@@ -154,12 +154,15 @@ function draw() {
     cells.rebuildMenuFlag = false;
   }
   if (clearCellFlag == 1) {
-    while (cells.cells.length > 2) {
-      cells.activeIndex = 2;
-      cells.cells[2].mode = M_DELETE;
-      cells.update();
-    }
+    cells.quickClear();
+    // while (cells.cells.length > 2) {
+    //   cells.activeIndex = 2;
+    //   cells.cells[2].mode = M_DELETE;
+    //   cells.update();
+    // }
     clearCellFlag = 0;
+    cells.cells[1].clearConsole();
+    setTidyFlag();
   }
   if (clearCellFlag == 2) {
     clearCellFlag = 1;

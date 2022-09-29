@@ -20,7 +20,7 @@ class Cell {
     this.type = type
     this.textLabel = blockConfig[this.type]['block label'];
     if (this.type == T_BLOCK){
-      this.textLabel = '<a href="javascript:void(0)" onclick="toggleInput("")">' + this.textLabel + '</a>';
+      // this.textLabel = '<a href="javascript:void(0)" onclick="toggleInput("")">' + this.textLabel + '</a>';
     }
     // labels, tools, setup
     this.mode = M_IDLE;
@@ -158,7 +158,14 @@ class Cell {
   updateHandleSH(newHandle) {
     this.handleSH = newHandle;
     if (this.type == T_BLOCK || this.type == T_INPUT){
-      this.textLabel = '<strong><a href="javascript:void(0)" onclick="toggleInput(\''+String(this.handleSH)+'\',' + String(this.type) + ')">' + blockConfig[this.type]['block label'] + '</a></strong>';
+      this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
+      // this.textLabel = '<strong><a href="javascript:void(0)" onclick="toggleInput(\''+String(this.handleSH)+'\',' + String(this.type) + ')">' + blockConfig[this.type]['block label'] + '</a></strong>';
+      // let button = createButton(this.handleSH + ': ' + blockConfig[this.type]['block label'], String(this.handleSH) + 'type' +  String(this.type));
+      // button.parent(this.indexLabeldiv);
+      // button.show();
+      // if (callback != 0) {
+      //   button.mousePressed(callback);
+      // }
       this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
       this.updateView(this.viewX - this.x, this.viewY - this.y);
       this.updateAllDivPositions();

@@ -153,20 +153,6 @@ function draw() {
     createMenuDiv();
     cells.rebuildMenuFlag = false;
   }
-  if (clearCellFlag == 1) {
-    cells.quickClear();
-    // while (cells.cells.length > 2) {
-    //   cells.activeIndex = 2;
-    //   cells.cells[2].mode = M_DELETE;
-    //   cells.update();
-    // }
-    clearCellFlag = 0;
-    cells.cells[1].clearConsole();
-    setTidyFlag();
-  }
-  if (clearCellFlag == 2) {
-    clearCellFlag = 1;
-  }
 
   if (testTimer != TST_OFF) {
     let readyToStep = (millis() - testPacer > testPaceSettings[testTimer]);

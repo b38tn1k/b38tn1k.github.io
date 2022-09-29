@@ -2,24 +2,18 @@ function newCell(type, x =-1, y =-1) {
   jlog('Main', 'newCell');
   if (mobileHack == false) {
     cells.addCell(type, 1.5 * menu.size().width);
-    menu.remove();
-    menu = createDiv();
-    createMenuDiv();
   } else {
     if (mobileHAddon == true) {
       cells.addCell(mobileHType, x, y);
-      // cells.turnOffActiveIndex();
       mobileHAddon = false;
-      menu.remove();
-      menu = createDiv();
-      createMenuDiv();
     } else {
-      console.log('mobileHack');
       mobileHType = type;
       mobileHAddon = true;
     }
   }
-  // setTidyFlag();
+  menu.remove();
+  menu = createDiv();
+  createMenuDiv();
 }
 
 function setTidyFlag() {
@@ -185,7 +179,8 @@ function showHideDemoMenu() {
 function clearCells() {
   jlog('Main', 'clearCells');
   controller.d_print('Clearing...');
-  clearCellFlag = 2;
+  cells.quickClear();
+  createMenuDiv();
 }
 
 function toggleSpeedMode() {
@@ -282,11 +277,7 @@ function newCellFromButtonClick(button) {
 }
 
 function addBlockMenuOption(type){
-  button = createButton('+ ' + blockConfig[type]['block label'], type);
-  button.parent(menu);
-  button.mousePressed(newCellFromButtonClick);
-  menu.html('<br>', true);
-  // menu.html('<a href="javascript:void(0);" onclick="newCell(' + type + ');createMenuDiv();">+ '+ blockConfig[type]['block label'] + '</a><br>', true);
+  addButtonToDiv('+ ' + blockConfig[type]['block label'], type, newCellFromButtonClick);
 }
 
 function addBlockMenuList(list) {
@@ -306,97 +297,95 @@ function showBlockSubMenu(button) {
   createMenuDiv();
 }
 
-function addButtonToMainDiv(name, value=0, callback=0){
+function addButtonToDiv(name, value=0, callback=0, div=menu){
   let button = createButton(name, String(value));
-  button.parent(menu);
+  button.parent(div);
   if (callback != 0) {
     button.mousePressed(callback);
   }
-  menu.html('<br>', true);
+  div.html('<br>', true);
 }
 
 function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   menu.remove();
   menu = createDiv();
-  addButtonToMainDiv('blocks menu', 0, showHideBlockMenu);
+  addButtonToDiv('blocks menu', 0, showHideBlockMenu);
   if (showBlockMenu == true) {
-    addButtonToMainDiv('data containers', 1, showBlockSubMenu);
+    addButtonToDiv('data containers', 1, showBlockSubMenu);
     if (subMenu == 1) {
       addBlockMenuList(containers);
     }
-    addButtonToMainDiv('data references', 2, showBlockSubMenu);
+    addButtonToDiv('data references', 2, showBlockSubMenu);
     if (subMenu == 2) {
       addBlockMenuList(handles);
     }
-    addButtonToMainDiv('array tools', 7, showBlockSubMenu);
+    addButtonToDiv('array tools', 7, showBlockSubMenu);
     if (subMenu == 7) {
       addBlockMenuList(arrayTools);
     }
-    addButtonToMainDiv('math', 3, showBlockSubMenu);
+    addButtonToDiv('math', 3, showBlockSubMenu);
     if (subMenu == 3) {
       addBlockMenuList(mathFunctions);
     }
-    addButtonToMainDiv('comparison', 4, showBlockSubMenu);
+    addButtonToDiv('comparison', 4, showBlockSubMenu);
     if (subMenu == 4) {
       addBlockMenuList(boolFunctions);
     }
-    addButtonToMainDiv('conditionals', 5, showBlockSubMenu);
+    addButtonToDiv('conditionals', 5, showBlockSubMenu);
     if (subMenu == 5) {
       addBlockMenuList(conditionals);
     }
-    addButtonToMainDiv('utilities', 6, showBlockSubMenu);
+    addButtonToDiv('utilities', 6, showBlockSubMenu);
     if (subMenu == 6) {
       addBlockMenuList(utilities);
     }
-    addButtonToMainDiv('show all', 6, showAll);
+    addButtonToDiv('show all', 6, showAll);
   } else {
     subMenu = 0;
   }
-  addButtonToMainDiv('demo menu', 6, showHideDemoMenu);
+  addButtonToDiv('demo menu', 6, showHideDemoMenu);
   if (showDemoMenu == true) {
-    addButtonToMainDiv('+ Hello, World!', 0, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ Turing bit flip', 14, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ Programmable TM', 15, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ Sleep Sort', 7, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ Draw Polygons', 8, loadCellsFromButtonClick);
+    addButtonToDiv('+ Hello, World!', 0, loadCellsFromButtonClick);
+    addButtonToDiv('+ Turing bit flip', 14, loadCellsFromButtonClick);
+    addButtonToDiv('+ Programmable TM', 15, loadCellsFromButtonClick);
+    addButtonToDiv('+ Sleep Sort', 7, loadCellsFromButtonClick);
+    addButtonToDiv('+ Draw Polygons', 8, loadCellsFromButtonClick);
     menu.html('<span style="color:LightGray">block usage:</span><br>', true);
-    addButtonToMainDiv('+ blocks', 1, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ assigning', 2, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ basic math', 3, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ comparisons', 4, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ if', 5, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ if not', 6, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ while and array get', 9, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ array/string push', 10, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ array/string set', 11, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ string delete', 12, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ array delete', 13, loadCellsFromButtonClick);
-    addButtonToMainDiv('+ test all', 13, testAll);
+    addButtonToDiv('+ blocks', 1, loadCellsFromButtonClick);
+    addButtonToDiv('+ assigning', 2, loadCellsFromButtonClick);
+    addButtonToDiv('+ basic math', 3, loadCellsFromButtonClick);
+    addButtonToDiv('+ comparisons', 4, loadCellsFromButtonClick);
+    addButtonToDiv('+ if', 5, loadCellsFromButtonClick);
+    addButtonToDiv('+ if not', 6, loadCellsFromButtonClick);
+    addButtonToDiv('+ while and array get', 9, loadCellsFromButtonClick);
+    addButtonToDiv('+ array/string push', 10, loadCellsFromButtonClick);
+    addButtonToDiv('+ array/string set', 11, loadCellsFromButtonClick);
+    addButtonToDiv('+ string delete', 12, loadCellsFromButtonClick);
+    addButtonToDiv('+ array delete', 13, loadCellsFromButtonClick);
+    addButtonToDiv('+ test all', 13, testAll);
   }
   menu.html("<br>", true);
-  addButtonToMainDiv('clear', 13, clearCells);
-  addButtonToMainDiv('tidy', 13, setTidyFlag);
-  addButtonToMainDiv('speed: ' + String(speedMode+1), 13, toggleSpeedMode);
-  addButtonToMainDiv('flash: ' + String(flash), 13, toggleFlash);
-  addButtonToMainDiv('center', 13, imlost);
+  addButtonToDiv('clear', 13, clearCells);
+  addButtonToDiv('tidy', 13, setTidyFlag);
+  addButtonToDiv('speed: ' + String(speedMode+1), 13, toggleSpeedMode);
+  addButtonToDiv('flash: ' + String(flash), 13, toggleFlash);
+  addButtonToDiv('center', 13, imlost);
   if (shareLinkGenerated == true) {
-    addButtonToMainDiv('reshare', 13, shareLink);
+    addButtonToDiv('reshare', 13, shareLink);
     menu.html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
   } else {
-    addButtonToMainDiv('share', 13, shareLink);
+    addButtonToDiv('share', 13, shareLink);
   }
   if (mobileHack == false) {
-    addButtonToMainDiv('zoom out', 13, toggleMobileHack);
+    addButtonToDiv('zoom out', 13, toggleMobileHack);
     // menu.html('<br><a href="javascript:void(0);" onclick="toggleMobileHack();createMenuDiv();">zoom out</a><br>', true);
   } else {
     // menu.html('<br><a href="javascript:void(0);" onclick="toggleMobileHack();createMenuDiv();">zoom in</a><br>', true);
-    addButtonToMainDiv('zoom in', 13, toggleMobileHack);
+    addButtonToDiv('zoom in', 13, toggleMobileHack);
   }
-  menu.html('<br><span style="color:LightGray"><small>version 0.alpha', true);
-  addButtonToMainDiv('dev div', 13, showDevDiv);
-  menu.html('refresh if zoomed</small></span>', true);
-  menu.html('', true);
+  menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br>refresh if zoomed</small></span><br>', true);
+  addButtonToDiv('dev div', 13, showDevDiv);
   menu.html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
   if (mobileHack == false){
     menu.style('font-size', '16px');
@@ -425,6 +414,24 @@ function createMenuDiv() {
   showDevDiv();
 }
 
+function toggleDevOptions(button) {
+  item = parseInt(button.srcElement.value);
+  switch (item) {
+    case 0:
+      showFPS = !showFPS;
+      break;
+    case 1:
+      clickDebug = !clickDebug;
+      break;
+    case 2:
+      printStack = !printStack;
+      break;
+    case 3:
+      doJLOG = !doJLOG;
+      break;
+  }
+}
+
 function showDevDiv(){
   showDev = ! showDev;
   if (showDev == false){
@@ -438,15 +445,20 @@ function showDevDiv(){
   devDiv.style('padding', '10px');
   devDiv.style('outline', '1px solid black');
   // devDiv.style('overflow', "auto");
-  devDiv.html('<a href="javascript:void(0);" onclick="saveCells()">save json</a><br>', true);
-  devDiv.html('<a href="javascript:void(0);" onclick="saveCells(true)">save WIP</a><br>', true);
-  devDiv.html('<a href="javascript:void(0);" onclick="showFPS = !showFPS;">show FPS</a><br>', true);
-  devDiv.html('<a href="javascript:void(0);" onclick="clickDebug = !clickDebug;console.log(\'click debug\', clickDebug)">click log</a><br>', true);
-  devDiv.html('<a href="javascript:void(0);" onclick="printStack = !printStack;console.log(\'print stack\', printStack)">stack log</a><br>', true);
-  devDiv.html('<a href="javascript:void(0);" onclick="doJLOG = !doJLOG;">TMI</a><br>', true);
-  devDiv.html('<a href="javascript:void(0);" onclick="whatsLeft();">free colors</a><br>', true);
-  devDiv.html('<a href="javascript:void(0);" onclick="cells.clean();">clean</a><br>', true);
-  devDiv.html('<a href="javascript:void(0);" onclick="loadCells(demos[demos.length-1])">current tester</a><br>', true);
+  addButtonToDiv('save json', 0, saveCells, devDiv);
+  addButtonToDiv('show FPS', 0, toggleDevOptions, devDiv);
+  addButtonToDiv('click log', 1, toggleDevOptions, devDiv);
+  addButtonToDiv('print stack', 2, toggleDevOptions, devDiv);
+  addButtonToDiv('tmi log', 3, toggleDevOptions, devDiv);
+  addButtonToDiv('free colors', 3, whatsLeft, devDiv);
+  addButtonToDiv('clean', 3, cells.clean, devDiv);
+  addButtonToDiv('load wip', demos.length-1, loadCellsFromButtonClick, devDiv);
+  // devDiv.html('<a href="javascript:void(0);" onclick="clickDebug = !clickDebug;console.log(\'click debug\', clickDebug)">click log</a><br>', true);
+  // devDiv.html('<a href="javascript:void(0);" onclick="printStack = !printStack;console.log(\'print stack\', printStack)">stack log</a><br>', true);
+  // devDiv.html('<a href="javascript:void(0);" onclick="doJLOG = !doJLOG;">TMI</a><br>', true);
+  // devDiv.html('<a href="javascript:void(0);" onclick="whatsLeft();">free colors</a><br>', true);
+  // devDiv.html('<a href="javascript:void(0);" onclick="cells.clean();">clean</a><br>', true);
+  // devDiv.html('<a href="javascript:void(0);" onclick="loadCells(demos[demos.length-1])">current tester</a><br>', true);
   devDiv.position(windowWidth - (40 + devDiv.size().width), 10);
 }
 

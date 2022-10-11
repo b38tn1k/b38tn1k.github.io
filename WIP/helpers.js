@@ -184,7 +184,6 @@ function showHideDemoMenu() {
   if (showDemoMenu == true) {
     myDivs['blocks']['main'].hide();
     myDivs['demos'].show();
-    console.log('helllooo');
   } else {
     myDivs['demos'].hide();
   }

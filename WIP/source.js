@@ -23,7 +23,7 @@ function inClickableZone() {
 function mousePressed() {
   frameRate(100);
   jlog('Main', 'mousePressed');
-  if (zoomMode == true && mobileHAddon == true) {
+  if (mobileDeviceDetected == true && mobileHAddon == true) {
     newCell(mobileHType, mouseX, mouseY); // call it again;
   } else {
     if (inClickableZone() === true) { // this was commented out but I forget why

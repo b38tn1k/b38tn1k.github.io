@@ -2,9 +2,7 @@ function newCell(type, x =-1, y =-1) {
   jlog('Main', 'newCell');
   type = int(type);
   if (mobileDeviceDetected == false) {
-    // cells.addCell(type, 1.5 * myDivs['menu'].size().width);
     cells.addCell(type, x, y);
-    console.log(cells.activeIndex)
   } else {
     if (mobileHAddon == true) {
       cells.addCell(mobileHType, x, y);

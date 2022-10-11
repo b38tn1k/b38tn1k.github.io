@@ -17,7 +17,7 @@ class Cell {
     // if (type == T_VAR || type == T_OUTLET || type == T_RANGE) {
     //   this.handleSH = 'unset';
     // }
-    this.type = type
+    this.type = int(type);
     this.textLabel = blockConfig[this.type]['block label'];
     if (this.type == T_BLOCK){
       // this.textLabel = '<a href="javascript:void(0)" onclick="toggleInput("")">' + this.textLabel + '</a>';
@@ -258,7 +258,7 @@ class Cell {
       this.standardInputHeight = h;
       this.input.size(w, h);
       this.width = w + 3*this.childXBorder;
-      if (mobileHackActual == true) {
+      if (mobileDeviceDetected == true) {
         this.width += this.handleW;
       }
       this.ySpacer += this.input.height;
@@ -501,7 +501,7 @@ class Cell {
       this.height = nh;
     }
     if (this.type == T_COMMENT) {
-      if (mobileHackActual == true) {
+      if (mobileDeviceDetected == true) {
         this.input.size(this.width - 3*this.childXBorder - this.handleW, this.height - 4*this.childYBorder);
       } else {
         this.input.size(this.width - 3*this.childXBorder, this.height - 4*this.childYBorder);
@@ -514,7 +514,7 @@ class Cell {
 
     this.height = max(this.minHeight, this.height);
     if (blockConfig[this.type]['input type'] != I_NONE && blockConfig[this.type]['input type'] != I_TEXT_AREA && this.type != T_CONSOLE) {
-      if (mobileHackActual == true) {
+      if (mobileDeviceDetected == true) {
         this.input.size(this.width - 3*this.childXBorder - this.handleW, this.standardInputHeight);
       } else {
         this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
@@ -573,7 +573,7 @@ class Cell {
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       let h = this.input.size().height;
-      if (mobileHackActual == true) {
+      if (mobileDeviceDetected == true) {
         this.input.size(this.width - 3 * this.childXBorder - this.handleW);
       } else {
         this.input.size(this.width - 3 * this.childXBorder);
@@ -625,7 +625,7 @@ class Cell {
     let breaker = false;
     if (this.hide == false) {
       let fudge = 2;
-      if (mobileHack == true) {
+      if (zoomMode == true || this.mode == M_NEW) {
         fudge = this.handleW;
       }
       if (blockConfig[this.type]['handles']['move'] == true) {
@@ -997,7 +997,7 @@ class Cell {
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;
-      if (mobileHack == true) {
+      if (zoomMode == true || this.mode == M_NEW) {
         fudge = this.handleW;
       }
       if (x > xp - fudge && x < xp + this.width + fudge) {

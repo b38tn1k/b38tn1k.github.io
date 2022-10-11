@@ -23,14 +23,16 @@ function inClickableZone() {
 function mousePressed() {
   frameRate(100);
   jlog('Main', 'mousePressed');
-  if (mobileHack == true && mobileHAddon == true) {
-    newCell(mobileHType, mouseX, mouseY);
+  if (zoomMode == true && mobileHAddon == true) {
+    newCell(mobileHType, mouseX, mouseY); // call it again;
   } else {
-    // if (inClickableZone() === true) {
+    if (inClickableZone() === true) { // this was commented out but I forget why
+
       doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
-    // } else {
-    //   doMouseDrag = false;
-    // }
+
+    } else {
+      doMouseDrag = false;
+    }
     if (doMouseDrag == true){
       xStart = mouseX;
       yStart = mouseY;
@@ -74,13 +76,13 @@ function setup() {
   jlog('Main', 'setup');
   pixelDensity(1);
   mainDiv = document.getElementById('main');
-  devDiv = createDiv();
+  myDivs['devDiv']= createDiv();
   colorSetup();
   setupScreen();
   cells = new Cells(allColors['colors'], allColors['highlights'], allColors['lowlights'], allColors['icolors'], allColors['dtcolors']);
   mobileSettings()
   controller = new Controller();
-  menu = createDiv();
+  myDivs['menu']= createDiv();
 
   createMenuDiv();
   xOff = 0;
@@ -115,6 +117,7 @@ function draw() {
     mouseDrag();
     cells.updateView(xPos, yPos, doMouseDrag);
   }
+
   if (redrawCounter != 0) {
     drawGrid();
     cells.draw();
@@ -142,14 +145,15 @@ function draw() {
       frameRate(fpsSetValue);
     }
   }
+
   if (tidyFlag > 0) {
     tidy();
     cells.updateView(xPos, yPos, true);
     tidyFlag -= 1;
   }
   if (cells.rebuildMenuFlag == true){
-    menu.remove();
-    menu = createDiv();
+    myDivs['menu'].remove();
+    myDivs['menu']= createDiv();
     createMenuDiv();
     cells.rebuildMenuFlag = false;
   }

@@ -1,7 +1,10 @@
 function newCell(type, x =-1, y =-1) {
   jlog('Main', 'newCell');
-  if (mobileHack == false) {
-    cells.addCell(type, 1.5 * menu.size().width);
+  type = int(type);
+  if (mobileDeviceDetected == false) {
+    // cells.addCell(type, 1.5 * myDivs['menu'].size().width);
+    cells.addCell(type, x, y);
+    console.log(cells.activeIndex)
   } else {
     if (mobileHAddon == true) {
       cells.addCell(mobileHType, x, y);
@@ -11,22 +14,22 @@ function newCell(type, x =-1, y =-1) {
       mobileHAddon = true;
     }
   }
-  menu.remove();
-  menu = createDiv();
+  myDivs['menu'].remove();
+  myDivs['menu'] = createDiv();
   createMenuDiv();
 }
 
 function setTidyFlag() {
   jlog('Main', 'tidy');
-  tidyFlag = 2;
+  tidyFlag = 3;
 }
 
 function tidy() {
   jlog('Main', 'tidy');
   if (cells.run == false) {
-    let xOffset = 2*menu.x + menu.size().width;
+    let xOffset = 2*myDivs['menu'].x + myDivs['menu'].size().width;
     cells.tidy(round(xOffset/(gridSize/2))*(gridSize/2), gridSize);
-    if (mobileHack == true) {
+    if (zoomMode == true) {
       cells.update(mouseX, mouseY, mouseIsPressed);
     }
   }
@@ -110,7 +113,7 @@ function shareLink() {
   jlog('Main', 'shareLink');
   shareLinkString = cells.putInAddyBar();
   shareLinkGenerated = true;
-  menu.html('');
+  myDivs['menu'].html('');
   createMenuDiv();
   setTidyFlag();
 }
@@ -137,11 +140,11 @@ function loadCells(myLoaderMap) {
   for (key in Object.keys(myLoaderMap)) {
     cells.linkChildren(key, myLoaderMap[key]);
   }
-  let xOffset = 2*menu.x + menu.size().width;
+  let xOffset = 2*myDivs['menu'].x + myDivs['menu'].size().width;
   cells.nudgeX(xOffset);
   setTidyFlag(); // have to do twice?
-  menu.remove();
-  menu = createDiv();
+  myDivs['menu'].remove();
+  myDivs['menu'] = createDiv();
   createMenuDiv();
   cells.updateView(xPos, yPos, true);
   setTidyFlag();
@@ -149,7 +152,7 @@ function loadCells(myLoaderMap) {
 }
 
 function mobileSettings() {
-  if (mobileHack == true){
+  if (zoomMode == true){
     fontSizeString = '10px';
     cells.dWidth = 40;
     cells.dHeight = 20;
@@ -165,15 +168,30 @@ function mobileSettings() {
 function showHideBlockMenu() {
   jlog('Main', 'showHideBlockMenu');
   showBlockMenu = ! showBlockMenu;
-  menu.html('');
-  createMenuDiv();
+  if (showBlockMenu == true) {
+    myDivs['blocks']['main'].show();
+  } else {
+    myDivs['blocks']['main'].hide();
+    if (submenu != 0) {
+      myDivs['blocks'][submenu].hide();
+      submenu = 0;
+    }
+  }
 }
 
 function showHideDemoMenu() {
   jlog('Main', 'showHideDemoMenu');
+
   showDemoMenu = ! showDemoMenu;
-  menu.html('');
-  createMenuDiv();
+  if (showDemoMenu == true) {
+    myDivs['blocks']['main'].hide();
+    myDivs['demos'].show();
+    console.log('helllooo');
+  } else {
+    myDivs['demos'].hide();
+  }
+  // myDivs['menu'].html('');
+  // createMenuDiv();
 }
 
 function clearCells() {
@@ -197,21 +215,19 @@ function toggleSpeedMode() {
   if (speedMode == 1) {
     fastMode = true;
   }
-  menu.html('');
-  createMenuDiv();
+  speedButton.html('speed: ' + String(speedMode + 1));
 }
 
 function toggleFlash() {
   jlog('Main', 'toggleFlash');
   flash = !flash;
-  menu.html('');
-  createMenuDiv();
+  flashButton.html('flash: ' + String(flash));
 }
 
 function showAll() {
   jlog('Main', 'showAll');
   for (let i = 0; i < userBlocks.length; i++) {
-    cells.addCell(userBlocks[i], 1.5 * menu.size().width);
+    cells.addCell(userBlocks[i], 1.5 * myDivs['menu'].size().width);
     cells.cells[cells.activeIndex].mode = M_IDLE;
   }
   setTidyFlag();
@@ -251,8 +267,8 @@ function imlost() {
   yPos = 0;
 }
 
-function toggleMobileHack() {
-  mobileHack = ! mobileHack;
+function togglezoomMode() {
+  zoomMode = ! zoomMode;
   // back up everything
   // reset font and max width sizes
   // recreate everything
@@ -263,152 +279,231 @@ function toggleMobileHack() {
   cells.cells[1].indexLabeldiv.html(consoleTextLabel);
   cells.cells[1].lineNumber = lineNumber;
   cells.cells[1].indexLabeldiv.elt.scrollTop = 1000 * cells.cells[1].lineNumber;
-  menu.html('');
+  myDivs['menu'].html('');
   for (let i = 0; i < cells.length; i++){
     cells.cells[i].resetDims();
   }
-  createMenuDiv();
+  // createMenuDiv();
+  if (zoomMode == false){
+    myDivs['menu'].style('font-size', '16px');
+  } else {
+    myDivs['menu'].style('font-size', '12px');
+  }
 }
 
 function newCellFromButtonClick(button) {
   type = button.srcElement.value;
-  newCell(type);
-  createMenuDiv();
+  newCell(type, mouseX, mouseY);
+  // createMenuDiv();
 }
 
-function addBlockMenuOption(type){
-  addButtonToDiv('+ ' + blockConfig[type]['block label'], type, newCellFromButtonClick);
-}
-
-function addBlockMenuList(list) {
+function createAddBlockMenu(list, div) {
   for (let i = 0; i < list.length; i++) {
-    addBlockMenuOption(list[i]);
+    addButtonToDiv('+ ' + blockConfig[list[i]]['block label'], list[i], newCellFromButtonClick, div, 'colorcoded');
   }
 }
 
 function loadCellsFromButtonClick(button) {
   index = parseInt(button.srcElement.value);
   loadCells(demos[index]);
-  createMenuDiv();
+  // createMenuDiv();
 }
 
-function showBlockSubMenu(button) {
-  subMenu = parseInt(button.srcElement.value);
-  createMenuDiv();
+function showBlocksubmenu(button) {
+  let oldSM = submenu;
+  submenu = parseInt(button.srcElement.value);
+  for (let i = 1; i <= 7; i++){
+    myDivs['blocks'][i].hide();
+  }
+  if (oldSM == submenu) {
+    submenu = 0;
+  } else {
+    myDivs['blocks'][submenu].show();
+  }
 }
 
-function addButtonToDiv(name, value=0, callback=0, div=menu){
+function addButtonToDiv(name, value, callback, div, cssClass='basic'){
   let button = createButton(name, String(value));
+  // button.addClass(String(cssClass)); // i prefer using JS
+  button.addClass('basic');
+  if (cssClass == 'colorcoded') {
+    let tc = allColors['dtcolors'][value].toString('#rrggbb');
+    let c1 = allColors['colors'][value].toString('#rrggbb');
+    button.style('color', tc);
+    button.style('text-align', 'left');
+    button.style('background-image', 'linear-gradient(' + c1 + ', ' + c1 + ')');
+    button.style('border-color', 'DimGray');
+  } else if (cssClass == 'dev') {
+    button.style('height', '18px');
+    button.style('background-image', 'linear-gradient(DimGray, DimGray)');
+    button.style('border-color', 'DimGray');
+    button.style('box-shadow', 'rgba(255,255,255,.6) 0 0px 0 inset')
+    button.style('color', 'LightGray');
+  } else if (cssClass == 'header') {
+    button.style('background-image', 'linear-gradient(#b7b8ba ,#a7a9ac)');
+  } else if (cssClass == 'demo') {
+    button.style('text-align', 'left');
+  } else if (cssClass == 'eg') {
+    button.style('text-align', 'left');
+    button.style('background-image', 'linear-gradient(#d7d8da ,#c7c9cc)');
+  }
   button.parent(div);
   if (callback != 0) {
     button.mousePressed(callback);
   }
+
+  if (cssClass == 'speedID') {
+    speedButton = button;
+  } else if (cssClass == 'flashID') {
+    flashButton = button;
+
+  }
   div.html('<br>', true);
+}
+
+function blocksMenu() {
+  addButtonToDiv('blocks menu', 0, showHideBlockMenu, myDivs['menu'], 'header');
+  myDivs['blocks'] = {};
+  myDivs['blocks']['main'] = createDiv();
+  for (let i = 1; i <= 7; i++) {
+    myDivs['blocks'][i] = createDiv();
+  }
+  createAddBlockMenu(containers, myDivs['blocks'][1]);
+  createAddBlockMenu(handles, myDivs['blocks'][2]);
+  createAddBlockMenu(arrayTools, myDivs['blocks'][7]);
+  createAddBlockMenu(mathFunctions, myDivs['blocks'][3]);
+  createAddBlockMenu(boolFunctions, myDivs['blocks'][4]);
+  createAddBlockMenu(conditionals, myDivs['blocks'][5]);
+  createAddBlockMenu(utilities, myDivs['blocks'][6]);
+  for (let i = 1; i <= 7; i++) {
+    // if (i != submenu && showBlockMenu == true)
+    myDivs['blocks'][i].hide();
+  }
+  addButtonToDiv('data containers', 1, showBlocksubmenu, myDivs['blocks']['main']);
+  myDivs['blocks'][1].parent(myDivs['blocks']['main']);
+
+  addButtonToDiv('data references', 2, showBlocksubmenu, myDivs['blocks']['main']);
+  myDivs['blocks'][2].parent(myDivs['blocks']['main']);
+
+  addButtonToDiv('array tools', 7, showBlocksubmenu, myDivs['blocks']['main']);
+  myDivs['blocks'][7].parent(myDivs['blocks']['main']);
+
+  addButtonToDiv('math', 3, showBlocksubmenu, myDivs['blocks']['main']);
+  myDivs['blocks'][3].parent(myDivs['blocks']['main']);
+
+  addButtonToDiv('comparison', 4, showBlocksubmenu, myDivs['blocks']['main']);
+  myDivs['blocks'][4].parent(myDivs['blocks']['main']);
+
+  addButtonToDiv('conditionals', 5, showBlocksubmenu, myDivs['blocks']['main']);
+  myDivs['blocks'][5].parent(myDivs['blocks']['main']);
+
+  addButtonToDiv('utilities', 6, showBlocksubmenu, myDivs['blocks']['main']);
+  myDivs['blocks'][6].parent(myDivs['blocks']['main']);
+
+  addButtonToDiv('show all', 6, showAll, myDivs['blocks']['main']);
+  myDivs['blocks']['main'].parent(myDivs['menu']);
+  if (showBlockMenu == false) {
+    myDivs['blocks']['main'].hide();
+  } else {
+    if (submenu != 0) {
+      myDivs['blocks'][submenu].show();
+    }
+  }
+}
+
+function demoMenu(){
+  myDivs['menu'].html('<br>', true);
+  addButtonToDiv('demo menu', 6, showHideDemoMenu, myDivs['menu'], 'header');
+  myDivs['demos'] = createDiv();
+  addButtonToDiv('Hello, World!', 0, loadCellsFromButtonClick, myDivs['demos'], 'demo');
+  addButtonToDiv('Turing bit flip', 14, loadCellsFromButtonClick, myDivs['demos'], 'demo');
+  addButtonToDiv('Programmable TM', 15, loadCellsFromButtonClick, myDivs['demos'], 'demo');
+  addButtonToDiv('Sleep Sort', 7, loadCellsFromButtonClick, myDivs['demos'], 'demo');
+  addButtonToDiv('Draw Polygons', 8, loadCellsFromButtonClick, myDivs['demos'], 'demo');
+  // myDivs['menu'].html('<span style="color:LightGray">block usage:</span><br>', true);
+  addButtonToDiv('blocks', 1, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('assigning', 2, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('basic math', 3, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('comparisons', 4, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('if', 5, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('if not', 6, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('while and array get', 9, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('array/string push', 10, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('array/string set', 11, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('string delete', 12, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('array delete', 13, loadCellsFromButtonClick, myDivs['demos'], 'eg');
+  addButtonToDiv('test all', 13, testAll, myDivs['demos']);
+  myDivs['demos'].parent(myDivs['menu']);
+  if (showDemoMenu == false){
+    myDivs['demos'].hide();
+  } else {
+    myDivs['demos'].show();
+  }
+
+}
+
+function utilitiesMenu(){
+  myDivs['menu'].html("<br>", true);
+  addButtonToDiv('clear', 13, clearCells, myDivs['menu']);
+  addButtonToDiv('tidy', 13, setTidyFlag, myDivs['menu']);
+  addButtonToDiv('speed: ' + String(speedMode+1), 13, toggleSpeedMode, myDivs['menu'], 'speedID');
+  addButtonToDiv('flash: ' + String(flash), 13, toggleFlash, myDivs['menu'], 'flashID');
+  addButtonToDiv('center', 13, imlost, myDivs['menu']);
+  if (shareLinkGenerated == true) {
+    addButtonToDiv('reshare', 13, shareLink, myDivs['menu']);
+    myDivs['menu'].html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
+  } else {
+    addButtonToDiv('share', 13, shareLink, myDivs['menu']);
+  }
+  if (zoomMode == false) {
+    addButtonToDiv('zoom out', 13, togglezoomMode, myDivs['menu']);
+    // myDivs['menu'].html('<br><a href="javascript:void(0);" onclick="togglezoomMode();createMenuDiv();">zoom out</a><br>', true);
+  } else {
+    // myDivs['menu'].html('<br><a href="javascript:void(0);" onclick="togglezoomMode();createMenuDiv();">zoom in</a><br>', true);
+    addButtonToDiv('zoom in', 13, togglezoomMode, myDivs['menu']);
+  }
+  // myDivs['menu'].html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
+  myDivs['menu'].html('<br>', true);
+  addButtonToDiv('about', 0, openAbout, myDivs['menu'], 'header');
+  myDivs['menu'].html('<br>', true);
+  addButtonToDiv('version 0.alpha', 13, showDevDiv, myDivs['menu'], 'dev');
+  // let myLink = createA('http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/', 'about', '_blank_');
+  // myLink.parent(myDivs['menu']);
+}
+
+function openAbout(){
+  window.open('https://b38tn1k.com/code/ux/2022/09/08/blocks-explained/');
 }
 
 function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
-  menu.remove();
-  menu = createDiv();
-  addButtonToDiv('blocks menu', 0, showHideBlockMenu);
-  if (showBlockMenu == true) {
-    addButtonToDiv('data containers', 1, showBlockSubMenu);
-    if (subMenu == 1) {
-      addBlockMenuList(containers);
-    }
-    addButtonToDiv('data references', 2, showBlockSubMenu);
-    if (subMenu == 2) {
-      addBlockMenuList(handles);
-    }
-    addButtonToDiv('array tools', 7, showBlockSubMenu);
-    if (subMenu == 7) {
-      addBlockMenuList(arrayTools);
-    }
-    addButtonToDiv('math', 3, showBlockSubMenu);
-    if (subMenu == 3) {
-      addBlockMenuList(mathFunctions);
-    }
-    addButtonToDiv('comparison', 4, showBlockSubMenu);
-    if (subMenu == 4) {
-      addBlockMenuList(boolFunctions);
-    }
-    addButtonToDiv('conditionals', 5, showBlockSubMenu);
-    if (subMenu == 5) {
-      addBlockMenuList(conditionals);
-    }
-    addButtonToDiv('utilities', 6, showBlockSubMenu);
-    if (subMenu == 6) {
-      addBlockMenuList(utilities);
-    }
-    addButtonToDiv('show all', 6, showAll);
+  myDivs['menu'].remove();
+  myDivs['menu'] = createDiv();
+  blocksMenu();
+  demoMenu();
+  utilitiesMenu();
+  if (zoomMode == false){
+    myDivs['menu'].style('font-size', '16px');
   } else {
-    subMenu = 0;
+    myDivs['menu'].style('font-size', '12px');
   }
-  addButtonToDiv('demo menu', 6, showHideDemoMenu);
-  if (showDemoMenu == true) {
-    addButtonToDiv('+ Hello, World!', 0, loadCellsFromButtonClick);
-    addButtonToDiv('+ Turing bit flip', 14, loadCellsFromButtonClick);
-    addButtonToDiv('+ Programmable TM', 15, loadCellsFromButtonClick);
-    addButtonToDiv('+ Sleep Sort', 7, loadCellsFromButtonClick);
-    addButtonToDiv('+ Draw Polygons', 8, loadCellsFromButtonClick);
-    menu.html('<span style="color:LightGray">block usage:</span><br>', true);
-    addButtonToDiv('+ blocks', 1, loadCellsFromButtonClick);
-    addButtonToDiv('+ assigning', 2, loadCellsFromButtonClick);
-    addButtonToDiv('+ basic math', 3, loadCellsFromButtonClick);
-    addButtonToDiv('+ comparisons', 4, loadCellsFromButtonClick);
-    addButtonToDiv('+ if', 5, loadCellsFromButtonClick);
-    addButtonToDiv('+ if not', 6, loadCellsFromButtonClick);
-    addButtonToDiv('+ while and array get', 9, loadCellsFromButtonClick);
-    addButtonToDiv('+ array/string push', 10, loadCellsFromButtonClick);
-    addButtonToDiv('+ array/string set', 11, loadCellsFromButtonClick);
-    addButtonToDiv('+ string delete', 12, loadCellsFromButtonClick);
-    addButtonToDiv('+ array delete', 13, loadCellsFromButtonClick);
-    addButtonToDiv('+ test all', 13, testAll);
-  }
-  menu.html("<br>", true);
-  addButtonToDiv('clear', 13, clearCells);
-  addButtonToDiv('tidy', 13, setTidyFlag);
-  addButtonToDiv('speed: ' + String(speedMode+1), 13, toggleSpeedMode);
-  addButtonToDiv('flash: ' + String(flash), 13, toggleFlash);
-  addButtonToDiv('center', 13, imlost);
-  if (shareLinkGenerated == true) {
-    addButtonToDiv('reshare', 13, shareLink);
-    menu.html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
-  } else {
-    addButtonToDiv('share', 13, shareLink);
-  }
-  if (mobileHack == false) {
-    addButtonToDiv('zoom out', 13, toggleMobileHack);
-    // menu.html('<br><a href="javascript:void(0);" onclick="toggleMobileHack();createMenuDiv();">zoom out</a><br>', true);
-  } else {
-    // menu.html('<br><a href="javascript:void(0);" onclick="toggleMobileHack();createMenuDiv();">zoom in</a><br>', true);
-    addButtonToDiv('zoom in', 13, toggleMobileHack);
-  }
-  menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br>refresh if zoomed</small></span><br>', true);
-  addButtonToDiv('dev div', 13, showDevDiv);
-  menu.html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
-  if (mobileHack == false){
-    menu.style('font-size', '16px');
-  } else {
-    menu.style('font-size', '12px');
-  }
-  menu.style('background-color', 'DimGray');
-  menu.style('padding', '10px');
-  menu.style('outline', '1px solid black');
-  if (menu.size().height > windowHeight - 50){
+  myDivs['menu'].style('background-color', 'DimGray');
+  myDivs['menu'].style('padding', '10px');
+  myDivs['menu'].style('outline', '1px solid black');
+  if (myDivs['menu'].size().height > windowHeight - 50){
     let newHeight = windowHeight - 50;
-    menu.size(null, newHeight);
+    myDivs['menu'].size(null, newHeight);
   } else {
-    menu.size(null, null);
+    myDivs['menu'].size(null, null);
   }
-  menu.style('overflow', "auto");
-  menu.position(10, 10);
-  noClickZone = [10, menu.size().width + 10, windowHeight - 2* menu.size().height, windowHeight];
+  myDivs['menu'].style('overflow', "auto");
+  myDivs['menu'].position(10, 10);
+  noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
   if (hideMenu == true){
-    menu.hide();
+    myDivs['menu'].hide();
     noClickZone = [-1, -1, -1, -1];
   } else {
-    menu.show();
+    myDivs['menu'].show();
   }
   showDev = ! showDev;
   showDevDiv();
@@ -435,43 +530,36 @@ function toggleDevOptions(button) {
 function showDevDiv(){
   showDev = ! showDev;
   if (showDev == false){
-    devDiv.remove();
+    myDivs['devDiv'].remove();
     return;
   }
-  devDiv.remove();
-  devDiv = createDiv();
-  devDiv.style('font-size', '12px');
-  devDiv.style('background-color', 'DimGray');
-  devDiv.style('padding', '10px');
-  devDiv.style('outline', '1px solid black');
-  // devDiv.style('overflow', "auto");
-  addButtonToDiv('save json', 0, saveCells, devDiv);
-  addButtonToDiv('show FPS', 0, toggleDevOptions, devDiv);
-  addButtonToDiv('click log', 1, toggleDevOptions, devDiv);
-  addButtonToDiv('print stack', 2, toggleDevOptions, devDiv);
-  addButtonToDiv('tmi log', 3, toggleDevOptions, devDiv);
-  addButtonToDiv('free colors', 3, whatsLeft, devDiv);
-  addButtonToDiv('clean', 3, cells.clean, devDiv);
-  addButtonToDiv('load wip', demos.length-1, loadCellsFromButtonClick, devDiv);
-  // devDiv.html('<a href="javascript:void(0);" onclick="clickDebug = !clickDebug;console.log(\'click debug\', clickDebug)">click log</a><br>', true);
-  // devDiv.html('<a href="javascript:void(0);" onclick="printStack = !printStack;console.log(\'print stack\', printStack)">stack log</a><br>', true);
-  // devDiv.html('<a href="javascript:void(0);" onclick="doJLOG = !doJLOG;">TMI</a><br>', true);
-  // devDiv.html('<a href="javascript:void(0);" onclick="whatsLeft();">free colors</a><br>', true);
-  // devDiv.html('<a href="javascript:void(0);" onclick="cells.clean();">clean</a><br>', true);
-  // devDiv.html('<a href="javascript:void(0);" onclick="loadCells(demos[demos.length-1])">current tester</a><br>', true);
-  devDiv.position(windowWidth - (40 + devDiv.size().width), 10);
+  myDivs['devDiv'].remove();
+  myDivs['devDiv']= createDiv();
+  myDivs['devDiv'].style('font-size', '12px');
+  myDivs['devDiv'].style('background-color', 'DimGray');
+  myDivs['devDiv'].style('padding', '10px');
+  myDivs['devDiv'].style('outline', '1px solid black');
+  addButtonToDiv('save json', 0, saveCells, myDivs['devDiv']);
+  addButtonToDiv('show FPS', 0, toggleDevOptions, myDivs['devDiv']);
+  addButtonToDiv('click log', 1, toggleDevOptions, myDivs['devDiv']);
+  addButtonToDiv('print stack', 2, toggleDevOptions, myDivs['devDiv']);
+  addButtonToDiv('tmi log', 3, toggleDevOptions, myDivs['devDiv']);
+  addButtonToDiv('free colors', 3, whatsLeft, myDivs['devDiv']);
+  addButtonToDiv('clean', 3, cells.clean, myDivs['devDiv']);
+  addButtonToDiv('load wip', demos.length-1, loadCellsFromButtonClick, myDivs['devDiv']);
+  myDivs['devDiv'].position(windowWidth - (40 + myDivs['devDiv'].size().width), 10);
 }
 
 function setupScreen() {
   jlog('Main', 'setupScreen');
   pixelDensity(1);
   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
-    mobileHack = true;
-    mobileHackActual = true;
+    zoomMode = true;
+    mobileDeviceDetected = true;
   }
   createCanvas(windowWidth, windowHeight);
   if (windowWidth/windowHeight < 10/16) {
-    mobileHack = true;
+    zoomMode = true;
   }
   let gs2 = gridSize**2;
   bgGrid = createGraphics(gs2, gs2);
@@ -501,7 +589,7 @@ function doLastBit(){
   }
   loaded = doTutorials(loaded);
   if (loaded == false) {
-    cells.addCell(T_START, 1.5 * menu.size().width);
+    cells.addCell(T_START, 1.5 * myDivs['menu'].size().width);
     cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
     if (demoIndex != -1 && demoIndex < demos.length) {
       loadCells(demos[demoIndex]);
@@ -511,8 +599,8 @@ function doLastBit(){
   if (cells.length > 1) {
     cells.cells[1].resizeConsole();
   }
-  menu.remove();
-  menu = createDiv();
+  myDivs['menu'].remove();
+  myDivs['menu'] = createDiv();
   createMenuDiv();
 }
 
@@ -534,12 +622,12 @@ function doTutorials(loaded) {
       case '#tutorialBlank':
         break;
       case '#tutorialHello':
-        cells.addCell(T_START, 1.5 * menu.size().width);
+        cells.addCell(T_START, 1.5 * myDivs['menu'].size().width);
         cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
         loadCells(demos[0]);
         cells.cells[0].reshape();
         cells.cells[0].refresh();
-        if (mobileHack == true){
+        if (zoomMode == true){
           tidyFlag = 0;
           cells.cells[1].x = cells.cells[0].x;
           cells.cells[1].y = cells.cells[0].y + cells.cells[0].height + cells.cells[0].handleH*2;
@@ -550,11 +638,11 @@ function doTutorials(loaded) {
         loaded = true;
         break;
       case '#tutorialHandles':
-        cells.addCell(T_START, 1.5 * menu.size().width);
+        cells.addCell(T_START, 1.5 * myDivs['menu'].size().width);
         cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
         cells.cells[0].x = windowWidth * 2;
         cells.cells[1].x = windowWidth * 2;
-        cells.addCell(T_CONST, 1.5 * menu.size().width);
+        cells.addCell(T_CONST, 1.5 * myDivs['menu'].size().width);
         cells.cells[2].mode = M_IDLE;
         cells.cells[2].x = (windowWidth / 2 ) - cells.cells[2].width/2;
         cells.cells[2].y = windowHeight/2 - cells.cells[2].height/2;
@@ -590,7 +678,7 @@ function doTutorials(loaded) {
         disableDrag = true;
         break;
       case '#tutorialMove':
-        cells.addCell(T_START, 1.5 * menu.size().width);
+        cells.addCell(T_START, 1.5 * myDivs['menu'].size().width);
         cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
         hideMenu = true;
         loaded = true;
@@ -614,7 +702,7 @@ function doTutorials(loaded) {
         cells.cells[4].disableDelete();
         break;
       case '#tutorialMutate':
-        cells.addCell(T_START, 1.5 * menu.size().width);
+        cells.addCell(T_START, 1.5 * myDivs['menu'].size().width);
         cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
         cells.cells[0].x = windowWidth * 2;
         cells.cells[1].x = windowWidth * 2;
@@ -641,7 +729,7 @@ function doTutorials(loaded) {
         }
         break;
       case '#tutorialCopy':
-      cells.addCell(T_START, 1.5 * menu.size().width);
+      cells.addCell(T_START, 1.5 * myDivs['menu'].size().width);
       cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
       cells.cells[0].x = windowWidth * 2;
       cells.cells[1].x = windowWidth * 2;

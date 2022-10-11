@@ -208,12 +208,12 @@ class Cells {
     }
   }
 
-  turnOffActiveIndex() {
-    if (this.activeIndex != -1) {
-      this.cells[this.activeIndex].mode = M_IDLE;
-      this.activeIndex = -1;
-    }
-  }
+  // turnOffActiveIndex() {
+  //   if (this.activeIndex != -1) {
+  //     this.cells[this.activeIndex].mode = M_IDLE;
+  //     this.activeIndex = -1;
+  //   }
+  // }
 
   pushChild(type, myBlockIndex, myBlock, childData){
     jlog('Cells', 'pushChild');
@@ -337,6 +337,9 @@ class Cells {
         this.cells[index + i].addParent(pIndex, this.cells[pIndex]);
       }
     }
+    for (let i = pIndex; i < this.length; i++) {
+      this.cellsInView.push(i);
+    }
   }
 
   quickClear(){
@@ -369,6 +372,12 @@ class Cells {
   checkSelected(x, y) {
     jlog('Cells', 'checkSelected');
     let inArea = false;
+    if (this.activeIndex != -1){
+      if (this.cells[this.activeIndex].mode == M_NEW){
+        this.cells[this.activeIndex].mode = M_MOVE;
+        return true;
+      }
+    }
     for (let j = 0; j < this.cellsInView.length; j++) {
       let i = this.cellsInView[j];
       if (this.cells[i].inArea(x, y) === true) {
@@ -376,7 +385,6 @@ class Cells {
         this.cells[i].mode = M_SELECTED;
         if (this.cells[i].checkButtons(x, y) === true) {
           this.activeIndex = i;
-          return true;
           break;
         }
       } else {
@@ -600,6 +608,7 @@ class Cells {
 
   doMove(x, y, mdown) {
     jlog('Cells', 'doMove');
+    console.log('moving');
     this.cells[this.activeIndex].moveC(x, y, this.viewXdelta, this.viewYdelta);
     if (this.cells[this.activeIndex].parent != -1) {
       this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
@@ -632,6 +641,7 @@ class Cells {
         }
       }
     }
+
     // release
     if (mdown === false && this.cells[this.activeIndex].mode == M_MOVE) {
       // if (pMoveIndexes.length != 0) {

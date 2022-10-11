@@ -200,6 +200,7 @@ class Controller {
           this.tidyFlag = true;
           this.d_print('<small>Your environment was updated.</small><br>');
           let button = createButton('reset env');
+          button.addClass('basic');
           button.parent(cells.cells[1].indexLabeldiv);
           button.mousePressed(loadBackup);
           cells.cells[1].indexLabeldiv.html('<br>', true);

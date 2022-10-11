@@ -78,12 +78,13 @@ var T_INDEX = 222;
 var T_REF = 223;
 
 var backupObject;
-var mobileHack = false;
-var mobileHackActual = false;
+var zoomMode = false;
+var mobileDeviceDetected = false;
 var selectChanged = true;
 var fontSizeString = '12px';
 var doJLOG = false;
-var bgGrid, widthOnTwo, heightOnTwo, cells, c, menu, shareLinkString, devDiv;
+var bgGrid, widthOnTwo, heightOnTwo, cells, c, shareLinkString;
+var myDivs = {};
 var xPos, yPos, xStart, yStart, xOff, yOff, doMouseDrag;
 var allColors = {};
 var showBlockMenu = false;
@@ -99,7 +100,7 @@ var mobileHType;
 var mobileHAddon = false;
 var tidyFlag = 0;
 var expandMenu = true;
-var subMenu = 0;
+var submenu = 0;
 var currentTestIndex = 0;
 var testPacer = 0;
 var testPaceSettings = [0, 0, 0, 500, 500];
@@ -115,6 +116,7 @@ var redrawCounter = 0;
 var notIdle = true;
 var noClickZone = [0, 0, 0, 0];
 var clearCellFlag = 0;
+var speedButton, flashButton;
 
 var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
 var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND, T_PUSH, T_DELETE, T_FOR, T_RUN];
@@ -132,6 +134,17 @@ var conditionals = [T_IF, T_WHILE, T_FOR];
 var containers = [T_BLOCK, T_INPUT, T_CONST,];
 var handles = [T_GOTO, T_VAR, T_ASSIGN];
 var arrayTools = [T_LEN, T_GET, T_SET, T_PUSH, T_DELETE, T_RUN];
+
+var blockMenuDict = {};
+blockMenuDict['data containers'] = containers;
+blockMenuDict['data references'] = handles;
+blockMenuDict['array tools'] = arrayTools;
+blockMenuDict['math'] = mathFunctions;
+blockMenuDict['comparisons'] = boolFunctions;
+blockMenuDict['conditionals'] = conditionals;
+blockMenuDict['utilities'] = utilities;
+
+
 
 
 var blockConfig = {};
@@ -226,7 +239,7 @@ blockConfig[T_FOR]['block label'] = "repeat";
 blockConfig[T_INDEX]['block label'] = "index";
 blockConfig[T_REF]['block label'] = "value";
 
-blockConfig[T_BLOCK]['accept child'] = [...notStartOrConsoleOrSpecial];
+blockConfig[T_BLOCK]['accept child'] = notStartOrConsoleOrSpecial;
 blockConfig[T_VAR]['accept child'] = [T_COMMENT]; //nothing
 blockConfig[T_INPUT]['accept child'] = [T_COMMENT]; //nothing
 blockConfig[T_IF]['accept child'] = [T_CONDITION, T_DO, T_ELSE, T_COMMENT];

@@ -17,10 +17,10 @@ class Cell {
     // if (type == T_VAR || type == T_OUTLET || type == T_RANGE) {
     //   this.handleSH = 'unset';
     // }
-    this.type = type
+    this.type = int(type);
     this.textLabel = blockConfig[this.type]['block label'];
     if (this.type == T_BLOCK){
-      this.textLabel = '<a href="javascript:void(0)" onclick="toggleInput("")">' + this.textLabel + '</a>';
+      // this.textLabel = '<a href="javascript:void(0)" onclick="toggleInput("")">' + this.textLabel + '</a>';
     }
     // labels, tools, setup
     this.mode = M_IDLE;
@@ -93,7 +93,11 @@ class Cell {
     return [this.width, this.height]
   }
 
-  resetDims() {
+  resetDims(full=false) {
+    if (full == true) {
+      this.height = this.startHeight;
+      this.width = this.startWidth;
+    }
     this.minWidth = this.width;
     this.minHeight = this.height;
   }
@@ -154,7 +158,14 @@ class Cell {
   updateHandleSH(newHandle) {
     this.handleSH = newHandle;
     if (this.type == T_BLOCK || this.type == T_INPUT){
-      this.textLabel = '<strong><a href="javascript:void(0)" onclick="toggleInput(\''+String(this.handleSH)+'\',' + String(this.type) + ')">' + blockConfig[this.type]['block label'] + '</a></strong>';
+      this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
+      // this.textLabel = '<strong><a href="javascript:void(0)" onclick="toggleInput(\''+String(this.handleSH)+'\',' + String(this.type) + ')">' + blockConfig[this.type]['block label'] + '</a></strong>';
+      // let button = createButton(this.handleSH + ': ' + blockConfig[this.type]['block label'], String(this.handleSH) + 'type' +  String(this.type));
+      // button.parent(this.indexLabeldiv);
+      // button.show();
+      // if (callback != 0) {
+      //   button.mousePressed(callback);
+      // }
       this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
       this.updateView(this.viewX - this.x, this.viewY - this.y);
       this.updateAllDivPositions();
@@ -247,7 +258,7 @@ class Cell {
       this.standardInputHeight = h;
       this.input.size(w, h);
       this.width = w + 3*this.childXBorder;
-      if (mobileHackActual == true) {
+      if (mobileDeviceDetected == true) {
         this.width += this.handleW;
       }
       this.ySpacer += this.input.height;
@@ -490,7 +501,7 @@ class Cell {
       this.height = nh;
     }
     if (this.type == T_COMMENT) {
-      if (mobileHackActual == true) {
+      if (mobileDeviceDetected == true) {
         this.input.size(this.width - 3*this.childXBorder - this.handleW, this.height - 4*this.childYBorder);
       } else {
         this.input.size(this.width - 3*this.childXBorder, this.height - 4*this.childYBorder);
@@ -503,7 +514,7 @@ class Cell {
 
     this.height = max(this.minHeight, this.height);
     if (blockConfig[this.type]['input type'] != I_NONE && blockConfig[this.type]['input type'] != I_TEXT_AREA && this.type != T_CONSOLE) {
-      if (mobileHackActual == true) {
+      if (mobileDeviceDetected == true) {
         this.input.size(this.width - 3*this.childXBorder - this.handleW, this.standardInputHeight);
       } else {
         this.input.size(this.width - 3*this.childXBorder, this.standardInputHeight);
@@ -562,7 +573,7 @@ class Cell {
     }
     if (blockConfig[this.type]['input type'] != I_NONE) {
       let h = this.input.size().height;
-      if (mobileHackActual == true) {
+      if (mobileDeviceDetected == true) {
         this.input.size(this.width - 3 * this.childXBorder - this.handleW);
       } else {
         this.input.size(this.width - 3 * this.childXBorder);
@@ -614,7 +625,7 @@ class Cell {
     let breaker = false;
     if (this.hide == false) {
       let fudge = 2;
-      if (mobileHack == true) {
+      if (zoomMode == true || this.mode == M_NEW) {
         fudge = this.handleW;
       }
       if (blockConfig[this.type]['handles']['move'] == true) {
@@ -702,6 +713,13 @@ class Cell {
       }
     }
     return breaker;
+  }
+
+  clearConsole(){
+    if (this.type == T_CONSOLE) {
+      this.indexLabeldiv.html(this.textLabel);
+      this.lineNumber = 0;
+    }
   }
 
   updateSHs() {
@@ -979,7 +997,7 @@ class Cell {
     let breaker = false;
     if (this.hide === false) {
       let fudge = 2;
-      if (mobileHack == true) {
+      if (zoomMode == true || this.mode == M_NEW) {
         fudge = this.handleW;
       }
       if (x > xp - fudge && x < xp + this.width + fudge) {

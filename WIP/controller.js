@@ -198,7 +198,14 @@ class Controller {
         this.printStack();
         if (this.envChanged == true) {
           this.tidyFlag = true;
-          this.d_print('<small>Your environment was updated. Click <a style="color: blue;" href="javascript:void(0)" onclick="loadBackup();">here</a> to reset, or do nothing to continue.<br></small>')
+          this.d_print('<small>Your environment was updated.</small><br>');
+          let button = createButton('reset env');
+          button.addClass('basic');
+          button.parent(cells.cells[1].indexLabeldiv);
+          button.mousePressed(loadBackup);
+          cells.cells[1].indexLabeldiv.html('<br>', true);
+          this.script[1].lineNumber += 1;
+          this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
         }
       }
     } catch (error) {

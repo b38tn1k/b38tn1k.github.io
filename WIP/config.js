@@ -89,6 +89,7 @@ var xPos, yPos, xStart, yStart, xOff, yOff, doMouseDrag;
 var allColors = {};
 var showBlockMenu = false;
 var showDemoMenu = false;
+var showUtils = false;
 var shareLinkGenerated = false;
 var slowMode = false;
 var fastMode = false;

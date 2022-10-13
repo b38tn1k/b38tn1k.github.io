@@ -197,7 +197,7 @@ A stack trace is provided in the browser console after running a process.
 A proof of Turing completeness is provided [here.](https://b38tn1k.com/WIP/#demo15)
 
 # Thoughts & Credits
-I made a Turing Machine that shows UBT is Turing complete (as much as anything else) so I'm feeling pretty happy. So here are some TL/DR thoughts.
+I made a Turing Machine that shows UBT is Turing complete (as much as anything else) so I'm feeling pretty happy. Here are some thoughts...
 
 Implementing array operations (get, set, delete, push, run) has made me appreciate everyone who contributed to Python. When I think about code, I think in Python. It's my 'internal dialogue programming language'. My (probably still incomplete) approach to array operations was directly inspired by how easy Python lists work.
 

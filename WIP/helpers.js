@@ -111,9 +111,29 @@ function shareLink() {
   jlog('Main', 'shareLink');
   shareLinkString = cells.putInAddyBar();
   shareLinkGenerated = true;
-  myDivs['menu'].html('');
-  createMenuDiv();
-  setTidyFlag();
+  myDivs['shareLink'] = createDiv();
+  myDivs['shareLink'].style('background-color', 'DimGray');
+  myDivs['shareLink'].style('padding', '10px');
+  myDivs['shareLink'].style('outline', '1px solid black');
+  let w = 200;
+  myDivs['shareLink'].size(w, null);
+  myDivs['shareLink'].style('overflow', "auto");
+  myDivs['shareLink'].position((windowWidth/2) - (w/2), 40);
+  myDivs['shareLink'].show();
+  addButtonToDiv('share', 1, shareButton, myDivs['shareLink'], 'header');
+  addButtonToDiv('cancel', 1, cancelShare, myDivs['shareLink']);
+  // noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
+  noClickZone = [0, windowWidth, 0, windowHeight];
+}
+
+function cancelShare() {
+  myDivs['shareLink'].remove();
+  noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
+}
+
+function shareButton() {
+  cancelShare();
+  window.open(shareLinkString);
 }
 
 function loadCells(myLoaderMap) {
@@ -168,6 +188,8 @@ function showHideBlockMenu() {
   showBlockMenu = ! showBlockMenu;
   if (showBlockMenu == true) {
     myDivs['blocks']['main'].show();
+    myDivs['demos'].hide();
+    showDemoMenu = false;
   } else {
     myDivs['blocks']['main'].hide();
     if (submenu != 0) {
@@ -183,6 +205,7 @@ function showHideDemoMenu() {
   showDemoMenu = ! showDemoMenu;
   if (showDemoMenu == true) {
     myDivs['blocks']['main'].hide();
+    showBlockMenu = false;
     myDivs['demos'].show();
   } else {
     myDivs['demos'].hide();
@@ -439,26 +462,45 @@ function demoMenu(){
 
 }
 
+function showUtil() {
+  showUtils = !showUtils;
+  if (showUtils == true) {
+    myDivs['utils'].show();
+  } else {
+    myDivs['utils'].hide();
+  }
+}
+
 function utilitiesMenu(){
   myDivs['menu'].html("<br>", true);
-  addButtonToDiv('clear', 13, clearCells, myDivs['menu']);
-  addButtonToDiv('tidy', 13, setTidyFlag, myDivs['menu']);
-  addButtonToDiv('speed: ' + String(speedMode+1), 13, toggleSpeedMode, myDivs['menu'], 'speedID');
-  addButtonToDiv('flash: ' + String(flash), 13, toggleFlash, myDivs['menu'], 'flashID');
-  addButtonToDiv('center', 13, imlost, myDivs['menu']);
-  if (shareLinkGenerated == true) {
-    addButtonToDiv('reshare', 13, shareLink, myDivs['menu']);
-    myDivs['menu'].html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
-  } else {
-    addButtonToDiv('share', 13, shareLink, myDivs['menu']);
-  }
+  addButtonToDiv('tools', 13, showUtil, myDivs['menu'], 'header');
+  myDivs['utils'] = createDiv();
+  addButtonToDiv('clear', 13, clearCells, myDivs['utils']);
+  addButtonToDiv('tidy', 13, setTidyFlag, myDivs['utils']);
+  addButtonToDiv('speed: ' + String(speedMode+1), 13, toggleSpeedMode, myDivs['utils'], 'speedID');
+  addButtonToDiv('flash: ' + String(flash), 13, toggleFlash, myDivs['utils'], 'flashID');
+  addButtonToDiv('center', 13, imlost, myDivs['utils']);
+  addButtonToDiv('share', 13, shareLink, myDivs['utils']);
+  // if (shareLinkGenerated == true) {
+  //   addButtonToDiv('reshare', 13, shareLink, myDivs['utils']);
+  //   myDivs['utils'].html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
+  // } else {
+  //   addButtonToDiv('share', 13, shareLink, myDivs['utils']);
+  // }
   if (zoomMode == false) {
-    addButtonToDiv('zoom out', 13, togglezoomMode, myDivs['menu']);
+    addButtonToDiv('zoom out', 13, togglezoomMode, myDivs['utils']);
     // myDivs['menu'].html('<br><a href="javascript:void(0);" onclick="togglezoomMode();createMenuDiv();">zoom out</a><br>', true);
   } else {
     // myDivs['menu'].html('<br><a href="javascript:void(0);" onclick="togglezoomMode();createMenuDiv();">zoom in</a><br>', true);
-    addButtonToDiv('zoom in', 13, togglezoomMode, myDivs['menu']);
+    addButtonToDiv('zoom in', 13, togglezoomMode, myDivs['utils']);
   }
+  myDivs['utils'].parent(myDivs['menu']);
+  if (showUtils == true) {
+    myDivs['utils'].show();
+  } else {
+    myDivs['utils'].hide();
+  }
+
   // myDivs['menu'].html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
   myDivs['menu'].html('<br>', true);
   addButtonToDiv('about', 0, openAbout, myDivs['menu'], 'header');

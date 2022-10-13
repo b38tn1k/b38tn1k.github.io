@@ -183,7 +183,7 @@ Blocks are ordered collections of other data and logic blocks (including referen
 <iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialData"></iframe>
 </div>
 
-Blocks and Variables can be renamed by clicking on the title of the related Set block.
+(functionality temporarily removed) ~~Blocks and Variables can be renamed by clicking on the title of the related Set block.~~
 
 # Under The Hood
 UBT uses an indexed node graph to create processes.

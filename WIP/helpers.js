@@ -517,17 +517,44 @@ function openAbout(){
 
 function closeRefactorDiv(){
   noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
+  let stringed = String(JSON.stringify(cells.saveCells()));
   for (let i = 0; i < myDivs['refactorInputs'].length; i++){
-    if (myDivs['refactorPriors'][i] != myDivs['refactorInputs'][i].value()) {
-      cells.refactors.push(myDivs['refactorInputs'][i].value());
-      for (let j = 0; j < cells.length; j++) {
-        if (cells.cells[j].handleSH == myDivs['refactorPriors'][i]) {
-          cells.cells[j].updateHandleSH(myDivs['refactorInputs'][i].value());
-          cells.cells[j].inputOptions.push(myDivs['refactorInputs'][i].value());
-        }
-      }
-    }
+    stringed = stringed.replaceAll(myDivs['refactorPriors'][i], myDivs['refactorInputs'][i].value());
   }
+
+  let consoleTextLabel = cells.cells[1].indexLabeldiv.html();;
+  let lineNumber = cells.cells[1].lineNumber;
+  let currentLayout = cells.saveCells();
+  clearCells();
+  cells.cells[0].indexLabeldiv.remove();
+  cells.cells[1].indexLabeldiv.remove();
+  cells.cells = [];
+  let myLoaderMap = JSON.parse(stringed);
+  for (key in Object.keys(myLoaderMap)) {
+    cells.addCellWithInfo(myLoaderMap[key]);
+  }
+  for (key in Object.keys(myLoaderMap)) {
+    cells.linkChildren(key, myLoaderMap[key]);
+  }
+  for (let i = 0; i < this.length; i++) {
+    this.cells[i].reshape(true);
+  }
+  cells.cells[1].indexLabeldiv.html(consoleTextLabel);
+  cells.cells[1].lineNumber = lineNumber;
+  cells.cells[1].indexLabeldiv.elt.scrollTop = 1000 * cells.cells[1].lineNumber;
+
+
+  // for (let i = 0; i < myDivs['refactorInputs'].length; i++){
+  //   if (myDivs['refactorPriors'][i] != myDivs['refactorInputs'][i].value()) {
+  //     cells.refactors.push(myDivs['refactorInputs'][i].value());
+  //     for (let j = 0; j < cells.length; j++) {
+  //       if (cells.cells[j].handleSH == myDivs['refactorPriors'][i]) {
+  //         cells.cells[j].updateHandleSH(myDivs['refactorInputs'][i].value());
+  //         cells.cells[j].inputOptions.push(myDivs['refactorInputs'][i].value());
+  //       }
+  //     }
+  //   }
+  // }
   myDivs['refactor'].remove();
   myDivs['refactorInputs'] = [];
   myDivs['refactorPriors'] = [];
@@ -549,8 +576,6 @@ function refactor() {
     if (cells.cells[i].handleSH) {
       if (['turtleY', 'turtleX', 'turtleDraw', 'unset', 'random', 'year', 'month#', 'monthS', 'day#', 'dayS', 'hour', 'minute', 'second', 'millis'].indexOf(cells.cells[i].handleSH) == -1) {
         handleSet.add(cells.cells[i].handleSH);
-      } else {
-        console.log(cells.cells[i].handleSH);
       }
     }
   }
@@ -1007,33 +1032,34 @@ function colorToHTMLRGB(color) {
 }
 
 function toggleInput(cID, type){
-  for (let i = 0; i < cells.length; i++){
-    if (type == cells.cells[i].type && (cells.cells[i].handleSH == cID)){
-      cells.cells[i].showHandleInput = !cells.cells[i].showHandleInput;
-    }
-
-    if (cells.cells[i].type == T_BLOCK && (cells.cells[i].handleSH == cID)) {
-      if (cells.cells[i].showHandleInput == true && cells.cells[i].hide == false){
-        cells.cells[i].input.show();
-        cells.cells[i].refresh();
-      }
-      if (cells.cells[i].showHandleInput == false) {
-        cells.cells[i].input.hide();
-        cells.cells[i].refresh();
-      }
-      break;
-    } else if (cells.cells[i].type == T_INPUT && (cells.cells[i].handleSH == cID)) {
-      if (cells.cells[i].showHandleInput == true) {
-        cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[3]));
-        cells.cells[i].input.value(cells.cells[i].handleSH);
-      } else {
-        cells.cells[i].updateHandleSH(cells.cells[i].input.value());
-        cells.cells[i].input.value(cells.cells[i].dataSH);
-        cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[2]));
-      }
-      break;
-    }
-  }
+  console.log('functionality removed to tools/refactor');
+  // for (let i = 0; i < cells.length; i++){
+  //   if (type == cells.cells[i].type && (cells.cells[i].handleSH == cID)){
+  //     cells.cells[i].showHandleInput = !cells.cells[i].showHandleInput;
+  //   }
+  //
+  //   if (cells.cells[i].type == T_BLOCK && (cells.cells[i].handleSH == cID)) {
+  //     if (cells.cells[i].showHandleInput == true && cells.cells[i].hide == false){
+  //       cells.cells[i].input.show();
+  //       cells.cells[i].refresh();
+  //     }
+  //     if (cells.cells[i].showHandleInput == false) {
+  //       cells.cells[i].input.hide();
+  //       cells.cells[i].refresh();
+  //     }
+  //     break;
+  //   } else if (cells.cells[i].type == T_INPUT && (cells.cells[i].handleSH == cID)) {
+  //     if (cells.cells[i].showHandleInput == true) {
+  //       cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[3]));
+  //       cells.cells[i].input.value(cells.cells[i].handleSH);
+  //     } else {
+  //       cells.cells[i].updateHandleSH(cells.cells[i].input.value());
+  //       cells.cells[i].input.value(cells.cells[i].dataSH);
+  //       cells.cells[i].input.style('background-color', colorToHTMLRGB(cells.cells[i].colors[2]));
+  //     }
+  //     break;
+  //   }
+  // }
 }
 
 function jlog(classname, label) {

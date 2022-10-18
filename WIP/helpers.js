@@ -481,6 +481,7 @@ function utilitiesMenu(){
   addButtonToDiv('flash: ' + String(flash), 13, toggleFlash, myDivs['utils'], 'flashID');
   addButtonToDiv('center', 13, imlost, myDivs['utils']);
   addButtonToDiv('share', 13, shareLink, myDivs['utils']);
+  addButtonToDiv('refactor', 13, refactor, myDivs['utils']);
   // if (shareLinkGenerated == true) {
   //   addButtonToDiv('reshare', 13, shareLink, myDivs['utils']);
   //   myDivs['utils'].html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
@@ -503,7 +504,7 @@ function utilitiesMenu(){
 
   // myDivs['menu'].html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
   myDivs['menu'].html('<br>', true);
-  addButtonToDiv('about', 0, openAbout, myDivs['menu'], 'header');
+  addButtonToDiv('about', 0, openAbout, myDivs['menu']);
   myDivs['menu'].html('<br>', true);
   addButtonToDiv('version 0.000..01', 13, showDevDiv, myDivs['menu'], 'dev');
   // let myLink = createA('http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/', 'about', '_blank_');
@@ -512,6 +513,57 @@ function utilitiesMenu(){
 
 function openAbout(){
   window.open('https://b38tn1k.com/code/ux/2022/09/08/blocks-explained/');
+}
+
+function closeRefactorDiv(){
+  noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
+  for (let i = 0; i < myDivs['refactorInputs'].length; i++){
+    if (myDivs['refactorPriors'][i] != myDivs['refactorInputs'][i].value()) {
+      cells.refactors.push(myDivs['refactorInputs'][i].value());
+      for (let j = 0; j < cells.length; j++) {
+        if (cells.cells[j].handleSH == myDivs['refactorPriors'][i]) {
+          cells.cells[j].updateHandleSH(myDivs['refactorInputs'][i].value());
+          cells.cells[j].inputOptions.push(myDivs['refactorInputs'][i].value());
+        }
+      }
+    }
+  }
+  myDivs['refactor'].remove();
+  myDivs['refactorInputs'] = [];
+  myDivs['refactorPriors'] = [];
+}
+
+function refactor() {
+  jlog('Main', 'refactor');
+  myDivs['refactor'] = createDiv();;
+  myDivs['refactor'].style('background-color', 'DimGray');
+  myDivs['refactor'].style('padding', '10px');
+  myDivs['refactor'].style('outline', '1px solid black');
+  let w = 200;
+  myDivs['refactor'].size(w, null);
+  myDivs['refactor'].style('overflow', "auto");
+  myDivs['refactor'].position((windowWidth/2) - (w/2), 40);
+  myDivs['refactor'].show();
+  let handleSet = new Set();
+  for (let i = 0; i < cells.length; i++) {
+    if (cells.cells[i].handleSH) {
+      if (['turtleY', 'turtleX', 'turtleDraw', 'unset', 'random', 'year', 'month#', 'monthS', 'day#', 'dayS', 'hour', 'minute', 'second', 'millis'].indexOf(cells.cells[i].handleSH) == -1) {
+        handleSet.add(cells.cells[i].handleSH);
+      } else {
+        console.log(cells.cells[i].handleSH);
+      }
+    }
+  }
+  myDivs['refactorInputs'] = [];
+  myDivs['refactorPriors'] = [];
+  for (const hand of handleSet.keys()) {
+    let inp = createInput(hand);
+    inp.parent(myDivs['refactor']);
+    myDivs['refactorInputs'].push(inp);
+    myDivs['refactorPriors'].push(hand);
+  }
+  addButtonToDiv('rename & close', 1, closeRefactorDiv, myDivs['refactor'], 'header');
+  noClickZone = [0, windowWidth, 0, windowHeight];
 }
 
 function createMenuDiv() {

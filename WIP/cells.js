@@ -24,6 +24,7 @@ class Cells {
     this.parentFlag = 0;
     this.parentWidthRecord = [-1, 0];
     this.partialUpdate = [];
+    this.refactors = [];
   }
 
   get length() {
@@ -700,16 +701,16 @@ class Cells {
   mapAndLink() {
     jlog('Cells', 'mapAndLink');
     let map = {};
-    map[T_GOTO] = [];
-    map[T_PUSH] = [];
-    map[T_DELETE] = [];
-    map[T_GET] = [];
-    map[T_RUN] = [];
-    map[T_SET] = [];
-    map[T_LEN] = [];
-    map[T_VAR] = [];
-    map[T_OUTLET] = [];
-    map[T_RANGE] = [];
+    map[T_GOTO] = [...this.refactors];
+    map[T_PUSH] = [...this.refactors];
+    map[T_DELETE] = [...this.refactors];
+    map[T_GET] = [...this.refactors];
+    map[T_RUN] = [...this.refactors];
+    map[T_SET] = [...this.refactors];
+    map[T_LEN] = [...this.refactors];
+    map[T_VAR] = [...this.refactors];
+    map[T_OUTLET] = [...this.refactors];
+    map[T_RANGE] = [...this.refactors];
     let varTable = {};
     for (let i = 0; i < this.length; i++) {
       // grab everything
@@ -771,6 +772,7 @@ class Cells {
         }
       }
     }
+    this.refactors = [];
   }
 
   doMutate() {

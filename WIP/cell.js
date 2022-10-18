@@ -176,6 +176,7 @@ class Cell {
     }
     if (this.type == T_VAR) {
       this.input.selected(newHandle);
+      // this.inputOptions.push(newHandle);
       this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
     }
     if (this.type == T_GOTO) {

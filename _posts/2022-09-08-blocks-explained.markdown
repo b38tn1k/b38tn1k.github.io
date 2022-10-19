@@ -52,7 +52,7 @@ provides a list of examples that can be loaded, run, and modified.
 </tr>
 <tr>
 <th>
-<strong>clear</strong>
+<strong>tools/clear</strong>
 </th>
 <th>
 removes all user-added blocks and start a new project.
@@ -60,7 +60,7 @@ removes all user-added blocks and start a new project.
 </tr>
 <tr>
 <th>
-<strong>tidy</strong>
+<strong>tools/tidy</strong>
 </th>
 <th>
 rearranges all blocks to be equally spaced near the center of the scrollable canvas.
@@ -68,7 +68,7 @@ rearranges all blocks to be equally spaced near the center of the scrollable can
 </tr>
 <tr>
 <th>
-<strong>speed</strong>
+<strong>tools/speed</strong>
 </th>
 <th>
 changes the rate at which the interpreter runs upon pressing start. There are 3 speed modes: 1: normal, 2: turbo, 3: slow.
@@ -76,7 +76,7 @@ changes the rate at which the interpreter runs upon pressing start. There are 3 
 </tr>
 <tr>
 <th>
-<strong>flash off</strong>
+<strong>tools/flash</strong>
 </th>
 <th>
 toggles the blocks from flashing when the code is being run.
@@ -84,7 +84,7 @@ toggles the blocks from flashing when the code is being run.
 </tr>
 <tr>
 <th>
-<strong>center</strong>
+<strong>tools/center</strong>
 </th>
 <th>
 returns the view to canvas origin.
@@ -100,7 +100,7 @@ downloads the project as JSON, not very useful without an upload option.
 </tr> -->
 <tr>
 <th>
-<strong>share</strong>
+<strong>tools/share</strong>
 </th>
 <th>
 converts the project into a URI string that can be used as a link.
@@ -108,7 +108,15 @@ converts the project into a URI string that can be used as a link.
 </tr>
 <tr>
 <th>
-<strong>zoom out / in</strong>
+<strong>tools/refactor</strong>
+</th>
+<th>
+rename a variable or block and its references.
+</th>
+</tr>
+<tr>
+<th>
+<strong>tools/zoom</strong>
 </th>
 <th>
 tries to make things easier on mobile devices and small screens. Tries.
@@ -183,7 +191,7 @@ Blocks are ordered collections of other data and logic blocks (including referen
 <iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialData"></iframe>
 </div>
 
-(functionality temporarily removed) ~~Blocks and Variables can be renamed by clicking on the title of the related Set block.~~
+Blocks and Variables can be renamed in the tools/refactor menu.
 
 # Under The Hood
 UBT uses an indexed node graph to create processes.

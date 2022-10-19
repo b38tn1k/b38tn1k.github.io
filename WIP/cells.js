@@ -183,6 +183,9 @@ class Cells {
     }
     try {
       let myURI = myString.slice(myString.indexOf('#')+1)
+      if (myURI[0] == '#') {
+        myURI = myURI.slice(1);
+      }
       let myJSONString = decodeURIComponent(myURI);
       let myLoaderMap = JSON.parse(myJSONString);
       for (key in Object.keys(myLoaderMap)) {
@@ -195,7 +198,7 @@ class Cells {
         this.cells[i].reshape(true);
       }
     } catch (e) {
-      console.log('failed to load');
+      console.log('failed to load', e);
       return false;
     }
     return true;

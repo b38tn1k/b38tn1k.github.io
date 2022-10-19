@@ -120,7 +120,8 @@ function shareLink() {
   myDivs['shareLink'].style('overflow', "auto");
   myDivs['shareLink'].position((windowWidth/2) - (w/2), 40);
   myDivs['shareLink'].show();
-  addButtonToDiv('share', 1, shareButton, myDivs['shareLink'], 'header');
+  addButtonToDiv('share project', 1, shareButton, myDivs['shareLink'], 'header');
+  addButtonToDiv('share script', 1, shareScript, myDivs['shareLink'], 'header');
   addButtonToDiv('cancel', 1, cancelShare, myDivs['shareLink']);
   // noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
   noClickZone = [0, windowWidth, 0, windowHeight];
@@ -129,6 +130,12 @@ function shareLink() {
 function cancelShare() {
   myDivs['shareLink'].remove();
   noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
+}
+
+function shareScript() {
+  cancelShare();
+  let scriptLink = shareLinkString.replace('#', '##');
+  window.open(scriptLink);
 }
 
 function shareButton() {
@@ -702,6 +709,9 @@ function doLastBit(){
     demoIndex = parseInt(demo[demo.length - 1]);
   } else {
     loaded = cells.makeFromAddyBar();
+    if (myString.indexOf("##")  != -1) {
+      showGUI = false;
+    }
   }
   loaded = doTutorials(loaded);
   if (loaded == false) {

@@ -2,6 +2,7 @@ var printStack = true;
 var clickDebug = true;
 var showDev = true;
 var showFPS = true;
+var showGUI = true;
 // printStack = false;
 clickDebug = false;
 showDev = false;

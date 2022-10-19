@@ -95,103 +95,105 @@ function setup() {
 }
 
 function draw() {
-  if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
-    window.scrollTo(0, 0);
-    cells.updateView(xPos, yPos, false);
-    cells.rebuildMenuFlag = true;
-  }
-
-  notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
-  if (showFPS == true){
-    controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
-  }
-  if (notIdle == true){
-    fpsSetValue = 30;
-  } else {
-    fpsSetValue = 5;
-  }
-  if (redrawCounter != 0) {
-    clear();
-  }
-  if (notIdle == true) {
-    mouseDrag();
-    cells.updateView(xPos, yPos, doMouseDrag);
-  }
-
-  if (redrawCounter != 0) {
-    drawGrid();
-    cells.draw();
-    redrawCounter -= 1;
-  }
-  if (cells.redrawFlag == true || cells.run == true){
-    redrawCounter = 2;
-  }
-  if (notIdle == true) {
-    cells.update(mouseX, mouseY, mouseIsPressed);
-  }
-  if (redrawCounter != 0) {
-    controller.update(cells, flash, fastMode);
-  }
-  if (controller.tidyFlag == true) {
-    setTidyFlag();
-    controller.tidyFlag = false;
-  }
-  if (cells.run == true && slowMode == true) {
-    frameRate(5);
-  } else {
-    if (redrawCounter != 0) {
-      frameRate(100);
-    } else {
-      frameRate(fpsSetValue);
+  if (showGUI == true) {
+    if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
+      window.scrollTo(0, 0);
+      cells.updateView(xPos, yPos, false);
+      cells.rebuildMenuFlag = true;
     }
-  }
 
-  if (tidyFlag > 0) {
-    tidy();
-    cells.updateView(xPos, yPos, true);
-    tidyFlag -= 1;
-  }
-  if (cells.rebuildMenuFlag == true){
-    myDivs['menu'].remove();
-    myDivs['menu']= createDiv();
-    createMenuDiv();
-    cells.rebuildMenuFlag = false;
-  }
+    notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
+    if (showFPS == true){
+      controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
+    }
+    if (notIdle == true){
+      fpsSetValue = 30;
+    } else {
+      fpsSetValue = 5;
+    }
+    if (redrawCounter != 0) {
+      clear();
+    }
+    if (notIdle == true) {
+      mouseDrag();
+      cells.updateView(xPos, yPos, doMouseDrag);
+    }
 
-  if (testTimer != TST_OFF) {
-    let readyToStep = (millis() - testPacer > testPaceSettings[testTimer]);
-    if (cells.run == false && readyToStep == true) {
-      switch(testTimer) {
-        case TST_LOAD:
-          currentTestIndex += 1;
-          if (currentTestIndex == demos.length-1){
-            if (testLoop == true) {
-              currentTestIndex = 0;
-            } else {
-              testTimer = TST_OFF;
-            }
-          } else {
-            testPacer = millis();
-            loadCells(demos[currentTestIndex]);
-            setTidyFlag();
-            testTimer = TST_TIDY;
-          }
-          break;
-        case TST_TIDY:
-          testPacer = millis();
-          testTimer = TST_RUN;
-          break;
-        case TST_RUN:
-          testPacer = millis();
-          cells.run = true;
-          testTimer = TST_PAUSE;
-          break;
-        case TST_PAUSE:
-          testPacer = millis();
-          testTimer = TST_LOAD;
-          break;
+    if (redrawCounter != 0) {
+      drawGrid();
+      cells.draw();
+      redrawCounter -= 1;
+    }
+    if (cells.redrawFlag == true || cells.run == true){
+      redrawCounter = 2;
+    }
+    if (notIdle == true) {
+      cells.update(mouseX, mouseY, mouseIsPressed);
+    }
+    if (redrawCounter != 0) {
+      controller.update(cells, flash, fastMode);
+    }
+    if (controller.tidyFlag == true) {
+      setTidyFlag();
+      controller.tidyFlag = false;
+    }
+    if (cells.run == true && slowMode == true) {
+      frameRate(5);
+    } else {
+      if (redrawCounter != 0) {
+        frameRate(100);
+      } else {
+        frameRate(fpsSetValue);
       }
     }
+
+    if (tidyFlag > 0) {
+      tidy();
+      cells.updateView(xPos, yPos, true);
+      tidyFlag -= 1;
+    }
+    if (cells.rebuildMenuFlag == true){
+      myDivs['menu'].remove();
+      myDivs['menu']= createDiv();
+      createMenuDiv();
+      cells.rebuildMenuFlag = false;
+    }
+
+    if (testTimer != TST_OFF) {
+      let readyToStep = (millis() - testPacer > testPaceSettings[testTimer]);
+      if (cells.run == false && readyToStep == true) {
+        switch(testTimer) {
+          case TST_LOAD:
+            currentTestIndex += 1;
+            if (currentTestIndex == demos.length-1){
+              if (testLoop == true) {
+                currentTestIndex = 0;
+              } else {
+                testTimer = TST_OFF;
+              }
+            } else {
+              testPacer = millis();
+              loadCells(demos[currentTestIndex]);
+              setTidyFlag();
+              testTimer = TST_TIDY;
+            }
+            break;
+          case TST_TIDY:
+            testPacer = millis();
+            testTimer = TST_RUN;
+            break;
+          case TST_RUN:
+            testPacer = millis();
+            cells.run = true;
+            testTimer = TST_PAUSE;
+            break;
+          case TST_PAUSE:
+            testPacer = millis();
+            testTimer = TST_LOAD;
+            break;
+        }
+      }
+    }
+    checkAnOrUpdateTutorial();
   }
-  checkAnOrUpdateTutorial();
 }

@@ -194,7 +194,7 @@ A stack and variable map are generated every time the process is run. Instructio
 
 A stack trace is provided in the browser console after running a process.
 
-A proof of Turing completeness is provided [here.](https://b38tn1k.com/WIP/#demo15)
+A proof of Turing 'completeness' is provided [here.](https://b38tn1k.com/WIP/#demo15)
 
 # Thoughts & Credits
 I made a Turing Machine that shows UBT is Turing complete (as much as anything else) so I'm feeling pretty happy. Here are some thoughts...

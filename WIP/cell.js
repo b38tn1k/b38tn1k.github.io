@@ -368,8 +368,10 @@ class Cell {
         }
         this.indexLabeldiv.show();
         if (showGUI == false) {
-          this.input.hide();
           this.indexLabeldiv.hide();
+          if (blockConfig[this.type]['input type'] != I_NONE) {
+            this.input.hide();
+          }
         }
 
       }
@@ -959,9 +961,11 @@ class Cell {
       } else {
         this.input.show();
       }
+      if (showGUI == false) {
+        this.input.hide();
+      }
     }
     if (showGUI == false) {
-      this.input.hide();
       this.indexLabeldiv.hide();
     }
   }

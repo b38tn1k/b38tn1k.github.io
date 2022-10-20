@@ -2,10 +2,6 @@ var printStack = true;
 var clickDebug = true;
 var showDev = true;
 var showFPS = true;
-var showGUI = true;
-var presentationMode = false;
-var autoStart = false;
-var presentationDivs = {};
 // printStack = false;
 clickDebug = false;
 showDev = false;
@@ -14,6 +10,10 @@ showFPS = false;
 var B_UNSET = 0;
 var B_TRUE = 1;
 var B_FALSE = 2;
+
+var RM_NORMAL = 0;
+var RM_CREATE = 1;
+var RM_PRESENT = 2;
 
 var M_IDLE = 0;
 var M_MOVE = 1;
@@ -123,6 +123,12 @@ var notIdle = true;
 var noClickZone = [0, 0, 0, 0];
 var clearCellFlag = 0;
 var speedButton, flashButton;
+var showGUI = true;
+var presentationMode = false;
+var presCreationMode = false;
+var autoStart = false;
+var presentationDivs = {};
+var runMode = RM_NORMAL;
 
 var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
 var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND, T_PUSH, T_DELETE, T_FOR, T_RUN];

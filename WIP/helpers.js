@@ -119,8 +119,8 @@ function shareLink() {
   myDivs['shareLink'].style('overflow', "auto");
   myDivs['shareLink'].position((windowWidth/2) - (w/2), 40);
   myDivs['shareLink'].show();
-  addButtonToDiv('share project', 1, shareButton, myDivs['shareLink'], 'header');
-  addButtonToDiv('share presentation', 1, shareScript, myDivs['shareLink'], 'header');
+  addButtonToDiv('share project', 1, shareProject, myDivs['shareLink'], 'header');
+  addButtonToDiv('create presentation', 1, createPresentation, myDivs['shareLink'], 'header');
   addButtonToDiv('cancel', 1, cancelShare, myDivs['shareLink']);
   // noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
   noClickZone = [0, windowWidth, 0, windowHeight];
@@ -132,16 +132,45 @@ function cancelShare() {
   noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
 }
 
-function shareScript() {
-  jlog('Main', 'shareScript');
+function createPresentation() {
+  jlog('Main', 'createPresentation');
   cancelShare();
+  presCreationMode = true;
+  showGUI = false;
+  runMode = RM_CREATE;
+  cells.hideAllDivs();
+  myDivs['presTools'] = createDiv();
+  myDivs['presTools'].style('background-color', 'DimGray');
+  myDivs['presTools'].style('padding', '10px');
+  myDivs['presTools'].style('outline', '1px solid black');
+  myDivs['presTools'].size(200, null);
+  myDivs['presTools'].style('overflow', "auto");
+  myDivs['presTools'].position(10, 10);
+  myDivs['presTools'].show();
+  hideMenu = true;
+  myDivs['menu'].hide();
+  addButtonToDiv('share presentation', 1, sharePresentation, myDivs['presTools']);
+  addButtonToDiv('back', 1, exitPresentationMode, myDivs['presTools']);
+}
+
+function exitPresentationMode() {
+  hideMenu = false;
+  presCreationMode = false;
+  showGUI = true;
+  myDivs['menu'].show();
+  cells.showAllDivs();
+  myDivs['presTools'].remove();
+  runMode = RM_NORMAL;
+}
+
+function sharePresentation() {
   shareLinkString = cells.putInAddyBar(true);
   let scriptLink = shareLinkString.replace('#', '##');
   window.open(scriptLink);
 }
 
-function shareButton() {
-  jlog('Main', 'shareButton');
+function shareProject() {
+  jlog('Main', 'shareProject');
   shareLinkString = cells.putInAddyBar();
   cancelShare();
   window.open(shareLinkString);
@@ -202,6 +231,8 @@ function showHideBlockMenu() {
     myDivs['blocks']['main'].show();
     myDivs['demos'].hide();
     showDemoMenu = false;
+    myDivs['utils'].hide();
+    showUtils = false;
   } else {
     myDivs['blocks']['main'].hide();
     restyleMenuDiv();
@@ -219,6 +250,8 @@ function showHideDemoMenu() {
   if (showDemoMenu == true) {
     myDivs['blocks']['main'].hide();
     showBlockMenu = false;
+    myDivs['utils'].hide();
+    showUtils = false;
     myDivs['demos'].show();
   } else {
     myDivs['demos'].hide();
@@ -486,11 +519,16 @@ function demoMenu(){
 
 }
 
-function showUtil() {
-  jlog('Main', 'showUtil');
+function showHideUtilMenu() {
+  jlog('Main', 'showHideUtilMenu');
   showUtils = !showUtils;
   if (showUtils == true) {
     myDivs['utils'].show();
+    myDivs['demos'].hide();
+    showDemoMenu = false;
+    myDivs['blocks']['main'].hide();
+    showBlockMenu = false;
+
   } else {
     myDivs['utils'].hide();
     restyleMenuDiv();
@@ -500,7 +538,7 @@ function showUtil() {
 function utilitiesMenu(){
   jlog('Main', 'utilitiesMenu');
   myDivs['menu'].html("<br>", true);
-  addButtonToDiv('tools', 13, showUtil, myDivs['menu'], 'header');
+  addButtonToDiv('tools', 13, showHideUtilMenu, myDivs['menu'], 'header');
   myDivs['utils'] = createDiv();
   addButtonToDiv('clear', 13, clearCells, myDivs['utils']);
   addButtonToDiv('tidy', 13, setTidyFlag, myDivs['utils']);
@@ -789,8 +827,6 @@ function addToPresentation(myString) {
   jlog('Main', 'addToPresentation');
   presentationDivs['main'].html(myString + '<br>', true);
 }
-
-
 
 function doTutorials(loaded) {
   jlog('Main', 'doTutorials');

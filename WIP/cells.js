@@ -865,6 +865,12 @@ class Cells {
     }
   }
 
+  hideAll() {
+    for (let i = 0; i < this.length; i++) {
+      this.cells[i].hideBlock();
+    }
+  }
+
   update(x, y, mdown) {
     jlog('Cells', 'update');
     // build mode

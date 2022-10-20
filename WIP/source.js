@@ -78,10 +78,10 @@ function setup() {
     showGUI = false;
     presentationMode = true;
     autoStart = true;
+    runMode = RM_PRESENT;
   }
   pixelDensity(1);
   mainDiv = document.getElementById('main');
-
   myDivs['devDiv']= createDiv();
   colorSetup();
   setupScreen();
@@ -89,7 +89,6 @@ function setup() {
   mobileSettings()
   controller = new Controller();
   myDivs['menu']= createDiv();
-
   createMenuDiv();
   xOff = 0;
   yOff = 0;
@@ -105,24 +104,23 @@ function setup() {
 }
 
 function draw() {
-  if (showGUI == true) {
+  notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
+  if (showFPS == true){
+    controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
+  }
+  if (notIdle == true){
+    fpsSetValue = 30;
+  } else {
+    fpsSetValue = 5;
+  }
+  if (redrawCounter != 0) {
+    clear();
+  }
+  if (runMode == RM_NORMAL) {
     if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
       window.scrollTo(0, 0);
       cells.updateView(xPos, yPos, false);
       cells.rebuildMenuFlag = true;
-    }
-
-    notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
-    if (showFPS == true){
-      controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
-    }
-    if (notIdle == true){
-      fpsSetValue = 30;
-    } else {
-      fpsSetValue = 5;
-    }
-    if (redrawCounter != 0) {
-      clear();
     }
     if (notIdle == true) {
       mouseDrag();
@@ -205,7 +203,10 @@ function draw() {
       }
     }
     checkAnOrUpdateTutorial();
-  } else {
+  } else if (runMode == RM_CREATE){
+    clear();
+    drawGrid();
+  } else if (runMode == RM_PRESENT){
     controller.update(cells, flash, fastMode);
   }
 }

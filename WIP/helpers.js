@@ -204,6 +204,7 @@ function showHideBlockMenu() {
     showDemoMenu = false;
   } else {
     myDivs['blocks']['main'].hide();
+    restyleMenuDiv();
     if (submenu != 0) {
       myDivs['blocks'][submenu].hide();
       submenu = 0;
@@ -221,6 +222,7 @@ function showHideDemoMenu() {
     myDivs['demos'].show();
   } else {
     myDivs['demos'].hide();
+    restyleMenuDiv();
   }
   // myDivs['menu'].html('');
   // createMenuDiv();
@@ -358,6 +360,7 @@ function showBlocksubmenu(button) {
   } else {
     myDivs['blocks'][submenu].show();
   }
+  restyleMenuDiv();
 }
 
 function addButtonToDiv(name, value, callback, div, cssClass='basic'){
@@ -490,6 +493,7 @@ function showUtil() {
     myDivs['utils'].show();
   } else {
     myDivs['utils'].hide();
+    restyleMenuDiv();
   }
 }
 
@@ -615,6 +619,20 @@ function refactor() {
   }
   addButtonToDiv('rename & close', 1, closeRefactorDiv, myDivs['refactor'], 'header');
   noClickZone = [0, windowWidth, 0, windowHeight];
+}
+
+function restyleMenuDiv(){
+  myDivs['menu'].style('background-color', 'DimGray');
+  myDivs['menu'].style('padding', '10px');
+  myDivs['menu'].style('outline', '1px solid black');
+  if (myDivs['menu'].size().height > windowHeight - 50){
+    let newHeight = windowHeight - 50;
+    myDivs['menu'].size(null, newHeight);
+  } else {
+    myDivs['menu'].size(null, null);
+  }
+  myDivs['menu'].style('overflow', "auto");
+  myDivs['menu'].position(10, 10);
 }
 
 function createMenuDiv() {

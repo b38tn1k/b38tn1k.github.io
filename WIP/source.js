@@ -86,6 +86,7 @@ function setup() {
   colorSetup();
   setupScreen();
   cells = new Cells(allColors['colors'], allColors['highlights'], allColors['lowlights'], allColors['icolors'], allColors['dtcolors']);
+  pres = new PresentationHelper();
   mobileSettings()
   controller = new Controller();
   myDivs['menu']= createDiv();
@@ -101,6 +102,7 @@ function setup() {
     cells.run = true;
     fastMode = 1;
   }
+  pres.addCells(cells.cells);
 }
 
 function draw() {

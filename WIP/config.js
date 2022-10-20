@@ -88,7 +88,7 @@ var selectChanged = true;
 var fontSizeString = '12px';
 var doJLOG = false;
 var doJLOGCountDown = 0;
-var bgGrid, widthOnTwo, heightOnTwo, cells, c, shareLinkString;
+var bgGrid, widthOnTwo, heightOnTwo, cells, c, shareLinkString, pres;
 var myDivs = {};
 var xPos, yPos, xStart, yStart, xOff, yOff, doMouseDrag;
 var allColors = {};

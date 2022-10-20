@@ -1,11 +1,16 @@
 function newCell(type, x =-1, y =-1) {
   jlog('Main', 'newCell');
   type = int(type);
+  let presAddStart = 0;
   if (mobileDeviceDetected == false) {
+    presAddStart = cells.length;
     cells.addCell(type, x, y);
+    pres.addCells(cells.cells, pas)
   } else {
     if (mobileHAddon == true) {
+      presAddStart = cells.length;
       cells.addCell(mobileHType, x, y);
+      pres.addCells(cells.cells, pas)
       mobileHAddon = false;
     } else {
       mobileHType = type;
@@ -151,6 +156,9 @@ function createPresentation() {
   myDivs['menu'].hide();
   addButtonToDiv('share presentation', 1, sharePresentation, myDivs['presTools']);
   addButtonToDiv('back', 1, exitPresentationMode, myDivs['presTools']);
+  for (let i = 0; i < pres.cells.length; i++) {
+    console.log(pres.cells[i].dataSH);
+  }
 }
 
 function exitPresentationMode() {
@@ -207,6 +215,8 @@ function loadCells(myLoaderMap) {
   cells.updateView(xPos, yPos, true);
   setTidyFlag();
   redrawCounter = 4;
+  pres.cells = [];
+  pres.addCells(cells.cells);
 }
 
 function mobileSettings() {

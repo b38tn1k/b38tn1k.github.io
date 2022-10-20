@@ -83,27 +83,32 @@ class Cells {
     this.rebuildMenuFlag = true;
   }
 
-  saveCells() {
+  saveCells(smaller=false) {
     jlog('Cells', 'saveCells');
     this.mapAndLink();
     let snapshot = {}
     for (let i = 0; i < this.length; i++) {
       snapshot[i] = {};
-      snapshot[i]['x'] = int(this.cells[i].x);
-      snapshot[i]['y'] = int(this.cells[i].y);
+      if (smaller == false) {
+        // console.log('smaller is false');
+        snapshot[i]['x'] = int(this.cells[i].x);
+        snapshot[i]['y'] = int(this.cells[i].y);
+        if (i == 1){
+          snapshot[i]['tL'] = blockConfig[T_CONSOLE]['block label'];
+        } else {
+          snapshot[i]['tL'] = this.cells[i].textLabel;
+        }
+        snapshot[i]['L'] = this.cells[i].indexLabeldiv.html();
+        snapshot[i]['h'] = this.cells[i].hide;
+        snapshot[i]['s'] = this.cells[i].shrink;
+      } else {
+        // console.log('smaller is true');
+      }
       snapshot[i]['t'] = this.cells[i].type;
-      snapshot[i]['h'] = this.cells[i].hide;
-      snapshot[i]['s'] = this.cells[i].shrink;
       snapshot[i]['d'] = this.cells[i].dataSH;
       snapshot[i]['i'] = this.cells[i].handleSH;
       snapshot[i]['p'] = this.cells[i].parent;
       snapshot[i]['c'] = this.cells[i].childIndicies;
-      if (i == 1){
-        snapshot[i]['tL'] = blockConfig[T_CONSOLE]['block label'];
-      } else {
-        snapshot[i]['tL'] = this.cells[i].textLabel;
-      }
-      snapshot[i]['L'] = this.cells[i].indexLabeldiv.html();
     }
     return snapshot;
   }
@@ -146,7 +151,7 @@ class Cells {
       }
     }
     this.cells[newCell].refresh(this.viewXdelta, this.viewYdelta);
-    if (this.cells[newCell].hide == true) {
+    if (this.cells[newCell].hide == true || showGUI == false) {
       this.cells[newCell].hideBlock();
     }
     this.cells[newCell].updateAllDivPositions();
@@ -166,13 +171,14 @@ class Cells {
     }
   }
 
-  putInAddyBar() {
+  putInAddyBar(smaller=false) {
     jlog('Cells', 'putInAddyBar');
     let myURL = getURL();
     if (myURL.indexOf('#') != -1) {
       myURL = myURL.slice(0, myURL.indexOf('#'));
     }
-    let myString = myURL + '#' + encodeURIComponent(JSON.stringify(this.saveCells()));
+    let myString = myURL + '#' + encodeURIComponent(JSON.stringify(this.saveCells(smaller)));
+    // console.log(myString.length);
     return myString;
   }
 
@@ -194,9 +200,16 @@ class Cells {
       for (key in Object.keys(myLoaderMap)) {
         cells.linkChildren(key, myLoaderMap[key]);
       }
-      for (let i = 0; i < this.length; i++) {
-        this.cells[i].reshape(true);
+      if (showGUI == true) {
+        for (let i = 0; i < this.length; i++) {
+          this.cells[i].reshape(true);
+        }
+      } else {
+        for (let i = 0; i < this.length; i++) {
+          this.cells[i].hideBlock();
+        }
       }
+
     } catch (e) {
       console.log('failed to load', e);
       return false;
@@ -344,9 +357,13 @@ class Cells {
     for (let i = pIndex; i < this.length; i++) {
       this.cellsInView.push(i);
     }
+    if (showGUI == false) {
+      this.cells[pIndex].hideBlock();
+    }
   }
 
   quickClear(){
+    jlog('Cells', 'quickClear');
     for (let i = 2; i < this.length; i++){
       this.cells[i].indexLabeldiv.remove();
       if (this.cells[i].input) {
@@ -612,7 +629,6 @@ class Cells {
 
   doMove(x, y, mdown) {
     jlog('Cells', 'doMove');
-    console.log('moving');
     this.cells[this.activeIndex].moveC(x, y, this.viewXdelta, this.viewYdelta);
     if (this.cells[this.activeIndex].parent != -1) {
       this.cells[this.cells[this.activeIndex].parent].removeChild(this.activeIndex);
@@ -694,6 +710,7 @@ class Cells {
   }
 
   clean() {
+    jlog('Cells', 'clean');
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].parent != -1){
         console.log(this.cells[this.cells[i].parent].childIndicies.indexOf(i));
@@ -714,17 +731,6 @@ class Cells {
     map[T_VAR] = [];
     map[T_OUTLET] = [];
     map[T_RANGE] = [];
-
-    // map[T_GOTO] = [...this.refactors];
-    // map[T_PUSH] = [...this.refactors];
-    // map[T_DELETE] = [...this.refactors];
-    // map[T_GET] = [...this.refactors];
-    // map[T_RUN] = [...this.refactors];
-    // map[T_SET] = [...this.refactors];
-    // map[T_LEN] = [...this.refactors];
-    // map[T_VAR] = [...this.refactors];
-    // map[T_OUTLET] = [...this.refactors];
-    // map[T_RANGE] = [...this.refactors];
     let varTable = {};
     for (let i = 0; i < this.length; i++) {
       // grab everything
@@ -786,7 +792,6 @@ class Cells {
         }
       }
     }
-    // this.refactors = [];
   }
 
   doMutate() {
@@ -947,6 +952,7 @@ class Cells {
   }
 
   hideAllDivs(){
+    jlog('Cells', 'hideAllDivs');
     for (let i = 0; i < this.length; i++){
       this.cells[i].indexLabeldiv.hide();
       this.cells[i].hideDivs();
@@ -954,6 +960,7 @@ class Cells {
   }
 
   showAllDivs(){
+    jlog('Cells', 'showAllDivs');
     for (let i = 0; i < this.length; i++){
       if (this.cells[i].hide == false) {
         this.cells[i].indexLabeldiv.show();

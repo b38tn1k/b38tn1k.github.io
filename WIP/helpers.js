@@ -109,8 +109,7 @@ function loadBackup() {
 
 function shareLink() {
   jlog('Main', 'shareLink');
-  shareLinkString = cells.putInAddyBar();
-  shareLinkGenerated = true;
+  // shareLinkGenerated = true;
   myDivs['shareLink'] = createDiv();
   myDivs['shareLink'].style('background-color', 'DimGray');
   myDivs['shareLink'].style('padding', '10px');
@@ -121,24 +120,29 @@ function shareLink() {
   myDivs['shareLink'].position((windowWidth/2) - (w/2), 40);
   myDivs['shareLink'].show();
   addButtonToDiv('share project', 1, shareButton, myDivs['shareLink'], 'header');
-  addButtonToDiv('share script', 1, shareScript, myDivs['shareLink'], 'header');
+  addButtonToDiv('share presentation', 1, shareScript, myDivs['shareLink'], 'header');
   addButtonToDiv('cancel', 1, cancelShare, myDivs['shareLink']);
   // noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
   noClickZone = [0, windowWidth, 0, windowHeight];
 }
 
 function cancelShare() {
+  jlog('Main', 'cancelShare');
   myDivs['shareLink'].remove();
   noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
 }
 
 function shareScript() {
+  jlog('Main', 'shareScript');
   cancelShare();
+  shareLinkString = cells.putInAddyBar(true);
   let scriptLink = shareLinkString.replace('#', '##');
   window.open(scriptLink);
 }
 
 function shareButton() {
+  jlog('Main', 'shareButton');
+  shareLinkString = cells.putInAddyBar();
   cancelShare();
   window.open(shareLinkString);
 }
@@ -177,6 +181,7 @@ function loadCells(myLoaderMap) {
 }
 
 function mobileSettings() {
+  jlog('Main', 'mobileSettings');
   if (zoomMode == true){
     fontSizeString = '10px';
     cells.dWidth = 40;
@@ -290,11 +295,13 @@ function mouseDrag() {
 }
 
 function imlost() {
+  jlog('Main', 'imlost');
   xPos = 0;
   yPos = 0;
 }
 
 function togglezoomMode() {
+  jlog('Main', 'togglezoomMode');
   zoomMode = ! zoomMode;
   // back up everything
   // reset font and max width sizes
@@ -319,24 +326,28 @@ function togglezoomMode() {
 }
 
 function newCellFromButtonClick(button) {
+  jlog('Main', 'newCellFromButtonClick');
   type = button.srcElement.value;
   newCell(type, mouseX, mouseY);
   // createMenuDiv();
 }
 
 function createAddBlockMenu(list, div) {
+  jlog('Main', 'createAddBlockMenu');
   for (let i = 0; i < list.length; i++) {
     addButtonToDiv('+ ' + blockConfig[list[i]]['block label'], list[i], newCellFromButtonClick, div, 'colorcoded');
   }
 }
 
 function loadCellsFromButtonClick(button) {
+  jlog('Main', 'loadCellsFromButtonClick');
   index = parseInt(button.srcElement.value);
   loadCells(demos[index]);
   // createMenuDiv();
 }
 
 function showBlocksubmenu(button) {
+  jlog('Main', 'showBlocksubmenu');
   let oldSM = submenu;
   submenu = parseInt(button.srcElement.value);
   for (let i = 1; i <= 7; i++){
@@ -350,6 +361,7 @@ function showBlocksubmenu(button) {
 }
 
 function addButtonToDiv(name, value, callback, div, cssClass='basic'){
+  jlog('Main', 'addButtonToDiv');
   let button = createButton(name, String(value));
   // button.addClass(String(cssClass)); // i prefer using JS
   button.addClass('basic');
@@ -389,6 +401,7 @@ function addButtonToDiv(name, value, callback, div, cssClass='basic'){
 }
 
 function blocksMenu() {
+  jlog('Main', 'blocksMenu');
   addButtonToDiv('blocks menu', 0, showHideBlockMenu, myDivs['menu'], 'header');
   myDivs['blocks'] = {};
   myDivs['blocks']['main'] = createDiv();
@@ -439,6 +452,7 @@ function blocksMenu() {
 }
 
 function demoMenu(){
+  jlog('Main', 'demoMenu');
   myDivs['menu'].html('<br>', true);
   addButtonToDiv('demo menu', 6, showHideDemoMenu, myDivs['menu'], 'header');
   myDivs['demos'] = createDiv();
@@ -470,6 +484,7 @@ function demoMenu(){
 }
 
 function showUtil() {
+  jlog('Main', 'showUtil');
   showUtils = !showUtils;
   if (showUtils == true) {
     myDivs['utils'].show();
@@ -479,6 +494,7 @@ function showUtil() {
 }
 
 function utilitiesMenu(){
+  jlog('Main', 'utilitiesMenu');
   myDivs['menu'].html("<br>", true);
   addButtonToDiv('tools', 13, showUtil, myDivs['menu'], 'header');
   myDivs['utils'] = createDiv();
@@ -519,10 +535,12 @@ function utilitiesMenu(){
 }
 
 function openAbout(){
+  jlog('Main', 'openAbout');
   window.open('https://b38tn1k.com/code/ux/2022/09/08/blocks-explained/');
 }
 
 function closeRefactorDiv(){
+  jlog('Main', 'closeRefactorDiv');
   noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
   let stringed = String(JSON.stringify(cells.saveCells()));
   for (let i = 0; i < myDivs['refactorInputs'].length; i++){
@@ -569,6 +587,7 @@ function closeRefactorDiv(){
 
 function refactor() {
   jlog('Main', 'refactor');
+  jlog('Main', 'refactor');
   myDivs['refactor'] = createDiv();;
   myDivs['refactor'].style('background-color', 'DimGray');
   myDivs['refactor'].style('padding', '10px');
@@ -601,38 +620,41 @@ function refactor() {
 function createMenuDiv() {
   jlog('Main', 'createMenuDiv');
   myDivs['menu'].remove();
-  myDivs['menu'] = createDiv();
-  blocksMenu();
-  demoMenu();
-  utilitiesMenu();
-  if (zoomMode == false){
-    myDivs['menu'].style('font-size', '16px');
-  } else {
-    myDivs['menu'].style('font-size', '12px');
+  if (showGUI == true) {
+    myDivs['menu'] = createDiv();
+    blocksMenu();
+    demoMenu();
+    utilitiesMenu();
+    if (zoomMode == false){
+      myDivs['menu'].style('font-size', '16px');
+    } else {
+      myDivs['menu'].style('font-size', '12px');
+    }
+    myDivs['menu'].style('background-color', 'DimGray');
+    myDivs['menu'].style('padding', '10px');
+    myDivs['menu'].style('outline', '1px solid black');
+    if (myDivs['menu'].size().height > windowHeight - 50){
+      let newHeight = windowHeight - 50;
+      myDivs['menu'].size(null, newHeight);
+    } else {
+      myDivs['menu'].size(null, null);
+    }
+    myDivs['menu'].style('overflow', "auto");
+    myDivs['menu'].position(10, 10);
+    noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
+    if (hideMenu == true){
+      myDivs['menu'].hide();
+      noClickZone = [-1, -1, -1, -1];
+    } else {
+      myDivs['menu'].show();
+    }
+    showDev = ! showDev;
+    showDevDiv();
   }
-  myDivs['menu'].style('background-color', 'DimGray');
-  myDivs['menu'].style('padding', '10px');
-  myDivs['menu'].style('outline', '1px solid black');
-  if (myDivs['menu'].size().height > windowHeight - 50){
-    let newHeight = windowHeight - 50;
-    myDivs['menu'].size(null, newHeight);
-  } else {
-    myDivs['menu'].size(null, null);
-  }
-  myDivs['menu'].style('overflow', "auto");
-  myDivs['menu'].position(10, 10);
-  noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
-  if (hideMenu == true){
-    myDivs['menu'].hide();
-    noClickZone = [-1, -1, -1, -1];
-  } else {
-    myDivs['menu'].show();
-  }
-  showDev = ! showDev;
-  showDevDiv();
 }
 
 function toggleDevOptions(button) {
+  jlog('Main', 'toggleDevOptions');
   item = parseInt(button.srcElement.value);
   switch (item) {
     case 0:
@@ -645,7 +667,7 @@ function toggleDevOptions(button) {
       printStack = !printStack;
       break;
     case 3:
-      doJLOG = !doJLOG;
+      doJLOGCountDown = 50;
       break;
   }
 }
@@ -653,10 +675,14 @@ function toggleDevOptions(button) {
 function showDevDiv(){
   showDev = ! showDev;
   if (showDev == false){
-    myDivs['devDiv'].remove();
+    if (myDivs['devDiv']) {
+      myDivs['devDiv'].remove();
+    }
     return;
   }
-  myDivs['devDiv'].remove();
+  if (myDivs['devDiv']) {
+    myDivs['devDiv'].remove();
+  }
   myDivs['devDiv']= createDiv();
   myDivs['devDiv'].style('font-size', '12px');
   myDivs['devDiv'].style('background-color', 'DimGray');
@@ -674,6 +700,7 @@ function showDevDiv(){
 }
 
 function setupScreen() {
+  jlog('Main', 'setupScreen');
   jlog('Main', 'setupScreen');
   pixelDensity(1);
   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
@@ -698,6 +725,7 @@ function setupScreen() {
 }
 
 function doLastBit(){
+  jlog('Main', 'doLastBit');
   let loaded = false;
   let demoIndex = -1;
   let myString = getURL();
@@ -709,9 +737,6 @@ function doLastBit(){
     demoIndex = parseInt(demo[demo.length - 1]);
   } else {
     loaded = cells.makeFromAddyBar();
-    if (myString.indexOf("##")  != -1) {
-      showGUI = false;
-    }
   }
   loaded = doTutorials(loaded);
   if (loaded == false) {
@@ -728,9 +753,29 @@ function doLastBit(){
   myDivs['menu'].remove();
   myDivs['menu'] = createDiv();
   createMenuDiv();
+  createPresentationDiv();
 }
 
+function createPresentationDiv(){
+  jlog('Main', 'createPresentationDiv');
+  presentationDivs['main'] = createDiv();
+  presentationDivs['main'].style('font-size', '16px');
+  // presentationDivs['main'].style('background-color', 'DimGray');
+  presentationDivs['main'].style('padding', '10px');
+  // presentationDivs['main'].size(null, null);
+  presentationDivs['main'].style('overflow', "auto");
+  presentationDivs['main'].position(10, 10);
+}
+
+function addToPresentation(myString) {
+  jlog('Main', 'addToPresentation');
+  presentationDivs['main'].html(myString + '<br>', true);
+}
+
+
+
 function doTutorials(loaded) {
+  jlog('Main', 'doTutorials');
   if (tutorial == true){
     let noIframe = true;
     try {
@@ -943,6 +988,7 @@ function doTutorials(loaded) {
 }
 
 function checkAnOrUpdateTutorial() {
+  jlog('Main', 'checkAnOrUpdateTutorial');
   if (tutorial == true){
     switch(tutorialstring) {
       case '#tutorialBlank':
@@ -1029,6 +1075,7 @@ function checkAnOrUpdateTutorial() {
 }
 
 function testAll() {
+  jlog('Main', 'testAll');
   while (speedMode != 1) {
     toggleSpeedMode();
   }
@@ -1038,10 +1085,12 @@ function testAll() {
 }
 
 function colorToHTMLRGB(color) {
+  jlog('Main', 'colorToHTMLRGB');
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
 }
 
 function toggleInput(cID, type){
+  jlog('Main', 'toggleInput');
   console.log('functionality removed to tools/refactor');
   // for (let i = 0; i < cells.length; i++){
   //   if (type == cells.cells[i].type && (cells.cells[i].handleSH == cID)){
@@ -1073,9 +1122,18 @@ function toggleInput(cID, type){
 }
 
 function jlog(classname, label) {
+  if (['length', 'tidy', 'startStop', 'stop', 'toggleStartForm', 'resizeConsole', 'updateView', 'moveC','updateAllDivPositions', 'updateDivPosition', 'reshape', 'refresh'].indexOf(label) != -1) {
+    return;
+  }
+  if (doJLOGCountDown > 0) {
+    doJLOG = true;
+  } else {
+    doJLOG = false;
+  }
   if (doJLOG == true) {
-    console.debug(classname, label, (millis()/1000).toFixed(1));
+    console.debug('frame: '+ frameCount, classname, label);
     logCounter += 1;
+    doJLOGCountDown -= 1;
     if (logCounter == 100) {
       console.clear();
     }
@@ -1083,6 +1141,7 @@ function jlog(classname, label) {
 }
 
 function whatsLeft(){
+  jlog('Main', 'whatsLeft');
   for (let i = 0; i < 55; i++) {
     if (everyone.indexOf(i) == -1){
       console.log('FREE:', i);

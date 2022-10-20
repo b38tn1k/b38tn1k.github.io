@@ -30,6 +30,8 @@ class Cell {
     this.startForm = false;
     this.showHandleInput = false;
     this.inputOptions = [];
+    this.forceHandleSH = false;
+    this.forceHandleSHFrameOff = -1;
     // geometry
     this.childYBorder = 2*r;
     this.childXBorder = 1.5 * r;
@@ -103,6 +105,7 @@ class Cell {
   }
 
   getDataSH() {
+    jlog('Cell', 'getDataSH');
     const d = new Date();
     switch(this.handleSH) {
       case 'random':
@@ -144,6 +147,7 @@ class Cell {
   }
 
   getDataSHForPrint() {
+    jlog('Cell', 'getDataSHForPrint');
     let res = this.getDataSH();
     if (String(res) == 'undefined') {
       res = this.textLabel;
@@ -152,10 +156,12 @@ class Cell {
   }
 
   disableDelete(){
+    jlog('Cell', 'disableDelete');
     this.deletable = false;
   }
 
   updateHandleSH(newHandle) {
+    jlog('Cell', 'updateHandleSH');
     this.handleSH = newHandle;
     if (this.type == T_BLOCK || this.type == T_INPUT){
       this.indexLabeldiv.html(this.textLabel + ' ' + newHandle);
@@ -286,7 +292,20 @@ class Cell {
     this.dataSH = value;
     if (blockConfig[this.type]['input type'] == I_TEXT && hard==true){
       this.input.value(value, value);
+      if (showGUI == false) {
+        this.input.hide();
+        this.indexLabeldiv.hide();
+      }
     }
+
+    if (blockConfig[this.type]['input type'] == I_SELECT && hard==true){
+      this.input.selected(value);
+      if (showGUI == false) {
+        this.input.hide();
+        this.indexLabeldiv.hide();
+      }
+    }
+
     // if (/^\d+\.\d+$/.test(String(value)) == true) {
     //   value = parseFloat(value).toFixed(3);
     // }
@@ -348,6 +367,10 @@ class Cell {
           }
         }
         this.indexLabeldiv.show();
+        if (showGUI == false) {
+          this.input.hide();
+          this.indexLabeldiv.hide();
+        }
 
       }
       stroke(this.colors[1]);
@@ -717,6 +740,7 @@ class Cell {
   }
 
   clearConsole(){
+    jlog('Cell', 'clearConsole');
     if (this.type == T_CONSOLE) {
       this.indexLabeldiv.html(this.textLabel);
       this.lineNumber = 0;
@@ -725,7 +749,7 @@ class Cell {
 
   updateSHs() {
     jlog('Cell', 'updateSHs');
-    if (blockConfig[this.type]['input type'] != I_NONE && this.mode != M_NEW) {
+    if (this.forceHandleSH == false && blockConfig[this.type]['input type'] != I_NONE && this.mode != M_NEW) {
       switch (this.type) {
         case T_BLOCK:
           if (this.mode != M_SELECTED) {
@@ -785,9 +809,21 @@ class Cell {
       }
       this.unpackDataSH();
     }
+    if (this.forceHandleSH == true) {
+      this.updateDataSH(this.handleSH, true);
+      if (this.forceHandleSHFrameOff == -1) {
+        this.forceHandleSHFrameOff = frameCount + 5;
+      }
+    }
+    if (this.forceHandleSHFrameOff != -1 && this.forceHandleSHFrameOff < frameCount) {
+      this.forceHandleSH = false;
+      this.forceHandleSHFrameOff = -1;
+    }
+
   }
 
   unpackDataSH() {
+    jlog('Cell', 'unpackDataSH');
     this.dataSHasType['string'] = this.dataSH;
     this.dataSHasType['number'] = parseFloat(this.dataSH);
     this.dataSHasType['isNumber'] = !(isNaN(this.dataSHasType['number']));
@@ -924,6 +960,10 @@ class Cell {
         this.input.show();
       }
     }
+    if (showGUI == false) {
+      this.input.hide();
+      this.indexLabeldiv.hide();
+    }
   }
 
   showBlock() {
@@ -984,6 +1024,7 @@ class Cell {
   }
 
   pushX(x) {
+    jlog('Cell', 'pushX');
     this.viewX += x;
     this.x += x;
   }

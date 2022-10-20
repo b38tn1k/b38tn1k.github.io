@@ -74,8 +74,14 @@ function preload() {
 
 function setup() {
   jlog('Main', 'setup');
+  if (getURL().indexOf("##")  != -1) { // hijack earlier
+    showGUI = false;
+    presentationMode = true;
+    autoStart = true;
+  }
   pixelDensity(1);
   mainDiv = document.getElementById('main');
+
   myDivs['devDiv']= createDiv();
   colorSetup();
   setupScreen();
@@ -92,6 +98,10 @@ function setup() {
   showDev = ! showDev; //lazy
   showDevDiv();
   doLastBit();
+  if (autoStart == true) {
+    cells.run = true;
+    fastMode = 1;
+  }
 }
 
 function draw() {
@@ -195,5 +205,7 @@ function draw() {
       }
     }
     checkAnOrUpdateTutorial();
+  } else {
+    controller.update(cells, flash, fastMode);
   }
 }

@@ -847,7 +847,10 @@ function createPresentationDiv(){
   presentationDivs['main'].style('overflow', "auto");
   presentationDivs['main'].position(10, 10);
   if (presentationMode == true) {
+    presentationDivs['main'].show();
     console.log(cells.layoutArray);
+  } else {
+    presentationDivs['main'].hide();
   }
 
   presentationDivs['defaultItemsWrapper'] = createDiv();

@@ -42,15 +42,17 @@ class Cells {
     // make this have memory later
   }
 
+  addIDsForCreateMode() {
+    for (let i = 0; i < this.length; i++) {
+      this.cells[i].id = i;
+    }
+  }
+
   cleanForCreateMode() {
     jlog('Cells', 'cleanForCreateMode');
     this.createMode = true;
     let layoutCount = 0;
     for (let i = 0; i < this.length; i++) {
-      if (this.cells[i].type == T_CONSOLE) {
-        this.cells[i].clearConsole();
-        this.cells[i].indexLabeldiv.size(null, this.dHeight/2);
-      }
       if (this.cells[i].type != T_LAYOUT_BLOCK) {
         this.cells[i].removeParent();
         this.cells[i].clearChildren();
@@ -60,12 +62,9 @@ class Cells {
       }
       this.cellsInView.push(i);
     }
-    this.cells[0].width = this.dWidth;
-    this.cells[0].height = this.dHeight;
-    this.cells[1].width = this.dWidth;
-    this.cells[1].height = this.dHeight;
-    this.cells[0].resetDims();
-    this.cells[1].resetDims();
+    // this.cells[0].width = this.dWidth; // make console small
+    // this.cells[0].height = this.dHeight;
+    // this.cells[0].resetDims();
     this.mapAndLink();
     if (layoutCount == 0) {
       this.newLayoutBlock('A0', windowWidth/3, 10);
@@ -81,12 +80,12 @@ class Cells {
   }
 
   newLayoutBlock(name, x, y) {
-    let c = [color(0, 0, 0, 0), color(0, 0, 0, 255), color(0, 0, 0, 255), color(0, 0, 0, 255), color(0, 0, 0, 255)];
+    let c = [color(0, 0, 0, 0), color(0, 0, 0, 255), color(255, 255, 255, 255), color(0, 0, 0, 255), color(0, 0, 0, 255)];
     let pIndex = this.length;
     this.cellsInView.push(pIndex);
-    this.cells.push(new Cell(T_LAYOUT_BLOCK, x, y, this.dWidth*2, this.dHeight*2, c, this.dRadius))
+    this.cells.push(new Cell(T_LAYOUT_BLOCK, x, y, this.dWidth*2, this.dHeight*2.5, c, this.dRadius))
     this.cells[pIndex].updateHandleSH(name);
-    this.cells[pIndex].childYBorder /= 2;
+    // this.cells[pIndex].childYBorder /= 2;
   }
 
   getLayoutBlockNextName(name){
@@ -107,6 +106,20 @@ class Cells {
     return newName;
   }
 
+  getLayoutArray(){
+    let layoutArray = [];
+    let rowArray = [];
+    let start = 'A0';
+    for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].type == T_LAYOUT_BLOCK){
+        console.log(this.cells[i].input.value());
+        if (this.cells[i].children.length != 0) {
+          console.log(this.cells[i].children[0].id);
+        }
+      }
+    }
+  }
+
   tidy(xMin, yMin) {
     jlog('Cells', 'tidy');
     let bigBlocks = [];
@@ -125,14 +138,13 @@ class Cells {
         }
       }
     }
-    if (this.createMode == false) {
-      this.cells[1].resizeConsole();
-    }
-
+    this.cells[1].resizeConsole();
     // bigBlocks.sort(function(a, b) {return a.width - b.width});
     // bigBlocks.sort(function(a, b) {return sqrt(a.x**2 + a.y**2) - sqrt(b.x**2 + b.y**2)});
     bigBlocks.sort(function(a, b) {return a.width * a.height - b.width * b.height});
-    bigBlocks.unshift(this.cells[0], this.cells[1]);
+    if (this.createMode == false) {
+      bigBlocks.unshift(this.cells[0], this.cells[1]);
+    }
     let x = xMin;
     let y = yMin;
     let offset = 0;

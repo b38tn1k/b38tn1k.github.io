@@ -130,7 +130,7 @@ var presCreationMode = false;
 var autoStart = false;
 var presentationDivs = {};
 var runMode = RM_NORMAL;
-var presComponents = [T_START, T_INPUT, T_CONST, T_CONSOLE];
+
 
 var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
 var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND, T_PUSH, T_DELETE, T_FOR, T_RUN];
@@ -140,6 +140,7 @@ var notStartOrConsoleOrSpecial = [T_COMMENT, T_CONST, T_VAR, T_IF, T_WHILE, T_EQ
 var numberyOnes = [T_OUTLET, T_COMMENT, T_CONST, T_VAR, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_COS, T_SIN, T_LEN, T_GET, T_ROUND];
 var boolyOnes = [T_COMMENT, T_NOT, T_EQUAL, T_GREATER, T_LESS];
 var conditionallyOnes = boolyOnes.concat(numberyOnes.slice(1));
+var presComponents = [T_INPUT, T_CONST];
 
 var mathFunctions = [T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_ROUND];
 var boolFunctions = [T_NOT, T_EQUAL, T_GREATER, T_LESS];
@@ -400,7 +401,7 @@ blockConfig[T_PUSH]['input type'] = I_SELECT;
 blockConfig[T_DELETE]['input type'] = I_SELECT;
 blockConfig[T_INDEX]['input type'] = I_NONE;
 blockConfig[T_REF]['input type'] = I_NONE;
-blockConfig[T_LAYOUT_BLOCK]['input type'] = I_NONE;
+blockConfig[T_LAYOUT_BLOCK]['input type'] = I_TEXT;
 
 blockConfig[T_BLOCK]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_GOTO]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};

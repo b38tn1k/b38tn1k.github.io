@@ -64,6 +64,7 @@ class Cell {
     this.handleH = 1.5*r;
     this.graphicUpdate = true;
     this.specialLayer = null;
+    this.id;
     // colors
     this.colors = c;
     if (type == T_START) {
@@ -229,12 +230,12 @@ class Cell {
 
   }
 
-  resizeConsole() {
+  resizeConsole(m1=100, m2=75) {
     jlog('Cell', 'resizeConsole');
     this.graphicUpdate = true;
     if (this.type == T_CONSOLE) {
-      this.minWidth = max(100, this.minWidth);
-      this.minHeight = max(75, this.minHeight);
+      this.minWidth = max(m1, this.minWidth);
+      this.minHeight = max(m2, this.minHeight);
       this.indexLabeldiv.size(this.width - 3*this.childXBorder, this.height - this.childYBorder);
       this.indexLabeldiv.style('overflow', "auto");
     }

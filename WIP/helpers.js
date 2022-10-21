@@ -150,6 +150,7 @@ function cancelShare() {
 function createPresentation() {
   jlog('Main', 'createPresentation');
   backupObject = JSON.stringify(cells.saveCells());
+  cells.addIDsForCreateMode();
   redrawCounter = 2;
   if (pres.length == 0){
     pres.addCellsForPres(cells.cells)
@@ -180,6 +181,7 @@ function exitPresentationMode() {
   hideMenu = false;
   presCreationMode = false;
   showGUI = true;
+  pres.getLayoutArray();
   pres.removeCreateMode();
   loadBackup();
   myDivs['menu'].show();

@@ -150,6 +150,7 @@ function cancelShare() {
 function createPresentation() {
   jlog('Main', 'createPresentation');
   backupObject = JSON.stringify(cells.saveCells());
+  pres.presBackup = cells.saveCells();
   cells.addIDsForCreateMode();
   redrawCounter = 2;
   if (pres.length == 0){
@@ -181,7 +182,6 @@ function exitPresentationMode() {
   hideMenu = false;
   presCreationMode = false;
   showGUI = true;
-  pres.getLayoutArray();
   pres.removeCreateMode();
   loadBackup();
   myDivs['menu'].show();
@@ -193,9 +193,11 @@ function exitPresentationMode() {
 }
 
 function sharePresentation() {
+  let layout = pres.getLayoutArray();
+  console.log(layout);
   shareLinkString = cells.putInAddyBar(true);
   let scriptLink = shareLinkString.replace('#', '##');
-  window.open(scriptLink);
+  // window.open(scriptLink);
   doMouseDrag = false;
 }
 
@@ -576,7 +578,7 @@ function utilitiesMenu(){
   addButtonToDiv('tidy', 13, setTidyFlag, myDivs['utils']);
   addButtonToDiv('speed: ' + String(speedMode+1), 13, toggleSpeedMode, myDivs['utils'], 'speedID');
   addButtonToDiv('flash: ' + String(flash), 13, toggleFlash, myDivs['utils'], 'flashID');
-  addButtonToDiv('center', 13, imlost, myDivs['utils']);
+  addButtonToDiv('origin', 13, imlost, myDivs['utils']);
   addButtonToDiv('share', 13, shareLink, myDivs['utils']);
   addButtonToDiv('refactor', 13, refactor, myDivs['utils']);
   // if (shareLinkGenerated == true) {
@@ -641,19 +643,6 @@ function closeRefactorDiv(){
   cells.cells[1].indexLabeldiv.html(consoleTextLabel);
   cells.cells[1].lineNumber = lineNumber;
   cells.cells[1].indexLabeldiv.elt.scrollTop = 1000 * cells.cells[1].lineNumber;
-
-
-  // for (let i = 0; i < myDivs['refactorInputs'].length; i++){
-  //   if (myDivs['refactorPriors'][i] != myDivs['refactorInputs'][i].value()) {
-  //     cells.refactors.push(myDivs['refactorInputs'][i].value());
-  //     for (let j = 0; j < cells.length; j++) {
-  //       if (cells.cells[j].handleSH == myDivs['refactorPriors'][i]) {
-  //         cells.cells[j].updateHandleSH(myDivs['refactorInputs'][i].value());
-  //         cells.cells[j].inputOptions.push(myDivs['refactorInputs'][i].value());
-  //       }
-  //     }
-  //   }
-  // }
   myDivs['refactor'].remove();
   myDivs['refactorInputs'] = [];
   myDivs['refactorPriors'] = [];

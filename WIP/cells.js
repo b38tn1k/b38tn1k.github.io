@@ -25,7 +25,7 @@ class Cells {
     this.parentWidthRecord = [-1, 0];
     this.partialUpdate = [];
     this.createMode = false;
-    // this.refactors = [];
+    this.presBackup;
   }
 
   get length() {
@@ -83,7 +83,7 @@ class Cells {
     let c = [color(0, 0, 0, 0), color(0, 0, 0, 255), color(255, 255, 255, 255), color(0, 0, 0, 255), color(0, 0, 0, 255)];
     let pIndex = this.length;
     this.cellsInView.push(pIndex);
-    this.cells.push(new Cell(T_LAYOUT_BLOCK, x, y, this.dWidth*2, this.dHeight*2.5, c, this.dRadius))
+    this.cells.push(new Cell(T_LAYOUT_BLOCK, x, y, this.dWidth*2, this.dHeight*2.8, c, this.dRadius))
     this.cells[pIndex].updateHandleSH(name);
     // this.cells[pIndex].childYBorder /= 2;
   }
@@ -100,24 +100,52 @@ class Cells {
     return newName;
   }
 
+  getLetterAndNumber(name){
+    let letter = name[0];
+    let value = name[0].charCodeAt(0);
+    let number = parseInt(name.slice(1));
+    return {'letter' : letter, 'ascii' : value, 'number' : number};
+  }
+
   getLayoutBlockBelowName(name){
-    let newName = name[0];
-    newName += String(parseInt(name.slice(1)) + 1);
-    return newName;
+    let startName = this.getLetterAndNumber(name);
+    let newNumber = String(startName['number'] + 1);
+    let newLetter = 'A'.charCodeAt(0);
+    for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].type == T_LAYOUT_BLOCK) {
+        if (this.getLetterAndNumber(this.cells[i].handleSH)['number'] == newNumber){
+          newLetter = this.getLetterAndNumber(this.cells[i].handleSH)['ascii'] + 1;
+        }
+      }
+    }
+    return String.fromCharCode(newLetter) + newNumber;
   }
 
   getLayoutArray(){
     let layoutArray = [];
     let rowArray = [];
-    let start = 'A0';
+    let mydiv = [];
+    let prev = 'A-1';
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].type == T_LAYOUT_BLOCK){
-        console.log(this.cells[i].input.value());
+        mydiv = [];
+        mydiv.push(this.cells[i].input.value());
         if (this.cells[i].children.length != 0) {
-          console.log(this.cells[i].children[0].id);
+          mydiv.push(this.cells[i].children[0].id);
         }
+        if (this.cells[i].handleSH == this.getLayoutBlockNextName(prev)) {
+          rowArray.push(mydiv);
+        } else {
+          layoutArray.push(rowArray);
+          rowArray = [];
+          rowArray.push(mydiv);
+        }
+        prev = this.cells[i].handleSH;
       }
     }
+    layoutArray.push(rowArray);
+    layoutArray = layoutArray.slice(1);
+    return (layoutArray);
   }
 
   tidy(xMin, yMin) {
@@ -198,7 +226,9 @@ class Cells {
       snapshot[i]['d'] = this.cells[i].dataSH;
       snapshot[i]['i'] = this.cells[i].handleSH;
       snapshot[i]['p'] = this.cells[i].parent;
-      snapshot[i]['c'] = this.cells[i].childIndicies;
+      if (this.cells[i].childIndicies.length != 0){
+        snapshot[i]['c'] = this.cells[i].childIndicies;
+      }
     }
     return snapshot;
   }
@@ -310,6 +340,9 @@ class Cells {
   linkChildren(ind, info) {
     jlog('Cells', 'linkChildren');
     let id = parseInt(ind);
+    if (! info.c) {
+      info.c = [];
+    }
     for (let i = 0; i < info.c.length; i++) {
       this.cells[id].forcefullyAddChildren(info.c[i], this.cells[info.c[i]], true);
     }

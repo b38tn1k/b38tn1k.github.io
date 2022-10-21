@@ -5,12 +5,12 @@ function newCell(type, x =-1, y =-1) {
   if (mobileDeviceDetected == false) {
     presAddStart = cells.length;
     cells.addCell(type, x, y);
-    pres.addCells(cells.cells, pas)
+    pres.addCellsForPres(cells.cells, presAddStart)
   } else {
     if (mobileHAddon == true) {
       presAddStart = cells.length;
       cells.addCell(mobileHType, x, y);
-      pres.addCells(cells.cells, pas)
+      pres.addCellsForPres(cells.cells, pas)
       mobileHAddon = false;
     } else {
       mobileHType = type;
@@ -30,10 +30,19 @@ function setTidyFlag() {
 function tidy() {
   jlog('Main', 'tidy');
   if (cells.run == false) {
-    let xOffset = 2*myDivs['menu'].x + myDivs['menu'].size().width;
-    cells.tidy(round(xOffset/(gridSize/2))*(gridSize/2), gridSize);
-    if (zoomMode == true) {
-      cells.update(mouseX, mouseY, mouseIsPressed);
+    if (runMode == RM_NORMAL) {
+      let xOffset = 2*myDivs['menu'].x + myDivs['menu'].size().width;
+      cells.tidy(round(xOffset/(gridSize/2))*(gridSize/2), gridSize);
+      if (zoomMode == true) {
+        cells.update(mouseX, mouseY, mouseIsPressed);
+      }
+    }
+    if (runMode == RM_CREATE) {
+      let yOffset = 2*myDivs['presTools'].y + myDivs['presTools'].size().height// + gridSize/2;
+      pres.tidy(myDivs['presTools'].x/pixelDensity(), yOffset);
+      if (zoomMode == true) {
+        pres.update(mouseX, mouseY, mouseIsPressed);
+      }
     }
   }
 }
@@ -135,46 +144,57 @@ function cancelShare() {
   jlog('Main', 'cancelShare');
   myDivs['shareLink'].remove();
   noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
+  doMouseDrag = false;
 }
 
 function createPresentation() {
   jlog('Main', 'createPresentation');
+  backupObject = JSON.stringify(cells.saveCells());
+  redrawCounter = 2;
+  if (pres.length == 0){
+    pres.addCellsForPres(cells.cells)
+  }
   cancelShare();
   presCreationMode = true;
-  showGUI = false;
+  // showGUI = false;
   runMode = RM_CREATE;
-  cells.hideAllDivs();
+  cells.hideAll(presComponents);
   myDivs['presTools'] = createDiv();
   myDivs['presTools'].style('background-color', 'DimGray');
   myDivs['presTools'].style('padding', '10px');
   myDivs['presTools'].style('outline', '1px solid black');
-  myDivs['presTools'].size(200, null);
+  myDivs['presTools'].size(myDivs['menu'].width, null);
   myDivs['presTools'].style('overflow', "auto");
   myDivs['presTools'].position(10, 10);
   myDivs['presTools'].show();
   hideMenu = true;
   myDivs['menu'].hide();
   addButtonToDiv('share presentation', 1, sharePresentation, myDivs['presTools']);
+  addButtonToDiv('center', 13, imlost, myDivs['presTools']);
   addButtonToDiv('back', 1, exitPresentationMode, myDivs['presTools']);
-  for (let i = 0; i < pres.cells.length; i++) {
-    console.log(pres.cells[i].dataSH);
-  }
+  pres.cleanForCreateMode();
+  setTidyFlag();
 }
 
 function exitPresentationMode() {
   hideMenu = false;
   presCreationMode = false;
   showGUI = true;
+  pres.removeCreateMode();
+  loadBackup();
   myDivs['menu'].show();
-  cells.showAllDivs();
+  noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
   myDivs['presTools'].remove();
   runMode = RM_NORMAL;
+  redrawCounter = 4;
+  cells.updateView(xPos, yPos, true);
 }
 
 function sharePresentation() {
   shareLinkString = cells.putInAddyBar(true);
   let scriptLink = shareLinkString.replace('#', '##');
   window.open(scriptLink);
+  doMouseDrag = false;
 }
 
 function shareProject() {
@@ -216,7 +236,7 @@ function loadCells(myLoaderMap) {
   setTidyFlag();
   redrawCounter = 4;
   pres.cells = [];
-  pres.addCells(cells.cells);
+  pres.addCellsForPres(cells.cells);
 }
 
 function mobileSettings() {

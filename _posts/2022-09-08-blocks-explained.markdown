@@ -84,7 +84,7 @@ toggles the blocks from flashing when the code is being run.
 </tr>
 <tr>
 <th>
-<strong>tools/center</strong>
+<strong>tools/origin</strong>
 </th>
 <th>
 returns the view to canvas origin.

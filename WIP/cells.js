@@ -24,6 +24,7 @@ class Cells {
     this.parentFlag = 0;
     this.parentWidthRecord = [-1, 0];
     this.partialUpdate = [];
+    this.createMode = false;
     // this.refactors = [];
   }
 
@@ -32,13 +33,83 @@ class Cells {
     return this.cells.length;
   }
 
+  removeCreateMode() {
+    jlog('Cells', 'removeCreateMode');
+    this.quickClear(true);
+    this.cellsInView = [];
+    this.cells = [];
+    this.createMode = false;
+    // make this have memory later
+  }
+
+  cleanForCreateMode() {
+    jlog('Cells', 'cleanForCreateMode');
+    this.createMode = true;
+    let layoutCount = 0;
+    for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].type != T_LAYOUT_BLOCK) {
+        this.cells[i].removeParent();
+        this.cells[i].clearChildren();
+        this.cells[i].disableAllButMove();
+      } else {
+        layoutCount += 1;
+      }
+      this.cellsInView.push(i);
+    }
+    this.cells[0].width = this.dWidth;
+    this.cells[0].height = this.dHeight;
+    this.cells[1].width = this.dWidth;
+    this.cells[1].height = this.dHeight;
+    this.cells[0].resetDims();
+    this.cells[1].resetDims();
+    this.mapAndLink();
+    if (layoutCount == 0) {
+      this.newLayoutBlock('A0', windowWidth/3, 10);
+    } else {
+      for (let i = 0; i < this.length; i++) {
+        if (this.cells[i].type == T_LAYOUT_BLOCK) {
+          if (this.cells[i].children.length != 0){
+            this.cells[i].children[0].addParent(i, this.cells[i]);
+          }
+        }
+      }
+    }
+  }
+
+  newLayoutBlock(name, x, y) {
+    let c = [color(0, 0, 0, 0), color(0, 0, 0, 255), color(0, 0, 0, 255), color(0, 0, 0, 255), color(0, 0, 0, 255)];
+    let pIndex = this.length;
+    this.cellsInView.push(pIndex);
+    this.cells.push(new Cell(T_LAYOUT_BLOCK, x, y, this.dWidth*2, this.dHeight*2, c, this.dRadius))
+    this.cells[pIndex].updateHandleSH(name);
+    this.cells[pIndex].childYBorder /= 2;
+  }
+
+  getLayoutBlockNextName(name){
+    let newName = '';
+    if (name[0] == 'Z'){
+      newName = getLayoutBlockBelowName(name);
+    } else {
+      let value = name[0].charCodeAt(0);
+      let newLetter = String.fromCharCode(value + 1);
+      newName = newLetter + name.slice(1);
+    }
+    return newName;
+  }
+
+  getLayoutBlockBelowName(name){
+    let newName = name[0];
+    newName += String(parseInt(name.slice(1)) + 1);
+    return newName;
+  }
+
   tidy(xMin, yMin) {
     jlog('Cells', 'tidy');
     let bigBlocks = [];
     let consol, start;
     for (let i = 0; i < this.length; i++) {
       if (this.cells[i].parent == -1) {
-        if (this.cells[i].type != T_START && this.cells[i].type != T_CONSOLE) {
+        if (this.cells[i].type != T_START && this.cells[i].type != T_CONSOLE && this.cells[i].type != T_LAYOUT_BLOCK) {
           this.cells[i].reshape(true);
           bigBlocks.push(this.cells[i]);
         } // i hate this but..
@@ -50,7 +121,10 @@ class Cells {
         }
       }
     }
-    this.cells[1].resizeConsole();
+    if (this.createMode == false) {
+      this.cells[1].resizeConsole();
+    }
+
     // bigBlocks.sort(function(a, b) {return a.width - b.width});
     // bigBlocks.sort(function(a, b) {return sqrt(a.x**2 + a.y**2) - sqrt(b.x**2 + b.y**2)});
     bigBlocks.sort(function(a, b) {return a.width * a.height - b.width * b.height});
@@ -60,7 +134,7 @@ class Cells {
     let offset = 0;
     let newPos = [];
     for (let i = 0; i < bigBlocks.length; i++) {
-      if (y + bigBlocks[i].height > windowHeight || i < 2) {
+      if (y + bigBlocks[i].height > windowHeight || (i < 2 && this.createMode == false)) {
         x += offset + bigBlocks[i].childXBorder * 3;
         y = yMin;
         offset = 0;
@@ -195,10 +269,10 @@ class Cells {
       let myJSONString = decodeURIComponent(myURI);
       let myLoaderMap = JSON.parse(myJSONString);
       for (key in Object.keys(myLoaderMap)) {
-        cells.addCellWithInfo(myLoaderMap[key]);
+        this.addCellWithInfo(myLoaderMap[key]);
       }
       for (key in Object.keys(myLoaderMap)) {
-        cells.linkChildren(key, myLoaderMap[key]);
+        this.linkChildren(key, myLoaderMap[key]);
       }
       if (showGUI == true) {
         for (let i = 0; i < this.length; i++) {
@@ -362,19 +436,25 @@ class Cells {
     }
   }
 
-  quickClear(){
+  quickClear(brutal=false){
     jlog('Cells', 'quickClear');
-    for (let i = 2; i < this.length; i++){
+    let start = 0;
+    if (brutal == true) {
+      start = 0;
+    }
+    for (let i = start; i < this.length; i++){
       this.cells[i].indexLabeldiv.remove();
       if (this.cells[i].input) {
         this.cells[i].input.remove();
       }
     }
-    this.cells[0].children = [];
-    this.cells[0].resetDims(true);
-    this.cells[0].childIndicies = [];
-    this.cells[1].reshape(true);
-    this.cells.splice(2);
+    if (brutal == false) {
+      this.cells[0].children = [];
+      this.cells[0].resetDims(true);
+      this.cells[0].childIndicies = [];
+      this.cells[1].reshape(true);
+      this.cells.splice(2);
+    }
 
   }
 
@@ -865,9 +945,11 @@ class Cells {
     }
   }
 
-  hideAll() {
+  hideAll(exceptions=[123456754356783646728347682]) {
     for (let i = 0; i < this.length; i++) {
-      this.cells[i].hideBlock();
+      if (exceptions.indexOf(this.cells[i].type) == -1) {
+        this.cells[i].hideBlock(false); //don't hide children, they will be an exception or hidden anyway
+      }
     }
   }
 
@@ -915,19 +997,30 @@ class Cells {
             this.cells[this.activeIndex].resizeC(x, y);
           }
           if (mdown === true && this.cells[this.activeIndex].mode == M_EXPAND_OR_COLLAPSE) {
-            this.parentFlag = 2;
-            this.cells[this.activeIndex].expandOrCollapse();
-            if (this.cells[this.activeIndex].shrink == true) {
-              let parent = this.cells[this.activeIndex].parent;
-              while (parent != -1) {
-                this.cells[parent].minHeight = 0;
-                this.cells[parent].reshape(true);
-                parent = this.cells[parent].parent;
+            if (this.cells[this.activeIndex].type == T_LAYOUT_BLOCK) {
+              this.newLayoutBlock(this.getLayoutBlockBelowName(this.cells[this.activeIndex].handleSH), this.cells[this.activeIndex].x, this.cells[this.activeIndex].y + this.cells[this.activeIndex].height + 5);
+              this.cells[this.activeIndex].mode = M_IDLE;
+            } else {
+              this.parentFlag = 2;
+              this.cells[this.activeIndex].expandOrCollapse();
+              if (this.cells[this.activeIndex].shrink == true) {
+                let parent = this.cells[this.activeIndex].parent;
+                while (parent != -1) {
+                  this.cells[parent].minHeight = 0;
+                  this.cells[parent].reshape(true);
+                  parent = this.cells[parent].parent;
+                }
               }
             }
           }
           if (mdown === true && this.cells[this.activeIndex].mode == M_COPY) {
-            this.doCopy();
+            if (this.cells[this.activeIndex].type == T_LAYOUT_BLOCK) {
+              this.newLayoutBlock(this.getLayoutBlockNextName(this.cells[this.activeIndex].handleSH), this.cells[this.activeIndex].x + this.cells[this.activeIndex].width + 5, this.cells[this.activeIndex].y);
+              this.cells[this.activeIndex].mode = M_IDLE;
+            } else {
+              this.doCopy();
+            }
+
           }
           if (this.redrawFlag == true) {
             this.doParentDrop(x, y, mdown);
@@ -1030,6 +1123,20 @@ class Cells {
     if (this.activeIndex != -1) {
      this.cells[this.activeIndex].draw();
    }
+  }
+
+  addCellsForPres(inputCells, start = 0){
+    jlog('PresentationHelper', 'addCells');
+    for (let i = start; i < inputCells.length; i++) {
+      this.addCellForPres(inputCells[i]);
+    }
+  }
+
+  addCellForPres(cell){
+    jlog('PresentationHelper', 'addCell');
+    if (presComponents.indexOf(cell.type) != -1){
+      this.cells.push(cell);
+    }
   }
 
 };

@@ -80,6 +80,7 @@ var T_DELETE = 44;
 var T_FOR = 51;
 var T_INDEX = 222;
 var T_REF = 223;
+var T_LAYOUT_BLOCK = 666;
 
 var backupObject;
 var zoomMode = false;
@@ -129,6 +130,7 @@ var presCreationMode = false;
 var autoStart = false;
 var presentationDivs = {};
 var runMode = RM_NORMAL;
+var presComponents = [T_START, T_INPUT, T_CONST, T_CONSOLE];
 
 var turtleVars = ['turtleX', 'turtleY', 'turtleDraw'];
 var everyone = [T_COMMENT, T_CONST, T_BLOCK, T_VAR, T_INPUT, T_IF, T_WHILE, T_EQUAL, T_LESS, T_GREATER, T_ADD, T_SUBTRACT, T_MULT, T_DIV, T_MOD, T_GOTO, T_NOT, T_CONDITION, T_ELSE, T_DO, T_OUTLET, T_ASSIGN, T_PRINT, T_AVERAGE, T_SQRT, T_HYPOT, T_SIN, T_COS, T_LEN, T_GET, T_SET, T_START, T_CONSOLE, T_ROUND, T_PUSH, T_DELETE, T_FOR, T_RUN];
@@ -204,6 +206,7 @@ blockConfig[T_DELETE] = {};
 blockConfig[T_FOR] = {};
 blockConfig[T_INDEX] = {};
 blockConfig[T_REF] = {};
+blockConfig[T_LAYOUT_BLOCK] = {};
 
 
 blockConfig[T_BLOCK]['block label'] = "block";
@@ -250,6 +253,7 @@ blockConfig[T_DELETE]['block label'] = "delete";
 blockConfig[T_FOR]['block label'] = "repeat";
 blockConfig[T_INDEX]['block label'] = "index";
 blockConfig[T_REF]['block label'] = "value";
+blockConfig[T_LAYOUT_BLOCK]['block label'] = "layout cell";
 
 blockConfig[T_BLOCK]['accept child'] = notStartOrConsoleOrSpecial;
 blockConfig[T_VAR]['accept child'] = [T_COMMENT]; //nothing
@@ -298,6 +302,7 @@ blockConfig[T_DELETE]['accept child'] = [T_INDEX];
 blockConfig[T_INDEX]['accept child'] = numberyOnes.slice(1);
 blockConfig[T_REF]['accept child'] = numberyOnes.slice(1);
 blockConfig[T_REF]['accept child'].push(T_GOTO);
+blockConfig[T_LAYOUT_BLOCK]['accept child'] = presComponents;
 
 blockConfig[T_BLOCK]['max children'] = 100;
 blockConfig[T_GOTO]['max children'] = 0;
@@ -343,6 +348,7 @@ blockConfig[T_PUSH]['max children'] = 1;
 blockConfig[T_DELETE]['max children'] = 1;
 blockConfig[T_INDEX]['max children'] = 1;
 blockConfig[T_REF]['max children'] = 1;
+blockConfig[T_LAYOUT_BLOCK]['max children'] = 1;
 
 var I_NONE = 0;
 var I_TEXT = 1;
@@ -394,6 +400,7 @@ blockConfig[T_PUSH]['input type'] = I_SELECT;
 blockConfig[T_DELETE]['input type'] = I_SELECT;
 blockConfig[T_INDEX]['input type'] = I_NONE;
 blockConfig[T_REF]['input type'] = I_NONE;
+blockConfig[T_LAYOUT_BLOCK]['input type'] = I_NONE;
 
 blockConfig[T_BLOCK]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
 blockConfig[T_GOTO]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};
@@ -439,3 +446,4 @@ blockConfig[T_PUSH]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : t
 blockConfig[T_DELETE]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : T_GET, 'copy' : true};
 blockConfig[T_INDEX]['handles'] = {'move' : false, 'resize'  : false, 'delete'  : false, 'expand'  : false, 'mutate' : -1, 'copy' : false};
 blockConfig[T_REF]['handles'] = {'move' : false, 'resize'  : false, 'delete'  : false, 'expand'  : false, 'mutate' : -1, 'copy' : false};
+blockConfig[T_LAYOUT_BLOCK]['handles'] = {'move' : true, 'resize'  : true, 'delete'  : true, 'expand'  : true, 'mutate' : -1, 'copy' : true};

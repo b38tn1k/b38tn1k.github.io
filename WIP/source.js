@@ -27,9 +27,11 @@ function mousePressed() {
     newCell(mobileHType, mouseX, mouseY); // call it again;
   } else {
     if (inClickableZone() === true) { // this was commented out but I forget why
-
-      doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
-
+      if (runMode == RM_NORMAL) {
+        doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
+      } else if (runMode == RM_CREATE) {
+        doMouseDrag = !(pres.checkSelected(mouseX, mouseY));
+      }
     } else {
       doMouseDrag = false;
     }
@@ -86,7 +88,7 @@ function setup() {
   colorSetup();
   setupScreen();
   cells = new Cells(allColors['colors'], allColors['highlights'], allColors['lowlights'], allColors['icolors'], allColors['dtcolors']);
-  pres = new PresentationHelper();
+  pres = new Cells(allColors['colors'], allColors['highlights'], allColors['lowlights'], allColors['icolors'], allColors['dtcolors']);
   mobileSettings()
   controller = new Controller();
   myDivs['menu']= createDiv();
@@ -102,14 +104,12 @@ function setup() {
     cells.run = true;
     fastMode = 1;
   }
-  pres.addCells(cells.cells);
+  pres.addCellsForPres(cells.cells);
+  pres.createMode = true;
 }
 
 function draw() {
   notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
-  if (showFPS == true){
-    controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
-  }
   if (notIdle == true){
     fpsSetValue = 30;
   } else {
@@ -119,6 +119,9 @@ function draw() {
     clear();
   }
   if (runMode == RM_NORMAL) {
+    if (showFPS == true){
+      controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
+    }
     if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
       window.scrollTo(0, 0);
       cells.updateView(xPos, yPos, false);
@@ -128,7 +131,6 @@ function draw() {
       mouseDrag();
       cells.updateView(xPos, yPos, doMouseDrag);
     }
-
     if (redrawCounter != 0) {
       drawGrid();
       cells.draw();
@@ -206,8 +208,25 @@ function draw() {
     }
     checkAnOrUpdateTutorial();
   } else if (runMode == RM_CREATE){
-    clear();
-    drawGrid();
+    if (redrawCounter != 0) {
+      redrawCounter -= 1;
+      drawGrid();
+      pres.draw();
+    }
+    if (notIdle == true) {
+      mouseDrag();
+      pres.update(mouseX, mouseY, mouseIsPressed);
+      pres.updateView(xPos, yPos, doMouseDrag);
+    }
+    if (tidyFlag > 0) {
+      tidy();
+      noClickZone = [10, myDivs['presTools'].size().width + 10, 10, pixelDensity * myDivs['presTools'].size().height + 10];
+      pres.updateView(xPos, yPos, true);
+      tidyFlag -= 1;
+    }
+    if (pres.redrawFlag == true){
+      redrawCounter = 2;
+    }
   } else if (runMode == RM_PRESENT){
     controller.update(cells, flash, fastMode);
   }

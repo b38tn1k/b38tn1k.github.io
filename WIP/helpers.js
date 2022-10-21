@@ -150,7 +150,7 @@ function cancelShare() {
 function createPresentation() {
   jlog('Main', 'createPresentation');
   backupObject = JSON.stringify(cells.saveCells());
-  pres.presBackup = cells.saveCells();
+  pres.presBackup = cells.saveCells(true);
   cells.addIDsForCreateMode();
   redrawCounter = 2;
   if (pres.length == 0){
@@ -193,11 +193,10 @@ function exitPresentationMode() {
 }
 
 function sharePresentation() {
-  let layout = pres.getLayoutArray();
-  console.log(layout);
-  shareLinkString = cells.putInAddyBar(true);
+  shareLinkString = pres.putInAddyBar(true);
   let scriptLink = shareLinkString.replace('#', '##');
-  // window.open(scriptLink);
+  exitPresentationMode();
+  window.open(scriptLink);
   doMouseDrag = false;
 }
 
@@ -455,7 +454,12 @@ function addButtonToDiv(name, value, callback, div, cssClass='basic'){
   } else if (cssClass == 'eg') {
     button.style('text-align', 'left');
     button.style('background-image', 'linear-gradient(#d7d8da ,#c7c9cc)');
+  } else if (cssClass == 'big') {
+    button.style('height', '100%');
+    button.style('width', '100%');
   }
+
+
   button.parent(div);
   if (callback != 0) {
     button.mousePressed(callback);
@@ -842,11 +846,47 @@ function createPresentationDiv(){
   // presentationDivs['main'].size(null, null);
   presentationDivs['main'].style('overflow', "auto");
   presentationDivs['main'].position(10, 10);
+  if (presentationMode == true) {
+    console.log(cells.layoutArray);
+  }
+
+  presentationDivs['defaultItemsWrapper'] = createDiv();
+  presentationDivs['defaultItemsWrapper'].style('font-size', '16px');
+  // presentationDivs['defaultItemsWrapper'].style('padding', '10px');
+  presentationDivs['defaultItemsWrapper'].style('border', "1px solid black")
+  presentationDivs['defaultItemsWrapper'].size(null, 100);
+  presentationDivs['defaultItemsWrapper'].parent(presentationDivs['main']);
+
+  presentationDivs['startbutton'] = createDiv();
+  presentationDivs['startbutton'].style('float', 'left');
+  presentationDivs['startbutton'].size(100, null);
+  presentationDivs['startbutton'].style('padding', "10px");
+  addButtonToDiv('run', 3, runFromButton, presentationDivs['startbutton']);//, 'big');
+
+  presentationDivs['startbutton'].parent(presentationDivs['defaultItemsWrapper']);
+
+  presentationDivs['console'] = createDiv('<strong>console:</strong><br>');
+  // presentationDivs['console'].style('overflow', "hidden");
+  presentationDivs['console'].size(200, presentationDivs['defaultItemsWrapper'].size().height);// * 0.6);
+  presentationDivs['console'].style('overflow', "scroll");
+  presentationDivs['console'].style('background-color', "black");
+  presentationDivs['defaultItemsWrapper'].style('border', "1px solid black")
+  // presentationDivs['console'].style('padding', "10px");
+  presentationDivs['console'].parent(presentationDivs['defaultItemsWrapper']);
 }
 
-function addToPresentation(myString) {
+function runFromButton() {
+  cells.run = ! cells.run;
+  fastMode = 1;
+}
+
+function addToPresentation(myString, div) {
   jlog('Main', 'addToPresentation');
-  presentationDivs['main'].html(myString + '<br>', true);
+
+  if (div == 'console') {
+    presentationDivs[div].html(' > ' + myString + '<br>', true);
+    presentationDivs['console'].elt.scrollTop = 1000 * presentationDivs['console'].html().length;
+  }
 }
 
 function doTutorials(loaded) {

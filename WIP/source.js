@@ -79,7 +79,7 @@ function setup() {
   if (getURL().indexOf("##")  != -1) { // hijack earlier
     showGUI = false;
     presentationMode = true;
-    autoStart = true;
+    // autoStart = true;
     runMode = RM_PRESENT;
   }
   pixelDensity(1);

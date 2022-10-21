@@ -26,6 +26,7 @@ class Cells {
     this.partialUpdate = [];
     this.createMode = false;
     this.presBackup;
+    this.layoutArray;
   }
 
   get length() {
@@ -203,8 +204,8 @@ class Cells {
 
   saveCells(smaller=false) {
     jlog('Cells', 'saveCells');
+    let snapshot = {};
     this.mapAndLink();
-    let snapshot = {}
     for (let i = 0; i < this.length; i++) {
       snapshot[i] = {};
       if (smaller == false) {
@@ -297,7 +298,12 @@ class Cells {
     if (myURL.indexOf('#') != -1) {
       myURL = myURL.slice(0, myURL.indexOf('#'));
     }
-    let myString = myURL + '#' + encodeURIComponent(JSON.stringify(this.saveCells(smaller)));
+    let myJSONString = JSON.stringify(this.saveCells(smaller))
+    if (this.createMode == true) {
+      this.presBackup['layout'] = this.getLayoutArray();
+      myJSONString = JSON.stringify(this.presBackup);
+    }
+    let myString = myURL + '#' + encodeURIComponent(myJSONString);
     // console.log(myString.length);
     return myString;
   }
@@ -313,12 +319,22 @@ class Cells {
         myURI = myURI.slice(1);
       }
       let myJSONString = decodeURIComponent(myURI);
+
       let myLoaderMap = JSON.parse(myJSONString);
-      for (key in Object.keys(myLoaderMap)) {
-        this.addCellWithInfo(myLoaderMap[key]);
+      // this is annoying!
+      let layoutIndex = Object.keys(myLoaderMap).indexOf('layout');
+      if (layoutIndex != -1) {
+        cells.layoutArray = myLoaderMap['layout'];
       }
       for (key in Object.keys(myLoaderMap)) {
-        this.linkChildren(key, myLoaderMap[key]);
+        if (key != layoutIndex) {
+          this.addCellWithInfo(myLoaderMap[key]);
+        }
+      }
+      for (key in Object.keys(myLoaderMap)) {
+        if (key != layoutIndex) {
+          this.linkChildren(key, myLoaderMap[key]);
+        }
       }
       if (showGUI == true) {
         for (let i = 0; i < this.length; i++) {

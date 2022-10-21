@@ -47,6 +47,10 @@ class Cells {
     this.createMode = true;
     let layoutCount = 0;
     for (let i = 0; i < this.length; i++) {
+      if (this.cells[i].type == T_CONSOLE) {
+        this.cells[i].clearConsole();
+        this.cells[i].indexLabeldiv.size(null, this.dHeight/2);
+      }
       if (this.cells[i].type != T_LAYOUT_BLOCK) {
         this.cells[i].removeParent();
         this.cells[i].clearChildren();

@@ -182,9 +182,9 @@ function addButtonToDiv(name, value, callback, div, cssClass='basic'){
   } else if (cssClass == 'eg') {
     button.style('text-align', 'left');
     button.style('background-image', 'linear-gradient(#d7d8da ,#c7c9cc)');
-  } else if (cssClass == 'big') {
-    button.style('height', '100%');
-    button.style('width', '100%');
+  } else if (cssClass == 'padded') {
+    button.style('padding', '10px');
+    // button.style('width', '100%');
   }
 
 
@@ -462,42 +462,90 @@ function showDevDiv(){
   myDivs['devDiv'].position(windowWidth - (40 + myDivs['devDiv'].size().width), 10);
 }
 
+function newSectionDiv(h=AUTO) {
+  myDiv  = createDiv();
+  myDiv.style('font-size', '16px');
+  myDiv.style('padding', '10px');
+  myDiv.style('border', "1px solid black")
+  myDiv.size((windowWidth - (40 * pixelDensity())), h);
+  myDiv.style('overflow', "hidden");
+  return myDiv;
+}
+
+function newRowDiv(parent, h=AUTO) {
+  myDiv  = createDiv();
+  myDiv.style('font-size', '16px');
+  // myDiv.style('padding', '10px');
+  myDiv.style('overflow', "hidden");
+  myDiv.parent(parent);
+  return myDiv;
+}
+
+function newColDiv(parent, h=AUTO) {
+  myDiv  = createDiv();
+  myDiv.style('font-size', '16px');
+  myDiv.style('padding', '10px');
+  myDiv.style('overflow', "hidden");
+  myDiv.style('display', "inline-block");
+  myDiv.parent(parent);
+  return myDiv;
+}
+
+function presUpdateData() {
+  cells.cells[parseInt(this.id())].updateDataSH(this.value(), true);
+}
+function newPresentationInput(data, myId){
+  myInput = createInput(String(data));
+  myInput.input(presUpdateData);
+  myInput.id(myId);
+  return myInput;
+}
+
 function createPresentationDiv(){
   jlog('Main', 'createPresentationDiv');
   presentationDivs['main'] = createDiv();
   presentationDivs['main'].style('font-size', '16px');
   presentationDivs['main'].style('padding', '10px');
-  presentationDivs['main'].style('overflow', "auto");
-  presentationDivs['main'].position(10, 10);
+  presentationDivs['main'].style('overflow', "hidden");
+  presentationDivs['main'].position(0, 0);
+  presentationDivs['preslayout'] = newSectionDiv();
+  presentationDivs['preslayout'].parent(presentationDivs['main']);
   if (presentationMode == true) {
     presentationDivs['main'].show();
-    console.log(cells.layoutArray);
+    for (let i = 0; i < cells.layoutArray.length; i++){
+      myNewRow = newRowDiv(presentationDivs['preslayout']);
+      for (let j = 0; j < cells.layoutArray[i].length; j++) {
+        let newCol = newColDiv(myNewRow);
+        if (cells.layoutArray[i][j][0] != ""){
+          newCol.html(cells.layoutArray[i][j][0] + '<br>', true);
+        }
+        if (cells.layoutArray[i][j].length > 1) {
+          let myId = parseInt(cells.layoutArray[i][j][1]);
+          let data = cells.cells[myId].dataSHasType['string'];
+          myNewInput = newPresentationInput(data, myId);
+          myNewInput.parent(newCol);
+        }
+      }
+    }
+    presentationDivs['main'].html('<br>', true);
+
+    presentationDivs['dftWrapper'] = newSectionDiv(150);
+    presentationDivs['dftWrapper'].parent(presentationDivs['main']);
+    addButtonToDiv('run', 3, runFromButton, presentationDivs['dftWrapper']);
+    let spacer = createDiv();
+    spacer.size(AUTO, 10);
+    spacer.parent(presentationDivs['dftWrapper']);
+
+    presentationDivs['console'] = createDiv();
+    presentationDivs['console'].style('padding', "10px");
+    presentationDivs['console'].size(presentationDivs['dftWrapper'].size().width, 100);
+    // presentationDivs['console'].size((presentationDivs['dftWrapper'].size().width - 40), (presentationDivs['dftWrapper'].size().height - 30));
+    presentationDivs['console'].style('overflow', "scroll");
+    presentationDivs['console'].style('position', "relative");
+    presentationDivs['console'].parent(presentationDivs['dftWrapper']);
   } else {
     presentationDivs['main'].hide();
   }
-
-  presentationDivs['dftWrapper'] = createDiv();
-  presentationDivs['dftWrapper'].style('font-size', '16px');
-  presentationDivs['dftWrapper'].style('border', "1px solid black")
-  presentationDivs['dftWrapper'].size((windowWidth - (40 * pixelDensity())), 150);
-  presentationDivs['dftWrapper'].style('overflow', "hidden");
-  presentationDivs['dftWrapper'].parent(presentationDivs['main']);
-
-  presentationDivs['consoleWrapper'] = createDiv();
-  // presentationDivs['consoleWrapper'].size(100, AUTO);
-  presentationDivs['consoleWrapper'].style('padding', "10px");
-  presentationDivs['consoleWrapper'].style('overflow', "hidden");
-  presentationDivs['consoleWrapper'].style('position', "absolute");
-  presentationDivs['consoleWrapper'].parent(presentationDivs['dftWrapper']);
-  addButtonToDiv('run', 3, runFromButton, presentationDivs['consoleWrapper']);
-
-  presentationDivs['console'] = createDiv();
-  presentationDivs['console'].style('padding', "10px");
-  presentationDivs['console'].size((presentationDivs['dftWrapper'].size().width - 40), (presentationDivs['dftWrapper'].size().height - presentationDivs['consoleWrapper'].size().height - 20));
-  presentationDivs['console'].style('overflow', "scroll");
-  presentationDivs['console'].style('position', "relative");
-  presentationDivs['console'].style('border', "1px solid black")
-  presentationDivs['console'].parent(presentationDivs['consoleWrapper']);
 }
 
 function addToPresentation(myString, div) {

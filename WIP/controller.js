@@ -669,7 +669,8 @@ class Controller {
     console.log(myString);
     let stringForConsole = myOutput + myString + '<br>';
     if (presentationMode == true) {
-      addToPresentation(myString, 'console');
+      addToPresentation(stringForConsole, 'console');
+      this.script[1].lineNumber += 1;
     } else {
       this.script[1].indexLabeldiv.html(stringForConsole, true);
       this.script[1].lineNumber += 1;

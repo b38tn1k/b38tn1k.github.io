@@ -695,6 +695,7 @@ function checkAnOrUpdateTutorial() {
         }
         break;
       case '#tutorialPLM':
+        disableDrag = true;
         break;
 
       }

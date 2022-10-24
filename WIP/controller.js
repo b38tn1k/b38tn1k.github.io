@@ -1,5 +1,6 @@
 class Controller {
   constructor() {
+    jlog('Controller', 'constructor');
     this.script;
     this.envChanged = false;
     this.index = 0;
@@ -25,6 +26,7 @@ class Controller {
   }
 
   step(flash, fastMode) {
+    jlog('Controller', 'step');
     this.objectWideFlashFlag = flash;
     try { // big try so I can put anything into the onscreen c onsole
       if (this.index < this.script.length) {
@@ -216,6 +218,7 @@ class Controller {
   }
 
   updateVarMap(key, data) {
+    jlog('Controller', 'updateVarMap');
     if (key == 'turtleX') {
       this.tChangeX = true;
     }
@@ -229,6 +232,7 @@ class Controller {
   }
 
   moveByParent() {
+    jlog('Controller', 'moveByParent');
     if (this.workingStack.length > 100) {
       this.script[1].indexLabeldiv.html('\n uncomfortably deep stack, time to die', true);
       this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
@@ -277,6 +281,7 @@ class Controller {
   }
 
   findBlock(handle) {
+    jlog('Controller', 'findBlock');
     let block = -1;
     for (let i = 0; i < this.script.length; i++) {
       if ((this.script[i].type == T_BLOCK || this.script[i].type == T_INPUT) && this.script[i].handleSH == handle) {
@@ -291,6 +296,7 @@ class Controller {
   }
 
   getValue(child, index) {
+    jlog('Controller', 'getValue');
     let data;
     let varType = -1;
     if (mathFunctions.indexOf(child.type) != -1) {
@@ -339,6 +345,7 @@ class Controller {
   }
 
   lookAtChildren(activeCell, index, start = 0) {
+    jlog('Controller', 'lookAtChildren');
     let onlyNums = true;
     let onlyBools = true;
     let containsString = false;
@@ -373,6 +380,7 @@ class Controller {
   }
 
   evaluateCondition(onlyBools, onlyNums, vals) {
+    jlog('Controller', 'evaluateCondition');
     let res = true;
     let myResult = 0;
     if (onlyBools == true) {
@@ -392,6 +400,7 @@ class Controller {
   }
 
   startStop(cells) {
+    jlog('Controller', 'startStop');
     // started
     if (cells.run == true && this.running == false) {
       this.run = true;
@@ -418,6 +427,9 @@ class Controller {
       this.stackNotes = [];
       this.stackSizeRecord = [];
       for (let i = 0; i < cells.length; i++) {
+        if (showGUI == false) {
+          cells.cells[i].hideBlock();
+        }
         if (this.script[i].type == T_VAR || this.script[i].type == T_OUTLET || this.script[i].type == T_INPUT) {
           if (!(this.script[i].handleSH in this.varMap)) {
             this.varMap[this.script[i].handleSH] = [];
@@ -460,11 +472,16 @@ class Controller {
   }
 
   HCF() {
+    jlog('Controller', 'HCF');
     this.index = this.terminate;
     this.run = false;
   }
 
   printStack() {
+    jlog('Controller', 'printStack');
+    if (showGUI == false) {
+      cells.hideAllDivs();
+    }
     let readableStack = {};
     for (let i = 0; i < this.stackTrace['index'].length; i++) {
       readableStack[i] = {};
@@ -485,10 +502,12 @@ class Controller {
     }
   }
   addNote(myString) {
+    jlog('Controller', 'addNote');
     this.stackNotes.push([this.stackTrace['index'].length - 1, myString]);
   }
 
   addToStack(index, dir = 1) {
+    jlog('Controller', 'addToStack');
     this.stackSizeRecord.push(this.workingStack.length);
     this.stackTrace['index'].push(index);
     this.stackTrace['dir'].push(dir);
@@ -510,6 +529,7 @@ class Controller {
   }
 
   updateTurtle() {
+    jlog('Controller', 'updateTurtle');
     if (this.weHaveATurtlePeople == true) {
       if (this.tChangeX == true) {
         this.tBuffX.push(parseFloat(this.varMap['turtleX'][0].getDataSH()));
@@ -541,6 +561,7 @@ class Controller {
   }
 
   t_start(activeCell, index) {
+    jlog('Controller', 't_start');
     this.addToStack(index);
     if (activeCell.children.length == 0) {
       this.run = false;
@@ -551,6 +572,7 @@ class Controller {
   }
 
   t_goto(activeCell, index) {
+    jlog('Controller', 't_goto');
     this.addToStack(index);
     // let myIndex = this.index;
     let next = activeCell.handleSH;
@@ -564,6 +586,7 @@ class Controller {
   }
 
   t_block(activeCell, index) {
+    jlog('Controller', 't_block');
     this.addToStack(index);
     let stillIn = false;
     if (activeCell.children.length != 0) {
@@ -574,6 +597,7 @@ class Controller {
   }
 
   buildPrintString(activeCell, depth){
+    jlog('Controller', 'buildPrintString');
     depth += 1;
     if (depth > 20) {
       return 'max depth';
@@ -614,6 +638,7 @@ class Controller {
   }
 
   d_print(myString, inplace=false, flagString=''){
+    jlog('Controller', 'd_print');
     if (!this.script){
       this.script = cells.cells;
     }
@@ -633,19 +658,29 @@ class Controller {
   }
 
   t_print(activeCell, index) {
+    jlog('Controller', 't_print');
     this.addToStack(index);
     let myOutput = this.script[1].lineNumber + ': '
     if (this.script[1].lineNumber == 0) {
       myOutput = '<br>' + this.script[1].lineNumber + ': ';
     }
 
-    let myString = this.buildPrintString(activeCell, 0);
-    this.script[1].indexLabeldiv.html(myOutput + myString.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;") + '<br>', true);
-    this.script[1].lineNumber += 1;
-    this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
+    let myString = this.buildPrintString(activeCell, 0).replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+    console.log(myString);
+    let stringForConsole = myOutput + myString + '<br>';
+    if (presentationMode == true) {
+      addToPresentation(stringForConsole, 'console');
+      this.script[1].lineNumber += 1;
+    } else {
+      this.script[1].indexLabeldiv.html(stringForConsole, true);
+      this.script[1].lineNumber += 1;
+      this.script[1].indexLabeldiv.elt.scrollTop = 1000 * this.script[1].lineNumber;
+    }
+
   }
 
   t_assign(activeCell, index) {
+    jlog('Controller', 't_assign');
     this.addToStack(index);
     this.lookAtChildren(activeCell, index);
     if (activeCell.children.length > 1) {
@@ -660,6 +695,7 @@ class Controller {
   }
 
   t_math(activeCell, index) {
+    jlog('Controller', 't_math');
     this.addToStack(index);
     let res;
     let survey = this.lookAtChildren(activeCell, index, 1);
@@ -722,6 +758,7 @@ class Controller {
   }
 
   t_compare(activeCell, index) {
+    jlog('Controller', 't_compare');
     this.addToStack(index);
     let survey = this.lookAtChildren(activeCell, index, 0);
     let onlyNums = survey['onlyNums'];
@@ -777,6 +814,7 @@ class Controller {
   }
 
   t_not(activeCell, index) {
+    jlog('Controller', 't_not');
     this.addToStack(index);
     let survey = this.lookAtChildren(activeCell, index, 0);
     let onlyNums = survey['onlyNums'];
@@ -792,6 +830,7 @@ class Controller {
   }
 
   t_if(activeCell, index) {
+    jlog('Controller', 't_if');
     this.addToStack(index);
     let conditions = activeCell.children[0];
     activeCell.dataSH = B_UNSET; // 0 = unknown, 1 = true, 2 = false (?)
@@ -817,6 +856,7 @@ class Controller {
   }
 
   runChildren(childs, indix){ //arays but used sequentially
+    jlog('Controller', 'runChildren');
     for (let i = 0; i < childs.length; i++){
       switch(childs[i].type){
         case T_EQUAL:
@@ -838,6 +878,7 @@ class Controller {
   }
 
   t_condition(activeCell, index) {
+    jlog('Controller', 't_condition');
     this.addToStack(index);
     activeCell.dataSH = B_UNSET;
     let survey = this.lookAtChildren(activeCell, index, 0);
@@ -850,6 +891,7 @@ class Controller {
   }
 
   t_for(activeCell, index) {
+    jlog('Controller', 't_for');
     this.addToStack(index);
     let stillIn = false;
     if (activeCell.children[0].children.length > 0) {
@@ -875,6 +917,7 @@ class Controller {
   }
 
   t_while(activeCell, index) {
+    jlog('Controller', 't_while');
     this.addToStack(index);
     let conditions = activeCell.children[0];
     activeCell.dataSH = B_UNSET; // 0 = unknown, 1 = true, 2 = false (?)
@@ -900,6 +943,7 @@ class Controller {
   }
 
   t_len(activeCell, index) {
+    jlog('Controller', 't_len');
     this.addToStack(index);
     let blockIndex = this.findBlock(activeCell.handleSH);
     if (blockIndex == -1) {
@@ -914,6 +958,7 @@ class Controller {
   }
 
   unpackGet(getBlock){
+    jlog('Controller', 'unpackGet');
     if (getBlock.dataSH.indexOf('object:') != -1){
       let index = parseInt(getBlock.dataSH.slice('object:'.length));
       if (String(this.script[index].handleSH) == 'undefined') {
@@ -927,6 +972,7 @@ class Controller {
   }
 
   t_arrayOp(activeCell, index) {
+    jlog('Controller', 't_arrayOp');
     this.addToStack(index);
     if (activeCell.children[0].children.length == 0){
       return;
@@ -984,9 +1030,11 @@ class Controller {
         let newChild = cells.pushChild(type, blockIndex, this.script[blockIndex], childData);
         if (type == T_GOTO) {
           newChild.updateHandleSH(activeCell.children[0].children[0].handleSH);
+          newChild.forceHandleSH = true;
         }
         this.script.push(newChild);// = cells.cells;
         this.terminate = this.script.length + 1;
+
       }
     } else if (activeCell.type == T_SET) { // might not work with T_GET
       this.lookAtChildren(activeCell.children[0], activeCell.childIndicies[0], 0);

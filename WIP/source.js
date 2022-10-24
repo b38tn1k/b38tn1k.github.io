@@ -27,9 +27,11 @@ function mousePressed() {
     newCell(mobileHType, mouseX, mouseY); // call it again;
   } else {
     if (inClickableZone() === true) { // this was commented out but I forget why
-
-      doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
-
+      if (runMode == RM_NORMAL) {
+        doMouseDrag = !(cells.checkSelected(mouseX, mouseY));
+      } else if (runMode == RM_CREATE) {
+        doMouseDrag = !(pres.checkSelected(mouseX, mouseY));
+      }
     } else {
       doMouseDrag = false;
     }
@@ -68,22 +70,27 @@ function preload() {
   demos.push(loadJSON('assets/demo13.json'));
   demos.push(loadJSON('assets/demo14.json'));
   demos.push(loadJSON('assets/demo15.json'));
-
   demos.push(loadJSON('assets/wip-demo.json'));
 }
 
 function setup() {
   jlog('Main', 'setup');
+  if (getURL().indexOf("##")  != -1) { // hijack earlier
+    showGUI = false;
+    presentationMode = true;
+    // autoStart = true;
+    runMode = RM_PRESENT;
+  }
   pixelDensity(1);
   mainDiv = document.getElementById('main');
   myDivs['devDiv']= createDiv();
   colorSetup();
   setupScreen();
   cells = new Cells(allColors['colors'], allColors['highlights'], allColors['lowlights'], allColors['icolors'], allColors['dtcolors']);
+  pres = new Cells(allColors['colors'], allColors['highlights'], allColors['lowlights'], allColors['icolors'], allColors['dtcolors']);
   mobileSettings()
   controller = new Controller();
   myDivs['menu']= createDiv();
-
   createMenuDiv();
   xOff = 0;
   yOff = 0;
@@ -92,19 +99,16 @@ function setup() {
   showDev = ! showDev; //lazy
   showDevDiv();
   doLastBit();
+  if (autoStart == true) {
+    cells.run = true;
+    fastMode = 1;
+  }
+  pres.addCellsForPres(cells.cells);
+  pres.createMode = true;
 }
 
 function draw() {
-  if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
-    window.scrollTo(0, 0);
-    cells.updateView(xPos, yPos, false);
-    cells.rebuildMenuFlag = true;
-  }
-
   notIdle = (focused || cells.redrawFlag || cells.run || controller.tidyFlag || testTimer != TST_OFF || tidyFlag > 0 || frameCount < 100);
-  if (showFPS == true){
-    controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
-  }
   if (notIdle == true){
     fpsSetValue = 30;
   } else {
@@ -113,85 +117,116 @@ function draw() {
   if (redrawCounter != 0) {
     clear();
   }
-  if (notIdle == true) {
-    mouseDrag();
-    cells.updateView(xPos, yPos, doMouseDrag);
-  }
-
-  if (redrawCounter != 0) {
-    drawGrid();
-    cells.draw();
-    redrawCounter -= 1;
-  }
-  if (cells.redrawFlag == true || cells.run == true){
-    redrawCounter = 2;
-  }
-  if (notIdle == true) {
-    cells.update(mouseX, mouseY, mouseIsPressed);
-  }
-  if (redrawCounter != 0) {
-    controller.update(cells, flash, fastMode);
-  }
-  if (controller.tidyFlag == true) {
-    setTidyFlag();
-    controller.tidyFlag = false;
-  }
-  if (cells.run == true && slowMode == true) {
-    frameRate(5);
-  } else {
-    if (redrawCounter != 0) {
-      frameRate(100);
-    } else {
-      frameRate(fpsSetValue);
+  if (runMode == RM_NORMAL) {
+    if (showFPS == true){
+      controller.d_print(frameRate().toFixed(2), true, '<br>FPS: ');
     }
-  }
-
-  if (tidyFlag > 0) {
-    tidy();
-    cells.updateView(xPos, yPos, true);
-    tidyFlag -= 1;
-  }
-  if (cells.rebuildMenuFlag == true){
-    myDivs['menu'].remove();
-    myDivs['menu']= createDiv();
-    createMenuDiv();
-    cells.rebuildMenuFlag = false;
-  }
-
-  if (testTimer != TST_OFF) {
-    let readyToStep = (millis() - testPacer > testPaceSettings[testTimer]);
-    if (cells.run == false && readyToStep == true) {
-      switch(testTimer) {
-        case TST_LOAD:
-          currentTestIndex += 1;
-          if (currentTestIndex == demos.length-1){
-            if (testLoop == true) {
-              currentTestIndex = 0;
-            } else {
-              testTimer = TST_OFF;
-            }
-          } else {
-            testPacer = millis();
-            loadCells(demos[currentTestIndex]);
-            setTidyFlag();
-            testTimer = TST_TIDY;
-          }
-          break;
-        case TST_TIDY:
-          testPacer = millis();
-          testTimer = TST_RUN;
-          break;
-        case TST_RUN:
-          testPacer = millis();
-          cells.run = true;
-          testTimer = TST_PAUSE;
-          break;
-        case TST_PAUSE:
-          testPacer = millis();
-          testTimer = TST_LOAD;
-          break;
+    if ((tutorial == false) && (scrollX != 0 || scrollY != 0)) {
+      window.scrollTo(0, 0);
+      cells.updateView(xPos, yPos, false);
+      cells.rebuildMenuFlag = true;
+    }
+    if (notIdle == true) {
+      mouseDrag();
+      cells.updateView(xPos, yPos, doMouseDrag);
+    }
+    if (redrawCounter != 0) {
+      drawGrid();
+      cells.draw();
+      redrawCounter -= 1;
+    }
+    if (cells.redrawFlag == true || cells.run == true){
+      redrawCounter = 2;
+    }
+    if (notIdle == true) {
+      cells.update(mouseX, mouseY, mouseIsPressed);
+    }
+    if (redrawCounter != 0) {
+      controller.update(cells, flash, fastMode);
+    }
+    if (controller.tidyFlag == true) {
+      setTidyFlag();
+      controller.tidyFlag = false;
+    }
+    if (cells.run == true && slowMode == true) {
+      frameRate(5);
+    } else {
+      if (redrawCounter != 0) {
+        frameRate(100);
+      } else {
+        frameRate(fpsSetValue);
       }
     }
+
+    if (tidyFlag > 0) {
+      tidy();
+      cells.updateView(xPos, yPos, true);
+      tidyFlag -= 1;
+    }
+    if (cells.rebuildMenuFlag == true){
+      myDivs['menu'].remove();
+      myDivs['menu']= createDiv();
+      createMenuDiv();
+      cells.rebuildMenuFlag = false;
+    }
+
+    if (testTimer != TST_OFF) {
+      let readyToStep = (millis() - testPacer > testPaceSettings[testTimer]);
+      if (cells.run == false && readyToStep == true) {
+        switch(testTimer) {
+          case TST_LOAD:
+            currentTestIndex += 1;
+            if (currentTestIndex == demos.length-1){
+              if (testLoop == true) {
+                currentTestIndex = 0;
+              } else {
+                testTimer = TST_OFF;
+              }
+            } else {
+              testPacer = millis();
+              loadCells(demos[currentTestIndex]);
+              setTidyFlag();
+              testTimer = TST_TIDY;
+            }
+            break;
+          case TST_TIDY:
+            testPacer = millis();
+            testTimer = TST_RUN;
+            break;
+          case TST_RUN:
+            testPacer = millis();
+            cells.run = true;
+            testTimer = TST_PAUSE;
+            break;
+          case TST_PAUSE:
+            testPacer = millis();
+            testTimer = TST_LOAD;
+            break;
+        }
+      }
+    }
+    checkAnOrUpdateTutorial();
+  } else if (runMode == RM_CREATE){
+    if (redrawCounter != 0) {
+      redrawCounter -= 1;
+      drawGrid();
+      pres.draw();
+    }
+    if (notIdle == true) {
+      mouseDrag();
+      pres.update(mouseX, mouseY, mouseIsPressed);
+      pres.updateView(xPos, yPos, doMouseDrag);
+    }
+    if (tidyFlag > 0) {
+      tidy();
+      noClickZone = [10, myDivs['presTools'].size().width + 10, 10, pixelDensity * myDivs['presTools'].size().height + 10];
+      pres.updateView(xPos, yPos, true);
+      tidyFlag -= 1;
+    }
+    if (pres.redrawFlag == true){
+      redrawCounter = 2;
+    }
+  } else if (runMode == RM_PRESENT){
+    controller.update(cells, flash, fastMode);
   }
-  checkAnOrUpdateTutorial();
 }

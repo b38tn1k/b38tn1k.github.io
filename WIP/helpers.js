@@ -1,11 +1,16 @@
 function newCell(type, x =-1, y =-1) {
   jlog('Main', 'newCell');
   type = int(type);
+  let presAddStart = 0;
   if (mobileDeviceDetected == false) {
+    presAddStart = cells.length;
     cells.addCell(type, x, y);
+    pres.addCellsForPres(cells.cells, presAddStart)
   } else {
     if (mobileHAddon == true) {
+      presAddStart = cells.length;
       cells.addCell(mobileHType, x, y);
+      pres.addCellsForPres(cells.cells, pas)
       mobileHAddon = false;
     } else {
       mobileHType = type;
@@ -25,10 +30,19 @@ function setTidyFlag() {
 function tidy() {
   jlog('Main', 'tidy');
   if (cells.run == false) {
-    let xOffset = 2*myDivs['menu'].x + myDivs['menu'].size().width;
-    cells.tidy(round(xOffset/(gridSize/2))*(gridSize/2), gridSize);
-    if (zoomMode == true) {
-      cells.update(mouseX, mouseY, mouseIsPressed);
+    if (runMode == RM_NORMAL) {
+      let xOffset = 2*myDivs['menu'].x + myDivs['menu'].size().width;
+      cells.tidy(round(xOffset/(gridSize/2))*(gridSize/2), gridSize);
+      if (zoomMode == true) {
+        cells.update(mouseX, mouseY, mouseIsPressed);
+      }
+    }
+    if (runMode == RM_CREATE) {
+      let yOffset = 2*myDivs['presTools'].y + myDivs['presTools'].size().height// + gridSize/2;
+      pres.tidy(myDivs['presTools'].x/pixelDensity(), yOffset);
+      if (zoomMode == true) {
+        pres.update(mouseX, mouseY, mouseIsPressed);
+      }
     }
   }
 }
@@ -107,35 +121,6 @@ function loadBackup() {
   setTidyFlag();
 }
 
-function shareLink() {
-  jlog('Main', 'shareLink');
-  shareLinkString = cells.putInAddyBar();
-  shareLinkGenerated = true;
-  myDivs['shareLink'] = createDiv();
-  myDivs['shareLink'].style('background-color', 'DimGray');
-  myDivs['shareLink'].style('padding', '10px');
-  myDivs['shareLink'].style('outline', '1px solid black');
-  let w = 200;
-  myDivs['shareLink'].size(w, null);
-  myDivs['shareLink'].style('overflow', "auto");
-  myDivs['shareLink'].position((windowWidth/2) - (w/2), 40);
-  myDivs['shareLink'].show();
-  addButtonToDiv('share', 1, shareButton, myDivs['shareLink'], 'header');
-  addButtonToDiv('cancel', 1, cancelShare, myDivs['shareLink']);
-  // noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
-  noClickZone = [0, windowWidth, 0, windowHeight];
-}
-
-function cancelShare() {
-  myDivs['shareLink'].remove();
-  noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
-}
-
-function shareButton() {
-  cancelShare();
-  window.open(shareLinkString);
-}
-
 function loadCells(myLoaderMap) {
   jlog('Main', 'loadCells');
   imlost();
@@ -167,9 +152,12 @@ function loadCells(myLoaderMap) {
   cells.updateView(xPos, yPos, true);
   setTidyFlag();
   redrawCounter = 4;
+  pres.cells = [];
+  pres.addCellsForPres(cells.cells);
 }
 
 function mobileSettings() {
+  jlog('Main', 'mobileSettings');
   if (zoomMode == true){
     fontSizeString = '10px';
     cells.dWidth = 40;
@@ -181,37 +169,6 @@ function mobileSettings() {
     cells.dRadius = 5;
     fontSizeString = '12px';
   }
-}
-
-function showHideBlockMenu() {
-  jlog('Main', 'showHideBlockMenu');
-  showBlockMenu = ! showBlockMenu;
-  if (showBlockMenu == true) {
-    myDivs['blocks']['main'].show();
-    myDivs['demos'].hide();
-    showDemoMenu = false;
-  } else {
-    myDivs['blocks']['main'].hide();
-    if (submenu != 0) {
-      myDivs['blocks'][submenu].hide();
-      submenu = 0;
-    }
-  }
-}
-
-function showHideDemoMenu() {
-  jlog('Main', 'showHideDemoMenu');
-
-  showDemoMenu = ! showDemoMenu;
-  if (showDemoMenu == true) {
-    myDivs['blocks']['main'].hide();
-    showBlockMenu = false;
-    myDivs['demos'].show();
-  } else {
-    myDivs['demos'].hide();
-  }
-  // myDivs['menu'].html('');
-  // createMenuDiv();
 }
 
 function clearCells() {
@@ -283,11 +240,13 @@ function mouseDrag() {
 }
 
 function imlost() {
+  jlog('Main', 'imlost');
   xPos = 0;
   yPos = 0;
 }
 
 function togglezoomMode() {
+  jlog('Main', 'togglezoomMode');
   zoomMode = ! zoomMode;
   // back up everything
   // reset font and max width sizes
@@ -311,256 +270,8 @@ function togglezoomMode() {
   }
 }
 
-function newCellFromButtonClick(button) {
-  type = button.srcElement.value;
-  newCell(type, mouseX, mouseY);
-  // createMenuDiv();
-}
-
-function createAddBlockMenu(list, div) {
-  for (let i = 0; i < list.length; i++) {
-    addButtonToDiv('+ ' + blockConfig[list[i]]['block label'], list[i], newCellFromButtonClick, div, 'colorcoded');
-  }
-}
-
-function loadCellsFromButtonClick(button) {
-  index = parseInt(button.srcElement.value);
-  loadCells(demos[index]);
-  // createMenuDiv();
-}
-
-function showBlocksubmenu(button) {
-  let oldSM = submenu;
-  submenu = parseInt(button.srcElement.value);
-  for (let i = 1; i <= 7; i++){
-    myDivs['blocks'][i].hide();
-  }
-  if (oldSM == submenu) {
-    submenu = 0;
-  } else {
-    myDivs['blocks'][submenu].show();
-  }
-}
-
-function addButtonToDiv(name, value, callback, div, cssClass='basic'){
-  let button = createButton(name, String(value));
-  // button.addClass(String(cssClass)); // i prefer using JS
-  button.addClass('basic');
-  if (cssClass == 'colorcoded') {
-    let tc = allColors['dtcolors'][value].toString('#rrggbb');
-    let c1 = allColors['colors'][value].toString('#rrggbb');
-    button.style('color', tc);
-    button.style('text-align', 'left');
-    button.style('background-image', 'linear-gradient(' + c1 + ', ' + c1 + ')');
-    button.style('border-color', 'DimGray');
-  } else if (cssClass == 'dev') {
-    button.style('height', '18px');
-    button.style('background-image', 'linear-gradient(DimGray, DimGray)');
-    button.style('border-color', 'DimGray');
-    button.style('box-shadow', 'rgba(255,255,255,.6) 0 0px 0 inset')
-    button.style('color', 'LightGray');
-  } else if (cssClass == 'header') {
-    button.style('background-image', 'linear-gradient(#b7b8ba ,#a7a9ac)');
-  } else if (cssClass == 'demo') {
-    button.style('text-align', 'left');
-  } else if (cssClass == 'eg') {
-    button.style('text-align', 'left');
-    button.style('background-image', 'linear-gradient(#d7d8da ,#c7c9cc)');
-  }
-  button.parent(div);
-  if (callback != 0) {
-    button.mousePressed(callback);
-  }
-
-  if (cssClass == 'speedID') {
-    speedButton = button;
-  } else if (cssClass == 'flashID') {
-    flashButton = button;
-
-  }
-  div.html('<br>', true);
-}
-
-function blocksMenu() {
-  addButtonToDiv('blocks menu', 0, showHideBlockMenu, myDivs['menu'], 'header');
-  myDivs['blocks'] = {};
-  myDivs['blocks']['main'] = createDiv();
-  for (let i = 1; i <= 7; i++) {
-    myDivs['blocks'][i] = createDiv();
-  }
-  createAddBlockMenu(containers, myDivs['blocks'][1]);
-  createAddBlockMenu(handles, myDivs['blocks'][2]);
-  createAddBlockMenu(arrayTools, myDivs['blocks'][7]);
-  createAddBlockMenu(mathFunctions, myDivs['blocks'][3]);
-  createAddBlockMenu(boolFunctions, myDivs['blocks'][4]);
-  createAddBlockMenu(conditionals, myDivs['blocks'][5]);
-  createAddBlockMenu(utilities, myDivs['blocks'][6]);
-  for (let i = 1; i <= 7; i++) {
-    // if (i != submenu && showBlockMenu == true)
-    myDivs['blocks'][i].hide();
-  }
-  addButtonToDiv('data containers', 1, showBlocksubmenu, myDivs['blocks']['main']);
-  myDivs['blocks'][1].parent(myDivs['blocks']['main']);
-
-  addButtonToDiv('data references', 2, showBlocksubmenu, myDivs['blocks']['main']);
-  myDivs['blocks'][2].parent(myDivs['blocks']['main']);
-
-  addButtonToDiv('array tools', 7, showBlocksubmenu, myDivs['blocks']['main']);
-  myDivs['blocks'][7].parent(myDivs['blocks']['main']);
-
-  addButtonToDiv('math', 3, showBlocksubmenu, myDivs['blocks']['main']);
-  myDivs['blocks'][3].parent(myDivs['blocks']['main']);
-
-  addButtonToDiv('comparison', 4, showBlocksubmenu, myDivs['blocks']['main']);
-  myDivs['blocks'][4].parent(myDivs['blocks']['main']);
-
-  addButtonToDiv('conditionals', 5, showBlocksubmenu, myDivs['blocks']['main']);
-  myDivs['blocks'][5].parent(myDivs['blocks']['main']);
-
-  addButtonToDiv('utilities', 6, showBlocksubmenu, myDivs['blocks']['main']);
-  myDivs['blocks'][6].parent(myDivs['blocks']['main']);
-
-  addButtonToDiv('show all', 6, showAll, myDivs['blocks']['main']);
-  myDivs['blocks']['main'].parent(myDivs['menu']);
-  if (showBlockMenu == false) {
-    myDivs['blocks']['main'].hide();
-  } else {
-    if (submenu != 0) {
-      myDivs['blocks'][submenu].show();
-    }
-  }
-}
-
-function demoMenu(){
-  myDivs['menu'].html('<br>', true);
-  addButtonToDiv('demo menu', 6, showHideDemoMenu, myDivs['menu'], 'header');
-  myDivs['demos'] = createDiv();
-  addButtonToDiv('Hello, World!', 0, loadCellsFromButtonClick, myDivs['demos'], 'demo');
-  addButtonToDiv('Turing bit flip', 14, loadCellsFromButtonClick, myDivs['demos'], 'demo');
-  addButtonToDiv('Programmable TM', 15, loadCellsFromButtonClick, myDivs['demos'], 'demo');
-  addButtonToDiv('Sleep Sort', 7, loadCellsFromButtonClick, myDivs['demos'], 'demo');
-  addButtonToDiv('Draw Polygons', 8, loadCellsFromButtonClick, myDivs['demos'], 'demo');
-  // myDivs['menu'].html('<span style="color:LightGray">block usage:</span><br>', true);
-  addButtonToDiv('blocks', 1, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('assigning', 2, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('basic math', 3, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('comparisons', 4, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('if', 5, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('if not', 6, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('while and array get', 9, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('array/string push', 10, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('array/string set', 11, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('string delete', 12, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('array delete', 13, loadCellsFromButtonClick, myDivs['demos'], 'eg');
-  addButtonToDiv('test all', 13, testAll, myDivs['demos']);
-  myDivs['demos'].parent(myDivs['menu']);
-  if (showDemoMenu == false){
-    myDivs['demos'].hide();
-  } else {
-    myDivs['demos'].show();
-  }
-
-}
-
-function showUtil() {
-  showUtils = !showUtils;
-  if (showUtils == true) {
-    myDivs['utils'].show();
-  } else {
-    myDivs['utils'].hide();
-  }
-}
-
-function utilitiesMenu(){
-  myDivs['menu'].html("<br>", true);
-  addButtonToDiv('tools', 13, showUtil, myDivs['menu'], 'header');
-  myDivs['utils'] = createDiv();
-  addButtonToDiv('clear', 13, clearCells, myDivs['utils']);
-  addButtonToDiv('tidy', 13, setTidyFlag, myDivs['utils']);
-  addButtonToDiv('speed: ' + String(speedMode+1), 13, toggleSpeedMode, myDivs['utils'], 'speedID');
-  addButtonToDiv('flash: ' + String(flash), 13, toggleFlash, myDivs['utils'], 'flashID');
-  addButtonToDiv('center', 13, imlost, myDivs['utils']);
-  addButtonToDiv('share', 13, shareLink, myDivs['utils']);
-  addButtonToDiv('refactor', 13, refactor, myDivs['utils']);
-  // if (shareLinkGenerated == true) {
-  //   addButtonToDiv('reshare', 13, shareLink, myDivs['utils']);
-  //   myDivs['utils'].html('<a href="' +shareLinkString +'" target="_blank">share link</a><br>', true);
-  // } else {
-  //   addButtonToDiv('share', 13, shareLink, myDivs['utils']);
-  // }
-  if (zoomMode == false) {
-    addButtonToDiv('zoom out', 13, togglezoomMode, myDivs['utils']);
-    // myDivs['menu'].html('<br><a href="javascript:void(0);" onclick="togglezoomMode();createMenuDiv();">zoom out</a><br>', true);
-  } else {
-    // myDivs['menu'].html('<br><a href="javascript:void(0);" onclick="togglezoomMode();createMenuDiv();">zoom in</a><br>', true);
-    addButtonToDiv('zoom in', 13, togglezoomMode, myDivs['utils']);
-  }
-  myDivs['utils'].parent(myDivs['menu']);
-  if (showUtils == true) {
-    myDivs['utils'].show();
-  } else {
-    myDivs['utils'].hide();
-  }
-
-  // myDivs['menu'].html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
-  myDivs['menu'].html('<br>', true);
-  addButtonToDiv('about', 0, openAbout, myDivs['menu']);
-  myDivs['menu'].html('<br>', true);
-  addButtonToDiv('version 0.000..01', 13, showDevDiv, myDivs['menu'], 'dev');
-  // let myLink = createA('http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/', 'about', '_blank_');
-  // myLink.parent(myDivs['menu']);
-}
-
-function openAbout(){
-  window.open('https://b38tn1k.com/code/ux/2022/09/08/blocks-explained/');
-}
-
-function closeRefactorDiv(){
-  noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
-  let stringed = String(JSON.stringify(cells.saveCells()));
-  for (let i = 0; i < myDivs['refactorInputs'].length; i++){
-    stringed = stringed.replaceAll(myDivs['refactorPriors'][i], myDivs['refactorInputs'][i].value());
-  }
-
-  let consoleTextLabel = cells.cells[1].indexLabeldiv.html();;
-  let lineNumber = cells.cells[1].lineNumber;
-  let currentLayout = cells.saveCells();
-  clearCells();
-  cells.cells[0].indexLabeldiv.remove();
-  cells.cells[1].indexLabeldiv.remove();
-  cells.cells = [];
-  let myLoaderMap = JSON.parse(stringed);
-  for (key in Object.keys(myLoaderMap)) {
-    cells.addCellWithInfo(myLoaderMap[key]);
-  }
-  for (key in Object.keys(myLoaderMap)) {
-    cells.linkChildren(key, myLoaderMap[key]);
-  }
-  for (let i = 0; i < this.length; i++) {
-    this.cells[i].reshape(true);
-  }
-  cells.cells[1].indexLabeldiv.html(consoleTextLabel);
-  cells.cells[1].lineNumber = lineNumber;
-  cells.cells[1].indexLabeldiv.elt.scrollTop = 1000 * cells.cells[1].lineNumber;
-
-
-  // for (let i = 0; i < myDivs['refactorInputs'].length; i++){
-  //   if (myDivs['refactorPriors'][i] != myDivs['refactorInputs'][i].value()) {
-  //     cells.refactors.push(myDivs['refactorInputs'][i].value());
-  //     for (let j = 0; j < cells.length; j++) {
-  //       if (cells.cells[j].handleSH == myDivs['refactorPriors'][i]) {
-  //         cells.cells[j].updateHandleSH(myDivs['refactorInputs'][i].value());
-  //         cells.cells[j].inputOptions.push(myDivs['refactorInputs'][i].value());
-  //       }
-  //     }
-  //   }
-  // }
-  myDivs['refactor'].remove();
-  myDivs['refactorInputs'] = [];
-  myDivs['refactorPriors'] = [];
-}
-
 function refactor() {
+  jlog('Main', 'refactor');
   jlog('Main', 'refactor');
   myDivs['refactor'] = createDiv();;
   myDivs['refactor'].style('background-color', 'DimGray');
@@ -591,18 +302,7 @@ function refactor() {
   noClickZone = [0, windowWidth, 0, windowHeight];
 }
 
-function createMenuDiv() {
-  jlog('Main', 'createMenuDiv');
-  myDivs['menu'].remove();
-  myDivs['menu'] = createDiv();
-  blocksMenu();
-  demoMenu();
-  utilitiesMenu();
-  if (zoomMode == false){
-    myDivs['menu'].style('font-size', '16px');
-  } else {
-    myDivs['menu'].style('font-size', '12px');
-  }
+function restyleMenuDiv(){
   myDivs['menu'].style('background-color', 'DimGray');
   myDivs['menu'].style('padding', '10px');
   myDivs['menu'].style('outline', '1px solid black');
@@ -614,59 +314,10 @@ function createMenuDiv() {
   }
   myDivs['menu'].style('overflow', "auto");
   myDivs['menu'].position(10, 10);
-  noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
-  if (hideMenu == true){
-    myDivs['menu'].hide();
-    noClickZone = [-1, -1, -1, -1];
-  } else {
-    myDivs['menu'].show();
-  }
-  showDev = ! showDev;
-  showDevDiv();
-}
-
-function toggleDevOptions(button) {
-  item = parseInt(button.srcElement.value);
-  switch (item) {
-    case 0:
-      showFPS = !showFPS;
-      break;
-    case 1:
-      clickDebug = !clickDebug;
-      break;
-    case 2:
-      printStack = !printStack;
-      break;
-    case 3:
-      doJLOG = !doJLOG;
-      break;
-  }
-}
-
-function showDevDiv(){
-  showDev = ! showDev;
-  if (showDev == false){
-    myDivs['devDiv'].remove();
-    return;
-  }
-  myDivs['devDiv'].remove();
-  myDivs['devDiv']= createDiv();
-  myDivs['devDiv'].style('font-size', '12px');
-  myDivs['devDiv'].style('background-color', 'DimGray');
-  myDivs['devDiv'].style('padding', '10px');
-  myDivs['devDiv'].style('outline', '1px solid black');
-  addButtonToDiv('save json', 0, saveCells, myDivs['devDiv']);
-  addButtonToDiv('show FPS', 0, toggleDevOptions, myDivs['devDiv']);
-  addButtonToDiv('click log', 1, toggleDevOptions, myDivs['devDiv']);
-  addButtonToDiv('print stack', 2, toggleDevOptions, myDivs['devDiv']);
-  addButtonToDiv('tmi log', 3, toggleDevOptions, myDivs['devDiv']);
-  addButtonToDiv('free colors', 3, whatsLeft, myDivs['devDiv']);
-  addButtonToDiv('clean', 3, cells.clean, myDivs['devDiv']);
-  addButtonToDiv('load wip', demos.length-1, loadCellsFromButtonClick, myDivs['devDiv']);
-  myDivs['devDiv'].position(windowWidth - (40 + myDivs['devDiv'].size().width), 10);
 }
 
 function setupScreen() {
+  jlog('Main', 'setupScreen');
   jlog('Main', 'setupScreen');
   pixelDensity(1);
   if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
@@ -691,6 +342,7 @@ function setupScreen() {
 }
 
 function doLastBit(){
+  jlog('Main', 'doLastBit');
   let loaded = false;
   let demoIndex = -1;
   let myString = getURL();
@@ -718,9 +370,17 @@ function doLastBit(){
   myDivs['menu'].remove();
   myDivs['menu'] = createDiv();
   createMenuDiv();
+  createPresentationDiv();
 }
 
+function runFromButton() {
+  cells.run = ! cells.run;
+  fastMode = 1;
+}
+
+
 function doTutorials(loaded) {
+  jlog('Main', 'doTutorials');
   if (tutorial == true){
     let noIframe = true;
     try {
@@ -927,12 +587,32 @@ function doTutorials(loaded) {
       }
       cells.tidy(0, 10);
       break;
+    case '#tutorialPLM':
+      cells.addCell(T_START, 1.5 * myDivs['menu'].size().width);
+      cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
+      loadCells(demos[0]);
+      cells.cells[0].reshape();
+      cells.cells[0].refresh();
+      if (zoomMode == true){
+        tidyFlag = 0;
+        cells.cells[1].x = cells.cells[0].x;
+        cells.cells[1].y = cells.cells[0].y + cells.cells[0].height + cells.cells[0].handleH*2;
+      } else {
+        setTidyFlag();
+      }
+      loaded = true;
+      createPresentation();
+      pres.cells[1].addChild(0, pres.cells[0]);
+      pres.cells[1].input.value('Input:')
+      pres.cells[0].addParent(1, pres.cells[1]);
+      break;
     }
   }
   return loaded;
 }
 
 function checkAnOrUpdateTutorial() {
+  jlog('Main', 'checkAnOrUpdateTutorial');
   if (tutorial == true){
     switch(tutorialstring) {
       case '#tutorialBlank':
@@ -1014,11 +694,15 @@ function checkAnOrUpdateTutorial() {
           cells.cells[j].updateAllDivPositions();
         }
         break;
+      case '#tutorialPLM':
+        break;
+
       }
     }
 }
 
 function testAll() {
+  jlog('Main', 'testAll');
   while (speedMode != 1) {
     toggleSpeedMode();
   }
@@ -1028,10 +712,12 @@ function testAll() {
 }
 
 function colorToHTMLRGB(color) {
+  jlog('Main', 'colorToHTMLRGB');
   return "rgb(" + color._getRed() + ", " + color._getGreen() + ", " + color._getBlue() + ")";
 }
 
 function toggleInput(cID, type){
+  jlog('Main', 'toggleInput');
   console.log('functionality removed to tools/refactor');
   // for (let i = 0; i < cells.length; i++){
   //   if (type == cells.cells[i].type && (cells.cells[i].handleSH == cID)){
@@ -1063,9 +749,18 @@ function toggleInput(cID, type){
 }
 
 function jlog(classname, label) {
+  if (['length', 'tidy', 'startStop', 'stop', 'toggleStartForm', 'resizeConsole', 'updateView', 'moveC','updateAllDivPositions', 'updateDivPosition', 'reshape', 'refresh'].indexOf(label) != -1) {
+    return;
+  }
+  if (doJLOGCountDown > 0) {
+    doJLOG = true;
+  } else {
+    doJLOG = false;
+  }
   if (doJLOG == true) {
-    console.debug(classname, label, (millis()/1000).toFixed(1));
+    console.debug('frame: '+ frameCount, classname, label);
     logCounter += 1;
+    doJLOGCountDown -= 1;
     if (logCounter == 100) {
       console.clear();
     }
@@ -1073,6 +768,7 @@ function jlog(classname, label) {
 }
 
 function whatsLeft(){
+  jlog('Main', 'whatsLeft');
   for (let i = 0; i < 55; i++) {
     if (everyone.indexOf(i) == -1){
       console.log('FREE:', i);

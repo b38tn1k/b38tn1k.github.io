@@ -69,7 +69,7 @@ class Cells {
     // this.cells[0].resetDims();
     this.mapAndLink();
     if (layoutCount == 0) {
-      this.newLayoutBlock('A0', windowWidth/3, 10);
+      this.newLayoutBlock('A0', myDivs['presTools'].size().width + 20, 10);
     } else {
       for (let i = 0; i < this.length; i++) {
         if (this.cells[i].type == T_LAYOUT_BLOCK) {

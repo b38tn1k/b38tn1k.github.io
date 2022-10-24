@@ -308,6 +308,7 @@ class Cells {
       myJSONString = JSON.stringify(this.presBackup);
     }
     let myString = myURL + '#' + encodeURIComponent(myJSONString);
+    console.log(myString);
     // console.log(myString.length);
     return myString;
   }
@@ -318,7 +319,7 @@ class Cells {
       return false;
     }
     try {
-      let myURI = myString.slice(myString.indexOf('#')+1)
+      let myURI = (myString.slice(myString.indexOf('#')+1))
       if (myURI[0] == '#') {
         myURI = myURI.slice(1);
       }

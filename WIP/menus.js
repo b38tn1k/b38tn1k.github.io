@@ -78,6 +78,7 @@ function sharePresentation() {
   shareLinkString = pres.putInAddyBar(true);
   let scriptLink = shareLinkString.replace('#', '##');
   exitPresentationMode();
+  console.log(scriptLink);
   window.open(scriptLink);
   doMouseDrag = false;
 }

@@ -288,7 +288,6 @@ function demoMenu(){
   } else {
     myDivs['demos'].show();
   }
-
 }
 
 function showHideUtilMenu() {

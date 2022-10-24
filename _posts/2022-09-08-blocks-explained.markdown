@@ -197,7 +197,7 @@ Blocks and Variables can be renamed in the tools/refactor menu.
 # Presentation Mode
 It is possible to share, save, and bookmark scripting projects using the 'tools/share/share project' button.
 
-To share a less visually cluttered version of the project (for using rather than building) the user can select 'tools/share/create presentation' and open a presentation editor. The presentation editor provides a list of potentially user-editable blocks from the project source and introduces the layout block which is used to create rows and columns in a webpage application, new layout cells can be added using the buttons located on the block (center-right and center-bottom).
+To share a less visually cluttered version of the project (for using rather than building) the user can select 'tools/share/create presentation' and open a presentation editor. The presentation editor provides a list of potentially user-editable blocks from the project source and introduces the layout block which is used to create rows and columns in a webpage application. New layout cells can be added using the buttons located on the block (center-right and center-bottom).
 
 Adding user-editable blocks to a layout block will allow the end-user to change the input in the web-application page.
 

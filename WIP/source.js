@@ -70,7 +70,6 @@ function preload() {
   demos.push(loadJSON('assets/demo13.json'));
   demos.push(loadJSON('assets/demo14.json'));
   demos.push(loadJSON('assets/demo15.json'));
-
   demos.push(loadJSON('assets/wip-demo.json'));
 }
 

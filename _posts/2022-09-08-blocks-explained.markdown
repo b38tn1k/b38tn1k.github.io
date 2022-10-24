@@ -16,6 +16,7 @@ sitemap:
 - [The Basics](#the-basics)
 - [Hello, World!](#hello-world)
 - [Data Stuff](#data-stuff)
+- [Presentation Mode](#presentation-mode)
 - [Under The Hood](#under-the-hood)
 
 # Introduction
@@ -103,7 +104,7 @@ downloads the project as JSON, not very useful without an upload option.
 <strong>tools/share</strong>
 </th>
 <th>
-converts the project into a URI string that can be used as a link.
+opens a submenu in which the 'share project' button converts the project into a URI string that can be used as a link and the 'create presentation' button opens an editor to allow the user to create a basic webpage application - see the section 'presentation mode' for more details.
 </th>
 </tr>
 <tr>
@@ -193,6 +194,23 @@ Blocks are ordered collections of other data and logic blocks (including referen
 
 Blocks and Variables can be renamed in the tools/refactor menu.
 
+# Presentation Mode
+It is possible to share, save, and bookmark scripting projects using the 'tools/share/share project' button.
+
+To share a less visually cluttered version of the project (for using rather than building) the user can select 'tools/share/create presentation' and open a presentation editor. The presentation editor provides a list of potentially user-editable blocks from the project source and introduces the layout block which is used to create rows and columns in a webpage application, new layout cells can be added using the buttons located on the block (center-right and center-bottom).
+
+Adding user-editable blocks to a layout block will allow the end-user to change the input in the web-application page.
+
+<div id="presLayoutMode">
+<iframe class='presentationMode' style="width:100%; zoom:1.0; height:200px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialPLM"></iframe>
+</div>
+
+Once an optimal layout is created, the application can be then be accessed using the 'share presentation' button.
+
+## Caveats
+UBT runs completely in the client browser and uses URI strings to 'load' script layouts. Some browsers concatenate the length of URI strings and as such large projects may not load.
+
+
 # Under The Hood
 UBT uses an indexed node graph to create processes.
 
@@ -209,7 +227,7 @@ I made a Turing Machine that shows UBT is Turing complete (as much as anything e
 
 Implementing array operations (get, set, delete, push, run) has made me appreciate everyone who contributed to Python. When I think about code, I think in Python. It's my 'internal dialogue programming language'. My (probably still incomplete) approach to array operations was directly inspired by how easy Python lists work.
 
-If you check the [source](https://github.com/b38tn1k/b38tn1k.github.io/tree/master/WIP), you might see some weird non-idiomatic javascript. I learnt javascript to convert some of my Processing PDE sketches to p5.js. I learnt Processing PDE because it appeared similar to Arduino, but unlocked the screen as something I could play with. Most of my coding xp is robot facing - not UI or screen elements. I'm sure there are more structured approaches to writing javascript but I'm doing this for fun.
+If you check the [source](https://github.com/b38tn1k/b38tn1k.github.io/tree/master/WIP), you might see some weird non-idiomatic javascript. I learnt javascript to convert some of my Processing PDE sketches to p5.js. I learnt Processing PDE because it appeared similar to Arduino, but unlocked the screen as something I could play with. Most of my coding xp is robot facing - not UI or screen elements. I'm sure there are more structured approaches to writing javascript but I'm doing this for fun and to learn!
 
 Proving this idea out sent me down many Wikipedia rabbit holes, stackoverflow, and reddit posts.
 
@@ -247,5 +265,8 @@ if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigat
   elem = document.getElementById('data');
   elem.style.cursor = 'pointer';
   elem.onclick=function(){location.href='{{ site.url }}/WIP/#tutorialData'};
+  elem = document.getElementById('presLayoutMode');
+  elem.style.cursor = 'pointer';
+  elem.onclick=function(){location.href='{{ site.url }}/WIP/#tutorialPLM'};
 }
 </script>

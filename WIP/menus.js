@@ -19,7 +19,9 @@ function shareLink() {
 
 function cancelShare() {
   jlog('Main', 'cancelShare');
-  myDivs['shareLink'].remove();
+  if (myDivs['shareLink']){
+    myDivs['shareLink'].remove();
+  }
   noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
   doMouseDrag = false;
 }
@@ -56,17 +58,20 @@ function createPresentation() {
 }
 
 function exitPresentationMode() {
-  hideMenu = false;
-  presCreationMode = false;
-  showGUI = true;
-  pres.removeCreateMode();
-  loadBackup();
-  myDivs['menu'].show();
-  noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
-  myDivs['presTools'].remove();
-  runMode = RM_NORMAL;
-  redrawCounter = 4;
-  cells.updateView(xPos, yPos, true);
+  if (tutorial == false){
+    hideMenu = false;
+    presCreationMode = false;
+    showGUI = true;
+    pres.removeCreateMode();
+    loadBackup();
+    myDivs['menu'].show();
+    noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
+    myDivs['presTools'].remove();
+    runMode = RM_NORMAL;
+    redrawCounter = 4;
+    cells.updateView(xPos, yPos, true);
+  }
+  doMouseDrag = false;
 }
 
 function sharePresentation() {
@@ -95,12 +100,12 @@ function showHideBlockMenu() {
     showUtils = false;
   } else {
     myDivs['blocks']['main'].hide();
-    restyleMenuDiv();
     if (submenu != 0) {
       myDivs['blocks'][submenu].hide();
       submenu = 0;
     }
   }
+  restyleMenuDiv();
 }
 
 function showHideDemoMenu() {
@@ -119,6 +124,7 @@ function showHideDemoMenu() {
   }
   // myDivs['menu'].html('');
   // createMenuDiv();
+  restyleMenuDiv();
 }
 
 function newCellFromButtonClick(button) {
@@ -294,11 +300,10 @@ function showHideUtilMenu() {
     showDemoMenu = false;
     myDivs['blocks']['main'].hide();
     showBlockMenu = false;
-
   } else {
     myDivs['utils'].hide();
-    restyleMenuDiv();
   }
+  restyleMenuDiv();
 }
 
 function utilitiesMenu(){

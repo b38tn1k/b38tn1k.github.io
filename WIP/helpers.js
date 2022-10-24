@@ -587,6 +587,25 @@ function doTutorials(loaded) {
       }
       cells.tidy(0, 10);
       break;
+    case '#tutorialPLM':
+      cells.addCell(T_START, 1.5 * myDivs['menu'].size().width);
+      cells.addCell(T_CONSOLE, windowWidth - 2.5 * cells.dWidth);
+      loadCells(demos[0]);
+      cells.cells[0].reshape();
+      cells.cells[0].refresh();
+      if (zoomMode == true){
+        tidyFlag = 0;
+        cells.cells[1].x = cells.cells[0].x;
+        cells.cells[1].y = cells.cells[0].y + cells.cells[0].height + cells.cells[0].handleH*2;
+      } else {
+        setTidyFlag();
+      }
+      loaded = true;
+      createPresentation();
+      pres.cells[1].addChild(0, pres.cells[0]);
+      pres.cells[1].input.value('Input:')
+      pres.cells[0].addParent(1, pres.cells[1]);
+      break;
     }
   }
   return loaded;
@@ -675,6 +694,9 @@ function checkAnOrUpdateTutorial() {
           cells.cells[j].updateAllDivPositions();
         }
         break;
+      case '#tutorialPLM':
+        break;
+
       }
     }
 }

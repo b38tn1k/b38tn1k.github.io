@@ -40,6 +40,7 @@ class Cells {
     this.cellsInView = [];
     this.cells = [];
     this.createMode = false;
+    console.log(this.length);
     // make this have memory later
   }
 
@@ -167,7 +168,10 @@ class Cells {
         }
       }
     }
-    this.cells[1].resizeConsole();
+    if (this.length > 1) {
+      this.cells[1].resizeConsole();
+    }
+
     // bigBlocks.sort(function(a, b) {return a.width - b.width});
     // bigBlocks.sort(function(a, b) {return sqrt(a.x**2 + a.y**2) - sqrt(b.x**2 + b.y**2)});
     bigBlocks.sort(function(a, b) {return a.width * a.height - b.width * b.height});

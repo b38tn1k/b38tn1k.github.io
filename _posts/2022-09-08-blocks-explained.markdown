@@ -186,7 +186,7 @@ Variables have a name that can be used to access and update the data at differen
 
 Both data and logic blocks can be collected into a sequence using the Set Block.
 
-Blocks are ordered collections of other data and logic blocks (including references to other Blocks and Variables). They can act as arrays (get, push, set, *remove (TODO)*) or be used to define how logic flows. A Block is similar to a Variable in that once it is set, it can be called upon later in the process using a Block reference. Block and Variable definitions cannot be added to other blocks, instead, use a reference block. See blocks, variables and constants in action below:
+Blocks are ordered collections of other data and logic blocks (including references to other Blocks and Variables). They can act as arrays (get, push, set, remove) or be used to define how logic flows. A Block is similar to a Variable in that once it is set, it can be called upon later in the process using a Block reference. Block and Variable definitions cannot be added to other blocks, instead, use a reference block. See blocks, variables and constants in action below:
 
 <div id="data">
 <iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:400px; overflow: hidden;"  scrolling="no" src="{{ site.url }}/WIP/#tutorialData"></iframe>

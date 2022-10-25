@@ -828,7 +828,7 @@ class Cell {
           break;
         case T_INPUT:
           if (this.mode != M_SELECTED) {
-            if (this.showHandleInput == false){
+            if (runMode != RM_PRESENT){
               this.updateDataSH(this.input.value());
             }
           }
@@ -837,7 +837,9 @@ class Cell {
           this.dataSH = this.input.value();
           break;
         case T_CONST:
-          this.updateDataSH(this.input.value());
+          if (runMode != RM_PRESENT){
+            this.updateDataSH(this.input.value());
+          }
           break;
         default:
           break;

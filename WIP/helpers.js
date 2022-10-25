@@ -39,7 +39,7 @@ function tidy() {
     }
     if (runMode == RM_CREATE) {
       let yOffset = 2*myDivs['presTools'].y + myDivs['presTools'].size().height// + gridSize/2;
-      pres.tidy(myDivs['presTools'].x/pixelDensity(), yOffset);
+      pres.tidy((myDivs['presTools'].x + 10)/pixelDensity(), yOffset);
       if (zoomMode == true) {
         pres.update(mouseX, mouseY, mouseIsPressed);
       }

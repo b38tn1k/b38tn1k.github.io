@@ -353,6 +353,9 @@ class Controller {
     let isNumbers = [];
     // this.runChildren(activeCell.children, activeCell.childIndicies);
     for (let i = start; i < activeCell.children.length; i++) {
+      if (activeCell.children[i].type == T_GET) {
+        this.t_arrayOp(activeCell.children[i], activeCell.childIndicies[i]);
+      }
       if (activeCell.children[i].type != T_COMMENT) {
         let result = this.getValue(activeCell.children[i], activeCell.childIndicies[i]);
         vals.push(result['data']);
@@ -666,7 +669,6 @@ class Controller {
     }
 
     let myString = this.buildPrintString(activeCell, 0).replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-    console.log(myString);
     let stringForConsole = myOutput + myString + '<br>';
     if (presentationMode == true) {
       addToPresentation(stringForConsole, 'console');

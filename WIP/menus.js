@@ -51,7 +51,7 @@ function createPresentation() {
   hideMenu = true;
   myDivs['menu'].hide();
   addButtonToDiv('share presentation', 1, sharePresentation, myDivs['presTools']);
-  addButtonToDiv('center', 13, imlost, myDivs['presTools']);
+  addButtonToDiv('origin', 13, imlost, myDivs['presTools']);
   addButtonToDiv('back', 1, exitPresentationMode, myDivs['presTools']);
   pres.cleanForCreateMode();
   setTidyFlag();
@@ -70,6 +70,7 @@ function exitPresentationMode() {
     runMode = RM_NORMAL;
     redrawCounter = 4;
     cells.updateView(xPos, yPos, true);
+    console.log('ok');
   }
   doMouseDrag = false;
 }
@@ -497,12 +498,23 @@ function newColDiv(parent, h=AUTO) {
 }
 
 function presUpdateData() {
-  cells.cells[parseInt(this.id())].updateDataSH(this.value(), true);
+  let myID = parseInt(this.id());
+  cells.cells[myID].updateDataSH(this.value(), true);
+  if (cells.cells[myID].type != T_CONST) {
+    let handle = cells.cells[myID].handleSH;
+    for (let i = 0; i < cells.length; i++){
+      if (cells.cells[i].handleSH == handle) {
+        cells.cells[i].updateDataSH(this.value());
+      }
+    }
+  }
 }
-function newPresentationInput(data, myId){
+
+function newPresentationInput(data, myId, width){
   myInput = createInput(String(data));
   myInput.input(presUpdateData);
   myInput.id(myId);
+  myInput.size(width, AUTO);
   return myInput;
 }
 
@@ -527,7 +539,7 @@ function createPresentationDiv(){
         if (cells.layoutArray[i][j].length > 1) {
           let myId = parseInt(cells.layoutArray[i][j][1]);
           let data = cells.cells[myId].dataSHasType['string'];
-          myNewInput = newPresentationInput(data, myId);
+          myNewInput = newPresentationInput(data, myId, 70);
           myNewInput.parent(newCol);
         }
       }

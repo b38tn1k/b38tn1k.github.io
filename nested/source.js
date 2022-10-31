@@ -101,6 +101,6 @@ function draw() {
   for (let i = 0; i < textDiv.elt.scrollTop/50; i++) {
     let px = random(0, windowWidth);
     let py = random(0, windowHeight);
-    point(px, py);
+    square(px, py, 1);
   }
 }

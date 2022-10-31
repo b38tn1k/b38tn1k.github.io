@@ -58,7 +58,7 @@ function createPresentation() {
   setTidyFlag();
 }
 
-function exitPresentationMode() {
+function exitPresentationMode(copied = false) {
   if (tutorial == false){
     hideMenu = false;
     presCreationMode = false;
@@ -71,6 +71,10 @@ function exitPresentationMode() {
     runMode = RM_NORMAL;
     redrawCounter = 4;
     cells.updateView(xPos, yPos, true);
+    if (copied == true) {
+      cells.cells[1].indexLabeldiv.html('<br>copied link to clipboard<br>', true);
+      // controller.d_print('copied link to clipboard');
+    }
   }
   doMouseDrag = false;
 }
@@ -78,7 +82,7 @@ function exitPresentationMode() {
 function sharePresentation() {
   shareLinkString = pres.putInAddyBar(true);
   let scriptLink = shareLinkString.replace('#', '##');
-  exitPresentationMode();
+  exitPresentationMode(true);
   copyToClipboard(scriptLink);
   // window.open(scriptLink);
   doMouseDrag = false;

@@ -80,6 +80,8 @@ function setup() {
     presentationMode = true;
     // autoStart = true;
     runMode = RM_PRESENT;
+    let bd = select('body');
+    bd.removeClass('noselect')
   }
   pixelDensity(1);
   mainDiv = document.getElementById('main');

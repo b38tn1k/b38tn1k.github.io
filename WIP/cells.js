@@ -303,6 +303,7 @@ class Cells {
       myURL = myURL.slice(0, myURL.indexOf('#'));
     }
     let myJSONString = JSON.stringify(this.saveCells(smaller))
+    console.log(myJSONString);
     if (this.createMode == true) {
       this.presBackup['layout'] = this.getLayoutArray();
       myJSONString = JSON.stringify(this.presBackup);

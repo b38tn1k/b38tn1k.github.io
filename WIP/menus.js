@@ -574,3 +574,17 @@ function addToPresentation(myString, div) {
     presentationDivs['console'].elt.scrollTop = 1000 * presentationDivs['console'].html().length;
   }
 }
+
+function restyleMenuDiv(){
+  myDivs['menu'].style('background-color', 'DimGray');
+  myDivs['menu'].style('padding', '10px');
+  myDivs['menu'].style('outline', '1px solid black');
+  if (myDivs['menu'].size().height > windowHeight - 50){
+    let newHeight = windowHeight - 50;
+    myDivs['menu'].size(null, newHeight);
+  } else {
+    myDivs['menu'].size(null, null);
+  }
+  myDivs['menu'].style('overflow', "auto");
+  myDivs['menu'].position(10, 10);
+}

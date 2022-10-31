@@ -80,7 +80,8 @@ function setupScreen() {
   scrollThresh = scrollIncrement;
   stroke('#00FF41');
   fill('#00FF41');
-  strokeWeight(pixelDensity()*2);
+  // strokeWeight(pixelDensity()*2);
+  strokeWeight(1);
   // console.log(textDiv.elt.scrollHeight, textDiv.elt.scrollTop, textDiv.elt.scrollHeight - windowHeight)
 }
 

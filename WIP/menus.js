@@ -10,7 +10,7 @@ function shareLink() {
   myDivs['shareLink'].style('overflow', "auto");
   myDivs['shareLink'].position((windowWidth/2) - (w/2), 40);
   myDivs['shareLink'].show();
-  addButtonToDiv('share project', 1, shareProject, myDivs['shareLink'], 'header');
+  addButtonToDiv('copy project link', 1, shareProject, myDivs['shareLink'], 'header');
   addButtonToDiv('create presentation', 1, createPresentation, myDivs['shareLink'], 'header');
   addButtonToDiv('cancel', 1, cancelShare, myDivs['shareLink']);
   // noClickZone = [10, myDivs['menu'].size().width + 10, windowHeight - 2* myDivs['menu'].size().height, windowHeight];
@@ -50,8 +50,9 @@ function createPresentation() {
   myDivs['presTools'].show();
   hideMenu = true;
   myDivs['menu'].hide();
-  addButtonToDiv('share presentation', 1, sharePresentation, myDivs['presTools']);
+  addButtonToDiv('copy link', 1, sharePresentation, myDivs['presTools']);
   addButtonToDiv('origin', 13, imlost, myDivs['presTools']);
+  addButtonToDiv('tidy', 13, setTidyFlag, myDivs['presTools']);
   addButtonToDiv('back', 1, exitPresentationMode, myDivs['presTools']);
   pres.cleanForCreateMode();
   setTidyFlag();
@@ -70,7 +71,6 @@ function exitPresentationMode() {
     runMode = RM_NORMAL;
     redrawCounter = 4;
     cells.updateView(xPos, yPos, true);
-    console.log('ok');
   }
   doMouseDrag = false;
 }
@@ -79,8 +79,8 @@ function sharePresentation() {
   shareLinkString = pres.putInAddyBar(true);
   let scriptLink = shareLinkString.replace('#', '##');
   exitPresentationMode();
-  console.log(scriptLink);
-  window.open(scriptLink);
+  copyToClipboard(scriptLink);
+  // window.open(scriptLink);
   doMouseDrag = false;
 }
 
@@ -88,7 +88,8 @@ function shareProject() {
   jlog('Main', 'shareProject');
   shareLinkString = cells.putInAddyBar();
   cancelShare();
-  window.open(shareLinkString);
+  copyToClipboard(shareLinkString);
+  // window.open(shareLinkString);
 }
 
 function showHideBlockMenu() {

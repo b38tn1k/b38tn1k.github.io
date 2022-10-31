@@ -85,7 +85,6 @@ function colorSetup() {
 function saveCells(wip=false) {
   jlog('Main', 'saveCells');
   let map = cells.saveCells();
-  console.log(JSON.stringify(map));
   let name = 'demo' + String(demos.length) + '.json';
   if (wip == true) {
     name = 'wip-demo.json'
@@ -94,10 +93,27 @@ function saveCells(wip=false) {
   setTidyFlag();
 }
 
+function copyToClipboard(myString) {
+  // console.log(myString); //stolen from tutorial
+  // Create new element
+   var el = document.createElement('textarea');
+   // Set value (string to be copied)
+   el.value = myString;
+   // Set non-editable to avoid focus and move outside of view
+   el.setAttribute('readonly', '');
+   el.style = {position: 'absolute', left: '-9999px'};
+   document.body.appendChild(el);
+   // Select text inside element
+   el.select();
+   // Copy text to clipboard
+   document.execCommand('copy');
+   // Remove temporary element
+   document.body.removeChild(el);
+   controller.d_print('copied link to clipboard');
+}
+
 function loadBackup() {
   jlog('Main', 'loadBackup');
-  // console.log(backupObject);
-
   let consoleTextLabel = cells.cells[1].indexLabeldiv.html();;
   let lineNumber = cells.cells[1].lineNumber;
   let currentLayout = cells.saveCells();
@@ -212,7 +228,6 @@ function showAll() {
 
 function drawGrid() {
   jlog('Main', 'drawGrid');
-  // console.log(xPos, yPos);
   for (let x = 0; x < windowWidth; x+=bgGrid.width) {
     for (let y = 0; y < windowHeight; y+= bgGrid.height) {
       image(bgGrid, x + xPos%20, y + yPos%20);

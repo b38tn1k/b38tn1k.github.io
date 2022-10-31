@@ -40,7 +40,6 @@ class Cells {
     this.cellsInView = [];
     this.cells = [];
     this.createMode = false;
-    console.log(this.length);
     // make this have memory later
   }
 
@@ -213,7 +212,6 @@ class Cells {
     for (let i = 0; i < this.length; i++) {
       snapshot[i] = {};
       if (smaller == false) {
-        // console.log('smaller is false');
         snapshot[i]['x'] = int(this.cells[i].x);
         snapshot[i]['y'] = int(this.cells[i].y);
         if (i == 1){
@@ -224,8 +222,6 @@ class Cells {
         snapshot[i]['L'] = this.cells[i].indexLabeldiv.html();
         snapshot[i]['h'] = this.cells[i].hide;
         snapshot[i]['s'] = this.cells[i].shrink;
-      } else {
-        // console.log('smaller is true');
       }
       snapshot[i]['t'] = this.cells[i].type;
       snapshot[i]['d'] = this.cells[i].dataSH;
@@ -303,14 +299,11 @@ class Cells {
       myURL = myURL.slice(0, myURL.indexOf('#'));
     }
     let myJSONString = JSON.stringify(this.saveCells(smaller))
-    console.log(myJSONString);
     if (this.createMode == true) {
       this.presBackup['layout'] = this.getLayoutArray();
       myJSONString = JSON.stringify(this.presBackup);
     }
     let myString = myURL + '#' + encodeURIComponent(myJSONString);
-    console.log(myString);
-    // console.log(myString.length);
     return myString;
   }
 
@@ -663,7 +656,6 @@ class Cells {
           this.cells[i].childIndicies[j] = newCI;
         }
       }
-      // console.log('made it this far')// nope
       // recreate the cell list
       let newCells = [];
       for (let i = 0; i < map.length; i++) {
@@ -815,11 +807,6 @@ class Cells {
 
     // release
     if (mdown === false && this.cells[this.activeIndex].mode == M_MOVE) {
-      // if (pMoveIndexes.length != 0) {
-      //   for (let i = 0; i < pMoveIndexes.length; i++) {
-      //     console.log(this.cells[pMoveIndexes[i]].textLabel);
-      //   }
-      // }
       // create parent/child link and initial align
       if (pParentIndexes.length != 0) {
         // make parent trees

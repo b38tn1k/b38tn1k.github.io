@@ -13,6 +13,8 @@ sitemap:
 
 It's November. Let's make something.
 
+https://b38tn1k.com/november/
+
 {% for pst in site.posts %}
 {% if pst.tags contains 'gameprogress' %}
 <h3> {{ pst.title }} </h3>

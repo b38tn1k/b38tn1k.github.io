@@ -5,17 +5,16 @@ class MobileJStick {
     this.g = createGraphics(w, h);
     this.bg = createGraphics(w, h);
     this.fg = createGraphics(w, h);
-    this.jsX = 0.85*w;
-    this.jsY = 0.8*h;
-    this.jsR = 0.3 * min(w, h);
-    this.jsRm = 0.5 * this.jsR;
+    let jsX = 0.85*w;
+    let jsY = 0.8*h;
+    let jsR = 0.3 * min(w, h);
+    let jsRm = 0.5 * jsR;
     this.bg.fill(gColors[3]);
     this.bg.noStroke();
-    this.bg.circle(this.jsX, this.jsY, this.jsR); // make this images eventually maybe
+    this.bg.circle(jsX, jsY, jsR); // make this images eventually maybe
     this.fg.fill(gColors[4]);
     this.fg.noStroke();
-    this.fg.circle(this.jsX, this.jsY, this.jsRm);
-
+    this.fg.circle(jsX, jsY, jsRm);
   }
   update() {
     this.g.image(this.bg, 0, 0);

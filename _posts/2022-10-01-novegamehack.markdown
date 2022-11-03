@@ -2,7 +2,7 @@
 layout: post
 title:  "November Game Hack"
 date:   2022-10-01
-categories: [code, fun]
+categories: [code, fun, game, november]
 comments: True
 sitemap:
   lastmod: 2022-10-02

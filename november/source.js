@@ -37,13 +37,11 @@ function setupScreen() {
     gGraphics['base']['g'] = createGraphics(max(width, height), min(width, height));
     gGraphics['base']['rot'] = (width < height ? radians(90) : 0);
     gGraphics['base']['trans'] = (width < height ? [height/2, (-width)/2] : [width/2, height/2]);
-    updateAbles['mobileJStick'] = new MobileJStick(gGraphics['base']['g'].width, gGraphics['base']['g'].height);
   } else {
     gGraphics['base'] = {};
     gGraphics['base']['g'] = createGraphics(width, height);
     gGraphics['base']['rot'] = 0;//radians(90);
     gGraphics['base']['trans'] = [width/2, height/2];
-    updateAbles['mobileJStick'] = new MobileJStick(gGraphics['base']['g'].width, gGraphics['base']['g'].height);
   }
   visualUserAgentCheck();
 }

@@ -11,7 +11,7 @@ sitemap:
   exclude: 'yes'
 ---
 
-It's November. Let's make something.
+It's November. Let's make something fun and stop thinking about Untitled Block Thing for a bit. 
 
 [where it's at](https://b38tn1k.com/november/)
 

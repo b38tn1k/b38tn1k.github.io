@@ -13,12 +13,11 @@ sitemap:
 
 It's November. Let's make something.
 
-{% for post in site.posts %}
-{% if post.tags contains 'gameprogress' %}
-  {{ post.title }}
-  <time datetime="{{ page.date | date_to_xmlschema }}" class="post-date">{{ page.date | date_to_string }}</time>
-  {{ content }}
-  {{ post.content }}
+{% for pst in site.posts %}
+{% if pst.tags contains 'gameprogress' %}
+
+  {{ pst.title }} <time datetime="{{ pst.date | date_to_xmlschema }}" class="post-date">{{ pst.date | date_to_string }}</time> 
+  {{ pst.content }}
 
 {% endif %}
 

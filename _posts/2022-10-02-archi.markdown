@@ -1,0 +1,8 @@
+---
+layout: post
+title:  "Architecture"
+date:   2022-10-02
+tags: gameprogress
+---
+
+Kicking it off with something extremely booooring. I am thinking about architecture and drawing pictures. Mobile vs Desktop have different input methods and serving both is always tricky. For this project I want to make it nice and sensible from the start. Rendering has similar challenges, the local vs global coords method I implemented in UBT can be improved upon.

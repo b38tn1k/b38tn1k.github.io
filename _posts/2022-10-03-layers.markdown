@@ -1,0 +1,25 @@
+---
+layout: post
+title:  "Layers & Transforms"
+date:   2022-10-03
+categories: [game, november]
+tags: gameprogress
+---
+I'm probably not gonna post EVERY day of November but it's the start of the project and I'm having fun.
+
+I'm using p5.js (surprise!) and the Renderer/graphics tools they provide to draw on the screen. I also hope to generate at least some visual content assets with code (generative, procedural, etc) and p5 is awesome for that. I will def draw some assets too.
+
+A little 'drawable' class holds a graphic/canvas and related orientation information. A layer handler makes sure they all get rendered in the right order; birds above trees above dirt... Using layers like this also simplifies some of the rotation / transform stuff I have to do. I want the game to be played in landscape[^1] and rotating complete rendered layers on mobile[^2] is easier than tryna draw everything sideways, or trying to work with portrait ratio.
+
+A transform class helps with geometry, it's only 90deg rotation sometimes so the math is simple. User input is clicks and presses, relationships between 'input screen space' and 'layer space' hasn't create any headaches yet.
+
+Something I learned today, p5 push() and pop() pixel operations only seem to work on the default/base-layer canvas, so smooth rotation animations will either have to be animated or drawn on the default canvas, not a major issue.
+
+Something else I learned today, my goal of more but shorter .js files is sorta a pain for HTML rendering. The 'async' tag with script is helping, but some squishing and minifying may be required in the future.
+
+At the end of the day I tried make a fun little screen border, the pixel pattern can be a little wonky. Will fix when I get to art.
+
+
+[^1]: JRPG + Cormac McCarthy  + sad apocalyptic cowboy movie is the current vibe. And cowboys are filmed in landscape.
+
+[^2]: Forcing orientation in mobile is a bit of a no-no as I understand it, but this is a creative thing so it ok.

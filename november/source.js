@@ -30,18 +30,22 @@ function mousePressed() {
 }
 
 function setupScreen() {
-
   resizeCanvas(windowWidth, windowHeight);
-  if (isTouchDevice() === true){
-    gGraphics['base'] = createGraphics(max(width, height), min(width, height));
-    gGraphics['base-rotate'] = (width < height ? radians(90) : 0);
-    console.log(width, height, gGraphics['base'].width, gGraphics['base'].height)
-    gGraphics['base-translate'] = (width < height ? [height/2, (-width)/2] : [width/2, height/2]);
+  checkIsTouchDevice();
+  if (isTouchDevice === true){
+    gGraphics['base'] = {}
+    gGraphics['base']['g'] = createGraphics(max(width, height), min(width, height));
+    gGraphics['base']['rot'] = (width < height ? radians(90) : 0);
+    gGraphics['base']['trans'] = (width < height ? [height/2, (-width)/2] : [width/2, height/2]);
+    updateAbles['mobileJStick'] = new MobileJStick(gGraphics['base']['g'].width, gGraphics['base']['g'].height);
   } else {
-    gGraphics['base'] = createGraphics(width, height);
-    gGraphics['base-rotate'] = 0;//radians(90);
-    gGraphics['base-translate'] = [width/2, height/2];
+    gGraphics['base'] = {};
+    gGraphics['base']['g'] = createGraphics(width, height);
+    gGraphics['base']['rot'] = 0;//radians(90);
+    gGraphics['base']['trans'] = [width/2, height/2];
+    updateAbles['mobileJStick'] = new MobileJStick(gGraphics['base']['g'].width, gGraphics['base']['g'].height);
   }
+  visualUserAgentCheck();
 }
 
 function preload() {
@@ -65,18 +69,23 @@ function setup() {
 function draw() {
   if (gUpdated == true) {
     clear();
-    drawTestPattern(gGraphics['base']);
   }
-  if (isTouchDevice() === true){
-    bigCText('MOBILE-ISH', 64, gGraphics['base']);
-  } else {
-    bigCText('NOT MOBILE', 64, gGraphics['base']);
+  // update updateables
+  for (let key in updateAbles) {
+    updateAbles[key].update();
   }
 
-  // draw graphic layers
+  // draw graphic layers to base
+  for (let key in updateAbles) {
+    if ('drawable' in updateAbles[key]) {
+      gGraphics['base']['g'].image(updateAbles[key].g, 0, 0);
+    }
+  }
+
+  // draw base layer
   push();
-  rotate(gGraphics['base-rotate']);
-  translate(gGraphics['base-translate'][0], gGraphics['base-translate'][1]);
-  image(gGraphics['base'], 0, 0);
+  rotate(gGraphics['base']['rot']);
+  translate(gGraphics['base']['trans'][0], gGraphics['base']['trans'][1]);
+  image(gGraphics['base']['g'], 0, 0);
   pop();
 }

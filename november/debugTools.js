@@ -18,3 +18,12 @@ function drawTestPattern(canvas) {
   canvas.circle(canvas.width/2, canvas.height/2, 20);
   canvas.circle(0, canvas.height, 20);
 }
+
+function visualUserAgentCheck(){
+  drawTestPattern(gGraphics['base']['g']);
+  if (isTouchDevice === true){
+    bigCText('MOBILE-ISH', 64, gGraphics['base']['g']);
+  } else {
+    bigCText('NOT MOBILE', 64, gGraphics['base']['g']);
+  }
+}

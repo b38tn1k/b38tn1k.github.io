@@ -15,10 +15,8 @@ It's November. Let's make something.
 
 {% for pst in site.posts %}
 {% if pst.tags contains 'gameprogress' %}
-
-  {{ pst.title }} <time datetime="{{ pst.date | date_to_xmlschema }}" class="post-date">{{ pst.date | date_to_string }}</time> 
-  {{ pst.content }}
-
+<h3> {{ pst.title }} </h3>
+<time datetime="{{ pst.date | date_to_xmlschema }}" class="post-date">{{ pst.date | date_to_string }}</time>
+{{ pst.content }}
 {% endif %}
-
 {% endfor %}

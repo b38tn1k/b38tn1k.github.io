@@ -6,7 +6,15 @@ function bigCText(myString, size = 64, canvas=gGraphics['canvas'], c=gColors[10]
   } else {
     canvas.fill(c);
   }
-  let y = (windowHeight - size)/2;
-  let x = (windowWidth - canvas.textWidth(myString))/2;
-  canvas.text(myString, x, y);
+  canvas.textAlign(CENTER, CENTER);
+  canvas.text(myString, canvas.width/2, canvas.height/2);
+}
+
+function drawTestPattern(canvas) {
+  canvas.fill(gColors[42]);
+  canvas.circle(0, 0, 20);
+  canvas.circle(canvas.width, 0, 20);
+  canvas.circle(canvas.width, canvas.height, 20);
+  canvas.circle(canvas.width/2, canvas.height/2, 20);
+  canvas.circle(0, canvas.height, 20);
 }

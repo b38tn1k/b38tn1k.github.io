@@ -30,13 +30,17 @@ function mousePressed() {
 }
 
 function setupScreen() {
+
   resizeCanvas(windowWidth, windowHeight);
   if (isTouchDevice() === true){
-    gGraphics['base'] = createGraphics(max(windowWidth, windowHeight), min(windowWidth, windowHeight));
-    gGraphics['base-transform'] = windowWidth > windowHeight ? radians(90) : 0;
+    gGraphics['base'] = createGraphics(max(width, height), min(width, height));
+    gGraphics['base-rotate'] = (width < height ? radians(90) : 0);
+    console.log(width, height, gGraphics['base'].width, gGraphics['base'].height)
+    gGraphics['base-translate'] = (width < height ? [height/2, (-width)/2] : [width/2, height/2]);
   } else {
-    gGraphics['base'] = createGraphics(windowWidth, windowHeight);
-    gGraphics['base-transform'] = 0;
+    gGraphics['base'] = createGraphics(width, height);
+    gGraphics['base-rotate'] = 0;//radians(90);
+    gGraphics['base-translate'] = [width/2, height/2];
   }
 }
 
@@ -54,18 +58,25 @@ function unpackColors(c) {
 function setup() {
   gGraphics['canvas'] = createCanvas(0, 0, P2D);
   setupScreen();
+  imageMode(CENTER);
+  pixelDensity(1);
 }
 
 function draw() {
+  if (gUpdated == true) {
+    clear();
+    drawTestPattern(gGraphics['base']);
+  }
   if (isTouchDevice() === true){
-    bigCText('MOBILE TOUCH DEVICE', 64, gGraphics['base']);
+    bigCText('MOBILE-ISH', 64, gGraphics['base']);
   } else {
     bigCText('NOT MOBILE', 64, gGraphics['base']);
   }
 
   // draw graphic layers
   push();
-  rotate(gGraphics['base-transform']);
+  rotate(gGraphics['base-rotate']);
+  translate(gGraphics['base-translate'][0], gGraphics['base-translate'][1]);
   image(gGraphics['base'], 0, 0);
   pop();
 }

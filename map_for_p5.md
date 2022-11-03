@@ -24,6 +24,8 @@ title: internal_map
     {{ post.content }}
     enddemo
 
+    {% if post.tags contains 'gameprogress' %}
+
     {% else %}
 
     startpost

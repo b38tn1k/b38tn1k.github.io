@@ -1,0 +1,21 @@
+---
+layout: post
+title:  "November Game Hack"
+date:   2022-10-01
+categories: [code, game, November]
+comments: True
+sitemap:
+  lastmod: 2022-10-02
+  priority: 0.7
+  changefreq: 'monthly'
+  exclude: 'yes'
+---
+
+It's November. Let's make something.
+
+{% for post in site.posts %}
+{% if post.tags contains 'gameprogress' %}
+  link {{ post.url }}
+{% endif %}
+
+{% endfor %}

@@ -1,0 +1,13 @@
+---
+layout: post
+title:  "Architecture"
+date:   2022-10-02
+categories: [code, game, November]
+tags: gameprogress
+comments: True
+sitemap:
+  lastmod: 2022-10-02
+  priority: 0.2
+  changefreq: 'monthly'
+  exclude: 'yes'
+---

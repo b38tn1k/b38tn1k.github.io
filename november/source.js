@@ -11,10 +11,13 @@ function setupScreen() {
   gUpdated = true;
   gTransforms = new Transforms(checkIsTouchDevice());
   gGLayers = new LayerHandler(gTransforms);
+  gInputs = new InputHandler(gTransforms);
+  gDebugTools = new DebugTools();
   gGLayers.clear();
-  visualUserAgentCheck();
-  visualCheckLayers(true);
-
+  drawBase(gGLayers);
+  drawBorder(gGLayers);
+  // visualUserAgentCheck();
+  // visualCheckLayers(true);
 }
 
 function preload() {
@@ -31,12 +34,13 @@ function setup() {
   createCanvas(0, 0, P2D);
   setupScreen();
   imageMode(CENTER);
+  rectMode(CENTER);
   pixelDensity(1);
 }
 
 function draw() {
-  if (gUpdated == true) {
-    gGLayers.draw();
-    gUpdated = false;
-  }
+  clear();
+  gInputs.update();
+  gGLayers.draw();
+  visualCheckInputs(gInputs);
 }

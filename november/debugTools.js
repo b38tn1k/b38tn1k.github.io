@@ -1,3 +1,19 @@
+class DebugTools {
+  constructor() {
+    let tri = createGraphics(25, 20);
+    tri.fill(gColors[52]);
+    tri.noStroke();
+    tri.triangle(0, tri.height/2, tri.width * 0.8, tri.height/2, tri.width, 0);
+    tri.triangle(0, tri.height/2, tri.width * 0.8, tri.height/2, tri.width, tri.height);
+    this.compass = createGraphics(50, 50);
+    this.compass.fill(gColors[3]);
+    this.compass.strokeWeight(3);
+    this.compass.stroke(gColors[30]);
+    this.compass.circle(25, 25, 45);
+    this.compass.imageMode(CENTER);
+    this.compass.image(tri, 25, 25);
+  }
+};
 
 function bigCText(myString, size = 64, canvas=gGLayers.base.g, c=gColors[10]) {
   canvas.textSize(size);
@@ -65,4 +81,22 @@ function visualCheckLayers(addFakes = false) {
     gGLayers.base.g.textSize(ts);
     gGLayers.base.g.text(gGLayers.getLayerName(i), x, y);
   }
+}
+
+function visualCheckInputs(myInp) {
+  if (myInp.on == true) {
+    fill(gColors[22]);
+  } else {
+    fill(gColors[12]);
+  }
+  push();
+  let x = gTransforms.w - 100;
+  let y = gTransforms.h - 70;
+  // [x, y] = [100, 100];
+  [x, y] = gTransforms.transformCart(x, y);
+  translate(x, y);
+  rotate(myInp.angleTo(x, y))
+  image(gDebugTools.compass, 0, 0);
+  pop();
+
 }

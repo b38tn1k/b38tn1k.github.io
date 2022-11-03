@@ -25,6 +25,7 @@ class LayerHandler {
       this.layers.splice(level, 0, newLayer);
       this.layerMap[name] = level;
     }
+    return this.getLayer(name);
   }
 
   getLayerName(index) {
@@ -42,7 +43,6 @@ class LayerHandler {
   }
 
   clear() {
-    clear();
     this.base.g.clear();
   }
 

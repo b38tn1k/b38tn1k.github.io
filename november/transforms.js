@@ -16,6 +16,19 @@ class Transforms {
     }
   }
 
+  angleTo(xO, yO, xT, yT) {
+    let dx = xO - xT;
+    let dy = yO - yT;
+    return atan2(dy, dx);
+  }
+
+  transformCart(x, y) {
+    if (this.rot != 0){ // then it equals radians(90)
+      [x, y] = [this.h - y, x];
+    }
+    return [x, y];
+  }
+
   get fullScreenGraphicDims() {
     return [this.w, this.h, this.rot, this.tx, this.ty];
   }

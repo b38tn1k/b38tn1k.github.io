@@ -2,7 +2,6 @@
 layout: post
 title:  "Architecture"
 date:   2022-10-02
-categories: [code, game, November]
 tags: gameprogress
 comments: True
 sitemap:

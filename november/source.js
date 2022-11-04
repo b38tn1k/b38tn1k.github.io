@@ -14,14 +14,18 @@ function setupScreen() {
   gInputs = new InputHandler(gTransforms);
   gDebugTools = new DebugTools();
   gGLayers.clear();
-  drawBase(gGLayers);
-  drawBorder(gGLayers);
+
+  addSprite();
+  drawBorder();
+  drawRoad();
   // visualUserAgentCheck();
   // visualCheckLayers(true);
 }
 
 function preload() {
   let c = loadStrings('NES.hex', function(){for (let i = 0; i < c.length; i++) {gColors.push(color('#' + c[i]));};});
+  gLoaders['dumsprite'] = loadImage('assets/dummysprite.png');
+
 }
 
 function unpackColors(c) {
@@ -40,7 +44,9 @@ function setup() {
 
 function draw() {
   clear();
+  gGLayers.clear();
   gInputs.update();
   gGLayers.draw();
-  visualCheckInputs(gInputs);
+  let a = visualCheckInputs();
+  updateSpritePos();
 }

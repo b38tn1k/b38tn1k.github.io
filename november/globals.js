@@ -4,4 +4,5 @@ var gTransforms;
 var gInputs;
 var gDebugTools;
 var gColors = []; // alwayyyys
+var gLoaders = {};
 var gUpdated = true; //control FPS when I get there

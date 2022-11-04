@@ -1,23 +1,23 @@
 class DebugTools {
   constructor() {
     let tri = createGraphics(25, 20);
-    tri.fill(gColors[52]);
+    tri.fill(G.colors[52]);
     tri.noStroke();
     tri.triangle(0, tri.height/2, tri.width * 0.8, tri.height/2, tri.width, 0);
     tri.triangle(0, tri.height/2, tri.width * 0.8, tri.height/2, tri.width, tri.height);
     this.compass = createGraphics(50, 50);
-    this.compass.fill(gColors[3]);
+    this.compass.fill(G.colors[3]);
     this.compass.strokeWeight(3);
-    this.compass.stroke(gColors[30]);
+    this.compass.stroke(G.colors[30]);
     this.compass.circle(25, 25, 45);
     this.compass.imageMode(CENTER);
     this.compass.image(tri, 25, 25);
-    this.compassx = gTransforms.w - 100;
-    this.compassy = gTransforms.h - 70;
+    this.compassx = G.inputs.originX;
+    this.compassy = G.inputs.originY;
   }
 };
 
-function bigCText(myString, size = 64, canvas=gGLayers.base.g, c=gColors[10]) {
+function bigCText(myString, size = 64, canvas, c=G.colors[10]) {
   canvas.textSize(size);
   if ( String(canvas.elt.id).includes('defaultCanvas')) {
     fill(c);
@@ -28,15 +28,15 @@ function bigCText(myString, size = 64, canvas=gGLayers.base.g, c=gColors[10]) {
   canvas.text(myString, canvas.width/2, canvas.height/2);
 }
 
-function drawTestPattern(canvas=gGLayers.base.g) {
+function drawTestPattern(canvas) {
   canvas.noStroke();
-  canvas.fill(gColors[22]);
+  canvas.fill(G.colors[22]);
   canvas.circle(0, 0, 40);
   canvas.circle(canvas.width, 0, 40);
   canvas.circle(canvas.width, canvas.height, 40);
   canvas.circle(canvas.width/2, canvas.height/2, 40);
   canvas.circle(0, canvas.height, 40);
-  canvas.fill(gColors[42]);
+  canvas.fill(G.colors[42]);
   canvas.circle(0, 0, 20);
   canvas.circle(canvas.width, 0, 20);
   canvas.circle(canvas.width, canvas.height, 20);
@@ -44,7 +44,7 @@ function drawTestPattern(canvas=gGLayers.base.g) {
   canvas.circle(0, canvas.height, 20);
 }
 
-function visualUserAgentCheck(canvas=gGLayers.base.g){
+function visualUserAgentCheck(canvas){
   drawTestPattern(canvas);
   if (checkIsTouchDevice() === true){
     bigCText('MOBILE-ISH', 64, canvas);
@@ -55,67 +55,59 @@ function visualUserAgentCheck(canvas=gGLayers.base.g){
 
 function visualCheckLayers(addFakes = false) {
   if (addFakes == true) {
-    gGLayers.newLayer(0, 'L3');
-    gGLayers.newLayer(0, 'L2');
-    gGLayers.newLayer(2, 'L4');
-    gGLayers.newLayer(0, 'L0');
-    gGLayers.newLayer(1, 'L1');
+    G.gLayers.newLayer(0, 'L3');
+    G.gLayers.newLayer(0, 'L2');
+    G.gLayers.newLayer(2, 'L4');
+    G.gLayers.newLayer(0, 'L0');
+    G.gLayers.newLayer(1, 'L1');
   }
   let x = 100;
   let y = 100;
   let r = 50;
   let ts = 32;
   let c = 10;
-  gGLayers.base.g.fill(gColors[c]);
-  gGLayers.base.g.circle(x, y, r);
-  gGLayers.base.g.fill(gColors[c + 10]);
-  gGLayers.base.g.textAlign(CENTER, CENTER);
-  gGLayers.base.g.textSize(ts);
-  gGLayers.base.g.text('B', x, y);
-  for (let i = 0; i < gGLayers.layers.length; i++) {
+  for (let i = 0; i < G.gLayers.layers.length; i++) {
     y += 40;
     c += 2;
-    let myL = gGLayers.layers[i]
-    gGLayers.base.g.fill(gColors[c]);
-    gGLayers.base.g.circle(x, y, r);
-    gGLayers.base.g.fill(gColors[c + 10]);
-    gGLayers.base.g.textAlign(CENTER, CENTER);
-    gGLayers.base.g.textSize(ts);
-    gGLayers.base.g.text(gGLayers.getLayerName(i), x, y);
+    let myL = G.gLayers.layers[i]
+    G.gLayers.layers[i].g.fill(G.colors[c]);
+    G.gLayers.layers[i].g.circle(x, y, r);
+    G.gLayers.layers[i].g.fill(G.colors[c + 10]);
+    G.gLayers.layers[i].g.textAlign(CENTER, CENTER);
+    G.gLayers.layers[i].g.textSize(ts);
+    G.gLayers.layers[i].g.text(G.gLayers.getLayerName(i), x, y);
   }
 }
 
-function visualCheckInputs(myInp=gInputs) {
+function visualCheckInputs(myInp=G.inputs) {
   if (myInp.on == true) {
-    fill(gColors[22]);
+    fill(G.colors[22]);
   } else {
-    fill(gColors[12]);
+    fill(G.colors[12]);
   }
   push();
-  let [x, y] = [gDebugTools.compassx, gDebugTools.compassy];
-  // [x, y] = [100, 100];
-  [x, y] = gTransforms.transformCart(x, y);
+  let [x, y] = [G.debugTools.compassx, G.debugTools.compassy];
   translate(x, y);
   rotate(myInp.angleTo(x, y))
-  image(gDebugTools.compass, 0, 0);
+  image(G.debugTools.compass, 0, 0);
   pop();
   return myInp.angleTo(x, y);
 }
 
 function drawRoad(){
   // make the world brown and sad looking;
-  let r = gGLayers.newLayer(0, 'road');
-  r.g.background(gColors[36]);
+  let r = G.gLayers.newLayer(0, 'road');
+  r.g.background(G.colors[36]);
   // add a road
-  r.g.fill(gColors[35]);
+  r.g.fill(G.colors[35]);
   r.g.noStroke();
   r.g.rectMode(CENTER);
-  r.g.rect(gGLayers.base.g.width/2, gGLayers.base.g.height/2, 7*gGLayers.base.g.width/12, gGLayers.base.g.height * 2);
+  r.g.rect(G.dims.cx, G.dims.cy, 7*G.dims.w/12, G.dims.h * 2);
 }
 
 function drawBorder() {
-  let b = gGLayers.newLayer(0, 'border');
-  b.g.fill(gColors[0]);
+  let b = G.gLayers.newLayer(0, 'border');
+  b.g.fill(G.colors[0]);
   b.g.noStroke();
   b.g.rectMode(CENTER);
   let r = 5;
@@ -154,59 +146,35 @@ function drawBorder() {
   }
 }
 
-function addSprite(sprt = gLoaders['dumsprite']){
-  let ml = gGLayers.newLayer(0, 'sprite');
-  ml.g = sprt;
-  [ml.tx, ml.ty] = gTransforms.transformCart((gTransforms.w - ml.g.width)/2, 3*gTransforms.h/4);
-  ml = gGLayers.newLayer(0, 'spritesays');
-  [ml.tx, ml.ty] = gTransforms.transformCart((gTransforms.w)/2, 3*gTransforms.h/4);
-  ml.ty -= 20;
-  ml.g.textAlign(LEFT, TOP);
-  ml.g.textSize(12);
-}
-
-function updateSpritePos(myInp=gInputs) {
+function updateSpritePos(myInp=G.inputs) {
   if (myInp.on == true) {
-    let [x, y] = [gDebugTools.compassx, gDebugTools.compassy];
-    // [x, y] = [100, 100];
-    [x, y] = gTransforms.transformCart(x, y);
-    let a = myInp.angleTo(x, y);
-    if (a > PI) {
-      a -= PI;
+    testSprite.play = true;
+    let uv = G.inputs.getUnitVectorFromOrigin();
+    let speed = 0.3;
+    if (testSprite.isMoveFrame() == true) {
+      testSprite.tx += uv[0] * speed;//-= cos(a) * 0.5;
+      testSprite.ty += uv[1]  * speed;//-= sin(a) * 0.5;
     }
-    let ml = gGLayers.getLayer('sprite');
-    let sps = gGLayers.getLayer('spritesays');
-    sps.tx = ml.tx;
-    sps.ty = ml.ty - 20;
-    sps.g.clear();
-    //7*gGLayers.base.g.width/12
-    if (a < 0) {
-      sps.g.text('I\'m sorry, I can\'t go back', 0, 0);
-      // console.log('I\'m sorry, I can\'t go back');
-    } else {
-      ml.tx -= cos(a) * 0.5;
-      ml.ty -= sin(a) * 0.5;
-      // ml.tx =( a * 7*gGLayers.base.g.width/12) + (5 * gGLayers.base.g.width/24) - ml.g.width/2;
-    }
+  } else {
+    testSprite.stopAtOne = true;
   }
 }
 
 function vignette(){
-  let vg = gGLayers.newLayer(0, 'vignette');
+  let vg = G.gLayers.newLayer(100, 'vignette');
   vg.g.noFill();
+  vg.g.strokeWeight(1);
   let c1 = color(0, 0, 0, 0);
-  let c2 = color(0, 0, 0, 255);
+  let c2 = color(255, 0, 0, 255);
   let border = 1.1;
-  let w = gGLayers.w * border;
-  let h = gGLayers.h * border;
-  let br = min(w, h) / max(gGLayers.w, gGLayers.h);
-  while (min(w, h) < max(gGLayers.w, gGLayers.h)) {
-    let ratio = (min(w, h) / max(gGLayers.w, gGLayers.h)) - br;
+  let w = G.dims.w * border;
+  let h = G.dims.h * border;
+  let br = min(w, h) / max(G.dims.w, G.dims.h);
+  while (min(w, h) < max(G.dims.w, G.dims.h)) {
+    let ratio = (min(w, h) / max(G.dims.w, G.dims.h)) - br;
     vg.g.stroke(lerpColor(c1, c2, ratio));
-    vg.g.ellipse(gGLayers.cx, gGLayers.cy, w, h);
+    vg.g.ellipse(G.dims.cx, G.dims.cy, w, h);
     w += 1;
     h += 1;
   }
-
-
 }

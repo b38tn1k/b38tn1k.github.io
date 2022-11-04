@@ -170,7 +170,7 @@ function updateSpritePos(myInp=gInputs) {
     let [x, y] = [gDebugTools.compassx, gDebugTools.compassy];
     // [x, y] = [100, 100];
     [x, y] = gTransforms.transformCart(x, y);
-    let a = myInp.angleTo(x, y) + gTransforms.rot;
+    let a = myInp.angleTo(x, y);
     if (a > PI) {
       a -= PI;
     }

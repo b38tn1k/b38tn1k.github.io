@@ -1,9 +1,8 @@
 class InputHandler {
-  constructor(gTransforms) {
+  constructor() {
     this.x = 0;
     this.y  = 0;
     this.on = false;
-    this.transforms = gTransforms;
   }
   update() {
     this.x = mouseX;

@@ -5,8 +5,14 @@ class Transforms {
       this.w = max(width, height);
       this.h = min(width, height);
       this.rot = (width < height ? radians(90) : 0);
+      this.rot = (width < height ? radians(90) : 0);
       this.tx = (width < height ? height/2 : width/2);
       this.ty = (width < height ?  (-width)/2 : height/2);
+      // this.w = width;
+      // this.h = height;
+      // this.rot = 0;
+      // this.tx = width/2;
+      // this.ty = height/2;
     } else {
       this.w = width;
       this.h = height;
@@ -19,7 +25,11 @@ class Transforms {
   angleTo(xO, yO, xT, yT) {
     let dx = xO - xT;
     let dy = yO - yT;
-    return atan2(dy, dx);
+    let res = atan2(dy, dx);
+    // if (this.rot != 0){ // then it equals radians(90)
+    //   res = PI - res;
+    // }
+    return res
   }
 
   transformCart(x, y) {

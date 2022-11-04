@@ -1,6 +1,10 @@
 class LayerHandler {
   constructor (tf) {
     let [w, h, r, tx, ty] = tf.fullScreenGraphicDims;
+    this.cx = w/2;
+    this.cy = h/2;
+    this.w = w;
+    this.h = h; // these ones are sorta useful for gen stuff / playing
     this.base = new Drawable(w, h, r, tx, ty);
     this.layers = [];
     this.layerMap = {};

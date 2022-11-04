@@ -17,6 +17,7 @@ function setupScreen() {
 
   addSprite();
   drawBorder();
+  vignette();
   drawRoad();
   // visualUserAgentCheck();
   // visualCheckLayers(true);

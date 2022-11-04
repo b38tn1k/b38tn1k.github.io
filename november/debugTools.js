@@ -135,7 +135,7 @@ function drawBorder() {
   let rd = r;
   let v = 0;
   let off = 0;
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < r; i++) {
     for (let i = brv + r/2; i < w; i += 2*r) {
       b.g.square(i + off, brh + r/2 + v, rd);
       b.g.square(i + off, h - (brh + r/2 + v), rd);
@@ -189,4 +189,24 @@ function updateSpritePos(myInp=gInputs) {
       // ml.tx =( a * 7*gGLayers.base.g.width/12) + (5 * gGLayers.base.g.width/24) - ml.g.width/2;
     }
   }
+}
+
+function vignette(){
+  let vg = gGLayers.newLayer(0, 'vignette');
+  vg.g.noFill();
+  let c1 = color(0, 0, 0, 0);
+  let c2 = color(0, 0, 0, 255);
+  let border = 1.1;
+  let w = gGLayers.w * border;
+  let h = gGLayers.h * border;
+  let br = min(w, h) / max(gGLayers.w, gGLayers.h);
+  while (min(w, h) < max(gGLayers.w, gGLayers.h)) {
+    let ratio = (min(w, h) / max(gGLayers.w, gGLayers.h)) - br;
+    vg.g.stroke(lerpColor(c1, c2, ratio));
+    vg.g.ellipse(gGLayers.cx, gGLayers.cy, w, h);
+    w += 1;
+    h += 1;
+  }
+
+
 }

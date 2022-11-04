@@ -1,22 +1,16 @@
 class LayerHandler {
-  constructor (tf) {
-    let [w, h, r, tx, ty] = tf.fullScreenGraphicDims;
-    this.cx = w/2;
-    this.cy = h/2;
-    this.w = w;
-    this.h = h; // these ones are sorta useful for gen stuff / playing
-    this.base = new Drawable(w, h, r, tx, ty);
+  constructor (dims) {
+    let [w, h, r, tx, ty] = dims.fullScreenGraphicDims;
+    this.dims = dims;
     this.layers = [];
     this.layerMap = {};
   }
 
   newLayer(level, name, w=0, h=0, r=0, tx=0, ty=0) {
     if (w == 0) {
-      w=this.base.g.width;
-      h=this.base.g.height;
-      r=this.base.rot;
+      [w, h, r, tx, ty] = this.dims.fullScreenGraphicDims;
     }
-    let newLayer = new Drawable(w, h, r, tx, ty);
+    let newLayer = new Drawable(w, h, r, tx, ty, level);
     if (level > this.layers.length) {
       this.layerMap[name] = this.layers.length;
       this.layers.push(newLayer);
@@ -47,17 +41,19 @@ class LayerHandler {
   }
 
   clear() {
-    this.base.g.clear();
+    for (let i = 0; i < this.layers.length; i++) {
+      console.log(i, this.layers[i], this.getLayerName(i));
+      this.layers[i].clear();
+    }
   }
 
   draw() {
     for (let i = 0; i < this.layers.length; i++) {
-      this.base.g.image(this.layers[i].g, this.layers[i].tx, this.layers[i].ty);
+      push();
+      rotate(this.layers[i].rot);
+      translate(this.layers[i].tx, this.layers[i].ty);
+      image(this.layers[i].g, 0, 0);
+      pop();
     }
-    push();
-    rotate(this.base.rot);
-    translate(this.base.tx, this.base.ty);
-    image(this.base.g, 0, 0);
-    pop();
   }
 }

@@ -1,3 +1,6 @@
+var G;
+var loaders = {};
+
 function deviceTurned() {
   setupScreen();
 }
@@ -6,33 +9,32 @@ function windowResized() {
   setupScreen();
 }
 
+var testSprite;
+
 function setupScreen() {
   resizeCanvas(windowWidth, windowHeight);
-  gUpdated = true;
-  gTransforms = new Transforms(checkIsTouchDevice());
-  gGLayers = new LayerHandler(gTransforms);
-  gInputs = new InputHandler(gTransforms);
-  gDebugTools = new DebugTools();
-  gGLayers.clear();
+  G.updated = true;
+  G.dims = new Dimensions();
+  G.gLayers = new LayerHandler(G.dims);
+  G.inputs = new InputHandler(G.dims.w - 100, G.dims.h - 100);
+  G.debugTools = new DebugTools();
+  G.gLayers.clear();
 
-  addSprite();
+  let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+  testSprite = new Drawable(w, h, r, tx, G.dims.h - 100, 0);
+  testSprite.setAnimation(8, G.loaders['walk'], [0, 4], [1, 2, 3, 5, 6, 7]);
+
+  // visualCheckLayers(true);
   drawBorder();
   vignette();
   drawRoad();
-  // visualUserAgentCheck();
-  // visualCheckLayers(true);
 }
 
 function preload() {
-  let c = loadStrings('NES.hex', function(){for (let i = 0; i < c.length; i++) {gColors.push(color('#' + c[i]));};});
-  gLoaders['dumsprite'] = loadImage('assets/dummysprite.png');
-
-}
-
-function unpackColors(c) {
-  for (let i = 0; i < c.length; i++) {
-    gColors.push(color('#' + c[i]));
-  }
+  G = new Globals();
+  let c = loadStrings('NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
+  G.loaders['dumsprite'] = loadImage('assets/dummysprite.png');
+  G.loaders['walk'] = loadImage('assets/walk2.png');
 }
 
 function setup() {
@@ -45,9 +47,10 @@ function setup() {
 
 function draw() {
   clear();
-  gGLayers.clear();
-  gInputs.update();
-  gGLayers.draw();
+  G.inputs.update();
+  G.gLayers.draw();
+  testSprite.update();
+  image(testSprite.g, testSprite.tx, testSprite.ty);
   let a = visualCheckInputs();
   updateSpritePos();
 }

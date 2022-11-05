@@ -34,7 +34,7 @@ function preload() {
   G = new Globals();
   let c = loadStrings('NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
   G.loaders['dumsprite'] = loadImage('assets/dummysprite.png');
-  G.loaders['walk'] = loadImage('assets/walk2.png');
+  G.loaders['walk'] = loadImage('assets/walk3.png');
 }
 
 function setup() {

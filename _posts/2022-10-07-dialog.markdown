@@ -28,7 +28,7 @@ let selfish = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
 testDialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
 ```
 
-The Dialog class still needs a couple additions - I want a 'decision event trigger' to control some game events.
+The Dialog class still needs a few additions - I want a 'decision event trigger' to control some game events.
 
 I need to make a proper Sprite class soon, grouping drawables and animations with state changing and some other things. Also, an Item and an InventoryHandler class should happen soon, I think it would be fun to be able to save/share inventories between game sessions too; the endgame inventory becoming the starting inventory of the next game.
 

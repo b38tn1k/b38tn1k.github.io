@@ -5,7 +5,7 @@ class Drawable {
     this.ty = ty;
     this.g = createGraphics(w, h);
     this.level = level;
-    this.clearable = true;
+    this.clearable = false;
     this.animate = false;
     this.rate = 0.2;
     this.frames = [];
@@ -17,6 +17,11 @@ class Drawable {
     this.play = false;
     this.stopFrames;
     this.moveFrames;
+    this.tiled = false;
+  }
+
+  setClearable() {
+    this.clearable = true;
   }
 
   clear() {
@@ -30,6 +35,7 @@ class Drawable {
   }
 
   setAnimation(frames, spriteSheet, stopFrames=[0], moveFrames = 0) {
+    this.setClearable();
     if (moveFrames == 0) {
       this.moveFrames = [];
       for (let i = 0; i <= frames; i++) {
@@ -45,6 +51,16 @@ class Drawable {
     this.fWidth = spriteSheet.width / frames;
     let frameHeight = spriteSheet.height;
     this.g = createGraphics(this.fWidth, frameHeight);
+    this.update();
+  }
+
+  setTileAble(tileCnv) {
+    this.tiled = true;
+    for (let i = 0; i < this.g.width; i+=tileCnv.g.width) {
+      for (let j = 0; j < this.g.height; j+=tileCnv.g.height) {
+        this.g.image(tileCnv.g, i, j);
+      }
+    }
   }
 
   update() {

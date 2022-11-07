@@ -10,6 +10,10 @@ class Dimensions {
     this.rot = 0;
   }
 
+  getScrollTransform(x, y){
+    return [x, y];
+  }
+
   checkIsTouchDevice() {
     return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
   }

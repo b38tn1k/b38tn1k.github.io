@@ -1,19 +1,19 @@
 class DebugTools {
   constructor() {
     let tri = createGraphics(25, 20);
-    tri.fill(G.colors[52]);
+    tri.fill(G.colors[0]);
     tri.noStroke();
     tri.triangle(0, tri.height/2, tri.width * 0.8, tri.height/2, tri.width, 0);
     tri.triangle(0, tri.height/2, tri.width * 0.8, tri.height/2, tri.width, tri.height);
     this.compass = createGraphics(50, 50);
-    this.compass.fill(G.colors[3]);
+    this.compass.fill(G.colors[1]);
     this.compass.strokeWeight(3);
-    this.compass.stroke(G.colors[30]);
+    this.compass.stroke(G.colors[0]);
     this.compass.circle(25, 25, 45);
     this.compass.imageMode(CENTER);
     this.compass.image(tri, 25, 25);
-    this.compassx = G.inputs.originX;
-    this.compassy = G.inputs.originY;
+    this.compassx = G.dims.w - 100;
+    this.compassy = G.dims.h - 100;
   }
 };
 
@@ -53,6 +53,16 @@ function visualUserAgentCheck(canvas){
   }
 }
 
+function dummyLayout() {
+  let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+  testSprite = new Drawable(w, h, r, tx, G.dims.h - 100, 0);
+  testSprite.setAnimation(8, G.loaders['walk'], [0, 4], [1, 2, 3, 5, 6, 7]);
+  let b = G.gLayers.newLayer(100, 'border');
+  pixelBorder(b);
+  let bg = G.gLayers.newLayer(0, 'background');
+  bg.g.background(255, 255, 255);
+}
+
 function visualCheckLayers(addFakes = false) {
   if (addFakes == true) {
     G.gLayers.newLayer(0, 'L3');
@@ -80,101 +90,27 @@ function visualCheckLayers(addFakes = false) {
 }
 
 function visualCheckInputs(myInp=G.inputs) {
-  if (myInp.on == true) {
-    fill(G.colors[22]);
-  } else {
-    fill(G.colors[12]);
-  }
   push();
   let [x, y] = [G.debugTools.compassx, G.debugTools.compassy];
   translate(x, y);
-  rotate(myInp.angleTo(x, y))
+  // rotate(myInp.angleTo(x, y))
+
+  rotate(myInp.angleTo(myInp.originX, myInp.originY));
   image(G.debugTools.compass, 0, 0);
   pop();
   return myInp.angleTo(x, y);
-}
-
-function drawRoad(){
-  // make the world brown and sad looking;
-  let r = G.gLayers.newLayer(0, 'road');
-  r.g.background(G.colors[36]);
-  // add a road
-  r.g.fill(G.colors[35]);
-  r.g.noStroke();
-  r.g.rectMode(CENTER);
-  r.g.rect(G.dims.cx, G.dims.cy, 7*G.dims.w/12, G.dims.h * 2);
-}
-
-function drawBorder() {
-  let b = G.gLayers.newLayer(0, 'border');
-  b.g.fill(G.colors[0]);
-  b.g.noStroke();
-  b.g.rectMode(CENTER);
-  let r = 5;
-  let w = b.g.width;
-  let h = b.g.height;
-  let wOn2 = b.g.width/2;
-  let hOn2 = b.g.height/2;
-  let flwr = floor((w)/r);
-  let flhr = floor((h)/r);
-  flwr -= 1;
-  brh = (w - (flwr * r)) * 2;
-  brv = (h - (flhr * r)) * 2;
-  b.g.rect(wOn2, brh/2, w, brh);
-  b.g.rect(wOn2, h-brh/2, w, brh);
-  b.g.rect(brv/2, hOn2, brv, h);
-  b.g.rect(w-brv/2, hOn2, brv, h);
-  let rd = r;
-  let v = 0;
-  let off = 0;
-  for (let i = 0; i < r; i++) {
-    for (let i = brv + r/2; i < w; i += 2*r) {
-      b.g.square(i + off, brh + r/2 + v, rd);
-      b.g.square(i + off, h - (brh + r/2 + v), rd);
-    }
-    for (let i = brh/2 - r/2; i < h; i += 2*r) {
-      b.g.square(brv + r/2 + v, i + off, rd);
-      b.g.square(w - (brv + r/2 + v), i + off, rd);
-    }
-    v += r;
-    if (off == 0) {
-      off = r;
-    } else {
-      off = 0;
-    }
-    rd -= 1;
-  }
 }
 
 function updateSpritePos(myInp=G.inputs) {
   if (myInp.on == true) {
     testSprite.play = true;
     let uv = G.inputs.getUnitVectorFromOrigin();
-    let speed = 0.3;
+    let speed = 1;
     if (testSprite.isMoveFrame() == true) {
       testSprite.tx += uv[0] * speed;//-= cos(a) * 0.5;
       testSprite.ty += uv[1]  * speed;//-= sin(a) * 0.5;
     }
   } else {
     testSprite.stopAtOne = true;
-  }
-}
-
-function vignette(){
-  let vg = G.gLayers.newLayer(100, 'vignette');
-  vg.g.noFill();
-  vg.g.strokeWeight(1);
-  let c1 = color(0, 0, 0, 0);
-  let c2 = color(255, 0, 0, 255);
-  let border = 1.1;
-  let w = G.dims.w * border;
-  let h = G.dims.h * border;
-  let br = min(w, h) / max(G.dims.w, G.dims.h);
-  while (min(w, h) < max(G.dims.w, G.dims.h)) {
-    let ratio = (min(w, h) / max(G.dims.w, G.dims.h)) - br;
-    vg.g.stroke(lerpColor(c1, c2, ratio));
-    vg.g.ellipse(G.dims.cx, G.dims.cy, w, h);
-    w += 1;
-    h += 1;
   }
 }

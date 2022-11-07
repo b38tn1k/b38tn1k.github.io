@@ -36,13 +36,20 @@ class LayerHandler {
     return name;
   }
 
-  getLayer(name) {
-    return this.layers[this.layerMap[name]];
+  getLayer(name, force=false, level=0) {
+    let result = -1;
+    if (name in this.layerMap) {
+      result = this.layers[this.layerMap[name]];
+    }
+    if (force == true && result == -1) {
+      result = this.newLayer(level, name)
+    }
+    return result;
   }
 
   clear() {
+    clear();
     for (let i = 0; i < this.layers.length; i++) {
-      console.log(i, this.layers[i], this.getLayerName(i));
       this.layers[i].clear();
     }
   }

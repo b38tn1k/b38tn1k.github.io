@@ -61,7 +61,7 @@ function dummyLayout() {
   pixelBorder(b);
   let bg = G.gLayers.newLayer(0, 'background');
   bg.g.background(255, 255, 255);
-  testNPC = new Drawable(w, h, r, G.dims.w * 0.7, G.dims.cy);
+  testNPC = new Drawable(w, h, r, G.dims.w * 0.55, G.dims.cy);
   testNPC.setAnimation(8, G.loaders['walk'], [0, 4], [1, 2, 3, 5, 6, 7]);
   testNPC.update();
   testDialog = new Dialog(G.dims.cy + 20, 50);

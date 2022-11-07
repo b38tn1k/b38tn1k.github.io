@@ -48,7 +48,7 @@ class Dialog {
           if (this.coords[key].tx > sprite.tx) {
             this.coords[tag].x = sprite.tx + (sprite.g.width * 0.6);
           } else {
-            this.coords[tag].x = sprite.tx - (this.textBoxWidth + (sprite.g.width * 0.6));
+            this.coords[tag].x = sprite.tx - (this.textBoxWidth + (sprite.g.width * 0.1));
           }
         }
       }

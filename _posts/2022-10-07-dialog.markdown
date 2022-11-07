@@ -1,0 +1,45 @@
+---
+layout: post
+title:  "Dialog Stuff"
+date:   2022-10-07
+categories: [game, november]
+tags: gameprogress
+---
+Conversing with NPCs is an important component of the gameplay concept. I have created Dialog and DialogEvent classes to facilitate. The Dialog class holds an entire conversation, it is implemented as a data-tree structure in DialogEvents are nodes.
+
+DialogEvents can have multiple children, allowing different conversational branches based on the User selected dialog options. There can be multiple speakers and multiple branching sections. Dialog is triggered when the player character gets close to an NPC and the dialog for each sprite is positioned onscreen to indicate who is talking.
+
+Timing the conversation is interesting; the difference between a readable conversation and a conversation that 'drags' is very small. Providing more reading time for longer sentences helps.
+
+Creating the dialog tree itself is unavoidably messy, I will probably explore a JSON definition and loader script once I start building multiple dialogs. Currently:
+
+```javascript
+testDialog = new Dialog(G.dims.cy + 20, 50);
+testDialog.updateCoords('NPC1', testNPC);
+testDialog.addDialogEvent('NPC1', 'What\'s the hurry, buddy?');
+testDialog.addDialogEvent('PC', 'I can\'t stop! I have to keep going.');
+testDialog.addDialogEvent('NPC1', 'I\'m so hungry! Please, do you have any food?');
+let parEvent = testDialog.addDialogEvent('PC', '', ['Here you go.', 'I\'m hungry too.', 'No!']);
+let thankyou = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'Thank you!');
+testDialog.addChildDialogEvent(thankyou, 'PC', 'You are welcome!');
+let sorry = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'That\'s ok. Don\'t worry about me');
+testDialog.addChildDialogEvent(sorry, 'PC', 'I wish I had food.');
+let selfish = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
+testDialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
+```
+
+The Dialog class still needs a couple additions - I want a 'decision event trigger' to control some game events.
+
+I need to make a proper Sprite class soon, grouping drawables and animations with state changing and some other things. Also, an Item and an InventoryHandler class should happen soon, I think it would be fun to be able to save/share inventories between game sessions too; the endgame inventory becoming the starting inventory of the next game.
+
+I think I am most excited to make a Quest class which will hold Sprites, Dialogs, and Items. I have 6 Quest category ideas:
+- Charity
+- Trade
+- Theft
+- Recovery
+- Delivery
+- Conversation
+
+All sorta inspired by Death Stranding.
+
+Hopefully I can made 2 or 3 unique quests for each category. The game concept has a defined 'ending' and a play-through should take no longer than 10 minutes, the 're-playability factor' should be determined by the variety of quests that can be experienced in the game.

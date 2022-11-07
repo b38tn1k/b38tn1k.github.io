@@ -61,6 +61,23 @@ function dummyLayout() {
   pixelBorder(b);
   let bg = G.gLayers.newLayer(0, 'background');
   bg.g.background(255, 255, 255);
+  testNPC = new Drawable(w, h, r, G.dims.w * 0.7, G.dims.cy);
+  testNPC.setAnimation(8, G.loaders['walk'], [0, 4], [1, 2, 3, 5, 6, 7]);
+  testNPC.update();
+  testDialog = new Dialog(G.dims.cy + 20, 50);
+  // testDialog = new Dialog(G.dims.h, G.dims.h);
+  testDialog.updateCoords('NPC1', testNPC);
+  testDialog.addDialogEvent('NPC1', 'What\'s the hurry, buddy?');
+  testDialog.addDialogEvent('PC', 'I can\'t stop! I have to keep going.');
+  testDialog.addDialogEvent('NPC1', 'I\'m so hungry! Please, do you have any food?');
+  testSprite.hasFood = function() {return true;};
+  let parEvent = testDialog.addDialogEvent('PC', '', ['Here you go.', 'I\'m hungry too.', 'No!'], [testSprite.hasFood, returnTrue, returnTrue]);
+  let thankyou = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'Thank you!');
+  testDialog.addChildDialogEvent(thankyou, 'PC', 'You are welcome!');
+  let sorry = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'That\'s ok. Don\'t worry about me.');
+  testDialog.addChildDialogEvent(sorry, 'PC', 'I wish I had food.');
+  let selfish = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
+  testDialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
 }
 
 function visualCheckLayers(addFakes = false) {

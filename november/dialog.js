@@ -1,8 +1,9 @@
 class DialogEvent {
-  constructor(id='', words='', options = []) {
+  constructor(id='', words='', options = [], conditions = []) {
     this.id = id;
     this.words = words;
     this.options = options;
+    this.conditions = conditions;
     this.optionYs = [];
     this.children = [];
     this.printHead = 0;
@@ -12,7 +13,6 @@ class DialogEvent {
     this.hasOptions = (options.length != 0);
   }
 };
-
 
 class Dialog {
   constructor(y, h) {
@@ -37,6 +37,7 @@ class Dialog {
     this.optionBorder = 20;
     this.textBoxWidth = 100;
     this.pauseForOptions = false;
+    this.eventTrigger = false;
   }
 
   updateCoords(tag, sprite, playerCharacter=false) {
@@ -107,7 +108,27 @@ class Dialog {
     return result;
   }
 
+  progress(input) {
+    this.de = this.getChild();
+    this.onScr[this.de.id] = this.de;
+    input.setChangeListener();
+    if (this.de.hasOptions == true) {
+      this.pauseForOptions = true;
+    } else {
+      this.pauseForOptions = false;
+    }
+  }
+
+  waitForSelection(input) {
+    if (input.on == true && input.hasChanged() == true) {
+      this.pauseForOptions = false;
+      this.chooseOption(input.y);
+      this.eventTrigger = true;
+    }
+  }
+
   update(sprite, input) {
+    this.eventTrigger = false;
     this.updateCoords('PC', sprite, true);
     if (sprite.ty < this.yIn && sprite.ty > this.yOut) {
       this.play = true;
@@ -121,21 +142,10 @@ class Dialog {
       this.decrementPrintHead()
     }
     if (this.de.completed == true && millis() > this.de.pauseUntil) {
-      this.de = this.getChild();
-      this.onScr[this.de.id] = this.de;
-      input.setChangeListener();
-      if (this.de.hasOptions == true) {
-        this.pauseForOptions = true;
-      } else {
-        this.pauseForOptions = false;
-      }
+      this.progress(input);
     }
     if (this.pauseForOptions) {
-      console.log(input.hasChanged());
-      if (input.on == true && input.hasChanged() == true) {
-        this.pauseForOptions = false;
-        this.chooseOption(input.y);
-      }
+      this.waitForSelection(input);
     }
   }
 
@@ -155,15 +165,15 @@ class Dialog {
     this.selector = option;
   }
 
-  addDialogEvent(id, words, options=[]) {
-    let newLine = new DialogEvent(id, words, options);
+  addDialogEvent(id, words, options=[], conditions=[]) {
+    let newLine = new DialogEvent(id, words, options, conditions);
     this.de.children.push(newLine);
     this.de = this.de.children[0];
     return this.de
   }
 
-  addChildDialogEvent(parent, id, words, options=[]){
-    let newLine = new DialogEvent(id, words, options);
+  addChildDialogEvent(parent, id, words, options=[], conditions=[]){
+    let newLine = new DialogEvent(id, words, options, conditions);
     parent.children.push(newLine);
     return parent.children[parent.children.length-1];
   }
@@ -180,8 +190,10 @@ class Dialog {
     let y = this.coords[key].y
     let firstTime = (this.onScr[key].optionYs.length == 0);
     for (let i = 0; i < this.onScr[key].options.length; i++) {
-      this.layer.g.text('> ' + this.onScr[key].options[i], x, y, this.textBoxWidth);
-      y += this.optionBorder;
+      if (this.onScr[key].conditions[i]() == true) {
+        this.layer.g.text('> ' + this.onScr[key].options[i], x, y, this.textBoxWidth);
+        y += this.optionBorder;
+      }
       if (firstTime) {
         this.onScr[key].optionYs.push(y);
       }

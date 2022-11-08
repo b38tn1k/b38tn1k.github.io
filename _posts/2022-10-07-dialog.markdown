@@ -46,4 +46,4 @@ Hopefully I can made 2 or 3 unique quests for each category. The game concept ha
 
 Game art direction is still undecided, it's def going to be basic (achievable, also skill-limited) but the current vibe is beyond minimal.
 
-![boring]({{ site.url }}/images/scrs1.png)
+![boring](https://b38tn1k.com/images/scrs1.png)

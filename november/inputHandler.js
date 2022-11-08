@@ -24,8 +24,9 @@ class InputHandler {
       } else {
         result = true;
         this.listenerOn = false;
-        this.prevOn = this.on;
       }
+    } else {
+      result = true;
     }
     return result;
   }

@@ -43,3 +43,7 @@ I think I am most excited to make a Quest class which will hold Sprites, Dialogs
 All sorta inspired by Death Stranding.
 
 Hopefully I can made 2 or 3 unique quests for each category. The game concept has a defined 'ending' and a play-through should take no longer than 10 minutes, the 're-playability factor' should be determined by the variety of quests that can be experienced in the game.
+
+Game art direction is still undecided, it's def going to be basic (achievable, also skill-limited) but the current vibe is beyond minimal.
+
+![boring]({{ site.url }}/images/20221108-000907.png)

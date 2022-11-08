@@ -9,6 +9,17 @@ function windowResized() {
   setupScreen();
 }
 
+function keyPressed() {
+  if (key == 's') {
+    saveImage();
+  }
+}
+
+function saveImage() {
+  var timestamp = year() + nf(month(), 2) + nf(day(), 2) + "-"  + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2);
+  save(timestamp+".png");
+}
+
 var testSprite;
 var testNPC;
 var testDialog;
@@ -30,6 +41,7 @@ function preload() {
   let c = loadStrings('NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
   G.loaders['dumsprite'] = loadImage('assets/dummysprite.png');
   G.loaders['walk'] = loadImage('assets/walk3.png');
+  G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
 }
 
 function setup() {
@@ -54,12 +66,7 @@ function draw() {
   testDialog.update(testSprite, G.inputs);
   testDialog.draw();
   if (testDialog.eventTrigger == true) {
-    if (testDialog.selector == 0) {
-      console.log(testDialog.selector, 'give food');
-    } else {
-      console.log('don\'t give food');
-    }
-
+    console.log(testDialog.eventID);
   }
   let a = visualCheckInputs();
 

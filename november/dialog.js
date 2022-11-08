@@ -1,23 +1,37 @@
 class DialogEvent {
-  constructor(id='', words='', options = [], conditions = []) {
+  constructor(id='', words='') {
     this.id = id;
     this.words = words;
-    this.options = options;
-    this.conditions = conditions;
+    this.options = [];
+    this.conditions = [];
+    this.eventIDs = [];
     this.optionYs = [];
     this.children = [];
     this.printHead = 0;
     this.completed = false;
     this.pauseUntil = -1;
     this.length = words.length;
-    this.hasOptions = (options.length != 0);
+    this.hasOptions = false;
   }
 };
 
 class Dialog {
   constructor(y, h) {
     this.layer = G.gLayers.getLayer('dialog', true, 100);
+    this.font = G.loaders['font'];
+    this.layer.g.textFont(this.font);
+    this.bgcolor = G.colors[2];
+    this.fgcolor = G.colors[0];
+    this.fontSize = 12;
+    this.lineSpacing = 1.5;
+    this.pauseMult = 40;
+    this.pauseMin = 500;
+    this.textBoxWidth = 100;
+    this.totalLineHeight = this.fontSize * this.lineSpacing;
+    this.layer.g.textSize(this.fontSize);
+    this.layer.g.textLeading(this.lineSpacing * this.fontSize);
     this.layer.g.textAlign(LEFT, TOP);
+    this.layer.g.noStroke();
     this.layer.g.textWrap(WORD);
     this.layer.setClearable();
     this.head = new DialogEvent();
@@ -32,23 +46,27 @@ class Dialog {
     this.prevPlay = false;
     this.onScr = {};
     this.selector = 0;
-    this.pauseMult = 40;
-    this.pauseMin = 500;
-    this.optionBorder = 20;
-    this.textBoxWidth = 100;
     this.pauseForOptions = false;
     this.eventTrigger = false;
+    this.eventID = -1;
   }
 
-  updateCoords(tag, sprite, playerCharacter=false) {
+  addOption(parent, words, eventId=-1, condition=returnTrue) {
+    parent.options.push(words);
+    parent.conditions.push(condition);
+    parent.eventIDs.push(eventId);
+    parent.hasOptions = true;
+  }
+
+  updateCoords(tag, sprite, playerCharacter=false) { // could do more here to fit text in above sprite if screen edges are close
     this.coords[tag] = {};
     if (playerCharacter == true) {
       for (key in this.coords) {
         if (key != 'PC') {
           if (this.coords[key].tx > sprite.tx) {
-            this.coords[tag].x = sprite.tx + (sprite.g.width * 0.6);
+            this.coords[tag].x = sprite.tx + (sprite.g.width * 0.5);
           } else {
-            this.coords[tag].x = sprite.tx - (this.textBoxWidth + (sprite.g.width * 0.1));
+            this.coords[tag].x = sprite.tx - (this.textBoxWidth + (sprite.g.width * 0.5)); // this is gonna bite me
           }
         }
       }
@@ -120,15 +138,15 @@ class Dialog {
   }
 
   waitForSelection(input) {
-    if (input.on == true && input.hasChanged() == true) {
+    if (input.hasChanged() == true && input.on == true) {
       this.pauseForOptions = false;
       this.chooseOption(input.y);
-      this.eventTrigger = true;
     }
   }
 
   update(sprite, input) {
     this.eventTrigger = false;
+    this.eventID = -1;
     this.updateCoords('PC', sprite, true);
     if (sprite.ty < this.yIn && sprite.ty > this.yOut) {
       this.play = true;
@@ -163,26 +181,35 @@ class Dialog {
     this.de.words = this.de.options[option];
     this.de.length = this.de.words.length;
     this.selector = option;
+    this.eventTrigger = true;
+    this.eventID = this.de.eventIDs[option];
   }
 
-  addDialogEvent(id, words, options=[], conditions=[]) {
-    let newLine = new DialogEvent(id, words, options, conditions);
+  addDialogEvent(id, words='') {
+    let newLine = new DialogEvent(id, words);
     this.de.children.push(newLine);
     this.de = this.de.children[0];
     return this.de
   }
 
-  addChildDialogEvent(parent, id, words, options=[], conditions=[]){
-    let newLine = new DialogEvent(id, words, options, conditions);
+  addChildDialogEvent(parent, id, words=''){
+    let newLine = new DialogEvent(id, words);
     parent.children.push(newLine);
     return parent.children[parent.children.length-1];
   }
 
   writeText() {
     let words = this.onScr[key].words.slice(0, this.onScr[key].printHead);
-    let x = this.coords[key].x
-    let y = this.coords[key].y
-    this.layer.g.text(words ,x ,y, 100);
+    let x = this.coords[key].x;
+    let y = this.coords[key].y;
+    let lineCount = ceil(this.layer.g.textWidth(this.onScr[key].words) / this.textBoxWidth);
+    let textBoxHeight =lineCount * (this.totalLineHeight);
+    if (this.onScr[key].printHead > 0) {
+      this.layer.g.fill(this.bgcolor);
+      this.layer.g.rect(x, y, this.textBoxWidth, textBoxHeight);
+    }
+    this.layer.g.fill(this.fgcolor);
+    this.layer.g.text(words,x ,y, 100);
   }
 
   writeOptions() {
@@ -191,8 +218,14 @@ class Dialog {
     let firstTime = (this.onScr[key].optionYs.length == 0);
     for (let i = 0; i < this.onScr[key].options.length; i++) {
       if (this.onScr[key].conditions[i]() == true) {
-        this.layer.g.text('> ' + this.onScr[key].options[i], x, y, this.textBoxWidth);
-        y += this.optionBorder;
+        let fullText = '> ' + this.onScr[key].options[i];
+        let lineCount = ceil(this.layer.g.textWidth(fullText) / this.textBoxWidth);
+        let textBoxHeight =lineCount * (this.totalLineHeight);
+        this.layer.g.fill(this.bgcolor);
+        this.layer.g.rect(x, y, this.textBoxWidth, textBoxHeight);
+        this.layer.g.fill(this.fgcolor);
+        this.layer.g.text(fullText, x, y, this.textBoxWidth);
+        y += textBoxHeight;
       }
       if (firstTime) {
         this.onScr[key].optionYs.push(y);

@@ -24,6 +24,10 @@ class Drawable {
     this.clearable = true;
   }
 
+  setRate(num) {
+    this.rate = num;
+  }
+
   clear() {
     if (this.clearable == true) {
       this.g.clear();

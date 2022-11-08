@@ -17,7 +17,7 @@ class DialogEvent {
 
 class Dialog {
   constructor(x, y, w, h) {
-    this.bbox = [x, y, x+w, y+h, w, h];
+    this.bbox = [x-w, y-w, x+w, y+h, 2*w, 2*h];
     // this.showZones = true;
     this.layer = G.gLayers.getLayer('dialog', true, 100);
     this.layer.setClearable();

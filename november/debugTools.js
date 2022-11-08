@@ -38,7 +38,7 @@ function dummyLayout() {
   testNPC.play();
 
 
-  testDialog = new Dialog(G.dims.w * 0.55, 100, 300, 200);
+  testDialog = new Dialog(G.dims.w * 0.7, G.dims.cy, 100, 100);
   // testDialog.showZones = true;
   testDialog.updateCoords('NPC1', testNPC.current);
   testDialog.addDialogEvent('NPC1', 'What\'s the hurry, buddy?');

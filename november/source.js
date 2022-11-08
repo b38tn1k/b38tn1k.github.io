@@ -60,11 +60,8 @@ function draw() {
     testSprite.update();
     updateSpritePos();
   }
-
   image(testSprite.g, testSprite.tx, testSprite.ty);
   image(testNPC.g, testNPC.tx, testNPC.ty);
-  // console.log(testNPC.tx)
-  circle(testNPC.tx, testNPC.ty, 10);
   testDialog.update(testSprite, G.inputs);
   testDialog.draw();
   if (testDialog.eventTrigger == true) {

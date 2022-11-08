@@ -65,8 +65,8 @@ function dummyLayout() {
   testNPC.setAnimation(8, G.loaders['walk']);
   testSprite.setRate(0.4);
   testNPC.update();
-  // testDialog = new Dialog(G.dims.cy + 20, 50);
-  testDialog = new Dialog(G.dims.h, G.dims.h);
+  testDialog = new Dialog(G.dims.cy + 20, 50);
+  // testDialog = new Dialog(G.dims.h, G.dims.h);
   testDialog.updateCoords('NPC1', testNPC);
   testDialog.addDialogEvent('NPC1', 'What\'s the hurry, buddy?');
   testDialog.addDialogEvent('PC', 'I can\'t stop! I have to keep going.');

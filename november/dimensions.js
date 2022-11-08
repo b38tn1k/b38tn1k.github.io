@@ -1,5 +1,3 @@
-
-
 class Dimensions {
   constructor() {
     this.isTouchDevice = this.checkIsTouchDevice();

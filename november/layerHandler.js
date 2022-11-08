@@ -26,6 +26,14 @@ class LayerHandler {
     return this.getLayer(name);
   }
 
+  getLayerNames() {
+    let names = [];
+    for (key in this.layerMap) {
+      names.push(key, this.layerMap[key]);
+    }
+    return names;
+  }
+
   getLayerName(index) {
     let name = 'unk';
     for (key in this.layerMap) {

@@ -39,8 +39,9 @@ function setupScreen() {
 function preload() {
   G = new Globals();
   let c = loadStrings('NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
-  G.loaders['dumsprite'] = loadImage('assets/dummysprite.png');
   G.loaders['walk'] = loadImage('assets/walk3.png');
+  G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdle.png');
+  G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
 }
 
@@ -55,18 +56,24 @@ function setup() {
 
 function draw() {
   G.inputs.update();
-  G.gLayers.draw();
-  if (testDialog.pauseForOptions == false) {
-    testSprite.update();
-    updateSpritePos();
-  }
-  image(testSprite.g, testSprite.tx, testSprite.ty);
-  image(testNPC.g, testNPC.tx, testNPC.ty);
-  testDialog.update(testSprite, G.inputs);
+  G.gLayers.clear();
+
+  testSprite.update(testDialog, G.inputs);
+  testNPC.update(testDialog, G.inputs);
+
+  testSprite.draw();
+  testNPC.draw();
+
+  testDialog.update(testSprite.current, G.inputs);
   testDialog.draw();
+
   if (testDialog.eventTrigger == true) {
-    console.log(testDialog.eventID);
+    if (parseInt(testDialog.eventID) == 101) {
+      testNPC.changeSequence(1, true);
+    }
   }
+
+  G.gLayers.draw();
   let a = visualCheckInputs();
 
 }

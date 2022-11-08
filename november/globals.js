@@ -2,17 +2,13 @@
 function returnTrue() {
   return true;
 }
-function bounded(env, x, y) {
+function bounded(env, x, y) { // envelope = [x1, y1, x2, y2]
   let result = {}
-  // console.log(env); // x, y, x2, y2;
   result.horizontal = (x == constrain(x, env[0], env[2]));
   result.vertical = (y == constrain(y, env[1], env[3]));
+  result.onLeft = (x < (env[0] + (env[2] - env[0])/2));
+  result.onTop = (y < (env[1] + (env[3] - env[1])/2));
   result.complete = result.vertical && result.horizontal;
-  let midX = env[0] + (env[2] - env[0])/2;
-  let midY = env[1] + (env[3] - env[1])/2;
-  result.onLeft = (x < midX);
-  result.onTop = (y < midY);
-  // console.log(result);
   return(result);
 }
 class Globals {

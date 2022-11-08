@@ -17,57 +17,30 @@ class DebugTools {
   }
 };
 
-function bigCText(myString, size = 64, canvas, c=G.colors[10]) {
-  canvas.textSize(size);
-  if ( String(canvas.elt.id).includes('defaultCanvas')) {
-    fill(c);
-  } else {
-    canvas.fill(c);
-  }
-  canvas.textAlign(CENTER, CENTER);
-  canvas.text(myString, canvas.width/2, canvas.height/2);
-}
-
-function drawTestPattern(canvas) {
-  canvas.noStroke();
-  canvas.fill(G.colors[22]);
-  canvas.circle(0, 0, 40);
-  canvas.circle(canvas.width, 0, 40);
-  canvas.circle(canvas.width, canvas.height, 40);
-  canvas.circle(canvas.width/2, canvas.height/2, 40);
-  canvas.circle(0, canvas.height, 40);
-  canvas.fill(G.colors[42]);
-  canvas.circle(0, 0, 20);
-  canvas.circle(canvas.width, 0, 20);
-  canvas.circle(canvas.width, canvas.height, 20);
-  canvas.circle(canvas.width/2, canvas.height/2, 20);
-  canvas.circle(0, canvas.height, 20);
-}
-
-function visualUserAgentCheck(canvas){
-  drawTestPattern(canvas);
-  if (checkIsTouchDevice() === true){
-    bigCText('MOBILE-ISH', 64, canvas);
-  } else {
-    bigCText('NOT MOBILE', 64, canvas);
-  }
-}
-
 function dummyLayout() {
   let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
-  testSprite = new Drawable(w, h, r, tx, G.dims.h - 100, 0);
-  testSprite.setAnimation(8, G.loaders['walk'], [0, 4], [1, 2, 3, 5, 6, 7]);
-  let b = G.gLayers.newLayer(100, 'border');
-  pixelBorder(b);
-  let bg = G.gLayers.newLayer(0, 'background');
-  bg.g.background(255, 255, 255);
-  testNPC = new Drawable(w, h, r, G.dims.w * 0.8, G.dims.cy);
-  testNPC.setAnimation(8, G.loaders['walk']);
-  testSprite.setRate(0.4);
+
+  // testSprite = new Drawable(w, h, r, tx, G.dims.h - 100, 0);
+  // testSprite.setAnimation(8, G.loaders['walk'], [0, 4], [1, 2, 3, 5, 6, 7]);
+  // testSprite.setRate(0.4);
+
+  testSprite = new SpriteCollection(G.dims.cx, G.dims.h - 100, true);
+  testSprite.addAnimation(8, G.loaders['walk'], [0, 4], [1, 2, 3, 5, 6, 7]);
+  testSprite.setCollectionRate(0.4);
+  testSprite.playable = true;
+
+
+  testNPC = new SpriteCollection(G.dims.w * 0.7, G.dims.cy);
+  testNPC.setCollectionRate(0.4);
+  testNPC.addAnimation(7, G.loaders['slume-idle']);
+  testNPC.addAnimation(9, G.loaders['slume-death'], [8]);
   testNPC.update();
-  testDialog = new Dialog(G.dims.w * 0.66, 100, 200, 200);
-  // testDialog = new Dialog(G.dims.h, G.dims.h);
-  testDialog.updateCoords('NPC1', testNPC);
+  testNPC.play();
+
+
+  testDialog = new Dialog(G.dims.w * 0.55, 100, 300, 200);
+  // testDialog.showZones = true;
+  testDialog.updateCoords('NPC1', testNPC.current);
   testDialog.addDialogEvent('NPC1', 'What\'s the hurry, buddy?');
   testDialog.addDialogEvent('PC', 'I can\'t stop! I have to keep going.');
   testDialog.addDialogEvent('NPC1', 'I\'m so hungry! Please, do you have any food?');
@@ -76,7 +49,7 @@ function dummyLayout() {
   testDialog.addOption(parEvent, 'Here you go.', 'feeding time ID', testSprite.hasFood);
   testDialog.addOption(parEvent, 'I\'m hungry too.');
   testDialog.addOption(parEvent, 'I need boots.', 'trading time', testSprite.hasFood);
-  testDialog.addOption(parEvent, 'No!');
+  testDialog.addOption(parEvent, 'No!', 101);
   let thankyou = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'Thank you!');
   testDialog.addChildDialogEvent(thankyou, 'PC', 'You are welcome!');
   let sorry = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'That\'s ok. Don\'t worry about me.');
@@ -89,32 +62,11 @@ function dummyLayout() {
   testDialog.addChildDialogEvent(tradeResp, 'NPC1', 'I understand.');
   let selfish = testDialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
   testDialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
-}
 
-function visualCheckLayers(addFakes = false) {
-  if (addFakes == true) {
-    G.gLayers.newLayer(0, 'L3');
-    G.gLayers.newLayer(0, 'L2');
-    G.gLayers.newLayer(2, 'L4');
-    G.gLayers.newLayer(0, 'L0');
-    G.gLayers.newLayer(1, 'L1');
-  }
-  let x = 100;
-  let y = 100;
-  let r = 50;
-  let ts = 32;
-  let c = 10;
-  for (let i = 0; i < G.gLayers.layers.length; i++) {
-    y += 40;
-    c += 2;
-    let myL = G.gLayers.layers[i]
-    G.gLayers.layers[i].g.fill(G.colors[c]);
-    G.gLayers.layers[i].g.circle(x, y, r);
-    G.gLayers.layers[i].g.fill(G.colors[c + 10]);
-    G.gLayers.layers[i].g.textAlign(CENTER, CENTER);
-    G.gLayers.layers[i].g.textSize(ts);
-    G.gLayers.layers[i].g.text(G.gLayers.getLayerName(i), x, y);
-  }
+  let b = G.gLayers.newLayer(100, 'border');
+  pixelBorder(b);
+  let bg = G.gLayers.newLayer(0, 'background');
+  bg.g.background(255, 255, 255);
 }
 
 function visualCheckInputs(myInp=G.inputs) {

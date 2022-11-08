@@ -20,6 +20,7 @@ class Dialog {
     this.bbox = [x, y, x+w, y+h, w, h];
     // this.showZones = true;
     this.layer = G.gLayers.getLayer('dialog', true, 100);
+    this.layer.setClearable();
     this.font = G.loaders['font'];
     this.layer.g.textFont(this.font);
     this.bgcolor = G.colors[2];
@@ -58,7 +59,7 @@ class Dialog {
     parent.hasOptions = true;
   }
 
-  updateCoords(tag, sprite, playerCharacter=false) { // could do more here to fit text in above sprite if screen edges are close
+  updateCoords(tag, sprite) { // could do more here to fit text in above sprite if screen edges are close
     // create hypothetical layouts
     // 60% of sprite dims (CENTER mode)
     let newFlag = !(tag in this.coords);
@@ -209,8 +210,7 @@ class Dialog {
   update(sprite, input) {
     this.eventTrigger = false;
     this.eventID = -1;
-    this.updateCoords('PC', sprite, true);
-    // if (sprite.ty < this.yIn && sprite.ty > this.yOut) {
+    this.updateCoords('PC', sprite);
     if (bounded(this.bbox, sprite.tx, sprite.ty).complete == true) {
       this.play = true;
       if (this.prevPlay != this.play) {

@@ -52,7 +52,7 @@ function vignette(cnv, border = 1.1){
   }
 }
 
-function pixelBorder(cnv, r=5) {
+function pixelBorder(cnv, r=3) {
   let flwr = floor((cnv.g.width - r)/r);
   let flhr = floor((cnv.g.height - r)/r);
   let rd = r;

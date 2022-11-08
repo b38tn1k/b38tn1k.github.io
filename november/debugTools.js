@@ -61,12 +61,12 @@ function dummyLayout() {
   pixelBorder(b);
   let bg = G.gLayers.newLayer(0, 'background');
   bg.g.background(255, 255, 255);
-  testNPC = new Drawable(w, h, r, G.dims.w * 0.66, G.dims.cy);
+  testNPC = new Drawable(w, h, r, G.dims.w * 0.8, G.dims.cy);
   testNPC.setAnimation(8, G.loaders['walk']);
   testSprite.setRate(0.4);
   testNPC.update();
-  testDialog = new Dialog(G.dims.cy + 20, 50);
-  // testDialog = new Dialog(G.dims.h, G.dims.h);
+  // testDialog = new Dialog(G.dims.cy + 20, 50);
+  testDialog = new Dialog(G.dims.h, G.dims.h);
   testDialog.updateCoords('NPC1', testNPC);
   testDialog.addDialogEvent('NPC1', 'What\'s the hurry, buddy?');
   testDialog.addDialogEvent('PC', 'I can\'t stop! I have to keep going.');

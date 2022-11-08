@@ -59,25 +59,87 @@ class Dialog {
   }
 
   updateCoords(tag, sprite, playerCharacter=false) { // could do more here to fit text in above sprite if screen edges are close
+    // create hypothetical layouts
+    // 60% of sprite dims (CENTER mode)
+    let newFlag = !(tag in this.coords);
     this.coords[tag] = {};
-    if (playerCharacter == true) {
-      for (key in this.coords) {
-        if (key != 'PC') {
-          if (this.coords[key].tx > sprite.tx) {
-            this.coords[tag].x = sprite.tx + (sprite.g.width * 0.5);
-          } else {
-            this.coords[tag].x = sprite.tx - (this.textBoxWidth + (sprite.g.width * 0.5)); // this is gonna bite me
-          }
+    this.coords[tag].tx = sprite.tx;
+    this.coords[tag].ty = sprite.ty;
+    let sw = sprite.g.width * 0.6;
+    let sh = sprite.g.height * 0.6
+    let left = sprite.tx - (this.textBoxWidth + sw);
+    let right = sprite.tx + (this.textBoxWidth + sw);
+    let above = sprite.ty - sh;
+    let below = sprite.ty + sh;
+    // find danger zones
+    let padding = 30;
+    let minLeft = padding;
+    let maxRight = G.dims.w - padding;
+    let minTop = sh + padding;
+    let minBottom = G.dims.h - (sh + padding);
+    let leftIsPossible = (left > minLeft);
+    let rightIsPossible = (right < maxRight);
+    let topIsPossible = (above > minTop);
+    let bottomIsPossible = (below < minBottom);
+    if (newFlag == true) {
+      if (sprite.tx >= G.dims.cx && rightIsPossible == true) {
+        this.coords[tag].x = right - this.textBoxWidth;
+        this.coords[tag].y = above;
+      } else if (sprite.tx < G.dims.cx && leftIsPossible == true) {
+        this.coords[tag].x = left;
+        this.coords[tag].y = above;
+      } else {
+        if (rightIsPossible == true) {
+          this.coords[tag].x = right - this.textBoxWidth;
+          this.coords[tag].y = above;
+        } else if (leftIsPossible == true){
+          this.coords[tag].x = left;
+          this.coords[tag].y = above;
+        } else {
+          this.coords[tag].y = below;
+          this.coords[tag].x = sprite.tx - this.textBoxWidth/2;
         }
       }
     } else {
-      if (sprite.tx > G.dims.cx) {
-        this.coords[tag].x = sprite.tx + (sprite.g.width * 0.6);
+      // find layout
+      let othersOnLeft = false;
+      let othersOnRight = false;
+      for (key in this.coords) {
+        if (key != tag) {
+          othersOnRight = (sprite.tx < this.coords[key].tx) || othersOnRight;
+          othersOnLeft = (sprite.tx > this.coords[key].tx) || othersOnLeft;
+        }
+      }
+      let failed = true;
+      if (othersOnLeft == true && rightIsPossible == true) {
+        // do right
+        this.coords[tag].x = right - this.textBoxWidth;
+        failed = false;
+      }
+
+      if (othersOnRight == true && leftIsPossible == true) {
+        // do left
+        this.coords[tag].x = left;
+        failed = false;
+      }
+
+      if (topIsPossible == true) {
+        this.coords[tag].y = above;
       } else {
-        this.coords[tag].x = sprite.tx - (this.textBoxWidth + (sprite.g.width * 0.6));
+        this.coords[tag].y = below;
+        this.coords[tag].x = sprite.tx - this.textBoxWidth/2;
+        failed = false;
+      }
+
+      if (failed == true) {
+        if (rightIsPossible == true) {
+          this.coords[tag].x = right - this.textBoxWidth;
+        } else {
+          this.coords[tag].x = left;
+        }
+        // do center?
       }
     }
-    this.coords[tag].y = sprite.ty - sprite.g.height * 0.6;
   }
 
   incrementPrintHead() {

@@ -2,7 +2,18 @@
 function returnTrue() {
   return true;
 }
+function bounded(env, x, y) {
 
+  let result = {}
+  result.horizontal = (x == constrain(x, env[0], env[1]));
+  result.vertical = (y == constrain(y, env[2], env[3]));
+  result.complete = result.vertical && result.horizontal;
+  let midX = env[0] + (env[1] - env[0])/2;
+  let midY = env[2] + (env[3] - env[2])/2;
+  result.onLeft = (x < midX);
+  result.onTop = (y < midY);
+  return(result);
+}
 class Globals {
   constructor(){
     this.gLayers;

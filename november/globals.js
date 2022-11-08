@@ -3,15 +3,16 @@ function returnTrue() {
   return true;
 }
 function bounded(env, x, y) {
-
   let result = {}
-  result.horizontal = (x == constrain(x, env[0], env[1]));
-  result.vertical = (y == constrain(y, env[2], env[3]));
+  // console.log(env); // x, y, x2, y2;
+  result.horizontal = (x == constrain(x, env[0], env[2]));
+  result.vertical = (y == constrain(y, env[1], env[3]));
   result.complete = result.vertical && result.horizontal;
-  let midX = env[0] + (env[1] - env[0])/2;
-  let midY = env[2] + (env[3] - env[2])/2;
+  let midX = env[0] + (env[2] - env[0])/2;
+  let midY = env[1] + (env[3] - env[1])/2;
   result.onLeft = (x < midX);
   result.onTop = (y < midY);
+  // console.log(result);
   return(result);
 }
 class Globals {

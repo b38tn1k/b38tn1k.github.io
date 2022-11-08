@@ -16,7 +16,9 @@ class DialogEvent {
 };
 
 class Dialog {
-  constructor(y, h) {
+  constructor(x, y, w, h) {
+    this.bbox = [x, y, x+w, y+h, w, h];
+    // this.showZones = true;
     this.layer = G.gLayers.getLayer('dialog', true, 100);
     this.font = G.loaders['font'];
     this.layer.g.textFont(this.font);
@@ -37,8 +39,6 @@ class Dialog {
     this.head = new DialogEvent();
     this.de = this.head;
     this.coords = {};
-    this.yIn = y;
-    this.yOut = y - h;
     this.coords = {};
     this.coords['PC'] = {};
     this.printHeadSpeed = 1;
@@ -210,7 +210,8 @@ class Dialog {
     this.eventTrigger = false;
     this.eventID = -1;
     this.updateCoords('PC', sprite, true);
-    if (sprite.ty < this.yIn && sprite.ty > this.yOut) {
+    // if (sprite.ty < this.yIn && sprite.ty > this.yOut) {
+    if (bounded(this.bbox, sprite.tx, sprite.ty).complete == true) {
       this.play = true;
       if (this.prevPlay != this.play) {
         this.begin();
@@ -297,6 +298,11 @@ class Dialog {
 
   draw() {
     this.layer.clear();
+    if (this.showZones == true) {
+      this.layer.g.fill(this.bgcolor);
+      this.layer.g.rect(this.bbox[0], this.bbox[1], this.bbox[4], this.bbox[5]);
+      this.layer.g.circle(this.bbox[0], this.bbox[1], 20);
+    }
     for (key in this.onScr) {
       if (this.onScr[key].hasOptions == false) {
         this.writeText();
@@ -304,6 +310,7 @@ class Dialog {
         this.writeOptions();
       }
     }
+
   }
 
 };

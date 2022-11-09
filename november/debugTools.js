@@ -20,10 +20,6 @@ class DebugTools {
 function dummyLayout() {
   let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
 
-  // testSprite = new Drawable(w, h, r, tx, G.dims.h - 100, 0);
-  // testSprite.setAnimation(8, G.loaders['walk'], [0, 4], [1, 2, 3, 5, 6, 7]);
-  // testSprite.setRate(0.4);
-
   testSprite = new SpriteCollection(G.dims.cx, G.dims.h - 100, true);
   testSprite.addAnimation(8, G.loaders['walk'], [0, 4], [1, 2, 3, 5, 6, 7]);
   testSprite.setCollectionRate(0.4);
@@ -65,8 +61,16 @@ function dummyLayout() {
 
   let b = G.gLayers.newLayer(100, 'border');
   pixelBorder(b);
+
+  let bgRes = 3;
   let bg = G.gLayers.newLayer(0, 'background');
-  bg.g.background(255, 255, 255);
+  let myColors = [G.colors[25], G.colors[2], G.colors[25], G.colors[37], G.colors[37]];
+  let tile = getPerlinTile(100, 0.05, bgRes, myColors, true);
+  bg.setTileAble(tile);
+  let road = G.gLayers.newLayer(1, 'road');
+  myColors = [G.colors[35], G.colors[34], G.colors[34], G.colors[33], G.colors[35]];
+  drawRoad(road, 0.3, bgRes, myColors);
+  // showColors();
 }
 
 function visualCheckInputs(myInp=G.inputs) {

@@ -1,0 +1,12 @@
+---
+layout: post
+title:  "Art Day"
+date:   2022-10-09
+categories: [game, november]
+tags: gameprogress
+---
+Felt like switching it up so today I played with Perlin Noise and some art generation. Currently I am not a fan. I might need to switch out my goto color palette but I'm also thinking about 'hand' drawing all the components anyway. I found the previous test player character sprite got lost in the background so used the [Universal LPC Spritesheet Generator](https://sanderfrenken.github.io/Universal-LPC-Spritesheet-Character-Generator/#?body=Body_color_light&head=Human_male_light&hat=Cloth_hood_white&clothes=Longsleeve_brown&belt=Leather_Belt_brown&legs=Pants_brown&gloves=Gloves_white&shoes=Boots_blue) tool to make a little guy.
+
+Backgrounds are sorta underwhelming.
+
+![yuck](https://b38tn1k.com/images/yuck.png)

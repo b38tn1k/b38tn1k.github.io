@@ -39,7 +39,7 @@ function setupScreen() {
 function preload() {
   G = new Globals();
   let c = loadStrings('NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
-  G.loaders['walk'] = loadImage('assets/walk3.png');
+  G.loaders['walk'] = loadImage('assets/walk4.png');
   G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdle.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');

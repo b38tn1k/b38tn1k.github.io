@@ -1,40 +1,3 @@
-function pixelBorderBackup(cnv, r=5) {
-  let wOn2 = cnv.g.width/2;
-  let hOn2 = cnv.g.height/2;
-  let flwr = floor((cnv.g.width)/r);
-  let flhr = floor((cnv.g.height)/r);
-  let rd = r;
-  let v = 0;
-  let off = 0;
-  flwr -= 1;
-  cnvrh = (cnv.g.width - (flwr * r)) * 2;
-  cnvrv = (cnv.g.height - (flhr * r)) * 2;
-  cnv.g.fill(G.colors[0]);
-  cnv.g.noStroke();
-  cnv.g.rectMode(CENTER);
-  cnv.g.rect(wOn2, cnvrh/2, cnv.g.width, cnvrh);
-  cnv.g.rect(wOn2, cnv.g.height-cnvrh/2, cnv.g.width, cnvrh);
-  cnv.g.rect(cnvrv/2, hOn2, cnvrv, cnv.g.height);
-  cnv.g.rect(cnv.g.width-cnvrv/2, hOn2, cnvrv, cnv.g.height);
-  for (let k = 0; k < r; k++) {
-    for (let i = cnvrv + r/2; i < cnv.g.width; i += 2*r) {
-      cnv.g.square(i + off, cnvrh + r/2 + v, rd);
-      cnv.g.square(i + off, cnv.g.height - (cnvrh + r/2 + v), rd);
-    }
-    for (let i = cnvrh/2 - r/2; i < cnv.g.height; i += 2*r) {
-      cnv.g.square(cnvrv + r/2 + v, i + off, rd);
-      cnv.g.square(cnv.g.width - (cnvrv + r/2 + v), i + off, rd);
-    }
-    v += r;
-    if (off == 0) {
-      off = r;
-    } else {
-      off = 0;
-    }
-    rd -= 1;
-  }
-}
-
 function vignette(cnv, border = 1.1){
   let c1 = color(0, 0, 0, 0);
   let c2 = color(255, 0, 0, 255);
@@ -108,59 +71,105 @@ function pixelBorder(cnv, r=3) {
   cnv.g.image(newCanv, cnv.tx, cnv.ty);
 }
 
-function getPerlinTile(dim, r=100, scalex=5, scaley=5) {
-  console.log(dim)
+function getPerlinTile(dim, scale, r, myColors, addNoise=false) {
+  noiseSeed(random(100));
   let cnv = new Drawable(dim, dim, 0, 0, 0, 0);
-  perlinTile(cnv, r, scalex, scaley);
+  for (let x = 0; x < cnv.g.width + r; x+=r) {
+    for (let y = 0; y < cnv.g.height + r; y+=r) {
+      const n = sqrt(myNoise(x * scale, y * scale, 0, cnv.g.width * scale, cnv.g.height * scale));
+      const c = int(map(n, 0, 1, 0, myColors.length));
+      cnv.g.stroke(myColors[c]);
+      cnv.g.fill(myColors[c]);
+      cnv.g.square(x, y, r);
+    }
+  }
+  if (addNoise == true) {
+    addNoiseTile(cnv, r, myColors);
+  }
   return cnv;
 }
 
-function perlinTile(cnv, r, scalex, scaley) {
-  let psX = cnv.g.width / r;
-  let psY = cnv.g.width / r;
-  cnv.g.noStroke();
-  let blendBorder = (r/2)-1;
-  let [blbdXm, blbdXM, blbdYm, blbdYM] = [blendBorder, r - blendBorder, blendBorder, r - blendBorder];
-  let val, ratio;
-  for (let i = 0; i < r; i++) {
-    for (let j = 0; j < r; j++) {
-      val = noise(i/scalex, j/scaley);
-      ratio = val;
-      if (i < blbdXm) {
-        let v2 = noise((i+r)/scalex, (j)/scaley);
-        val = max(val, v2);
-        // ratio = (i / blbdXm);
-        // val = (ratio * val) + ((1 - ratio) * noise((i+r)/scalex, (j)/scaley));
-      }
-      if (i > blbdXM) {
-        let v2 = noise((i-r)/scalex, (j)/scaley);
-        val = max(val, v2);
-        // ratio = 1 - ((i - blbdXM) / blendBorder);
-        // val = (ratio * val) + ((1 - ratio) * noise((i-r)/scalex, (j)/scaley));
-      }
-      if (j < blbdYm) {
-        let v2 = noise((i/scalex),(j+r)/scaley);
-        val = max(val, v2);
-        // ratio = (j) / blbdYm;
-        // val = (val * ratio) + ((1-ratio) * noise((i)/scalex, (j+r)/scaley));
-      }
-      if (j > blbdYM) {
-        let v2 = noise(i/scalex, (j-r)/scaley);
-        val = max(val, v2);
-        // ratio = 1 - ((j - blbdYM) / blendBorder);
-        // val = (val * ratio) + ((1 - ratio) * noise((i)/scalex, (j-r)/scaley))
-      }
-      if (val > 0.5) {
-        cnv.g.fill(G.colors[35]);
-      } else if (val < 0.4) {
-        cnv.g.fill(G.colors[33]);
-      } else {
-        cnv.g.fill(G.colors[34]);
-        // cnv.g.fill(0, 255, 255);
+function addNoiseTile(cnv, r, myColors, amount = 50) {
+  let range = floor(cnv.g.width / r);
+  for (let i = 0; i < amount; i++) {
+    let c = myColors[int(random(myColors.length))]
+    cnv.g.stroke(c);
+    cnv.g.fill(c);
+    cnv.g.square(r * int(random(range)), r * int(random(range)), r);
+  }
+}
 
-      }
-
-      cnv.g.rect(i * psX, j*psY, psX, psY);
+function drawRoad(cnv, widthPercent, bgRes, myColors) {
+[w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+let roadTexture = new Drawable(w, h, r, tx, ty, 0);
+let tile = getPerlinTile(100, 0.05, bgRes, myColors, true);
+roadTexture.setTileAble(tile);
+var roadTextureIMG = createImage(w, h);
+roadTextureIMG.copy(roadTexture.g, 0, 0, w, h, 0, 0, w, h);
+let roadMask = new Drawable(w, h, r, tx, ty, 0);
+roadMask.g.fill(0);
+let border = 10;
+let startX = (1 - widthPercent) * (w/2);
+startX = floor(startX / bgRes) * bgRes + bgRes * border;
+let endX = startX + widthPercent * w;
+endX = floor(endX / bgRes) * bgRes - bgRes  * border;
+width = endX - startX;
+roadMask.g.rect(startX, 0, width, h);
+let probability = 0.8;
+px = startX - bgRes;
+pxE = endX;
+for (let repeat = 0; repeat < border; repeat++) {
+  for (let i = 0; i < h; i+= bgRes) {
+    if (probability > random()) {
+      roadMask.g.square(px, i, bgRes);
+    }
+    if (probability > random()) {
+      roadMask.g.square(pxE, i, bgRes);
     }
   }
+  probability -= 0.1;
+  px -= bgRes;
+  pxE += bgRes;
+}
+var roadMaskIMG = createImage(w, h);
+roadMaskIMG.copy(roadMask.g, 0, 0, w, h, 0, 0, w, h);
+roadTextureIMG.mask(roadMaskIMG);
+cnv.g.image(roadTextureIMG, 0, 0);
+// cnv.g.image(roadMask.g, 0, 0);
+}
+
+function showColors() {
+  function colorString(levels) {
+    return String(levels[0]) + ', ' + String(levels[1]) + ', ' + String(levels[2])
+  }
+  colorDiv = createDiv();
+  colorDiv.position(0, 0);
+  colorDiv.style('background-color', '#FFFFFF');
+  for (let i = 0; i < G.colors.length; i++) {
+    let levels = G.colors[i].levels;
+    colorDiv.html('<span style="color:rgb(' + colorString(levels) + ')">' + i + '    ■ </span>' , true);
+    // colorDiv.html(i + '    ■ </span>', true);
+    if (i % 10 == 0 && i != 0) {
+      colorDiv.html('<br><br>', true);
+    }
+  }
+}
+
+
+
+function perlinTilebackup(cnv, scale, r) {
+  cnv.g.strokeWeight(2);
+  cnv.g.rectMode(CENTER);
+  for (let x = 0; x < cnv.g.width; x++) {
+    for (let y = 0; y < cnv.g.height; y++) {
+      const n = myNoise(x * scale, y * scale, 0, cnv.g.width * scale, cnv.g.height * scale);
+      const c = map(n, 0, 1, 0, 255);
+      cnv.g.stroke(c);
+      cnv.g.point(x, y);
+    }
+  }
+}
+
+function myNoise(x, y, z, w, h) {
+  return (noise(x, y, z) * (w - x) * (h - y) + noise(x - w, y, z) * x * (h - y) + noise(x - w, y - h, z) * x * y + noise(x, y - h, z) * (w - x) * y) / (w * h);
 }

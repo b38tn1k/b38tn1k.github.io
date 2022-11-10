@@ -11,16 +11,32 @@ function bounded(env, x, y) { // envelope = [x1, y1, x2, y2]
   result.complete = result.vertical && result.horizontal;
   return(result);
 }
+function splitSheet(src, res, col, start, end){
+
+  let sx = start * res;
+  let sy = col * res;
+  let sw = (end - start) * res;
+  let sh = res;
+  let img = createImage(sw, sh);
+  img.copy(src, sx, sy, sw, sh, 0, 0, sw, sh);
+
+
+  return img;
+}
+
+
 class Globals {
   constructor(){
-    this.gLayers;
+    this.graphLayers;
     this.dims;
     this.inputs;
     this.colors = []; // alwayyyys
     this.loaders = {};
     this.updated = true; //control FPS when I get there
     this.player;
-    this.scroller;
     this.UIElements;
+    this.levels = [];
+    this.levelPointer = 0;
+    this.triggerRadius = 100;
   }
 }

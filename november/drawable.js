@@ -1,8 +1,17 @@
+function newDrawableFromImage(image){
+  let w = image.width;
+  let h = image.height;
+  let nd = new Drawable(w, h);
+  nd.g.image(image, 0, 0)
+  return nd;
+}
+
 class Drawable {
-  constructor(w, h, r, tx, ty, level) {
+  constructor(w, h, r=0, tx=0, ty=0, level=0) {
     this.rot = r;
     this.tx = tx;
     this.ty = ty;
+    this.a = 0;
     this.g = createGraphics(w, h);
     this.level = level;
     this.clearable = false;
@@ -84,6 +93,7 @@ class Drawable {
       if (this.stopAtOne == true && (this.stopFrames.indexOf(int(this.cFrame)) != -1)) {
         this.play = false;
         this.stopAtOne = false;
+        this.cFrame = this.stopFrames[0]; // stop frame default, others may be transitionalable
       }
       if (this.play == true) {
         this.cFrame += this.rate;

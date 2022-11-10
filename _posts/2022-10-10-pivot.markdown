@@ -1,0 +1,17 @@
+---
+layout: post
+title:  "Pivot"
+date:   2022-10-10
+categories: [game, november]
+tags: gameprogress
+---
+The nice thing about doing creative things without anyone watching is you can change your mind and not have to explain yourself and say the end result is exactly what you intended.
+
+I had an idea - a scrolling game where a character follows a road, encounters people and tries to help. The character has their own mission and they can't turn back. So sometimes they can't help.
+
+After putting in some dummy art and building a late night half-baked scroller method, I don't like the scroller concept so much. Looking at Open Game Art, there are some really interesting 'single screen levels' with different biomes, obstacles, etc. Implementing terrain changes in a continuous scroller is possible, but I wonder if the effort is worth it, considering the extra gameplay time added travelling through transition zones. Having the character move from one level to another via a 'layer transition' mechanic allows for more varied game settings and less boring travel time. So I'm gonna try do that. Quests (which I had internally rebranded as "Encounters") will become Layers. Not a big change, but one I think provides some new exciting possibilities.
+
+Later:
+I've added a new PlayerCharacter class that extends the SpriteCollection. PlayerCharacter includes an inventory and some input control specifics. Control input is slightly different for touch screen vs mouse input now - you can guide the character with the mouse or use an 'invisible joystick' on touch screens (invisible cause I haven't drawn it yet). Player inventory is reflected in the UIElements class, drawn on screen, and is also transferrable via Dialog events. A GameLevelHandler class groups NPCs and Dialogs into levels, I want to add background and foreground elements too. Rebuilding the level when the browser window is resized or rotated is still a bit messy, will work on that first.
+
+A spritesheet slicer method makes importing sheets from LPC much easier, I think probably saves a little on load time also. Still looking ugly but getting closer to a point where it is worth trying to make look pretty. good progress!

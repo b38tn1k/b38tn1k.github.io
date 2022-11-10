@@ -4,7 +4,7 @@ class DialogEvent {
     this.words = words;
     this.options = [];
     this.conditions = [];
-    this.eventIDs = [];
+    this.triggers = [];
     this.optionYs = [];
     this.children = [];
     this.printHead = 0;
@@ -13,16 +13,23 @@ class DialogEvent {
     this.length = words.length;
     this.hasOptions = false;
   }
+  reset() {
+    this.printHead = 0;
+    this.completed = false;
+    this.pauseUntil = -1;
+    this.optionYs = [];
+    if (this.options.length != 0) {
+      this.hasOptions = true;
+    }
+  }
 };
 
 class Dialog {
   constructor(x, y, w, h) {
     this.bbox = [x-w, y-w, x+w, y+h, 2*w, 2*h];
     // this.showZones = true;
-    this.layer = G.gLayers.getLayer('dialog', true, 100);
-    this.layer.setClearable();
-    this.font = G.loaders['font'];
-    this.layer.g.textFont(this.font);
+    this.layer = G.graphLayers.getLayer('dialog', true, 100);
+    this.layer.g.textFont(G.loaders['font']);
     this.bgcolor = G.colors[2];
     this.fgcolor = G.colors[0];
     this.fontSize = 12;
@@ -49,14 +56,43 @@ class Dialog {
     this.selector = 0;
     this.pauseForOptions = false;
     this.eventTrigger = false;
-    this.eventID = -1;
+    this.past = [];
   }
 
-  addOption(parent, words, eventId=-1, condition=returnTrue) {
+  addDialogEvent(id, words='') {
+    let newLine = new DialogEvent(id, words);
+    this.de.children.push(newLine);
+    this.de = this.de.children[0];
+    return this.de
+  }
+
+  addChildDialogEvent(parent, id, words=''){
+    let newLine = new DialogEvent(id, words);
+    parent.children.push(newLine);
+    return parent.children[parent.children.length-1];
+  }
+
+  addOption(parent, words, trigger=returnTrue, condition=returnTrue) {
     parent.options.push(words);
     parent.conditions.push(condition);
-    parent.eventIDs.push(eventId);
+    parent.triggers.push(trigger);
     parent.hasOptions = true;
+  }
+
+  refreshLayout(x, y, w, h) {
+    this.layer = G.graphLayers.getLayer('dialog', true, 100);
+    this.layer.setClearable();
+    this.layer.g.textFont(G.loaders['font']);
+    this.layer.g.textSize(this.fontSize);
+    this.layer.g.textLeading(this.lineSpacing * this.fontSize);
+    this.layer.g.textAlign(LEFT, TOP);
+    this.layer.g.noStroke();
+    this.layer.g.textWrap(WORD);
+    this.layer.setClearable();
+    this.bbox = [x-w, y-w, x+w, y+h, 2*w, 2*h];
+    for (key in this.onScr) {
+      this.onScr[key].printHead = 0;
+    }
   }
 
   updateCoords(tag, sprite) { // could do more here to fit text in above sprite if screen edges are close
@@ -157,12 +193,23 @@ class Dialog {
     }
   }
 
-  decrementPrintHead() {
+  leaveConversationArea() {
     for (key in this.onScr) {
       if (this.onScr[key].printHead > 0) {
         this.onScr[key].printHead -= this.printHeadSpeed;
       }
     }
+    // reset - can be better
+    // this.play = false;
+    // this.prevPlay = false;
+    // this.past.push(this.de);
+    // this.onScr = {};
+    // this.selector = 0;
+    // while (this.past.length != 0) {
+    //   let d = this.past.pop();
+    //   d.reset();
+    // }
+
   }
 
   setPauseTime(de) {
@@ -190,6 +237,7 @@ class Dialog {
   }
 
   progress(input) {
+    this.past.push(this.de);
     this.de = this.getChild();
     this.onScr[this.de.id] = this.de;
     input.setChangeListener();
@@ -209,7 +257,6 @@ class Dialog {
 
   update(sprite, input) {
     this.eventTrigger = false;
-    this.eventID = -1;
     this.updateCoords('PC', sprite);
     if (bounded(this.bbox, sprite.tx, sprite.ty).complete == true) {
       this.play = true;
@@ -220,7 +267,7 @@ class Dialog {
       }
       this.incrementPrintHead()
     } else {
-      this.decrementPrintHead()
+      this.leaveConversationArea()
     }
     if (this.de.completed == true && millis() > this.de.pauseUntil) {
       this.progress(input);
@@ -245,20 +292,9 @@ class Dialog {
     this.de.length = this.de.words.length;
     this.selector = option;
     this.eventTrigger = true;
-    this.eventID = this.de.eventIDs[option];
-  }
-
-  addDialogEvent(id, words='') {
-    let newLine = new DialogEvent(id, words);
-    this.de.children.push(newLine);
-    this.de = this.de.children[0];
-    return this.de
-  }
-
-  addChildDialogEvent(parent, id, words=''){
-    let newLine = new DialogEvent(id, words);
-    parent.children.push(newLine);
-    return parent.children[parent.children.length-1];
+    this.de.triggers[option]();
+    // console.log();
+    // this.eventID = this.de.eventIDs[option];
   }
 
   writeText() {

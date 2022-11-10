@@ -62,6 +62,8 @@ class SpriteCollection {
     } else {
       // this.current.play = this.playAni;
     }
+    this.x = this.current.tx;
+    this.y = this.current.ty;
     this.current.update();
   }
   draw() {

@@ -20,7 +20,6 @@ function saveImage() {
   save(timestamp+".png");
 }
 
-var testSprite;
 var testNPC;
 var testDialog;
 
@@ -30,18 +29,23 @@ function setupScreen() {
   G.dims = new Dimensions();
   G.gLayers = new LayerHandler(G.dims);
   G.inputs = new InputHandler(G.dims);
-  G.debugTools = new DebugTools();
+  G.UIElements = new UIElements();
   G.gLayers.clear();
+
 
   dummyLayout();
 }
 
 function preload() {
   G = new Globals();
-  let c = loadStrings('NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
+  let c = loadStrings('assets/NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
   G.loaders['walk'] = loadImage('assets/walk4.png');
   G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdle.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
+  G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
+  G.loaders['agulha'] = loadImage('assets/agulha.png');
+  G.loaders['windrose'] = loadImage('assets/windrose.png');
+
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
 }
 
@@ -55,17 +59,14 @@ function setup() {
 }
 
 function draw() {
-  G.inputs.update();
+
   G.gLayers.clear();
 
-  testSprite.update(testDialog, G.inputs);
+  G.inputs.update();
+  G.UIElements.update();
+  G.player.update(testDialog, G.inputs);
   testNPC.update(testDialog, G.inputs);
-
-  testSprite.draw();
-  testNPC.draw();
-
-  testDialog.update(testSprite.current, G.inputs);
-  testDialog.draw();
+  testDialog.update(G.player.current, G.inputs);
 
   if (testDialog.eventTrigger == true) {
     if (parseInt(testDialog.eventID) == 101) {
@@ -73,7 +74,10 @@ function draw() {
     }
   }
 
+  G.player.draw();
+  testNPC.draw();
+  testDialog.draw();
   G.gLayers.draw();
-  let a = visualCheckInputs();
+  G.UIElements.draw();
 
 }

@@ -1,0 +1,7 @@
+Compass Assets:
+https://opengameart.org/content/16x16-compasswindrose
+Puffolotti
+
+Test Sprite
+https://sanderfrenken.github.io/Universal-LPC-Spritesheet-Character-Generator/#?body=Body_color_light&head=Human_male_light&hat=Cloth_hood_white&clothes=Longsleeve_brown&belt=Leather_Belt_brown&legs=Pants_brown&gloves=Gloves_white&shoes=Boots_blue
+LPC Spritesheet Generator

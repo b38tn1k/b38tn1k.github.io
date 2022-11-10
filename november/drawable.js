@@ -18,6 +18,16 @@ class Drawable {
     this.stopFrames;
     this.moveFrames;
     this.tiled = false;
+    this.static = false;
+    this.repeatable = false;
+  }
+
+  setStatic() {
+    this.static = true;
+  }
+
+  setRepeatable() {
+    this.repeatable = true;
   }
 
   setClearable() {

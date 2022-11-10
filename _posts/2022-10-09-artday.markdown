@@ -10,3 +10,8 @@ Felt like switching it up so today I played with Perlin Noise and some art gener
 Backgrounds are sorta underwhelming.
 
 ![yuck](https://b38tn1k.com/images/yuck.png)
+
+Later that day...
+The perlin noise art annoyed me. I had a look around [Open Game Art](https://opengameart.org/content/blowhard-2-blow-harder) and found some inspiration + more test assets. I am keeping a running attribution list [here](https://b38tn1k.com/november/assets/attributionList.txt).
+
+I created a UIElements class that will display the game progress tracker, inventory. It currently only displays the compass. I created a scrollTracker class to try keep the sprite center-screen-ish. This one needs a bit more thought - I want to avoid using globals to jump into classes, it gets messy and confusing quick. 

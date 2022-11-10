@@ -288,7 +288,7 @@ class Dialog {
         this.layer.g.rect(x, y, this.textBoxWidth, textBoxHeight);
         this.layer.g.fill(this.fgcolor);
         this.layer.g.text(fullText, x, y, this.textBoxWidth);
-        y += textBoxHeight;
+        y += textBoxHeight * 2;
       }
       if (firstTime) {
         this.onScr[key].optionYs.push(y);

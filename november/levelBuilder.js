@@ -30,5 +30,9 @@ function level0() {
   dialog.addChildDialogEvent(tradeResp, 'NPC1', 'I understand.');
   let selfish = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
   dialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
+
+  let bg = level.BG();
+  bg.g.background(G.colors[23]);
+  bg.randomTile(G.loaders['grass'], 5, 1);
   G.levels.push(level);
 }

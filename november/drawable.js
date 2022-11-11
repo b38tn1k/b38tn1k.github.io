@@ -77,6 +77,21 @@ class Drawable {
     this.update();
   }
 
+  randomTile(tileset, length, height, chance=1.0) {
+    let resX = tileset.width/length;
+    let resY = tileset.height/height;
+    for (let x = 0; x < this.g.width; x += resX){
+      for (let y = 0; y < this.g.height; y += resY) {
+        let valX = int(random(length));
+        let valY = int(random(height));
+        if (random() <= chance) {
+          this.g.image(tileset, x, y, resX, resY, valX*resX, valY*resX, resX, resY);
+        }
+
+      }
+    }
+  }
+
   setTileAble(tileCnv) {
     this.tiled = true;
     for (let i = 0; i < this.g.width; i+=tileCnv.g.width) {

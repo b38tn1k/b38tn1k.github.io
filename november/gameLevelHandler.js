@@ -8,6 +8,10 @@ class Level {
     this.npcs = [];
     this.npcsC = [];
     this.npcTags = [];
+    this.bg = G.graphLayers.getLayer('background', true, 0, 16);
+  }
+  BG() {
+    return this.bg;
   }
   newSpriteCollection(tag, x, y) {
     this.npcsC.push([x, y]);
@@ -23,6 +27,11 @@ class Level {
     let nd = new Dialog(G.dims.w * x, G.dims.h * y, G.triggerRadius, G.triggerRadius);
     this.addDialog(nd);
     return nd;
+  }
+  newBackground() {
+    let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+    this.background = new Drawable(w, h, r, this.x, this.y, 100);
+    return this.background;
   }
   addDialog(dialog) { // i might want to save the dims in these ones for resizing?
     this.dialogs.push(dialog);
@@ -41,7 +50,6 @@ class Level {
       for (let j = 0; j < this.npcs.length; j++) {
         this.dialogs[i].updateCoords(this.npcTags[j], this.npcs[j].current);
       }
-
     }
 
   }

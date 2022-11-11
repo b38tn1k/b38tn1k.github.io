@@ -43,6 +43,7 @@ class Dialog {
     this.layer.g.textAlign(LEFT, TOP);
     this.layer.g.noStroke();
     this.layer.g.textWrap(WORD);
+    this.layer.g.rectMode(CORNER);
     this.layer.setClearable();
     this.head = new DialogEvent();
     this.de = this.head;
@@ -89,6 +90,7 @@ class Dialog {
     this.layer.g.noStroke();
     this.layer.g.textWrap(WORD);
     this.layer.setClearable();
+    this.layer.g.rectMode(CORNER);
     this.bbox = [x-w, y-w, x+w, y+h, 2*w, 2*h];
     for (key in this.onScr) {
       this.onScr[key].printHead = 0;

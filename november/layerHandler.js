@@ -6,9 +6,15 @@ class LayerHandler {
     this.layerMap = {};
   }
 
-  newLayer(level, name, w=0, h=0, r=0, tx=0, ty=0) {
+  newLayer(level, name, w=0, h=0, r=0, tx=0, ty=0, res=-1) {
     if (w == 0) {
       [w, h, r, tx, ty] = this.dims.fullScreenGraphicDims;
+    }
+    if (res != -1) {
+      w = int((w/res) + 1) * res;
+      h = int((h/res) + 1) * res;
+      // tx = w/2;
+      // ty = h/2;
     }
     let newLayer = new Drawable(w, h, r, tx, ty, level);
     if (level > this.layers.length) {
@@ -44,13 +50,13 @@ class LayerHandler {
     return name;
   }
 
-  getLayer(name, force=false, level=0) {
+  getLayer(name, force=false, level=0, res=-1) {
     let result = -1;
     if (name in this.layerMap) {
       result = this.layers[this.layerMap[name]];
     }
     if (force == true && result == -1) {
-      result = this.newLayer(level, name)
+      result = this.newLayer(level, name, 0, 0, 0, 0, 0, res)
     }
     return result;
   }

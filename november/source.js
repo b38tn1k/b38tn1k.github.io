@@ -3,14 +3,14 @@ var loaders = {};
 
 function deviceTurned() {
   setupScreen();
-  dummyLayout();
+  // dummyLayout();
   G.player.refreshLayout();
   G.levels[G.levelPointer].refreshLayout();
 }
 
 function windowResized() {
   setupScreen();
-  dummyLayout();
+  // dummyLayout();
   G.player.refreshLayout();
   G.levels[G.levelPointer].refreshLayout();
 }
@@ -62,6 +62,8 @@ function preload() {
   G.loaders['windrose'] = loadImage('assets/windrose.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
+  G.loaders['grass'] = loadImage('assets/grass2.png');
+  G.loaders['food'] = loadImage('assets/food.png');
 }
 
 function setup() {
@@ -72,7 +74,7 @@ function setup() {
   rectMode(CENTER);
   pixelDensity(1);
   frameRate(30);
-  dummyLayout();
+  // dummyLayout();
 }
 
 function draw() {

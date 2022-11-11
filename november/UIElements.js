@@ -33,8 +33,8 @@ class UIElements {
     let r = this.inv.unit;
 
     for (let x = this.inv.x; x < newWidth + this.inv.x; x+=this.inv.unit) {
-      this.inv.g.stroke(G.colors[3]);
-      this.inv.g.fill(G.colors[4]);
+      this.inv.g.stroke(G.colors[4]);
+      this.inv.g.fill(G.colors[3]);
       this.inv.g.square(x, y, r);
       if (keys[counter] in G.loaders) {
         this.inv.g.image(G.loaders[keys[counter]], x, y);

@@ -62,8 +62,9 @@ function preload() {
   G.loaders['windrose'] = loadImage('assets/windrose.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
-  G.loaders['grass'] = loadImage('assets/grass2.png');
-  G.loaders['food'] = loadImage('assets/food.png');
+  G.loaders['grass'] = loadImage('assets/grass.png');
+  G.loaders['path'] = loadImage('assets/path.png');
+  G.loaders['food'] = loadImage('assets/carrot.png');
 }
 
 function setup() {

@@ -92,6 +92,28 @@ class Drawable {
     }
   }
 
+  drawPath(tileset, length, height, width=0.2){
+    let resX = tileset.width/length;
+    let resY = tileset.height/height;
+    let valX = 0;
+    let valY = 0;
+    let actualWidth = this.g.width * width;
+    let startX = (this.g.width / 2) - (actualWidth/2);
+    startX = int(startX / resX) * resX;
+    let endX = (this.g.width / 2) + (actualWidth/2);
+    endX = int(endX / resX + 1) * resX;
+    let endTrig = endX - resX;
+    for (let x = startX; x < endX; x+= resX) {
+      if (x >= endTrig) {
+        valX = 2;
+      }
+      for (let y = 0; y < this.g.height; y+= resY) {
+        this.g.image(tileset, x, y, resX, resY, valX*resX, valY*resX, resX, resY);
+      }
+      valX = 1;
+    }
+  }
+
   setTileAble(tileCnv) {
     this.tiled = true;
     for (let i = 0; i < this.g.width; i+=tileCnv.g.width) {

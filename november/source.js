@@ -58,6 +58,7 @@ function preload() {
   G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdle.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
+  G.loaders['compass'] = loadImage('assets/compass.png');
   G.loaders['agulha'] = loadImage('assets/agulha.png');
   G.loaders['windrose'] = loadImage('assets/windrose.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');
@@ -65,6 +66,7 @@ function preload() {
   G.loaders['grass'] = loadImage('assets/grass.png');
   G.loaders['path'] = loadImage('assets/path.png');
   G.loaders['food'] = loadImage('assets/carrot.png');
+  G.loaders['controlOrigin'] = loadImage('assets/controlOrigin.png');
 }
 
 function setup() {

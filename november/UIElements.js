@@ -1,10 +1,9 @@
 class UIElements {
   constructor() {
     this.cmp = {}
-    this.cmp.bg = newDrawableFromImage(G.loaders['windrose']);
-    this.cmp.fg = newDrawableFromImage(G.loaders['agulha']);
-    this.cmp.x = G.dims.w - 100;
-    this.cmp.y = G.dims.h - 100;
+    this.cmp.bg = newDrawableFromImage(splitSheet(G.loaders['compass'], 30, 0, 0, 1));
+    this.cmp.fg = newDrawableFromImage(splitSheet(G.loaders['compass'], 30, 0, 1, 2));
+
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
     this.border = new Drawable(w, h, r, tx, ty, 0);
     pixelBorder(this.border);
@@ -19,6 +18,10 @@ class UIElements {
     this.inv.x = 10;
     this.inv.y = 10;
     this.inv.textY = this.inv.y + this.inv.unit - 3;
+    this.cmp.x = G.dims.w - this.inv.unit;
+    this.cmp.y = this.inv.y + this.inv.halfunit;
+    this.isTouchDevice = G.dims.isTouchDevice;
+    this.controlOrigin = [];
   }
 
   drawInventory(inventory) {
@@ -52,6 +55,7 @@ class UIElements {
   }
 
   update(player, myInp=G.inputs) {
+    this.controlOrigin = [myInp.originX, myInp.originY]
     this.cmp.fg.rot = myInp.angleTo(player.current);
     if (player.inventoryChanged == true) {
       this.drawInventory(player.inventory);
@@ -60,6 +64,9 @@ class UIElements {
   }
 
   draw() {
+    if (this.isTouchDevice == true) {
+      image(G.loaders['controlOrigin'], this.controlOrigin[0], this.controlOrigin[1])
+    }
     push();
     translate(this.cmp.x, this.cmp.y);
     image(this.cmp.bg.g, 0, 0);

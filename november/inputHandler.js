@@ -12,6 +12,7 @@ class InputHandler {
     this.listenerTracker = false;
     this.listenerOn = false;
     this.cardinals = [radians(0), radians(90), radians(180), radians(270)];
+    this.prevOn = false;
   }
   facing(sprite){
     let a = this.angleTo(sprite);
@@ -51,6 +52,11 @@ class InputHandler {
     this.x = mouseX;
     this.y = mouseY;
     this.on = mouseIsPressed;
+    if (this.prevOn != this.on) {
+      this.originX = this.x;
+      this.originY = this.y;
+    }
+    this.prevOn = this.on;
   }
   angleToSprite(sprite){
     let dx = sprite.tx - this.x;

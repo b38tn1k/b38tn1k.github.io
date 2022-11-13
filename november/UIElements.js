@@ -1,8 +1,8 @@
 class UIElements {
   constructor() {
     this.cmp = {}
-    this.cmp.bg = newDrawableFromImage(splitSheet(G.loaders['compass'], 30, 0, 0, 1));
-    this.cmp.fg = newDrawableFromImage(splitSheet(G.loaders['compass'], 30, 0, 1, 2));
+    this.cmp.bg = newDrawableFromImage(splitSheet(G.loaders['compass'], 38, 0, 0, 1));
+    this.cmp.fg = newDrawableFromImage(splitSheet(G.loaders['compass'], 38, 0, 1, 2));
 
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
     this.border = new Drawable(w, h, r, tx, ty, 0);

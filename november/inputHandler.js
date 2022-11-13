@@ -17,15 +17,14 @@ class InputHandler {
   facing(sprite){
     let a = this.angleTo(sprite);
     let dir = 'unk';
-    if (a > 0) {
+    if (a >= 0) {
       dir = 'up';
     } else {
       dir = 'down';
     }
     if (a > radians(-45) && a < radians(45)) {
       dir = 'left';
-    }
-    if (a > radians(135) || a < radians(-135)) {
+    } else if (a > radians(135) || a < radians(-135)) {
       dir = 'right';
     }
     return dir;

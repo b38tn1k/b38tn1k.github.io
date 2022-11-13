@@ -32,8 +32,13 @@ function level0() {
   dialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
 
   let bg = level.BG();
+  level.attachBGSetup(drawBGLevel0);
+  drawBGLevel0(bg);
+  G.levels.push(level);
+}
+
+function drawBGLevel0(bg){
   bg.g.background(G.colors[23]);
   bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
   bg.drawPath(G.loaders['path'], 7, 1);
-  G.levels.push(level);
 }

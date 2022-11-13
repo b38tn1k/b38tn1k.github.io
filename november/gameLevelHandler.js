@@ -9,9 +9,14 @@ class Level {
     this.npcsC = [];
     this.npcTags = [];
     this.bg = G.graphLayers.getLayer('background', true, 0, 16);
+    this.drawBG;
   }
   BG() {
+    this.bg = G.graphLayers.getLayer('background', true, 0, 16);
     return this.bg;
+  }
+  attachBGSetup(bg){
+    this.drawBG = bg;
   }
   newSpriteCollection(tag, x, y) {
     this.npcsC.push([x, y]);
@@ -40,6 +45,10 @@ class Level {
     this.npcs.push(npc);
   }
   refreshLayout() {
+    let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+    this.bg = G.graphLayers.newLayer(0, 'background', w, h, r, tx, ty);
+    this.drawBG(this.bg);
+
     for (let i = 0; i < this.npcs.length; i++) {
       this.npcs[i].refreshLayout(G.dims.w * this.npcsC[i][0], G.dims.h * this.npcsC[i][1]);
     }

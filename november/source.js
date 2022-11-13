@@ -45,8 +45,8 @@ function setupGame() {
   G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 11, 0, 8), 'right',[0, 4], 0);
   G.player.setCollectionRate(0.4);
   G.player.addInventoryItem('food', 3);
-  G.player.addInventoryItem('boots');
-  G.player.addInventoryItem('toys');
+  G.player.addInventoryItem('boot', 0);
+  G.player.addInventoryItem('toy');
   level0();
 }
 
@@ -64,6 +64,8 @@ function preload() {
   G.loaders['grass'] = loadImage('assets/grass.png');
   G.loaders['path'] = loadImage('assets/path.png');
   G.loaders['food'] = loadImage('assets/carrot.png');
+  G.loaders['toy'] = loadImage('assets/toy.png');
+  G.loaders['boot'] = loadImage('assets/boot.png');
 }
 
 function setup() {

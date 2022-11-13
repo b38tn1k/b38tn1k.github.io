@@ -9,7 +9,7 @@ class InputHandler {
     this.x = 0;
     this.y  = 0;
     this.on = false;
-    this.prevOn = false;
+    this.listenerTracker = false;
     this.listenerOn = false;
     this.cardinals = [radians(0), radians(90), radians(180), radians(270)];
   }
@@ -31,12 +31,12 @@ class InputHandler {
   }
   setChangeListener() {
     this.listenerOn = true;
-    this.prevOn = this.on;
+    this.listenerTracker = this.on;
   }
   hasChanged() {
     let result = true;
     if (this.listenerOn == true) {
-      if (this.prevOn == this.on) {
+      if (this.listenerTracker == this.on) {
         result = false;
       } else {
         result = true;

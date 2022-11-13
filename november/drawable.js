@@ -92,7 +92,7 @@ class Drawable {
     }
   }
 
-  drawPath(tileset, length, height, width=0.2){
+  drawPath(tileset, length, height, width=0.3){
     let resX = tileset.width/length;
     let resY = tileset.height/height;
     let valX = 0;

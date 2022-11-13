@@ -33,7 +33,7 @@ function level0() {
 
   let bg = level.BG();
   bg.g.background(G.colors[23]);
-  bg.randomTile(G.loaders['grass'], 5, 1);
+  bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
   bg.drawPath(G.loaders['path'], 7, 1);
   G.levels.push(level);
 }

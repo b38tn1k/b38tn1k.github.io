@@ -64,9 +64,9 @@ class UIElements {
   }
 
   draw() {
-    if (this.isTouchDevice == true) {
-      image(G.loaders['controlOrigin'], this.controlOrigin[0], this.controlOrigin[1])
-    }
+    // if (this.isTouchDevice == true) {
+    //   image(G.loaders['controlOrigin'], this.controlOrigin[0], this.controlOrigin[1])
+    // }
     push();
     translate(this.cmp.x, this.cmp.y);
     image(this.cmp.bg.g, 0, 0);

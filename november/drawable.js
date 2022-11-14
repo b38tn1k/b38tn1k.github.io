@@ -136,8 +136,8 @@ class Drawable {
     let valY = 0;
     let actualWidth = this.g.width * width;
     actualWidth = max(2 * resX, actualWidth);
-    let startX = (this.g.width / 2 - 1) - (actualWidth/2);
-    startX = int(startX / resX + 1) * resX;
+    let startX = (this.g.width / 2) - (actualWidth/2);
+    startX = int(startX / resX) * resX;
     let endX = (this.g.width / 2) + (actualWidth/2);
     endX = int(endX / resX + 1) * resX;
     let endTrig = endX - resX;

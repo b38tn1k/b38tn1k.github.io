@@ -76,7 +76,6 @@ function setup() {
   rectMode(CENTER);
   pixelDensity(1);
   frameRate(30);
-  // dummyLayout();
 }
 
 function draw() {
@@ -89,5 +88,4 @@ function draw() {
   G.levels[G.levelPointer].draw();
   G.graphLayers.draw();
   G.UIElements.draw();
-  image(splitSheet(G.loaders['grass'], 64, 0, 5, 6), 126, 128);
 }

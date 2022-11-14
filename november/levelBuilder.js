@@ -38,7 +38,8 @@ function level0() {
 }
 
 function drawBGLevel0(bg){
-  bg.g.background(G.colors[23]);
   bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
+  bg.randomTile(splitSheet(G.loaders['grass'], 64, 1, 0, 5), 5, 1, 0.3, 0.5);
+  bg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 1), 1, 1);
   bg.drawPath(G.loaders['path'], 7, 1);
 }

@@ -9,7 +9,7 @@ link: 'https://youtube.com/playlist?list=PLZttbibA79ov0Y0J_pEOQnuLViuv8ho1e'
 
 [description] During lockdown I have been putting Arduinos in boxes and connecting them to MIDI to provide various musical utility.
 
-<a href="https://github.com/b38tn1k/chordtoy" target="_blank">Github Link</a>
+<a href="https://github.com/b38tn1k/chordtoy" "target="_blank">Github Link</a>
 
 
 Arduino can act as a synth or a sampler (I <a href="https://b38tn1k.com/#discog/music-for-arduino-algorithmic-suite-for-uno-quartet" target="_blank" >did</a> <a href="https://b38tn1k.com/#discog/music-for-arduino-escape-from-dinosaur-island" target="_blank" >two</a> Arduino-only EPs last year) but it really shines as a MIDI insert and passthrough effect.

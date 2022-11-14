@@ -13,6 +13,7 @@ class Drawable {
     this.ty = ty;
     this.a = 0;
     this.g = createGraphics(w, h);
+    this.g.imageMode(CORNER);
     this.level = level;
     this.clearable = false;
     this.animate = false;
@@ -77,18 +78,54 @@ class Drawable {
     this.update();
   }
 
-  randomTile(tileset, length, height, chance=1.0) {
+  randomTile(tileset, length, height, chance=1.0, valley=0.0) {
     let resX = tileset.width/length;
     let resY = tileset.height/height;
+    let valleyWidth = this.g.width * valley;
+    let valleyXS = (this.g.width/2) - (valleyWidth/2);
+    let valleyXE = (this.g.width/2) + (valleyWidth/2);
     for (let x = 0; x < this.g.width; x += resX){
-      for (let y = 0; y < this.g.height; y += resY) {
-        let valX = int(random(length));
-        let valY = int(random(height));
-        if (random() <= chance) {
-          this.g.image(tileset, x, y, resX, resY, valX*resX, valY*resX, resX, resY);
+      if (x < valleyXS || x > valleyXE) {
+        for (let y = 0; y < this.g.height; y += resY) {
+          let valX = int(random(length));
+          let valY = int(random(height));
+          if (random() <= chance) {
+            this.g.image(tileset, x, y, resX, resY, valX*resX, valY*resX, resX, resY);
+          }
         }
-
       }
+    }
+  }
+
+  border(tileset, length, height) {
+    let resX = tileset.width/length;
+    let resY = tileset.height/height;
+    let hResY = resY/4;
+    let hResX = resY/2;
+    let borderL = 1;
+    let borderR = 1;
+    let threshold = 2;
+
+
+    for (let y = -hResY; y < this.g.height; y+= hResY) {
+      for (let x = borderL * hResX; x >= -hResX; x -= hResX) {
+        this.g.image(tileset, x, y);
+      }
+      for (let x = this.g.width - ((borderR + 1) * hResX); x < this.g.width; x += hResX) {
+        this.g.image(tileset, x, y);
+      }
+      if (random() > 0.5 ) {
+        borderR += 1
+      } else {
+        borderR -= 1;
+      }
+      if (random() > 0.5 ) {
+        borderL += 1
+      } else {
+        borderL -= 1;
+      }
+      borderL = constrain(borderL, 0, threshold);
+      borderR = constrain(borderR, 0, threshold);
     }
   }
 
@@ -99,7 +136,7 @@ class Drawable {
     let valY = 0;
     let actualWidth = this.g.width * width;
     let startX = (this.g.width / 2) - (actualWidth/2);
-    startX = int(startX / resX) * resX;
+    startX = int(startX / resX + 1) * resX;
     let endX = (this.g.width / 2) + (actualWidth/2);
     endX = int(endX / resX + 1) * resX;
     let endTrig = endX - resX;

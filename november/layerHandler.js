@@ -13,8 +13,8 @@ class LayerHandler {
     if (res != -1) {
       w = int((w/res) + 1) * res;
       h = int((h/res) + 1) * res;
-      // tx = w/2;
-      // ty = h/2;
+      tx = w/2;
+      ty = h/2;
     }
     let newLayer = new Drawable(w, h, r, tx, ty, level);
     if (level > this.layers.length) {

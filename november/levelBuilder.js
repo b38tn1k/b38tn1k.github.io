@@ -31,15 +31,17 @@ function level0() {
   let selfish = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
   dialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
 
-  let bg = level.BG();
-  level.attachBGSetup(drawBGLevel0);
-  drawBGLevel0(bg);
+  let bg = level.bg;
+  let fg = level.fg;
+  level.attachBGSetup(drawLevel0);
+  drawLevel0(bg, fg);
   G.levels.push(level);
 }
 
-function drawBGLevel0(bg){
+function drawLevel0(bg, fg){
   bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['grass'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
-  bg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 1), 1, 1);
-  bg.drawPath(G.loaders['path'], 7, 1);
+  bg.drawPath(splitSheet(G.loaders['grass'], 64, 3, 0, 3), 3, 1);
+  fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 2), 2, 1);
+
 }

@@ -8,15 +8,18 @@ class Level {
     this.npcs = [];
     this.npcsC = [];
     this.npcTags = [];
-    this.bg = G.graphLayers.getLayer('background', true, 0, 16);
-    this.drawBG;
+    this.bg;
+    // this.bg = G.graphLayers.getLayer('background', true, 0, 16);
+    this.drawBGFG;
+    this.initBGFG();
   }
-  BG() {
-    this.bg = G.graphLayers.getLayer('background', true, 0, 16);
-    return this.bg;
+  initBGFG(res = 16) {
+    let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+    this.bg = G.graphLayers.newLayer(0, 'background', w, h, r, tx, ty, 16);
+    this.fg = G.graphLayers.newLayer(100, 'foreground', w, h, r, tx, ty, 16);
   }
   attachBGSetup(bg){
-    this.drawBG = bg;
+    this.drawBGFG = bg;
   }
   newSpriteCollection(tag, x, y) {
     this.npcsC.push([x, y]);
@@ -33,11 +36,6 @@ class Level {
     this.addDialog(nd);
     return nd;
   }
-  newBackground() {
-    let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
-    this.background = new Drawable(w, h, r, this.x, this.y, 100);
-    return this.background;
-  }
   addDialog(dialog) { // i might want to save the dims in these ones for resizing?
     this.dialogs.push(dialog);
   }
@@ -45,10 +43,8 @@ class Level {
     this.npcs.push(npc);
   }
   refreshLayout() {
-    let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
-    this.bg = G.graphLayers.newLayer(0, 'background', w, h, r, tx, ty);
-    this.drawBG(this.bg);
-
+    this.initBGFG();
+    this.drawBGFG(this.bg, this.fg);
     for (let i = 0; i < this.npcs.length; i++) {
       this.npcs[i].refreshLayout(G.dims.w * this.npcsC[i][0], G.dims.h * this.npcsC[i][1]);
     }
@@ -60,7 +56,6 @@ class Level {
         this.dialogs[i].updateCoords(this.npcTags[j], this.npcs[j].current);
       }
     }
-
   }
   update(player, inputs) {
     for (let i = 0; i < this.npcs.length; i++) {

@@ -62,11 +62,14 @@ class PlayerCharacter extends SpriteCollection {
       if (this.current.isMoveFrame() == true) {
         this.current.tx += uv[0] * this.movementSpeed;
         this.current.ty += uv[1]  * this.movementSpeed;
+        this.current.tx = constrain(this.current.tx, 0, G.dims.w);
+        this.current.ty = constrain(this.current.ty, 0, G.dims.h);
       }
-
     } else {
       this.current.stopAtOne = true;
     }
+
+
 
   }
 }

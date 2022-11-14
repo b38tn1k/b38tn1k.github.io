@@ -61,8 +61,8 @@ function preload() {
   G.loaders['compass'] = loadImage('assets/compass.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
-  G.loaders['grass'] = loadImage('assets/grass.png');
-  G.loaders['path'] = loadImage('assets/path.png');
+  G.loaders['grass'] = loadImage('assets/grasslands.png');
+  // G.loaders['path'] = loadImage('assets/path.png');
   G.loaders['food'] = loadImage('assets/carrot.png');
   G.loaders['toy'] = loadImage('assets/toy.png');
   G.loaders['boot'] = loadImage('assets/boot.png');

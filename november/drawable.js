@@ -105,13 +105,13 @@ class Drawable {
     let borderL = 1;
     let borderR = 1;
     let threshold = 2;
-
-
     for (let y = -hResY; y < this.g.height; y+= hResY) {
+      // borderL = 4;
+      // borderR = 4;
       for (let x = borderL * hResX; x >= -hResX; x -= hResX) {
         this.g.image(tileset, x, y);
       }
-      for (let x = this.g.width - ((borderR + 1) * hResX); x < this.g.width; x += hResX) {
+      for (let x = this.g.width - ((borderR + 2) * hResX); x < this.g.width; x += hResX) {
         this.g.image(tileset, x, y);
       }
       if (random() > 0.5 ) {
@@ -135,7 +135,8 @@ class Drawable {
     let valX = 0;
     let valY = 0;
     let actualWidth = this.g.width * width;
-    let startX = (this.g.width / 2) - (actualWidth/2);
+    actualWidth = max(2 * resX, actualWidth);
+    let startX = (this.g.width / 2 - 1) - (actualWidth/2);
     startX = int(startX / resX + 1) * resX;
     let endX = (this.g.width / 2) + (actualWidth/2);
     endX = int(endX / resX + 1) * resX;

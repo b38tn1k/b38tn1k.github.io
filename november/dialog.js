@@ -58,6 +58,7 @@ class Dialog {
     this.pauseForOptions = false;
     this.eventTrigger = false;
     this.past = [];
+    this.finished = false;
   }
 
   addDialogEvent(id, words='') {
@@ -94,6 +95,22 @@ class Dialog {
     this.bbox = [x-w, y-w, x+w, y+h, 2*w, 2*h];
     for (key in this.onScr) {
       this.onScr[key].printHead = 0;
+    }
+    this.reset();
+  }
+
+  reset() {
+    // reset - can be better
+    this.past.push(this.de);
+    this.play = false;
+    this.prevPlay = false;
+    this.finished = false;
+    this.onScr = {};
+    this.selector = 0;
+    this.de = this.head;
+    while (this.past.length != 0) {
+      let d = this.past.pop();
+      d.reset();
     }
   }
 
@@ -201,17 +218,7 @@ class Dialog {
         this.onScr[key].printHead -= this.printHeadSpeed;
       }
     }
-    // reset - can be better
-    // this.play = false;
-    // this.prevPlay = false;
-    // this.past.push(this.de);
-    // this.onScr = {};
-    // this.selector = 0;
-    // while (this.past.length != 0) {
-    //   let d = this.past.pop();
-    //   d.reset();
-    // }
-
+    this.reset();
   }
 
   setPauseTime(de) {
@@ -234,6 +241,8 @@ class Dialog {
     if (this.de.children.length != 0) {
       result = this.de.children[this.selector];
       this.selector = 0;
+    } else {
+      this.finished = true;
     }
     return result;
   }
@@ -271,7 +280,7 @@ class Dialog {
     } else {
       this.leaveConversationArea()
     }
-    if (this.de.completed == true && millis() > this.de.pauseUntil) {
+    if (this.de.completed == true && millis() > this.de.pauseUntil && this.finished == false) {
       this.progress(input);
     }
     if (this.pauseForOptions) {

@@ -98,14 +98,11 @@ class Drawable {
   }
 
   border(tileset, length, height) {
-
-
     let resX = tileset.width/length;
     let resY = tileset.height/height;
     let widthInTiles = ceil((this.g.width) / resX);
     let tileOverlapX = 2;
     let choice = 0;
-
     let borderWidth = int(ceil(0.07 * widthInTiles)) * tileOverlapX;
     let hResY = resY/4;
     let hResX = resX/2;
@@ -114,8 +111,6 @@ class Drawable {
     let xL = -hResX;
     let xR = (widthInTiles - 1) * resX;
     let rowL, rowR;
-    console.log(borderWidth);
-
     for (let y = -hResY; y < this.g.height; y+= hResY) {
       choice = floor(random(length));
       rowL = ceil(random(borderWidth));
@@ -133,7 +128,7 @@ class Drawable {
     }
   }
 
-  drawPath(tileset, length, height, width=0.3){
+  drawPath(tileset, length, height, final=false){
     let resX = tileset.width/length;
     let resY = tileset.height/height;
     let center = resX * floor((this.g.width/2)/resX);
@@ -158,7 +153,20 @@ class Drawable {
     for (let y = 0; y < this.g.height + resY; y+= resY) {
       this.g.image(tempCanvas, x, y);
     }
-
+    let bb;
+    if (even) {
+      if (final == false) {
+        this.g.image(tileset, center - resX, 0, resX, resY, resX * 3, 0, resX, resY);
+        this.g.image(tileset, center, 0, resX, resY, resX * 3, 0, resX, resY);
+      }
+      bb = [center - resX, 0, center + resX, resY];
+    } else {
+      if (final == false) {
+        this.g.image(tileset, center, 0, resX, resY, resX * 3, 0, resX, resY);
+      }
+      bb = [center, 0, center + resX, resY];
+    }
+    return bb;
   }
 
   setTileAble(tileCnv) {

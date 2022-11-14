@@ -9,23 +9,35 @@ class Level {
     this.npcsC = [];
     this.npcTags = [];
     this.bg;
-    // this.bg = G.graphLayers.getLayer('background', true, 0, 16);
     this.drawBGFG;
+    this.inventory = new Inventory();
     this.initBGFG();
+    this.transitionBB;
   }
   initBGFG(res = 16) {
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
-    this.bg = G.graphLayers.newLayer(0, 'background', w, h, r, tx, ty, 16);
-    this.fg = G.graphLayers.newLayer(100, 'foreground', w, h, r, tx, ty, 16);
+    this.bg = G.graphLayers.getLayer('background');
+    this.fg = G.graphLayers.getLayer('foreground');
+    if (this.bg == -1) {
+      this.bg = G.graphLayers.newLayer(0, 'background', w, h, r, tx, ty, 16);
+      this.fg = G.graphLayers.newLayer(100, 'foreground', w, h, r, tx, ty, 16);
+    }
   }
   attachBGSetup(bg){
     this.drawBGFG = bg;
   }
-  newSpriteCollection(tag, x, y) {
+
+  newSpriteCollection(tag, x, y, type=0) {
     this.npcsC.push([x, y]);
     this.npcTags.push(tag);
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
-    let sc = new SpriteCollection(G.dims.w * x, G.dims.h * y);
+    let sc;
+    if (type == 1) {
+      sc = new ChasingSprites(G.dims.w * x, G.dims.h * y);
+    } else {
+      sc = new SpriteCollection(G.dims.w * x, G.dims.h * y);
+    }
+
     this.addNPC(sc);
     return sc;
   }
@@ -41,6 +53,9 @@ class Level {
   }
   addNPC(npc) {
     this.npcs.push(npc);
+  }
+  drawStatics() {
+    this.transitionBB = this.drawBGFG(this.bg, this.fg);
   }
   refreshLayout() {
     this.initBGFG();
@@ -59,12 +74,19 @@ class Level {
   }
   update(player, inputs) {
     for (let i = 0; i < this.npcs.length; i++) {
-      this.npcs[i].update(this.currentDialog, inputs);
+      this.npcs[i].update(player);
     }
-    this.dialogs[this.diaP].update(player.current, inputs);
+    if (this.dialogs.length > 0) {
+      this.dialogs[this.diaP].update(player.current, inputs);
+    }
+    if (bounded(this.transitionBB, player.current.tx, player.current.ty).complete == true) {
+      transitionLevel();
+    }
   }
   draw() {
-    this.dialogs[this.diaP].draw();
+    if (this.dialogs.length > 0) {
+      this.dialogs[this.diaP].draw();
+    }
     for (let i = 0; i < this.npcs.length; i++) {
       this.npcs[i].draw();
     }

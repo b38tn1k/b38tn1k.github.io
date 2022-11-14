@@ -1,0 +1,10 @@
+---
+layout: post
+title:  "Thievery"
+date:   2022-10-14
+categories: [game, november]
+tags: gameprogress
+---
+I spent the weekend messing with art layout and today fixing up some of those scattered ideas. Random layouts get tricky when the game can be either portrait or landscape - borders and path width calculation is working alright now. I also added basic Level transitioning and a second level, a Thievery level with a new ChasingSprite class that will pursue the player character and take certain inventory items until the inventory is depleted. The idle behaviour for this class is a random walk that could use some tuning.
+
+I also implemented a bit of logic in the Input class to attempt to prevent high speed oscillation, caused when calculating atan2(dx, dy) for very small dx, dy values. So now the character doesn't turn into a ghost when they catch up to the controller position. baby steps.

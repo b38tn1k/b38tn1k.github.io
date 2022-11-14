@@ -13,6 +13,7 @@ class InputHandler {
     this.listenerOn = false;
     this.cardinals = [radians(0), radians(90), radians(180), radians(270)];
     this.prevOn = false;
+    this.prevA = 0;
   }
   facing(sprite){
     let a = this.angleTo(sprite);
@@ -47,6 +48,13 @@ class InputHandler {
     }
     return result;
   }
+  checkToClose(sprite) {
+    let flag = false;
+    if ((abs(this.x - sprite.tx) <= 2) && (abs(this.y - sprite.ty) <= 2)) {
+      flag = true;
+    }
+    return flag;
+  }
   update() {
     this.x = mouseX;
     this.y = mouseY;
@@ -63,11 +71,14 @@ class InputHandler {
     return atan2(dy, dx);
   }
   angleTo(sprite){
-    if (G.dims.isTouchDevice == true) {
-      return this.angleToOrigin();
-    } else {
-      return this.angleToSprite(sprite);
+    if (this.checkToClose(sprite) == false) {
+      if (G.dims.isTouchDevice == true) {
+        this.prevA = this.angleToOrigin();
+      } else {
+        this.prevA = this.angleToSprite(sprite);
+      }
     }
+    return this.prevA;
   }
   angleToOrigin() {
     let dx = this.originX - this.x;
@@ -75,10 +86,14 @@ class InputHandler {
     return atan2(dy, dx);
   }
   getUnitVector(sprite) {
-    if (G.dims.isTouchDevice == true) {
-      return this.getUnitVectorFromOrigin();
+    if (this.checkToClose(sprite) == false) {
+      if (G.dims.isTouchDevice == true) {
+        return this.getUnitVectorFromOrigin();
+      } else {
+        return this.getUnitVectorFromSprite(sprite);
+      }
     } else {
-      return this.getUnitVectorFromSprite(sprite);
+      return ([0, 0]);
     }
   }
   getUnitVectorFromSprite(sprite) {

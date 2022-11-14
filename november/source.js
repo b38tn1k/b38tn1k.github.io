@@ -44,10 +44,12 @@ function setupGame() {
   G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 10, 1, 8), 'down',[0, 4], 0);
   G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 11, 0, 8), 'right',[0, 4], 0);
   G.player.setCollectionRate(0.4);
-  G.player.addInventoryItem('food', 3);
-  G.player.addInventoryItem('boot', 0);
-  G.player.addInventoryItem('toy');
+  G.player.addItem('food', 3);
+  G.player.addItem('boot', 0);
+  G.player.addItem('toy');
   level0();
+  level1();
+  G.levels[G.levelPointer].drawStatics();
 }
 
 function preload() {
@@ -62,7 +64,8 @@ function preload() {
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
   G.loaders['grass'] = loadImage('assets/grasslands.png');
-  // G.loaders['path'] = loadImage('assets/path.png');
+  G.loaders['rats'] = loadImage('assets/RattlingAttack.png');
+  G.loaders['ratsRev'] = loadImage('assets/RattlingAttackRev.png');
   G.loaders['food'] = loadImage('assets/carrot.png');
   G.loaders['toy'] = loadImage('assets/toy.png');
   G.loaders['boot'] = loadImage('assets/boot.png');
@@ -88,4 +91,5 @@ function draw() {
   G.levels[G.levelPointer].draw();
   G.graphLayers.draw();
   G.UIElements.draw();
+  strokeWeight(10);
 }

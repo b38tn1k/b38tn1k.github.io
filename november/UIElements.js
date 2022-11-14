@@ -57,9 +57,9 @@ class UIElements {
   update(player, myInp=G.inputs) {
     this.controlOrigin = [myInp.originX, myInp.originY]
     this.cmp.fg.rot = myInp.angleTo(player.current);
-    if (player.inventoryChanged == true) {
-      this.drawInventory(player.inventory);
-      player.inventoryChanged = false;
+    if (player.inventory.dI == true) {
+      this.drawInventory(player.inventory.i);
+      player.inventory.dI = false;
     }
   }
 

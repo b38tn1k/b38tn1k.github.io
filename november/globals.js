@@ -3,6 +3,10 @@ function returnTrue() {
   return true;
 }
 function bounded(env, x, y) { // envelope = [x1, y1, x2, y2]
+  if (!env) {
+    env = [0, 0, 0, 0];
+    console.log('no bbox!');
+  }
   let result = {}
   result.horizontal = (x == constrain(x, env[0], env[2]));
   result.vertical = (y == constrain(y, env[1], env[3]));
@@ -21,6 +25,13 @@ function splitSheet(src, res, col, start, end){
   return img;
 }
 
+function transitionLevel() {
+  G.levelPointer += 1;
+  let old = G.levelPointer;
+  G.levelPointer = constrain(G.levelPointer, 0, G.levels.length-1);
+  G.levels[G.levelPointer].drawStatics();
+  G.player.reOrigin();
+}
 
 class Globals {
   constructor(){

@@ -57,10 +57,12 @@ class SpriteCollection {
       }
     }
   }
-  changeSequence(num, thenStop=false) {
+  changeSequence(num, thenStop=false, continueAni=false) {
     if (num < this.collection.length) {
       this.pointer = num;
+      let tempFrame = this.current.cFrame;
       this.current = this.collection[this.pointer];
+      this.current.cFrame = tempFrame
       this.current.play = this.playAni;
       this.current.update();
       this.current.stopAtOne = true;
@@ -69,7 +71,7 @@ class SpriteCollection {
       }
     }
   }
-  update(dialog, input=G.inputs) {
+  update(none) {
     this.current = this.collection[this.pointer];
     this.x = this.current.tx;
     this.y = this.current.ty;

@@ -54,7 +54,7 @@ class Level {
   addNPC(npc) {
     this.npcs.push(npc);
   }
-  drawStatics() {
+  drawStatics() { // handle deletion and creation of graphics better
     this.bg.g.clear();
     this.fg.g.clear();
     this.transitionBB = this.drawBGFG(this.bg, this.fg);
@@ -62,6 +62,7 @@ class Level {
   refreshLayout() {
     this.initBGFG();
     this.drawBGFG(this.bg, this.fg);
+    console.log(this.transitionBB, this.bg.g.width, this.fg.g.width);
     for (let i = 0; i < this.npcs.length; i++) {
       this.npcs[i].refreshLayout(G.dims.w * this.npcsC[i][0], G.dims.h * this.npcsC[i][1]);
     }

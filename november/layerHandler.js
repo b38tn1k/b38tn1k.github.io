@@ -65,6 +65,7 @@ class LayerHandler {
     clear();
     for (let i = 0; i < this.layers.length; i++) {
       this.layers[i].clear();
+
     }
   }
 

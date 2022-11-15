@@ -74,6 +74,7 @@ class Drawable {
     this.animate = true;
     this.fWidth = spriteSheet.width / frames;
     let frameHeight = spriteSheet.height;
+    this.g.remove();
     this.g = createGraphics(this.fWidth, frameHeight);
     this.update();
   }
@@ -166,6 +167,7 @@ class Drawable {
       }
       bb = [center, 0, center + resX, resY];
     }
+    tempCanvas.remove();
     return bb;
   }
 

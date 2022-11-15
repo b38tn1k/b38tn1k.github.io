@@ -1,0 +1,14 @@
+---
+layout: post
+title:  "Minimum Viable Mechanics"
+date:   2022-10-15
+categories: [game, november]
+tags: gameprogress
+---
+The 'ChasingSprite' class received some improvements for animation handling and I created a test spider spritesheet. Creepy. With npc interaction via dialog, trade, and attack, I have enough mechanics to start building out some encounters. The grasslands biome map was getting a bit boring so I drew up an Ice and Desert biome. I started creating a little anti-colonial encounter that I think may be fun. Plan is to continue building levels and encounters until I discover some missing code, then try build it. I have a feeling some of my planned encounters will require a dedicated level logic worker, trying to figure out how it will work - it may be small level-specific objects with a generic 'update' interface, TBD.
+
+The player character can now also be controlled via directional and WASD keys when playing on computer.
+
+![snow](https://b38tn1k.com/images/iceLands.png)
+
+![desert](https://b38tn1k.com/images/deserLands.png)

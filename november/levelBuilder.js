@@ -64,7 +64,7 @@ function level1() {
 
   //function splitSheet(src, res, row, start, end)
   let spider;
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 20; i++) {
     spider = level.newSpriteCollection('spider', random(), random(), 1);
     spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 0, 0, 2), 'left');
     spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 1, 0, 2), 'right');

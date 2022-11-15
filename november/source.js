@@ -15,22 +15,9 @@ function windowResized() {
   G.levels[G.levelPointer].refreshLayout();
 }
 
-function keyIsDown() {
-  if (keyCode == UP_ARROW) {
-    // saveImage();
-    G.player.moveNorth();
-  }
-  if (keyCode == DOWN_ARROW) {
-    // saveImage();
-    G.player.moveSouth();
-  }
-  if (keyCode == LEFT_ARROW) {
-    // saveImage();
-    G.player.moveWest();
-  }
-  if (keyCode == RIGHT_ARROW) {
-    // saveImage();
-    G.player.moveEast();
+function keyPressed() {
+  if (key == 'p') {
+    saveImage();
   }
 }
 
@@ -60,8 +47,8 @@ function setupGame() {
   G.player.addItem('food', 3);
   G.player.addItem('boot', 0);
   G.player.addItem('toy');
-  // level0();
-  // level1();
+  level0();
+  level1();
   level2();
   G.levels[G.levelPointer].drawStatics();
 }

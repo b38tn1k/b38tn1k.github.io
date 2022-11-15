@@ -218,7 +218,7 @@ class Dialog {
         this.onScr[key].printHead -= this.printHeadSpeed;
       }
     }
-    this.reset();
+    // this.reset();
   }
 
   setPauseTime(de) {
@@ -335,7 +335,8 @@ class Dialog {
         this.layer.g.rect(x, y, this.textBoxWidth, textBoxHeight);
         this.layer.g.fill(this.fgcolor);
         this.layer.g.text(fullText, x, y, this.textBoxWidth);
-        y += textBoxHeight * 2;
+        // y += textBoxHeight * 2;
+        y += textBoxHeight + this.fontSize;
       }
       if (firstTime) {
         this.onScr[key].optionYs.push(y);

@@ -2,15 +2,19 @@ class Inventory {
   constructor() {
     this.i = {};
     this.dI = true;
+    this.iDi = true;
+    this.count = 0;
   }
   addItem(key, count=1) {
     let res = this.checkInventory(key);
+    this.dI = true;
+    this.iDi = true;
     if (res.has == true) {
       this.i[key] += count;
-      this.dI = true;
     } else {
       this.i[key] = count;
     }
+    this.count += count;
   }
 
   subtractItem(key, count=1) {
@@ -18,7 +22,29 @@ class Inventory {
     if (res.has == true) {
       this.i[key] -= count;
       this.dI = true;
+      this.iDi = true;
+      this.count -= count;
     }
+  }
+
+  hasItems() {
+    return this.count > 0;
+  }
+
+  trade(sI, sC, dI, dC) {
+    this.subtractItem(sI, sC);
+    this.addItem(dI, dC);
+  }
+
+  empty() {
+    let tempCount = this.count;
+    for (key in this.i) {
+      this.i[key] = 0;
+    }
+    this.count = 0;
+    this.dI = true;
+    this.iDi = true;
+    return tempCount;
   }
 
   checkInventory(key) {
@@ -39,6 +65,8 @@ class PlayerCharacter extends SpriteCollection {
     this.playable = true;
     this.inventory = new Inventory;
     this.movementSpeed = 2;
+    this.wBoots = 4;
+    this.noBoots = 2;
     this.bbox = [0, 0, 0, 0];
     this.bboxWidth = 16;
     this.moveVector = [0, 0];
@@ -87,9 +115,21 @@ class PlayerCharacter extends SpriteCollection {
   checkInventory(key) {
     return this.inventory.checkInventory(key);
   }
+  hasBead() {
+    return this.inventory.checkInventory('bead').has;
+  }
 
   hasFood() {
     return this.inventory.checkInventory('food').has;
+  }
+  hasAnything() {
+    return this.inventory.hasItems();
+  }
+  hasNothing() {
+    return ! (this.inventory.hasItems());
+  }
+  emptyInventory() {
+    return this.inventory.empty();
   }
 
   selectCurrent(input){
@@ -109,6 +149,10 @@ class PlayerCharacter extends SpriteCollection {
   }
 
   update(level, input) {
+    if (this.inventory.iDi == true) {
+      this.movementSpeed = this.inventory.checkInventory('boot').has ? this.wBoots : this.noBoots;
+      this.inventory.iDi = false;
+    }
     if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
       this.moveNorth();
     }

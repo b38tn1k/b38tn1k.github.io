@@ -46,31 +46,40 @@ function setupGame() {
   G.player.setCollectionRate(0.4);
   G.player.addItem('food', 3);
   G.player.addItem('boot', 0);
-  G.player.addItem('toy');
+  G.player.addItem('toy',1);
   level0();
   level1();
   level2();
+  level3();
   G.levels[G.levelPointer].drawStatics();
 }
 
 function preload() {
   G = new Globals();
   let c = loadStrings('assets/NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
+  // sprites
   G.loaders['player-boots'] = loadImage('assets/boots.png');
   G.loaders['slumeY'] = loadImage('assets/slume_yellow_idle.png');
   G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdle.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
+  G.loaders['spider'] = loadImage('assets/spider.png');
+  // UI
   G.loaders['compass'] = loadImage('assets/compass.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');
-  G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
-  G.loaders['grass'] = loadImage('assets/grasslands.png');
-  G.loaders['desert'] = loadImage('assets/desert.png');
-  G.loaders['snow'] = loadImage('assets/snow.png');
-  G.loaders['spider'] = loadImage('assets/spider.png');
   G.loaders['food'] = loadImage('assets/carrot.png');
   G.loaders['toy'] = loadImage('assets/toy.png');
   G.loaders['boot'] = loadImage('assets/boot.png');
+  G.loaders['bead'] = loadImage('assets/bead.png');
+  // font
+  G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
+  // maps
+  G.loaders['grass'] = loadImage('assets/grasslands.png');
+  G.loaders['desert'] = loadImage('assets/desert.png');
+  G.loaders['snow'] = loadImage('assets/snow.png');
+
+
+
 }
 
 function setup() {

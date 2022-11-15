@@ -53,14 +53,14 @@ function level0() {
   dialog.addChildDialogEvent(tradeResp, 'NPC1', 'I understand.');
   let selfish = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
   dialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
-  level.attachBGSetup(grassArt);
+  level.attachBGSetup(desertArt);
   G.levels.push(level);
 }
 
 
 function level1() {
   let level = new Level('level1');
-  level.attachBGSetup(desertArt);
+  level.attachBGSetup(grassArt);
 
   //function splitSheet(src, res, row, start, end)
   let spider;
@@ -96,16 +96,68 @@ function level2() {
   dialog.addDialogEvent('NPC1', 'My name is Colin Iser. I have discovered and tamed this land.');
   dialog.addDialogEvent('PC', '...');
   dialog.addDialogEvent('NPC1', 'I have taught the native people how to trade using glass beads I import from far away.');
-  dialog.addDialogEvent('NPC1', 'It is quite lucrative. Would you like to trade? This currency may assist on your travels.');
+  dialog.addDialogEvent('NPC1', 'It is quite lucrative. Would you like to trade? This currency will assist on your travels.');
   let parEvent = dialog.addDialogEvent('PC');
   dialog.addOption(parEvent, 'No');
-  dialog.addOption(parEvent, 'I will exchange all I have.');
-  dialog.addOption(parEvent, 'One meal for two beads.');
+  dialog.addOption(parEvent, 'I will exchange all I have.', function () {return G.player.addItem('bead', G.player.emptyInventory());}, function () {return G.player.hasAnything();});
+  dialog.addOption(parEvent, 'One meal for two beads.', function () {return G.player.inventory.trade('food', 1, 'bead', 2)}, function () {return G.player.hasFood();});
   let no = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Very well then. You shall perish.');
-  dialog.addChildDialogEvent(no, 'PC', '...');
+  no = dialog.addChildDialogEvent(no, 'PC', 'Whatever dude...');
+  dialog.addChildDialogEvent(no, 'NPC1', 'Perish!!!');
   let yes = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Excellent! A deal!');
-  dialog.addChildDialogEvent(yes, 'PC', '...');
+  yes = dialog.addChildDialogEvent(yes, 'PC', '...');
+  dialog.addChildDialogEvent(yes, 'NPC1', 'Not very talkative, are you?');
   let sorta = dialog.addChildDialogEvent(parEvent, 'NPC1', 'An acceptable trade.');
-  dialog.addChildDialogEvent(sorta, 'PC', '...');
+  sorta = dialog.addChildDialogEvent(sorta, 'PC', '...');
+  dialog.addChildDialogEvent(sorta, 'NPC1', 'Not very talkative, are you?');
+}
+
+function level3() {
+  let level = new Level('level3');
+  G.levels.push(level);
+  level.attachBGSetup(snowArt);
+  let npc1 = level.newSpriteCollection('NPC1', 0.5, 0.3);
+  npc1.setCollectionRate(0.4);
+  npc1.addAnimation(7, G.loaders['slume-idle']);
+  npc1.update();
+  npc1.play();
+  let dialog = level.newDialog(0.5, 0.3);
+  dialog.updateCoords('NPC1', npc1.current);
+  dialog.addDialogEvent('NPC1', 'Hello!');
+  dialog.addDialogEvent('PC', 'Hi!');
+  dialog.addDialogEvent('NPC1', 'Where are you headed?');
+  dialog.addDialogEvent('PC', 'North, but without boots I am making little progress.');
+  dialog.addDialogEvent('NPC1', 'We have boots to spare! Would you like to trade?');
+  let parEvent = dialog.addDialogEvent('PC');
+  dialog.addOption(parEvent, 'I have nothing to trade.', returnTrue, function () {return G.player.hasNothing();});
+  let nothing = dialog.addChildDialogEvent(parEvent, 'NPC1', 'I am sorry to hear. There are many opportunities along the path.');
+  nothing = dialog.addChildDialogEvent(nothing, 'PC', 'Oh well...');
+  dialog.addChildDialogEvent(nothing, 'NPC1', 'Good luck!');
+
+  dialog.addOption(parEvent, 'One bead for a pair of boots.', returnTrue, function () {return G.player.hasBead();});
+  let tryBeads = dialog.addChildDialogEvent(parEvent, 'NPC1', 'You have been talking to the idiot Colin Iser. We do not trade with people like him!');
+  tryBeads = dialog.addChildDialogEvent(tryBeads, 'PC', 'I\'m sorry? What?');
+  tryBeads = dialog.addChildDialogEvent(tryBeads, 'NPC1', 'Leave us alone!');
+  dialog.addChildDialogEvent(tryBeads, 'PC', 'Sorry.');
+
+  dialog.addOption(parEvent, 'One meal for a pair of boots.', function () {return G.player.inventory.trade('food', 1, 'boot', 1)}, function () {return G.player.hasFood();});
+  let foodForBoots = dialog.addChildDialogEvent(parEvent, 'NPC1', 'An acceptable trade!');
+  foodForBoots = dialog.addChildDialogEvent(foodForBoots, 'PC', 'These boots are warm!');
+  foodForBoots = dialog.addChildDialogEvent(foodForBoots, 'NPC1', 'Fair travels!');
+
+  let otherNPCs;
+  for (let i = 0; i < 10; i++) {
+    otherNPCs = level.newSpriteCollection('NPC', random(), random(), 1);
+    otherNPCs.addAnimation(7, G.loaders['slume-idle'], 'left');
+    otherNPCs.addAnimation(7, G.loaders['slume-idle'], 'right');
+    otherNPCs.addAnimation(7, G.loaders['slume-idle'], 'up');
+    otherNPCs.addAnimation(7, G.loaders['slume-idle'], 'down');
+    otherNPCs.setCollectionRate(0.4);
+    otherNPCs.goal = 'food';
+    otherNPCs.update();
+    otherNPCs.play();
+    otherNPCs.attack = false;
+  }
+
 
 }

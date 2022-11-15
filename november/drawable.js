@@ -190,7 +190,7 @@ class Drawable {
       if (this.play == true) {
         this.cFrame += this.rate;
       }
-      if (this.cFrame > this.frameCount) {
+      if (this.cFrame >= this.frameCount) {
         this.cFrame = 0;
       }
     }

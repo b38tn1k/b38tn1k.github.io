@@ -31,12 +31,17 @@ class ChasingSprites extends SpriteCollection {
     this.recalculateRandomWalkVector();
     this.hit = {};
     this.hit.is = false;
+    this.direction = 'up';
+    this.prevDir = '';
     // showColors();
   }
 
   recalculateRandomWalkVector() {
-    let dir = random();
-    this.randomWalkVector = [int(random(-2, 2)) * dir, int(random(-2, 2)) * (1 - dir)];
+    let xAmp = random();
+    let yAmp = 1.0 - xAmp;
+    let xDir = (random() > 0.5) ? -1 : 1;
+    let yDir = (random() > 0.5) ? -1 : 1;
+    this.randomWalkVector = [xAmp * xDir, yAmp * yDir];
   }
 
   // angleToSprite(sprite) {
@@ -60,6 +65,7 @@ class ChasingSprites extends SpriteCollection {
   update(player) {
     super.update();
     this.prevX = this.current.tx;
+    this.prevY = this.current.ty;
     if (player) {
       if (player.inventory.checkInventory(this.goal).has == false) {
         this.attack = false;
@@ -92,6 +98,15 @@ class ChasingSprites extends SpriteCollection {
       this.current.tx = constrain(this.current.tx, 0, G.dims.w);
       this.current.ty = constrain(this.current.ty, 0, G.dims.h);
     }
+
+    let deltaX = this.prevX - this.current.tx;
+    let deltaY = this.prevY - this.current.ty;
+    if (abs(deltaX) > abs(deltaY)) {
+      this.direction = (deltaX < 0) ? 'right' : 'left';
+    } else {
+      this.direction = (deltaY < 0) ? 'down' : 'up';
+    }
+    let changed = this.chooseSequence(this.direction);
   }
 
   draw() {

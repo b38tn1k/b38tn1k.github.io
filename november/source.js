@@ -15,9 +15,22 @@ function windowResized() {
   G.levels[G.levelPointer].refreshLayout();
 }
 
-function keyPressed() {
-  if (key == 's') {
-    saveImage();
+function keyIsDown() {
+  if (keyCode == UP_ARROW) {
+    // saveImage();
+    G.player.moveNorth();
+  }
+  if (keyCode == DOWN_ARROW) {
+    // saveImage();
+    G.player.moveSouth();
+  }
+  if (keyCode == LEFT_ARROW) {
+    // saveImage();
+    G.player.moveWest();
+  }
+  if (keyCode == RIGHT_ARROW) {
+    // saveImage();
+    G.player.moveEast();
   }
 }
 
@@ -47,8 +60,8 @@ function setupGame() {
   G.player.addItem('food', 3);
   G.player.addItem('boot', 0);
   G.player.addItem('toy');
-  level0();
-  level1();
+  // level0();
+  // level1();
   level2();
   G.levels[G.levelPointer].drawStatics();
 }
@@ -57,6 +70,7 @@ function preload() {
   G = new Globals();
   let c = loadStrings('assets/NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
   G.loaders['player-boots'] = loadImage('assets/boots.png');
+  G.loaders['slumeY'] = loadImage('assets/slume_yellow_idle.png');
   G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdle.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
@@ -66,7 +80,7 @@ function preload() {
   G.loaders['grass'] = loadImage('assets/grasslands.png');
   G.loaders['desert'] = loadImage('assets/desert.png');
   G.loaders['snow'] = loadImage('assets/snow.png');
-  G.loaders['rats'] = loadImage('assets/RattlingAttack.png');
+  G.loaders['spider'] = loadImage('assets/spider.png');
   G.loaders['food'] = loadImage('assets/carrot.png');
   G.loaders['toy'] = loadImage('assets/toy.png');
   G.loaders['boot'] = loadImage('assets/boot.png');

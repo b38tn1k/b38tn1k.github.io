@@ -41,6 +41,29 @@ class PlayerCharacter extends SpriteCollection {
     this.movementSpeed = 2;
     this.bbox = [0, 0, 0, 0];
     this.bboxWidth = 16;
+    this.moveVector = [0, 0];
+    this.keyInput = false;
+    this.keyBasedDir = 'up';
+  }
+
+  moveNorth(){
+    this.moveVector[0] -= 1;
+    this.keyInput = true;
+  }
+
+  moveSouth(){
+    this.moveVector[0] += 1;
+    this.keyInput = true;
+  }
+
+  moveWest(){
+    this.moveVector[1] -= 1;
+    this.keyInput = true;
+  }
+
+  moveEast(){
+    this.moveVector[1] += 1;
+    this.keyInput = true;
   }
 
   reOrigin() {
@@ -71,11 +94,33 @@ class PlayerCharacter extends SpriteCollection {
 
   selectCurrent(input){
     let direction = input.facing(this.current);
+    this.keyBasedDir = direction;
     this.chooseSequence(direction);
+  }
 
+  selectCurrentKeys(mv){
+    let direction = this.keyBasedDir;
+    if (abs(mv[0]) >= 1) {
+      this.keyBasedDir = mv[0] > 0 ? 'down' : 'up';
+    } else if (abs(mv[1]) >= 1) {
+      this.keyBasedDir = mv[1] > 0 ? 'right' : 'left';
+    }
+    this.chooseSequence(this.keyBasedDir);
   }
 
   update(level, input) {
+    if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
+      this.moveNorth();
+    }
+    if (keyIsDown(DOWN_ARROW) || keyIsDown(83)) {
+      this.moveSouth();
+    }
+    if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
+      this.moveWest();
+    }
+    if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) {
+      this.moveEast();
+    }
     let pause = false;
     if (level.dialogs.length > 0) {
       let dialog = level.dialogs[G.levels[G.levelPointer].diaP]
@@ -90,11 +135,20 @@ class PlayerCharacter extends SpriteCollection {
       if (this.current.isMoveFrame() == true) {
         this.current.tx += uv[0] * this.movementSpeed;
         this.current.ty += uv[1]  * this.movementSpeed;
-        this.current.tx = constrain(this.current.tx, 0, G.dims.w);
-        this.current.ty = constrain(this.current.ty, 0, G.dims.h);
       }
+    } else if (this.keyInput == true  && pause == false){
+      this.selectCurrentKeys(this.moveVector);
+      this.keyInput = false;
+      this.current.play = true;
+      if (this.current.isMoveFrame() == true) {
+        this.current.tx += this.moveVector[1] * this.movementSpeed;
+        this.current.ty += this.moveVector[0]  * this.movementSpeed;
+      }
+      this.moveVector = [0, 0];
     } else {
       this.current.stopAtOne = true;
     }
+    this.current.tx = constrain(this.current.tx, 0, G.dims.w);
+    this.current.ty = constrain(this.current.ty, 0, G.dims.h);
   }
 }

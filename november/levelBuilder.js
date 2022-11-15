@@ -1,11 +1,34 @@
+function grassArt(bg, fg){
+  bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
+  bg.randomTile(splitSheet(G.loaders['grass'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
+  let bb = bg.drawPath(splitSheet(G.loaders['grass'], 64, 3, 0, 4), 4, 1);
+  fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 2), 2, 1);
+  return bb;
+}
+
+function snowArt(bg, fg){
+  bg.randomTile(splitSheet(G.loaders['snow'], 64, 0, 0, 5), 5, 1);
+  bg.randomTile(splitSheet(G.loaders['snow'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
+  let bb = bg.drawPath(splitSheet(G.loaders['snow'], 64, 3, 0, 4), 4, 1);
+  fg.border(splitSheet(G.loaders['snow'], 64, 2, 0, 3), 3, 1);
+  return bb;
+}
+
+function desertArt(bg, fg){
+  bg.randomTile(splitSheet(G.loaders['desert'], 64, 0, 0, 5), 5, 1);
+  bg.randomTile(splitSheet(G.loaders['desert'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
+  let bb = bg.drawPath(splitSheet(G.loaders['desert'], 64, 3, 0, 4), 4, 1);
+  fg.border(splitSheet(G.loaders['desert'], 64, 2, 0, 2), 2, 1);
+  return bb;
+}
+
 function level0() {
   let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
   let level = new Level('Level0');
-  level.inventory.addItem('boots');
   let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
   npc1.setCollectionRate(0.4);
   npc1.addAnimation(7, G.loaders['slume-idle']);
-  npc1.addAnimation(9, G.loaders['slume-death'], [8]);
+  npc1.addAnimation(9, G.loaders['slume-death'], 'death', [8]);
   npc1.update();
   npc1.play();
   let dialog = level.newDialog(0.7, 0.5);
@@ -30,71 +53,59 @@ function level0() {
   dialog.addChildDialogEvent(tradeResp, 'NPC1', 'I understand.');
   let selfish = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
   dialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
-  let bg = level.bg;
-  let fg = level.fg;
-  level.attachBGSetup(drawLevel0);
-  // level.transitionBB = drawLevel0(bg, fg);
+  level.attachBGSetup(grassArt);
   G.levels.push(level);
 }
 
-function drawLevel0(bg, fg){
-  bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
-  bg.randomTile(splitSheet(G.loaders['grass'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
-  let bb = bg.drawPath(splitSheet(G.loaders['grass'], 64, 3, 0, 4), 4, 1);
-  fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 2), 2, 1);
-  return bb;
-}
 
 function level1() {
   let level = new Level('level1');
-  let bg = level.bg;
-  let fg = level.fg;
-  level.attachBGSetup(drawLevel1);
+  level.attachBGSetup(desertArt);
 
-  let rat = level.newSpriteCollection('rat', 0.6, 0.5, 1);
-  rat.setCollectionRate(0.4);
-  rat.addAnimation(4, G.loaders['rats']);
-  rat.goal = 'food';
-  rat.update();
-  rat.play();
-
-  rat = level.newSpriteCollection('rat', 0.3, 0.2, 1);
-  rat.setCollectionRate(0.4);
-  rat.addAnimation(4, G.loaders['rats']);
-  rat.goal = 'food';
-  rat.update();
-  rat.play();
-
-  rat = level.newSpriteCollection('rat', 0.8, 0.8, 1);
-  rat.setCollectionRate(0.4);
-  rat.addAnimation(4, G.loaders['rats']);
-  rat.goal = 'food';
-  rat.update();
-  rat.play();
-
+  //function splitSheet(src, res, row, start, end)
+  let spider;
+  for (let i = 0; i < 1; i++) {
+    spider = level.newSpriteCollection('spider', random(), random(), 1);
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 0, 0, 2), 'left');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 1, 0, 2), 'right');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 2, 0, 2), 'up');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 3, 0, 2), 'down');
+    spider.setCollectionRate(0.4);
+    spider.goal = 'food';
+    spider.update();
+    spider.play();
+  }
   G.levels.push(level);
 }
 
-function drawLevel1(bg, fg){
-  bg.randomTile(splitSheet(G.loaders['desert'], 64, 0, 0, 5), 5, 1);
-  bg.randomTile(splitSheet(G.loaders['desert'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
-  let bb = bg.drawPath(splitSheet(G.loaders['desert'], 64, 3, 0, 4), 4, 1);
-  fg.border(splitSheet(G.loaders['desert'], 64, 2, 0, 2), 2, 1);
-  return bb;
-}
+
 
 function level2() {
   let level = new Level('level2');
-  let bg = level.bg;
-  let fg = level.fg;
-  level.attachBGSetup(drawLevel2);
   G.levels.push(level);
-}
+  level.attachBGSetup(snowArt);
+  let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
+  npc1.setCollectionRate(0.4);
+  npc1.addAnimation(7, G.loaders['slumeY']);
+  npc1.update();
+  npc1.play();
+  let dialog = level.newDialog(0.7, 0.5);
+  dialog.updateCoords('NPC1', npc1.current);
+  dialog.addDialogEvent('NPC1', 'Greetings Traveller, who might you be?');
+  dialog.addDialogEvent('PC', '...');
+  dialog.addDialogEvent('NPC1', 'My name is Colin Iser. I have discovered and tamed this land.');
+  dialog.addDialogEvent('PC', '...');
+  dialog.addDialogEvent('NPC1', 'I have taught the native people how to trade using glass beads I import from far away.');
+  dialog.addDialogEvent('NPC1', 'It is quite lucrative. Would you like to trade? This currency may assist on your travels.');
+  let parEvent = dialog.addDialogEvent('PC');
+  dialog.addOption(parEvent, 'No');
+  dialog.addOption(parEvent, 'I will exchange all I have.');
+  dialog.addOption(parEvent, 'One meal for two beads.');
+  let no = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Very well then. You shall perish.');
+  dialog.addChildDialogEvent(no, 'PC', '...');
+  let yes = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Excellent! A deal!');
+  dialog.addChildDialogEvent(yes, 'PC', '...');
+  let sorta = dialog.addChildDialogEvent(parEvent, 'NPC1', 'An acceptable trade.');
+  dialog.addChildDialogEvent(sorta, 'PC', '...');
 
-function drawLevel2(bg, fg){
-  bg.randomTile(splitSheet(G.loaders['snow'], 64, 0, 0, 5), 5, 1);
-  bg.randomTile(splitSheet(G.loaders['snow'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
-  let bb = bg.drawPath(splitSheet(G.loaders['snow'], 64, 3, 0, 4), 4, 1);
-  fg.border(splitSheet(G.loaders['snow'], 64, 2, 0, 2), 2, 1);
-  return bb;
 }

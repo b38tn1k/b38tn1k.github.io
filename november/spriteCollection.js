@@ -42,13 +42,20 @@ class SpriteCollection {
     this.playAni = true;
     this.current.play = this.playAni;
   }
+  playAll(num=0.4) {
+    for (let i = 0; i < this.collection.length; i+= 1) {
+      this.collection[i].play = true;
+    }
+  }
   stop() {
     this.playAni = false;
     this.current.play = false;
   }
   chooseSequence(tag) {
+    let changed = false;
     if (tag in this.tags) {
       if (this.tags[tag] != this.pointer) {
+        changed = true;
         let tx = this.current.tx;
         let ty = this.current.ty;
         this.changeSequence(this.tags[tag]);
@@ -56,19 +63,21 @@ class SpriteCollection {
         this.current.ty = ty;
       }
     }
+    return changed;
   }
   changeSequence(num, thenStop=false, continueAni=false) {
     if (num < this.collection.length) {
       this.pointer = num;
       let tempFrame = this.current.cFrame;
       this.current = this.collection[this.pointer];
-      this.current.cFrame = tempFrame
+      this.current.cFrame = tempFrame;
       this.current.play = this.playAni;
       this.current.update();
-      this.current.stopAtOne = true;
       if (thenStop == true) {
         this.current.stopAtOne = true;
       }
+    } else {
+      console.log('oops - missing sequence')
     }
   }
   update(none) {

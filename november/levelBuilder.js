@@ -46,7 +46,7 @@ function drawLevel0(bg, fg){
 }
 
 function level1() {
-  let level = new Level('final');
+  let level = new Level('level1');
   let bg = level.bg;
   let fg = level.fg;
   level.attachBGSetup(drawLevel1);
@@ -54,7 +54,6 @@ function level1() {
   let rat = level.newSpriteCollection('rat', 0.6, 0.5, 1);
   rat.setCollectionRate(0.4);
   rat.addAnimation(4, G.loaders['rats']);
-  rat.addAnimation(4, G.loaders['ratsRev']);
   rat.goal = 'food';
   rat.update();
   rat.play();
@@ -62,7 +61,6 @@ function level1() {
   rat = level.newSpriteCollection('rat', 0.3, 0.2, 1);
   rat.setCollectionRate(0.4);
   rat.addAnimation(4, G.loaders['rats']);
-  rat.addAnimation(4, G.loaders['ratsRev']);
   rat.goal = 'food';
   rat.update();
   rat.play();
@@ -70,7 +68,6 @@ function level1() {
   rat = level.newSpriteCollection('rat', 0.8, 0.8, 1);
   rat.setCollectionRate(0.4);
   rat.addAnimation(4, G.loaders['rats']);
-  rat.addAnimation(4, G.loaders['ratsRev']);
   rat.goal = 'food';
   rat.update();
   rat.play();
@@ -79,9 +76,25 @@ function level1() {
 }
 
 function drawLevel1(bg, fg){
-  bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
-  bg.randomTile(splitSheet(G.loaders['grass'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
-  let bb = bg.drawPath(splitSheet(G.loaders['grass'], 64, 3, 0, 4), 4, 1, true);
-  fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 2), 2, 1);
+  bg.randomTile(splitSheet(G.loaders['desert'], 64, 0, 0, 5), 5, 1);
+  bg.randomTile(splitSheet(G.loaders['desert'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
+  let bb = bg.drawPath(splitSheet(G.loaders['desert'], 64, 3, 0, 4), 4, 1);
+  fg.border(splitSheet(G.loaders['desert'], 64, 2, 0, 2), 2, 1);
+  return bb;
+}
+
+function level2() {
+  let level = new Level('level2');
+  let bg = level.bg;
+  let fg = level.fg;
+  level.attachBGSetup(drawLevel2);
+  G.levels.push(level);
+}
+
+function drawLevel2(bg, fg){
+  bg.randomTile(splitSheet(G.loaders['snow'], 64, 0, 0, 5), 5, 1);
+  bg.randomTile(splitSheet(G.loaders['snow'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
+  let bb = bg.drawPath(splitSheet(G.loaders['snow'], 64, 3, 0, 4), 4, 1);
+  fg.border(splitSheet(G.loaders['snow'], 64, 2, 0, 2), 2, 1);
   return bb;
 }

@@ -1,6 +1,24 @@
+class HitThing {
+  constructor(name, value, x, y) {
+    this.words = name + ' ' + String(value);
+    this.time = millis() + 300;
+    this.is = true;
+    this.x = x;
+    this.y = y;
+  }
+}
+
 class ChasingSprites extends SpriteCollection {
   constructor(x, y) {
     super(x, y, true);
+    this.layer.g.textFont(G.loaders['font']);
+    this.textColor = G.colors[34];
+    this.bgColor = G.colors[22];
+    this.fontSize = 12;
+    this.layer.g.textSize(this.fontSize);
+    this.layer.g.textLeading(this.lineSpacing * this.fontSize);
+    this.layer.g.textAlign(LEFT, TOP);
+    this.layer.g.noStroke();
     this.attack = true; // vs flee?
     this.movementSpeed = 1;
     this.goal;
@@ -11,6 +29,9 @@ class ChasingSprites extends SpriteCollection {
     this.prevY;
     this.prevX = (x < G.dims.cx) ? x-1 : x+1;
     this.recalculateRandomWalkVector();
+    this.hit = {};
+    this.hit.is = false;
+    // showColors();
   }
 
   recalculateRandomWalkVector() {
@@ -29,6 +50,12 @@ class ChasingSprites extends SpriteCollection {
   //   let j = -1 * sin(this.angleToSprite(sprite));
   //   return [i, j];
   // }
+
+  doAttack(player) {
+    this.attack = false;
+    player.subtractItem(this.goal);
+    this.hit = new HitThing(this.goal, -1, player.x, player.y - player.current.g.height/2);
+  }
 
   update(player) {
     super.update();
@@ -49,8 +76,7 @@ class ChasingSprites extends SpriteCollection {
           this.current.ty -= this.movementSpeed;
         }
         if (bounded(player.bbox, this.x, this.y).complete == true) {
-          this.attack = false;
-          player.subtractItem(this.goal);
+          this.doAttack(player);
         }
       }
     }
@@ -66,10 +92,15 @@ class ChasingSprites extends SpriteCollection {
       this.current.tx = constrain(this.current.tx, 0, G.dims.w);
       this.current.ty = constrain(this.current.ty, 0, G.dims.h);
     }
-    // if (this.prevX - this.current.tx < 0) {
-    //   this.changeSequence(1);
-    // } else {
-    //   this.changeSequence(0);
-    // }
+  }
+
+  draw() {
+    super.draw();
+    if (this.hit.is == true && this.hit.time > millis()) {
+      this.layer.g.fill(this.bgColor);
+      this.layer.g.rect(this.hit.x, this.hit.y, this.layer.g.textWidth(this.hit.words), this.fontSize * 1.5);
+      this.layer.g.fill(this.textColor);
+      this.layer.g.text(this.hit.words, this.hit.x ,this.hit.y);
+    }
   }
 };

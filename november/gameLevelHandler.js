@@ -55,6 +55,8 @@ class Level {
     this.npcs.push(npc);
   }
   drawStatics() {
+    this.bg.g.clear();
+    this.fg.g.clear();
     this.transitionBB = this.drawBGFG(this.bg, this.fg);
   }
   refreshLayout() {

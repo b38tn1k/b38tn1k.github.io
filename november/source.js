@@ -49,6 +49,7 @@ function setupGame() {
   G.player.addItem('toy');
   level0();
   level1();
+  level2();
   G.levels[G.levelPointer].drawStatics();
 }
 
@@ -56,7 +57,6 @@ function preload() {
   G = new Globals();
   let c = loadStrings('assets/NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
   G.loaders['player-boots'] = loadImage('assets/boots.png');
-  G.loaders['player-no-boots'] = loadImage('assets/noboots.png');
   G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdle.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
@@ -64,8 +64,9 @@ function preload() {
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
   G.loaders['grass'] = loadImage('assets/grasslands.png');
+  G.loaders['desert'] = loadImage('assets/desert.png');
+  G.loaders['snow'] = loadImage('assets/snow.png');
   G.loaders['rats'] = loadImage('assets/RattlingAttack.png');
-  G.loaders['ratsRev'] = loadImage('assets/RattlingAttackRev.png');
   G.loaders['food'] = loadImage('assets/carrot.png');
   G.loaders['toy'] = loadImage('assets/toy.png');
   G.loaders['boot'] = loadImage('assets/boot.png');

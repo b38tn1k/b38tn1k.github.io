@@ -11,6 +11,15 @@ class SpriteCollection {
     this.current;
     this.playAni = true;
   }
+  shutDown() {
+    for (let i = 0; i < this.collection.length; i++) {
+      this.collection[i].shutDown();
+    }
+    this.collection = [];
+    this.layer = null;
+    this.collection = null;
+
+  }
   addAnimation(frames, spriteSheet, tag = '', stopFrames=[0], moveFrames=0) {
     this.tags[tag] = this.collection.length;
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;

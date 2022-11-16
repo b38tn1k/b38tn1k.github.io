@@ -4,15 +4,17 @@ var loaders = {};
 function deviceTurned() {
   setupScreen();
   // dummyLayout();
-  G.player.refreshLayout();
-  G.levels[G.levelPointer].refreshLayout();
+  // G.player.refreshLayout();
+  // G.levels[G.levelPointer].refreshLayout();
+  rebuildLevel();
 }
 
 function windowResized() {
   setupScreen();
   // dummyLayout();
-  G.player.refreshLayout();
-  G.levels[G.levelPointer].refreshLayout();
+  // G.player.refreshLayout();
+  // G.levels[G.levelPointer].refreshLayout();
+  rebuildLevel();
 }
 
 function keyPressed() {
@@ -48,11 +50,14 @@ function setupGame() {
   G.player.addItem('boot', 0);
   G.player.addItem('toy', 0);
   G.player.addItem('bead', 0);
-  level0();
-  level1();
-  level2();
-  level3();
-  G.levels[G.levelPointer].drawStatics();
+  // G.player.emptyInventory();
+  G.levelSetup.push(level0);
+  G.levelSetup.push(level1);
+  G.levelSetup.push(level2);
+  G.levelSetup.push(level3);
+  // G.levels[G.levelPointer].drawStatics();
+  G.level = G.levelSetup[G.levelPointer]();
+  G.level.drawStatics();
 }
 
 function preload() {
@@ -78,9 +83,6 @@ function preload() {
   G.loaders['grass'] = loadImage('assets/grasslands.png');
   G.loaders['desert'] = loadImage('assets/desert.png');
   G.loaders['snow'] = loadImage('assets/snow.png');
-
-
-
 }
 
 function setup() {
@@ -97,10 +99,10 @@ function draw() {
   G.graphLayers.clear();
   G.inputs.update();
   G.UIElements.update(G.player, G.inputs);
-  G.player.update(G.levels[G.levelPointer], G.inputs);
-  G.levels[G.levelPointer].update(G.player, G.inputs);
+  G.player.update(G.level, G.inputs);
+  G.level.update(G.player, G.inputs);
   G.player.draw();
-  G.levels[G.levelPointer].draw();
+  G.level.draw();
   G.graphLayers.draw();
   G.UIElements.draw();
   strokeWeight(10);

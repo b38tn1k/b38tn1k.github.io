@@ -25,11 +25,18 @@ function splitSheet(src, res, row, start, end){
   return img;
 }
 
+function rebuildLevel() {
+  G.level = G.levelSetup[G.levelPointer]();
+  G.level.drawStatics();
+  G.player.reOrigin();
+}
+
 function transitionLevel() {
   G.levelPointer += 1;
-  let old = G.levelPointer;
-  G.levelPointer = constrain(G.levelPointer, 0, G.levels.length-1);
-  G.levels[G.levelPointer].drawStatics();
+  G.level.shutDown();
+  G.levelPointer = constrain(G.levelPointer, 0, G.levelSetup.length-1);
+  G.level = G.levelSetup[G.levelPointer]();
+  G.level.drawStatics();
   G.player.reOrigin();
 }
 
@@ -43,7 +50,8 @@ class Globals {
     this.updated = true; //control FPS when I get there
     this.player;
     this.UIElements;
-    this.levels = [];
+    this.level;
+    this.levelSetup = [];
     this.levelPointer = 0;
     this.triggerRadius = 100;
   }

@@ -27,6 +27,18 @@ class Level {
     this.drawBGFG = bg;
   }
 
+  shutDown() {
+    for (let i = 0; i < this.npcs.length; i++) {
+      this.npcs[i].shutDown();
+    }
+    this.npcs = [];
+    // console.log(this.dialogs);
+    for (let i = 0; i < this.dialogs.length; i++) {
+      this.dialogs[i].shutDown();
+    }
+    this.dialogs = [];
+  }
+
   newSpriteCollection(tag, x, y, type=0) {
     this.npcsC.push([x, y]);
     this.npcTags.push(tag);
@@ -37,7 +49,6 @@ class Level {
     } else {
       sc = new SpriteCollection(G.dims.w * x, G.dims.h * y);
     }
-
     this.addNPC(sc);
     return sc;
   }

@@ -63,8 +63,8 @@ class Inventory {
 
 class PlayerCharacter extends SpriteCollection {
   constructor() {
-    super(G.dims.cx, G.dims.h - 100);
-    this.origin = [G.dims.cx, G.dims.h - 100];
+    super(G.dims.w * 0.5, G.dims.h * 0.8);
+    this.origin = [0.5, 0.8];
     this.playable = true;
     this.inventory = new Inventory();
     this.movementSpeed = 2;
@@ -98,12 +98,13 @@ class PlayerCharacter extends SpriteCollection {
   }
 
   reOrigin() {
-    this.current.tx = this.origin[0];
-    this.current.ty = this.origin[1];
+    this.current.tx = int(this.origin[0] * G.dims.w);
+    this.current.ty = int(this.origin[1] * G.dims.h);
+    this.refreshLayout();
   }
 
   refreshLayout() {
-    super.refreshLayout(G.dims.cx, G.dims.h - 100);
+    super.refreshLayout(int(this.origin[0] * G.dims.w), int(this.origin[1] * G.dims.h));
     this.inventory.dI = true;
   }
 
@@ -170,7 +171,7 @@ class PlayerCharacter extends SpriteCollection {
     }
     let pause = false;
     if (level.dialogs.length > 0) {
-      let dialog = level.dialogs[G.levels[G.levelPointer].diaP]
+      let dialog = level.dialogs[level.diaP]
       pause = dialog.pauseForOptions;
     }
     super.update();

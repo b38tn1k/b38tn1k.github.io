@@ -54,7 +54,7 @@ function level0() {
   let selfish = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
   dialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
   level.attachBGSetup(desertArt);
-  G.levels.push(level);
+  return level;
 }
 
 
@@ -75,14 +75,13 @@ function level1() {
     spider.update();
     spider.play();
   }
-  G.levels.push(level);
+  return level;
 }
 
 
 
 function level2() {
   let level = new Level('level2');
-  G.levels.push(level);
   level.attachBGSetup(snowArt);
   let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
   npc1.setCollectionRate(0.4);
@@ -110,11 +109,11 @@ function level2() {
   let sorta = dialog.addChildDialogEvent(parEvent, 'NPC1', 'An acceptable trade.');
   sorta = dialog.addChildDialogEvent(sorta, 'PC', '...');
   dialog.addChildDialogEvent(sorta, 'NPC1', 'Not very talkative, are you?');
+  return level;
 }
 
 function level3() {
   let level = new Level('level3');
-  G.levels.push(level);
   level.attachBGSetup(snowArt);
   let npc1 = level.newSpriteCollection('NPC1', 0.5, 0.3);
   npc1.setCollectionRate(0.4);
@@ -139,8 +138,6 @@ function level3() {
   tryBeads = dialog.addChildDialogEvent(tryBeads, 'PC', 'I\'m sorry? What?');
   tryBeads = dialog.addChildDialogEvent(tryBeads, 'NPC1', 'Leave us alone!');
   dialog.addChildDialogEvent(tryBeads, 'PC', 'Sorry.');
-  G.player.emptyInventory();
-  // G.player.addItem('toy');
 
   dialog.addOption(parEvent, 'One meal for a pair of boots.', function () {return G.player.inventory.trade('food', 1, 'boot', 1)}, function () {return G.player.hasFood();});
   let foodForBoots = dialog.addChildDialogEvent(parEvent, 'NPC1', 'An acceptable trade!');
@@ -160,6 +157,5 @@ function level3() {
     otherNPCs.play();
     otherNPCs.attack = false;
   }
-
-
+  return level;
 }

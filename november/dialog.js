@@ -61,6 +61,11 @@ class Dialog {
     this.finished = false;
   }
 
+  shutDown() {
+    this.head = null;
+    this.de = null;
+  }
+
   addDialogEvent(id, words='') {
     let newLine = new DialogEvent(id, words);
     this.de.children.push(newLine);

@@ -171,6 +171,11 @@ class Drawable {
     return bb;
   }
 
+  shutDown() {
+    this.g.remove();
+    this.spriteSheet = null;
+  }
+
   setTileAble(tileCnv) {
     this.tiled = true;
     for (let i = 0; i < this.g.width; i+=tileCnv.g.width) {

@@ -18,8 +18,14 @@ class Inventory {
     this.iDi = true;
     this.count = 0;
   }
-  addTradable(key, count) {
-
+  getRandomOwnedInventoryItem() {
+    let choice = [];
+    for (key in this.i) {
+      if (this.i[key] >= 1){
+        choice.push(key);
+      }
+    }
+    return random(choice);
   }
   addItem(key, count=1) {
     let res = this.checkInventory(key);

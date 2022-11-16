@@ -154,9 +154,6 @@ function level3() {
   dialog2.addDialogEvent('NPC1', 'Where are you headed?');
   dialog2.addDialogEvent('PC', 'North.');
   dialog2.addDialogEvent('NPC1', 'You have a long path ahead.');
-  dialog2.addDialogEvent('PC', '...');
-  dialog2.addDialogEvent('NPC1', '...');
-  dialog2.addDialogEvent('PC', '...');
 
   let otherNPCs;
   for (let i = 0; i < 10; i++) {

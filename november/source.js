@@ -40,7 +40,7 @@ function setupGame() {
   G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 10, 1, 8), 'down',[0, 4], 0);
   G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 11, 0, 8), 'right',[0, 4], 0);
   G.player.setCollectionRate(0.4);
-  G.player.addItem('food', 0);
+  G.player.addItem('food', 1);
   G.player.addItem('boot', 0);
   G.player.addItem('toy', 1);
   G.player.addItem('bead', 0);

@@ -38,8 +38,9 @@ class ChasingSprites extends SpriteCollection {
 
   doAttack(player) {
     this.attack = false;
-    player.subtractItem(this.goal);
-    player.hit = new HitThing(this.goal, -1, player.x, player.y - player.current.g.height/2);
+    let item = player.inventory.getRandomOwnedInventoryItem()
+    player.subtractItem(item);
+    player.hit = new HitThing(item, -1, player.x, player.y - player.current.g.height/2);
   }
 
   update(player) {

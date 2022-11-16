@@ -1,3 +1,16 @@
+class HitThing {
+  constructor(name, value, x, y) {
+    if (value > 0) {
+      value = '+' + String(value);
+    }
+    this.words = name + ' ' + String(value);
+    this.time = millis() + 300;
+    this.is = true;
+    this.x = x;
+    this.y = y;
+  }
+}
+
 class Inventory {
   constructor() {
     this.i = {};
@@ -64,9 +77,18 @@ class Inventory {
 class PlayerCharacter extends SpriteCollection {
   constructor() {
     super(G.dims.w * 0.5, G.dims.h * 0.8);
+    this.layer.g.textFont(G.loaders['font']);
+    this.textColor = G.colors[0];
+    this.bgColor = G.colors[2];
+    this.fontSize = 12;
+    this.layer.g.textSize(this.fontSize);
+    this.layer.g.textLeading(this.lineSpacing * this.fontSize);
+    this.layer.g.textAlign(LEFT, TOP);
+    this.layer.g.noStroke();
     this.origin = [0.5, 0.8];
     this.playable = true;
     this.inventory = new Inventory();
+    this.oldInventory = new Inventory();;
     this.movementSpeed = 2;
     this.wBoots = 4;
     this.noBoots = 2;
@@ -75,11 +97,31 @@ class PlayerCharacter extends SpriteCollection {
     this.moveVector = [0, 0];
     this.keyInput = false;
     this.keyBasedDir = 'up';
+    this.hit = {};
+    this.hit.is = false;
   }
 
   moveNorth(){
     this.moveVector[0] -= 1;
     this.keyInput = true;
+  }
+
+  backupInventory() {
+    this.oldInventory.i = {};
+    this.oldInventory.count = this.inventory.count;
+    for (key in this.inventory.i) {
+      this.oldInventory.i[key] = this.inventory.i[key];
+    }
+  }
+
+  recoverInventory() {
+    this.inventory.i = {};
+    this.inventory.count = this.oldInventory.count;
+    for (key in this.oldInventory.i) {
+      this.inventory.i[key] = this.oldInventory.i[key];
+    }
+    this.inventory.dI = true;
+    this.inventory.iDi = true;
   }
 
   moveSouth(){
@@ -122,9 +164,17 @@ class PlayerCharacter extends SpriteCollection {
   hasBead() {
     return this.inventory.checkInventory('bead').has;
   }
-
+  hasNoFoodAndNoBeads() {
+    return !(this.hasBead() || this.hasFood());
+  }
   hasFood() {
     return this.inventory.checkInventory('food').has;
+  }
+  hasBoot() {
+    return this.inventory.checkInventory('boot').has;
+  }
+  hasNoBoot() {
+    return ! (this.hasBoot());
   }
   hasAnything() {
     return this.inventory.hasItems();
@@ -199,4 +249,14 @@ class PlayerCharacter extends SpriteCollection {
     this.current.tx = constrain(this.current.tx, 0, G.dims.w);
     this.current.ty = constrain(this.current.ty, 0, G.dims.h);
   }
-}
+
+  draw() {
+    super.draw();
+    if (this.hit.is == true && this.hit.time > millis()) {
+      this.layer.g.fill(this.bgColor);
+      this.layer.g.rect(this.hit.x, this.hit.y, this.layer.g.textWidth(this.hit.words), this.fontSize * 1.5);
+      this.layer.g.fill(this.textColor);
+      this.layer.g.text(this.hit.words, this.hit.x ,this.hit.y);
+    }
+  }
+};

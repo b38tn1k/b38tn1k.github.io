@@ -3,17 +3,11 @@ var loaders = {};
 
 function deviceTurned() {
   setupScreen();
-  // dummyLayout();
-  // G.player.refreshLayout();
-  // G.levels[G.levelPointer].refreshLayout();
   rebuildLevel();
 }
 
 function windowResized() {
   setupScreen();
-  // dummyLayout();
-  // G.player.refreshLayout();
-  // G.levels[G.levelPointer].refreshLayout();
   rebuildLevel();
 }
 
@@ -46,16 +40,16 @@ function setupGame() {
   G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 10, 1, 8), 'down',[0, 4], 0);
   G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 11, 0, 8), 'right',[0, 4], 0);
   G.player.setCollectionRate(0.4);
-  G.player.addItem('food', 3);
+  G.player.addItem('food', 0);
   G.player.addItem('boot', 0);
-  G.player.addItem('toy', 0);
+  G.player.addItem('toy', 1);
   G.player.addItem('bead', 0);
   // G.player.emptyInventory();
+  G.player.backupInventory();
   G.levelSetup.push(level0);
   G.levelSetup.push(level1);
   G.levelSetup.push(level2);
   G.levelSetup.push(level3);
-  // G.levels[G.levelPointer].drawStatics();
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
 }
@@ -77,6 +71,8 @@ function preload() {
   G.loaders['toy'] = loadImage('assets/toy.png');
   G.loaders['boot'] = loadImage('assets/boot.png');
   G.loaders['bead'] = loadImage('assets/bead.png');
+  // pickups
+  G.loaders['chest'] = loadImage('assets/chest.png');
   // font
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
   // maps

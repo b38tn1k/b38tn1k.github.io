@@ -1,3 +1,60 @@
+function pixelBorder(cnv, r=3) {
+  let flwr = floor((cnv.g.width - r)/r);
+  let flhr = floor((cnv.g.height - r)/r);
+  let rd = r;
+  let v = 0;
+  let off = 0;
+  let noff = r;
+  flwr -= 1;
+  let flY = (flwr%2 == 0);
+  let flX = (flhr%2 == 0);
+  cnv.g.fill(G.colors[0]);
+  cnv.g.stroke(G.colors[0]);
+  cnv.g.strokeWeight(1);
+  let newCanv = createGraphics(flwr*r, flhr*r);
+  cnv.g.rectMode(CORNER);
+  cnv.g.rect(0, 0, cnv.g.width, (cnv.g.height - newCanv.height)/2);
+  cnv.g.rect(0, 0, (cnv.g.width - newCanv.width)/2, cnv.g.height);
+  cnv.g.rect(0, cnv.g.height-((cnv.g.height - newCanv.height)/2), cnv.g.width, newCanv.height);
+  cnv.g.rect(cnv.g.width - (cnv.g.width - newCanv.width)/2, 0, newCanv.width, cnv.g.height);
+  newCanv.fill(G.colors[0]);
+  newCanv.noStroke();
+  newCanv.rectMode(CORNER);
+  for (let i = 0; i < r; i++) {
+    // horizontals
+    for (let j = 0; j < newCanv.width; j += 2*r) {
+      newCanv.square(j + off, v, rd);
+      if (flX == true) {
+        newCanv.square(j + noff, newCanv.height - (v + r), rd);
+      } else {
+        newCanv.square(j + off, newCanv.height - (v + r), rd);
+      }
+    }
+    // verticals
+    for (let j = 0; j <= cnv.g.height; j += 2*r) {
+      newCanv.square(v, j + off, rd);
+      if (flY == true) {
+        newCanv.square(newCanv.width - (v + r), j + noff, rd);
+      } else {
+        newCanv.square(newCanv.width - (v + r), j + off, rd);
+      }
+
+    }
+    v += r;
+    if (off == 0) {
+      off = r;
+      noff = 0;
+    } else {
+      off = 0;
+      noff = r;
+    }
+    rd -= 1;
+  }
+  cnv.g.imageMode(CENTER);
+  cnv.g.image(newCanv, cnv.tx, cnv.ty);
+  newCanv.remove();
+}
+
 class UIElements {
   constructor() {
     this.cmp = {}

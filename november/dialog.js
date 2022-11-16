@@ -142,6 +142,8 @@ class Dialog {
     let rightIsPossible = (right < maxRight);
     let topIsPossible = (above > minTop);
     let bottomIsPossible = (below < minBottom);
+    let othersOnLeft = false;
+    let othersOnRight = false;
     if (newFlag == true) {
       if (sprite.tx >= G.dims.cx && rightIsPossible == true) {
         this.coords[tag].x = right - this.textBoxWidth;
@@ -163,11 +165,11 @@ class Dialog {
       }
     } else {
       // find layout
-      let othersOnLeft = false;
-      let othersOnRight = false;
+      othersOnLeft = false;
+      othersOnRight = false;
       for (key in this.coords) {
         if (key != tag) {
-          othersOnRight = (sprite.tx < this.coords[key].tx) || othersOnRight;
+          othersOnRight = (sprite.tx <= this.coords[key].tx) || othersOnRight;
           othersOnLeft = (sprite.tx > this.coords[key].tx) || othersOnLeft;
         }
       }

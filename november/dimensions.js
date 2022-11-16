@@ -5,6 +5,7 @@ class Dimensions {
     this.h = height;
     this.cx = width/2;
     this.cy = height/2;
+    this.swarmSize = min(20, ceil((width * height) / (18000)));
     this.rot = 0;
   }
 

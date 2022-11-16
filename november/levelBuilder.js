@@ -31,6 +31,7 @@ function level0() {
   npc1.addAnimation(9, G.loaders['slume-death'], 'death', [8]);
   npc1.update();
   npc1.play();
+  level.addPickup(0.3, 0.3);
   let dialog = level.newDialog(0.7, 0.5);
   dialog.updateCoords('NPC1', npc1.current);
   dialog.addDialogEvent('NPC1', 'What\'s the hurry, buddy?');
@@ -39,7 +40,7 @@ function level0() {
   let parEvent = dialog.addDialogEvent('PC');
   dialog.addOption(parEvent, 'Here you go.', function () {return G.player.subtractItem('food');}, function () {return G.player.hasFood();});
   dialog.addOption(parEvent, 'I\'m hungry too.');
-  dialog.addOption(parEvent, 'I need boots.', returnTrue, function () {return G.player.hasFood();});
+  dialog.addOption(parEvent, 'I need boots.', returnTrue, function () {return (G.player.hasFood() && G.player.hasNoBoot());});
   dialog.addOption(parEvent, 'No!', function () {npc1.changeSequence(1, true);}, returnTrue);
   let thankyou = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Thank you!');
   dialog.addChildDialogEvent(thankyou, 'PC', 'You are welcome!');
@@ -64,7 +65,10 @@ function level1() {
 
   //function splitSheet(src, res, row, start, end)
   let spider;
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 5; i++) {
+    level.addPickup(random(), random());
+  }
+  for (let i = 0; i < G.dims.swarmSize; i++) {
     spider = level.newSpriteCollection('spider', random(), random(), 1);
     spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 0, 0, 2), 'left');
     spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 1, 0, 2), 'right');
@@ -72,13 +76,12 @@ function level1() {
     spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 3, 0, 2), 'down');
     spider.setCollectionRate(0.4);
     spider.goal = 'food';
+    spider.aggressive = true;
     spider.update();
     spider.play();
   }
   return level;
 }
-
-
 
 function level2() {
   let level = new Level('level2');
@@ -94,7 +97,7 @@ function level2() {
   dialog.addDialogEvent('PC', '...');
   dialog.addDialogEvent('NPC1', 'My name is Colin Iser. I have discovered and tamed this land.');
   dialog.addDialogEvent('PC', '...');
-  dialog.addDialogEvent('NPC1', 'I have taught the localse to trade using glass beads I import from far away.');
+  dialog.addDialogEvent('NPC1', 'I have taught the locals to trade using glass beads I import from far away.');
   dialog.addDialogEvent('NPC1', 'Would you like to trade? This currency will help on your travels!');
   let parEvent = dialog.addDialogEvent('PC');
   dialog.addOption(parEvent, 'No');
@@ -120,7 +123,7 @@ function level3() {
   npc1.addAnimation(7, G.loaders['slume-idle']);
   npc1.update();
   npc1.play();
-  let dialog = level.newDialog(0.5, 0.3);
+  let dialog = level.newDialog(0.5, 0.3, function () {return (G.player.hasNoBoot());});
   dialog.updateCoords('NPC1', npc1.current);
   dialog.addDialogEvent('NPC1', 'Hello!');
   dialog.addDialogEvent('PC', 'Hi!');
@@ -128,7 +131,7 @@ function level3() {
   dialog.addDialogEvent('PC', 'North, but without boots I am making little progress.');
   dialog.addDialogEvent('NPC1', 'We have boots to spare! Would you like to trade?');
   let parEvent = dialog.addDialogEvent('PC');
-  dialog.addOption(parEvent, 'I have nothing useful to trade.', returnTrue, function () {return G.player.hasNothing();});
+  dialog.addOption(parEvent, 'I have nothing useful to trade.', returnTrue, function () {return G.player.hasNoFoodAndNoBeads();});
   let nothing = dialog.addChildDialogEvent(parEvent, 'NPC1', 'I am sorry to hear. There are many opportunities along the path.');
   nothing = dialog.addChildDialogEvent(nothing, 'PC', 'Oh well...');
   dialog.addChildDialogEvent(nothing, 'NPC1', 'Good luck!');
@@ -143,6 +146,17 @@ function level3() {
   let foodForBoots = dialog.addChildDialogEvent(parEvent, 'NPC1', 'An acceptable trade!');
   foodForBoots = dialog.addChildDialogEvent(foodForBoots, 'PC', 'These boots are warm!');
   foodForBoots = dialog.addChildDialogEvent(foodForBoots, 'NPC1', 'Fair travels!');
+
+  let dialog2 = level.newDialog(0.5, 0.3);
+  dialog2.updateCoords('NPC1', npc1.current);
+  dialog2.addDialogEvent('NPC1', 'Hello!');
+  dialog2.addDialogEvent('PC', 'Hi!');
+  dialog2.addDialogEvent('NPC1', 'Where are you headed?');
+  dialog2.addDialogEvent('PC', 'North.');
+  dialog2.addDialogEvent('NPC1', 'You have a long path ahead.');
+  dialog2.addDialogEvent('PC', '...');
+  dialog2.addDialogEvent('NPC1', '...');
+  dialog2.addDialogEvent('PC', '...');
 
   let otherNPCs;
   for (let i = 0; i < 10; i++) {

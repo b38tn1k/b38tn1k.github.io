@@ -2,6 +2,9 @@
 function returnTrue() {
   return true;
 }
+function returnFalse() {
+  return false;
+}
 function bounded(env, x, y) { // envelope = [x1, y1, x2, y2]
   if (!env) {
     env = [0, 0, 0, 0];
@@ -24,11 +27,27 @@ function splitSheet(src, res, row, start, end){
   img.copy(src, sx, sy, sw, sh, 0, 0, sw, sh);
   return img;
 }
-
 function rebuildLevel() {
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
   G.player.reOrigin();
+  G.player.recoverInventory();
+}
+function showColors() {
+  function colorString(levels) {
+    return String(levels[0]) + ', ' + String(levels[1]) + ', ' + String(levels[2])
+  }
+  colorDiv = createDiv();
+  colorDiv.position(0, 0);
+  colorDiv.style('background-color', '#FFFFFF');
+  for (let i = 0; i < G.colors.length; i++) {
+    let levels = G.colors[i].levels;
+    colorDiv.html('<span style="color:rgb(' + colorString(levels) + ')">' + i + '    ■ </span>' , true);
+    // colorDiv.html(i + '    ■ </span>', true);
+    if (i % 10 == 0 && i != 0) {
+      colorDiv.html('<br><br>', true);
+    }
+  }
 }
 
 function transitionLevel() {
@@ -38,6 +57,7 @@ function transitionLevel() {
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
   G.player.reOrigin();
+  G.player.backupInventory();
 }
 
 class Globals {

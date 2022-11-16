@@ -2,9 +2,10 @@ class Level {
   constructor(name) {
     this.name = name;
     this.dialogs = [];
+    this.pickups = [];
     this.dialogsC = [];
+    this.dialogCondition = [];
     this.diaP = 0;
-    this.dialogCurrent;
     this.npcs = [];
     this.npcsC = [];
     this.npcTags = [];
@@ -13,6 +14,8 @@ class Level {
     this.inventory = new Inventory();
     this.initBGFG();
     this.transitionBB;
+    this.spriteLayer = G.graphLayers.getLayer('sprites', true, 100);
+    this.new = true;
   }
   initBGFG(res = 16) {
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
@@ -52,18 +55,22 @@ class Level {
     this.addNPC(sc);
     return sc;
   }
-  newDialog(x, y) {
+  newDialog(x, y, condition=returnTrue) {
     this.dialogsC.push([x, y]);
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
     let nd = new Dialog(G.dims.w * x, G.dims.h * y, G.triggerRadius, G.triggerRadius);
-    this.addDialog(nd);
+    this.addDialog(nd, condition);
     return nd;
   }
-  addDialog(dialog) { // i might want to save the dims in these ones for resizing?
+  addDialog(dialog, condition) { // i might want to save the dims in these ones for resizing?
     this.dialogs.push(dialog);
+    this.dialogCondition.push(condition);
   }
   addNPC(npc) {
     this.npcs.push(npc);
+  }
+  addPickup(x, y) {
+    this.pickups.push(new Pickup(x, y));
   }
   drawStatics() { // handle deletion and creation of graphics better
     this.bg.g.clear();
@@ -86,7 +93,19 @@ class Level {
       }
     }
   }
+  chooseDialog(player){
+    for (let i = 0; i < this.dialogCondition.length; i++) {
+      if (this.dialogCondition[i]() == true) {
+        this.diaP = i;
+        break;
+      }
+    }
+  }
   update(player, inputs) {
+    if (player && this.new == true) {
+      this.chooseDialog();
+      this.new = false;
+    }
     for (let i = 0; i < this.npcs.length; i++) {
       this.npcs[i].update(player);
     }
@@ -96,6 +115,9 @@ class Level {
     if (bounded(this.transitionBB, player.current.tx, player.current.ty).complete == true) {
       transitionLevel();
     }
+    for (let i = 0; i < this.pickups.length; i++) {
+      this.pickups[i].update(player);
+    }
   }
   draw() {
     if (this.dialogs.length > 0) {
@@ -103,6 +125,11 @@ class Level {
     }
     for (let i = 0; i < this.npcs.length; i++) {
       this.npcs[i].draw();
+    }
+    for (let i = 0; i < this.pickups.length; i++) {
+      if (this.pickups[i].draw == true) {
+        this.spriteLayer.g.image(G.loaders[this.pickups[i].image], this.pickups[i].x, this.pickups[i].y);
+      }
     }
   }
 }

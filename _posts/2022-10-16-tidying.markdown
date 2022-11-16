@@ -1,0 +1,19 @@
+---
+layout: post
+title:  "Tidying Up, Picking Up"
+date:   2022-10-16
+categories: [game, november]
+tags: gameprogress
+---
+
+Generating all the levels at the start of the game was a dumb idea. While level transition was instant, the amount of graphic elements just hanging out in memory, waiting to be shown, was getting sorta massive for a javascript game. So now each level is generated on transition, after the previous level is removed. This causes a slight drop in FPS for the transition moment, but I can hide this with a static title card or something eventually.
+
+Having a method to generate the current level in-game also simplifies some other issues I had encountered and creates some new problems...
+
+Resizing or reorienting the window required the level to create a new background canvas and reorient all the sprites and dialogues. Now I can just completely regenerate the entire level using the same transition level method.
+
+This provided an interesting 'infinite money hack' as while the player's inventory was persistent, the regenerated level would provide opportunity to repeat trades and/or pickups.
+
+Infinite Money Hacks are sorta annoying, so I implemented Inventory Backup and Inventory Recover methods, meaning any time a level is regenerated, the player will have the same inventory as the first time they entered the level.
+
+I also added a Pickup class which drops a random item into Player inventory when triggered. For the draft levels, pickups created some inconstancies in the plot - why say 'i don't have boots' when you clearly have boots? I added some additional dialog options based upon inventory. This will be something I need to keep track of! For Thievery levels it adds a bit more excitement - the chasing sprites will change behaviour based upon inventory, so picking up a chest with food can anger the spiders. It may be worth exploring randomising the dropped item that results from an inventory-based attack. If you have boots and you don't want to loose them then you may think twice about picking up a mystery item in a chest that could trigger an attack. I might do that.

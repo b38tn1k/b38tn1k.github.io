@@ -5,6 +5,9 @@ class Inventory {
     this.iDi = true;
     this.count = 0;
   }
+  addTradable(key, count) {
+
+  }
   addItem(key, count=1) {
     let res = this.checkInventory(key);
     this.dI = true;
@@ -63,7 +66,7 @@ class PlayerCharacter extends SpriteCollection {
     super(G.dims.cx, G.dims.h - 100);
     this.origin = [G.dims.cx, G.dims.h - 100];
     this.playable = true;
-    this.inventory = new Inventory;
+    this.inventory = new Inventory();
     this.movementSpeed = 2;
     this.wBoots = 4;
     this.noBoots = 2;

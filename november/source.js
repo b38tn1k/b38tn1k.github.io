@@ -46,7 +46,8 @@ function setupGame() {
   G.player.setCollectionRate(0.4);
   G.player.addItem('food', 3);
   G.player.addItem('boot', 0);
-  G.player.addItem('toy',1);
+  G.player.addItem('toy', 0);
+  G.player.addItem('bead', 0);
   level0();
   level1();
   level2();

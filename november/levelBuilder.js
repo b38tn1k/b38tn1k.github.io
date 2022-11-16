@@ -95,8 +95,8 @@ function level2() {
   dialog.addDialogEvent('PC', '...');
   dialog.addDialogEvent('NPC1', 'My name is Colin Iser. I have discovered and tamed this land.');
   dialog.addDialogEvent('PC', '...');
-  dialog.addDialogEvent('NPC1', 'I have taught the native people how to trade using glass beads I import from far away.');
-  dialog.addDialogEvent('NPC1', 'It is quite lucrative. Would you like to trade? This currency will assist on your travels.');
+  dialog.addDialogEvent('NPC1', 'I have taught the localse to trade using glass beads I import from far away.');
+  dialog.addDialogEvent('NPC1', 'Would you like to trade? This currency will help on your travels!');
   let parEvent = dialog.addDialogEvent('PC');
   dialog.addOption(parEvent, 'No');
   dialog.addOption(parEvent, 'I will exchange all I have.', function () {return G.player.addItem('bead', G.player.emptyInventory());}, function () {return G.player.hasAnything();});
@@ -129,7 +129,7 @@ function level3() {
   dialog.addDialogEvent('PC', 'North, but without boots I am making little progress.');
   dialog.addDialogEvent('NPC1', 'We have boots to spare! Would you like to trade?');
   let parEvent = dialog.addDialogEvent('PC');
-  dialog.addOption(parEvent, 'I have nothing to trade.', returnTrue, function () {return G.player.hasNothing();});
+  dialog.addOption(parEvent, 'I have nothing useful to trade.', returnTrue, function () {return G.player.hasNothing();});
   let nothing = dialog.addChildDialogEvent(parEvent, 'NPC1', 'I am sorry to hear. There are many opportunities along the path.');
   nothing = dialog.addChildDialogEvent(nothing, 'PC', 'Oh well...');
   dialog.addChildDialogEvent(nothing, 'NPC1', 'Good luck!');
@@ -139,6 +139,8 @@ function level3() {
   tryBeads = dialog.addChildDialogEvent(tryBeads, 'PC', 'I\'m sorry? What?');
   tryBeads = dialog.addChildDialogEvent(tryBeads, 'NPC1', 'Leave us alone!');
   dialog.addChildDialogEvent(tryBeads, 'PC', 'Sorry.');
+  G.player.emptyInventory();
+  // G.player.addItem('toy');
 
   dialog.addOption(parEvent, 'One meal for a pair of boots.', function () {return G.player.inventory.trade('food', 1, 'boot', 1)}, function () {return G.player.hasFood();});
   let foodForBoots = dialog.addChildDialogEvent(parEvent, 'NPC1', 'An acceptable trade!');

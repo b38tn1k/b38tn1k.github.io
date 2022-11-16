@@ -98,6 +98,24 @@ class Drawable {
     }
   }
 
+  setBorder(tileset, length, height) {
+    let resX = tileset.width/length;
+    let resY = tileset.height/height;
+    for (let x = resX; x < this.g.width-2*resX; x+= resY) {
+      this.g.image(tileset, x, resY, resX, resY, 3*resX, 0, resX, resY);
+    }
+    for (let y = 0; y < this.g.height; y+= resY) {
+      this.g.image(tileset, 0, y, resX, resY, 2*resX, 0, resX, resY);
+      this.g.image(tileset, resX, y, resX, resY, 0, 0, resX, resY);
+      this.g.image(tileset, this.g.width - resX*2, y, resX, resY, resX, 0, resX, resY);
+      this.g.image(tileset, this.g.width - resX, y, resX, resY, 2*resX, 0, resX, resY);
+    }
+    for (let x = resX; x < this.g.width-2*resX; x+= resY) {
+      this.g.image(tileset, x, 0, resX, resY, 2*resX, 0, resX, resY);
+    }
+
+  }
+
   border(tileset, length, height) {
     let resX = tileset.width/length;
     let resY = tileset.height/height;

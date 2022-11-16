@@ -50,6 +50,7 @@ function setupGame() {
   G.levelSetup.push(level1);
   G.levelSetup.push(level2);
   G.levelSetup.push(level3);
+  G.levelSetup.push(finalLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
 }
@@ -79,6 +80,7 @@ function preload() {
   G.loaders['grass'] = loadImage('assets/grasslands.png');
   G.loaders['desert'] = loadImage('assets/desert.png');
   G.loaders['snow'] = loadImage('assets/snow.png');
+  G.loaders['temple'] = loadImage('assets/temple.png');
 }
 
 function setup() {
@@ -101,5 +103,5 @@ function draw() {
   G.level.draw();
   G.graphLayers.draw();
   G.UIElements.draw();
-  strokeWeight(10);
+  // strokeWeight(10);
 }

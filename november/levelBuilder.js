@@ -22,6 +22,12 @@ function desertArt(bg, fg){
   return bb;
 }
 
+function templeArt(bg, fg){
+  bg.randomTile(splitSheet(G.loaders['temple'], 64, 0, 0, 5), 5, 1);
+  fg.setBorder(splitSheet(G.loaders['temple'], 64, 2, 0, 4), 4, 1);
+  return [-1, -1, -1, -1];
+}
+
 function level0() {
   let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
   let level = new Level('Level0');
@@ -168,5 +174,13 @@ function level3() {
     otherNPCs.play();
     otherNPCs.attack = false;
   }
+  return level;
+}
+
+function finalLevel() {
+  let level = new Level('level3');
+  level.attachBGSetup(snowArt);
+  level.attachBGSetup(templeArt);
+
   return level;
 }

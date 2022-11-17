@@ -63,6 +63,7 @@ function setupGame() {
   G.levelSetup.push(level4);
   G.levelSetup.push(level5);
   G.levelSetup.push(level6);
+  G.levelSetup.push(level7);
   G.levelSetup.push(finalLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();

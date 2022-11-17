@@ -169,7 +169,7 @@ function level4() {
   level.attachBGSetup(snowArt);
   let npc1 = level.newSpriteCollection('NPC1', 0.5, 0.3);
   npc1.setCollectionRate(0.4);
-  npc1.addAnimation(7, G.loaders['slume-idle']);
+  npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 0, 0, 7), 'left');
   npc1.update();
   npc1.play();
   let dialog = level.newDialog(0.5, 0.3, returnTrue);
@@ -301,8 +301,40 @@ function level6() {
   return level;
 }
 
+function level7() {
+  let level = new Level('level7');
+  G.player.hasCompanion = true;
+  level.attachBGSetup(grassArt); // change to precave art
+  let npc1 = level.newSpriteCollection('NPC1', 0.4, 0.3);
+  npc1.setCollectionRate(0.4);
+  npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 1, 0, 7), 'right');
+  npc1.update();
+  npc1.play();
+  let dialog = level.newDialog(0.5, 0.3, returnTrue);
+  dialog.updateCoords('NPC1', npc1.current);
+  dialog.addDialogEvent('NPC1', 'That opossum looks ravenous!');
+  dialog.addDialogEvent('PC', 'Yeh... it just started following me around.');
+  dialog.addDialogEvent('NPC1', 'It must like you! If you feed it, it will probably help you out.');
+  dialog.addDialogEvent('PC', 'Interesting...');
+  dialog.addDialogEvent('NPC1', 'Have you given it a name?');
+  let parEvent = dialog.addDialogEvent('PC', '');
+  dialog.addOption(parEvent, 'Daisy', function () {return G.player.companion.name = 'Daisy';}, returnTrue);
+  dialog.addOption(parEvent, 'Dr. Pinknose', function () {return G.player.companion.name = 'Dr. Pinknose';}, returnTrue);
+  dialog.addOption(parEvent, 'Bitey', function () {return G.player.companion.name = 'Bitey';}, returnTrue);
+  dialog.addOption(parEvent, 'Ziggy', function () {return G.player.companion.name = 'Ziggy';}, returnTrue);
+  let ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Daisy\s effort. But be careful, there are ghosts!');
+  dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Dr. Pinknose\'s effort. But be careful, there are ghosts!');
+  dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Bitey\'s effort. But be careful, there are ghosts!');
+  dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Ziggy\'s effort. But be careful, there are ghosts!');
+  dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  return level;
+}
+
 function finalLevel() {
-  let level = new Level('level4');
+  let level = new Level('final');
   level.attachBGSetup(snowArt);
   level.attachBGSetup(templeArt);
   let possum = level.newSpriteCollection('possum', 0.5, 0.5);

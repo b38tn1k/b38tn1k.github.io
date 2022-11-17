@@ -4,6 +4,7 @@ class Companion extends ChasingSprites {
     this.aggressive = false;
     this.attack = false;
     this.movementSpeed = 2;
+    this.name = '';
   }
 
   findCloset(points){

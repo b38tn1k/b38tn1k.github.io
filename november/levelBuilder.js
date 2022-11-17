@@ -75,7 +75,7 @@ function level1() {
   //function splitSheet(src, res, row, start, end)
   let spider;
   for (let i = 0; i < G.dims.swarmSize/2; i++) {
-    level.addPickup(random(), random(), ['toy', 'food']);
+    level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['toy', 'food']);
   }
   for (let i = 0; i < G.dims.swarmSize; i++) {
     spider = level.newSpriteCollection('spider', random(), random(), 1);
@@ -132,7 +132,7 @@ function level3() {
   //function splitSheet(src, res, row, start, end)
   let rat;
   for (let i = 0; i < G.dims.swarmSize/2; i++) {
-    level.addPickup(random(), random(), ['toy', 'food']);
+    level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['toy', 'food']);
   }
 
   let tree = level.newSpriteCollection('tree', 0.25, 0.6, 2);
@@ -283,7 +283,7 @@ function level6() {
   }
   let spider;
   for (let i = 0; i < G.dims.swarmSize; i++) {
-    level.addPickup(random(), random(), ['food', 'bead', 'toy', 'boot']);
+    level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['food', 'bead', 'toy', 'boot']);
   }
   for (let i = 0; i < ceil(G.dims.swarmSize/2); i++) {
     spider = level.newSpriteCollection('spider', random(), random(), 1);

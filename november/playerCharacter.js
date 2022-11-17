@@ -37,6 +37,7 @@ class Inventory {
       this.i[key] = count;
     }
     this.count += count;
+    return true;
   }
 
   subtractItem(key, count=1) {
@@ -47,6 +48,7 @@ class Inventory {
       this.iDi = true;
       this.count -= count;
     }
+    return true;
   }
 
   hasItems() {
@@ -158,10 +160,12 @@ class PlayerCharacter extends SpriteCollection {
 
   addItem(key, count=1) {
     this.inventory.addItem(key, count);
+    return true;
   }
 
   subtractItem(key, count=1) {
     this.inventory.subtractItem(key, count);
+    return true;
   }
 
   checkInventory(key) {
@@ -209,6 +213,8 @@ class PlayerCharacter extends SpriteCollection {
   }
 
   update(level, input) {
+    let prevX = this.current.tx;
+    let prevY = this.current.ty;
     if (this.inventory.iDi == true) {
       this.movementSpeed = this.inventory.checkInventory('boot').has ? this.wBoots : this.noBoots;
       this.inventory.iDi = false;
@@ -254,6 +260,12 @@ class PlayerCharacter extends SpriteCollection {
     }
     this.current.tx = constrain(this.current.tx, 0, G.dims.w);
     this.current.ty = constrain(this.current.ty, 0, G.dims.h);
+    for (let i = 0; i < level.obstacles.length; i++) {
+      if (bounded(level.obstacles[i], this.current.tx, this.current.ty).complete == true) {
+        this.current.tx = prevX;
+        this.current.ty = prevY;
+      }
+    }
   }
 
   draw() {

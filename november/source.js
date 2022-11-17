@@ -44,12 +44,14 @@ function setupGame() {
   G.player.addItem('boot', 0);
   G.player.addItem('toy', 1);
   G.player.addItem('bead', 0);
-  // G.player.emptyInventory();
+  G.player.emptyInventory();
   G.player.backupInventory();
   // G.levelSetup.push(level0);
   // G.levelSetup.push(level1);
   // G.levelSetup.push(level2);
   // G.levelSetup.push(level3);
+  // G.levelSetup.push(level4);
+  G.levelSetup.push(level5);
   G.levelSetup.push(finalLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
@@ -61,10 +63,11 @@ function preload() {
   // sprites
   G.loaders['player-boots'] = loadImage('assets/boots.png');
   G.loaders['slumeY'] = loadImage('assets/slume_yellow_idle.png');
-  G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdle.png');
+  G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdlef.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['spider'] = loadImage('assets/spider.png');
+  G.loaders['rat'] = loadImage('assets/ratf.png');
   G.loaders['possum'] = loadImage('assets/possum.png');
   // UI
   G.loaders['compass'] = loadImage('assets/compass.png');
@@ -100,9 +103,10 @@ function draw() {
   G.UIElements.update(G.player, G.inputs);
   G.player.update(G.level, G.inputs);
   G.level.update(G.player, G.inputs);
-  G.player.draw();
   G.level.draw();
+  G.player.draw();
   G.graphLayers.draw();
   G.UIElements.draw();
+  // image(splitSheet(G.loaders['snow'], 64, 2, 0, 1), 200, 100);
   // strokeWeight(10);
 }

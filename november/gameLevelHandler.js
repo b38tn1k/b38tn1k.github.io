@@ -6,6 +6,7 @@ class Level {
     this.dialogsC = [];
     this.dialogCondition = [];
     this.diaP = 0;
+    this.obstacles = [];
     this.npcs = [];
     this.npcsC = [];
     this.npcTags = [];
@@ -42,18 +43,32 @@ class Level {
     this.dialogs = [];
   }
 
-  newSpriteCollection(tag, x, y, type=0) {
+  newSpriteCollection(tag, x, y, type=0, radius=32) {
     this.npcsC.push([x, y]);
     this.npcTags.push(tag);
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
     let sc;
     if (type == 1) {
       sc = new ChasingSprites(G.dims.w * x, G.dims.h * y);
-    } else {
+    } else if (type == 0){
       sc = new SpriteCollection(G.dims.w * x, G.dims.h * y);
+    } else if (type == 2) {
+      let xx = G.dims.w * x;
+      let yy = G.dims.h * y;
+      sc = new SpriteCollection(xx, yy);
+      let bb = [xx - radius, yy-radius, xx + radius, yy + radius];
+      this.obstacles.push(bb);
     }
     this.addNPC(sc);
     return sc;
+  }
+  setSpritesToAttack() {
+    for (let i = 0; i < this.npcs.length; i++) {
+      this.npcs[i].attack = true;
+      this.npcs[i].aggressive = true;
+      this.npcs[i].doRandomWalk = true;
+    }
+    return true;
   }
   newDialog(x, y, condition=returnTrue) {
     this.dialogsC.push([x, y]);
@@ -69,8 +84,8 @@ class Level {
   addNPC(npc) {
     this.npcs.push(npc);
   }
-  addPickup(x, y) {
-    this.pickups.push(new Pickup(x, y));
+  addPickup(x, y, items) {
+    this.pickups.push(new Pickup(x, y, items));
   }
   drawStatics() { // handle deletion and creation of graphics better
     this.bg.g.clear();

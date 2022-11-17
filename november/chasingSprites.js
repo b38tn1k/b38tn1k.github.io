@@ -13,7 +13,12 @@ class ChasingSprites extends SpriteCollection {
     this.recalculateRandomWalkVector();
     this.direction = 'up';
     this.prevDir = '';
+    this.doRandomWalk = true;
     // showColors();
+  }
+
+  randomWalkOff() {
+    this.doRandomWalk = false;
   }
 
   recalculateRandomWalkVector() {
@@ -72,25 +77,32 @@ class ChasingSprites extends SpriteCollection {
       }
     }
     if (this.attack == false) { // then random walk
-      if (this.randomWalkTimer == this.randomWalkInterval) {
-        this.recalculateRandomWalkVector();
-        this.randomWalkInterval = int(random(20, 100));
-        this.randomWalkTimer = 0;
+      if (this.doRandomWalk == true) {
+        if (this.randomWalkTimer == this.randomWalkInterval) {
+          this.recalculateRandomWalkVector();
+          this.randomWalkInterval = int(random(20, 100));
+          this.randomWalkTimer = 0;
+        }
+        this.current.tx += this.movementSpeed * this.randomWalkVector[1];
+        this.current.ty += this.movementSpeed * this.randomWalkVector[0];
+        this.randomWalkTimer += 1;
       }
-      this.current.tx += this.movementSpeed * this.randomWalkVector[1];
-      this.current.ty += this.movementSpeed * this.randomWalkVector[0];
-      this.randomWalkTimer += 1;
-      this.current.tx = constrain(this.current.tx, 0, G.dims.w);
-      this.current.ty = constrain(this.current.ty, 0, G.dims.h);
     }
-
-    let deltaX = this.prevX - this.current.tx;
-    let deltaY = this.prevY - this.current.ty;
-    if (abs(deltaX) > abs(deltaY)) {
-      this.direction = (deltaX < 0) ? 'right' : 'left';
-    } else {
-      this.direction = (deltaY < 0) ? 'down' : 'up';
+    if (this.doRandomWalk == true) {
+      let deltaX = this.prevX - this.current.tx;
+      let deltaY = this.prevY - this.current.ty;
+      if ('up' in this.tags) {
+        if (abs(deltaX) >= abs(deltaY)) {
+          this.direction = (deltaX < 0) ? 'right' : 'left';
+        } else {
+          this.direction = (deltaY < 0) ? 'down' : 'up';
+        }
+      } else {
+        this.direction = (deltaX < 0) ? 'right' : 'left';
+      }
+      let changed = this.chooseSequence(this.direction);
     }
-    let changed = this.chooseSequence(this.direction);
+    this.current.tx = constrain(this.current.tx, 0, G.dims.w);
+    this.current.ty = constrain(this.current.ty, 0, G.dims.h);
   }
 };

@@ -1,6 +1,6 @@
 class Pickup {
-  constructor (x, y) {
-    this.item = random(['food', 'boot', 'bead', 'toy']);
+  constructor (x, y, items=['food', 'bead', 'toy']) {
+    this.item = random(items);
     this.image = 'chest'; // tryna be more conservative
     this.x = int(G.dims.w * x);
     this.y = int(G.dims.h * y);

@@ -59,6 +59,7 @@ class Dialog {
     this.eventTrigger = false;
     this.past = [];
     this.finished = false;
+    this.dontWait = false;
   }
 
   shutDown() {
@@ -290,6 +291,11 @@ class Dialog {
     if (this.de.completed == true && millis() > this.de.pauseUntil && this.finished == false) {
       this.progress(input);
     }
+    if (this.dontWait) {
+      this.pauseForOptions = false;
+      this.chooseOption(0);
+
+    }
     if (this.pauseForOptions) {
       this.waitForSelection(input);
     }
@@ -316,17 +322,19 @@ class Dialog {
   }
 
   writeText() {
-    let words = this.onScr[key].words.slice(0, this.onScr[key].printHead);
-    let x = this.coords[key].x;
-    let y = this.coords[key].y;
-    let lineCount = ceil(this.layer.g.textWidth(this.onScr[key].words) / this.textBoxWidth);
-    let textBoxHeight =lineCount * (this.totalLineHeight);
-    if (this.onScr[key].printHead > 0) {
-      this.layer.g.fill(this.bgcolor);
-      this.layer.g.rect(x, y, this.textBoxWidth, textBoxHeight);
+    if (this.onScr[key].words != -1) {
+      let words = this.onScr[key].words.slice(0, this.onScr[key].printHead);
+      let x = this.coords[key].x;
+      let y = this.coords[key].y;
+      let lineCount = ceil(this.layer.g.textWidth(this.onScr[key].words) / this.textBoxWidth);
+      let textBoxHeight =lineCount * (this.totalLineHeight);
+      if (this.onScr[key].printHead > 0) {
+        this.layer.g.fill(this.bgcolor);
+        this.layer.g.rect(x, y, this.textBoxWidth, textBoxHeight);
+      }
+      this.layer.g.fill(this.fgcolor);
+      this.layer.g.text(words,x ,y, 100);
     }
-    this.layer.g.fill(this.fgcolor);
-    this.layer.g.text(words,x ,y, 100);
   }
 
   writeOptions() {
@@ -334,7 +342,7 @@ class Dialog {
     let y = this.coords[key].y
     let firstTime = (this.onScr[key].optionYs.length == 0);
     for (let i = 0; i < this.onScr[key].options.length; i++) {
-      if (this.onScr[key].conditions[i]() == true) {
+      if (this.onScr[key].conditions[i]() == true && this.onScr[key].options[i] != -1) {
         let fullText = '> ' + this.onScr[key].options[i];
         let lineCount = ceil(this.layer.g.textWidth(fullText) / this.textBoxWidth);
         let textBoxHeight =lineCount * (this.totalLineHeight);
@@ -344,6 +352,9 @@ class Dialog {
         this.layer.g.text(fullText, x, y, this.textBoxWidth);
         // y += textBoxHeight * 2;
         y += textBoxHeight + this.fontSize;
+      }
+      if (this.onScr[key].options[i] == -1){
+        this.dontWait = true;
       }
       if (firstTime) {
         this.onScr[key].optionYs.push(y);

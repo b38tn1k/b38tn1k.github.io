@@ -46,11 +46,12 @@ function setupGame() {
   G.player.addItem('bead', 0);
   G.player.emptyInventory();
   G.player.backupInventory();
-  // G.levelSetup.push(level0);
-  // G.levelSetup.push(level1);
-  // G.levelSetup.push(level2);
-  // G.levelSetup.push(level3);
-  // G.levelSetup.push(level4);
+  // LEVEL SETUP
+  G.levelSetup.push(level0);
+  G.levelSetup.push(level1);
+  G.levelSetup.push(level2);
+  G.levelSetup.push(level3);
+  G.levelSetup.push(level4);
   G.levelSetup.push(level5);
   G.levelSetup.push(finalLevel);
   G.level = G.levelSetup[G.levelPointer]();

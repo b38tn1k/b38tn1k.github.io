@@ -62,11 +62,17 @@ class Level {
     this.addNPC(sc);
     return sc;
   }
+  deleteDialogs() {
+    this.dialogsC = [];
+    this.dialogCondition = [];
+    this.dialogs = [];
+  }
   setSpritesToAttack() {
     for (let i = 0; i < this.npcs.length; i++) {
       this.npcs[i].attack = true;
       this.npcs[i].aggressive = true;
       this.npcs[i].doRandomWalk = true;
+      this.deleteDialogs();
     }
     return true;
   }

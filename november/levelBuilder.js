@@ -74,7 +74,7 @@ function level1() {
 
   //function splitSheet(src, res, row, start, end)
   let spider;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 10; i++) {
     level.addPickup(random(), random(), ['toy', 'food']);
   }
   for (let i = 0; i < G.dims.swarmSize; i++) {

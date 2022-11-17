@@ -28,6 +28,7 @@ function splitSheet(src, res, row, start, end){
   return img;
 }
 function rebuildLevel() {
+  G.level = null;
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
   G.player.reOrigin();

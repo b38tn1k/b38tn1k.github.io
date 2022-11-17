@@ -39,6 +39,15 @@ function setupGame() {
   G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 9, 0, 8), 'left',[0, 4], 0);
   G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 10, 1, 8), 'down',[0, 4], 0);
   G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 11, 0, 8), 'right',[0, 4], 0);
+  G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 0, 0, 8), 'left');
+  G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 1, 0, 8), 'right');
+  G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 2, 0, 8), 'up');
+  G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 3, 0, 8), 'down');
+  G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 4, 0, 8), 'idle');
+  G.player.companion.setCollectionRate(0.4);
+  G.player.companion.goal = 'food';
+  G.player.companion.update();
+  G.player.companion.play();
   G.player.setCollectionRate(0.4);
   G.player.addItem('food', 1);
   G.player.addItem('boot', 0);
@@ -47,12 +56,13 @@ function setupGame() {
   G.player.emptyInventory();
   G.player.backupInventory();
   // LEVEL SETUP
-  G.levelSetup.push(level0);
-  G.levelSetup.push(level1);
-  G.levelSetup.push(level2);
-  G.levelSetup.push(level3);
-  G.levelSetup.push(level4);
+  // G.levelSetup.push(level0);
+  // G.levelSetup.push(level1);
+  // G.levelSetup.push(level2);
+  // G.levelSetup.push(level3);
+  // G.levelSetup.push(level4);
   G.levelSetup.push(level5);
+  G.levelSetup.push(level6);
   G.levelSetup.push(finalLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();

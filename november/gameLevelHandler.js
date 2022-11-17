@@ -69,6 +69,7 @@ class Level {
   }
   setSpritesToAttack() {
     for (let i = 0; i < this.npcs.length; i++) {
+      this.npcs[i].autochange = true;
       this.npcs[i].attack = true;
       this.npcs[i].aggressive = true;
       this.npcs[i].doRandomWalk = true;

@@ -85,6 +85,8 @@ class Inventory {
 class PlayerCharacter extends SpriteCollection {
   constructor() {
     super(G.dims.w * 0.5, G.dims.h * 0.8);
+    this.companion = new Companion();
+    this.hasCompanion = false;
     this.layer.g.textFont(G.loaders['font']);
     this.textColor = G.colors[0];
     this.bgColor = G.colors[2];
@@ -150,7 +152,10 @@ class PlayerCharacter extends SpriteCollection {
   reOrigin() {
     this.current.tx = int(this.origin[0] * G.dims.w);
     this.current.ty = int(this.origin[1] * G.dims.h);
+    this.companion.current.tx = this.current.tx + 32;
+    this.companion.current.ty = this.current.ty;
     this.refreshLayout();
+    // this.companion.refreshLayout();
   }
 
   refreshLayout() {
@@ -213,6 +218,9 @@ class PlayerCharacter extends SpriteCollection {
   }
 
   update(level, input) {
+    if (this.hasCompanion) {
+      this.companion.update(this, level);
+    }
     let prevX = this.current.tx;
     let prevY = this.current.ty;
     if (this.inventory.iDi == true) {
@@ -270,6 +278,9 @@ class PlayerCharacter extends SpriteCollection {
 
   draw() {
     super.draw();
+    if (this.hasCompanion) {
+      this.companion.draw();
+    }
     if (this.hit.is == true && this.hit.time > millis()) {
       this.layer.g.fill(this.bgColor);
       this.layer.g.rect(this.hit.x, this.hit.y, this.layer.g.textWidth(this.hit.words), this.fontSize * 1.5);

@@ -14,11 +14,16 @@ class ChasingSprites extends SpriteCollection {
     this.direction = 'up';
     this.prevDir = '';
     this.doRandomWalk = true;
+    this.autochange = false;
     // showColors();
   }
 
   randomWalkOff() {
     this.doRandomWalk = false;
+  }
+
+  randomWalkOn() {
+    this.doRandomWalk = true;
   }
 
   recalculateRandomWalkVector() {
@@ -63,13 +68,17 @@ class ChasingSprites extends SpriteCollection {
       if (this.attack == true) {
         if (int(player.x) > int(this.x)) {
           this.current.tx += this.movementSpeed;
+          // this.chooseSequence('right');
         } else if (int(player.x) < int(this.x)) {
           this.current.tx -= this.movementSpeed;
+          // this.chooseSequence('left');
         }
         if (int(player.y) > int(this.y)) {
           this.current.ty += this.movementSpeed;
+          // this.chooseSequence('down');
         } else if (int(player.y) < int(this.y)) {
           this.current.ty -= this.movementSpeed;
+          // this.chooseSequence('up');
         }
         if (bounded(player.bbox, this.x, this.y).complete == true) {
           this.doAttack(player);
@@ -88,7 +97,7 @@ class ChasingSprites extends SpriteCollection {
         this.randomWalkTimer += 1;
       }
     }
-    if (this.doRandomWalk == true) {
+    if (this.autochange == true) {
       let deltaX = this.prevX - this.current.tx;
       let deltaY = this.prevY - this.current.ty;
       if ('up' in this.tags) {
@@ -101,8 +110,9 @@ class ChasingSprites extends SpriteCollection {
         this.direction = (deltaX < 0) ? 'right' : 'left';
       }
       let changed = this.chooseSequence(this.direction);
+      this.current.tx = constrain(this.current.tx, 0, G.dims.w);
+      this.current.ty = constrain(this.current.ty, 0, G.dims.h);
     }
-    this.current.tx = constrain(this.current.tx, 0, G.dims.w);
-    this.current.ty = constrain(this.current.ty, 0, G.dims.h);
+
   }
 };

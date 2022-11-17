@@ -218,7 +218,7 @@ function level4() {
 }
 
 function level5() {
-  let level = new Level('level1');
+  let level = new Level('level5');
   level.attachBGSetup(grassArt);
   let possum = level.newSpriteCollection('possum', 0.55, 0.4, 1);
   possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 0, 0, 8), 'left');
@@ -243,7 +243,61 @@ function level5() {
   dialog.addOption(dotdot, -1, function () {return level.setSpritesToAttack()}, returnTrue);
   dialog.addChildDialogEvent(dotdot, 'NPC1', -1);
   return level;
+}
 
+function level6() {
+  let level = new Level('level6');
+  level.attachBGSetup(grassArt);
+  G.player.hasCompanion = true;
+  let tree = level.newSpriteCollection('tree', 0.25, 0.6, 2);
+  tree.addAnimation(2, splitSheet(G.loaders['grass'], 64, 2, 0, 2), 'static');
+  tree.setCollectionRate(10);
+  tree.update();
+  tree.play();
+  tree = level.newSpriteCollection('tree', 0.75, 0.6, 2);
+  tree.addAnimation(2, splitSheet(G.loaders['grass'], 64, 2, 0, 2), 'static');
+  tree.setCollectionRate(10);
+  tree.update();
+  tree.play();
+  tree = level.newSpriteCollection('tree', 0.5, 0.25, 2);
+  tree.addAnimation(2, splitSheet(G.loaders['grass'], 64, 2, 0, 2), 'static');
+  tree.setCollectionRate(10);
+  tree.update();
+  tree.play();
+  tree = level.newSpriteCollection('tree', 0.5, 0.6, 2);
+  tree.addAnimation(2, splitSheet(G.loaders['grass'], 64, 2, 0, 2), 'static');
+  tree.setCollectionRate(10);
+  tree.update();
+  tree.play();
+  let rat;
+  for (let i = 0; i < ceil(G.dims.swarmSize/2); i++) {
+    rat = level.newSpriteCollection('rat', random(), random(), 1);
+    rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 0, 0, 10), 'left');
+    rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 1, 0, 10), 'right');
+    rat.setCollectionRate(0.4);
+    rat.goal = 'food';
+    rat.aggressive = true;
+    rat.update();
+    rat.play();
+  }
+  let spider;
+  for (let i = 0; i < G.dims.swarmSize; i++) {
+    level.addPickup(random(), random());
+  }
+  for (let i = 0; i < ceil(G.dims.swarmSize/2); i++) {
+    spider = level.newSpriteCollection('spider', random(), random(), 1);
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 0, 0, 2), 'left');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 1, 0, 2), 'right');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 2, 0, 2), 'up');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 3, 0, 2), 'down');
+    spider.setCollectionRate(0.4);
+    spider.goal = 'food';
+    spider.aggressive = true;
+    spider.update();
+    spider.play();
+  }
+
+  return level;
 }
 
 function finalLevel() {

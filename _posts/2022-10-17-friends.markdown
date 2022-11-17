@@ -1,0 +1,10 @@
+---
+layout: post
+title:  "Friends!"
+date:   2022-10-17
+categories: [game, november]
+tags: gameprogress
+---
+I had the idea last night that a companion animal might be a fun mechanic in the game, opening up some new types of encounters and making recurring puzzles easier the second time around. I don't have a #1 favourite animal but Opossums are def in the top 10. They're funny looking creatures that do good work in nature - eating ticks and cleaning up after larger carnivores. So now the player character has a companion opossum who joins the PC and helps out by fetching crates. Sorta cute.
+
+I also did a little work on the transitions, cleaning them up and adding an entry animation.

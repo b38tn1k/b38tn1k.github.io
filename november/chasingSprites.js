@@ -14,7 +14,7 @@ class ChasingSprites extends SpriteCollection {
     this.direction = 'up';
     this.prevDir = '';
     this.doRandomWalk = true;
-    this.autochange = false;
+    this.autochange = true;
     // showColors();
   }
 

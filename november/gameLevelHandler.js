@@ -135,7 +135,7 @@ class Level {
       this.dialogs[this.diaP].update(player.current, inputs);
     }
     if (bounded(this.transitionBB, player.current.tx, player.current.ty).complete == true) {
-      transitionLevel();
+      G.transitionFlag = true;
     }
     for (let i = 0; i < this.pickups.length; i++) {
       this.pickups[i].update(player);

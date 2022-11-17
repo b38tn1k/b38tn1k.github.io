@@ -228,6 +228,7 @@ function level5() {
   possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 4, 0, 8), 'idle');
   possum.setCollectionRate(0.4);
   possum.movementSpeed = 2;
+  possum.autochange = false;
   possum.chooseSequence('idle');
   possum.randomWalkOff();
   possum.goal = 'food';
@@ -305,24 +306,9 @@ function finalLevel() {
   level.attachBGSetup(snowArt);
   level.attachBGSetup(templeArt);
   let possum = level.newSpriteCollection('possum', 0.5, 0.5);
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 0, 0, 8), 'left');
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 1, 0, 8), 'right');
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 2, 0, 8), 'up');
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 3, 0, 8), 'down');
   possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 4, 0, 8), 'idle');
   possum.setCollectionRate(0.4);
   possum.chooseSequence('idle');
-  possum.update();
-  possum.play();
-  possum = level.newSpriteCollection('possum', random(), random(), 1);
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 0, 0, 8), 'left');
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 1, 0, 8), 'right');
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 2, 0, 8), 'up');
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 3, 0, 8), 'down');
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 4, 0, 8), 'idle');
-  possum.setCollectionRate(0.4);
-  possum.goal = 'food';
-  possum.attack = false;
   possum.update();
   possum.play();
 

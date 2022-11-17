@@ -84,7 +84,9 @@ class Inventory {
 
 class PlayerCharacter extends SpriteCollection {
   constructor() {
-    super(G.dims.w * 0.5, G.dims.h * 0.8);
+    // super(G.dims.w * 0.5, G.dims.h * 0.8);
+    super(G.dims.w * 0.5, G.dims.h);
+    this.makeEntry = true;
     this.companion = new Companion();
     this.hasCompanion = false;
     this.layer.g.textFont(G.loaders['font']);
@@ -95,7 +97,7 @@ class PlayerCharacter extends SpriteCollection {
     this.layer.g.textLeading(this.lineSpacing * this.fontSize);
     this.layer.g.textAlign(LEFT, TOP);
     this.layer.g.noStroke();
-    this.origin = [0.5, 0.8];
+    this.origin = [0.5, 1];
     this.playable = true;
     this.inventory = new Inventory();
     this.oldInventory = new Inventory();;
@@ -217,10 +219,7 @@ class PlayerCharacter extends SpriteCollection {
     this.chooseSequence(this.keyBasedDir);
   }
 
-  update(level, input) {
-    if (this.hasCompanion) {
-      this.companion.update(this, level);
-    }
+  doUpdate(level, input) {
     let prevX = this.current.tx;
     let prevY = this.current.ty;
     if (this.inventory.iDi == true) {
@@ -274,6 +273,28 @@ class PlayerCharacter extends SpriteCollection {
         this.current.ty = prevY;
       }
     }
+  }
+
+  enterLevel(level, input){
+    super.update();
+    if (this.current.ty > G.dims.h * 0.85) {
+      this.current.play = true;
+      this.current.ty -= this.movementSpeed;
+    } else {
+      this.makeEntry = false;
+    }
+  }
+
+  update(level, input) {
+    if (this.hasCompanion) {
+      this.companion.update(this, level);
+    }
+    if (this.makeEntry == true) {
+      this.enterLevel(level, input);
+    } else {
+      this.doUpdate(level, input);
+    }
+
   }
 
   draw() {

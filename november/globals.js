@@ -60,6 +60,7 @@ function transitionLevel() {
   G.level.drawStatics();
   G.player.reOrigin();
   G.player.backupInventory();
+  G.player.makeEntry = true;
 }
 
 class Globals {

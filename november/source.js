@@ -118,6 +118,8 @@ function draw() {
   G.player.draw();
   G.graphLayers.draw();
   G.UIElements.draw();
-  // image(splitSheet(G.loaders['snow'], 64, 2, 0, 1), 200, 100);
-  // strokeWeight(10);
+  if (G.transitionFlag == true) {
+    G.transitionFlag = false;
+    transitionLevel();
+  }
 }

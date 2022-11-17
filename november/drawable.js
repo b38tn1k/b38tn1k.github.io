@@ -178,12 +178,12 @@ class Drawable {
         this.g.image(tileset, center - resX, 0, resX, resY, resX * 3, 0, resX, resY);
         this.g.image(tileset, center, 0, resX, resY, resX * 3, 0, resX, resY);
       }
-      bb = [center - resX, 0, center + resX, resY];
+      bb = [center - resX, 0, center + resX, floor(resY/3)];
     } else {
       if (final == false) {
         this.g.image(tileset, center, 0, resX, resY, resX * 3, 0, resX, resY);
       }
-      bb = [center, 0, center + resX, resY];
+      bb = [center, 0, center + resX, floor(resY/3)];
     }
     tempCanvas.remove();
     return bb;

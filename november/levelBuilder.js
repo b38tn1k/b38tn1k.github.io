@@ -283,7 +283,7 @@ function level6() {
   }
   let spider;
   for (let i = 0; i < G.dims.swarmSize; i++) {
-    level.addPickup(random(), random());
+    level.addPickup(random(), random(), ['food', 'bead', 'toy', 'boot']);
   }
   for (let i = 0; i < ceil(G.dims.swarmSize/2); i++) {
     spider = level.newSpriteCollection('spider', random(), random(), 1);

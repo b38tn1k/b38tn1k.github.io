@@ -46,10 +46,10 @@ function setupGame() {
   G.player.addItem('bead', 0);
   // G.player.emptyInventory();
   G.player.backupInventory();
-  G.levelSetup.push(level0);
-  G.levelSetup.push(level1);
-  G.levelSetup.push(level2);
-  G.levelSetup.push(level3);
+  // G.levelSetup.push(level0);
+  // G.levelSetup.push(level1);
+  // G.levelSetup.push(level2);
+  // G.levelSetup.push(level3);
   G.levelSetup.push(finalLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
@@ -65,6 +65,7 @@ function preload() {
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['spider'] = loadImage('assets/spider.png');
+  G.loaders['possum'] = loadImage('assets/possum.png');
   // UI
   G.loaders['compass'] = loadImage('assets/compass.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');

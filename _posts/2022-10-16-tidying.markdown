@@ -17,3 +17,9 @@ This provided an interesting 'infinite money hack' as while the player's invento
 Infinite Money Hacks are sorta annoying, so I implemented Inventory Backup and Inventory Recover methods, meaning any time a level is regenerated, the player will have the same inventory as the first time they entered the level.
 
 I also added a Pickup class which drops a random item into Player inventory when triggered. For the draft levels, pickups created some inconstancies in the plot - why say 'i don't have boots' when you clearly have boots? I added some additional dialog options based upon inventory. This will be something I need to keep track of! For Thievery levels it adds a bit more excitement - the chasing sprites will change behaviour based upon inventory, so picking up a chest with food can anger the spiders. It may be worth exploring randomising the dropped item that results from an inventory-based attack. If you have boots and you don't want to loose them then you may think twice about picking up a mystery item in a chest that could trigger an attack. I might do that.
+
+Later: did it. also some cute and creepy sprites. I spent more time on the cute one.
+
+![possum](https://b38tn1k.com/sprites/possum.png)
+
+![possum](https://b38tn1k.com/sprites/spider.png)

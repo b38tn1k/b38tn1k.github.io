@@ -24,6 +24,7 @@ function desertArt(bg, fg){
 
 function templeArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['temple'], 64, 0, 0, 5), 5, 1);
+  bg.randomTile(splitSheet(G.loaders['temple'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
   fg.setBorder(splitSheet(G.loaders['temple'], 64, 2, 0, 4), 4, 1);
   return [-1, -1, -1, -1];
 }
@@ -76,10 +77,10 @@ function level1() {
   }
   for (let i = 0; i < G.dims.swarmSize; i++) {
     spider = level.newSpriteCollection('spider', random(), random(), 1);
-    spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 0, 0, 2), 'left');
-    spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 1, 0, 2), 'right');
-    spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 2, 0, 2), 'up');
-    spider.addAnimation(2, splitSheet(G.loaders['spider'], 24, 3, 0, 2), 'down');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 0, 0, 2), 'left');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 1, 0, 2), 'right');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 2, 0, 2), 'up');
+    spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 3, 0, 2), 'down');
     spider.setCollectionRate(0.4);
     spider.goal = 'food';
     spider.aggressive = true;
@@ -181,6 +182,27 @@ function finalLevel() {
   let level = new Level('level3');
   level.attachBGSetup(snowArt);
   level.attachBGSetup(templeArt);
+  let possum = level.newSpriteCollection('possum', 0.5, 0.5);
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 0, 0, 8), 'left');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 1, 0, 8), 'right');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 2, 0, 8), 'up');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 3, 0, 8), 'down');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 4, 0, 8), 'idle');
+  possum.setCollectionRate(0.4);
+  possum.chooseSequence('idle');
+  possum.update();
+  possum.play();
+  possum = level.newSpriteCollection('possum', random(), random(), 1);
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 0, 0, 8), 'left');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 1, 0, 8), 'right');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 2, 0, 8), 'up');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 3, 0, 8), 'down');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 4, 0, 8), 'idle');
+  possum.setCollectionRate(0.4);
+  possum.goal = 'food';
+  possum.attack = false;
+  possum.update();
+  possum.play();
 
   return level;
 }

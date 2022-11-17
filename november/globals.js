@@ -55,6 +55,7 @@ function transitionLevel() {
   G.levelPointer += 1;
   G.level.shutDown();
   G.levelPointer = constrain(G.levelPointer, 0, G.levelSetup.length-1);
+  G.level = null;
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
   G.player.reOrigin();

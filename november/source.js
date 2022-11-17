@@ -56,11 +56,11 @@ function setupGame() {
   G.player.emptyInventory();
   G.player.backupInventory();
   // LEVEL SETUP
-  // G.levelSetup.push(level0);
-  // G.levelSetup.push(level1);
-  // G.levelSetup.push(level2);
-  // G.levelSetup.push(level3);
-  // G.levelSetup.push(level4);
+  G.levelSetup.push(level0);
+  G.levelSetup.push(level1);
+  G.levelSetup.push(level2);
+  G.levelSetup.push(level3);
+  G.levelSetup.push(level4);
   G.levelSetup.push(level5);
   G.levelSetup.push(level6);
   G.levelSetup.push(finalLevel);

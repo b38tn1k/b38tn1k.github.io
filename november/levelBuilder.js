@@ -11,12 +11,10 @@ function preCaveArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['grass'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
   let bb = bg.drawPath(splitSheet(G.loaders['grass'], 64, 3, 0, 4), 4, 1);
-
-
-  bg.topBorderDouble(splitSheet(G.loaders['grass'], 64, 4, 0, 5), 5, 1);
-  bg.drawCave(splitSheet(G.loaders['grass'], 64, 5, 0, 3), 3, 1);
   bb[1] = 0;
   bb[3] = 128;
+  bg.topBorderDouble(splitSheet(G.loaders['grass'], 64, 4, 0, 5), 5, 1);
+  bg.drawCave(splitSheet(G.loaders['grass'], 64, 5, 0, 3), 3, 1);
   fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 2), 2, 1);
   return bb;
 }
@@ -24,7 +22,7 @@ function preCaveArt(bg, fg){
 function snowArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['snow'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['snow'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
-  let bb = bg.drawPath(splitSheet(G.loaders['snow'], 64, 3, 3, 4), 4, 1);
+  let bb = bg.drawPath(splitSheet(G.loaders['snow'], 64, 3, 0, 4), 4, 1);
   fg.border(splitSheet(G.loaders['snow'], 64, 2, 0, 3), 3, 1);
   return bb;
 }

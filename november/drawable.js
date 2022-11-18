@@ -98,6 +98,19 @@ class Drawable {
     }
   }
 
+  topBorderDouble(tileset, length, height) {
+    let resX = tileset.width/length;
+    let resY = tileset.height/height;
+    let topChoice = 2;
+    let bottomChoice = 3;
+    for (let x = 0; x < this.g.width; x+= resY) {
+      topChoice = random([0, 1, 2]);
+      bottomChoice = random([3, 4]);
+      this.g.image(tileset, x, 0, resX, resY, topChoice*resX, 0, resX, resY);
+      this.g.image(tileset, x, resY, resX, resY, bottomChoice*resX, 0, resX, resY);
+    }
+  }
+
   setBorder(tileset, length, height) {
     let resX = tileset.width/length;
     let resY = tileset.height/height;
@@ -145,6 +158,26 @@ class Drawable {
       this.g.image(tileset, xL, y, resX, resY, choice*resX, 0, resX, resY);
       this.g.image(tileset, xR, y, resX, resY, choice*resX, 0, resX, resY);
     }
+  }
+
+  drawCave(tileset, length, height) {
+    let resX = tileset.width/length;
+    let resY = tileset.height/height;
+    let center = resX * floor((this.g.width/2)/resX);
+    let even = (floor(this.g.width/resX) % 2 == 0);
+
+    if (even) {
+      this.g.image(tileset, center - (resX*2), resY, resX, resX, 0, 0, resX, resY);
+      this.g.image(tileset, center - resX, resY, resX, resX, resX, 0, resX, resY);
+      this.g.image(tileset, center, resY, resX, resY, resX, 0, resX, resY);
+      this.g.image(tileset, center + (resX), resY, resX, resX, resX*2, 0, resX, resY);
+    } else {
+      this.g.image(tileset, center, resY, resX, resY, resX, 0, resX, resY);
+      this.g.image(tileset, center - (resX), resY, resX, resX, 0, 0, resX, resY);
+      this.g.image(tileset, center + (resX), resY, resX, resX, resX*2, 0, resX, resY);
+
+    }
+
   }
 
   drawPath(tileset, length, height, final=false){

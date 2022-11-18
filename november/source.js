@@ -65,10 +65,10 @@ function setupGame() {
   // G.levelSetup.push(level3);
   // G.levelSetup.push(level4);
   // G.levelSetup.push(level5);
-  G.levelSetup.push(level6);
+  // G.levelSetup.push(level6);
   G.levelSetup.push(level7);
-  G.levelSetup.push(finalLevel);
 
+  G.levelSetup.push(finalLevel);
   G.levelSetup.push(testLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
@@ -128,4 +128,5 @@ function draw() {
     G.transitionFlag = false;
     transitionLevel();
   }
+  // image(splitSheet(G.loaders['grass'], 64, 5, 0, 3), 200, 200);
 }

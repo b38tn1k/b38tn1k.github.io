@@ -15,6 +15,8 @@ class ChasingSprites extends SpriteCollection {
     this.prevDir = '';
     this.doRandomWalk = true;
     this.autochange = true;
+    this.changeSpriteTimer = 0;
+    this.changeSpriteThresh = 20;
     // showColors();
   }
 
@@ -89,6 +91,7 @@ class ChasingSprites extends SpriteCollection {
       if (this.doRandomWalk == true) {
         if (this.randomWalkTimer == this.randomWalkInterval) {
           this.recalculateRandomWalkVector();
+          this.changeSpriteTimer = 0;
           this.randomWalkInterval = int(random(20, 100));
           this.randomWalkTimer = 0;
         }
@@ -97,7 +100,7 @@ class ChasingSprites extends SpriteCollection {
         this.randomWalkTimer += 1;
       }
     }
-    if (this.autochange == true) {
+    if (this.autochange == true && this.changeSpriteTimer == 0) {
       let deltaX = this.prevX - this.current.tx;
       let deltaY = this.prevY - this.current.ty;
       if ('up' in this.tags) {
@@ -112,6 +115,10 @@ class ChasingSprites extends SpriteCollection {
       let changed = this.chooseSequence(this.direction);
       this.current.tx = constrain(this.current.tx, 0, G.dims.w);
       this.current.ty = constrain(this.current.ty, 0, G.dims.h);
+    }
+    this.changeSpriteTimer += 1;
+    if (this.changeSpriteTimer == this.changeSpriteThresh) {
+      this.changeSpriteTimer = 0;
     }
 
   }

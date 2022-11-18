@@ -9,8 +9,9 @@ class Companion extends ChasingSprites {
 
   findCloset(points){
     let distances = [];
-    for (let i = 0; i < points.length; i++){
-      distances.push(int(pow((this.current.tx - points[i].x), 2)) + int(pow((this.current.ty - points[i].y), 2)));
+    let i;
+    for (i = 0; i < points.length; i++){
+      distances.push(int(pow((this.current.tx - points[i].bb[0]), 2)) + int(pow((this.current.ty - points[i].bb[1]), 2)));
     }
     return points[distances.indexOf(min(distances))];
   }
@@ -35,10 +36,10 @@ class Companion extends ChasingSprites {
 
       if (approach.horizontal == true) {
         // do nothing;
-      } else if (approach.onRight == true) {
-        this.current.tx += this.movementSpeed;
-      } else {
+      } else if (approach.onLeft == true) {
         this.current.tx -= this.movementSpeed;
+      } else {
+        this.current.tx += this.movementSpeed;
       }
       if (approach.vertical == true) {
         // do nothing
@@ -53,6 +54,8 @@ class Companion extends ChasingSprites {
         player.hit = new HitThing(target.item, 1, this.current.tx, this.current.ty);
       }
     }
+    this.current.tx = constrain(this.current.tx, G.dims.w * 0.2, G.dims.w * 0.8);
+    this.current.ty = constrain(this.current.ty, G.dims.h * 0.1, G.dims.h * 0.9);
   }
 
 };

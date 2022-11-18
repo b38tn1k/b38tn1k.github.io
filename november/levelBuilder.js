@@ -305,6 +305,7 @@ function level7() {
   let level = new Level('level7');
   G.player.hasCompanion = true;
   level.attachBGSetup(grassArt); // change to precave art
+  level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['food', 'bead', 'toy', 'boot']);
   let npc1 = level.newSpriteCollection('NPC1', 0.4, 0.3);
   npc1.setCollectionRate(0.4);
   npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 1, 0, 7), 'right');

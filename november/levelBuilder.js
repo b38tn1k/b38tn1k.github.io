@@ -77,6 +77,7 @@ function level1() {
   for (let i = 0; i < G.dims.swarmSize/2; i++) {
     level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['toy', 'food']);
   }
+  level.optimizePickups();
   for (let i = 0; i < G.dims.swarmSize; i++) {
     spider = level.newSpriteCollection('spider', random(), random(), 1);
     spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 0, 0, 2), 'left');
@@ -134,7 +135,7 @@ function level3() {
   for (let i = 0; i < G.dims.swarmSize/2; i++) {
     level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['toy', 'food']);
   }
-
+  level.optimizePickups();
   let tree = level.newSpriteCollection('tree', 0.25, 0.6, 2);
   tree.addAnimation(2, splitSheet(G.loaders['snow'], 64, 2, 0, 2), 'static');
   tree.setCollectionRate(10);
@@ -285,6 +286,7 @@ function level6() {
   for (let i = 0; i < G.dims.swarmSize; i++) {
     level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['food', 'bead', 'toy', 'boot']);
   }
+  level.optimizePickups();
   for (let i = 0; i < ceil(G.dims.swarmSize/2); i++) {
     spider = level.newSpriteCollection('spider', random(), random(), 1);
     spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 0, 0, 2), 'left');

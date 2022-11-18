@@ -8,3 +8,15 @@ tags: gameprogress
 I had the idea last night that a companion animal might be a fun mechanic in the game, opening up some new types of encounters and making recurring puzzles easier the second time around. I don't have a #1 favourite animal but Opossums are def in the top 10. They're funny looking creatures that do good work in nature - eating ticks and cleaning up after larger carnivores. So now the player character has a companion opossum who joins the PC and helps out by fetching crates. Sorta cute.
 
 I also did a little work on the transitions, cleaning them up and adding an entry animation.
+
+Later: optimising the possum pickup path is something I could spend a couple days on. But I have like a week and a bit left for this project so I won't:
+
+The possum enters the level and starts grabbing pickups for the player. The logical method (assuming a logical possum) is to grab the closest pickup, then the pickup closest to that one, and so on - a greedy possum algorithm. Implementing this in the game loop was interesting to me - the closest pickup can change as the possum travels along the trajectory between one pickup and the next one.
+
+In sparse-pickup levels, this works really cool and looks sorta organic, you can imagine the possum thinking "this one, then that one, ohh nah, then THAT one.."
+
+In more dense pickup fields, this approach resulted in some crazy oscillations. The possum may be following a trajectory that would intercept with a middle-distance between two locations. At this 'Lagrangian Pickup Point' the possum is struck with indecision - which is the closest? that one, no this one, no that one... Greedy Algo in the loop without any persistent memory of a plant doesn't work out in this application. I tried adding jitter, cause I really wanted the organic / chaotic possum energy, but even with jitter I found oscillations could still occur.
+
+So, I took the boring route. The possum moves through level pickups in a predetermined order, optimisation of the pickup order based on the possum spawn point is done on level load.
+
+One weird annoyance I will figure out tomorrow - while the possum extends the enemy class and uses the same motion->animation mapping, it can sometimes moonwalk to a target location. another //TODO

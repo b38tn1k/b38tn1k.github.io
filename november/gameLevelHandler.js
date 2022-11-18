@@ -18,6 +18,19 @@ class Level {
     this.spriteLayer = G.graphLayers.getLayer('sprites', true, 100);
     this.new = true;
   }
+  optimizePickups() {
+    let distances = [];
+    let orderedIndices = [];
+    for (let i = 0; i < this.pickups.length; i++){
+      distances.push(int(pow((G.dims.cx - this.pickups[i].bb[0]), 2)) + int(pow((this.pickups[i].bb[1]), 2)));
+    }
+    while (distances.length > 0) {
+      const minCurInd =  this.pickups[distances.indexOf(min(distances))];
+      orderedIndices.push(minCurInd);
+      distances.splice(minCurInd, 1);
+    }
+    this.pickups = orderedIndices;
+  }
   initBGFG(res = 16) {
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
     this.bg = G.graphLayers.getLayer('background');

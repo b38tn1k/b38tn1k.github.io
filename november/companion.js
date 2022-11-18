@@ -5,12 +5,20 @@ class Companion extends ChasingSprites {
     this.attack = false;
     this.movementSpeed = 2;
     this.name = '';
+    this.target = null;
+    this.pickupCounter = 0;
+  }
+  reset(player) {
+    this.current.tx = player.current.tx + 32;
+    this.current.ty = player.current.tx + 32;
+    console.log(this.current.tx, this.current.ty)
+    this.target = null;
+    this.pickupCounter = 0;
   }
 
   findCloset(points){
     let distances = [];
-    let i;
-    for (i = 0; i < points.length; i++){
+    for (let i = 0; i < points.length; i++){
       distances.push(int(pow((this.current.tx - points[i].bb[0]), 2)) + int(pow((this.current.ty - points[i].bb[1]), 2)));
     }
     return points[distances.indexOf(min(distances))];
@@ -20,26 +28,26 @@ class Companion extends ChasingSprites {
     if (!(player && level)) {
       return false;
     }
-    let targets = [];
     super.update(player);
-    for (let i = 0; i < level.pickups.length; i++) {
-      if (level.pickups[i].draw == true) {
-        targets.push(level.pickups[i]);
-        this.randomWalkOff();
-      }
-    }
-    if (targets.length == 0) {
+
+    if (level.pickups.length == 0) {
       this.randomWalkOn();
     } else {
-      let target = this.findCloset(targets);
-      let approach = bounded(target.bb, this.current.tx, this.current.ty);
+      if (this.target == null) {
+        this.target = level.pickups[this.pickupCounter];
+        while (this.target.draw == false) {
+          this.pickupCounter += 1;
+          this.target = level.pickups[this.pickupCounter];
+        }
+      }
 
+      let approach = bounded(this.target.bb, this.current.tx, this.current.ty);
       if (approach.horizontal == true) {
         // do nothing;
       } else if (approach.onLeft == true) {
-        this.current.tx -= this.movementSpeed;
-      } else {
         this.current.tx += this.movementSpeed;
+      } else {
+        this.current.tx -= this.movementSpeed;
       }
       if (approach.vertical == true) {
         // do nothing
@@ -48,10 +56,25 @@ class Companion extends ChasingSprites {
       } else {
         this.current.ty -= this.movementSpeed;
       }
-      if (bounded(target.bb, this.current.tx, this.current.ty).complete == true) {
-        target.draw = false;
-        player.addItem(target.item);
-        player.hit = new HitThing(target.item, 1, this.current.tx, this.current.ty);
+      for (let i = 0; i < level.pickups.length; i++) {
+        if (bounded(level.pickups[i].bb, this.current.tx, this.current.ty).complete == true) {
+          if (level.pickups[i].draw == true) {
+            player.addItem(level.pickups[i].item);
+            player.hit = new HitThing(level.pickups[i].item, 1, this.current.tx, this.current.ty);
+          }
+          level.pickups[i].draw = false;
+          // level.pickups.splice(i, 1);
+          while (this.target.draw == false) {
+            this.pickupCounter += 1;
+            if (this.pickupCounter >= level.pickups.length) {
+              level.pickups = [];
+              break;
+            } else {
+              this.target = level.pickups[this.pickupCounter];
+            }
+          }
+          break;
+        }
       }
     }
     this.current.tx = constrain(this.current.tx, G.dims.w * 0.2, G.dims.w * 0.8);

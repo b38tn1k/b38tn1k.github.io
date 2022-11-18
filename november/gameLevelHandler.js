@@ -17,12 +17,13 @@ class Level {
     this.transitionBB;
     this.spriteLayer = G.graphLayers.getLayer('sprites', true, 100);
     this.new = true;
+    this.levelLogic = returnTrue;
   }
   optimizePickups() {
     let distances = [];
     let orderedIndices = [];
     for (let i = 0; i < this.pickups.length; i++){
-      distances.push(int(pow((G.dims.cx - this.pickups[i].bb[0]), 2)) + int(pow((this.pickups[i].bb[1]), 2)));
+      distances.push(int(pow((G.dims.cx - this.pickups[i].bbox[0]), 2)) + int(pow(G.dims.h - (this.pickups[i].bbox[1]), 2)));
     }
     while (distances.length > 0) {
       const minCurInd =  this.pickups[distances.indexOf(min(distances))];
@@ -137,6 +138,7 @@ class Level {
     }
   }
   update(player, inputs) {
+    this.levelLogic(player, inputs, this);
     if (player && this.new == true) {
       this.chooseDialog();
       this.new = false;
@@ -161,9 +163,15 @@ class Level {
     for (let i = 0; i < this.npcs.length; i++) {
       this.npcs[i].draw();
     }
+    let bounce;
     for (let i = 0; i < this.pickups.length; i++) {
-      if (this.pickups[i].draw == true) {
-        this.spriteLayer.g.image(G.loaders[this.pickups[i].image], this.pickups[i].x, this.pickups[i].y);
+      if (this.pickups[i].isActive == true) {
+        if (this.pickups[i].bounce == true) {
+          bounce = 0.5*(sin(millis()/200));
+        } else {
+          bounce = 0;
+        }
+        this.spriteLayer.g.image(G.loaders[this.pickups[i].image], this.pickups[i].x, this.pickups[i].y + bounce);
       }
     }
   }

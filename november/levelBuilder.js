@@ -21,6 +21,10 @@ function desertArt(bg, fg){
   fg.border(splitSheet(G.loaders['desert'], 64, 2, 0, 2), 2, 1);
   return bb;
 }
+function testLevelArt(bg, fg){
+  bg.randomTile(splitSheet(G.loaders['temple'], 64, 0, 0, 5), 5, 1);
+  return [-1, -1, -1, -1];
+}
 
 function templeArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['temple'], 64, 0, 0, 5), 5, 1);
@@ -282,11 +286,11 @@ function level6() {
     rat.update();
     rat.play();
   }
-  let spider;
   for (let i = 0; i < G.dims.swarmSize; i++) {
     level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['food', 'bead', 'toy', 'boot']);
   }
   level.optimizePickups();
+  let spider;
   for (let i = 0; i < ceil(G.dims.swarmSize/2); i++) {
     spider = level.newSpriteCollection('spider', random(), random(), 1);
     spider.addAnimation(2, splitSheet(G.loaders['spider'], 32, 0, 0, 2), 'left');
@@ -333,6 +337,22 @@ function level7() {
   dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Ziggy\'s effort. But be careful, there are ghosts!');
   dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  return level;
+}
+
+function testLevel() {
+  let level = new Level('test');
+  G.player.hasCompanion = true;
+  level.attachBGSetup(testLevelArt);
+  level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['food', 'bead', 'toy', 'boot']);
+  let rat = level.newSpriteCollection('rat', random(), random(), 1);
+  rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 0, 0, 10), 'left');
+  rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 1, 0, 10), 'right');
+  rat.setCollectionRate(0.4);
+  rat.goal = 'food';
+  rat.aggressive = true;
+  rat.update();
+  rat.play();
   return level;
 }
 

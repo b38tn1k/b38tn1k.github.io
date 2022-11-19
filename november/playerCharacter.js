@@ -154,8 +154,8 @@ class PlayerCharacter extends SpriteCollection {
   reOrigin() {
     this.current.tx = int(this.origin[0] * G.dims.w);
     this.current.ty = int(this.origin[1] * G.dims.h);
-    this.companion.reset(this);
     this.refreshLayout();
+    this.companion.reset(this);
   }
 
   refreshLayout() {

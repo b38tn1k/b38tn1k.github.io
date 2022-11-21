@@ -110,7 +110,7 @@ function preload() {
 
 function setup() {
   createCanvas(0, 0, WEBGL);
-  perspective();
+  perspective(PI / 3.0, width / height, 0.1, 500);
   setupScreen();
   setupGame();
   imageMode(CENTER);

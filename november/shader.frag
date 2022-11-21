@@ -2,20 +2,91 @@
 precision mediump float;
 #endif
 
-varying vec2 vTexCoord;
+#define PIXHEIGHT 4.0
+#define BLURSPREAD 0.5
+#define SEPIAMIX 0.3
+#define BLOOMMIX 0.2
+#define CURVE 5.
+#define PI 3.14159265
+#define SLOPACITY 0.4
+#define VIG 50.
+#define NOISEAMOUNT 0.15
+varying vec2 fragCoord;
 uniform sampler2D texture;
-float mix = 0.4;
+uniform vec3 res;
+uniform vec2 texelSize;
+uniform vec2 randomNumbers;
+
+vec2 curveMap(vec2 uv) {
+  uv = uv * 2.0 - 1.0;
+  vec2 off = abs(uv.yx) / vec2(CURVE, CURVE);
+  uv = uv + uv * off * off;
+  uv = uv * 0.5 + 0.5;
+  return uv;
+}
+
+vec4 sepiaIze(vec4 arg) {
+  vec4 sepia = arg;
+  vec4 result = arg;
+  sepia.r = arg.r * 0.393 + arg.g * 0.769 + arg.b * 0.189;
+  sepia.g = arg.r * 0.349 + arg.g * 0.686 + arg.b * 0.168;
+  sepia.b = arg.r * 0.272 + arg.g * 0.534 + arg.b * 0.131;
+  result.r = SEPIAMIX * arg.r + (1.0 - SEPIAMIX) * sepia.r;
+  result.g = SEPIAMIX * arg.g + (1.0 - SEPIAMIX) * sepia.g;
+  result.b = SEPIAMIX * arg.b + (1.0 - SEPIAMIX) * sepia.b;
+  return result;
+}
+
+vec4 sLGen(float uvC, float resolution){
+    float intensity = sin(uvC * resolution * PI * 2.0);
+    intensity = ((0.5 * intensity) + 0.5) * 0.9 + 0.1;
+    return vec4(vec3(pow(intensity, SLOPACITY)), 1.0);
+}
+
+vec4 applyScanLines(vec4 myVec, vec2 uv, vec3 res) {
+  myVec *= sLGen(uv.x, res.y);
+  myVec *= sLGen(uv.y, res.x);
+  return myVec;
+}
+
+float rand(vec2 co, vec2 randomNumbers){
+    return NOISEAMOUNT * fract(sin(dot(co, randomNumbers)) * 43758.5453);
+}
 
 void main() {
-  vec2 uv = vTexCoord;
+  vec2 uv = fragCoord;
+  vec2 offset = texelSize * BLURSPREAD;
   uv.y = 1.0 - uv.y;
+  uv = curveMap(uv);
   vec4 col = texture2D(texture, uv);
-  vec4 sepia = texture2D(texture, uv);
-  sepia.r = col.r * 0.393 + col.g * 0.769 + col.b * 0.189;
-  sepia.g = col.r * 0.349 + col.g * 0.686 + col.b * 0.168;
-  sepia.b = col.r * 0.272 + col.g * 0.534 + col.b * 0.131;
-  col.r = mix * col.r + (1.0 - mix) * sepia.r;
-  col.g = mix * col.g + (1.0 - mix) * sepia.g;
-  col.b = mix * col.b + (1.0 - mix) * sepia.b;
-  gl_FragColor = col;
+  vec4 blur = texture2D(texture, uv);
+  blur += rand(uv, randomNumbers);
+  col += rand(uv, randomNumbers);
+  blur = applyScanLines(blur, uv, res);
+  col = applyScanLines(col, uv, res);
+  blur += texture2D(texture, uv + vec2(-offset.x, -offset.y));
+  blur += texture2D(texture, uv + vec2(0.0, -offset.y));
+  blur += texture2D(texture, uv + vec2(offset.x, -offset.y));
+  blur += texture2D(texture, uv + vec2(-offset.x, 0.0));
+  blur += texture2D(texture, uv + vec2(offset.x, 0.0));
+  blur += texture2D(texture, uv + vec2(-offset.x, offset.y));
+  blur += texture2D(texture, uv + vec2(0.0, offset.y));
+  blur += texture2D(texture, uv + vec2(offset.x, offset.y));
+  blur /= 9.0;
+  blur = sepiaIze(blur);
+  col = sepiaIze(col);
+  float avg = blur.r + blur.g + blur.b;
+  avg = avg/3.;
+  vec4 bloom = mix(col, blur, clamp(avg*(1.0 + BLOOMMIX), 0.0, 1.0));
+  vec2 VigUV2 = abs(uv * 2.0 - 1.0);
+  vec2 u = VIG / res.xy * 0.5;
+  u = smoothstep(vec2(0), u, 1.0 - VigUV2);
+  bloom = bloom *u.x * u.y;
+  bloom *= 1.2;
+
+  if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0){
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+  } else {
+      gl_FragColor = bloom;
+  }
 }

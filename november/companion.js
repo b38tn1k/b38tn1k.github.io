@@ -11,7 +11,6 @@ class Companion extends ChasingSprites {
   reset(player) {
     this.current.tx = player.current.tx + 32;
     this.current.ty = player.current.ty;
-    console.log(this.current.tx, this.current.ty)
     this.removeTarget();
     this.pickupCounter = 0;
   }

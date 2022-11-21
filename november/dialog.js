@@ -32,7 +32,7 @@ class Dialog {
     this.layer.g.textFont(G.loaders['font']);
     this.bgcolor = G.colors[2];
     this.fgcolor = G.colors[0];
-    this.fontSize = 12;
+    this.fontSize = 13;
     this.lineSpacing = 1.5;
     this.pauseMult = 40;
     this.pauseMin = 500;

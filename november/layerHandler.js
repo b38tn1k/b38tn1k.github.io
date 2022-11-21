@@ -8,6 +8,7 @@ class LayerHandler {
     this.tx = tx;
     this.ty = ty;
     this.base.imageMode(CENTER);
+    this.textelSize = [1.0/w, 1.0/h];
     // FIX: this breaks the already broken on the fly layer level selection
     // ["UI", 1, "sprites", 2, "background", 0, "foreground", 3, "dialog", 4]
     this.order = ["background", "foreground", "sprites", "dialog", "UI"];
@@ -80,12 +81,15 @@ class LayerHandler {
   draw() {
     for (let i = 0; i < this.order.length; i++) {
       let j = this.layerMap[this.order[i]];
-      this.base.image(this.layers[j].g, this.layers[j].tx, this.layers[j].ty);
+      if (this.layers[j].g) {
+        this.base.image(this.layers[j].g, this.layers[j].tx, this.layers[j].ty);
+      }
     }
-    // image(this.base, this.tx, this.ty);
-    // image(this.base, -this.tx, -this.ty);
-    // image(this.base, 0, 0);
     G.shader.setUniform('texture', this.base);
+    G.shader.setUniform('texelSize', this.textelSize);
+    G.shader.setUniform('res', [1. * (this.dims.w), 1. * (this.dims.h), 0.]);
+    G.shader.setUniform('randomNumbers', [random(), random()]);
+
     rect(-width/2, -height/2, width, height);
   }
 }

@@ -57,9 +57,12 @@ function pixelBorder(cnv, r=3) {
 
 class UIElements {
   constructor() {
+    this.layer = G.graphLayers.getLayer('UI', true, 100);
+    this.layer.g.imageMode(CENTER);
     this.cmp = {}
     this.cmp.bg = newDrawableFromImage(splitSheet(G.loaders['compass'], 38, 0, 0, 1));
-    this.cmp.fg = newDrawableFromImage(splitSheet(G.loaders['compass'], 38, 0, 1, 2));
+    this.cmp.fg = newDrawableFromImage(splitSheet(G.loaders['compass'], 38, 2, 1, 9));
+    // compass height = 38;
 
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
     this.border = new Drawable(w, h, r, tx, ty, 0);
@@ -121,22 +124,12 @@ class UIElements {
   }
 
   draw() {
-    // if (this.isTouchDevice == true) {
-    //   image(G.loaders['controlOrigin'], this.controlOrigin[0], this.controlOrigin[1])
-    // }
-    push();
-    translate(this.cmp.x, this.cmp.y);
-    image(this.cmp.bg.g, 0, 0);
-    rotate(this.cmp.fg.rot);
-    image(this.cmp.fg.g, 0, 0);
-    pop();
-
-    push();
-    translate(this.inv.tx, this.inv.ty);
-    image(this.inv.g, 0, 0);
-    image(this.border.g, 0, 0);
-    pop();
-
+    this.layer.g.image(this.cmp.bg.g, this.cmp.x, this.cmp.y);
+    let selection = int(((this.cmp.fg.rot + radians(22.5) + PI)/TWO_PI) * 8);
+    selection = (selection == 8) ? 0 : selection;
+    this.layer.g.image(this.cmp.fg.g, this.cmp.x, this.cmp.y, 38, 38, selection*38, 0, 38, 38);
+    this.layer.g.image(this.inv.g, this.inv.tx, this.inv.ty);
+    this.layer.g.image(this.border.g, this.inv.tx, this.inv.ty);
   }
 
 };

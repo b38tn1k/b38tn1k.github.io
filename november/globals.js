@@ -33,6 +33,7 @@ function rebuildLevel() {
   G.level.drawStatics();
   G.player.reOrigin();
   G.player.recoverInventory();
+  G.player.makeEntry = true;
 }
 function showColors() {
   function colorString(levels) {

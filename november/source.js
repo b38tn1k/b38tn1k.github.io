@@ -115,6 +115,7 @@ function setup() {
 }
 
 function draw() {
+  // console.log(G.graphLayers.getLayerNames());
   G.graphLayers.clear();
   G.inputs.update();
   G.UIElements.update(G.player, G.inputs);

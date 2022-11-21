@@ -4,6 +4,13 @@ class LayerHandler {
     this.dims = dims;
     this.layers = [];
     this.layerMap = {};
+    this.base = createGraphics(w, h);
+    this.tx = tx;
+    this.ty = ty;
+    this.base.imageMode(CENTER);
+    // FIX: this breaks the already broken on the fly layer level selection
+    // ["UI", 1, "sprites", 2, "background", 0, "foreground", 3, "dialog", 4]
+    this.order = ["background", "foreground", "sprites", "dialog", "UI"];
   }
 
   newLayer(level, name, w=0, h=0, r=0, tx=0, ty=0, res=-1) {
@@ -63,6 +70,7 @@ class LayerHandler {
 
   clear() {
     clear();
+    this.base.clear();
     for (let i = 0; i < this.layers.length; i++) {
       this.layers[i].clear();
 
@@ -70,12 +78,18 @@ class LayerHandler {
   }
 
   draw() {
-    for (let i = 0; i < this.layers.length; i++) {
-      push();
-      rotate(this.layers[i].rot);
-      translate(this.layers[i].tx, this.layers[i].ty);
-      image(this.layers[i].g, 0, 0);
-      pop();
+    for (let i = 0; i < this.order.length; i++) {
+      let j = this.layerMap[this.order[i]];
+      this.base.image(this.layers[j].g, this.layers[j].tx, this.layers[j].ty);
     }
+    // for (let i = 0; i < this.layers.length; i++) {
+      // push();
+      // rotate(this.layers[i].rot);
+      // translate(this.layers[i].tx, this.layers[i].ty);
+      // image(this.layers[i].g, 0, 0);
+      // pop();
+      // this.base.image(this.layers[i].g, this.layers[i].tx, this.layers[i].ty);
+    // }
+    image(this.base, this.tx, this.ty);
   }
 }

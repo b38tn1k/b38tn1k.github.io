@@ -6,7 +6,7 @@ categories: [game, november]
 tags: gameprogress
 ---
 I was going to draw some human sprites today but instead I thought I would play around with some shaders. The NES colour palette is very bright and cheerful and I really like it, but I wanted to try something a touch gloomier, and also add a bit of nostalgia by attempting to emulate the qualities of an old CRT television. P5 does shaders really nicely using WebGL, but I had to convert all the graphic layers into a single texture to achieve the pass-through effect I wanted. This only really effected the UI layer, so I gave up on trying to find a method to rotate p5.Graphics objects in other p5.Graphics images and drew some new animations for the compass. The LayerHandler now renders all graphics layers into a single texture which is then passed into a shader. The shader applies colour changes (desaturation-y sepia-y), adds some static noise and CRT scanlines, distorts the image to take the shape of a CRT screen, and finally blurs and blooms the texture. Before and after shown below, I may need to more the UI elements in a touch but I think the result looks a bit more cohesive.
-![no shader example](https://b38tn1k.com/sprites/noshader.png)
-![shader example](https://b38tn1k.com/sprites/shader1.png)
+![no shader example](https://b38tn1k.com/images/noshader.png)
+![shader example](https://b38tn1k.com/images/shader1.png)
 
-Over the weekend I also cleaned up the ChasingSprite AI. Implementing the possum exposed a scenario in which the randomWalk and approachTarget functions could occur in the same loop, creating some crazy animation choices and sprite moonwalking. I also cleaned up the dialog renderer to better calculate the size of the dialog background rectangle. small things. 
+Over the weekend I also cleaned up the ChasingSprite AI. Implementing the possum exposed a scenario in which the randomWalk and approachTarget functions could occur in the same loop, creating some crazy animation choices and sprite moonwalking. I also cleaned up the dialog renderer to better calculate the size of the dialog background rectangle. small things.

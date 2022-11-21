@@ -8,9 +8,10 @@ precision mediump float;
 #define BLOOMMIX 0.2
 #define CURVE 5.
 #define PI 3.14159265
-#define SLOPACITY 0.4
+#define SLOPACITY 0.2
 #define VIG 50.
-#define NOISEAMOUNT 0.15
+#define NOISEAMOUNT 0.1
+#define BRIGHTNESS 1.1
 varying vec2 fragCoord;
 uniform sampler2D texture;
 uniform vec3 res;
@@ -82,7 +83,7 @@ void main() {
   vec2 u = VIG / res.xy * 0.5;
   u = smoothstep(vec2(0), u, 1.0 - VigUV2);
   bloom = bloom *u.x * u.y;
-  bloom *= 1.2;
+  bloom *= BRIGHTNESS;
 
   if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0){
       gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);

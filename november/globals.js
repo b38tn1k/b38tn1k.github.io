@@ -78,5 +78,6 @@ class Globals {
     this.levelSetup = [];
     this.levelPointer = 0;
     this.triggerRadius = 100;
+    this.shader;
   }
 }

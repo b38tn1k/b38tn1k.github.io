@@ -82,14 +82,10 @@ class LayerHandler {
       let j = this.layerMap[this.order[i]];
       this.base.image(this.layers[j].g, this.layers[j].tx, this.layers[j].ty);
     }
-    // for (let i = 0; i < this.layers.length; i++) {
-      // push();
-      // rotate(this.layers[i].rot);
-      // translate(this.layers[i].tx, this.layers[i].ty);
-      // image(this.layers[i].g, 0, 0);
-      // pop();
-      // this.base.image(this.layers[i].g, this.layers[i].tx, this.layers[i].ty);
-    // }
-    image(this.base, this.tx, this.ty);
+    // image(this.base, this.tx, this.ty);
+    // image(this.base, -this.tx, -this.ty);
+    // image(this.base, 0, 0);
+    G.shader.setUniform('texture', this.base);
+    rect(-width/2, -height/2, width, height);
   }
 }

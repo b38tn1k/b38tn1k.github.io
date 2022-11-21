@@ -33,6 +33,9 @@ function setupScreen() {
   G.inputs = new InputHandler(G.dims);
   G.UIElements = new UIElements();
   G.graphLayers.clear();
+  shader(G.shader);
+  fill(255);
+  noStroke();
 }
 
 function setupGame() {
@@ -77,6 +80,7 @@ function setupGame() {
 function preload() {
   G = new Globals();
   let c = loadStrings('assets/NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
+  G.shader = loadShader('shader.vert', 'shader.frag');
   // sprites
   G.loaders['player-boots'] = loadImage('assets/boots.png');
   G.loaders['slumeY'] = loadImage('assets/slume_yellow_idle.png');
@@ -105,7 +109,8 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(0, 0, P2D);
+  createCanvas(0, 0, WEBGL);
+  perspective();
   setupScreen();
   setupGame();
   imageMode(CENTER);

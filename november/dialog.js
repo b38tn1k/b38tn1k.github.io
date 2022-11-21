@@ -321,13 +321,32 @@ class Dialog {
     // this.eventID = this.de.eventIDs[option];
   }
 
+  calculateTextBoxHeight(line) {
+    let words = line.split(" ");
+    let wordLengths = [];
+    for (let i = 0; i < words.length; i++) {
+      wordLengths.push(this.layer.g.textWidth(words[i]) + this.layer.g.textWidth(" "));
+    }
+    let currentLine = 0;
+    let lc = 1;
+    for (let i = 0; i < wordLengths.length; i++) {
+      if (currentLine + wordLengths[i] < this.textBoxWidth) {
+        currentLine += wordLengths[i];
+      } else {
+        currentLine = wordLengths[i];
+        lc += 1;
+      }
+    }
+    let textBoxHeight =lc * this.totalLineHeight;
+    return textBoxHeight;
+  }
+
   writeText() {
     if (this.onScr[key].words != -1) {
       let words = this.onScr[key].words.slice(0, this.onScr[key].printHead);
       let x = this.coords[key].x;
       let y = this.coords[key].y;
-      let lineCount = ceil(this.layer.g.textWidth(this.onScr[key].words) / this.textBoxWidth);
-      let textBoxHeight =lineCount * (this.totalLineHeight);
+      let textBoxHeight =this.calculateTextBoxHeight(this.onScr[key].words);
       if (this.onScr[key].printHead > 0) {
         this.layer.g.fill(this.bgcolor);
         this.layer.g.rect(x, y, this.textBoxWidth, textBoxHeight);

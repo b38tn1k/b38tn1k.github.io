@@ -14,6 +14,12 @@ class LayerHandler {
     this.order = ["background", "foreground", "sprites", "dialog", "UI"];
   }
 
+  setupLayers() {
+    for (let i = 0; i < this.order.length; i++) {
+      this.getLayer(this.order[i], true);
+    }
+  }
+
   newLayer(level, name, w=0, h=0, r=0, tx=0, ty=0, res=-1) {
     if (w == 0) {
       [w, h, r, tx, ty] = this.dims.fullScreenGraphicDims;

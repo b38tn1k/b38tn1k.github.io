@@ -30,6 +30,7 @@ function setupScreen() {
   G.updated = true;
   G.dims = new Dimensions();
   G.graphLayers = new LayerHandler(G.dims);
+  G.graphLayers.setupLayers();
   G.inputs = new InputHandler(G.dims);
   G.UIElements = new UIElements();
   G.graphLayers.clear();

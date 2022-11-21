@@ -9,7 +9,7 @@ precision mediump float;
 #define CURVE 5.
 #define PI 3.14159265
 #define SLOPACITY 1.
-#define VIG 50.
+#define VIG 75.
 #define NOISEAMOUNT 0.1
 #define BRIGHTNESS 1.1
 varying vec2 fragCoord;

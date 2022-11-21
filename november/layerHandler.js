@@ -87,7 +87,7 @@ class LayerHandler {
     }
     G.shader.setUniform('texture', this.base);
     G.shader.setUniform('texelSize', this.textelSize);
-    G.shader.setUniform('res', [1. * (this.dims.w), 1. * (this.dims.h), 0.]);
+    G.shader.setUniform('res', [1. * (width), 1. * (height), 0.]);
     G.shader.setUniform('randomNumbers', [random(), random()]);
 
     rect(-width/2, -height/2, width, height);

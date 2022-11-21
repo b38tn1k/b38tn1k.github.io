@@ -8,7 +8,7 @@ precision mediump float;
 #define BLOOMMIX 0.2
 #define CURVE 5.
 #define PI 3.14159265
-#define SLOPACITY 0.2
+#define SLOPACITY 1.
 #define VIG 50.
 #define NOISEAMOUNT 0.1
 #define BRIGHTNESS 1.1
@@ -39,7 +39,7 @@ vec4 sepiaIze(vec4 arg) {
 }
 
 vec4 sLGen(float uvC, float resolution){
-    float intensity = sin(uvC * resolution * PI * 2.0);
+    float intensity = sin(uvC * resolution * PI * 10.);
     intensity = ((0.5 * intensity) + 0.5) * 0.9 + 0.1;
     return vec4(vec3(pow(intensity, SLOPACITY)), 1.0);
 }
@@ -64,7 +64,7 @@ void main() {
   blur += rand(uv, randomNumbers);
   col += rand(uv, randomNumbers);
   blur = applyScanLines(blur, uv, res);
-  col = applyScanLines(col, uv, res);
+  // col = applyScanLines(col, uv, res);
   blur += texture2D(texture, uv + vec2(-offset.x, -offset.y));
   blur += texture2D(texture, uv + vec2(0.0, -offset.y));
   blur += texture2D(texture, uv + vec2(offset.x, -offset.y));

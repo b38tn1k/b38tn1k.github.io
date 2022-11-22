@@ -124,7 +124,7 @@ function level2() {
   level.addPickup(0.45, 0.4, ['toy', 'food']);
   let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
   npc1.setCollectionRate(0.4);
-  npc1.addAnimation(7, G.loaders['slumeY']);
+  npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 10, 0, 4), 32, 0, 0, 4);
   npc1.update();
   npc1.play();
   let dialog = level.newDialog(0.7, 0.5);
@@ -195,7 +195,7 @@ function level4() {
   level.attachBGSetup(snowArt);
   let npc1 = level.newSpriteCollection('NPC1', 0.5, 0.3);
   npc1.setCollectionRate(0.4);
-  npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 0, 0, 7), 'left');
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
   npc1.update();
   npc1.play();
   let dialog = level.newDialog(0.5, 0.3, returnTrue);
@@ -233,8 +233,11 @@ function level4() {
   let otherNPCs;
   for (let i = 0; i < 10; i++) {
     otherNPCs = level.newSpriteCollection('NPC', random(), random(), 1);
-    otherNPCs.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 0, 0, 7), 'left');
-    otherNPCs.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 1, 0, 7), 'right');
+    // npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 7, 0, 8), 32, 0, 0, 1);
+    otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 7, 0, 8), 'right');
+    otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 6, 0, 8), 'left');
+    otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 3, 0, 8), 'up');
+    otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 2, 0, 8), 'down');
     otherNPCs.setCollectionRate(0.4);
     otherNPCs.goal = 'food';
     otherNPCs.update();
@@ -336,7 +339,8 @@ function level7() {
   level.addPickup(random(0.2, 0.8), random(0.2, 0.8));
   let npc1 = level.newSpriteCollection('NPC1', 0.4, 0.4);
   npc1.setCollectionRate(0.4);
-  npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 1, 0, 7), 'right');
+  // npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 1, 0, 7), 'right');
+  npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 12, 0, 4), 32, 0, 0, 4);
   npc1.update();
   npc1.play();
   let dialog = level.newDialog(0.5, 0.3, returnTrue);
@@ -436,9 +440,9 @@ function level8() {
 
   for (let i = 0; i < G.dims.swarmSize; i++) {
     ghost = level.newSpriteCollection('ghost', random(), random(), 1);
-    ghost.addAnimation(10, splitSheet(G.loaders['rat'], 52, 0, 0, 10), 'left');
-    ghost.addAnimation(10, splitSheet(G.loaders['rat'], 52, 1, 0, 10), 'right');
-    ghost.setCollectionRate(0.4);
+    ghost.addAnimation(4, splitSheet(G.loaders['ghost'], 64, 0, 0, 4), 'left');
+    ghost.addAnimation(4, splitSheet(G.loaders['ghost'], 64, 1, 0, 4), 'right');
+    ghost.setCollectionRate(0.3);
     ghost.goal = 'crystal';
     ghost.aggressive = true;
     ghost.update();
@@ -450,18 +454,47 @@ function level8() {
 
 function level9() {
   let level = new Level('level9');
-  G.player.hasCompanion = true;
+  G.player.hasCompanion = false;
   level.attachBGSetup(grassArt);
   level.addPickup(random(0.2, 0.8), random(0.2, 0.8));
-  let npc1 = level.newSpriteCollection('NPC1', 0.4, 0.4);
+  let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
   npc1.setCollectionRate(0.4);
-  npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 1, 0, 7), 'right');
+  npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 13, 0, 4), 32, 0, 0, 4);
   npc1.update();
   npc1.play();
-  let dialog = level.newDialog(0.5, 0.3, returnTrue);
+  let dialog = level.newDialog(0.7, 0.5, returnTrue);
   dialog.updateCoords('NPC1', npc1.current);
   dialog.addDialogEvent('NPC1', 'You survived!');
   dialog.addDialogEvent('PC', 'Yup.');
+  dialog.addDialogEvent('NPC1', 'Find any crystals?');
+  G.player.companion.name = 'Milky Joe';
+  if (G.player.inventory.hasItems('crystal') == true) {
+    dialog.addDialogEvent('PC', 'Yup.');
+  } else {
+    dialog.addDialogEvent('PC', 'Nope.');
+    dialog.addDialogEvent('NPC1', 'Wanna sell me that possum?');
+    dialog.addDialogEvent('PC', 'Nope. ' + G.player.companion.name + ' belongs to themselves.');
+    dialog.addDialogEvent('NPC1', 'Sure, sure...');
+    let dotdot = dialog.addDialogEvent('PC', '');
+    dialog.addOption(dotdot, -1, function () {return level.setSpritesToAttack()}, returnTrue);
+    dialog.addChildDialogEvent(dotdot, 'NPC1', -1);
+  }
+
+  let possum = level.newSpriteCollection('possum', 0.4, 0.4, 1);
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 0, 0, 8), 'left');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 1, 0, 8), 'right');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 2, 0, 8), 'up');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 3, 0, 8), 'down');
+  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 4, 0, 8), 'idle');
+  possum.setCollectionRate(0.4);
+  possum.movementSpeed = 2;
+  possum.autochange = false;
+  possum.chooseSequence('idle');
+  possum.randomWalkOff();
+  possum.goal = 'food';
+  possum.update();
+  possum.play();
+  level.addPickup(0.3, 0.25, ['food']);
   return level;
 }
 

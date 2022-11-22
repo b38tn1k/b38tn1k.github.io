@@ -95,8 +95,8 @@ function setupGame() {
   // G.levelSetup.push(level4);
   // G.levelSetup.push(level5);
   // G.levelSetup.push(level6);
-  G.levelSetup.push(level7);
-  G.levelSetup.push(level8);
+  // G.levelSetup.push(level7);
+  // G.levelSetup.push(level8);
   G.levelSetup.push(level9);
 
   G.levelSetup.push(finalLevel);
@@ -120,6 +120,7 @@ function preload() {
   G.loaders['spider'] = loadImage('assets/spider.png');
   G.loaders['rat'] = loadImage('assets/ratfoutlined.png');
   G.loaders['possum'] = loadImage('assets/possum.png');
+  G.loaders['ghost'] = loadImage('assets/ghost.png');
   // UI
   G.loaders['compass'] = loadImage('assets/compass.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');

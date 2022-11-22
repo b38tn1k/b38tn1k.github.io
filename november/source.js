@@ -95,8 +95,9 @@ function setupGame() {
   // G.levelSetup.push(level4);
   // G.levelSetup.push(level5);
   // G.levelSetup.push(level6);
-  // G.levelSetup.push(level7);
+  G.levelSetup.push(level7);
   G.levelSetup.push(level8);
+  G.levelSetup.push(level9);
 
   G.levelSetup.push(finalLevel);
   G.levelSetup.push(testLevel);
@@ -117,7 +118,7 @@ function preload() {
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['spider'] = loadImage('assets/spider.png');
-  G.loaders['rat'] = loadImage('assets/ratf.png');
+  G.loaders['rat'] = loadImage('assets/ratfoutlined.png');
   G.loaders['possum'] = loadImage('assets/possum.png');
   // UI
   G.loaders['compass'] = loadImage('assets/compass.png');
@@ -126,6 +127,7 @@ function preload() {
   G.loaders['toy'] = loadImage('assets/toy.png');
   G.loaders['boot'] = loadImage('assets/boot.png');
   G.loaders['bead'] = loadImage('assets/bead.png');
+  G.loaders['crystal'] = loadImage('assets/crystal2.png');
   // pickups
   G.loaders['chest'] = loadImage('assets/chest.png');
   G.loaders['crystal1'] = loadImage('assets/crystal.png');

@@ -21,7 +21,7 @@ class Inventory {
   getRandomOwnedInventoryItem() {
     let choice = [];
     for (key in this.i) {
-      if (this.i[key] >= 1){
+      if (this.i[key] >= 1 && key != 'boot'){
         choice.push(key);
       }
     }

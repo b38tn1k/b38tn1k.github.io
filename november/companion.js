@@ -13,6 +13,10 @@ class Companion extends ChasingSprites {
     this.current.ty = player.current.ty;
     this.removeTarget();
     this.pickupCounter = 0;
+    this.x = this.current.tx;
+    this.y = this.current.ty;
+    this.layer = G.graphLayers.getLayer('sprites', true, 100);
+    this.layer.clearable = true;
   }
 
   findCloset(points){

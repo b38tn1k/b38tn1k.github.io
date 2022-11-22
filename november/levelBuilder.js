@@ -309,7 +309,7 @@ function level6() {
     rat.play();
   }
   for (let i = 0; i < G.dims.swarmSize; i++) {
-    level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['food', 'bead', 'toy', 'boot']);
+    level.addPickup(random(0.2, 0.8), random(0.2, 0.8));
   }
   level.optimizePickups();
   let spider;
@@ -333,8 +333,8 @@ function level7() {
   let level = new Level('level7');
   G.player.hasCompanion = true;
   level.attachBGSetup(preCaveArt); // change to precave art
-  level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['food', 'bead', 'toy', 'boot']);
-  let npc1 = level.newSpriteCollection('NPC1', 0.4, 0.3);
+  level.addPickup(random(0.2, 0.8), random(0.2, 0.8));
+  let npc1 = level.newSpriteCollection('NPC1', 0.4, 0.4);
   npc1.setCollectionRate(0.4);
   npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 1, 0, 7), 'right');
   npc1.update();
@@ -351,20 +351,47 @@ function level7() {
   dialog.addOption(parEvent, 'Dr. Pinknose', function () {return G.player.companion.name = 'Dr. Pinknose';}, returnTrue);
   dialog.addOption(parEvent, 'Bitey', function () {return G.player.companion.name = 'Bitey';}, returnTrue);
   dialog.addOption(parEvent, 'Ziggy', function () {return G.player.companion.name = 'Ziggy';}, returnTrue);
-  let ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Daisy\s effort. But be careful, there are ghosts!');
-  dialog.addChildDialogEvent(ok,'PC', 'OK!');
-  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Dr. Pinknose\'s effort. But be careful, there are ghosts!');
-  dialog.addChildDialogEvent(ok,'PC', 'OK!');
-  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Bitey\'s effort. But be careful, there are ghosts!');
-  dialog.addChildDialogEvent(ok,'PC', 'OK!');
-  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Ziggy\'s effort. But be careful, there are ghosts!');
-  dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  let ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will give you enough food to keep Daisy happy.');
+  let ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Possums are afraid of the dark. You should leave Daisy with me.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'uhhh. I don\'t think possums are afraid of the dark.');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Well, they hate ghosts.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'So do I. uh. OK. Daisy, stay!');
+
+  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will give you enough food to keep Dr. Pinknose happy.');
+  ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Possums are afraid of the dark. You should leave Dr. Pinknose with me.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'uhhh. I don\'t think possums are afraid of the dark.');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Well, they hate ghosts.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'So do I. uh. OK. Dr. Pinknose, stay!');
+
+  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will give you enough food to keep Bitey happy.');
+  ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Possums are afraid of the dark. You should leave Bitey with me.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'uhhh. I don\'t think possums are afraid of the dark.');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Well, they hate ghosts.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'So do I. uh. OK. Bitey, stay!');
+
+  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will give you enough food to keep Ziggy happy.');
+  ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Possums are afraid of the dark. You should leave Ziggy with me.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'uhhh. I don\'t think possums are afraid of the dark.');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Well, they hate ghosts.');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', 'So do I. uh. OK. Ziggy, stay!');
   return level;
 }
 
 function level8() {
   let level = new Level('level8');
-  G.player.hasCompanion = true;
+  G.player.hasCompanion = false;
   level.attachBGSetup(caveArt);
 
   splitSheet(G.loaders['cave'], 64, 2, 0, 4)
@@ -405,19 +432,36 @@ function level8() {
   }
   level.optimizePickups();
 
-  let rat; // replace with ghosts
+  let ghost; // replace with ghosts
 
   for (let i = 0; i < G.dims.swarmSize; i++) {
-    rat = level.newSpriteCollection('rat', random(), random(), 1);
-    rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 0, 0, 10), 'left');
-    rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 1, 0, 10), 'right');
-    rat.setCollectionRate(0.4);
-    rat.goal = 'food';
-    rat.aggressive = true;
-    rat.update();
-    rat.play();
+    ghost = level.newSpriteCollection('ghost', random(), random(), 1);
+    ghost.addAnimation(10, splitSheet(G.loaders['rat'], 52, 0, 0, 10), 'left');
+    ghost.addAnimation(10, splitSheet(G.loaders['rat'], 52, 1, 0, 10), 'right');
+    ghost.setCollectionRate(0.4);
+    ghost.goal = 'crystal';
+    ghost.aggressive = true;
+    ghost.update();
+    ghost.play();
   }
 
+  return level;
+}
+
+function level9() {
+  let level = new Level('level9');
+  G.player.hasCompanion = true;
+  level.attachBGSetup(grassArt);
+  level.addPickup(random(0.2, 0.8), random(0.2, 0.8));
+  let npc1 = level.newSpriteCollection('NPC1', 0.4, 0.4);
+  npc1.setCollectionRate(0.4);
+  npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 1, 0, 7), 'right');
+  npc1.update();
+  npc1.play();
+  let dialog = level.newDialog(0.5, 0.3, returnTrue);
+  dialog.updateCoords('NPC1', npc1.current);
+  dialog.addDialogEvent('NPC1', 'You survived!');
+  dialog.addDialogEvent('PC', 'Yup.');
   return level;
 }
 
@@ -425,7 +469,7 @@ function testLevel() {
   let level = new Level('test');
   G.player.hasCompanion = true;
   level.attachBGSetup(testLevelArt);
-  level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['food', 'bead', 'toy', 'boot']);
+  level.addPickup(random(0.2, 0.8), random(0.2, 0.8));
   let rat = level.newSpriteCollection('rat', random(), random(), 1);
   rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 0, 0, 10), 'left');
   rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 1, 0, 10), 'right');

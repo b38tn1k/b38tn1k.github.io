@@ -80,7 +80,6 @@ class LayerHandler {
     this.base.clear();
     for (let i = 0; i < this.layers.length; i++) {
       this.layers[i].clear();
-
     }
   }
 
@@ -95,6 +94,8 @@ class LayerHandler {
     G.shader.setUniform('texelSize', this.textelSize);
     G.shader.setUniform('res', [1. * (width), 1. * (height), 0.]);
     G.shader.setUniform('randomNumbers', [random(), random()]);
+    G.shader.setUniform('sinWave', (3. + sin(millis()/600)));
+
 
     rect(-width/2, -height/2, width, height);
   }

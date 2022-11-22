@@ -185,6 +185,9 @@ class PlayerCharacter extends SpriteCollection {
   hasFood() {
     return this.inventory.checkInventory('food').has;
   }
+  hasNoFood() {
+    return ! (this.hasFood());
+  }
   hasBoot() {
     return this.inventory.checkInventory('boot').has;
   }
@@ -222,6 +225,19 @@ class PlayerCharacter extends SpriteCollection {
     let prevY = this.current.ty;
     if (this.inventory.iDi == true) {
       this.movementSpeed = this.inventory.checkInventory('boot').has ? this.wBoots : this.noBoots;
+      if (this.inventory.checkInventory('boot').has == false) {
+        this.addAnimation(8, G.loaders['player-noboots-up'], 'up', [0, 4], 0);
+        this.addAnimation(8, G.loaders['player-noboots-down'], 'down',[0, 4], 0);
+        this.addAnimation(8, G.loaders['player-noboots-left'], 'left',[0, 4], 0);
+        this.addAnimation(8, G.loaders['player-noboots-right'], 'right',[0, 4], 0);
+        this.setCollectionRate(0.8);
+      } else {
+        this.addAnimation(8, G.loaders['player-boots-up'], 'up', [0, 4], 0);
+        this.addAnimation(8, G.loaders['player-boots-down'], 'down',[0, 4], 0);
+        this.addAnimation(8, G.loaders['player-boots-left'], 'left',[0, 4], 0);
+        this.addAnimation(8, G.loaders['player-boots-right'], 'right',[0, 4], 0);
+        this.setCollectionRate(0.8);
+      }
       this.inventory.iDi = false;
     }
     if (keyIsDown(UP_ARROW) || keyIsDown(87)) {

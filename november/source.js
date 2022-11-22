@@ -18,6 +18,12 @@ function keyPressed() {
   if (key == 'f') {
     G.player.addItem('food');
   }
+  if (key == 'b') {
+    G.player.addItem('boot');
+  }
+  if (key == 'n') {
+    G.player.subtractItem('boot');
+  }
 }
 
 function saveImage() {
@@ -42,10 +48,29 @@ function setupScreen() {
 function setupGame() {
   G.dims = new Dimensions();
   G.player = new PlayerCharacter(); // resolution, column, start, end
-  G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 8, 1, 8), 'up', [0, 4], 0);
-  G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 9, 0, 8), 'left',[0, 4], 0);
-  G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 10, 1, 8), 'down',[0, 4], 0);
-  G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 11, 0, 8), 'right',[0, 4], 0);
+  // G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 8, 1, 8), 'up', [0, 4], 0);
+  // G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 10, 1, 8), 'down',[0, 4], 0);
+  // G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 9, 0, 8), 'left',[0, 4], 0);
+  // G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 11, 0, 8), 'right',[0, 4], 0);
+  G.loaders['player-noboots-down'] = splitSheet(G.loaders['humanoid2'], 64, 0, 0, 4);
+  G.loaders['player-noboots-up'] = splitSheet(G.loaders['humanoid2'], 64, 1, 0, 4);
+  G.loaders['player-boots-down'] = splitSheet(G.loaders['humanoid2'], 64, 2, 0, 4);
+  G.loaders['player-boots-up'] = splitSheet(G.loaders['humanoid2'], 64, 3, 0, 4);
+  G.loaders['player-noboots-left'] = splitSheet(G.loaders['humanoid2'], 64, 4, 0, 4);
+  G.loaders['player-noboots-right'] = splitSheet(G.loaders['humanoid2'], 64, 5, 0, 4);
+  G.loaders['player-boots-left'] = splitSheet(G.loaders['humanoid2'], 64, 6, 0, 4);
+  G.loaders['player-boots-right'] = splitSheet(G.loaders['humanoid2'], 64, 7, 0, 4);
+
+  G.player.addAnimation(8, G.loaders['player-noboots-up'], 'up', [0, 4], 0);
+  G.player.addAnimation(8, G.loaders['player-noboots-down'], 'down',[0, 4], 0);
+  G.player.addAnimation(8, G.loaders['player-noboots-left'], 'left',[0, 4], 0);
+  G.player.addAnimation(8, G.loaders['player-noboots-right'], 'right',[0, 4], 0);
+
+  G.player.addAnimation(8, G.loaders['player-boots-up'], 'up', [0, 4], 0);
+  G.player.addAnimation(8, G.loaders['player-boots-down'], 'down',[0, 4], 0);
+  G.player.addAnimation(8, G.loaders['player-boots-left'], 'left',[0, 4], 0);
+  G.player.addAnimation(8, G.loaders['player-boots-right'], 'right',[0, 4], 0);
+
   G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 0, 0, 8), 'left');
   G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 1, 0, 8), 'right');
   G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 2, 0, 8), 'up');
@@ -55,7 +80,7 @@ function setupGame() {
   G.player.companion.goal = 'food';
   G.player.companion.update();
   G.player.companion.play();
-  G.player.setCollectionRate(0.4);
+  G.player.setCollectionRate(0.8);
   G.player.addItem('food', 1);
   G.player.addItem('boot', 0);
   G.player.addItem('toy', 1);
@@ -84,6 +109,8 @@ function preload() {
   G.shader = loadShader('shader.vert', 'shader.frag');
   // sprites
   G.loaders['player-boots'] = loadImage('assets/boots.png');
+  G.loaders['humanoid2'] = loadImage('assets/humanoid2.png');
+  G.loaders['humanoid1'] = loadImage('assets/humanoid1.png');
   G.loaders['slumeY'] = loadImage('assets/slume_yellow_idle.png');
   G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdlef.png');
   G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
@@ -135,5 +162,7 @@ function draw() {
     G.transitionFlag = false;
     transitionLevel();
   }
+  //splitSheet(src, res, row, start, end)
+  // G.UIElements.layer.g.image(splitSheet(G.loaders['humanoid2'], 64, 0, 0, 4), width/2, height/2);
   // image(splitSheet(G.loaders['grass'], 64, 5, 0, 3), 200, 200);
 }

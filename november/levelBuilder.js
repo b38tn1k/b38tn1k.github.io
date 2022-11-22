@@ -53,8 +53,8 @@ function level0() {
   npc1.setCollectionRate(0.4);
   //function splitSheet(src, res, row, start, end)
 
-  npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 0, 0, 7));
-  npc1.addAnimation(9, G.loaders['slume-death'], 'death', [8]);
+  npc1.addAnimation(6, splitSheet(G.loaders['humanoid1'], 64, 8, 0, 6), 32, 0, 0, 6);
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 9, 0, 8), 'death', [7, 8]);
   npc1.update();
   npc1.play();
   level.addPickup(0.3, 0.3);
@@ -65,7 +65,7 @@ function level0() {
   dialog.addDialogEvent('NPC1', 'I\'m so hungry! Please, do you have any food?');
   let parEvent = dialog.addDialogEvent('PC');
   dialog.addOption(parEvent, 'Here you go.', function () {return G.player.subtractItem('food');}, function () {return G.player.hasFood();});
-  dialog.addOption(parEvent, 'I\'m hungry too.');
+  dialog.addOption(parEvent, 'I\'m hungry too.', function () {npc1.changeSequence(1, true);}, returnTrue);
   dialog.addOption(parEvent, 'I need boots.', returnTrue, function () {return (G.player.hasFood() && G.player.hasNoBoot());});
   dialog.addOption(parEvent, 'No!', function () {npc1.changeSequence(1, true);}, returnTrue);
   let thankyou = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Thank you!');
@@ -198,7 +198,8 @@ function level4() {
   dialog.addDialogEvent('PC', 'North, but without boots I am making little progress.');
   dialog.addDialogEvent('NPC1', 'We have boots to spare! Would you like to trade?');
   let parEvent = dialog.addDialogEvent('PC');
-  dialog.addOption(parEvent, 'I have nothing useful to trade.', returnTrue, function () {return G.player.hasNoFoodAndNoBeads();});
+
+  dialog.addOption(parEvent, 'I have nothing useful to trade.', returnTrue, function () {return G.player.hasNoFood();});
   let nothing = dialog.addChildDialogEvent(parEvent, 'NPC1', 'As I said, boots to spare! Take them. They are yours.');
   nothing = dialog.addChildDialogEvent(nothing, 'PC', '');
   dialog.addOption(nothing, 'Thank you!', function () {return G.player.addItem('boot');}, returnTrue);

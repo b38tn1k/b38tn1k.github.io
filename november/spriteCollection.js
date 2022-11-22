@@ -8,6 +8,13 @@ class SpriteCollection {
     this.layer = G.graphLayers.getLayer('sprites', true, 100);
     this.layer.clearable = true;
     this.layer.g.imageMode(CENTER);
+    this.layer.g.textFont(G.loaders['font']);
+    this.textColor = G.colors[0];
+    this.bgColor = G.colors[2];
+    this.fontSize = 12;
+    this.layer.g.textSize(this.fontSize);
+    this.layer.g.textLeading(this.lineSpacing * this.fontSize);
+    this.layer.g.textAlign(LEFT, TOP);
     this.current;
     this.playAni = true;
   }

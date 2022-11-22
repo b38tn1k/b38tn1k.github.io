@@ -4,7 +4,7 @@ precision mediump float;
 
 #define PIXHEIGHT 4.0
 #define BLURSPREAD 0.5
-#define SEPIAMIX 0.3
+#define SEPIAMIX 0.2
 #define BLOOMMIX 0.2
 #define CURVE 5.
 #define PI 3.14159265

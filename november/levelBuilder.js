@@ -269,6 +269,8 @@ function level5() {
   possum.setCollectionRate(0.4);
   possum.movementSpeed = 2;
   possum.autochange = false;
+  possum.attack = false;
+  possum.aggressive = false;
   possum.chooseSequence('idle');
   possum.randomWalkOff();
   possum.goal = 'food';
@@ -499,6 +501,8 @@ function level9() {
   possum.setCollectionRate(0.4);
   possum.movementSpeed = 2;
   possum.autochange = false;
+  possum.attack = false;
+  possum.aggressive = false;
   possum.chooseSequence('idle');
   possum.randomWalkOff();
   possum.goal = 'food';

@@ -244,6 +244,16 @@ function level4() {
     otherNPCs.play();
     otherNPCs.attack = false;
   }
+  npc1 = level.newSpriteCollection('Finn', 0.3, 0.4);
+  npc1.setCollectionRate(0.4);
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 0, 0, 8), 32, 0, 0, 8);
+  npc1.update();
+  npc1.play();
+  npc1 = level.newSpriteCollection('Jake', 0.34, 0.44);
+  npc1.setCollectionRate(0.4);
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 1, 0, 8), 32, 0, 0, 8);
+  npc1.update();
+  npc1.play();
   return level;
 }
 

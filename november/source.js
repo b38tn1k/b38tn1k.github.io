@@ -24,6 +24,11 @@ function keyPressed() {
   if (key == 'n') {
     G.player.subtractItem('boot');
   }
+
+  if (key == ' ') {
+    transitionLevel();
+    console.log(G.levelPointer);
+  }
 }
 
 function saveImage() {

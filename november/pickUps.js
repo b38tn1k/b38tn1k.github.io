@@ -13,6 +13,10 @@ class Pickup {
     this.calculateBB();
   }
 
+  chooseImage(name) {
+    this.image = name;
+  }
+
   turnOff(player){
     this.isActive = false;
     if (player) {

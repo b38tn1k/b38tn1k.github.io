@@ -88,14 +88,15 @@ function setupGame() {
   G.player.emptyInventory();
   G.player.backupInventory();
   // LEVEL SETUP
-  G.levelSetup.push(level0);
-  G.levelSetup.push(level1);
-  G.levelSetup.push(level2);
-  G.levelSetup.push(level3);
-  G.levelSetup.push(level4);
-  G.levelSetup.push(level5);
-  G.levelSetup.push(level6);
-  G.levelSetup.push(level7);
+  // G.levelSetup.push(level0);
+  // G.levelSetup.push(level1);
+  // G.levelSetup.push(level2);
+  // G.levelSetup.push(level3);
+  // G.levelSetup.push(level4);
+  // G.levelSetup.push(level5);
+  // G.levelSetup.push(level6);
+  // G.levelSetup.push(level7);
+  G.levelSetup.push(level8);
 
   G.levelSetup.push(finalLevel);
   G.levelSetup.push(testLevel);
@@ -127,6 +128,7 @@ function preload() {
   G.loaders['bead'] = loadImage('assets/bead.png');
   // pickups
   G.loaders['chest'] = loadImage('assets/chest.png');
+  G.loaders['crystal1'] = loadImage('assets/crystal.png');
   // font
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
   // maps
@@ -134,6 +136,7 @@ function preload() {
   G.loaders['desert'] = loadImage('assets/desert.png');
   G.loaders['snow'] = loadImage('assets/snow.png');
   G.loaders['temple'] = loadImage('assets/temple.png');
+  G.loaders['cave'] = loadImage('assets/cave.png');
 }
 
 function setup() {

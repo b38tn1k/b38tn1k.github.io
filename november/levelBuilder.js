@@ -6,6 +6,14 @@ function grassArt(bg, fg){
   return bb;
 }
 
+function caveArt(bg, fg){
+  bg.randomTile(splitSheet(G.loaders['cave'], 64, 0, 0, 5), 5, 1);
+  bg.randomTile(splitSheet(G.loaders['cave'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
+  let bb = bg.drawPath(splitSheet(G.loaders['cave'], 64, 3, 0, 4), 4, 1);
+  fg.border(splitSheet(G.loaders['cave'], 64, 2, 0, 4), 4, 1);
+  return bb;
+}
+
 function preCaveArt(bg, fg){
 //function splitSheet(src, res, row, start, end)
   bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
@@ -351,6 +359,65 @@ function level7() {
   dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'This cave is full of crystals. If you bring me crystals I will make it worth yours and Ziggy\'s effort. But be careful, there are ghosts!');
   dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  return level;
+}
+
+function level8() {
+  let level = new Level('level8');
+  G.player.hasCompanion = true;
+  level.attachBGSetup(caveArt);
+
+  splitSheet(G.loaders['cave'], 64, 2, 0, 4)
+
+  rock = level.newSpriteCollection('rocks', 0.3, 0.3, 2);
+  rock.addAnimation(1, splitSheet(G.loaders['cave'], 64, 2, 3, 4), 'static');
+  rock.setCollectionRate(10);
+  rock.update();
+  rock.play();
+
+  rock = level.newSpriteCollection('rocks', 0.3, 0.7, 2);
+  rock.addAnimation(1, splitSheet(G.loaders['cave'], 64, 2, 1, 2), 'static');
+  rock.setCollectionRate(10);
+  rock.update();
+  rock.play();
+
+  rock = level.newSpriteCollection('rocks', 0.7, 0.3, 2);
+  rock.addAnimation(1, splitSheet(G.loaders['cave'], 64, 2, 0, 1), 'static');
+  rock.setCollectionRate(10);
+  rock.update();
+  rock.play();
+
+  rock = level.newSpriteCollection('rocks', 0.7, 0.7, 2);
+  rock.addAnimation(1, splitSheet(G.loaders['cave'], 64, 2, 3, 4), 'static');
+  rock.setCollectionRate(10);
+  rock.update();
+  rock.play();
+
+  rock = level.newSpriteCollection('rocks', 0.5, 0.5, 2);
+  rock.addAnimation(1, splitSheet(G.loaders['cave'], 64, 2, 3, 4), 'static');
+  rock.setCollectionRate(10);
+  rock.update();
+  rock.play();
+
+  for (let i = 0; i < G.dims.swarmSize * 2; i++) {
+    level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['crystal']);
+    level.pickups[i].chooseImage('crystal1');
+  }
+  level.optimizePickups();
+
+  let rat; // replace with ghosts
+
+  for (let i = 0; i < G.dims.swarmSize; i++) {
+    rat = level.newSpriteCollection('rat', random(), random(), 1);
+    rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 0, 0, 10), 'left');
+    rat.addAnimation(10, splitSheet(G.loaders['rat'], 52, 1, 0, 10), 'right');
+    rat.setCollectionRate(0.4);
+    rat.goal = 'food';
+    rat.aggressive = true;
+    rat.update();
+    rat.play();
+  }
+
   return level;
 }
 

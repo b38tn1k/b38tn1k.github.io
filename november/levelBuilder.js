@@ -244,12 +244,12 @@ function level4() {
     otherNPCs.play();
     otherNPCs.attack = false;
   }
-  npc1 = level.newSpriteCollection('Finn', 0.3, 0.4);
+  npc1 = level.newSpriteCollection('Finn', 0.2, 0.4);
   npc1.setCollectionRate(0.4);
   npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 0, 0, 8), 32, 0, 0, 8);
   npc1.update();
   npc1.play();
-  npc1 = level.newSpriteCollection('Jake', 0.34, 0.44);
+  npc1 = level.newSpriteCollection('Jake', 0.24, 0.44);
   npc1.setCollectionRate(0.4);
   npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 1, 0, 8), 32, 0, 0, 8);
   npc1.update();
@@ -482,6 +482,10 @@ function level9() {
   G.player.companion.name = 'Milky Joe';
   if (G.player.inventory.hasItems('crystal') == true) {
     dialog.addDialogEvent('PC', 'Yup.');
+    dialog.addDialogEvent('NPC1', 'Two meals per crystal. How does that sound?');
+    let answer = dialog.addDialogEvent('PC', '');
+    dialog.addOption(answer, 'Deal.', function() {return G.player.crystalsToFood(2);});
+    dialog.addOption(answer, 'Three meals per crystal.', function() {return G.player.crystalsToFood(2);});
   } else {
     dialog.addDialogEvent('PC', 'Nope.');
     dialog.addDialogEvent('NPC1', 'Wanna sell me that possum?');

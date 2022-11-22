@@ -191,6 +191,11 @@ class PlayerCharacter extends SpriteCollection {
   hasBoot() {
     return this.inventory.checkInventory('boot').has;
   }
+  crystalsToFood(mult){
+    let crystalCount = this.inventory.i['crystal'];
+    this.addItem('food', mult * crystalCount);
+    this.subtractItem('crystal', crystalCount);
+  }
   hasNoBoot() {
     return ! (this.hasBoot());
   }

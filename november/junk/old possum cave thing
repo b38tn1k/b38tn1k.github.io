@@ -1,0 +1,28 @@
+addSleepyPossum(level);
+let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
+npc1.setCollectionRate(0.4);
+npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 13, 0, 4), 32, 0, 0, 4);
+npc1.update();
+npc1.play();
+let dialog = level.newDialog(0.7, 0.5, returnTrue);
+dialog.updateCoords('NPC1', npc1.current);
+dialog.addDialogEvent('NPC1', 'You survived!');
+dialog.addDialogEvent('PC', 'Yup.');
+dialog.addDialogEvent('NPC1', 'Find any crystals?');
+G.player.companion.name = 'Milky Joe';
+if (G.player.inventory.hasItems('crystal') == true) {
+  dialog.addDialogEvent('PC', 'Yup.');
+  dialog.addDialogEvent('NPC1', 'Two meals per crystal. How does that sound?');
+  let answer = dialog.addDialogEvent('PC', '');
+  dialog.addOption(answer, 'Deal.', function() {return G.player.crystalsToFood(2);});
+  dialog.addOption(answer, 'Three meals per crystal.', function() {return G.player.crystalsToFood(2);});
+} else {
+  dialog.addDialogEvent('PC', 'Nope.');
+  dialog.addDialogEvent('NPC1', 'Wanna sell me that possum?');
+  dialog.addDialogEvent('PC', 'Nope. ' + G.player.companion.name + ' belongs to themselves.');
+  dialog.addDialogEvent('NPC1', 'Sure, sure...');
+  let dotdot = dialog.addDialogEvent('PC', '');
+  dialog.addOption(dotdot, -1, function () {return level.setSpritesToAttack()}, returnTrue);
+  dialog.addChildDialogEvent(dotdot, 'NPC1', -1);
+}
+level.addPickup(0.3, 0.25, ['food']);

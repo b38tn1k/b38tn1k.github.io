@@ -4,7 +4,7 @@ class Companion extends ChasingSprites {
     this.aggressive = false;
     this.attack = false;
     this.movementSpeed = 2;
-    this.name = '';
+    this.name = 'Daisy';
     this.pickupCounter = 0;
     this.setRandomWalkBB(0.2, 0.01);
   }

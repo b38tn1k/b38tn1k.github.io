@@ -106,9 +106,8 @@ function setupGame() {
   G.levelSetup.push(level7);
   G.levelSetup.push(level8);
   G.levelSetup.push(level9);
-
+  G.levelSetup.push(level10);
   G.levelSetup.push(finalLevel);
-  G.levelSetup.push(testLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
 }
@@ -118,13 +117,8 @@ function preload() {
   let c = loadStrings('assets/NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
   G.shader = loadShader('shader.vert', 'shader.frag');
   // sprites
-  G.loaders['player-boots'] = loadImage('assets/boots.png');
   G.loaders['humanoid2'] = loadImage('assets/humanoid2.png');
   G.loaders['humanoid1'] = loadImage('assets/humanoid1.png');
-  G.loaders['slumeY'] = loadImage('assets/slume_yellow_idle.png');
-  G.loaders['slume-idle'] = loadImage('assets/BlueSlumeIdlef.png');
-  G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
-  G.loaders['slume-death'] = loadImage('assets/BlueSlumeDeath.png');
   G.loaders['spider'] = loadImage('assets/spider.png');
   G.loaders['rat'] = loadImage('assets/ratfoutlined.png');
   G.loaders['possum'] = loadImage('assets/possum.png');
@@ -150,6 +144,7 @@ function preload() {
   G.loaders['snow'] = loadImage('assets/snow.png');
   G.loaders['temple'] = loadImage('assets/temple.png');
   G.loaders['cave'] = loadImage('assets/cave.png');
+  G.loaders['town'] = loadImage('assets/town.png');
 }
 
 function setup() {

@@ -566,6 +566,55 @@ function level13() {
   return level;
 }
 
+function level14() {
+  let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+  let level = new Level('Level14');
+  level.attachBGSetup(desertArt);
+  addObstacle(level, 'desert', 0.25, 0.6);
+  addObstacle(level, 'desert', 0.75, 0.6);
+  addObstacle(level, 'desert', 0.5, 0.25);
+  addObstacle(level, 'desert', 0.5, 0.6);
+  addRandomRats(level, ceil(G.dims.swarmSize/2));
+  addRandomSpiders(level, ceil(G.dims.swarmSize/2));
+  addRandomPickups(level, G.dims.swarmSize);
+  return level;
+}
+
+function level15() {
+  let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+  let level = new Level('Level15');
+  level.attachBGSetup(desertArt);
+  let possum = addSleepyPossum(level, 0.5, 0.4);
+  let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
+  npc1.setCollectionRate(0.4);
+  npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 13, 0, 4), 32, 0, 0, 4);
+  npc1.update();
+  npc1.play();
+  let cage = level.newSpriteCollection('cage', 0.5, 0.4);
+  cage.addAnimation(1, G.loaders['cage'], 64, 0, 0, 1);
+  cage.update();
+  cage.play();
+  let dialog = level.newDialog(0.5, 0.6, returnTrue);
+  dialog.updateCoords('NPC1', npc1.current);
+  dialog.addDialogEvent('PC', 'Release ' + G.player.companion.name + ' right now!');
+  dialog.addDialogEvent('NPC1', 'Oh, you survived the cave.');
+  dialog.addDialogEvent('PC', 'You\'d better free that possum.');
+  dialog.addDialogEvent('NPC1', 'Or what? Possum is good eatting. And how do you know this is your possum?');
+  dialog.addDialogEvent('PC', 'I know ' + G.player.companion.name + '.');
+  dialog.addDialogEvent('NPC1', 'Yes yes. I guess we could trade.');
+  let parEvent = dialog.addDialogEvent('PC', '');
+  G.player.addItem('food');
+  dialog.addOption(parEvent, 'Everything I have. Take it.', function() { level.setSpritesToAttack(false); return G.player.emptyInventory()}, function () {return G.player.hasAnything();});
+  let ok = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Excellent.');
+  ok = dialog.addChildDialogEvent(ok, 'PC', G.player.companion.name + '!');
+  dialog.addOption(parEvent, 'The only thing I will give you is my FISTS IN YOUR FACE!.', function() { return level.setSpritesToAttack(false);}, returnTrue);
+  ok = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Ok ok! We don\'t need that.');
+  ok = dialog.addChildDialogEvent(ok, 'PC', G.player.companion.name + '!');
+
+
+  return level;
+}
+
 function finalLevel() {
   let level = new Level('final');
   level.attachBGSetup(snowArt);

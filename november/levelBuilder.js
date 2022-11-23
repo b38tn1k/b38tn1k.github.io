@@ -27,6 +27,19 @@ function preCaveArt(bg, fg){
   return bb;
 }
 
+function preTempleArt(bg, fg){
+//function splitSheet(src, res, row, start, end)
+  bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
+  bg.randomTile(splitSheet(G.loaders['grass'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
+  let bb = bg.drawPath(splitSheet(G.loaders['grass'], 64, 3, 0, 4), 4, 1);
+  bb[1] = 0;
+  bb[3] = 128;
+  bg.topBorderDouble(splitSheet(G.loaders['grass'], 64, 6, 0, 5), 5, 1);
+  bg.drawCave(splitSheet(G.loaders['grass'], 64, 7, 0, 3), 3, 1);
+  fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 4), 4, 1);
+  return bb;
+}
+
 function snowArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['snow'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['snow'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
@@ -58,7 +71,7 @@ function testLevelArt(bg, fg){
 function templeArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['temple'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['temple'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
-  fg.setBorder(splitSheet(G.loaders['temple'], 64, 2, 0, 4), 4, 1);
+  bg.setBorder(splitSheet(G.loaders['temple'], 64, 2, 0, 4), 4, 1);
   return [-1, -1, -1, -1];
 }
 
@@ -568,6 +581,7 @@ function level13() {
 
 function level14() {
   let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+  G.player.hasCompanion = false;
   let level = new Level('Level14');
   level.attachBGSetup(desertArt);
   addObstacle(level, 'desert', 0.25, 0.6);
@@ -582,6 +596,7 @@ function level14() {
 
 function level15() {
   let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+  G.player.hasCompanion = false;
   let level = new Level('Level15');
   level.attachBGSetup(desertArt);
   let possum = addSleepyPossum(level, 0.5, 0.4);
@@ -615,16 +630,78 @@ function level15() {
   return level;
 }
 
-function finalLevel() {
+function level16() {
+  let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
+  G.player.hasCompanion = true;
+  let level = new Level('Level16');
+  level.attachBGSetup(desertArt);
+  addObstacle(level, 'desert', 0.25, 0.5);
+  addObstacle(level, 'desert', 0.75, 0.5);
+  addObstacle(level, 'desert', 0.5, 0.5);
+  addRandomRats(level, ceil(G.dims.swarmSize/2));
+  addRandomSpiders(level, ceil(G.dims.swarmSize/2));
+  addRandomPickups(level, G.dims.swarmSize);
+  return level;
+}
+
+function penultimateLevel() {
+  G.player.hasCompanion = true;
   let level = new Level('final');
-  level.attachBGSetup(snowArt);
+  level.attachBGSetup(preTempleArt);
+  for (let i = 0; i < max(4, floor(G.dims.swarmSize/2)); i++) {
+    addSleepyPossum(level, random(0.1, 0.9), random(0.3, 0.8));
+  }
+  let dialog = level.newDialog(0.5, 0.6, returnTrue);
+  dialog.addDialogEvent('PC', 'Is this your family?');
+  dialog.addDialogEvent('PC', 'Is this your home?');
+  dialog.addDialogEvent('PC', 'I have been searching for this temple. Isn\'t that funny?');
+  dialog.addDialogEvent('PC', 'I guess you\'ve been searching for your family.');
+  let parEvent = dialog.addDialogEvent('PC', '');
+  dialog.addOption(parEvent, 'Thank you for all your help, ' + G.player.companion.name + '.', function() { return level.setSpritesToAttack(false);}, returnTrue);
+  dialog.addOption(parEvent, 'Goodbye, ' + G.player.companion.name + '.', function() { return level.setSpritesToAttack(false);}, returnTrue);
+
+
+  return level;
+}
+
+function finalLevel() {
+  G.player.hasCompanion = false;
+  let level = new Level('final');
   level.attachBGSetup(templeArt);
-  let possum = level.newSpriteCollection('possum', 0.5, 0.5);
-  possum.addAnimation(8, splitSheet(G.loaders['possum'], 48, 4, 0, 8), 'idle');
-  possum.setCollectionRate(0.4);
-  possum.chooseSequence('idle');
-  possum.update();
-  possum.play();
+  let boss = level.newSpriteCollection('comp', 0.5, 0.3);
+  boss.addAnimation(8, G.loaders['computer'], 96, 0, 0, 8);
+  boss.update();
+  boss.play();
+  let dialog = level.newDialog(0.5, 0.5, returnTrue);
+  dialog.updateCoords('comp', boss.current);
+  dialog.addDialogEvent('comp', 'cd .. && python4 god.py');
+  dialog.addDialogEvent('PC', 'Hello?');
+  dialog.addDialogEvent('comp', 'cd .. && python4 god.py');
+  dialog.addDialogEvent('comp', 'NameError: name \'tf\' is not defined');
+  dialog.addDialogEvent('comp', 'python4 /test/chatbot.py');
+  dialog.addDialogEvent('PC', 'ummm...');
+  dialog.addDialogEvent('comp', 'Welcome Visitor.');
+  dialog.addDialogEvent('comp', 'I am an all-knowing chat interface.');
+  dialog.addDialogEvent('comp', 'Do you want to chat?');
+  dialog.addDialogEvent('PC', 'I came to ask a question.');
+  dialog.addDialogEvent('comp', 'I can answer questions.');
+  let parEvent = dialog.addDialogEvent('PC', '');
+  dialog.addOption(parEvent, 'How many words are there?', returnTrue, returnTrue);
+  let resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Can you imagine the size of a dictionary.');
+  dialog.addOption(parEvent, 'What are atomic clocks made from?', returnTrue, returnTrue);
+  resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Atoms.');
+  dialog.addOption(parEvent, 'Is this the question I should ask?', returnTrue, returnTrue);
+  resp = dialog.addChildDialogEvent(parEvent, 'comp', '...');
+  dialog.addOption(parEvent, 'Tell me about possums.', returnTrue, returnTrue);
+  resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Possums are marsupials. They have existed for 20 million years. Possums are immune to some snake venoms.');
+  dialog.addOption(parEvent, 'OK. I\'m done. How do I leave.', returnTrue, returnTrue);
+  resp = dialog.addChildDialogEvent(parEvent, 'comp', 'You just do.');
+  parEvent = dialog.addChildDialogEvent(resp, 'PC', '');
+  function endIt(level) {
+    G.state = SHOW_MENU;
+    G.level.deleteDialogs();
+  }
+  dialog.addOption(parEvent, 'OK. Bye.', function(){return endIt();}, returnTrue);
 
   return level;
 }

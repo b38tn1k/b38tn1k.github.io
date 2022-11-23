@@ -34,7 +34,7 @@ class Dialog {
     this.fgcolor = G.colors[0];
     this.fontSize = 13;
     this.lineSpacing = 1.5;
-    this.pauseMult = 5;
+    this.pauseMult = 30;
     this.pauseMin = 500;
     this.textBoxWidth = 100;
     this.totalLineHeight = this.fontSize * this.lineSpacing;
@@ -363,8 +363,9 @@ class Dialog {
     for (let i = 0; i < this.onScr[key].options.length; i++) {
       if (this.onScr[key].conditions[i]() == true && this.onScr[key].options[i] != -1) {
         let fullText = '> ' + this.onScr[key].options[i];
-        let lineCount = ceil(this.layer.g.textWidth(fullText) / this.textBoxWidth);
-        let textBoxHeight =lineCount * (this.totalLineHeight);
+        // let lineCount = ceil(this.layer.g.textWidth(fullText) / this.textBoxWidth);
+        let textBoxHeight = this.calculateTextBoxHeight(fullText);
+        // let textBoxHeight =lineCount * (this.totalLineHeight);
         this.layer.g.fill(this.bgcolor);
         this.layer.g.rect(x, y, this.textBoxWidth, textBoxHeight);
         this.layer.g.fill(this.fgcolor);

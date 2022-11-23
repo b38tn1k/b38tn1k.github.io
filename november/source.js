@@ -112,6 +112,8 @@ function setupGame() {
   G.levelSetup.push(level13);
   G.levelSetup.push(level14);
   G.levelSetup.push(level15);
+  G.levelSetup.push(level16);
+  G.levelSetup.push(penultimateLevel);
   G.levelSetup.push(finalLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
@@ -129,6 +131,7 @@ function preload() {
   G.loaders['possum'] = loadImage('assets/possum.png');
   G.loaders['ghost'] = loadImage('assets/ghost.png');
   G.loaders['cage'] = loadImage('assets/cage.png');
+  G.loaders['computer'] = loadImage('assets/megaComputer.png');
   // UI
   G.loaders['compass'] = loadImage('assets/compass.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');

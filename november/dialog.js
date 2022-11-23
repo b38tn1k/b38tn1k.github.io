@@ -34,7 +34,7 @@ class Dialog {
     this.fgcolor = G.colors[0];
     this.fontSize = 13;
     this.lineSpacing = 1.5;
-    this.pauseMult = 40;
+    this.pauseMult = 5;
     this.pauseMin = 500;
     this.textBoxWidth = 100;
     this.totalLineHeight = this.fontSize * this.lineSpacing;

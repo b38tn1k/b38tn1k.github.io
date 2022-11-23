@@ -62,9 +62,9 @@ function templeArt(bg, fg){
   return [-1, -1, -1, -1];
 }
 
-function addRandomPickups(level, amount, name='chest') {
+function addRandomPickups(level, amount, name='chest', items = ['toy', 'food', 'bead']) {
   for (let i = 0; i < amount; i++) {
-    level.addPickup(random(0.2, 0.8), random(0.2, 0.8), ['toy', 'food']);
+    level.addPickup(random(0.2, 0.8), random(0.2, 0.8), items);
     level.pickups[i].chooseImage(name);
   }
   level.optimizePickups();
@@ -369,6 +369,8 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'uhhh. I don\'t think possums are afraid of the dark.');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Well, they hate ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'So do I. uh. OK. Daisy, stay!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Good Luck!');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
 
   ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Dr. Pinknose happy.');
   ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
@@ -378,6 +380,8 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'uhhh. I don\'t think possums are afraid of the dark.');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Well, they hate ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'So do I. uh. OK. Dr. Pinknose, stay!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Good Luck!');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
 
   ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Bitey happy.');
   ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
@@ -387,6 +391,8 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'uhhh. I don\'t think possums are afraid of the dark.');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Well, they hate ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'So do I. uh. OK. Bitey, stay!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Good Luck!');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
 
   ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Ziggy happy.');
   ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
@@ -396,6 +402,8 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'uhhh. I don\'t think possums are afraid of the dark.');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Well, they hate ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'So do I. uh. OK. Ziggy, stay!');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Good Luck!');
+  ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
   return level;
 }
 
@@ -408,7 +416,7 @@ function level8() {
   addObstacle(level, 'cave', 0.7, 0.7);
   addObstacle(level, 'cave', 0.7, 0.3);
   addObstacle(level, 'cave', 0.5, 0.5);
-  addRandomPickups(level, G.dims.swarmSize * 2, 'crystal1');
+  addRandomPickups(level, G.dims.swarmSize * 2, 'crystal1', ['crystal']);
   addRandomGhosts(level, G.dims.swarmSize);
 
   return level;

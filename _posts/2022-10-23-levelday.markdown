@@ -1,0 +1,18 @@
+---
+layout: post
+title:  "Level Day"
+date:   2022-10-23
+categories: [game, november]
+tags: gameprogress
+---
+
+A bunch of levels today, focusing on the main story beats of the game. I also cleaned up the level building script to break out some helper methods that kept turning up in level creation.
+
+When I kicked off this project I didn't know how far I would be able to get in a month but, if I had something half alright, I wanted to enter it in the Github November Game Jam competition. I think I will have enough by the end of November to give it a try! Hooray.
+
+I still have a couple TODOs but i think they are achievable:
+- make some of the animations cleaner.
+- add the soundtrack (already recorded)
+- make randomHuman() have a couple different sprite options to chose from.
+- finish up the final level.
+- and probably some I can't think of right now.

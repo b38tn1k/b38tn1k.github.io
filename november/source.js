@@ -107,6 +107,9 @@ function setupGame() {
   G.levelSetup.push(level8);
   G.levelSetup.push(level9);
   G.levelSetup.push(level10);
+  G.levelSetup.push(level11);
+  G.levelSetup.push(level12);
+  G.levelSetup.push(level13);
   G.levelSetup.push(finalLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
@@ -134,6 +137,8 @@ function preload() {
   // pickups
   G.loaders['chest'] = loadImage('assets/chest.png');
   G.loaders['crystal1'] = loadImage('assets/crystal.png');
+  G.loaders['medicine1'] = loadImage('assets/medicine1.png');
+  G.loaders['medicine'] = loadImage('assets/medicine.png');
   // fonts and logos
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
   G.loaders['logo'] = loadImage('assets/logo.png');

@@ -2,7 +2,7 @@ function grassArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['grass'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['grass'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
   let bb = bg.drawPath(splitSheet(G.loaders['grass'], 64, 3, 0, 4), 4, 1);
-  fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 2), 2, 1);
+  fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 4), 4, 1);
   return bb;
 }
 
@@ -23,7 +23,7 @@ function preCaveArt(bg, fg){
   bb[3] = 128;
   bg.topBorderDouble(splitSheet(G.loaders['grass'], 64, 4, 0, 5), 5, 1);
   bg.drawCave(splitSheet(G.loaders['grass'], 64, 5, 0, 3), 3, 1);
-  fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 2), 2, 1);
+  fg.border(splitSheet(G.loaders['grass'], 64, 2, 0, 4), 4, 1);
   return bb;
 }
 
@@ -31,7 +31,7 @@ function snowArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['snow'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['snow'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
   let bb = bg.drawPath(splitSheet(G.loaders['snow'], 64, 3, 0, 4), 4, 1);
-  fg.border(splitSheet(G.loaders['snow'], 64, 2, 0, 3), 3, 1);
+  fg.border(splitSheet(G.loaders['snow'], 64, 2, 0, 4), 4, 1);
   return bb;
 }
 
@@ -39,7 +39,7 @@ function townArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['town'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['town'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
   let bb = bg.drawPath(splitSheet(G.loaders['town'], 64, 3, 0, 4), 4, 1);
-  fg.border(splitSheet(G.loaders['town'], 64, 2, 0, 2), 2, 1);
+  fg.border(splitSheet(G.loaders['town'], 64, 2, 0, 4), 4, 1, 1, 1);
   return bb;
 }
 
@@ -47,7 +47,7 @@ function desertArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['desert'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['desert'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
   let bb = bg.drawPath(splitSheet(G.loaders['desert'], 64, 3, 0, 4), 4, 1);
-  fg.border(splitSheet(G.loaders['desert'], 64, 2, 0, 2), 2, 1);
+  fg.border(splitSheet(G.loaders['desert'], 64, 2, 0, 4), 4, 1);
   return bb;
 }
 function testLevelArt(bg, fg){
@@ -139,8 +139,9 @@ function addFinAndJake(level){
 
 function addRandomHumans(level, amount) {
   let otherNPCs;
+  let count = 10
   for (let i = 0; i < amount; i++) {
-    otherNPCs = level.newSpriteCollection('NPC', random(), random(), 1);
+    otherNPCs = level.newSpriteCollection('NPC' + String(count + i), random(), random(), 1);
     // npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 7, 0, 8), 32, 0, 0, 1);
     otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 7, 0, 8), 'right');
     otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 6, 0, 8), 'left');
@@ -443,10 +444,122 @@ function level9() {
 }
 
 function level10() {
-  let level = new Level('level9');
+  let level = new Level('level10');
   G.player.hasCompanion = false;
   level.attachBGSetup(townArt);
+  let npc1 = level.newSpriteCollection('NPC1', 0.6, 0.3);
+  npc1.setCollectionRate(0.4); // add more humans!
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
+  npc1.update();
+  npc1.play();
+  let npc2 = level.newSpriteCollection('NPC2', 0.3, 0.4);
+  npc2.setCollectionRate(0.4);
+  npc2.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
+  npc2.update();
+  npc2.play();
   addRandomHumans(level, 10);
+  let dialog = level.newDialog(0.5, 0.5, returnTrue);
+  dialog.updateCoords('NPC1', npc1.current);
+  dialog.updateCoords('NPC2', npc2.current);
+  dialog.addDialogEvent('PC', 'Has anyone seen an old man with a possum?');
+  dialog.addDialogEvent('NPC2', 'An old man with a possum? I dont think so.');
+  dialog.addDialogEvent('PC', 'He tricked me and stole my possum!');
+  dialog.addDialogEvent('NPC1', 'One of our foragers was attacked in the woods. They are looking after him just up the road. Maybe he knows something.');
+  dialog.addDialogEvent('PC', 'Thank you.');
+  dialog.addDialogEvent('NPC1', 'I hope you find your possum.');
+  dialog.addDialogEvent('NPC2', 'Old man. Possum. Hmmm...');
+  return level;
+}
+
+function level11() {
+  let level = new Level('level11');
+  G.player.hasCompanion = false;
+  level.attachBGSetup(townArt);
+  let npc1 = level.newSpriteCollection('NPC1', 0.6, 0.3);
+  npc1.setCollectionRate(0.4); // add more humans!
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
+  npc1.update();
+  npc1.play();
+  let npc2 = level.newSpriteCollection('NPC2', 0.6, 0.4);
+  npc2.setCollectionRate(0.4);
+  npc2.addAnimation(6, splitSheet(G.loaders['humanoid1'], 64, 8, 0, 6), 32, 0, 0, 6);
+  npc2.update();
+  npc2.play();
+  let dialog = level.newDialog(0.5, 0.5, returnTrue);
+  dialog.updateCoords('NPC1', npc1.current);
+  dialog.addDialogEvent('PC', 'The townsfold said your friend was attacked?');
+  dialog.addDialogEvent('NPC1', 'Yes. He was gathering food in the forest. Someone hit him and stole all the food.');
+  dialog.addDialogEvent('PC', 'Did he describe his attacker? I\'m looking for a possum-napper.');
+  dialog.addDialogEvent('NPC1', 'He\s been unconcious since we found him. We need medicine from the forest, but it\'s too dangerous.');
+  dialog.addDialogEvent('PC', 'I\'ll get your medicine.');
+  return level;
+}
+
+function level12() {
+  let level = new Level('level12');
+  level.attachBGSetup(grassArt);
+  G.player.hasCompanion = false;
+  addObstacle(level, 'grass', 0.25, 0.6);
+  addObstacle(level, 'grass', 0.75, 0.6);
+  addObstacle(level, 'grass', 0.5, 0.25);
+  addObstacle(level, 'grass', 0.5, 0.6);
+  addRandomRats(level, ceil(G.dims.swarmSize/2));
+  addRandomPickups(level, G.dims.swarmSize*2, 'medicine1', ['medicine']);
+  addRandomPickups(level, ceil(G.dims.swarmSize/2));
+  return level;
+}
+
+function level13() {
+  let level = new Level('level13');
+  G.player.hasCompanion = false;
+  level.attachBGSetup(townArt);
+  let npc1 = level.newSpriteCollection('NPC1', 0.4, 0.3);
+  npc1.setCollectionRate(0.4); // add more humans!
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
+  npc1.update();
+  npc1.play();
+  let npc2 = level.newSpriteCollection('NPC2', 0.6, 0.3);
+  npc2.setCollectionRate(0.4);
+  npc2.addAnimation(6, splitSheet(G.loaders['humanoid1'], 64, 8, 0, 6), 32, 0, 0, 6);
+  npc2.update();
+  npc2.play();
+  let dialog = level.newDialog(0.5, 0.5, returnTrue);
+  dialog.updateCoords('NPC1', npc1.current);
+  dialog.updateCoords('NPC2', npc2.current);
+  dialog.addDialogEvent('PC', 'I\'m back');
+  dialog.addDialogEvent('NPC1', 'With medicine?');
+  G.player.addItem('medicine', 10);
+  if (G.player.inventory.hasItems('medicine') == true) {
+    let parEvent = dialog.addDialogEvent('PC', '');
+    dialog.addOption(parEvent, 'Yes. Here.', function () {return G.player.removeMedicine();}, returnTrue);
+    dialog.addOption(parEvent, 'Did he say anything while I was gone?', function () {return G.player.removeMedicine();}, returnTrue);
+    let ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Wonderful. He should wake up soon.');
+    ok = dialog.addChildDialogEvent(ok,'NPC1', '...');
+    ok = dialog.addChildDialogEvent(ok, 'NPC2', 'Wha... Where am I?');
+    ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You were attack. In the forest.');
+    ok = dialog.addChildDialogEvent(ok, 'NPC2', 'I remember. An old man. With a caged possum.');
+    ok = dialog.addChildDialogEvent(ok, 'PC', 'Where is he!?');
+    ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You need to rest.');
+    ok = dialog.addChildDialogEvent(ok, 'NPC2', 'I\'m ok. He was heading towards the desert.');
+    ok = dialog.addChildDialogEvent(ok, 'PC', 'Thankyou.');
+
+    ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'No. I will give him the medicine. He should wake up soon.');
+    ok = dialog.addChildDialogEvent(ok,'NPC1', '...');
+    ok = dialog.addChildDialogEvent(ok, 'NPC2', 'Wha... Where am I?');
+    ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You were attack. In the forest.');
+    ok = dialog.addChildDialogEvent(ok, 'NPC2', 'I remember. An old man. With a caged possum.');
+    ok = dialog.addChildDialogEvent(ok, 'PC', 'Where is he!?');
+    ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You need to rest.');
+    ok = dialog.addChildDialogEvent(ok, 'NPC2', 'I\'m ok. He was heading towards the desert.');
+    ok = dialog.addChildDialogEvent(ok, 'PC', 'Thankyou.');
+  } else {
+    dialog.addDialogEvent('PC', 'No. I\'m so sorry.');
+    dialog.addDialogEvent('NPC1', 'We will manage.');
+    dialog.addDialogEvent('PC', 'Do you have any idea where the possum-napper might be?');
+    dialog.addDialogEvent('NPC1', 'The desert north of here is full of villians.');
+    dialog.addDialogEvent('PC', 'I will search there.');
+    dialog.addDialogEvent('NPC1', 'Good luck!');
+  }
 
   return level;
 }

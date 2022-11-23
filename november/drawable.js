@@ -130,15 +130,15 @@ class Drawable {
 
   }
 
-  border(tileset, length, height) {
+  border(tileset, length, height, rdivY=4, rdivX=2) {
     let resX = tileset.width/length;
     let resY = tileset.height/height;
     let widthInTiles = ceil((this.g.width) / resX);
     let tileOverlapX = 2;
     let choice = 0;
     let borderWidth = int(ceil(0.07 * widthInTiles)) * tileOverlapX;
-    let hResY = resY/4;
-    let hResX = resX/2;
+    let hResY = resY/rdivY;
+    let hResX = resX/rdivX;
     let borderL = 1;
     let borderR = 1;
     let xL = -hResX;

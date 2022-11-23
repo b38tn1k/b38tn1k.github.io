@@ -518,12 +518,12 @@ function level13() {
   npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
   npc1.update();
   npc1.play();
-  let npc2 = level.newSpriteCollection('NPC2', 0.6, 0.3);
+  let npc2 = level.newSpriteCollection('NPC2', 0.6, 0.5);
   npc2.setCollectionRate(0.4);
   npc2.addAnimation(6, splitSheet(G.loaders['humanoid1'], 64, 8, 0, 6), 32, 0, 0, 6);
   npc2.update();
   npc2.play();
-  let dialog = level.newDialog(0.5, 0.5, returnTrue);
+  let dialog = level.newDialog(0.5, 0.6, returnTrue);
   dialog.updateCoords('NPC1', npc1.current);
   dialog.updateCoords('NPC2', npc2.current);
   dialog.addDialogEvent('PC', 'I\'m back');
@@ -542,6 +542,7 @@ function level13() {
     ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You need to rest.');
     ok = dialog.addChildDialogEvent(ok, 'NPC2', 'I\'m ok. He was heading towards the desert.');
     ok = dialog.addChildDialogEvent(ok, 'PC', 'Thankyou.');
+    ok = dialog.addChildDialogEvent(ok, 'NPC2', 'Find him.');
 
     ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'No. I will give him the medicine. He should wake up soon.');
     ok = dialog.addChildDialogEvent(ok,'NPC1', '...');
@@ -552,6 +553,7 @@ function level13() {
     ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You need to rest.');
     ok = dialog.addChildDialogEvent(ok, 'NPC2', 'I\'m ok. He was heading towards the desert.');
     ok = dialog.addChildDialogEvent(ok, 'PC', 'Thankyou.');
+    ok = dialog.addChildDialogEvent(ok, 'NPC2', 'Find him.');
   } else {
     dialog.addDialogEvent('PC', 'No. I\'m so sorry.');
     dialog.addDialogEvent('NPC1', 'We will manage.');

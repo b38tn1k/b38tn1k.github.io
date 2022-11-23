@@ -59,6 +59,9 @@ class UIElements {
   constructor() {
     this.layer = G.graphLayers.getLayer('UI', true, 100);
     this.layer.g.imageMode(CENTER);
+    this.layer.g.textFont(G.loaders['font']);
+    this.textSize = 14;
+    this.layer.g.textSize(this.textSize);
     this.cmp = {}
     this.cmp.bg = newDrawableFromImage(splitSheet(G.loaders['compass'], 38, 0, 0, 1));
     this.cmp.fg = newDrawableFromImage(splitSheet(G.loaders['compass'], 38, 2, 1, 9));
@@ -124,12 +127,35 @@ class UIElements {
   }
 
   draw() {
+    this.layer.g.clear();
     this.layer.g.image(this.cmp.bg.g, this.cmp.x, this.cmp.y);
     let selection = int(((this.cmp.fg.rot + radians(22.5) + PI)/TWO_PI) * 8);
     selection = (selection == 8) ? 0 : selection;
     this.layer.g.image(this.cmp.fg.g, this.cmp.x, this.cmp.y, 38, 38, selection*38, 0, 38, 38);
     this.layer.g.image(this.inv.g, this.inv.tx, this.inv.ty);
     this.layer.g.image(this.border.g, this.inv.tx, this.inv.ty);
+    if (G.state == SHOW_MENU) {
+      let name = 'logo';
+      if (G.loaders[name].width > width * 0.95) {
+        name = 'logoS'
+      }
+      this.layer.g.fill(G.colors[2]);
+      this.layer.g.noStroke();
+      this.layer.g.rectMode(CENTER);
+      let x = this.layer.tx;
+      let y = (3*this.layer.ty)/5;
+      let h = G.loaders[name].height * 1.5;
+      let w = G.loaders[name].width * 1.2;
+      this.layer.g.rect(x, y, G.loaders[name].width * 1.2, h);
+      this.layer.g.fill(G.colors[0]);
+      let textX = x + (w/2) - this.layer.g.textWidth('b38tn1k.com   ');
+      let texty = (y + h/2) - this.textSize/2;
+      this.layer.g.text('b38tn1k.com',textX ,texty );
+
+
+      this.layer.g.image(G.loaders[name], x, y);//, w, h);
+    }
+
   }
 
 };

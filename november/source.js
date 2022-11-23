@@ -10,8 +10,11 @@ function windowResized() {
   setupScreen();
   rebuildLevel();
 }
-
+function mousePressed() {
+  G.state = PLAY_GAME;
+}
 function keyPressed() {
+  G.state = PLAY_GAME;
   if (key == 'p') {
     saveImage();
   }
@@ -137,8 +140,10 @@ function preload() {
   // pickups
   G.loaders['chest'] = loadImage('assets/chest.png');
   G.loaders['crystal1'] = loadImage('assets/crystal.png');
-  // font
+  // fonts and logos
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
+  G.loaders['logo'] = loadImage('assets/logo.png');
+  G.loaders['logoS'] = loadImage('assets/logoSmol.png');
   // maps
   G.loaders['grass'] = loadImage('assets/grasslands.png');
   G.loaders['desert'] = loadImage('assets/desert.png');
@@ -159,7 +164,6 @@ function setup() {
 }
 
 function draw() {
-  // console.log(G.graphLayers.getLayerNames());
   G.graphLayers.clear();
   G.inputs.update();
   G.UIElements.update(G.player, G.inputs);

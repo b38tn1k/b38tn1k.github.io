@@ -65,6 +65,7 @@ class InputHandler {
     }
     this.prevOn = this.on;
   }
+
   angleToSprite(sprite){
     let dx = sprite.tx - this.x;
     let dy = sprite.ty - this.y;

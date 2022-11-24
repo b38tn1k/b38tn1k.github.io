@@ -549,7 +549,7 @@ function level13() {
     let ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Wonderful. He should wake up soon.');
     ok = dialog.addChildDialogEvent(ok,'NPC1', '...');
     ok = dialog.addChildDialogEvent(ok, 'NPC2', 'Wha... Where am I?');
-    ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You were attack. In the forest.');
+    ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You were attacked. In the forest.');
     ok = dialog.addChildDialogEvent(ok, 'NPC2', 'I remember. An old man. With a caged possum.');
     ok = dialog.addChildDialogEvent(ok, 'PC', 'Where is he!?');
     ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You need to rest.');
@@ -560,7 +560,7 @@ function level13() {
     ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'No. I will give him the medicine. He should wake up soon.');
     ok = dialog.addChildDialogEvent(ok,'NPC1', '...');
     ok = dialog.addChildDialogEvent(ok, 'NPC2', 'Wha... Where am I?');
-    ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You were attack. In the forest.');
+    ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You were attacked. In the forest.');
     ok = dialog.addChildDialogEvent(ok, 'NPC2', 'I remember. An old man. With a caged possum.');
     ok = dialog.addChildDialogEvent(ok, 'PC', 'Where is he!?');
     ok = dialog.addChildDialogEvent(ok, 'NPC1', 'You need to rest.');

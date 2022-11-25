@@ -12,14 +12,14 @@ function windowResized() {
 }
 function mousePressed() {
   G.state = PLAY_GAME;
-  // userStartAudio();
+  userStartAudio();
 }
 function touchStarted() {
-  // userStartAudio();
+  userStartAudio();
 }
 function keyPressed() {
   G.state = PLAY_GAME;
-  // userStartAudio();
+  userStartAudio();
   if (key == 'p') {
     saveImage();
   }
@@ -61,10 +61,6 @@ function setupScreen() {
 function setupGame() {
   G.dims = new Dimensions();
   G.player = new PlayerCharacter(); // resolution, column, start, end
-  // G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 8, 1, 8), 'up', [0, 4], 0);
-  // G.player.addAnimation(7, splitSheet(G.loaders['player-boots'], 64, 10, 1, 8), 'down',[0, 4], 0);
-  // G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 9, 0, 8), 'left',[0, 4], 0);
-  // G.player.addAnimation(8, splitSheet(G.loaders['player-boots'], 64, 11, 0, 8), 'right',[0, 4], 0);
   G.loaders['player-noboots-down'] = splitSheet(G.loaders['humanoid2'], 64, 0, 0, 4);
   G.loaders['player-noboots-up'] = splitSheet(G.loaders['humanoid2'], 64, 1, 0, 4);
   G.loaders['player-boots-down'] = splitSheet(G.loaders['humanoid2'], 64, 2, 0, 4);
@@ -162,8 +158,8 @@ function preload() {
   G.loaders['cave'] = loadImage('assets/cave.png');
   G.loaders['town'] = loadImage('assets/town.png');
   // soundtrack
-  // soundFormats('mp3');
-  // G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3')
+  soundFormats('mp3');
+  G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3')
 }
 
 function setup() {
@@ -175,8 +171,8 @@ function setup() {
   rectMode(CENTER);
   pixelDensity(1);
   frameRate(30);
-  // getAudioContext().suspend();
-  // G.loaders['ost'].loop(0, 1, 0.75);
+  getAudioContext().suspend();
+  G.loaders['ost'].loop(0, 1, 0.75);
 }
 
 function draw() {

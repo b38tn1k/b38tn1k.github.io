@@ -75,7 +75,7 @@ function templeArt(bg, fg){
   return [-1, -1, -1, -1];
 }
 
-function addRandomPickups(level, amount, name='chest', items = ['toy', 'food', 'bead']) {
+function addRandomPickups(level, amount, name='chest', items = ['toy', 'food', 'food', 'bead']) {
   for (let i = 0; i < amount; i++) {
     level.addPickup(random(0.2, 0.8), random(0.2, 0.8), items);
     level.pickups[i].chooseImage(name);
@@ -674,26 +674,30 @@ function finalLevel() {
   boss.play();
   let dialog = level.newDialog(0.5, 0.5, returnTrue);
   dialog.updateCoords('comp', boss.current);
-  dialog.addDialogEvent('comp', 'cd .. && python4 god.py');
-  dialog.addDialogEvent('PC', 'Hello?');
-  dialog.addDialogEvent('comp', 'cd .. && python4 god.py');
-  dialog.addDialogEvent('comp', 'NameError: name \'tf\' is not defined');
-  dialog.addDialogEvent('comp', 'python4 /test/chatbot.py');
-  dialog.addDialogEvent('PC', 'ummm...');
-  dialog.addDialogEvent('comp', 'Welcome Visitor.');
-  dialog.addDialogEvent('comp', 'I am an all-knowing chat interface.');
-  dialog.addDialogEvent('comp', 'Do you want to chat?');
-  dialog.addDialogEvent('PC', 'I came to ask a question.');
+  // dialog.addDialogEvent('comp', 'cd .. && python4 godTest.py');
+  // dialog.addDialogEvent('PC', 'Hello?');
+  // dialog.addDialogEvent('comp', 'NameError: name \'tf\' is not defined');
+  // dialog.addDialogEvent('comp', 'python4 /test/chatbot.py');
+  // dialog.addDialogEvent('PC', 'ummm...');
+  // dialog.addDialogEvent('comp', 'Welcome Visitor.');
+  // dialog.addDialogEvent('comp', 'I am an all-knowing chat interface.');
+  // dialog.addDialogEvent('comp', 'Do you want to chat?');
+  // dialog.addDialogEvent('PC', 'I came to ask a question.');
   dialog.addDialogEvent('comp', 'I can answer questions.');
   let parEvent = dialog.addDialogEvent('PC', '');
   dialog.addOption(parEvent, 'How many words are there?', returnTrue, returnTrue);
-  let resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Can you imagine the size of a dictionary.');
+  let resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Can you imagine the size of a dictionary?');
+  // resp.children.push(parEvent);
+  // console.log(resp);
   dialog.addOption(parEvent, 'What are atomic clocks made from?', returnTrue, returnTrue);
-  resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Atoms.');
+  resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Atoms. I think.');
+  // resp.children = [parEvent];
   dialog.addOption(parEvent, 'Is this the question I should ask?', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(parEvent, 'comp', '...');
+  // resp.children = [parEvent];
   dialog.addOption(parEvent, 'Tell me about possums.', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Possums are marsupials. They have existed for 20 million years. Possums are immune to some snake venoms.');
+  // resp.children = [parEvent];
   dialog.addOption(parEvent, 'OK. I\'m done. How do I leave.', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(parEvent, 'comp', 'You just do.');
   parEvent = dialog.addChildDialogEvent(resp, 'PC', '');

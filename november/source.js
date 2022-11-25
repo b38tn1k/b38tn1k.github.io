@@ -12,9 +12,11 @@ function windowResized() {
 }
 function mousePressed() {
   G.state = PLAY_GAME;
+  userStartAudio();
 }
 function keyPressed() {
   G.state = PLAY_GAME;
+  userStartAudio();
   if (key == 'p') {
     saveImage();
   }
@@ -96,24 +98,24 @@ function setupGame() {
   G.player.emptyInventory();
   G.player.backupInventory();
   // LEVEL SETUP
-  G.levelSetup.push(level0);
-  G.levelSetup.push(level1);
-  G.levelSetup.push(level2);
-  G.levelSetup.push(level3);
-  G.levelSetup.push(level4);
-  G.levelSetup.push(level5);
-  G.levelSetup.push(level6);
-  G.levelSetup.push(level7);
-  G.levelSetup.push(level8);
-  G.levelSetup.push(level9);
-  G.levelSetup.push(level10);
-  G.levelSetup.push(level11);
-  G.levelSetup.push(level12);
-  G.levelSetup.push(level13);
-  G.levelSetup.push(level14);
-  G.levelSetup.push(level15);
-  G.levelSetup.push(level16);
-  G.levelSetup.push(penultimateLevel);
+  // G.levelSetup.push(level0);
+  // G.levelSetup.push(level1);
+  // G.levelSetup.push(level2);
+  // G.levelSetup.push(level3);
+  // G.levelSetup.push(level4);
+  // G.levelSetup.push(level5);
+  // G.levelSetup.push(level6);
+  // G.levelSetup.push(level7);
+  // G.levelSetup.push(level8);
+  // G.levelSetup.push(level9);
+  // G.levelSetup.push(level10);
+  // G.levelSetup.push(level11);
+  // G.levelSetup.push(level12);
+  // G.levelSetup.push(level13);
+  // G.levelSetup.push(level14);
+  // G.levelSetup.push(level15);
+  // G.levelSetup.push(level16);
+  // G.levelSetup.push(penultimateLevel);
   G.levelSetup.push(finalLevel);
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
@@ -156,6 +158,9 @@ function preload() {
   G.loaders['temple'] = loadImage('assets/temple.png');
   G.loaders['cave'] = loadImage('assets/cave.png');
   G.loaders['town'] = loadImage('assets/town.png');
+  // soundtrack
+  soundFormats('mp3');
+  G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3')
 }
 
 function setup() {
@@ -167,6 +172,9 @@ function setup() {
   rectMode(CENTER);
   pixelDensity(1);
   frameRate(30);
+  getAudioContext().suspend();
+  G.loaders['ost'].loop(0, 1, 0.75);
+
 }
 
 function draw() {

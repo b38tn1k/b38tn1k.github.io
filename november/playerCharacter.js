@@ -3,7 +3,11 @@ class HitThing {
     if (value > 0) {
       value = '+' + String(value);
     }
-    this.words = name + ' ' + String(value);
+    if (value == 0) {
+      this.words = name;
+    } else {
+      this.words = name + ' ' + String(value);
+    }
     this.time = millis() + 300;
     this.is = true;
     this.x = x;
@@ -111,6 +115,7 @@ class PlayerCharacter extends SpriteCollection {
     this.keyBasedDir = 'up';
     this.hit = {};
     this.hit.is = false;
+    this.isStuck = false;
   }
 
   moveNorth(){
@@ -314,6 +319,10 @@ class PlayerCharacter extends SpriteCollection {
     }
     if (this.makeEntry == true) {
       this.enterLevel(level, input);
+    } else if (this.isStuck == true) {
+      this.current.play = true;
+      this.current.stopAtOne = false;
+      super.update();
     } else {
       this.doUpdate(level, input);
     }

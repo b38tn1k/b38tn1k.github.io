@@ -52,50 +52,6 @@ class Companion extends ChasingSprites {
       if (continueFlag == true) {
         this.setTarget(level.pickups[this.pickupCounter]);
       }
-    //   if (this.target == null) {
-    //     this.target = level.pickups[this.pickupCounter];
-    //     while (this.target.isActive == false) {
-    //       this.pickupCounter += 1;
-    //       this.target = level.pickups[this.pickupCounter];
-    //     }
-    //   }
-    //
-    //   let approach = bounded(this.target.bbox, this.current.tx, this.current.ty);
-    //   if (approach.horizontal == true) {
-    //     // do nothing;
-    //   } else if (approach.onLeft == true) {
-    //     this.current.tx += this.movementSpeed;
-    //   } else {
-    //     this.current.tx -= this.movementSpeed;
-    //   }
-    //   if (approach.vertical == true) {
-    //     // do nothing
-    //   } else if (approach.onTop == true) {
-    //     this.current.ty += this.movementSpeed;
-    //   } else {
-    //     this.current.ty -= this.movementSpeed;
-    //   }
-    //
-    //   for (let i = 0; i < level.pickups.length; i++) {
-    //     if (bounded(level.pickups[i].bbox, this.current.tx, this.current.ty).complete == true) {
-    //       if (level.pickups[i].isActive == true) {
-    //         player.addItem(level.pickups[i].item);
-    //         player.hit = new HitThing(level.pickups[i].item, 1, this.current.tx, this.current.ty);
-    //       }
-    //       level.pickups[i].isActive = false;
-    //       // level.pickups.splice(i, 1);
-    //       while (this.target.isActive == false) {
-    //         this.pickupCounter += 1;
-    //         if (this.pickupCounter >= level.pickups.length) {
-    //           level.pickups = [];
-    //           break;
-    //         } else {
-    //           this.target = level.pickups[this.pickupCounter];
-    //         }
-    //       }
-    //       break;
-    //     }
-    //   }
     }
   }
 

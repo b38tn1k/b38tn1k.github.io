@@ -69,6 +69,7 @@ function setupGame() {
   G.loaders['player-noboots-right'] = splitSheet(G.loaders['humanoid2'], 64, 5, 0, 4);
   G.loaders['player-boots-left'] = splitSheet(G.loaders['humanoid2'], 64, 6, 0, 4);
   G.loaders['player-boots-right'] = splitSheet(G.loaders['humanoid2'], 64, 7, 0, 4);
+  G.loaders['player-stuck'] = splitSheet(G.loaders['humanoid2'], 64, 8, 0, 4);
 
   G.player.addAnimation(8, G.loaders['player-noboots-up'], 'up', [0, 4], 0);
   G.player.addAnimation(8, G.loaders['player-noboots-down'], 'down',[0, 4], 0);
@@ -79,6 +80,8 @@ function setupGame() {
   G.player.addAnimation(8, G.loaders['player-boots-down'], 'down',[0, 4], 0);
   G.player.addAnimation(8, G.loaders['player-boots-left'], 'left',[0, 4], 0);
   G.player.addAnimation(8, G.loaders['player-boots-right'], 'right',[0, 4], 0);
+
+  G.player.addAnimation(8, G.loaders['player-stuck'], 'stuck');
 
   G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 0, 0, 8), 'left');
   G.player.companion.addAnimation(8, splitSheet(G.loaders['possum'], 48, 1, 0, 8), 'right');
@@ -104,6 +107,7 @@ function setupGame() {
   G.levelSetup.push(level4);
   G.levelSetup.push(level5);
   G.levelSetup.push(level6);
+  G.levelSetup.push(level6v2);
   G.levelSetup.push(level7);
   G.levelSetup.push(level8);
   G.levelSetup.push(level9);
@@ -116,6 +120,8 @@ function setupGame() {
   G.levelSetup.push(level16);
   G.levelSetup.push(penultimateLevel);
   G.levelSetup.push(finalLevel);
+  // G.levelSetup.push(testLevel);
+
   G.level = G.levelSetup[G.levelPointer]();
   G.level.drawStatics();
 }
@@ -133,6 +139,7 @@ function preload() {
   G.loaders['ghost'] = loadImage('assets/ghost.png');
   G.loaders['cage'] = loadImage('assets/cage.png');
   G.loaders['computer'] = loadImage('assets/megaComputer.png');
+  G.loaders['puddle'] = loadImage('assets/puddle.png');
   // UI
   G.loaders['compass'] = loadImage('assets/compass.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');
@@ -159,7 +166,7 @@ function preload() {
   G.loaders['town'] = loadImage('assets/town.png');
   // soundtrack
   soundFormats('mp3');
-  G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3')
+  // G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3')
 }
 
 function setup() {
@@ -172,7 +179,7 @@ function setup() {
   pixelDensity(1);
   frameRate(30);
   getAudioContext().suspend();
-  G.loaders['ost'].loop(0, 1, 0.75);
+  // G.loaders['ost'].loop(0, 1, 0.75);
 }
 
 function draw() {

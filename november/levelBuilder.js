@@ -83,6 +83,14 @@ function addRandomPickups(level, amount, name='chest', items = ['toy', 'food', '
   level.optimizePickups();
 }
 
+function addPuddle(level, x, y){
+  let puddle = level.newSpriteCollection('puddle', x, y, 3);
+  puddle.addAnimation(4, G.loaders['puddle'], 'idle', 0, 0, 4);
+  puddle.setCollectionRate(0.4);
+  puddle.update();
+  puddle.play();
+}
+
 function addRandomGhosts(level, amount) {
   let ghost;
   for (let i = 0; i < amount; i++) {
@@ -345,9 +353,35 @@ function level6() {
   addObstacle(level, 'grass', 0.75, 0.6);
   addObstacle(level, 'grass', 0.5, 0.25);
   addObstacle(level, 'grass', 0.5, 0.6);
+  addPuddle(level, 0.35, 0.5);
+  addPuddle(level, 0.65, 0.5);
+  addPuddle(level, 0.35, 0.25);
+  addPuddle(level, 0.65, 0.25);
+  addRandomPickups(level, G.dims.swarmSize);
+  // addRandomRats(level, ceil(G.dims.swarmSize/2));
+  // addRandomSpiders(level, ceil(G.dims.swarmSize/2));
+  // let dialog = level.newDialog(0.5, 0.1, returnTrue);
+  // dialog.addDialogEvent('PC', 'Thanks for the help, possum!');
+
+  return level;
+}
+
+function level6v2() {
+  let level = new Level('level6v2');
+  level.attachBGSetup(grassArt);
+  G.player.hasCompanion = true;
+
+  addPuddle(level, 0.25, 0.6);
+  addPuddle(level, 0.75, 0.6);
+  addPuddle(level, 0.5, 0.25);
+  addPuddle(level, 0.5, 0.6);
+  addObstacle(level, 'grass', 0.35, 0.5);
+  addObstacle(level, 'grass', 0.65, 0.5);
+  addObstacle(level, 'grass', 0.35, 0.25);
+  addObstacle(level, 'grass', 0.65, 0.25);
+  addRandomPickups(level, G.dims.swarmSize);
   addRandomRats(level, ceil(G.dims.swarmSize/2));
   addRandomSpiders(level, ceil(G.dims.swarmSize/2));
-  addRandomPickups(level, G.dims.swarmSize);
   return level;
 }
 
@@ -365,9 +399,8 @@ function level7() {
   let dialog = level.newDialog(0.5, 0.3, returnTrue);
   dialog.updateCoords('NPC1', npc1.current);
   dialog.addDialogEvent('NPC1', 'That opossum looks ravenous!');
-  dialog.addDialogEvent('PC', 'Yeh... it just started following me around.');
-  dialog.addDialogEvent('NPC1', 'It must like you! If you feed it, it will probably help you out.');
-  dialog.addDialogEvent('PC', 'Interesting...');
+  dialog.addDialogEvent('PC', 'Yeh... it just started following me around. It helps me with loot and puddles.');
+  dialog.addDialogEvent('NPC1', 'It must like you! If you feed it, it will probably help you even more!');
   dialog.addDialogEvent('NPC1', 'Have you given it a name?');
   let parEvent = dialog.addDialogEvent('PC', '');
   dialog.addOption(parEvent, 'Daisy', function () {return G.player.companion.name = 'Daisy';}, returnTrue);
@@ -376,7 +409,7 @@ function level7() {
   dialog.addOption(parEvent, 'Ziggy', function () {return G.player.companion.name = 'Ziggy';}, returnTrue);
 
   let ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Daisy happy.');
-  let ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  // let ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Possums are afraid of the dark. You should leave Daisy with me.');
@@ -387,7 +420,7 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
 
   ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Dr. Pinknose happy.');
-  ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  // ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Possums are afraid of the dark. You should leave Dr. Pinknose with me.');
@@ -398,7 +431,7 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
 
   ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Bitey happy.');
-  ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  // ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Possums are afraid of the dark. You should leave Bitey with me.');
@@ -409,7 +442,7 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
 
   ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Ziggy happy.');
-  ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
+  // ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Possums are afraid of the dark. You should leave Ziggy with me.');
@@ -639,6 +672,9 @@ function level16() {
   addObstacle(level, 'desert', 0.25, 0.5);
   addObstacle(level, 'desert', 0.75, 0.5);
   addObstacle(level, 'desert', 0.5, 0.5);
+  addPuddle(level, 0.4, 0.5);
+  addPuddle(level, 0.6, 0.5);
+  addPuddle(level, 0.5, 0.25);
   addRandomRats(level, ceil(G.dims.swarmSize/2));
   addRandomSpiders(level, ceil(G.dims.swarmSize/2));
   addRandomPickups(level, G.dims.swarmSize);
@@ -665,12 +701,22 @@ function penultimateLevel() {
   return level;
 }
 
+function testLevel() {
+  let level = new Level('final');
+  level.attachBGSetup(testLevelArt);
+  addPuddle(level, 0.3, 0.4);
+
+  G.player.hasCompanion = true;
+
+  return level;
+}
+
 function finalLevel() {
   G.player.hasCompanion = false;
   let level = new Level('final');
   level.attachBGSetup(templeArt);
   let boss = level.newSpriteCollection('comp', 0.5, 0.3);
-  boss.addAnimation(8, G.loaders['computer'], 96, 0, 0, 8);
+  boss.addAnimation(8, G.loaders['computer'], 'comp', 0, 0, 8);
   boss.update();
   boss.play();
   let dialog = level.newDialog(0.5, 0.5, returnTrue);
@@ -688,19 +734,19 @@ function finalLevel() {
   let parEvent = dialog.addDialogEvent('PC', '');
   dialog.addOption(parEvent, 'How many words are there?', returnTrue, returnTrue);
   let resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Can you imagine the size of a dictionary?');
-  // resp.children.push(parEvent);
-  // console.log(resp);
+
   dialog.addOption(parEvent, 'What are atomic clocks made from?', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Atoms. I think.');
-  // resp.children = [parEvent];
+
   dialog.addOption(parEvent, 'Is this the question I should ask?', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(parEvent, 'comp', '...');
-  // resp.children = [parEvent];
+
   dialog.addOption(parEvent, 'Tell me about possums.', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Possums are marsupials. They have existed for 20 million years. Possums are immune to some snake venoms.');
-  // resp.children = [parEvent];
+
   dialog.addOption(parEvent, 'OK. I\'m done. How do I leave.', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(parEvent, 'comp', 'You just do.');
+
   parEvent = dialog.addChildDialogEvent(resp, 'PC', '');
   function endIt(level) {
     G.state = SHOW_MENU;

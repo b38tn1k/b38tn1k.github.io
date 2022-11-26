@@ -72,6 +72,8 @@ class Level {
       sc = new SpriteCollection(xx, yy);
       let bb = [xx - radius, yy-radius, xx + radius, yy + radius];
       this.obstacles.push(bb);
+    } else if (type == 3) {
+      sc = new StickySprites(G.dims.w * x, G.dims.h * y);
     }
     this.addNPC(sc);
     return sc;

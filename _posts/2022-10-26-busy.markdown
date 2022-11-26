@@ -1,0 +1,8 @@
+---
+layout: post
+title:  "Busy busy"
+date:   2022-10-26
+categories: [game, november]
+tags: gameprogress
+---
+It gets busy this time of year! I fixed a couple typos on Thanksgiving but didn't progress much further. Yesterday I added a new StickySprite class (quicksand puddles etc) to increase the 'narrative bond' between November Man and the Possum. November Man gets stuck, the possum saves him. Simple. Still working out the final level dialog, attempting to avoid too many words on the screen and overly complex dialog trees... will figure it out today hopefully.

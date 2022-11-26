@@ -338,7 +338,7 @@ function level5() {
   let dialog = level.newDialog(0.55, 0.5);
   dialog.updateCoords('NPC1', possum.current);
   dialog.addDialogEvent('NPC1', 'Zzz Zzz Zzz...');
-  dialog.addDialogEvent('PC', 'Good Morning!');
+  dialog.addDialogEvent('PC', 'Good Morning! Who are you?');
   let dotdot = dialog.addDialogEvent('PC', '');
   dialog.addOption(dotdot, -1, function () {return level.setSpritesToAttack()}, returnTrue);
   dialog.addChildDialogEvent(dotdot, 'NPC1', -1);
@@ -408,7 +408,7 @@ function level7() {
   dialog.addOption(parEvent, 'Bitey', function () {return G.player.companion.name = 'Bitey';}, returnTrue);
   dialog.addOption(parEvent, 'Ziggy', function () {return G.player.companion.name = 'Ziggy';}, returnTrue);
 
-  let ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Daisy happy.');
+  let ok2 = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Daisy happy.');
   // let ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
@@ -771,7 +771,7 @@ function finalLevel() {
   next = dialog.addChildDialogEvent(next, 'comp', 'Oh.');
   // up to here is ok
   parEvent = dialog.addChildDialogEvent(next, 'PC', '');
-  dialog.addOption(parEvent, 'OK. Bye.', function(){return transitionLevel()();}, returnTrue);
+  dialog.addOption(parEvent, 'OK. Bye.', function(){return transitionLevel();}, returnTrue);
   dialog.addOption(parEvent, 'Can I go now?', function(){return transitionLevel();}, returnTrue);
 
   return level;

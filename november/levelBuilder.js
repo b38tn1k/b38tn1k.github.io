@@ -733,16 +733,28 @@ function finalLevel() {
   dialog.addDialogEvent('comp', 'I can answer questions.');
   let parEvent = dialog.addDialogEvent('PC', '');
   dialog.addOption(parEvent, 'How many words are there?', returnTrue, returnTrue);
-  let resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Can you imagine the size of a dictionary?');
+  let q1resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Can you imagine the size of a dictionary?');
+
+  let next1 = dialog.addChildDialogEvent(q1resp, 'PC', '');
+
+  dialog.addOption(next1, 'Is this a question I should ask?', returnTrue, returnTrue);
+  resp = dialog.addChildDialogEvent(next1, 'comp', '...');
+
+  dialog.addOption(next1, 'Tell me about possums.', returnTrue, returnTrue);
+  resp = dialog.addChildDialogEvent(next1, 'comp', 'Possums are marsupials. They have existed for 20 million years. Possums are immune to some snake venoms.');
 
   dialog.addOption(parEvent, 'What are atomic clocks made from?', returnTrue, returnTrue);
-  resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Atoms. I think.');
+  let q2resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Atoms. I think.');
 
-  dialog.addOption(parEvent, 'Is this the question I should ask?', returnTrue, returnTrue);
-  resp = dialog.addChildDialogEvent(parEvent, 'comp', '...');
+  let next2 = dialog.addChildDialogEvent(q2resp, 'PC', '');
 
-  dialog.addOption(parEvent, 'Tell me about possums.', returnTrue, returnTrue);
-  resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Possums are marsupials. They have existed for 20 million years. Possums are immune to some snake venoms.');
+  dialog.addOption(next2, 'Is this a question I should ask?', returnTrue, returnTrue);
+  resp = dialog.addChildDialogEvent(next2, 'comp', '...');
+
+  dialog.addOption(next2, 'Tell me about possums.', returnTrue, returnTrue);
+  resp = dialog.addChildDialogEvent(next2, 'comp', 'Possums are marsupials. They have existed for 20 million years. Possums are immune to some snake venoms.');
+
+  // up to here is ok
 
   dialog.addOption(parEvent, 'OK. I\'m done. How do I leave.', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(parEvent, 'comp', 'You just do.');

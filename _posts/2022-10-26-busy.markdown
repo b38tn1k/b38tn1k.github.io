@@ -5,4 +5,16 @@ date:   2022-10-26
 categories: [game, november]
 tags: gameprogress
 ---
-It gets busy this time of year! I fixed a couple typos on Thanksgiving but didn't progress much further. Yesterday I added a new StickySprite class (quicksand puddles etc) to increase the 'narrative bond' between November Man and the Possum. November Man gets stuck, the possum saves him. Simple. Still working out the final level dialog, attempting to avoid too many words on the screen and overly complex dialog trees... will figure it out today hopefully.
+It gets busy this time of year! I fixed a couple typos on Thanksgiving but didn't progress much further. Yesterday I added a new StickySprite class (quicksand puddles etc) to increase the 'narrative bond' between November Man and Possum. November Man gets stuck, Possum saves him.
+
+I also worked on getting the soundtrack up and running with mixed results:
+- It works perfect on Chrome,
+- It doesn’t work at all on iOS safari or mobile chrome.
+- It occasionally glitches on Safari.
+- I should install Mozilla.
+
+[Listen to the soundtrack here!](https://b38tn1k.com/november/assets/B38TN1K_green_darner.mp3)
+
+The only suggested fix I’ve found online is to roll back p5.js to a very old version (I'm on 1.5, need ~0.4). This loses all the WebGL shader stuff. Sorta frustrating, I will continue searching for a solution.
+
+Still working out the final level dialog, attempting to avoid too many words on the screen and overly complex dialog trees... will figure it out today hopefully.

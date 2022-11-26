@@ -299,8 +299,8 @@ function level4() {
   dialog.addDialogEvent('NPC1', 'Hello!');
   dialog.addDialogEvent('PC', 'Hi!');
   dialog.addDialogEvent('NPC1', 'Where are you headed?');
-  dialog.addDialogEvent('PC', 'North, but without boots I am making little progress.');
-  dialog.addDialogEvent('NPC1', 'We have boots to spare! Would you like to trade?');
+  dialog.addDialogEvent('PC', 'The Northern Temple, but without boots I am making little progress.');
+  dialog.addDialogEvent('NPC1', 'Oh the Northern Temple. You are looking for knowledge? A noble quest. We have boots to spare! Would you like to trade?');
   let parEvent = dialog.addDialogEvent('PC');
 
   dialog.addOption(parEvent, 'I have nothing useful to trade.', returnTrue, function () {return G.player.hasNoFood();});
@@ -721,50 +721,76 @@ function finalLevel() {
   boss.play();
   let dialog = level.newDialog(0.5, 0.5, returnTrue);
   dialog.updateCoords('comp', boss.current);
-  // dialog.addDialogEvent('comp', 'cd .. && python4 godTest.py');
-  // dialog.addDialogEvent('PC', 'Hello?');
-  // dialog.addDialogEvent('comp', 'NameError: name \'tf\' is not defined');
-  // dialog.addDialogEvent('comp', 'python4 /test/chatbot.py');
-  // dialog.addDialogEvent('PC', 'ummm...');
-  // dialog.addDialogEvent('comp', 'Welcome Visitor.');
-  // dialog.addDialogEvent('comp', 'I am an all-knowing chat interface.');
-  // dialog.addDialogEvent('comp', 'Do you want to chat?');
-  // dialog.addDialogEvent('PC', 'I came to ask a question.');
+  dialog.addDialogEvent('comp', 'cd .. && python4 godTest.py');
+  dialog.addDialogEvent('PC', 'Hello?');
+  dialog.addDialogEvent('comp', 'NameError: name \'tf\' is not defined');
+  dialog.addDialogEvent('comp', 'python4 /test/chatbot.py');
+  dialog.addDialogEvent('PC', 'ummm...');
+  dialog.addDialogEvent('comp', 'Welcome Visitor.');
+  dialog.addDialogEvent('comp', 'I am an all-knowing chat interface.');
+  dialog.addDialogEvent('comp', 'Do you want to chat?');
+  dialog.addDialogEvent('PC', 'I came to ask a question.');
   dialog.addDialogEvent('comp', 'I can answer questions.');
   let parEvent = dialog.addDialogEvent('PC', '');
   dialog.addOption(parEvent, 'How many words are there?', returnTrue, returnTrue);
   let q1resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Can you imagine the size of a dictionary?');
 
   let next1 = dialog.addChildDialogEvent(q1resp, 'PC', '');
+  let doneWithQuestions = new DialogEvent('PC', 'OK... Did I really travel all this way just to talk to a machine?');
 
   dialog.addOption(next1, 'Is this a question I should ask?', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(next1, 'comp', '...');
+  resp.children.push(doneWithQuestions);
 
   dialog.addOption(next1, 'Tell me about possums.', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(next1, 'comp', 'Possums are marsupials. They have existed for 20 million years. Possums are immune to some snake venoms.');
+  resp.children.push(doneWithQuestions);
 
   dialog.addOption(parEvent, 'What are atomic clocks made from?', returnTrue, returnTrue);
   let q2resp = dialog.addChildDialogEvent(parEvent, 'comp', 'Atoms. I think.');
+  resp.children.push(doneWithQuestions);
 
   let next2 = dialog.addChildDialogEvent(q2resp, 'PC', '');
 
   dialog.addOption(next2, 'Is this a question I should ask?', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(next2, 'comp', '...');
+  resp.children.push(doneWithQuestions);
 
   dialog.addOption(next2, 'Tell me about possums.', returnTrue, returnTrue);
   resp = dialog.addChildDialogEvent(next2, 'comp', 'Possums are marsupials. They have existed for 20 million years. Possums are immune to some snake venoms.');
+  resp.children.push(doneWithQuestions);
 
+  let next = dialog.addChildDialogEvent(doneWithQuestions, 'comp', 'Did you find the answers you were looking for?');
+  next = dialog.addChildDialogEvent(next, 'PC', 'Honestly, I forgot the question I wanted to ask a long time ago.');
+  next = dialog.addChildDialogEvent(next, 'comp', 'You can always go back home.');
+  next = dialog.addChildDialogEvent(next, 'PC', 'There is nothing there for me.');
+  next = dialog.addChildDialogEvent(next, 'comp', 'You found nothing along your journey?');
+  next = dialog.addChildDialogEvent(next, 'PC', 'I found something. I found a friend.');
+  next = dialog.addChildDialogEvent(next, 'comp', 'Oh, well. I don\'t know what to say. Thank you.');
+  next = dialog.addChildDialogEvent(next, 'PC', 'No, not you.');
+  next = dialog.addChildDialogEvent(next, 'comp', 'Oh.');
   // up to here is ok
+  parEvent = dialog.addChildDialogEvent(next, 'PC', '');
+  dialog.addOption(parEvent, 'OK. Bye.', function(){return transitionLevel()();}, returnTrue);
+  dialog.addOption(parEvent, 'Can I go now?', function(){return transitionLevel();}, returnTrue);
 
-  dialog.addOption(parEvent, 'OK. I\'m done. How do I leave.', returnTrue, returnTrue);
-  resp = dialog.addChildDialogEvent(parEvent, 'comp', 'You just do.');
+  return level;
+}
 
-  parEvent = dialog.addChildDialogEvent(resp, 'PC', '');
-  function endIt(level) {
-    G.state = SHOW_MENU;
-    G.level.deleteDialogs();
+function finalFinalLevel() {
+  G.player.hasCompanion = true;
+  let level = new Level('final');
+  level.attachBGSetup(preTempleArt);
+  for (let i = 0; i < max(4, floor(G.dims.swarmSize/2)); i++) {
+    addSleepyPossum(level, random(0.1, 0.9), random(0.3, 0.8));
   }
-  dialog.addOption(parEvent, 'OK. Bye.', function(){return endIt();}, returnTrue);
-
+  level.setSpritesToAttack();
+  let dialog = level.newDialog(0.5, 0.6, returnTrue);
+  dialog.addDialogEvent('PC', 'I\'m back!');
+  function fflogic(player, inputs, level) {
+    player.companion.setTarget(player);
+    // add timers to the end card in here etc
+  }
+  level.levelLogic = fflogic;
   return level;
 }

@@ -16,6 +16,7 @@ function mousePressed() {
 }
 function touchStarted() {
   userStartAudio();
+  G.state = PLAY_GAME;
 }
 function keyPressed() {
   G.state = PLAY_GAME;
@@ -166,7 +167,7 @@ function preload() {
   G.loaders['town'] = loadImage('assets/town.png');
   // soundtrack
   soundFormats('mp3');
-  // G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3')
+  G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3')
 }
 
 function setup() {
@@ -179,7 +180,7 @@ function setup() {
   pixelDensity(1);
   frameRate(30);
   getAudioContext().suspend();
-  // G.loaders['ost'].loop(0, 1, 0.75);
+  G.loaders['ost'].loop(0, 1, 0.75);
 }
 
 function draw() {

@@ -495,7 +495,8 @@ function level11() {
   npc1.play();
   let npc2 = level.newSpriteCollection('NPC2', 0.6, 0.4);
   npc2.setCollectionRate(0.4);
-  npc2.addAnimation(6, splitSheet(G.loaders['humanoid1'], 64, 8, 0, 6), 32, 0, 0, 6);
+  // npc2.addAnimation(6, splitSheet(G.loaders['humanoid1'], 64, 8, 0, 6), 32, 0, 0, 6);
+  npc2.addAnimation(1, splitSheet(G.loaders['humanoid1'], 64, 9, 7, 8), 'death', [7, 8]);
   npc2.update();
   npc2.play();
   let dialog = level.newDialog(0.5, 0.5, returnTrue);

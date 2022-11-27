@@ -708,9 +708,12 @@ function penultimateLevel() {
 function testLevel() {
   let level = new Level('final');
   level.attachBGSetup(testLevelArt);
-  addPuddle(level, 0.3, 0.4);
+  level.attachBGSetup(grassArt);
+  // addPuddle(level, 0.3, 0.4);
+  G.player.addItem('boot');
+  addSleepyPossum(level, 0.5, 0.5);
 
-  G.player.hasCompanion = true;
+  // G.player.hasCompanion = true;
 
   return level;
 }

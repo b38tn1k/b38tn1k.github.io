@@ -1,7 +1,7 @@
 class StickySprites extends SpriteCollection {
   constructor(x, y) {
     super(x, y, true);
-    this.bbox = [x-32, y-32, x + 32, y + 32];
+    this.bbox = [x-24, y-24, x + 24, y + 24];
     this.activeTrap = true;
   }
 

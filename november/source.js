@@ -165,9 +165,6 @@ function preload() {
   G.loaders['temple'] = loadImage('assets/temple.png');
   G.loaders['cave'] = loadImage('assets/cave.png');
   G.loaders['town'] = loadImage('assets/town.png');
-  // soundtrack
-  soundFormats('mp3');
-  G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3')
 }
 
 function setup() {
@@ -180,6 +177,12 @@ function setup() {
   pixelDensity(1);
   frameRate(30);
   getAudioContext().suspend();
+  // soundtrack
+  soundFormats('mp3');
+  G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3', playSoundtrack)
+}
+
+function playSoundtrack() {
   G.loaders['ost'].loop(0, 1, 0.75);
 }
 

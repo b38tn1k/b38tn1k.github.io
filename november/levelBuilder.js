@@ -766,7 +766,7 @@ function finalLevel() {
   next = dialog.addChildDialogEvent(next, 'PC', 'There is nothing there for me.');
   next = dialog.addChildDialogEvent(next, 'comp', 'You found nothing along your journey?');
   next = dialog.addChildDialogEvent(next, 'PC', 'I found something. I found a friend.');
-  next = dialog.addChildDialogEvent(next, 'comp', 'Oh, well. I don\'t know what to say. Thank you.');
+  next = dialog.addChildDialogEvent(next, 'comp', 'Aww! I don\'t know what to say. Thank you.');
   next = dialog.addChildDialogEvent(next, 'PC', 'No, not you.');
   next = dialog.addChildDialogEvent(next, 'comp', 'Oh.');
   // up to here is ok

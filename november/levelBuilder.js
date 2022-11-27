@@ -688,6 +688,10 @@ function penultimateLevel() {
   for (let i = 0; i < max(4, floor(G.dims.swarmSize/2)); i++) {
     addSleepyPossum(level, random(0.1, 0.9), random(0.3, 0.8));
   }
+  let bby = 128 / height;
+  for (let i = 0; i < level.npcs.length; i++) {
+    level.npcs[i].setRandomWalkBB(0.2, bby);
+  }
   let dialog = level.newDialog(0.5, 0.6, returnTrue);
   dialog.addDialogEvent('PC', 'Is this your family?');
   dialog.addDialogEvent('PC', 'Is this your home?');
@@ -783,6 +787,10 @@ function finalFinalLevel() {
   level.attachBGSetup(preTempleArt);
   for (let i = 0; i < max(4, floor(G.dims.swarmSize/2)); i++) {
     addSleepyPossum(level, random(0.1, 0.9), random(0.3, 0.8));
+  }
+  let bby = 128 / height;
+  for (let i = 0; i < level.npcs.length; i++) {
+    level.npcs[i].setRandomWalkBB(0.2, bby);
   }
   level.setSpritesToAttack();
   let dialog = level.newDialog(0.5, 0.6, returnTrue);

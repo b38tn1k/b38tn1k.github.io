@@ -799,7 +799,13 @@ function finalFinalLevel() {
   let dialog = level.newDialog(0.5, 0.6, returnTrue);
   dialog.addDialogEvent('PC', 'I\'m back!');
   function fflogic(player, inputs, level) {
-    player.companion.setTarget(player);
+    if (level.levelTimer > 60) {
+      player.companion.setTarget(player);
+    }
+    if (level.levelTimer > 200) {
+      player.companion.setTarget(player);
+      G.state = END_GAME;
+    }
     // add timers to the end card in here etc
   }
   level.levelLogic = fflogic;

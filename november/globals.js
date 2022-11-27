@@ -1,7 +1,8 @@
 // anything in here better have a good reason to be here
 
-var SHOW_MENU = 0;
+var START_BANNER = 0;
 var PLAY_GAME = 1;
+var END_GAME = 2;
 
 function returnTrue() {
   return true;
@@ -83,6 +84,6 @@ class Globals {
     this.levelPointer = 0;
     this.triggerRadius = 100;
     this.shader;
-    this.state = SHOW_MENU;
+    this.state = START_BANNER;
   }
 }

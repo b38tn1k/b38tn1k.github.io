@@ -10,16 +10,22 @@ function windowResized() {
   setupScreen();
   rebuildLevel();
 }
+
+function toggleToPlay() {
+  if (G.state == START_BANNER) {
+    G.state = PLAY_GAME;
+  }
+}
 function mousePressed() {
-  G.state = PLAY_GAME;
+  toggleToPlay();
   userStartAudio();
 }
 function touchStarted() {
   userStartAudio();
-  G.state = PLAY_GAME;
+  toggleToPlay();
 }
 function keyPressed() {
-  G.state = PLAY_GAME;
+  toggleToPlay();
   userStartAudio();
   if (key == 'p') {
     saveImage();

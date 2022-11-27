@@ -134,7 +134,7 @@ class UIElements {
     this.layer.g.image(this.cmp.fg.g, this.cmp.x, this.cmp.y, 38, 38, selection*38, 0, 38, 38);
     this.layer.g.image(this.inv.g, this.inv.tx, this.inv.ty);
     this.layer.g.image(this.border.g, this.inv.tx, this.inv.ty);
-    if (G.state == SHOW_MENU) {
+    if (G.state == START_BANNER) {
       let name = 'logo';
       if (G.loaders[name].width > width * 0.95) {
         name = 'logoS'

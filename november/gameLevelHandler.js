@@ -18,6 +18,7 @@ class Level {
     this.spriteLayer = G.graphLayers.getLayer('sprites', true, 100);
     this.new = true;
     this.levelLogic = returnTrue;
+    this.levelTimer = 0;
   }
   optimizePickups() {
     let distances = [];
@@ -142,6 +143,7 @@ class Level {
     }
   }
   update(player, inputs) {
+    this.levelTimer += 1;
     this.levelLogic(player, inputs, this);
     if (player && this.new == true) {
       this.chooseDialog();

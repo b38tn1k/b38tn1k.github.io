@@ -56,6 +56,13 @@ function townArt(bg, fg){
   return bb;
 }
 
+function addRandomHouse(level, x=random(), y=random()) {
+  let selection = floor(random(1, 5));
+  house = level.newSpriteCollection('house', x, y);
+  let sheet = splitSheet(G.loaders['town'], 64, 2, selection-1, selection);
+  house.addAnimation(1, sheet, 'idle');
+}
+
 function desertArt(bg, fg){
   bg.randomTile(splitSheet(G.loaders['desert'], 64, 0, 0, 5), 5, 1);
   bg.randomTile(splitSheet(G.loaders['desert'], 64, 1, 0, 5), 5, 1, 0.4, 0.5);
@@ -294,6 +301,8 @@ function level3() {
 function level4() {
   let level = new Level('level4');
   level.attachBGSetup(snowArt);
+  addRandomHouse(level, 0.8, 0.2);
+  addRandomHouse(level, 0.2, 0.8);
   let npc1 = level.newSpriteCollection('NPC1', 0.5, 0.3);
   npc1.setCollectionRate(0.4);
   npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 16, 0, 8), 32, 0, 0, 8);

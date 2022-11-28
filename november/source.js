@@ -21,29 +21,30 @@ function mousePressed() {
   userStartAudio();
 }
 function touchStarted() {
-  userStartAudio();
+  // userStartAudio();
+  getAudioContext().resume();
   toggleToPlay();
 }
 function keyPressed() {
   toggleToPlay();
   userStartAudio();
-  if (key == 'p') {
-    saveImage();
-  }
-  if (key == 'f') {
-    G.player.addItem('food');
-  }
-  if (key == 'b') {
-    G.player.addItem('boot');
-  }
-  if (key == 'n') {
-    G.player.subtractItem('boot');
-  }
-
-  if (key == ' ') {
-    transitionLevel();
-    console.log(G.levelPointer);
-  }
+  // if (key == 'p') {
+  //   saveImage();
+  // }
+  // if (key == 'f') {
+  //   G.player.addItem('food');
+  // }
+  // if (key == 'b') {
+  //   G.player.addItem('boot');
+  // }
+  // if (key == 'n') {
+  //   G.player.subtractItem('boot');
+  // }
+  //
+  // if (key == ' ') {
+  //   transitionLevel();
+  //   console.log(G.levelPointer);
+  // }
 }
 
 function saveImage() {
@@ -147,6 +148,8 @@ function preload() {
   G.loaders['cage'] = loadImage('assets/cage.png');
   G.loaders['computer'] = loadImage('assets/megaComputer.png');
   G.loaders['puddle'] = loadImage('assets/puddle.png');
+  G.loaders['hen'] = loadImage('assets/hens.png');
+  G.loaders['bird'] = loadImage('assets/birds.png');
   // UI
   G.loaders['compass'] = loadImage('assets/compass.png');
   G.loaders['unk'] = loadImage('assets/mysteryTexture.png');
@@ -207,6 +210,8 @@ function draw() {
     transitionLevel();
   }
   //splitSheet(src, res, row, start, end)
+
+  // G.UIElements.layer.g.image(G.loaders['hen'], width/2, height/2);
   // G.UIElements.layer.g.image(splitSheet(G.loaders['humanoid2'], 64, 0, 0, 4), width/2, height/2);
   // image(splitSheet(G.loaders['grass'], 64, 5, 0, 3), 200, 200);
 }

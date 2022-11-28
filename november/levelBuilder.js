@@ -165,6 +165,85 @@ function addFinAndJake(level){
   npc1.play();
 }
 
+function addRandomHens(level, amount) {
+  let hen;
+  let selection;
+  for (let i = 0; i < amount; i++) {
+    selection = int(random(0, 4));
+    switch(selection) {
+      case 0:
+      hen = level.newSpriteCollection('hen', random(), random(), 1);
+      hen.addAnimation(5, splitSheet(G.loaders['hen'], 32, 0, 0, 5), 'left');
+      hen.addAnimation(5, splitSheet(G.loaders['hen'], 32, 1, 0, 5), 'right');
+      break;
+      case 1:
+      hen = level.newSpriteCollection('hen', random(), random(), 1);
+      hen.addAnimation(5, splitSheet(G.loaders['hen'], 32, 2, 0, 5), 'left');
+      hen.addAnimation(5, splitSheet(G.loaders['hen'], 32, 3, 0, 5), 'right');
+      break;
+      case 2:
+      hen = level.newSpriteCollection('hen', random(), random(), 1);
+      hen.addAnimation(5, splitSheet(G.loaders['hen'], 32, 4, 0, 5), 'left');
+      hen.addAnimation(5, splitSheet(G.loaders['hen'], 32, 5, 0, 5), 'right');
+      break;
+      case 3:
+      hen = level.newSpriteCollection('hen', random(), random(), 1);
+      hen.addAnimation(5, splitSheet(G.loaders['hen'], 32, 6, 0, 5), 'left');
+      hen.addAnimation(5, splitSheet(G.loaders['hen'], 32, 7, 0, 5), 'right');
+      break;
+    }
+    hen.setCollectionRate(0.4);
+    hen.goal = 'corn';
+    hen.update();
+    hen.play();
+    hen.attack = false;
+  }
+}
+
+function addRandomBirds(level, amount) {
+  let hen;
+  let selection;
+  for (let i = 0; i < amount; i++) {
+    selection = int(random(0, 4));
+    switch(selection) {
+      case 0:
+      hen = level.newSpriteCollection('hen', random(), random(), 1);
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 0, 0, 8), 'up');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 1, 0, 8), 'down');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 2, 0, 8), 'left');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 3, 0, 8), 'right');
+      break;
+      case 1:
+      hen = level.newSpriteCollection('hen', random(), random(), 1);
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 4, 0, 8), 'up');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 5, 0, 8), 'down');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 6, 0, 8), 'left');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 7, 0, 8), 'right');
+      break;
+      case 2:
+      hen = level.newSpriteCollection('hen', random(), random(), 1);
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 8, 0, 8), 'up');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 9, 0, 8), 'down');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 10, 0, 8), 'left');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 11, 0, 8), 'right');
+      break;
+      case 3:
+      hen = level.newSpriteCollection('hen', random(), random(), 1);
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 12, 0, 8), 'up');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 13, 0, 8), 'down');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 14, 0, 8), 'left');
+      hen.addAnimation(8, splitSheet(G.loaders['bird'], 16, 15, 0, 8), 'right');
+      break;
+    }
+    hen.setCollectionRate(0.4);
+    hen.goal = 'corn';
+    hen.update();
+    hen.play();
+    hen.attack = false;
+  }
+
+}
+
 function addRandomHumans(level, amount) {
   let otherNPCs;
   let count = 10
@@ -213,6 +292,8 @@ function addSleepyPossum(level, x, y) {
 function level0() {
   let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
   let level = new Level('Level0');
+  addRandomHens(level, ceil(G.dims.swarmSize/4));
+
   let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
   npc1.setCollectionRate(0.4);
   npc1.addAnimation(6, splitSheet(G.loaders['humanoid1'], 64, 8, 0, 6), 32, 0, 0, 6);
@@ -243,6 +324,7 @@ function level0() {
   let selfish = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Selfish much?');
   dialog.addChildDialogEvent(selfish, 'PC', 'I have a family!');
   level.attachBGSetup(desertArt);
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -251,6 +333,7 @@ function level1() {
   level.attachBGSetup(grassArt);
   addRandomPickups(level, G.dims.swarmSize/2);
   addRandomSpiders(level, G.dims.swarmSize);
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -260,7 +343,7 @@ function level2() {
   level.addPickup(0.45, 0.4, ['toy', 'food']);
   let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
   npc1.setCollectionRate(0.4);
-  npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 10, 0, 4), 32, 0, 0, 4);
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 10, 0, 8), 32, 0, 0, 4);
   npc1.update();
   npc1.play();
   let dialog = level.newDialog(0.65, 0.55);
@@ -284,6 +367,7 @@ function level2() {
   let sorta = dialog.addChildDialogEvent(parEvent, 'NPC1', 'An acceptable trade.');
   sorta = dialog.addChildDialogEvent(sorta, 'PC', '...');
   dialog.addChildDialogEvent(sorta, 'NPC1', 'Not very talkative, are you?');
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -295,6 +379,7 @@ function level3() {
   addObstacle(level, 'snow', 0.75, 0.6);
   addObstacle(level, 'snow', 0.5, 0.25);
   addRandomRats(level, G.dims.swarmSize);
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -303,6 +388,7 @@ function level4() {
   level.attachBGSetup(snowArt);
   addRandomHouse(level, 0.8, 0.2);
   addRandomHouse(level, 0.2, 0.8);
+  addRandomHens(level, ceil(G.dims.swarmSize/4));
   let npc1 = level.newSpriteCollection('NPC1', 0.5, 0.3);
   npc1.setCollectionRate(0.4);
   npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 16, 0, 8), 32, 0, 0, 8);
@@ -341,6 +427,7 @@ function level4() {
   let foodForBoots = dialog.addChildDialogEvent(parEvent, 'NPC1', 'An acceptable trade!');
   foodForBoots = dialog.addChildDialogEvent(foodForBoots, 'PC', 'These boots are warm!');
   foodForBoots = dialog.addChildDialogEvent(foodForBoots, 'NPC1', 'Fair travels!');
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
 
   return level;
 }
@@ -358,6 +445,7 @@ function level5() {
   let dotdot = dialog.addDialogEvent('PC', '');
   dialog.addOption(dotdot, -1, function () {return level.setSpritesToAttack()}, returnTrue);
   dialog.addChildDialogEvent(dotdot, 'NPC1', -1);
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -378,7 +466,7 @@ function level6() {
   // addRandomSpiders(level, ceil(G.dims.swarmSize/2));
   // let dialog = level.newDialog(0.5, 0.1, returnTrue);
   // dialog.addDialogEvent('PC', 'Thanks for the help, possum!');
-
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -398,6 +486,7 @@ function level6v2() {
   addRandomPickups(level, G.dims.swarmSize);
   addRandomRats(level, ceil(G.dims.swarmSize/2));
   addRandomSpiders(level, ceil(G.dims.swarmSize/2));
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -409,10 +498,11 @@ function level7() {
   let npc1 = level.newSpriteCollection('NPC1', 0.4, 0.4);
   npc1.setCollectionRate(0.4);
   // npc1.addAnimation(7, splitSheet(G.loaders['slume-idle'], 32, 1, 0, 7), 'right');
-  npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 12, 0, 4), 32, 0, 0, 4);
+  // npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 12, 0, 4), 32, 0, 0, 4);
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 18, 0, 8), 32, 0, 0, 4);
   npc1.update();
   npc1.play();
-  let dialog = level.newDialog(0.5, 0.3, returnTrue);
+  let dialog = level.newDialog(0.5, 0.5, returnTrue);
   dialog.updateCoords('NPC1', npc1.current);
   dialog.addDialogEvent('NPC1', 'That opossum looks ravenous!');
   dialog.addDialogEvent('PC', 'Yeh... it just started following me around. It helps me with loot and puddles.');
@@ -424,7 +514,8 @@ function level7() {
   dialog.addOption(parEvent, 'Bitey', function () {return G.player.companion.name = 'Bitey';}, returnTrue);
   dialog.addOption(parEvent, 'Ziggy', function () {return G.player.companion.name = 'Ziggy';}, returnTrue);
 
-  let ok2 = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Daisy happy.');
+  let ok2 = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals.');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'If you bring me crystals I will give you enough food to keep Daisy happy.');
   // let ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
@@ -435,7 +526,8 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Good Luck!');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
 
-  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Dr. Pinknose happy.');
+  ok2 = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals.');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'If you bring me crystals I will give you enough food to keep Dr. Pinknose happy.');
   // ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
@@ -446,7 +538,8 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Good Luck!');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
 
-  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Bitey happy.');
+  ok2 = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals.');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'If you bring me crystals I will give you enough food to keep Bitey happy.');
   // ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
@@ -457,7 +550,8 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Good Luck!');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
 
-  ok = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals. If you bring me crystals I will give you enough food to keep Ziggy happy.');
+  ok2 = dialog.addChildDialogEvent(parEvent,'NPC1', 'Lovely. This cave is full of crystals.');
+  ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'If you bring me crystals I will give you enough food to keep Ziggy happy.');
   // ok2 = dialog.addChildDialogEvent(ok,'PC', 'OK!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'The cave is very dark and full of ghosts.');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'Scary!');
@@ -467,6 +561,7 @@ function level7() {
   ok2 = dialog.addChildDialogEvent(ok2,'PC', 'So do I. uh. OK. Ziggy, stay!');
   ok2 = dialog.addChildDialogEvent(ok2,'NPC1', 'Good Luck!');
   ok2 = dialog.addChildDialogEvent(ok2,'PC', '...');
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -481,7 +576,6 @@ function level8() {
   addObstacle(level, 'cave', 0.5, 0.5);
   addRandomPickups(level, G.dims.swarmSize * 2, 'crystal1', ['crystal']);
   addRandomGhosts(level, G.dims.swarmSize);
-
   return level;
 }
 
@@ -502,6 +596,7 @@ function level9() {
   dialog.addDialogEvent('PC', 'Helloooooo!');
   dialog.addDialogEvent('PC', G.player.companion.name + '?');
   dialog.addDialogEvent('PC', 'I should head to the next town. Maybe someone knows something.');
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
 
   return level;
 }
@@ -510,6 +605,7 @@ function level10() {
   let level = new Level('level10');
   G.player.hasCompanion = false;
   level.attachBGSetup(townArt);
+  addRandomHens(level, ceil(G.dims.swarmSize/4));
   let npc1 = level.newSpriteCollection('NPC1', 0.6, 0.3);
   npc1.setCollectionRate(0.4); // add more humans!
   npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
@@ -523,14 +619,15 @@ function level10() {
   addRandomHumans(level, 10);
   let dialog = level.newDialog(0.5, 0.5, returnTrue);
   dialog.updateCoords('NPC1', npc1.current);
-  dialog.updateCoords('NPC2', npc2.current);
+  // dialog.updateCoords('NPC2', npc2.current);
   dialog.addDialogEvent('PC', 'Has anyone seen an old man with a possum?');
-  dialog.addDialogEvent('NPC2', 'An old man with a possum? I dont think so.');
+  // dialog.addDialogEvent('NPC2', 'An old man with a possum? I dont think so.');
   dialog.addDialogEvent('PC', 'He tricked me and stole my possum!');
   dialog.addDialogEvent('NPC1', 'One of our foragers was attacked in the woods. They are looking after him just up the road. Maybe he knows something.');
   dialog.addDialogEvent('PC', 'Thank you.');
   dialog.addDialogEvent('NPC1', 'I hope you find your possum.');
-  dialog.addDialogEvent('NPC2', 'Old man. Possum. Hmmm...');
+  // dialog.addDialogEvent('NPC2', 'Old man. Possum. Hmmm...');
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -538,6 +635,7 @@ function level11() {
   let level = new Level('level11');
   G.player.hasCompanion = false;
   level.attachBGSetup(townArt);
+  addRandomHens(level, ceil(G.dims.swarmSize/4));
   let npc1 = level.newSpriteCollection('NPC1', 0.6, 0.3);
   npc1.setCollectionRate(0.4); // add more humans!
   npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
@@ -556,6 +654,7 @@ function level11() {
   dialog.addDialogEvent('PC', 'Did he describe his attacker? I\'m looking for a possum-napper.');
   dialog.addDialogEvent('NPC1', 'He\s been unconcious since we found him. We need medicine from the forest, but it\'s too dangerous.');
   dialog.addDialogEvent('PC', 'I\'ll get your medicine.');
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -570,6 +669,7 @@ function level12() {
   addRandomRats(level, ceil(G.dims.swarmSize/2));
   addRandomPickups(level, G.dims.swarmSize*2, 'medicine1', ['medicine']);
   addRandomPickups(level, ceil(G.dims.swarmSize/2));
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -625,6 +725,7 @@ function level13() {
     dialog.addDialogEvent('PC', 'I will search there.');
     dialog.addDialogEvent('NPC1', 'Good luck!');
   }
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
 
   return level;
 }
@@ -641,6 +742,7 @@ function level14() {
   addRandomRats(level, ceil(G.dims.swarmSize/2));
   addRandomSpiders(level, ceil(G.dims.swarmSize/2));
   addRandomPickups(level, G.dims.swarmSize);
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -652,7 +754,8 @@ function level15() {
   let possum = addSleepyPossum(level, 0.5, 0.4);
   let npc1 = level.newSpriteCollection('NPC1', 0.7, 0.5);
   npc1.setCollectionRate(0.4);
-  npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 13, 0, 4), 32, 0, 0, 4);
+  // npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 13, 0, 4), 32, 0, 0, 4);
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 17, 0, 8), 32, 0, 0, 4);
   npc1.update();
   npc1.play();
   let cage = level.newSpriteCollection('cage', 0.5, 0.4);
@@ -664,7 +767,7 @@ function level15() {
   dialog.addDialogEvent('PC', 'Release ' + G.player.companion.name + ' right now!');
   dialog.addDialogEvent('NPC1', 'Oh, you survived the cave.');
   dialog.addDialogEvent('PC', 'You\'d better free that possum.');
-  dialog.addDialogEvent('NPC1', 'Or what? Possum is good eatting. And how do you know this is your possum?');
+  dialog.addDialogEvent('NPC1', 'Or what? Possums are delicious. And how do you know this is your possum?');
   dialog.addDialogEvent('PC', 'I know ' + G.player.companion.name + '.');
   dialog.addDialogEvent('NPC1', 'Yes yes. I guess we could trade.');
   let parEvent = dialog.addDialogEvent('PC', '');
@@ -674,8 +777,7 @@ function level15() {
   dialog.addOption(parEvent, 'The only thing I will give you is my FISTS IN YOUR FACE!.', function() { return level.setSpritesToAttack(false);}, returnTrue);
   ok = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Ok ok! We don\'t need that.');
   ok = dialog.addChildDialogEvent(ok, 'PC', G.player.companion.name + '!');
-
-
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -693,6 +795,7 @@ function level16() {
   addRandomRats(level, ceil(G.dims.swarmSize/2));
   addRandomSpiders(level, ceil(G.dims.swarmSize/2));
   addRandomPickups(level, G.dims.swarmSize);
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -715,8 +818,7 @@ function penultimateLevel() {
   let parEvent = dialog.addDialogEvent('PC', '');
   dialog.addOption(parEvent, 'Thank you for all your help, ' + G.player.companion.name + '.', function() { return level.setSpritesToAttack(false);}, returnTrue);
   dialog.addOption(parEvent, 'Goodbye, ' + G.player.companion.name + '.', function() { return level.setSpritesToAttack(false);}, returnTrue);
-
-
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }
 
@@ -824,5 +926,6 @@ function finalFinalLevel() {
     // add timers to the end card in here etc
   }
   level.levelLogic = fflogic;
+  addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }

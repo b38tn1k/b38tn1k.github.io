@@ -27,14 +27,14 @@ class DialogEvent {
 class Dialog {
   constructor(x, y, w, h) {
     this.bbox = [x-w, y-w, x+w, y+h, 2*w, 2*h];
-    this.showZones = false;//true;
+    // this.showZones = true;//true;
     this.layer = G.graphLayers.getLayer('dialog', true, 100);
     this.layer.g.textFont(G.loaders['font']);
     this.bgcolor = G.colors[2];
     this.fgcolor = G.colors[0];
     this.fontSize = 13;
     this.lineSpacing = 1.5;
-    this.pauseMult = 30;
+    this.pauseMult = 25;
     this.pauseMin = 500;
     this.textBoxWidth = 100;
     this.totalLineHeight = this.fontSize * this.lineSpacing;

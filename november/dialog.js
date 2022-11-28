@@ -27,7 +27,7 @@ class DialogEvent {
 class Dialog {
   constructor(x, y, w, h) {
     this.bbox = [x-w, y-w, x+w, y+h, 2*w, 2*h];
-    // this.showZones = true;
+    this.showZones = false;//true;
     this.layer = G.graphLayers.getLayer('dialog', true, 100);
     this.layer.g.textFont(G.loaders['font']);
     this.bgcolor = G.colors[2];
@@ -385,9 +385,10 @@ class Dialog {
   draw() {
     this.layer.clear();
     if (this.showZones == true) {
-      this.layer.g.fill(this.bgcolor);
+      this.layer.g.stroke(255, 0, 255);
+      this.layer.g.noFill();
       this.layer.g.rect(this.bbox[0], this.bbox[1], this.bbox[4], this.bbox[5]);
-      this.layer.g.circle(this.bbox[0], this.bbox[1], 20);
+      this.layer.g.noStroke();
     }
     for (key in this.onScr) {
       if (this.onScr[key].hasOptions == false) {

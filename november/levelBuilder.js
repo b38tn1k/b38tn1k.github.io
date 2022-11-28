@@ -220,7 +220,7 @@ function level0() {
   npc1.update();
   npc1.play();
   level.addPickup(0.3, 0.3);
-  let dialog = level.newDialog(0.7, 0.5);
+  let dialog = level.newDialog(0.65, 0.55);
   dialog.updateCoords('NPC1', npc1.current);
   dialog.addDialogEvent('NPC1', 'What\'s the hurry, buddy?');
   dialog.addDialogEvent('PC', 'I can\'t stop! I have to keep going.');
@@ -263,7 +263,7 @@ function level2() {
   npc1.addAnimation(4, splitSheet(G.loaders['humanoid1'], 64, 10, 0, 4), 32, 0, 0, 4);
   npc1.update();
   npc1.play();
-  let dialog = level.newDialog(0.7, 0.5);
+  let dialog = level.newDialog(0.65, 0.55);
   dialog.updateCoords('NPC1', npc1.current);
   dialog.addDialogEvent('NPC1', 'Greetings Traveller, who might you be?');
   dialog.addDialogEvent('PC', '...');

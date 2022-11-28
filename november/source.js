@@ -28,9 +28,9 @@ function touchStarted() {
 function keyPressed() {
   toggleToPlay();
   userStartAudio();
-  // if (key == 'p') {
-  //   saveImage();
-  // }
+  if (key == 'p') {
+    saveImage();
+  }
   // if (key == 'f') {
   //   G.player.addItem('food');
   // }

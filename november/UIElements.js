@@ -66,13 +66,15 @@ class UIElements {
     this.cmp.bg = newDrawableFromImage(splitSheet(G.loaders['compass'], 38, 0, 0, 1));
     this.cmp.fg = newDrawableFromImage(splitSheet(G.loaders['compass'], 38, 2, 1, 9));
     // compass height = 38;
-
     let [w, h, r, tx, ty] = G.dims.fullScreenGraphicDims;
     this.border = new Drawable(w, h, r, tx, ty, 0);
     pixelBorder(this.border);
     this.inv = new Drawable(w, h, r, tx, ty);
     this.inv.g.textFont(G.loaders['font']);
     this.fontSize = 10;
+    this.textBoxWidth = 500;
+    this.lineSpacing = 1.5;
+    this.totalLineHeight = this.fontSize * this.lineSpacing;
     this.halfFontSize = this.fontSize / 2;
     this.inv.g.textSize(this.fontSize);
     this.inv.g.textAlign(CENTER, TOP);
@@ -85,6 +87,8 @@ class UIElements {
     this.cmp.y = this.inv.y + this.inv.halfunit;
     this.isTouchDevice = G.dims.isTouchDevice;
     this.controlOrigin = [];
+    this.albumdiv = createDiv('<a href="https://b38tn1k.com/#discog/"><img src="https://b38tn1k.com/november/albumcoversquared.png" width=100%></a>');
+    this.albumdiv.hide();
   }
 
   drawInventory(inventory) {
@@ -126,14 +130,29 @@ class UIElements {
     }
   }
 
+  calculateTextBoxHeight(line, magicnumber=0) {
+    let words = line.split(" ");
+    let wordLengths = [];
+    for (let i = 0; i < words.length; i++) {
+      wordLengths.push(this.layer.g.textWidth(words[i]) + this.layer.g.textWidth(" "));
+    }
+    let currentLine = 0;
+    let lc = 1;
+    for (let i = 0; i < wordLengths.length; i++) {
+      if (currentLine + wordLengths[i] < this.textBoxWidth) {
+        currentLine += wordLengths[i];
+      } else {
+        currentLine = wordLengths[i];
+        lc += 1;
+      }
+    }
+    lc += magicnumber;
+    let textBoxHeight =lc * this.totalLineHeight;
+    return textBoxHeight;
+  }
+
   draw() {
     this.layer.g.clear();
-    this.layer.g.image(this.cmp.bg.g, this.cmp.x, this.cmp.y);
-    let selection = int(((this.cmp.fg.rot + radians(22.5) + PI)/TWO_PI) * 8);
-    selection = (selection == 8) ? 0 : selection;
-    this.layer.g.image(this.cmp.fg.g, this.cmp.x, this.cmp.y, 38, 38, selection*38, 0, 38, 38);
-    this.layer.g.image(this.inv.g, this.inv.tx, this.inv.ty);
-    this.layer.g.image(this.border.g, this.inv.tx, this.inv.ty);
     if (G.state == START_BANNER) {
       let name = 'logo';
       if (G.loaders[name].width > width * 0.95) {
@@ -151,9 +170,44 @@ class UIElements {
       let textX = x + (w/2) - this.layer.g.textWidth('b38tn1k.com   ');
       let texty = (y + h/2) - this.textSize/2;
       this.layer.g.text('b38tn1k.com',textX ,texty );
-
-
       this.layer.g.image(G.loaders[name], x, y);//, w, h);
+    } else if (G.state == PLAY_GAME) {
+      this.layer.g.image(this.cmp.bg.g, this.cmp.x, this.cmp.y);
+      let selection = int(((this.cmp.fg.rot + radians(22.5) + PI)/TWO_PI) * 8);
+      selection = (selection == 8) ? 0 : selection;
+      this.layer.g.image(this.cmp.fg.g, this.cmp.x, this.cmp.y, 38, 38, selection*38, 0, 38, 38);
+      this.layer.g.image(this.inv.g, this.inv.tx, this.inv.ty);
+      this.layer.g.image(this.border.g, this.inv.tx, this.inv.ty);
+    } else if (G.state == END_GAME){
+      let name = 'logo';
+      if (G.loaders[name].width > width * 0.95) {
+        name = 'logoS'
+      }
+      this.layer.g.fill(G.colors[2]);
+      this.layer.g.noStroke();
+      this.layer.g.rectMode(CENTER);
+      let x = this.layer.tx;
+      let y = (3*this.layer.ty)/5;
+      let h = G.loaders[name].height * 1.5;
+      let w = G.loaders[name].width * 1.2;
+      this.layer.g.rect(x, y, G.loaders[name].width * 1.2, h);
+      let myString = 'Hey! thanks for playing. \n I made all the "art"/music/code for this game. It was put together over November, 2022. You can download the soundtrack (free) at bandcamp. Hit the link below.\n cheers! james.'
+      let textX = x// - w/2;
+      let textY = y + h/2;
+      this.textBoxWidth = w - 50;
+      let backHeight = this.calculateTextBoxHeight(myString, 2);
+      this.layer.g.rect(x, y + (h/2) + (backHeight/2), G.loaders[name].width * 1.2, backHeight);
+      this.layer.g.fill(G.colors[0]);
+      this.layer.g.image(G.loaders[name], x, y);//, w, h);
+      this.layer.g.text(myString, textX ,textY, this.textBoxWidth);
+      let gap = int(height - (y + h/2 + backHeight));
+
+      this.albumdiv.style('width', String(0.6 * gap) + 'px');
+      this.albumdiv.style('height', String(0.6 * gap) + 'px');
+      let divX = (width/2) - ((0.6 * gap)/2);
+      let divY = y + (h/2) + (backHeight) + (0.2 * gap);
+      this.albumdiv.position(divX, divY);
+      this.albumdiv.show();
     }
 
   }

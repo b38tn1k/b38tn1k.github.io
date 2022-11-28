@@ -138,7 +138,7 @@ function preload() {
   let c = loadStrings('assets/NES.hex', function(){for (let i = 0; i < c.length; i++) {G.colors.push(color('#' + c[i]));};});
   G.shader = loadShader('shader.vert', 'shader.frag');
   // sprites
-  G.loaders['humanoid2'] = loadImage('assets/humanoid2.png');
+  G.loaders['humanoid2'] = loadImage('assets/humanoid2red.png');
   G.loaders['humanoid1'] = loadImage('assets/humanoid1.png');
   G.loaders['spider'] = loadImage('assets/spider.png');
   G.loaders['rat'] = loadImage('assets/ratfoutlined.png');

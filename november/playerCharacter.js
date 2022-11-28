@@ -254,6 +254,7 @@ class PlayerCharacter extends SpriteCollection {
       }
       this.inventory.iDi = false;
     }
+    this.moveVector = [0, 0];
     if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
       this.moveNorth();
     }

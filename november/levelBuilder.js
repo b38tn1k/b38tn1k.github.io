@@ -163,11 +163,18 @@ function addRandomHumans(level, amount) {
   let count = 10
   for (let i = 0; i < amount; i++) {
     otherNPCs = level.newSpriteCollection('NPC' + String(count + i), random(), random(), 1);
-    // npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 7, 0, 8), 32, 0, 0, 1);
-    otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 7, 0, 8), 'right');
-    otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 6, 0, 8), 'left');
-    otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 3, 0, 8), 'up');
-    otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 2, 0, 8), 'down');
+    if (random() > 0.5) {
+      otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 7, 0, 8), 'right');
+      otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 6, 0, 8), 'left');
+      otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 3, 0, 8), 'up');
+      otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 2, 0, 8), 'down');
+    } else {
+      otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 15, 0, 8), 'right');
+      otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 14, 0, 8), 'left');
+      otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 5, 0, 8), 'up');
+      otherNPCs.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 4, 0, 8), 'down');
+    }
+
     otherNPCs.setCollectionRate(0.4);
     otherNPCs.goal = 'food';
     otherNPCs.update();
@@ -289,7 +296,7 @@ function level4() {
   level.attachBGSetup(snowArt);
   let npc1 = level.newSpriteCollection('NPC1', 0.5, 0.3);
   npc1.setCollectionRate(0.4);
-  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
+  npc1.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 16, 0, 8), 32, 0, 0, 8);
   npc1.update();
   npc1.play();
   // addFinAndJake(level);
@@ -485,6 +492,7 @@ function level9() {
   dialog.addDialogEvent('PC', 'Is anyone there?.');
   dialog.addDialogEvent('PC', 'Helloooooo!');
   dialog.addDialogEvent('PC', G.player.companion.name + '?');
+  dialog.addDialogEvent('PC', 'I should head to the next town. Maybe someone knows something.');
 
   return level;
 }
@@ -500,7 +508,7 @@ function level10() {
   npc1.play();
   let npc2 = level.newSpriteCollection('NPC2', 0.3, 0.4);
   npc2.setCollectionRate(0.4);
-  npc2.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 11, 0, 8), 32, 0, 0, 8);
+  npc2.addAnimation(8, splitSheet(G.loaders['humanoid1'], 64, 16, 0, 8), 32, 0, 0, 8);
   npc2.update();
   npc2.play();
   addRandomHumans(level, 10);
@@ -575,7 +583,6 @@ function level13() {
   dialog.updateCoords('NPC2', npc2.current);
   dialog.addDialogEvent('PC', 'I\'m back');
   dialog.addDialogEvent('NPC1', 'With medicine?');
-  G.player.addItem('medicine', 10);
   if (G.player.inventory.hasItems('medicine') == true) {
     let parEvent = dialog.addDialogEvent('PC', '');
     dialog.addOption(parEvent, 'Yes. Here.', function () {return G.player.removeMedicine();}, returnTrue);
@@ -652,7 +659,6 @@ function level15() {
   dialog.addDialogEvent('PC', 'I know ' + G.player.companion.name + '.');
   dialog.addDialogEvent('NPC1', 'Yes yes. I guess we could trade.');
   let parEvent = dialog.addDialogEvent('PC', '');
-  G.player.addItem('food');
   dialog.addOption(parEvent, 'Everything I have. Take it.', function() { level.setSpritesToAttack(false); return G.player.emptyInventory()}, function () {return G.player.hasAnything();});
   let ok = dialog.addChildDialogEvent(parEvent, 'NPC1', 'Excellent.');
   ok = dialog.addChildDialogEvent(ok, 'PC', G.player.companion.name + '!');
@@ -710,7 +716,6 @@ function testLevel() {
   level.attachBGSetup(testLevelArt);
   level.attachBGSetup(grassArt);
   // addPuddle(level, 0.3, 0.4);
-  G.player.addItem('boot');
   addSleepyPossum(level, 0.5, 0.5);
 
   // G.player.hasCompanion = true;

@@ -189,6 +189,7 @@ function setup() {
   // soundtrack
   soundFormats('mp3');
   G.loaders['ost'] = loadSound('assets/B38TN1K_green_darner.mp3', playSoundtrack)
+  document.getElementById('logoSplash').remove();
 }
 
 function playSoundtrack() {

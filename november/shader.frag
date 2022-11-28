@@ -69,7 +69,7 @@ vec4 chromaA(vec4 myVec, sampler2D texture, vec2 uv, vec2 offs, vec3 res, float 
   aberationLayer.b = (texture2D(texture, uv + offs).b + texture2D(texture, uv - offs).b) * 0.5;
   aberationLayer *= aberationPattern(uv.x, res.y);
   aberationLayer *= aberationPattern(uv.y, res.x);
-  float mix = 0.2;
+  float mix = 0.25;
   myVec = (1. - mix) * myVec + mix * aberationLayer;
   return myVec;
 }

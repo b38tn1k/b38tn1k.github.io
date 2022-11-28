@@ -87,7 +87,7 @@ class UIElements {
     this.cmp.y = this.inv.y + this.inv.halfunit;
     this.isTouchDevice = G.dims.isTouchDevice;
     this.controlOrigin = [];
-    this.albumdiv = createDiv('<a href="https://b38tn1k.com/#discog/"><img src="https://b38tn1k.com/november/albumcoversquared.png" width=100%></a>');
+    this.albumdiv = createDiv('<a href="https://b38tn1k.com/#discog/november-man-and-possum-ost"><img src="https://b38tn1k.com/november/albumcoversquared.png" width=100%></a>');
     this.albumdiv.hide();
   }
 

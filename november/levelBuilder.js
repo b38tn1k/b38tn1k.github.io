@@ -813,11 +813,11 @@ function finalFinalLevel() {
   let dialog = level.newDialog(0.5, 0.8, returnTrue);
   dialog.addDialogEvent('PC', 'I\'m back!');
   function fflogic(player, inputs, level) {
-    if (level.levelTimer > 60) {
+    if (level.levelTimer > 100) {
       player.companion.setTarget(player);
       level.deleteDialogs();
     }
-    if (level.levelTimer > 100) {
+    if (level.levelTimer > 150) {
       player.companion.setTarget(player);
       G.state = END_GAME;
     }

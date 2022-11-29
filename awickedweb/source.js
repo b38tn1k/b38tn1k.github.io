@@ -18,8 +18,8 @@ function setupScreen() {
 
 function setupSim() {
   testWeb = new spWeb();
-  let parent = testWeb.addStrand(new Particle(100, height-100, 0, true), new Particle(width-100, 100, 0, true));
-  testWeb.addStrand(new Particle(width-100, height-100, 0, true), parent.particles[5]);
+  // let parent = testWeb.addStrand(new Particle(100, height-100, 0, true), new Particle(width-100, 100, 0, true));
+  // testWeb.addStrand(new Particle(width-100, height-100, 0, true), parent.particles[5]);
 }
 
 function setup() {

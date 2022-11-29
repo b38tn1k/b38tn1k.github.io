@@ -73,9 +73,9 @@ class spWeb {
 
   draw() {
     for (let i = 0; i < this.strands.length; i++) {
-      this.strands[i].drawStartEnd();
+      // this.strands[i].drawStartEnd();
       this.strands[i].draw2DCurve();
-      this.strands[i].draw2DParticles();
+      // this.strands[i].draw2DParticles();
     }
   }
 

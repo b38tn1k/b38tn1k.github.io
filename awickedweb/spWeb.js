@@ -7,8 +7,13 @@ class spWeb {
     this.state = IDLE;
   }
 
-  buildStrand(x, y) {
-    let p1 = new Particle(x, y, 0, true);
+  buildStrand(x, y, start = null) {
+    let p1;
+    if (start == null) {
+      p1 = new Particle(x, y, 0, true);
+    } else {
+      p1 = start;
+    }
     let p2 = new Particle(x, y, 0);
     let newStrand = new Strand(p1, p2);
     newStrand.building = true;
@@ -42,7 +47,19 @@ class spWeb {
       if (surveyCounter == 0) {
         this.buildStrand(x, y);
         this.state = BUILDING;
+      } else if (keyIsDown(SHIFT) == true) {
+        let p1;
+        for (let i = 0; i < survey.length; i++) {
+          if (survey[i].selected == true) {
+            p1 = survey[i].particle;
+            break;
+          }
+        }
+        this.buildStrand(x, y, p1);
+        this.state = BUILDING;
+
       }
+
     } else if (this.state == BUILDING) {
 
       let p1 = this.strands.pop().start;

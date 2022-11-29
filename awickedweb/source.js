@@ -1,4 +1,4 @@
-
+var testWeb;
 
 function deviceTurned() {
   setupScreen();
@@ -9,22 +9,17 @@ function windowResized() {
 }
 
 function mousePressed() {
-  testWeb.findClosestParticle(mouseX, mouseY);
-  babyWeb.findClosestParticle(mouseX, mouseY);
+  testWeb.mouseClickEvent(mouseX, mouseY);
 }
 
 function setupScreen() {
   createCanvas(windowWidth, windowHeight);
 }
 
-var testWeb;
 function setupSim() {
-  testWeb = new Strand(new Particle(100, height-100, 0, true), new Particle(width-100, 100, 0, true));
-  testWeb.createParticles();
-  testWeb.createSpringMesh();
-  babyWeb = new Strand(new Particle(width-100, height-100, 0, true), testWeb.particles[5]);
-  babyWeb.createParticles();
-  babyWeb.createSpringMesh();
+  testWeb = new spWeb();
+  let parent = testWeb.addStrand(new Particle(100, height-100, 0, true), new Particle(width-100, 100, 0, true));
+  testWeb.addStrand(new Particle(width-100, height-100, 0, true), parent.particles[5]);
 }
 
 function setup() {
@@ -35,12 +30,5 @@ function setup() {
 function draw() {
   clear();
   testWeb.update();
-  testWeb.drawStartEnd();
-  testWeb.draw2DCurve();
-  testWeb.draw2DParticles();
-  babyWeb.update();
-  babyWeb.drawStartEnd();
-  babyWeb.draw2DCurve();
-  babyWeb.draw2DParticles();
-
+  testWeb.draw();
 }

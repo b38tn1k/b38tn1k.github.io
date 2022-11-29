@@ -1,21 +1,98 @@
-function pointHypot(p1, p2) {
-  let dx = p1.x - p2.x;
-  let dy = p1.y - p2.y;
-  let h = sqrt(dx**2 + dy**2);
-  return h;
-}
+var IDLE = 0;
+var BUILDING = 1;
+
+class spWeb {
+  constructor() {
+    this.strands = [];
+    this.state = IDLE;
+  }
+
+  buildStrand(x, y) {
+    let p1 = new Particle(x, y, 0, true);
+    let p2 = new Particle(x, y, 0);
+    let newStrand = new Strand(p1, p2);
+    newStrand.building = true;
+    newStrand.createParticles();
+    newStrand.createSpringMesh();
+    this.strands.push(newStrand);
+    return newStrand;
+  }
+
+  addStrand(p1, p2) {
+    let newStrand = new Strand(p1, p2);
+    newStrand.createParticles();
+    newStrand.createSpringMesh();
+    this.strands.push(newStrand);
+    return newStrand;
+  }
+
+  update() {
+    for (let i = 0; i < this.strands.length; i++) {
+      this.strands[i].update();
+    }
+  }
+
+  mouseClickEvent(x, y) {
+    let survey = this.findClosestParticles(x, y);
+    let surveyCounter = 0;
+    for (let i = 0; i < survey.length; i++) {
+      surveyCounter += int(survey[i].selected);
+    }
+    if (this.state == IDLE){
+      if (surveyCounter == 0) {
+        this.buildStrand(x, y);
+        this.state = BUILDING;
+      }
+    } else if (this.state == BUILDING) {
+
+      let p1 = this.strands.pop().start;
+      let p2;
+      if (surveyCounter <= 1) {
+        p2 = new Particle(x, y, 0, true);
+      } else {
+        for (let i = 0; i < survey.length; i++) {
+          if (survey[i].selected == true) {
+            p2 = survey[i].particle;
+            break;
+          }
+        }
+      }
+      this.addStrand(p1, p2);
+      this.state = IDLE;
+    }
+
+  }
+
+  findClosestParticles(x, y) {
+    let result = [];
+    for (let i = 0; i < this.strands.length; i++) {
+      result.push(this.strands[i].findClosestParticle(x, y));
+    }
+    return result;
+  }
+
+  draw() {
+    for (let i = 0; i < this.strands.length; i++) {
+      this.strands[i].drawStartEnd();
+      this.strands[i].draw2DCurve();
+      this.strands[i].draw2DParticles();
+    }
+  }
+
+};
 
 class Strand {
   constructor(start, end) {
     this.particles = [];
     this.springs = [];
     // avoid using this VV, use particles.length
-    this.particleCount; // need to add to this as webs grow / shrink
+    this.particleCount = 5; // need to add to this as webs grow / shrink, 5 enough to start?
     // avoid using this ^^, use particles.length
     this.start = start;
     this.end = end;
     this.particleCursor = -1;
     this.approxSpringLength = 50;
+    this.building = false;
   }
 
   drawStartEnd() {
@@ -79,14 +156,18 @@ class Strand {
       this.particleCursor = avGuess -1 + distances.indexOf(hypot);
       selected = true;
     }
-    return selected;
+    let result = {}
+    result.selected = selected;
+    result.particle = this.particles[this.particleCursor];
+    return result;
   }
 
   createParticles(){
     // for 2D X and Y increments
-    let strandLength = pointHypot(this.start, this.end);
-    this.particleCount = ceil(strandLength/this.approxSpringLength);
-
+    if (this.building == false) {
+      let strandLength = pointHypot(this.start, this.end);
+      this.particleCount = ceil(strandLength/this.approxSpringLength);
+    }
     let xInc = (this.end.x - this.start.x) / this.particleCount;
     let yInc = (this.end.y - this.start.y) / this.particleCount;
     // the start anchor
@@ -122,8 +203,20 @@ class Strand {
     for (let i=0; i < this.springs.length; i++) {
       this.springs[i].update();
     }
+    if (this.building == true) {
+      this.end.x = mouseX;
+      this.end.y = mouseY;
+
+    }
   }
 };
+
+function pointHypot(p1, p2) {
+  let dx = p1.x - p2.x;
+  let dy = p1.y - p2.y;
+  let h = sqrt(dx**2 + dy**2);
+  return h;
+}
 
 class Point {
   constructor (x=0, y=0, z=0) {

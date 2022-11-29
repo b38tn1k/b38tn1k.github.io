@@ -6,6 +6,8 @@ class DialogEvent {
     this.conditions = [];
     this.triggers = [];
     this.optionYs = [];
+    this.optionYBools = [];
+    this.boundingBox = [];
     this.children = [];
     this.printHead = 0;
     this.completed = false;
@@ -270,7 +272,7 @@ class Dialog {
   waitForSelection(input) {
     if (input.hasChanged() == true && input.on == true) {
       this.pauseForOptions = false;
-      this.chooseOption(input.y);
+      this.chooseOption(input.x, input.y);
     }
   }
 
@@ -293,7 +295,7 @@ class Dialog {
     }
     if (this.dontWait) {
       this.pauseForOptions = false;
-      this.chooseOption(0);
+      this.chooseOption(0, 0);
 
     }
     if (this.pauseForOptions) {
@@ -301,14 +303,28 @@ class Dialog {
     }
   }
 
-  chooseOption(y) {
+  chooseOption(x, y) {
     let option = 0;
     if (y < this.de.optionYs[0]) {
-      option = 0;
-    }
-    for (let i = 1; i < this.de.optionYs.length; i++) {
-      if ((this.de.optionYs[i-1] < y) && (this.de.optionYs[i] > y)){
-        option = i;
+      let i = 0;
+      while (this.de.optionYBools[i] == false) {
+        i += 1;
+      }
+      option = i;
+    } else {
+      let yMax = 0;
+      for (let i = 1; i < this.de.optionYs.length; i++) {
+        yMax = this.de.optionYs[i];
+        if ((this.de.optionYs[i-1] < y) && (this.de.optionYs[i] > y)){
+          option = i;
+        }
+        if (y > yMax) {
+          let j = this.de.optionYBools.length-1;
+          while (this.de.optionYBools[j] == false) {
+            j -= 1;
+          }
+          option = j;
+        }
       }
     }
     this.de.hasOptions = false;
@@ -317,8 +333,6 @@ class Dialog {
     this.selector = option;
     this.eventTrigger = true;
     this.de.triggers[option]();
-    // console.log();
-    // this.eventID = this.de.eventIDs[option];
   }
 
   calculateTextBoxHeight(line) {
@@ -360,11 +374,12 @@ class Dialog {
     let x = this.coords[key].x
     let y = this.coords[key].y
     let firstTime = (this.onScr[key].optionYs.length == 0);
+    let textBoxHeight;
     for (let i = 0; i < this.onScr[key].options.length; i++) {
       if (this.onScr[key].conditions[i]() == true && this.onScr[key].options[i] != -1) {
         let fullText = '> ' + this.onScr[key].options[i];
         // let lineCount = ceil(this.layer.g.textWidth(fullText) / this.textBoxWidth);
-        let textBoxHeight = this.calculateTextBoxHeight(fullText);
+        textBoxHeight = this.calculateTextBoxHeight(fullText);
         // let textBoxHeight =lineCount * (this.totalLineHeight);
         this.layer.g.fill(this.bgcolor);
         this.layer.g.rect(x, y, this.textBoxWidth, textBoxHeight);
@@ -378,6 +393,12 @@ class Dialog {
       }
       if (firstTime) {
         this.onScr[key].optionYs.push(y);
+        this.onScr[key].optionYBools.push(this.onScr[key].conditions[i]());
+        // if (this.onScr[key].conditions[i]() == false) {
+        //   this.onScr[key].boundingBox.push([-1, -1, -1, -1]);
+        // } else {
+        //   this.onScr[key].boundingBox.push([x, y, x + this.textBoxWidth, y + textBoxHeight]);
+        // }
       }
     }
   }

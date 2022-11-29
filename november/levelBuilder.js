@@ -654,6 +654,7 @@ function level11() {
   dialog.addDialogEvent('PC', 'Did he describe his attacker? I\'m looking for a possum-napper.');
   dialog.addDialogEvent('NPC1', 'He\s been unconcious since we found him. We need medicine from the forest, but it\'s too dangerous.');
   dialog.addDialogEvent('PC', 'I\'ll get your medicine.');
+  dialog.addDialogEvent('NPC1', 'Be safe!');
   addRandomBirds(level, ceil(G.dims.swarmSize/4));
   return level;
 }

@@ -108,25 +108,25 @@ function setupGame() {
   G.player.emptyInventory();
   G.player.backupInventory();
   // LEVEL SETUP
-  G.levelSetup.push(level0);
+  G.levelSetup.push(level0); // starving man
   G.levelSetup.push(level1);
-  G.levelSetup.push(level2);
+  G.levelSetup.push(level2); // colin iser
   G.levelSetup.push(level3);
-  G.levelSetup.push(level4);
-  G.levelSetup.push(level5);
+  G.levelSetup.push(level4); // boots trade
+  G.levelSetup.push(level5); // meet Possum
   G.levelSetup.push(level6);
   G.levelSetup.push(level6v2);
-  G.levelSetup.push(level7);
+  G.levelSetup.push(level7); // cave entry
   G.levelSetup.push(level8);
-  G.levelSetup.push(level9);
-  G.levelSetup.push(level10);
-  G.levelSetup.push(level11);
-  G.levelSetup.push(level12);
-  G.levelSetup.push(level13);
+  G.levelSetup.push(level9); // cave exit
+  G.levelSetup.push(level10); // town 1
+  G.levelSetup.push(level11); // town 2
+  G.levelSetup.push(level12); // medicine
+  G.levelSetup.push(level13); // town return
   G.levelSetup.push(level14);
-  G.levelSetup.push(level15);
+  G.levelSetup.push(level15); //confront in desert
   G.levelSetup.push(level16);
-  G.levelSetup.push(penultimateLevel);
+  G.levelSetup.push(penultimateLevel); // is this your family?
   G.levelSetup.push(finalLevel);
   G.levelSetup.push(finalFinalLevel);
   // G.levelSetup.push(testLevel);

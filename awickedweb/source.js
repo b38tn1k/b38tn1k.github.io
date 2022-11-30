@@ -1,4 +1,5 @@
 var testWeb;
+var JL;
 
 function deviceTurned() {
   setupScreen();
@@ -24,6 +25,7 @@ function keyPressed() {
 
 function setupSim() {
   testWeb = new spWeb();
+  JL = new TimedLog();
   // let parent = testWeb.addStrand(new Particle(100, height-100, 0, true), new Particle(width-100, 100, 0, true));
   // testWeb.addStrand(new Particle(width-100, height-100, 0, true), parent.particles[5]);
 }
@@ -38,4 +40,5 @@ function draw() {
   clear();
   testWeb.update();
   testWeb.draw();
+  JL.update();
 }

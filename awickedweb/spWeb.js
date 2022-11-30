@@ -58,11 +58,8 @@ class spWeb {
         }
         this.buildStrand(x, y, p1);
         this.state = BUILDING;
-
       }
-
     } else if (this.state == BUILDING) {
-
       let p1 = this.strands.pop().start;
       let p2;
       if (surveyCounter <= 1) {
@@ -223,6 +220,8 @@ class Strand {
     }
     for (let i=0; i < this.springs.length; i++) {
       this.springs[i].update();
+      // JL.log('Spring ' + String(i), [this.springs[i].restLength, this.springs[i].currentLength()]);
+      
     }
     if (this.building == true) {
       this.end.x = mouseX;
@@ -276,6 +275,10 @@ class Spring {
     this.p2 = p2;
     this.k = 0.5;
     this.restLength = sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
+  }
+
+  currentLength() {
+    return pointHypot(this.p1, this.p2);
   }
 
   update() {

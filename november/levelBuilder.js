@@ -649,7 +649,7 @@ function level11() {
   npc2.play();
   let dialog = level.newDialog(0.5, 0.5, returnTrue);
   dialog.updateCoords('NPC1', npc1.current);
-  dialog.addDialogEvent('PC', 'The townsfold said your friend was attacked?');
+  dialog.addDialogEvent('PC', 'The townsfolk said your friend was attacked?');
   dialog.addDialogEvent('NPC1', 'Yes. He was gathering food in the forest. Someone hit him and stole all the food.');
   dialog.addDialogEvent('PC', 'Did he describe his attacker? I\'m looking for a possum-napper.');
   dialog.addDialogEvent('NPC1', 'He\s been unconcious since we found him. We need medicine from the forest, but it\'s too dangerous.');

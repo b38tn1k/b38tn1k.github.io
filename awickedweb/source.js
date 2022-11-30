@@ -25,6 +25,7 @@ function setupSim() {
 function setup() {
   setupScreen();
   setupSim();
+  pixelDensity(1);
 }
 
 function draw() {

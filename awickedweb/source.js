@@ -16,6 +16,12 @@ function setupScreen() {
   createCanvas(windowWidth, windowHeight);
 }
 
+function keyPressed() {
+  if (key == ' ') {
+    testWeb.showHandles = !testWeb.showHandles;
+  }
+}
+
 function setupSim() {
   testWeb = new spWeb();
   // let parent = testWeb.addStrand(new Particle(100, height-100, 0, true), new Particle(width-100, 100, 0, true));

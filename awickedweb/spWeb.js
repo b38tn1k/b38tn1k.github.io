@@ -5,6 +5,7 @@ class spWeb {
   constructor() {
     this.strands = [];
     this.state = IDLE;
+    this.showHandles = false;
   }
 
   buildStrand(x, y, start = null) {
@@ -90,9 +91,12 @@ class spWeb {
 
   draw() {
     for (let i = 0; i < this.strands.length; i++) {
-      this.strands[i].drawStartEnd();
       this.strands[i].draw2DCurve();
-      this.strands[i].draw2DParticles();
+      if (this.showHandles == true) {
+        this.strands[i].draw2DParticles();
+        this.strands[i].drawStartEnd();
+      }
+
     }
   }
 
@@ -108,7 +112,7 @@ class Strand {
     this.start = start;
     this.end = end;
     this.particleCursor = -1;
-    this.approxSpringLength = 50;
+    this.approxSpringLength = 40;
     this.building = false;
   }
 

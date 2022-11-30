@@ -587,7 +587,7 @@ function level9() {
   let dialog = level.newDialog(0.5, 0.5, returnTrue);
   dialog.addDialogEvent('PC', 'Hello?');
   dialog.addDialogEvent('PC', 'I\'m back from the caves.');
-  if (G.player.inventory.hasItems('crystal') == true) {
+  if (G.player.hasCrystal() == true) {
     dialog.addDialogEvent('PC', 'I got you some crystals.');
   } else {
     dialog.addDialogEvent('PC', 'I was attacked and dropped all the crystals.');

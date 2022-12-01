@@ -40,6 +40,11 @@ function factory() {
   spr = addSingleSprite(level, 'table' , 0.4, 0.5);spr.current.tx = 483;spr.current.ty = 151;
   spr = addSingleSprite(level, 'URarm' , 0.4, 0.5);spr.current.tx = 165;spr.current.ty = 72;
   spr = addSingleSprite(level, 'URarm' , 0.4, 0.5);spr.current.tx = 164;spr.current.ty = 157;
+  for (let i = 0; i < level.npcs.length; i++) {
+    if (level.npcs[i].clickable == true) {
+      level.npcs[i].init();
+    }
+  }
   level.attachBGSetup(testLevelArt);
   return level;
 }

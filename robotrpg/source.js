@@ -146,6 +146,7 @@ function preload() {
   G.loaders['URarm'] = loadImage('assets/UR-generic.png');
   G.loaders['mobileManipulator'] = loadImage('assets/mobileManipulator.png');
   G.loaders['table'] = loadImage('assets/table.png');
+  G.loaders['worker'] = loadImage('assets/worker.png');
   // fonts and logos
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
   // maps

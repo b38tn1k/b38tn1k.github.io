@@ -25,7 +25,7 @@ function factory() {
   // addSingleSprite(level, 'table', 0.5, 0.4);
   // addSingleSprite(level, 'vogui', 0.5, 0.5);
   // addSingleSprite(level, 'URarm', 0.4, 0.5);
-  // addSingleSprite(level, 'mobileManipulator', 0.6, 0.5);
+  addSingleSprite(level, 'worker', 0.5, 0.5);
   let spr = addSingleSprite(level, 'table' , 0.4, 0.5);spr.current.tx = 161;spr.current.ty = 82;
   spr = addSingleSprite(level, 'vogui' , 0.4, 0.5);spr.current.tx = 328;spr.current.ty = 199;
   spr = addSingleSprite(level, 'URarm' , 0.4, 0.5);spr.current.tx = 27;spr.current.ty = 32;

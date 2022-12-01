@@ -17,6 +17,7 @@ class SpriteCollection {
     this.layer.g.textAlign(LEFT, TOP);
     this.current;
     this.playAni = true;
+    this.clickable = false;
   }
   shutDown() {
     for (let i = 0; i < this.collection.length; i++) {

@@ -282,15 +282,16 @@ class PlayerCharacter extends SpriteCollection {
     }
     super.update();
     this.bbox = [this.x - this.bboxWidth, this.y - this.bboxWidth, this.x + this.bboxWidth, this.y + this.bboxWidth];
-    if (input.on == true && this.dontMove == false) {
-      this.selectCurrent(input);
-      this.current.play = true;
-      let uv = input.getUnitVector(this.current);
-      if (this.current.isMoveFrame() == true) {
-        this.current.tx += uv[0] * this.movementSpeed;
-        this.current.ty += uv[1]  * this.movementSpeed;
-      }
-    } else if (this.keyInput == true  && this.dontMove == false){
+    // if (input.on == true && this.dontMove == false) {
+    //   this.selectCurrent(input);
+    //   this.current.play = true;
+    //   let uv = input.getUnitVector(this.current);
+    //   if (this.current.isMoveFrame() == true) {
+    //     this.current.tx += uv[0] * this.movementSpeed;
+    //     this.current.ty += uv[1]  * this.movementSpeed;
+    //   }
+    // } else
+    if (this.keyInput == true  && this.dontMove == false){
       this.selectCurrentKeys(this.moveVector);
       this.keyInput = false;
       this.current.play = true;

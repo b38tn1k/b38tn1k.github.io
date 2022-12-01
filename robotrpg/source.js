@@ -18,6 +18,46 @@ function toggleToPlay() {
 }
 function mousePressed() {
   toggleToPlay();
+  let currentActive = -1;
+  if (keyIsDown(SHIFT) == false) {
+    for (let i = 0; i < G.level.npcs.length; i++) {
+      if (G.level.npcs[i].clickable == true) {
+        let clickOn = bounded(G.level.npcs[i].bbox, mouseX, mouseY);
+        if (clickOn.complete == true) {
+          G.level.npcs[i].active = !G.level.npcs[i].active;
+          currentActive = i;
+          break;
+        }
+      }
+    }
+    for (let i = 0; i < G.level.npcs.length; i++) {
+      if (G.level.npcs[i].clickable == true) {
+        if (i != currentActive) {
+          G.level.npcs[i].active = false;
+        }
+      }
+    }
+  } else {
+    for (let i = 0; i < G.level.npcs.length; i++) {
+      if (G.level.npcs[i].clickable == true) {
+        let clickOn = bounded(G.level.npcs[i].bbox, mouseX, mouseY);
+        if (clickOn.complete == true) {
+          currentActive = G.level.npcs.length;
+          let spr = addSingleSprite(G.level, G.level.npcTags[i], mouseX/width, mouseY/height);
+          spr.active = true;
+          break;
+        }
+      }
+    }
+    for (let i = 0; i < G.level.npcs.length; i++) {
+      if (G.level.npcs[i].clickable == true) {
+        if (i != currentActive) {
+          G.level.npcs[i].active = false;
+        }
+      }
+    }
+  }
+
 }
 
 function keyPressed() {
@@ -25,20 +65,27 @@ function keyPressed() {
   if (key == 'p') {
     saveImage();
   }
-  // if (key == 'f') {
-  //   G.player.addItem('food');
-  // }
-  // if (key == 'b') {
-  //   G.player.addItem('boot');
-  // }
-  // if (key == 'n') {
-  //   G.player.subtractItem('boot');
-  // }
-  //
-  // if (key == ' ') {
-  //   transitionLevel();
-  //   console.log(G.levelPointer);
-  // }
+  if (key == 'r') {
+    backupLayout()
+  }
+}
+
+function backupLayout() {
+  for (let i = 0; i < G.level.npcs.length; i++) {
+    console.log(G.level.npcTags[i], G.level.npcs[i].x, G.level.npcs[i].y);
+  }
+  for (let i = 0; i < G.level.npcs.length; i++) {
+    let myString = "spr = addSingleSprite(level, '";
+    myString += G.level.npcTags[i];
+    myString += "' , 0.4, 0.5);";
+    myString += "spr.current.tx = ";
+    myString += String(int(G.level.npcs[i].x));
+    myString += ";";
+    myString += "spr.current.ty = ";
+    myString += String(int(G.level.npcs[i].y));
+    myString += ";";
+    console.log(myString);
+  }
 }
 
 function saveImage() {
@@ -95,10 +142,14 @@ function preload() {
   // sprites
   G.loaders['humanoid2'] = loadImage('assets/humanoid2red.png');
   G.loaders['computer'] = loadImage('assets/megaComputer.png');
+  G.loaders['vogui'] = loadImage('assets/robotnikvogui.png');
+  G.loaders['URarm'] = loadImage('assets/UR-generic.png');
+  G.loaders['mobileManipulator'] = loadImage('assets/mobileManipulator.png');
+  G.loaders['table'] = loadImage('assets/table.png');
   // fonts and logos
   G.loaders['font'] = loadFont('assets/Lato-Regular.ttf');
   // maps
-  G.loaders['temple'] = loadImage('assets/temple.png');
+  G.loaders['lab'] = loadImage('assets/lab.png');
 }
 
 function setup() {

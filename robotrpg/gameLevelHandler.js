@@ -75,6 +75,8 @@ class Level {
       this.obstacles.push(bb);
     } else if (type == 3) {
       sc = new StickySprites(G.dims.w * x, G.dims.h * y);
+    } else if (type == 4) {
+      sc = new ClickableSprite(G.dims.w * x, G.dims.h * y);
     }
     this.addNPC(sc);
     return sc;

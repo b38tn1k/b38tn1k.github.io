@@ -118,6 +118,8 @@ function setupGame() {
   G.loaders['player-boots-left'] = splitSheet(G.loaders['humanoid2'], 64, 6, 0, 4);
   G.loaders['player-boots-right'] = splitSheet(G.loaders['humanoid2'], 64, 7, 0, 4);
   G.loaders['player-stuck'] = splitSheet(G.loaders['humanoid2'], 64, 8, 0, 4);
+  G.loaders['computer'] = splitSheet(G.loaders['computer'], 96, 0, 0, 1);
+  G.loaders['worker'] = splitSheet(G.loaders['worker'], 60, 0, 0, 1);
   G.player.addAnimation(8, G.loaders['player-noboots-up'], 'up', [0, 4], 0);
   G.player.addAnimation(8, G.loaders['player-noboots-down'], 'down',[0, 4], 0);
   G.player.addAnimation(8, G.loaders['player-noboots-left'], 'left',[0, 4], 0);

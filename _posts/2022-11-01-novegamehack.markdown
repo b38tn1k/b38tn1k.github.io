@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "November Game Hack"
-date:   2022-10-01
+date:   2022-11-01
 categories: [code, fun, game, november]
 comments: True
 sitemap:
@@ -11,7 +11,7 @@ sitemap:
   exclude: 'yes'
 ---
 
-It's November. Let's make something fun and stop thinking about Untitled Block Thing for a bit. 
+It's November. Let's make something fun and stop thinking about Untitled Block Thing for a bit.
 
 [where it's at](https://b38tn1k.com/november/)
 

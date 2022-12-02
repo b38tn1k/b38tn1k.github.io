@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Busy busy"
-date:   2022-10-26
+date:   2022-11-26
 categories: [game, november]
 tags: gameprogress
 ---

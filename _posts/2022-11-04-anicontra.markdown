@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Animation & Contradictions"
-date:   2022-10-04
+date:   2022-11-04
 categories: [game, november]
 tags: gameprogress
 ---

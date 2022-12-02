@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "a e s t h e t i c"
-date:   2022-10-21
+date:   2022-11-21
 categories: [game, november]
 tags: gameprogress
 ---

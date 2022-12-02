@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "art day part 2"
-date:   2022-10-22
+date:   2022-11-22
 categories: [game, november]
 tags: gameprogress
 ---

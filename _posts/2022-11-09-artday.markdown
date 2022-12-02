@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Art Day"
-date:   2022-10-09
+date:   2022-11-09
 categories: [game, november]
 tags: gameprogress
 ---
@@ -14,4 +14,4 @@ Backgrounds are sorta underwhelming.
 Later that day...
 The perlin noise art annoyed me. I had a look around [Open Game Art](https://opengameart.org/content/blowhard-2-blow-harder) and found some inspiration + more test assets. I am keeping a running attribution list [here](https://b38tn1k.com/november/assets/attributionList.txt).
 
-I created a UIElements class that will display the game progress tracker, inventory. It currently only displays the compass. I created a scrollTracker class to try keep the sprite center-screen-ish. This one needs a bit more thought - I want to avoid using globals to jump into classes, it gets messy and confusing quick. 
+I created a UIElements class that will display the game progress tracker, inventory. It currently only displays the compass. I created a scrollTracker class to try keep the sprite center-screen-ish. This one needs a bit more thought - I want to avoid using globals to jump into classes, it gets messy and confusing quick.

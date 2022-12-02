@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Tidying Up, Picking Up"
-date:   2022-10-16
+date:   2022-11-16
 categories: [game, november]
 tags: gameprogress
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Sprite Stuff"
-date:   2022-10-08
+date:   2022-11-08
 categories: [game, november]
 tags: gameprogress
 ---

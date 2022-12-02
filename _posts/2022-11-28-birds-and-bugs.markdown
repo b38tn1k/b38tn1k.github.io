@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Birds and Bugs"
-date:   2022-10-28
+date:   2022-11-28
 categories: [game, november]
 tags: gameprogress
 ---

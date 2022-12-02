@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Dialog Stuff"
-date:   2022-10-07
+date:   2022-11-07
 categories: [game, november]
 tags: gameprogress
 ---

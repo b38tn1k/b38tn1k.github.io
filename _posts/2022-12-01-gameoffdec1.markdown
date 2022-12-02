@@ -1,6 +1,6 @@
 ---
 layout: post
-title: gameoffdec1
+title: Game Off Day 1
 date: 2022-12-01
 categories: [game, november]
 tags: gameprogress

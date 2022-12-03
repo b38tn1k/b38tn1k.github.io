@@ -250,13 +250,14 @@ class Particle extends Point{
     super(x, y, z);
     this.v = new Point();
     this.mass = 1.0;
-    this.dampening = 0.9;
+    this.dampening = 0.7;
     this.returnK = 0.1;
     this.fixed = fixed;
   }
   addForce(fx, fy) {
     this.v.x += (fx / this.mass);
     this.v.y += (fy / this.mass);
+    this.v.y += 0.009;
   }
   update() {
     this.v.x *= this.dampening;

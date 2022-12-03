@@ -162,7 +162,7 @@ class Strand {
     let distances = [];
     for (let i = 0; i < guessSpace.length; i++) {
       let target = this.particles[guessSpace[i]];
-      let myHypot = sqrt((x - target.x) ** 2 + (y - target.y) ** 2);
+      let myHypot = pointHypot(new Point(x, y), target);
       distances.push(myHypot);
     }
     let hypot = min(distances);
@@ -221,7 +221,6 @@ class Strand {
     for (let i=0; i < this.springs.length; i++) {
       this.springs[i].update();
       // JL.log('Spring ' + String(i), [this.springs[i].restLength, this.springs[i].currentLength()]);
-      
     }
     if (this.building == true) {
       this.end.x = mouseX;
@@ -274,7 +273,7 @@ class Spring {
     this.p1 = p1;
     this.p2 = p2;
     this.k = 0.5;
-    this.restLength = sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
+    this.restLength = pointHypot(p1, p2);
   }
 
   currentLength() {

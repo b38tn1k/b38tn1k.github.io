@@ -1,3 +1,8 @@
+// mechanics
+var PARTICLE_MASS = 1.0;
+var DAMPENING = 0.97;
+var K = 0.5;
+// states
 var IDLE = 0;
 var BUILDING = 1;
 
@@ -249,19 +254,16 @@ class Particle extends Point{
   constructor (x=0, y=0, z=0, fixed=false) {
     super(x, y, z);
     this.v = new Point();
-    this.mass = 1.0;
-    this.dampening = 0.7;
-    this.returnK = 0.1;
     this.fixed = fixed;
   }
   addForce(fx, fy) {
-    this.v.x += (fx / this.mass);
-    this.v.y += (fy / this.mass);
+    this.v.x += (fx / PARTICLE_MASS);
+    this.v.y += (fy / PARTICLE_MASS);
     this.v.y += 0.009;
   }
   update() {
-    this.v.x *= this.dampening;
-    this.v.y *= this.dampening;
+    this.v.x *= DAMPENING;
+    this.v.y *= DAMPENING;
     if (this.fixed == false) {
       this.x += this.v.x;
       this.y += this.v.y;
@@ -273,7 +275,6 @@ class Spring {
   constructor(p1, p2) {
     this.p1 = p1;
     this.p2 = p2;
-    this.k = 0.5;
     this.restLength = pointHypot(p1, p2);
   }
 
@@ -287,7 +288,7 @@ class Spring {
     let dh = pointHypot(this.p1, this.p2);
     if (dh > 0.01) {
       let stretch = dh - this.restLength;
-      let rForce = this.k * stretch;
+      let rForce = K * stretch;
       let fx = (dx / dh) * rForce;
       let fy = (dy / dh) * rForce;
       this.p1.addForce(-fx, -fy);

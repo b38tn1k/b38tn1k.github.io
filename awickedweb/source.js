@@ -19,7 +19,7 @@ function setupScreen() {
 
 function keyPressed() {
   if (key == ' ') {
-    testWeb.showHandles = !testWeb.showHandles;
+    testWeb.toggleDebug();
   }
 }
 

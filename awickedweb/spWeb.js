@@ -1,10 +1,20 @@
 // mechanics
 var PARTICLE_MASS = 1.0;
 var DAMPENING = 0.97;
+var GRAVITY = 0.009;
 var K = 0.5;
+var APPROX_SPRING_LENGTH = 40;
+var MOUSE_DAMPENER = 1.0;
 // states
 var IDLE = 0;
 var BUILDING = 1;
+
+function pointHypot(p1, p2) {
+  let dx = p1.x - p2.x;
+  let dy = p1.y - p2.y;
+  let h = sqrt(dx**2 + dy**2);
+  return h;
+}
 
 class spWeb {
   constructor() {
@@ -13,16 +23,20 @@ class spWeb {
     this.showHandles = false;
   }
 
+  toggleDebug() {
+    this.showHandles = ! this.showHandles;
+  }
+
   buildStrand(x, y, start = null) {
     let p1;
     if (start == null) {
-      p1 = new Particle(x, y, 0, true);
+      p1 = new Particle(x, y, true);
     } else {
       p1 = start;
     }
-    let p2 = new Particle(x, y, 0);
+    let p2 = new Particle(x, y);
     let newStrand = new Strand(p1, p2);
-    newStrand.building = true;
+    newStrand.state = BUILDING;
     newStrand.createParticles();
     newStrand.createSpringMesh();
     this.strands.push(newStrand);
@@ -44,16 +58,18 @@ class spWeb {
   }
 
   mouseClickEvent(x, y) {
+    // find any and all near particles
     let survey = this.findClosestParticles(x, y);
     let surveyCounter = 0;
     for (let i = 0; i < survey.length; i++) {
       surveyCounter += int(survey[i].selected);
     }
     if (this.state == IDLE){
-      if (surveyCounter == 0) {
+      if (surveyCounter == 0) { // if no nearby particles, build a new strand
         this.buildStrand(x, y);
         this.state = BUILDING;
       } else if (keyIsDown(SHIFT) == true) {
+        //if there are nearby particles and the shift key is down, start a new strand from p1, the selected strand
         let p1;
         for (let i = 0; i < survey.length; i++) {
           if (survey[i].selected == true) {
@@ -65,12 +81,13 @@ class spWeb {
         this.state = BUILDING;
       }
     } else if (this.state == BUILDING) {
-      let p1 = this.strands.pop().start;
+      // if state is already building we are closing a strand.
+      let p1 = this.strands.pop().start; // we rebuild the entire strand on close, using the same start point.
       let p2;
       if (surveyCounter <= 1) {
-        p2 = new Particle(x, y, 0, true);
+        p2 = new Particle(x, y, true); // only particles in the survey are ones that belong to the current strand, make a strand fixed on both ends
       } else {
-        for (let i = 0; i < survey.length; i++) {
+        for (let i = 0; i < survey.length; i++) { // particles from other strands present, connect strands
           if (survey[i].selected == true) {
             p2 = survey[i].particle;
             break;
@@ -86,19 +103,18 @@ class spWeb {
   findClosestParticles(x, y) {
     let result = [];
     for (let i = 0; i < this.strands.length; i++) {
-      result.push(this.strands[i].findClosestParticle(x, y));
+      result.push(this.strands[i].findClosestParticle(x, y)); // actual math done on strand level. and it needs work!
     }
     return result;
   }
 
   draw() {
     for (let i = 0; i < this.strands.length; i++) {
-      this.strands[i].draw2DCurve();
+      draw2DCurve(this.strands[i].particles);
       if (this.showHandles == true) {
-        this.strands[i].draw2DParticles();
-        this.strands[i].drawStartEnd();
+        draw2DParticles(this.strands[i].particles, this.strands[i].particleCursor);
+      drawStartEnd(this.strands[i].particles);
       }
-
     }
   }
 
@@ -108,47 +124,10 @@ class Strand {
   constructor(start, end) {
     this.particles = [];
     this.springs = [];
-    // avoid using this VV, use particles.length
-    this.particleCount = 5; // need to add to this as webs grow / shrink, 5 enough to start?
-    // avoid using this ^^, use particles.length
     this.start = start;
     this.end = end;
     this.particleCursor = -1;
-    this.approxSpringLength = 40;
-    this.building = false;
-  }
-
-  drawStartEnd() {
-    fill(255, 0, 0);
-    circle(this.particles[0].x, this.particles[0].y, 5);
-    circle(this.particles[this.particles.length-1].x, this.particles[this.particles.length-1].y, 5);
-  }
-
-  draw2DParticles(){
-    noStroke();
-    for (let i = 0; i < this.particles.length; i++) {
-      noStroke();
-      fill(255);
-      if (i == this.particleCursor) {
-        fill(255, 0, 0);
-      }
-      circle(this.particles[i].x, this.particles[i].y, 5)
-      fill(255, 255, 255, 10);
-      circle(this.particles[i].x, this.particles[i].y, this.approxSpringLength);
-
-    }
-  }
-
-  draw2DCurve() {
-    stroke(255);
-    noFill();
-    beginShape();
-    curveVertex(this.particles[0].x, this.particles[0].y);
-    for (let i = 0; i < this.particles.length; i++) {
-      curveVertex(this.particles[i].x, this.particles[i].y);
-    }
-    curveVertex(this.particles[this.particles.length-1].x, this.particles[this.particles.length-1].y);
-    endShape();
+    this.state = IDLE;
   }
 
   findClosestParticle(x, y){
@@ -172,7 +151,7 @@ class Strand {
     }
     let hypot = min(distances);
     let selected = false;
-    if (hypot > this.approxSpringLength) {
+    if (hypot > APPROX_SPRING_LENGTH) {
       this.particleCursor = -1;
       selected = false;
     } else {
@@ -185,83 +164,97 @@ class Strand {
     return result;
   }
 
-  createParticles(){
+  createParticles(){ // called when rebuilding a strand after building.
     // for 2D X and Y increments
-    if (this.building == false) {
-      let strandLength = pointHypot(this.start, this.end);
-      this.particleCount = ceil(strandLength/this.approxSpringLength);
-    }
-    let xInc = (this.end.x - this.start.x) / this.particleCount;
-    let yInc = (this.end.y - this.start.y) / this.particleCount;
+    let strandLength = pointHypot(this.start, this.end);
+    let particleCount = ceil(strandLength/APPROX_SPRING_LENGTH);
+    let xInc = (this.end.x - this.start.x) / particleCount;
+    let yInc = (this.end.y - this.start.y) / particleCount;
     // the start anchor
     this.particles.push(this.start);
     // the particles equally spaced along the line;
-    for (let i=1; i < this.particleCount; i++) {
+    for (let i=1; i < particleCount; i++) {
       let currentParticleX = this.start.x + (xInc * i);
       let currentParticleY = this.start.y + (yInc * i);
       this.particles.push(new Particle (currentParticleX, currentParticleY))
     }
     this.particles.push(this.end);
-    // this.particles[0].fixed = true;
-    // this.particles[this.particles.length-1].fixed = true;
   }
-  createSpringMesh() {
+
+  createSpringMesh() { // Particle: *, Spring: =, Mesh: *=*=* ... =*=*
     for (let i=0; i < this.particles.length-1; i++) {
       this.springs.push(new Spring (this.particles[i], this.particles[i+1]));
     }
   }
 
-  update() {
-    for (let i=0; i < this.particles.length; i++) {
-      this.particles[i].update();
+  pullWithMouse() {
+    if (this.particles[this.particleCursor].fixed == false) {
+      this.particles[this.particleCursor].x += MOUSE_DAMPENER * (mouseX - this.particles[this.particleCursor].x);
+      this.particles[this.particleCursor].y += MOUSE_DAMPENER * (mouseY - this.particles[this.particleCursor].y);
     }
+  }
+
+  continueBuilding() {
+    this.end.x = mouseX;
+    this.end.y = mouseY;
+    let hypot = pointHypot(this.start, this.end);
+    let requiredParticles = ceil(hypot / (APPROX_SPRING_LENGTH));
+    while (this.particles.length < requiredParticles) {
+      let prevPoint = this.particles.slice(-2)[0];
+      let newX = (this.end.x + prevPoint.x)/2;
+      let newY = (this.end.y + prevPoint.y)/2;
+      this.particles.push(new Particle (mouseX, mouseY));
+      this.end.x = newX;
+      this.end.y = newY;
+      this.end.v.x = 0;
+      this.end.v.y = 0;
+      this.end = this.particles.slice(-1)[0];
+      this.springs.push(new Spring (this.particles.slice(-2)[0], this.particles.slice(-2)[1]));
+    }
+  }
+
+  update() {
     if (mouseIsPressed && this.particleCursor != -1) {
-      if (this.particles[this.particleCursor].fixed == false) {
-        this.particles[this.particleCursor].x += 0.2*(mouseX - this.particles[this.particleCursor].x);
-        this.particles[this.particleCursor].y += 0.2*(mouseY - this.particles[this.particleCursor].y);
-      }
+      this.pullWithMouse(); //mouseX, mouseY are global
     } else {
       this.particleCursor = -1;
     }
+    if (this.state == BUILDING) {
+      this.continueBuilding();
+    }
+    for (let i=0; i < this.particles.length; i++) {
+      this.particles[i].update();
+    }
     for (let i=0; i < this.springs.length; i++) {
       this.springs[i].update();
-      // JL.log('Spring ' + String(i), [this.springs[i].restLength, this.springs[i].currentLength()]);
-    }
-    if (this.building == true) {
-      this.end.x = mouseX;
-      this.end.y = mouseY;
-
     }
   }
 };
 
-function pointHypot(p1, p2) {
-  let dx = p1.x - p2.x;
-  let dy = p1.y - p2.y;
-  let h = sqrt(dx**2 + dy**2);
-  return h;
-}
+
 
 class Point {
-  constructor (x=0, y=0, z=0) {
+  constructor (x=0, y=0) {
     this.x = x;
     this.y = y;
-    this.z = z;
   }
 }
 
 class Particle extends Point{
-  constructor (x=0, y=0, z=0, fixed=false) {
-    super(x, y, z);
+  constructor (x=0, y=0, fixed=false) {
+    super(x, y);
     this.v = new Point();
     this.fixed = fixed;
+  }
+  addGravity() {
+    this.v.y += GRAVITY;
   }
   addForce(fx, fy) {
     this.v.x += (fx / PARTICLE_MASS);
     this.v.y += (fy / PARTICLE_MASS);
-    this.v.y += 0.009;
   }
   update() {
+    this.addGravity();
     this.v.x *= DAMPENING;
     this.v.y *= DAMPENING;
     if (this.fixed == false) {

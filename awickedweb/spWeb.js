@@ -1,5 +1,5 @@
 // mechanics
-var PARTICLE_MASS = 1.0;
+var PARTICLE_MASS = 5.0;
 var DAMPENING = 0.97;
 var GRAVITY = 0.009;
 var K = 0.5;
@@ -20,7 +20,7 @@ class spWeb {
   constructor() {
     this.strands = [];
     this.state = IDLE;
-    this.showHandles = false;
+    this.showHandles = true;
   }
 
   toggleDebug() {
@@ -113,7 +113,8 @@ class spWeb {
       draw2DCurve(this.strands[i].particles);
       if (this.showHandles == true) {
         draw2DParticles(this.strands[i].particles, this.strands[i].particleCursor);
-      drawStartEnd(this.strands[i].particles);
+        drawStartEnd(this.strands[i].particles);
+        drawClosest(this.strands[i]);
       }
     }
   }

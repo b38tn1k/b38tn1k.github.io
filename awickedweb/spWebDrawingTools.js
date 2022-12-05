@@ -29,3 +29,15 @@ function draw2DCurve(particles) {
   curveVertex(particles[particles.length-1].x, particles[particles.length-1].y);
   endShape();
 }
+
+function drawClosest(strand) {
+  let survey = strand.findClosestParticle(mouseX, mouseY);
+  if (survey.selected == true) {
+    fill(255, 255, 0);
+    circle(survey.particle.x, survey.particle.y, 5)
+    stroke(255, 255, 0);
+    noFill();
+    circle(survey.particle.x, survey.particle.y, APPROX_SPRING_LENGTH);
+
+  }
+}

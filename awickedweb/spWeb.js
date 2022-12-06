@@ -1,9 +1,10 @@
 // mechanics
 var PARTICLE_MASS = 5.0;
-var DAMPENING = 0.97;
-var GRAVITY = 0.009;
-var K = 0.5;
+var DAMPENING = 0.9;
+var GRAVITY = 0.05;
+var K = 0.4;
 var APPROX_SPRING_LENGTH = 40;
+var SELECTION_RADIUS = 50; // just a little bigger than spring length
 var MOUSE_DAMPENER = 1.0;
 // states
 var IDLE = 0;
@@ -57,47 +58,112 @@ class spWeb {
     }
   }
 
-  mouseClickEvent(x, y) {
+  countClosestParticles(x, y, survey) {
     // find any and all near particles
-    let survey = this.findClosestParticles(x, y);
+    if (!survey) {
+      survey = this.findClosestParticles(x, y);
+    }
     let surveyCounter = 0;
     for (let i = 0; i < survey.length; i++) {
       surveyCounter += int(survey[i].selected);
     }
+    return surveyCounter;
+  }
+
+  findASelectedParticle(survey) {
+    for (let i = 0; i < survey.length; i++) {
+      if (survey[i].selected == true) {
+        return survey[i].particle;
+      }
+    }
+  }
+
+  findEndParticle(survey, surveyCounter, x, y) {
+    let p2;
+    if (surveyCounter <= 1) {
+      p2 = new Particle(x, y, true); // only particles in the survey are ones that belong to the current strand, make a strand fixed on both ends
+    } else {
+      for (let i = 0; i < survey.length; i++) { // particles from other strands present, connect strands
+        if (survey[i].selected == true) {
+          p2 = survey[i].particle;
+          break;
+        }
+      }
+    }
+    return p2;
+  }
+
+  splitStrand(survey) {
+    let target = 0;
+    let p1 = -1;
+    // need to find both the strand index AND the particle in question.
+    console.log(survey);
+    for (target = 0; target < survey.length; target++) {
+      if (survey[target].particle) {
+        p1 = survey[target].particle;
+        break;
+      }
+    }
+    // if search failed, die now
+    if (p1 == -1 || p1 == 0) {
+      return -1;
+    }
+    console.log(target);
+    let activeStrand = this.strands[target];
+    let indexToCut = activeStrand.indexOfParticle(p1);
+    console.log(indexToCut);
+    if (indexToCut <= 1) {
+      activeStrand.particles[0].fixed = false;
+      return -1;
+    }
+    let newStrand = new Strand(null, null);
+    newStrand.particles = [];
+    newStrand.springs = [];
+    for (let i = indexToCut; i < activeStrand.particles.length; i++) {
+      newStrand.particles.push(activeStrand.particles[i]);
+    }
+    for (let i = indexToCut; i < activeStrand.springs.length; i++) {
+      newStrand.springs.push(activeStrand.springs[i]);
+    }
+    newStrand.start = newStrand.particles[0];
+    newStrand.end = newStrand.particles.slice(-1)[0];
+    this.strands.push(newStrand);
+    activeStrand.particles = activeStrand.particles.slice(0, indexToCut);
+    activeStrand.springs = activeStrand.springs.slice(0, indexToCut-1);
+    activeStrand.end = activeStrand.particles.slice(-1)[0];
+    activeStrand.end.fixed = false;
+    activeStrand.particleCursor = -1;
+
+  }
+
+  mouseClickEvent(x, y) {
+    let survey = this.findClosestParticles(x, y);
+    let surveyCounter = this.countClosestParticles(x, y, survey);
+
     if (this.state == IDLE){
       if (surveyCounter == 0) { // if no nearby particles, build a new strand
         this.buildStrand(x, y);
         this.state = BUILDING;
       } else if (keyIsDown(SHIFT) == true) {
         //if there are nearby particles and the shift key is down, start a new strand from p1, the selected strand
-        let p1;
-        for (let i = 0; i < survey.length; i++) {
-          if (survey[i].selected == true) {
-            p1 = survey[i].particle;
-            break;
-          }
-        }
+        let p1 = this.findASelectedParticle(survey);
         this.buildStrand(x, y, p1);
         this.state = BUILDING;
+      } else if (keyIsDown(88) == true) { // 88 = 'x' keycode
+        //if there are nearby particles and the shift key is down, start a new strand from p1, the selected strand
+        this.splitStrand(survey);
+        this.state = IDLE;
       }
     } else if (this.state == BUILDING) {
       // if state is already building we are closing a strand.
-      let p1 = this.strands.pop().start; // we rebuild the entire strand on close, using the same start point.
-      let p2;
-      if (surveyCounter <= 1) {
-        p2 = new Particle(x, y, true); // only particles in the survey are ones that belong to the current strand, make a strand fixed on both ends
-      } else {
-        for (let i = 0; i < survey.length; i++) { // particles from other strands present, connect strands
-          if (survey[i].selected == true) {
-            p2 = survey[i].particle;
-            break;
-          }
-        }
-      }
-      this.addStrand(p1, p2);
+      // let p1 = this.strands.pop().start; // we rebuild the entire strand on close, using the same start point.
+      // let p2 = this.findEndParticle(survey, surveyCounter, x, y);
+      // this.addStrand(p1, p2);
+      let currentStrand = this.strands[this.strands.length - 1];
+      currentStrand.end.fixed = true;
+      currentStrand.state = IDLE;
       this.state = IDLE;
     }
-
   }
 
   findClosestParticles(x, y) {
@@ -131,6 +197,17 @@ class Strand {
     this.state = IDLE;
   }
 
+  indexOfParticle(p) {
+    let index = -1;
+    for (let i = 0; i < this.particles.length; i++) {
+      if (p.x == this.particles[i].x && p.y == this.particles[i].y) {
+        index = i;
+        break;
+      }
+    }
+    return index;
+  }
+
   findClosestParticle(x, y){
     let xPercent = (x - this.start.x)/(this.end.x - this.start.x);
     let yPercent = (y - this.start.y)/(this.end.y - this.start.y);
@@ -152,7 +229,7 @@ class Strand {
     }
     let hypot = min(distances);
     let selected = false;
-    if (hypot > APPROX_SPRING_LENGTH) {
+    if (hypot > SELECTION_RADIUS) {
       this.particleCursor = -1;
       selected = false;
     } else {

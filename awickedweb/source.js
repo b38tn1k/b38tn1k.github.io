@@ -1,5 +1,7 @@
 var testWeb;
 var JL;
+var physicsDiv;
+var CURSOR_IN_GAME_WINDOW = true;
 
 function deviceTurned() {
   setupScreen();
@@ -10,7 +12,9 @@ function windowResized() {
 }
 
 function mousePressed() {
-  testWeb.mouseClickEvent(mouseX, mouseY);
+  if (CURSOR_IN_GAME_WINDOW == true) {
+    testWeb.mouseClickEvent(mouseX, mouseY);
+  }
 }
 
 function setupScreen() {
@@ -34,6 +38,7 @@ function setup() {
   setupScreen();
   setupSim();
   pixelDensity(1);
+  createPhysicsDiv();
 }
 
 function draw() {
@@ -41,4 +46,5 @@ function draw() {
   testWeb.update();
   testWeb.draw();
   JL.update();
+  writePhysics(width - 120, 18);
 }

@@ -38,6 +38,5 @@ function drawClosest(strand) {
     stroke(255, 255, 0);
     noFill();
     circle(survey.particle.x, survey.particle.y, APPROX_SPRING_LENGTH);
-
   }
 }

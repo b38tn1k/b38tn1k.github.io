@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <title>intake</title>
+  </head>
+  <body>
+    <form>
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name"><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email"><br>
+    <label for="phone">Phone:</label><br>
+    <input type="tel" id="phone" name="phone"><br><br>
+    <label for="reason">Company size:</label><br>
+    <select id="reason" name="reason">
+      <option value="sole">Sole Operator</option>
+      <option value="small">Small (~10 employees)</option>
+      <option value="medium">Medium (~100 employees)</option>
+      <option value="medium">Medium (1000+ employees)</option>
+    </select><br><br>
+    <label for="background">Please rate your experience with industrial automation:</label><br>
+    <input type="range" id="confidence" name="confidence" min="1" max="10"><br>
+    <label for="message">Team members you would like to attach to this project (comma seperated emails):</label><br>
+    <textarea id="message" name="message" rows="5" cols="50"></textarea><br><br>
+    <input type="submit" value="Next">
+  </form>
+  </body>
+</html>

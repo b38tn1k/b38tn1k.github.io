@@ -11,6 +11,8 @@ sitemap:
   exclude: 'yes'
 ---
 
+![logo]({{ site.url }}/november/assets/logo.png)
+
 It's November. Let's make something fun and stop thinking about Untitled Block Thing for a bit.
 
 [where it's at](https://b38tn1k.com/november/)

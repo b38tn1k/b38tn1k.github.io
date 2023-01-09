@@ -1,6 +1,6 @@
 ---
 layout: post
-title: wrapup
+title: Wrap Up
 date: 2023-01-09
 categories: [game, november]
 tags: gameprogress
@@ -10,15 +10,15 @@ Rankings are in and November Man and Possum came 146th out of 554 entries! Prett
 
 November Man also recieved some really nice written reviews. In the order I screenshotted them:
 
-![rankings](https://b38tn1k.com/images/ranking1.png)
+![ratings](https://b38tn1k.com/images/rating1.png)
 
-![rankings](https://b38tn1k.com/images/ranking2.png)
+![ratings](https://b38tn1k.com/images/rating2.png)
 
-![rankings](https://b38tn1k.com/images/ranking3.png)
+![ratings](https://b38tn1k.com/images/rating3.png)
 
-![rankings](https://b38tn1k.com/images/ranking4.png)
+![ratings](https://b38tn1k.com/images/rating4.png)
 
-![rankings](https://b38tn1k.com/images/ranking5.png)
+![ratings](https://b38tn1k.com/images/rating5.png)
 
-![rankings](https://b38tn1k.com/images/ranking6.png)
+![ratings](https://b38tn1k.com/images/rating6.png)
 

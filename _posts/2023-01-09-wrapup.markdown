@@ -1,0 +1,24 @@
+---
+layout: post
+title: wrapup
+date: 2023-01-09
+categories: [game, november]
+tags: gameprogress
+---
+Rankings are in and November Man and Possum came 146th out of 554 entries! Pretty decent for a first timer. I am excited to enter again next year and try crack the top 25% next time (I was so close). Overall rankings are shown below, I really failed to adhere to the theme of the Game Jam, 'cliche'. but everything else was pretty consistent!
+![rankings](https://b38tn1k.com/images/results-nov22-gamejam.png)
+
+November Man also recieved some really nice written reviews. In the order I screenshotted them:
+
+![rankings](https://b38tn1k.com/images/ranking1.png)
+
+![rankings](https://b38tn1k.com/images/ranking2.png)
+
+![rankings](https://b38tn1k.com/images/ranking3.png)
+
+![rankings](https://b38tn1k.com/images/ranking4.png)
+
+![rankings](https://b38tn1k.com/images/ranking5.png)
+
+![rankings](https://b38tn1k.com/images/ranking6.png)
+

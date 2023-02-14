@@ -153,7 +153,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   pg = createGraphics(docWidth, docHeight);
   setupScreen();
-  // next();
+  next();
 }
 
 function draw() {

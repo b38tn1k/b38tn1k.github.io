@@ -67,18 +67,13 @@ function keyPressed() {
 }
 
 async function autoExport() {
-  noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
-  let stringCounts = [4, 6, 7, 8];
-  for (let j = 0; j < stringCounts.length; j++) {
-    stringCount = stringCounts[j];
-    let i = 0;
-    while (i != 24) {
-      // await sleep(2000);
-      // saveImg();
-      await sleep(500);
-      next();
-      i++;
-    }
+  let i = 0;
+  while (i != 24) {
+    saveImg();
+    await sleep(1000);
+    next();
+    await sleep(2000);
+    i++;
   }
 }
 

@@ -67,6 +67,7 @@ function keyPressed() {
 }
 
 async function autoExport() {
+  noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
   let stringCounts = [4, 6, 7, 8];
   for (let j = 0; j < stringCounts.length; j++) {
     stringCount = stringCounts[j];
@@ -152,7 +153,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   pg = createGraphics(docWidth, docHeight);
   setupScreen();
-  next();
+  // next();
 }
 
 function draw() {

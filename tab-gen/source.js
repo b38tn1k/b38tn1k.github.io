@@ -7,7 +7,7 @@ var tabSpacing = 0.14 * 300;
 var fretSpacing = 1.5 * tabSpacing;
 var chordBoxFretCount = 5
 var noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
-var pg, bt;
+var pg;
 var leftRightCounter = 0;
 
 function saveImg() {
@@ -43,6 +43,26 @@ function keyPressed() {
   if (key == 'a') {
     autoExport();
   }
+  if (key == '4') {
+    clear();
+    stringCount = 4;
+    setupScreen();
+  }
+  if (key == '6') {
+    clear();
+    stringCount = 6;
+    setupScreen();
+  }
+  if (key == '7') {
+    clear();
+    stringCount = 7;
+    setupScreen();
+  }
+  if (key == '8') {
+    clear();
+    stringCount = 8;
+    setupScreen();
+  }
 
 }
 
@@ -52,18 +72,17 @@ async function autoExport() {
     stringCount = stringCounts[j];
     let i = 0;
     while (i != 24) {
-      await sleep(2000);
-      saveImg();
+      // await sleep(2000);
+      // saveImg();
       await sleep(500);
       next();
       i++;
     }
-    await sleep(500);
-    makeBackingTab();
   }
 }
 
-function makeBackingTab() {
+function setupScreen() {
+  pg.clear();
   chordBoxImg = createGraphics((stringCount) * tabSpacing, (chordBoxFretCount - 1) * fretSpacing);
   for (let i = 1; i < (stringCount * tabSpacing); i+= tabSpacing) {
     chordBoxImg.line(i, 0, i, chordBoxImg.height);
@@ -80,9 +99,9 @@ function makeBackingTab() {
   for (let j = 0; j <= numberThatCanFit-1; j++) {
     chordBoxGroup.image(chordBoxImg, j * chordBoxWithPadding, 0);
   }
-  bt.imageMode(CENTER);
-  bt.image(chordBoxGroup, pg.width/2, tabSpacing + chordBoxGroup.height/2);
-  bt.imageMode(CORNER);
+  pg.imageMode(CENTER);
+  pg.image(chordBoxGroup, pg.width/2, tabSpacing + chordBoxGroup.height/2);
+  pg.imageMode(CORNER);
 
   tabImg = createGraphics(docWidth, (stringCount + 1) * tabSpacing);
   for (let i = 1; i < (stringCount * tabSpacing); i+= tabSpacing) {
@@ -91,15 +110,9 @@ function makeBackingTab() {
   let totalHeight = tabImg.height + tabSpacing;
   var i = chordBoxImg.height + 3*tabSpacing;
   while (i + totalHeight < docHeight) {
-    bt.image(tabImg, 0, i);
+    pg.image(tabImg, 0, i);
     i += totalHeight;
   }
-}
-
-function setupScreen() {
-  pg.clear();
-  pg.image(bt, 0, 0);
-  
 }
 
 function shuffleNoteStrings() {
@@ -137,10 +150,7 @@ function transposeTool() {
 function setup() {
   
   createCanvas(windowWidth, windowHeight);
-  pixelDensity(3);
   pg = createGraphics(docWidth, docHeight);
-  bt = createGraphics(docWidth, docHeight);
-  makeBackingTab();
   setupScreen();
   next();
 }

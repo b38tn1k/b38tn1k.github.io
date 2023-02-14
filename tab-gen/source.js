@@ -47,21 +47,29 @@ function keyPressed() {
     clear();
     stringCount = 4;
     setupScreen();
+    noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+    next();
   }
   if (key == '6') {
     clear();
     stringCount = 6;
     setupScreen();
+    noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+    next();
   }
   if (key == '7') {
     clear();
     stringCount = 7;
     setupScreen();
+    noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+    next();
   }
   if (key == '8') {
     clear();
     stringCount = 8;
     setupScreen();
+    noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+    next();
   }
 
 }

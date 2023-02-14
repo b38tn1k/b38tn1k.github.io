@@ -137,12 +137,14 @@ function makeTextBoxes() {
 
 function transposeTool() {
   let tb = makeTextBoxes();
+  let left = 2;
+  let right = docWidth - left - tb.width
   if (leftRightCounter % 2 == 1) {
     console.log('left');
-    pg.image(tb, 2, (docHeight - tb.height)/2);
+    pg.image(tb, left, (docHeight - tb.height)/2);
   } else {
     console.log('right');
-    pg.image(tb, docWidth - 2 - tb.width, (docHeight - tb.height)/2);
+    pg.image(tb, right, (docHeight - tb.height)/2);
     shuffleNoteStrings();
   }
   leftRightCounter += 1;
@@ -157,5 +159,5 @@ function setup() {
 }
 
 function draw() {
-  image(pg, 0, 0);
+  image(pg, 0, 0, docWidth/3, docHeight/3);
 }

@@ -1,0 +1,10 @@
+---
+layout: post
+title:  "Lasers"
+date:   2022-03-05
+tags: demo
+image: 'https://b38tn1k.com/images/previews/laser.png'
+link: 'https://b38tn1k.com/lasers/'
+---
+
+[description]I forget exactly what the goal was here but I made a little LIDAR SLAM sim. I should add path finding. [description]

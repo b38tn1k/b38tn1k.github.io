@@ -161,7 +161,7 @@ function setup() {
   wordListTextArea.style('height', '40%');
   wordListTextArea.style('resize', 'vertical');
 
-  sizeSlider = createSlider(10, 100, 40, 1);
+  sizeSlider = createSlider(25, 100, 40, 1);
   sizeSlider.parent(mainDiv);
   sizeSlider.input(updateSliderLabel);
   sliderLabel = createDiv(sizeSlider.value());
@@ -182,6 +182,8 @@ function setup() {
 
 function updateSliderLabel(){
   sliderLabel.html(sizeSlider.value());
+  cols = int(sizeSlider.value());
+  rows = cols;
 }
 
 function draw() {

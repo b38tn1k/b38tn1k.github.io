@@ -7,6 +7,7 @@ var mainDiv;
 var wordListTextArea;
 var titleInput;
 var generateButton;
+var testButton;
 var saveImageButton;
 var sizeSlider;
 var sizeSliderLabel;
@@ -193,11 +194,12 @@ function generate() {
     listX += spacing;
   }
 
-  image(fullPageSolutions, 20 + mainDiv.width, 10, 0.3 * docWidth, 0.3 * docHeight);
-  // forest, rainforest, tropical, undergrowth, swamps, jungle, bush, mangrove, wilderness, countryside, guerrilla, highlands, desert, borneo, amazon, mountains, woodland, lizards, woods, marshy, hills, huts, wild, highland, monkey, caves, tiger
+  let fit = 1.0;
+  while (docWidth * fit > windowWidth || docHeight * fit > windowHeight) {
+    fit -= 0.05;
+  }
 
-  // image(solution, 20 + mainDiv.width, 10, area, area);
-  // image(grid, 20 + mainDiv.width, 10, area, area);
+  image(fullPage, 20 + mainDiv.width, 10, fit * docWidth, fit * docHeight);
 }
 
 function setupScreen() {
@@ -239,17 +241,28 @@ function setup() {
   fontSliderLabel = createDiv("Font Size: " + fontSize.toString());
   fontSliderLabel.parent(mainDiv);
   mainDiv.html('<br>',true);
+
+  testButton = createButton('Test');
+  testButton.parent(mainDiv);
+  testButton.mousePressed(testSetup);
+  mainDiv.html('<br>',true);
   
   generateButton = createButton('Generate');
   generateButton.parent(mainDiv);
   generateButton.mousePressed(generate);
   mainDiv.html('<br>',true);
 
-  saveImageButton = createButton('Save Image');
+  saveImageButton = createButton('Save Puzzle & Solution');
   saveImageButton.mousePressed(saveBoth);
   saveImageButton.parent(mainDiv);
 
   setupScreen();
+}
+
+function testSetup() {
+  titleInput.elt.value = 'SINGERS';
+  wordListTextArea.elt.value = 'Lennon, McCartney, Jagger, Richards, Dylan, Hendrix, Morrison, Simon, Garfunkel, King, Franklin, Redding, Cooke, Gaye, Wonder, Jones, Turner, Presley, Orbison, Cash';
+  generate();
 }
 
 function updateSize(){

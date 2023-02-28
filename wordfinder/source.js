@@ -1,9 +1,12 @@
 // forest, rainforest, tropical, undergrowth, swamps, jungle, bush, mangrove, wilderness, countryside, guerrilla, highlands, desert, borneo, amazon, mountains, woodland, lizards, woods, marshy, hills, huts, wild, highland, monkey, caves, tiger
 var docWidth = 2550;
 var mainDiv;
+var sliderLabel;
 var wordListTextArea;
 var generateButton;
 var showSolutionButton;
+var saveImageButton;
+var sizeSlider;
 var cols = 40;
 var rows = 40;
 var letters = 'qwertyuiopasdfghjklzxcvbnm';
@@ -157,12 +160,28 @@ function setup() {
   wordListTextArea.style('width', '100%');
   wordListTextArea.style('height', '40%');
   wordListTextArea.style('resize', 'vertical');
+
+  sizeSlider = createSlider(10, 100, 40, 1);
+  sizeSlider.parent(mainDiv);
+  sizeSlider.input(updateSliderLabel);
+  sliderLabel = createDiv(sizeSlider.value());
+  sliderLabel.parent(mainDiv);
   
   generateButton = createButton('Generate');
   generateButton.parent(mainDiv);
   generateButton.mousePressed(generate);
 
+  showSolutionButton = createButton('Solution');
+  showSolutionButton.parent(mainDiv);
+
+  saveImageButton  = createButton('Save Image');
+  saveImageButton.parent(mainDiv);
+
   setupScreen();
+}
+
+function updateSliderLabel(){
+  sliderLabel.html(sizeSlider.value());
 }
 
 function draw() {

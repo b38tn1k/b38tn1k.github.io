@@ -3,7 +3,7 @@ var stringCount = 4;
 var dpi = 300;
 var docWidth = 2550;
 var docHeight = 3300;
-var tabSpacing = 0.14 * 300;
+var tabSpacing = 0.15 * 300;
 var fretSpacing = 1.5 * tabSpacing;
 var chordBoxFretCount = 5
 var noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
@@ -26,8 +26,7 @@ function next() {
   return true;
 }
 
-function sleep(millisecondsDuration)
-{
+function sleep(millisecondsDuration) {
   return new Promise((resolve) => {
     setTimeout(resolve, millisecondsDuration);
   })
@@ -87,35 +86,43 @@ async function autoExport() {
 
 function setupScreen() {
   pg.clear();
+
+
   chordBoxImg = createGraphics((stringCount) * tabSpacing, (chordBoxFretCount - 1) * fretSpacing);
   for (let i = 1; i < (stringCount * tabSpacing); i+= tabSpacing) {
-    chordBoxImg.line(i, 0, i, chordBoxImg.height);
+    chordBoxImg.line(int(i), 0, int(i), int(chordBoxImg.height));
   }
-  chordBoxImg.line(0, 1, chordBoxImg.width-tabSpacing+1, 1);
-  chordBoxImg.line(0, chordBoxImg.height-1, chordBoxImg.width-tabSpacing+1, chordBoxImg.height-1);
+  chordBoxImg.line(0, 1, int(chordBoxImg.width-tabSpacing+1), 1);
+  chordBoxImg.line(0, int(chordBoxImg.height-1), int(chordBoxImg.width-tabSpacing+1), int(chordBoxImg.height-1));
+
   for (let i = fretSpacing; i < (chordBoxFretCount - 1) * fretSpacing - 2; i += fretSpacing) {
-    chordBoxImg.line(0, i, chordBoxImg.width-tabSpacing+1, i);
+    chordBoxImg.line(0, int(i), int(chordBoxImg.width-tabSpacing+1), int(i));
   }
   let chordBoxWithPadding = chordBoxImg.width + tabSpacing
   var numberThatCanFit = floor(docWidth / chordBoxWithPadding);
   chordBoxGroup = createGraphics(numberThatCanFit * (chordBoxWithPadding) - tabSpacing * 2 + 4, chordBoxImg.height + 1);
   
   for (let j = 0; j <= numberThatCanFit-1; j++) {
-    chordBoxGroup.image(chordBoxImg, j * chordBoxWithPadding, 0);
+    chordBoxGroup.image(chordBoxImg, int(j * chordBoxWithPadding), 0);
   }
   pg.imageMode(CENTER);
   pg.image(chordBoxGroup, pg.width/2, tabSpacing + chordBoxGroup.height/2);
   pg.imageMode(CORNER);
 
-  tabImg = createGraphics(docWidth, (stringCount + 1) * tabSpacing);
+  tabImg = createGraphics(docWidth, (stringCount-1) * tabSpacing + 2);
+  // tabImg.background(255, 255, 200);
   for (let i = 1; i < (stringCount * tabSpacing); i+= tabSpacing) {
-    tabImg.line(0, i, docWidth, i);
+    tabImg.line(0, int(i), docWidth, int(i));
   }
   let totalHeight = tabImg.height + tabSpacing;
-  var i = chordBoxImg.height + 3*tabSpacing;
-  while (i + totalHeight < docHeight) {
-    pg.image(tabImg, 0, i);
-    i += totalHeight;
+  let start = chordBoxImg.height + 4*tabSpacing;
+  let vSpace = docHeight - start;
+  let fit = floor(vSpace/totalHeight) - 1;
+  console.log(fit);
+  let gap = (docHeight - fit * totalHeight) / fit;
+  while (start + totalHeight < docHeight) {
+    pg.image(tabImg, 0, int(start));
+    start += totalHeight + gap;
   }
 }
 
@@ -130,9 +137,9 @@ function makeTextBoxes() {
   tb.background(255, 255, 255);
   tb.textSize(fontSize);
   for (let i = 0; i < 12; i++) {
-    tb.text(noteStrings[i], spacing/4, i * spacing + spacing - spacing/4);
+    tb.text(noteStrings[i], int(spacing/4), int(i * spacing + spacing - spacing/4));
     tb.noFill();
-    tb.square(1, i * spacing + 1, spacing);
+    tb.square(1, int(i * spacing + 1), int(spacing));
     tb.fill(0);
   }
   return tb;
@@ -144,17 +151,16 @@ function transposeTool() {
   let right = docWidth - left - tb.width
   if (leftRightCounter % 2 == 1) {
     console.log('left');
-    pg.image(tb, left, (docHeight - tb.height)/2);
+    pg.image(tb, int(left), int((docHeight - tb.height)/2));
   } else {
     console.log('right');
-    pg.image(tb, right, (docHeight - tb.height)/2);
+    pg.image(tb, int(right), int((docHeight - tb.height)/2));
     shuffleNoteStrings();
   }
   leftRightCounter += 1;
 }
 
 function setup() {
-  
   createCanvas(windowWidth, windowHeight);
   pg = createGraphics(docWidth, docHeight);
   setupScreen();

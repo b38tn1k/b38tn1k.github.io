@@ -1,14 +1,16 @@
 // forest, rainforest, tropical, undergrowth, swamps, jungle, bush, mangrove, wilderness, countryside, guerrilla, highlands, desert, borneo, amazon, mountains, woodland, lizards, woods, marshy, hills, huts, wild, highland, monkey, caves, tiger
 var docWidth = 2550;
+var fontSize = 90;
 var mainDiv;
-var sliderLabel;
 var wordListTextArea;
 var generateButton;
-var showSolutionButton;
 var saveImageButton;
 var sizeSlider;
-var cols = 40;
-var rows = 40;
+var sizeSliderLabel;
+var fontSlider;
+var fontSliderLabel;
+var cols = 25;
+var rows = 25;
 var letters = 'qwertyuiopasdfghjklzxcvbnm';
 var grid;
 var solution;
@@ -122,7 +124,7 @@ function generate() {
   solution.noStroke();
 
   grid = createGraphics(docWidth, docWidth);
-  grid.textSize(32);
+  grid.textSize(fontSize);
   grid.textAlign(CENTER, CENTER);
   
   spacing = docWidth / ((cols + rows)/2);
@@ -131,7 +133,7 @@ function generate() {
     for (let j = 0; j < rows; j++) {
       grid.text(letterGrid[i][j], start + i * spacing, start + j*spacing);
       if (finderGrid[i][j] != ''){
-        solution.circle(start + i * spacing, start + j*spacing, 48);
+        solution.circle(start + i * spacing, start + j*spacing, fontSize * 1.5);
       }
     }
   }
@@ -161,18 +163,21 @@ function setup() {
   wordListTextArea.style('height', '40%');
   wordListTextArea.style('resize', 'vertical');
 
-  sizeSlider = createSlider(25, 100, 40, 1);
+  sizeSlider = createSlider(25, 100, 25, 1);
   sizeSlider.parent(mainDiv);
-  sizeSlider.input(updateSliderLabel);
-  sliderLabel = createDiv(sizeSlider.value());
-  sliderLabel.parent(mainDiv);
+  sizeSlider.input(updateSize);
+  sizeSliderLabel = createDiv("Grid Size: 25");
+  sizeSliderLabel.parent(mainDiv);
+
+  fontSlider = createSlider(24, 128, 90, 1);
+  fontSlider.parent(mainDiv);
+  fontSlider.input(updateFontSize);
+  fontSliderLabel = createDiv("Font Size: 90");
+  fontSliderLabel.parent(mainDiv);
   
   generateButton = createButton('Generate');
   generateButton.parent(mainDiv);
   generateButton.mousePressed(generate);
-
-  showSolutionButton = createButton('Solution');
-  showSolutionButton.parent(mainDiv);
 
   saveImageButton  = createButton('Save Image');
   saveImageButton.parent(mainDiv);
@@ -180,10 +185,15 @@ function setup() {
   setupScreen();
 }
 
-function updateSliderLabel(){
-  sliderLabel.html(sizeSlider.value());
+function updateSize(){
+  sizeSliderLabel.html("Grid Size: " + sizeSlider.value().toString());
   cols = int(sizeSlider.value());
   rows = cols;
+}
+
+function updateFontSize () {
+  fontSliderLabel.html("Font Size: " + fontSlider.value().toString());
+  fontSize = int(fontSlider.value());
 }
 
 function draw() {

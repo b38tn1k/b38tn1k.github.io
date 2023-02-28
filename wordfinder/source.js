@@ -205,7 +205,7 @@ function generate() {
 function setupScreen() {
   createCanvas(windowWidth, windowHeight);
   mainDiv.position(10, 10);
-  mainDiv.size(min(400, 0.25 * windowWidth), windowHeight - 20);
+  mainDiv.size(min(400, 0.25 * windowWidth), windowHeight - 40);
 }
 
 function setup() {

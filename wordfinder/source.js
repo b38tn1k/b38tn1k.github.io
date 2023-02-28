@@ -1,8 +1,11 @@
 // forest, rainforest, tropical, undergrowth, swamps, jungle, bush, mangrove, wilderness, countryside, guerrilla, highlands, desert, borneo, amazon, mountains, woodland, lizards, woods, marshy, hills, huts, wild, highland, monkey, caves, tiger
 var docWidth = 2550;
-var fontSize = 90;
+var border = 60;
+var docHeight = 3300;
+var fontSize = 70;
 var mainDiv;
 var wordListTextArea;
+var titleInput;
 var generateButton;
 var saveImageButton;
 var sizeSlider;
@@ -14,6 +17,9 @@ var rows = 25;
 var letters = 'qwertyuiopasdfghjklzxcvbnm';
 var grid;
 var solution;
+var fullPage;
+var fullPageSolutions;
+var title;
 
 function windowResized() {
   setupScreen();
@@ -65,6 +71,11 @@ function addWordVertically(word, grid){
 
 function generate() {
   let list = wordListTextArea.elt.value.split(',');
+  title = "Puzzle";
+  if (titleInput.value()) {
+    title = titleInput.value();
+  }
+  
   for (let i = 0; i < list.length; i++) {
     list[i] = list[i].toUpperCase(); //or lower case
     list[i] = list[i].replace(/\s+/g, '');
@@ -118,16 +129,30 @@ function generate() {
 
   // letterGrid = finderGrid;
 
-  solution = createGraphics(docWidth, docWidth);
+  var gWidth = docWidth - (border*6);
+
+  solution = createGraphics(gWidth, gWidth);
+  grid = createGraphics(gWidth, gWidth);
+  fullPage = createGraphics(docWidth, docHeight);
+  fullPageSolutions = createGraphics(docWidth, docHeight);
+
   solution.background(255);
   solution.fill(200);
   solution.noStroke();
-
-  grid = createGraphics(docWidth, docWidth);
   grid.textSize(fontSize);
+
   grid.textAlign(CENTER, CENTER);
+
+  fullPage.background(255);
+  fullPage.textSize(fontSize);
+  fullPage.textAlign(CENTER, CENTER);
+
+  fullPageSolutions.background(255);
+  fullPageSolutions.textSize(fontSize);
+  fullPageSolutions.textAlign(CENTER, CENTER);
   
-  spacing = docWidth / ((cols + rows)/2);
+  
+  spacing = gWidth / ((cols + rows)/2);
   start = spacing/2;
   for (let i = 0; i < cols; i++) {
     for (let j = 0; j < rows; j++) {
@@ -138,11 +163,41 @@ function generate() {
     }
   }
 
-  let area = min((windowWidth - (50 + mainDiv.width)), windowHeight-50);
+  let area = min((windowWidth - (100 + mainDiv.width)), windowHeight-500);
 
-  image(solution, 20 + mainDiv.width, 10, area, area);
-  image(grid, 20 + mainDiv.width, 10, area, area);
-  
+  fullPage.text(title.toUpperCase(), docWidth/2, border);
+  fullPage.stroke(0);
+  fullPage.strokeWeight(2);
+  fullPage.rect(border*3, border * 3, grid.width, grid.height);
+  fullPage.image(grid, border*3, border * 3);
+
+  fullPageSolutions.text(title.toUpperCase(), docWidth/2, border);
+  fullPageSolutions.stroke(0);
+  fullPageSolutions.strokeWeight(2);
+  fullPageSolutions.rect(border*3, border * 3, grid.width, grid.height);
+  fullPageSolutions.image(solution, border*3, border * 3);
+  fullPageSolutions.image(grid, border*3, border * 3);
+
+  let listX = 3*border;
+  spacing = (docWidth - 6* border)/4;
+  let listY = grid.height + border * 3;
+  fullPage.textAlign(LEFT, TOP);
+  fullPageSolutions.textAlign(LEFT, TOP);
+  for (let i = 0; i < list.length; i++) {
+    if (i % 4 == 0) {
+      listX = 3*border;
+      listY += border*1.5;
+    }
+    fullPage.text(list[i], listX, listY);
+    fullPageSolutions.text(list[i], listX, listY);
+    listX += spacing;
+  }
+
+  image(fullPageSolutions, 20 + mainDiv.width, 10, 0.3 * docWidth, 0.3 * docHeight);
+  // forest, rainforest, tropical, undergrowth, swamps, jungle, bush, mangrove, wilderness, countryside, guerrilla, highlands, desert, borneo, amazon, mountains, woodland, lizards, woods, marshy, hills, huts, wild, highland, monkey, caves, tiger
+
+  // image(solution, 20 + mainDiv.width, 10, area, area);
+  // image(grid, 20 + mainDiv.width, 10, area, area);
 }
 
 function setupScreen() {
@@ -155,6 +210,13 @@ function setup() {
   mainDiv = createDiv('Word Finder Maker');
   mainDiv.style('background', 'white');
   mainDiv.style('padding', '10px');
+  mainDiv.html('<br>',true);
+  
+  titleInput = createInput();
+  titleInput.elt.placeholder = 'title'
+  titleInput.style('width', '100%');
+  titleInput.parent(mainDiv);
+  mainDiv.html('<br>',true);
   
   wordListTextArea = createElement('textarea');
   wordListTextArea.elt.placeholder = 'add comma seperated word list here'
@@ -162,24 +224,29 @@ function setup() {
   wordListTextArea.style('width', '100%');
   wordListTextArea.style('height', '40%');
   wordListTextArea.style('resize', 'vertical');
+  mainDiv.html('<br>',true);
 
   sizeSlider = createSlider(25, 100, 25, 1);
   sizeSlider.parent(mainDiv);
   sizeSlider.input(updateSize);
   sizeSliderLabel = createDiv("Grid Size: 25");
   sizeSliderLabel.parent(mainDiv);
+  mainDiv.html('<br>',true);
 
-  fontSlider = createSlider(24, 128, 90, 1);
+  fontSlider = createSlider(24, 128, fontSize, 1);
   fontSlider.parent(mainDiv);
   fontSlider.input(updateFontSize);
-  fontSliderLabel = createDiv("Font Size: 90");
+  fontSliderLabel = createDiv("Font Size: " + fontSize.toString());
   fontSliderLabel.parent(mainDiv);
+  mainDiv.html('<br>',true);
   
   generateButton = createButton('Generate');
   generateButton.parent(mainDiv);
   generateButton.mousePressed(generate);
+  mainDiv.html('<br>',true);
 
-  saveImageButton  = createButton('Save Image');
+  saveImageButton = createButton('Save Image');
+  saveImageButton.mousePressed(saveBoth);
   saveImageButton.parent(mainDiv);
 
   setupScreen();
@@ -194,6 +261,17 @@ function updateSize(){
 function updateFontSize () {
   fontSliderLabel.html("Font Size: " + fontSlider.value().toString());
   fontSize = int(fontSlider.value());
+}
+
+function saveBoth() {
+  var img = createImage(fullPage.width, fullPage.height);
+  img.copy(fullPage, 0, 0, fullPage.width, fullPage.height, 0, 0, fullPage.width, fullPage.height);
+  let myStr = title;
+  img.save(myStr, 'png'); 
+  img.copy(fullPageSolutions, 0, 0, fullPageSolutions.width, fullPageSolutions.height, 0, 0, fullPageSolutions.width, fullPageSolutions.height);
+  myStr = title + "_solutions";
+  img.save(myStr, 'png'); 
+
 }
 
 function draw() {

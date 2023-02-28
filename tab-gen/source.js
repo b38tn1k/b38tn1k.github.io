@@ -12,11 +12,11 @@ var leftRightCounter = 0;
 
 function saveImg() {
   var img = createImage(pg.width, pg.height);
-    img.copy(pg, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-    let myStr = String(stringCount) + "string_page" + String(leftRightCounter);
-    img.save(myStr, 'png'); 
-    console.log('saved');
-    return true;
+  img.copy(pg, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+  let myStr = String(stringCount) + "string_page" + String(leftRightCounter);
+  img.save(myStr, 'png'); 
+  console.log('saved');
+  return true;
 }
 
 function next() {

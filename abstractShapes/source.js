@@ -252,7 +252,13 @@ function generateArt(){
       tileFill(pg, tile);
       break;
     case 1:
-      maze(pg);
+      let radnDim = random([250, 300, 350, 400, 450, 500]);
+      let mt = createGraphics(radnDim, radnDim);
+      maze(mt);
+      mt = vSymmetrise(mt);
+      mt = hSymmetrise(mt);
+      tileFill(pg, mt);
+
       break;
   }
   // foregrounds
@@ -354,7 +360,8 @@ function addMultiples(t, s, pos) {
 }
 
 function maze(g){
-  let size = random(10, 80);
+  g.strokeWeight(3);
+  let size = random(20, 80);
   let res = random(0.001, 0.01);
   for(let x=0; x<g.width; x+=size+0){
     for (let y=0; y<g.height; y+=size+0){
@@ -363,9 +370,13 @@ function maze(g){
       if (c<1){
         g.line(x,y,x+size,y+size)
       }
-      else
-      {
+      else if (c < 2) {
         g.line(x,y+size,x+size,y)
+      } else if (c<3){
+        line(x,y,x,y+size)
+      }
+      else if (c<4){
+        line(x,y,x+size,y)
       }
     }
   }  

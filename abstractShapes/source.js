@@ -264,7 +264,6 @@ function generateArt(){
   // foregrounds
   
   let foregroundChoice = floor(random() * 4);
-
   let temp, temp2;
   switch(foregroundChoice) {
     case 0:
@@ -383,22 +382,40 @@ function maze(g){
 
 }
 
-function mandala1(g, temp, finalx, finaly, perfect = false, noFill = false) {
+function mandala1(g, temp, finalx, finaly, perfect = false) {
   temp.strokeWeight(3);
   temp.fill(255);
+  // let noFill = false
+  let backwards = random() > 0.5;
   let w = temp.width;
   let h = temp.height;
   let points = [];
   pt = {};
-  pt['r'] = 1;
-  pt['aOff'] = 0;
-  let pointCount = random(5, 12);
+  pt['aOff'] = random(0, QUARTER_PI);
+  if (backwards == true) {
+    pt['r'] = w/2;
+    points.push(pt);
+  } else {
+    pt['r'] = 1;
+  }
   points.push(pt);
+  let pointCount = random(5, 12);
   for (let i = 1; i < pointCount; i++) {
     pt = {};
-    pt['r'] = points[i-1]['r'] + random((w/(2 * pointCount)), w/pointCount);
+    if (backwards == true) {
+      pt['r'] = points[i-1]['r'] - random((w/(2 * pointCount)), w/pointCount);
+    } else {
+      pt['r'] = points[i-1]['r'] + random((w/(2 * pointCount)), w/pointCount);
+    }
     pt['aOff'] = random(0, QUARTER_PI);
+    if (pt['r'] < 0) {
+      pt['r'] = random() * 5;
+      points.push(pt);
+      break;
+    }
     if (pt['r'] >=w/2) {
+      pt['r'] = random(0.6, 1.0) * w/2;
+      points.push(pt);
       break;
     } else {
       points.push(pt);
@@ -410,29 +427,50 @@ function mandala1(g, temp, finalx, finaly, perfect = false, noFill = false) {
     pt['aOff'] = random(0, QUARTER_PI);
     points.push(pt);
   }
+  if (backwards == true) {
+    pt = {};
+    pt['r'] = 1;
+    pt['aOff'] = 0;
+    points.push(pt);
+    points.push(pt);
+    // points.reverse();
+  }
 
   let count = floor(random(2, 10));
   let inc = TWO_PI / count
-
-  
-  for (let a = 0; a < TWO_PI; a+= inc) {
+  for (let a = -TWO_PI; a < TWO_PI; a+= inc) {
     temp.beginShape();
-    if (noFill == true) {
-      temp.noFill();
+    // if (noFill == true) {
+    //   temp.noFill();
+    // }
+    
+    if (backwards == false) {
+      temp.curveVertex(w/2, h/2); 
+      for (let i = 0; i < points.length; i++) {
+        let x = w/2 + sin(points[i]['aOff'] + a) * points[i]['r'];
+        let y = h/2 + cos(points[i]['aOff'] + a) * points[i]['r'];
+        temp.curveVertex(x, y);
+      }
+      for (let i = points.length-1; i >= 0; i--) {
+        let x = w/2 + sin(a - points[i]['aOff']) * points[i]['r'];
+        let y = h/2 + cos(a - points[i]['aOff']) * points[i]['r'];
+        temp.curveVertex(x, y);
+      }
+      temp.curveVertex(w/2, h/2); 
+    } else {
+      for (let i = points.length-1; i >= 0; i--) {
+        let x = w/2 + sin(a - points[i]['aOff']) * points[i]['r'];
+        let y = h/2 + cos(a - points[i]['aOff']) * points[i]['r'];
+        temp.curveVertex(x, y);
+      }
+      for (let i = 0; i < points.length; i++) {
+        let x = w/2 + sin(points[i]['aOff'] + a) * points[i]['r'];
+        let y = h/2 + cos(points[i]['aOff'] + a) * points[i]['r'];
+        temp.curveVertex(x, y);
+      }
+
     }
     
-    temp.curveVertex(w/2, h/2);
-    for (let i = 0; i < points.length; i++) {
-      let x = w/2 + sin(points[i]['aOff'] + a) * points[i]['r'];
-      let y = h/2 + cos(points[i]['aOff'] + a) * points[i]['r'];
-      temp.curveVertex(x, y);
-    }
-    for (let i = points.length-1; i >= 0; i--) {
-      let x = w/2 + sin(a - points[i]['aOff']) * points[i]['r'];
-      let y = h/2 + cos(a - points[i]['aOff']) * points[i]['r'];
-      temp.curveVertex(x, y);
-    }
-    temp.curveVertex(w/2, h/2);
 
     temp.endShape();
 

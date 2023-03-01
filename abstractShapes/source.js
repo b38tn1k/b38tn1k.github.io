@@ -166,7 +166,7 @@ function dSymmetrise(g) {
 
 function medallion(g) {
   let radius = random((g.width - 500)/2, g.width / 5);
-  let count = floor(random(50, 100));
+  let count = floor(random(100, 200));
   let cir = 2 * PI * radius
   let temp = createGraphics(radius*2.5, radius*2.5);
   let weaveRadius = random(cir/count, cir/count * 1.5);
@@ -196,13 +196,14 @@ function medallion(g) {
       temp.fill(255);
       let radius2 = radius * (1 + random(0.9, 1.0));
       temp.circle(offx, offy, radius2 + 2*weaveRadius);
-      count = random(5, 15);
+      count = random(4, 16);
       temp.noFill();
       for (start = 0; start <= TWO_PI - PI/count; start += TWO_PI/count) {
         temp.circle(offx+weaveRadius*sin(start + offset), offy+weaveRadius*cos(start + offset), radius2);
       }
       break;
     case 2:
+      count = floor(random(50, 100))
       weaveRadius = cir / count;
       let stutter = PI/count;
       temp.fill(255);

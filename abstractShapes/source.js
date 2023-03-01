@@ -206,6 +206,7 @@ function medallion(g) {
       temp.noFill();
       for (start = 0; start <= TWO_PI - PI/count; start += TWO_PI/count) {
         temp.circle(offx+weaveRadius*sin(start + offset), offy+weaveRadius*cos(start + offset), radius2);
+        // temp.circle(offx+weaveRadius*sin(start + offset), offy+weaveRadius*cos(start + offset), radius2 * 0.95);
       }
       break;
     case 2:
@@ -242,13 +243,16 @@ function generateArt(){
   pg.background(255);
   // backgrounds
   let backgroundChoice = floor(random() * 4);
-  backgroundChoice = 0;
+  backgroundChoice = floor(random(2));
   switch(backgroundChoice) {
     case 0:
       let tile = squiggleTile(random([250, 300, 350, 400, 450, 500]));
       tile = vSymmetrise(tile);
       tile = hSymmetrise(tile);
       tileFill(pg, tile);
+      break;
+    case 1:
+      maze(pg);
       break;
   }
   // foregrounds
@@ -349,7 +353,26 @@ function addMultiples(t, s, pos) {
   }
 }
 
-function mandala1(g, temp, finalx, finaly, perfect = false) {
+function maze(g){
+  let size = random(10, 80);
+  let res = random(0.001, 0.01);
+  for(let x=0; x<g.width; x+=size+0){
+    for (let y=0; y<g.height; y+=size+0){
+      n = noise(x*res,y*res)-0.2;
+      c=random(0, 8) * n;
+      if (c<1){
+        g.line(x,y,x+size,y+size)
+      }
+      else
+      {
+        g.line(x,y+size,x+size,y)
+      }
+    }
+  }  
+
+}
+
+function mandala1(g, temp, finalx, finaly, perfect = false, noFill = false) {
   temp.strokeWeight(3);
   temp.fill(255);
   let w = temp.width;
@@ -383,6 +406,10 @@ function mandala1(g, temp, finalx, finaly, perfect = false) {
   
   for (let a = 0; a < TWO_PI; a+= inc) {
     temp.beginShape();
+    if (noFill == true) {
+      temp.noFill();
+    }
+    
     temp.curveVertex(w/2, h/2);
     for (let i = 0; i < points.length; i++) {
       let x = w/2 + sin(points[i]['aOff'] + a) * points[i]['r'];

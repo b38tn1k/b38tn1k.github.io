@@ -13,8 +13,8 @@ var sizeSlider;
 var sizeSliderLabel;
 var fontSlider;
 var fontSliderLabel;
-var cols = 25;
-var rows = 25;
+var cols = 20;
+var rows = 20;
 var letters = 'qwertyuiopasdfghjklzxcvbnm';
 var grid;
 var solution;
@@ -166,11 +166,11 @@ function generate() {
 
   let area = min((windowWidth - (100 + mainDiv.width)), windowHeight-500);
 
-  fullPage.text(title.toUpperCase(), docWidth/2, border);
+  fullPage.text(title.toUpperCase(), docWidth/2, 2*border);
   fullPage.stroke(0);
-  fullPage.strokeWeight(2);
-  fullPage.rect(border*3, border * 3, grid.width, grid.height);
-  fullPage.image(grid, border*3, border * 3);
+  fullPage.strokeWeight(3);
+  fullPage.rect(border*3, border * 4, grid.width, grid.height);
+  fullPage.image(grid, border*3, border * 4);
 
   fullPageSolutions.text(title.toUpperCase(), docWidth/2, border);
   fullPageSolutions.stroke(0);
@@ -181,7 +181,7 @@ function generate() {
 
   let listX = 3*border;
   spacing = (docWidth - 6* border)/4;
-  let listY = grid.height + border * 3;
+  let listY = grid.height + border * 4;
   fullPage.textAlign(LEFT, TOP);
   fullPageSolutions.textAlign(LEFT, TOP);
   for (let i = 0; i < list.length; i++) {
@@ -228,10 +228,10 @@ function setup() {
   wordListTextArea.style('resize', 'vertical');
   mainDiv.html('<br>',true);
 
-  sizeSlider = createSlider(25, 100, 25, 1);
+  sizeSlider = createSlider(20, 100, 20, 1);
   sizeSlider.parent(mainDiv);
   sizeSlider.input(updateSize);
-  sizeSliderLabel = createDiv("Grid Size: 25");
+  sizeSliderLabel = createDiv("Grid Size: " + cols.toString());
   sizeSliderLabel.parent(mainDiv);
   mainDiv.html('<br>',true);
 

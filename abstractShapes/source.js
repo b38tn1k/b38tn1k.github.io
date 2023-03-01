@@ -165,35 +165,70 @@ function dSymmetrise(g) {
 }
 
 function medallion(g) {
-  let radius = random(g.width / 3, g.width / 5);
-  
-  
-  
-  count = random(30, 100);
+  let radius = random((g.width - 500)/2, g.width / 5);
+  let count = floor(random(50, 100));
   let cir = 2 * PI * radius
-  weaveRadius = random(cir/count, cir/count * 1.5);
-  temp = createGraphics(radius*2.5, radius*2.5);
-  offx = temp.width/2;
-  offy = temp.width/2;
+  let temp = createGraphics(radius*2.5, radius*2.5);
+  let weaveRadius = random(cir/count, cir/count * 1.5);
+  let offx = temp.width/2;
+  let offy = temp.width/2;
   temp.fill(255);
+  temp.noStroke();
   temp.circle(offx, offy, 2*radius);
   temp.strokeWeight(3);
+  temp.stroke(0);
   let start = 0;
+  let borderType = floor(random() * 3);
   let offset = random();
   let offset2 = 1 + random();
   let tempRad = radius - weaveRadius;
-  for (start = 0; start <= TWO_PI - PI/count; start += TWO_PI/count) {
-    temp.circle(offx+tempRad*sin(start + offset), offy+tempRad*cos(start + offset), weaveRadius * offset2);
-    temp.circle(offx+tempRad*sin(start + offset), offy+tempRad*cos(start + offset), weaveRadius);
+  let x, y;
+  switch(borderType) {
+    case 0:
+      offset = random() * TWO_PI;
+      offset2 = 1 + random();
+      for (start = 0; start <= TWO_PI - PI/count; start += TWO_PI/count) {
+        temp.circle(offx+radius*sin(start + offset), offy+radius*cos(start + offset), weaveRadius * offset2);
+        temp.circle(offx+radius*sin(start + offset), offy+radius*cos(start + offset), weaveRadius);
+      }
+      break;
+    case 1:
+      temp.fill(255);
+      let radius2 = radius * (1 + random(0.9, 1.0));
+      temp.circle(offx, offy, radius2 + 2*weaveRadius);
+      count = random(5, 15);
+      temp.noFill();
+      for (start = 0; start <= TWO_PI - PI/count; start += TWO_PI/count) {
+        temp.circle(offx+weaveRadius*sin(start + offset), offy+weaveRadius*cos(start + offset), radius2);
+      }
+      break;
+    case 2:
+      weaveRadius = cir / count;
+      let stutter = PI/count;
+      temp.fill(255);
+      for (start = 0; start <= TWO_PI - PI/count; start += TWO_PI/count) {
+        x = offx+radius*sin(start);
+        y = offy+radius*cos(start);
+        temp.arc(x, y, weaveRadius, weaveRadius, PI - start, 0 - start);
+        x = offx+radius*sin(start - stutter);
+        y = offy+radius*cos(start - stutter);
+        temp.arc(x, y, weaveRadius, weaveRadius, 0 - start, PI - start);
+        
+      }
+      // offset = random();
+      // offset2 = 1 + random();
+      // for (start = 0; start <= TWO_PI - PI/count; start += TWO_PI/count) {
+      //   temp.circle(offx+radius*sin(start + offset), offy+radius*cos(start + offset), weaveRadius * offset2);
+      //   temp.circle(offx+radius*sin(start + offset), offy+radius*cos(start + offset), weaveRadius);
+      // }
+      break;
+
+
+
   }
-  offset = random();
-  offset2 = 1 + random();
-  for (start = 0; start <= TWO_PI - PI/count; start += TWO_PI/count) {
-    temp.circle(offx+radius*sin(start + offset), offy+radius*cos(start + offset), weaveRadius * offset2);
-    temp.circle(offx+radius*sin(start + offset), offy+radius*cos(start + offset), weaveRadius);
-  }
-  // temp.noFill();
-  // temp.arc(offx+radius*sin(start), offy+radius*cos(start), weaveRadius, weaveRadius, HALF_PI, -HALF_PI)
+
+  
+  
   g.imageMode(CENTER);
   g.image(temp, docWidth/2, docHeight/2);
   

@@ -1,6 +1,9 @@
 var docWidth = 2550;
 var docHeight = 3300;
 var pg;
+var mainDiv;
+var generateButton;
+var saveImageButton;
 
 
 function keyPressed() {
@@ -8,9 +11,7 @@ function keyPressed() {
     setupScreen();
   }
   if (key == 's') {
-    var img = createImage(pg.width, pg.height);
-    img.copy(pg, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-    img.save('pattern', 'png'); 
+    dl();
   }
   
   if (keyCode == DOWN_ARROW){
@@ -26,6 +27,12 @@ function keyPressed() {
 
   return;
   }
+}
+
+function dl() {
+  var img = createImage(pg.width, pg.height);
+  img.copy(pg, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+  img.save('pattern', 'png'); 
 }
 
 function deviceTurned() {
@@ -93,7 +100,6 @@ function rotatePts(pts, angle){
 }
 
 function squiggleTile(d) {
-  console.log(d);
   let tile = createGraphics(d, d);
   tile.noFill();
   tile.strokeWeight(3);
@@ -224,6 +230,14 @@ function medallion(g) {
 
 function setupScreen() {
   createCanvas(windowWidth, windowHeight);
+  mainDiv.size(min(200, 0.25 * windowWidth));
+  mainDiv.position(10, windowHeight - (mainDiv.height + 20));
+  
+  generateArt();
+  
+}
+
+function generateArt(){
   pg = initPage();
   pg.background(255);
   // backgrounds
@@ -326,14 +340,12 @@ function setupScreen() {
   //finalise
   border();
   showPage();
-  
 }
 
 function addMultiples(t, s, pos) {
   t.imageMode(CENTER);
   for (let i = 0; i < pos.length; i++) {
     t.image(s, t.width * pos[i][0], t.height * pos[i][1]);
-    console.log(pos[i]);
   }
 }
 
@@ -416,14 +428,26 @@ function initPage() {
 
 function showPage() {
   let fit = 1.0;
-  while (docWidth * fit > windowWidth || docHeight * fit > windowHeight) {
+  while (docWidth * fit > windowWidth || docHeight * fit > (windowHeight  - mainDiv.height - 40)) {
     fit -= 0.05;
   }
   image(pg, 10, 10, fit * docWidth, fit * docHeight);
 }
 
 function setup() {
+  mainDiv = createDiv('Abstract Shape Maker');
+  mainDiv.style('background', 'white');
+  mainDiv.style('padding', '10px');
+  mainDiv.html('<br>',true);
 
+  generateButton = createButton('Generate');
+  generateButton.parent(mainDiv);
+  generateButton.mousePressed(generateArt);
+  mainDiv.html('<br>',true);
+
+  saveImageButton = createButton('Save');
+  saveImageButton.mousePressed(dl);
+  saveImageButton.parent(mainDiv);
   setupScreen();
 }
 

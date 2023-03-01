@@ -216,24 +216,10 @@ function medallion(g) {
         temp.arc(x, y, weaveRadius, weaveRadius, 0 - start, PI - start);
         
       }
-      // offset = random();
-      // offset2 = 1 + random();
-      // for (start = 0; start <= TWO_PI - PI/count; start += TWO_PI/count) {
-      //   temp.circle(offx+radius*sin(start + offset), offy+radius*cos(start + offset), weaveRadius * offset2);
-      //   temp.circle(offx+radius*sin(start + offset), offy+radius*cos(start + offset), weaveRadius);
-      // }
       break;
-
-
-
   }
-
-  
-  
   g.imageMode(CENTER);
   g.image(temp, docWidth/2, docHeight/2);
-  
-
 }
 
 function setupScreen() {
@@ -245,8 +231,53 @@ function setupScreen() {
   tile = hSymmetrise(tile);
   tileFill(pg, tile);
   medallion(pg);
+  mandala1(pg);
   border();
   showPage();
+}
+
+function mandala1(g) {
+  let temp = initPage();
+  temp.strokeWeight(3);
+  temp.fill(255);
+  let points = [];
+  pt = {};
+  pt['r'] = 1;
+  pt['aOff'] = 0;
+  let pointCount = random(5, 12);
+  points.push(pt);
+  for (let i = 1; i < pointCount; i++) {
+    pt = {};
+    pt['r'] = points[i-1]['r'] + random(50, 300);
+    pt['aOff'] = random(0, QUARTER_PI);
+    points.push(pt);
+  }
+  let w = docWidth;
+  let h = docHeight;
+  for (let a = 0; a < TWO_PI; a+= QUARTER_PI) {
+    temp.beginShape();
+    temp.curveVertex(w/2, h/2);
+    for (let i = 0; i < points.length; i++) {
+      let x = w/2 + sin(points[i]['aOff'] + a) * points[i]['r'];
+      let y = h/2 + cos(points[i]['aOff'] + a) * points[i]['r'];
+      temp.curveVertex(x, y);
+    }
+    for (let i = points.length-1; i >= 0; i--) {
+      let x = w/2 + sin(a - points[i]['aOff']) * points[i]['r'];
+      let y = h/2 + cos(a - points[i]['aOff']) * points[i]['r'];
+      temp.curveVertex(x, y);
+    }
+    temp.curveVertex(w/2, h/2);
+
+    temp.endShape();
+
+  }
+  
+
+
+
+  g.imageMode(CENTER);
+  g.image(temp, docWidth/2, docHeight/2);
 }
 
 function border() {

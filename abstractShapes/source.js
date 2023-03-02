@@ -243,7 +243,9 @@ function generateArt(){
   pg.background(255);
   // backgrounds
   let backgroundChoice = floor(random() * 4);
-  backgroundChoice = floor(random(2));
+  let radnDim;
+  let mt;
+  backgroundChoice = floor(random(3));
   switch(backgroundChoice) {
     case 0:
       let tile = squiggleTile(random([250, 300, 350, 400, 450, 500]));
@@ -252,17 +254,22 @@ function generateArt(){
       tileFill(pg, tile);
       break;
     case 1:
-      let radnDim = random([250, 300, 350, 400, 450, 500]);
-      let mt = createGraphics(radnDim, radnDim);
+      radnDim = random([250, 300, 350, 400, 450, 500]);
+      mt = createGraphics(radnDim, radnDim);
       maze(mt);
       mt = vSymmetrise(mt);
       mt = hSymmetrise(mt);
       tileFill(pg, mt);
-
+      break;
+    case 2:
+      radnDim = random([250, 300, 350, 400, 450, 500]);
+      mt = createGraphics(radnDim, radnDim);
+      mandala1(mt, mt, mt.width/2, mt.width/2, false, true);
+      tileFill(pg, mt);
       break;
   }
+
   // foregrounds
-  
   let foregroundChoice = floor(random() * 4);
   let temp, temp2;
   switch(foregroundChoice) {
@@ -382,7 +389,7 @@ function maze(g){
 
 }
 
-function mandala1(g, temp, finalx, finaly, perfect = false) {
+function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
   temp.strokeWeight(3);
   temp.fill(255);
   // let noFill = false
@@ -400,6 +407,9 @@ function mandala1(g, temp, finalx, finaly, perfect = false) {
   }
   points.push(pt);
   let pointCount = random(5, 12);
+  if (simple == true) {
+    pointCount = random(2, 6);
+  }
   for (let i = 1; i < pointCount; i++) {
     pt = {};
     if (backwards == true) {
@@ -437,6 +447,9 @@ function mandala1(g, temp, finalx, finaly, perfect = false) {
   }
 
   let count = floor(random(2, 10));
+  if (simple == true) {
+    count = floor(random(3, 7));
+  }
   let inc = TWO_PI / count
   for (let a = -TWO_PI; a < TWO_PI; a+= inc) {
     temp.beginShape();

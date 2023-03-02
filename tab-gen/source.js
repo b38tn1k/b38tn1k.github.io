@@ -1,4 +1,6 @@
 var stringCount = 4;
+var chordBoxes = false;
+var transposeTool = false;
 
 var dpi = 300;
 var docWidth = 2550;
@@ -22,7 +24,7 @@ function saveImg() {
 function next() {
   clear();
   setupScreen();
-  transposeTool();
+  // transposeTool();
   return true;
 }
 
@@ -45,6 +47,13 @@ function keyPressed() {
   if (key == '4') {
     clear();
     stringCount = 4;
+    setupScreen();
+    noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
+    next();
+  }
+  if (key == '5') {
+    clear();
+    stringCount = 5;
     setupScreen();
     noteStrings = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
     next();
@@ -86,7 +95,7 @@ async function autoExport() {
 
 function setupScreen() {
   pg.clear();
-
+  pg.background(255);
 
   chordBoxImg = createGraphics((stringCount) * tabSpacing, (chordBoxFretCount - 1) * fretSpacing);
   for (let i = 1; i < (stringCount * tabSpacing); i+= tabSpacing) {
@@ -105,25 +114,36 @@ function setupScreen() {
   for (let j = 0; j <= numberThatCanFit-1; j++) {
     chordBoxGroup.image(chordBoxImg, int(j * chordBoxWithPadding), 0);
   }
-  pg.imageMode(CENTER);
-  pg.image(chordBoxGroup, pg.width/2, tabSpacing + chordBoxGroup.height/2);
-  pg.imageMode(CORNER);
-
+  if (chordBoxes == true) {
+    pg.imageMode(CENTER);
+    pg.image(chordBoxGroup, pg.width/2, tabSpacing + chordBoxGroup.height/2);
+    pg.imageMode(CORNER);
+  }
+  
   tabImg = createGraphics(docWidth, (stringCount-1) * tabSpacing + 2);
-  // tabImg.background(255, 255, 200);
   for (let i = 1; i < (stringCount * tabSpacing); i+= tabSpacing) {
     tabImg.line(0, int(i), docWidth, int(i));
   }
   let totalHeight = tabImg.height + tabSpacing;
-  let start = chordBoxImg.height + 4*tabSpacing;
+  let start = 4*tabSpacing;
+  if (chordBoxes == true) {
+    start += chordBoxImg.height;
+  }
   let vSpace = docHeight - start;
   let fit = floor(vSpace/totalHeight) - 1;
-  console.log(fit);
   let gap = (docHeight - fit * totalHeight) / fit;
+  while (gap <= 2 * tabSpacing){
+    fit -= 1;
+    gap = (docHeight - fit * totalHeight) / fit;
+  }
   while (start + totalHeight < docHeight) {
     pg.image(tabImg, 0, int(start));
     start += totalHeight + gap;
   }
+  if (transposeTool == true) {
+    transposeTool();
+  }4
+  showPage();
 }
 
 function shuffleNoteStrings() {
@@ -168,5 +188,12 @@ function setup() {
 }
 
 function draw() {
-  image(pg, 0, 0, docWidth/3, docHeight/3);
+}
+
+function showPage() {
+  let fit = 1.0;
+  while (docWidth * fit > windowWidth || docHeight * fit > windowHeight){//  - mainDiv.height - 40)) {
+    fit -= 0.05;
+  }
+  image(pg, 10, 10, fit * docWidth, fit * docHeight);
 }

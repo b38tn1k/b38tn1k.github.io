@@ -152,7 +152,6 @@ function generate() {
   fullPageSolutions.textSize(fontSize);
   fullPageSolutions.textAlign(CENTER, CENTER);
   
-  
   spacing = gWidth / ((cols + rows)/2);
   start = spacing/2;
   for (let i = 0; i < cols; i++) {
@@ -165,16 +164,28 @@ function generate() {
   }
 
   let area = min((windowWidth - (100 + mainDiv.width)), windowHeight-500);
+  // fullPage.textSize(1.5*fontSize);
+  // fullPageSolutions.textSize(1.5*fontSize);
+  fullPageSolutions.stroke(0);
+  fullPageSolutions.strokeWeight(3);
+  fullPage.stroke(0);
+  fullPage.strokeWeight(3);
 
+  fullPageSolutions.text(title.toUpperCase(), docWidth/2, border);
   fullPage.text(title.toUpperCase(), docWidth/2, 2*border);
+
+  fullPage.textSize(fontSize);
+
+  fullPageSolutions.textSize(fontSize);
+
   fullPage.stroke(0);
   fullPage.strokeWeight(3);
   fullPage.rect(border*3, border * 4, grid.width, grid.height);
   fullPage.image(grid, border*3, border * 4);
 
-  fullPageSolutions.text(title.toUpperCase(), docWidth/2, border);
+  
   fullPageSolutions.stroke(0);
-  fullPageSolutions.strokeWeight(2);
+  fullPageSolutions.strokeWeight(3);
   fullPageSolutions.rect(border*3, border * 3, grid.width, grid.height);
   fullPageSolutions.image(solution, border*3, border * 3);
   fullPageSolutions.image(grid, border*3, border * 3);
@@ -184,6 +195,8 @@ function generate() {
   let listY = grid.height + border * 4;
   fullPage.textAlign(LEFT, TOP);
   fullPageSolutions.textAlign(LEFT, TOP);
+  fullPageSolutions.noStroke();
+  fullPage.noStroke();
   for (let i = 0; i < list.length; i++) {
     if (i % 4 == 0) {
       listX = 3*border;

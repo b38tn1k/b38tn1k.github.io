@@ -35,7 +35,6 @@ function cleanCanvases() {
       toRemove.push(canvases[i]);
     }
   }
-  console.log(canvases.length, toRemove.length);
   for (let i = 0; i < toRemove.length; i++) {
     toRemove[i].remove();
   }

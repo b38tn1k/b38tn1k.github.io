@@ -30,6 +30,8 @@ function windowResized() {
 }
 
 function setupScreen() {
+  setAttributes('antialias', true);
+  setAttributes('context', 'willReadFrequently');
   createCanvas(windowWidth, windowHeight);
   mainDiv.size(min(200, 0.25 * windowWidth));
   mainDiv.position(10, windowHeight - (mainDiv.height + 20));
@@ -44,7 +46,6 @@ function cleanCanvases() {
       toRemove.push(canvases[i]);
     }
   }
-  console.log(canvases.length, toRemove.length);
   for (let i = 0; i < toRemove.length; i++) {
     toRemove[i].remove();
   }
@@ -58,8 +59,7 @@ function generateArt(){
   let backgroundChoice = floor(random() * 4);
   let radnDim;
   let mt;
-  backgroundChoice = floor(random(3));
-  // backgroundChoice = 3;
+  backgroundChoice = floor(random(4));
   switch(backgroundChoice) {
     case 0:
       let tile = squiggleTile(random([250, 300, 350, 400, 450, 500]));
@@ -85,9 +85,18 @@ function generateArt(){
       delete(mt);
       break;
     case 3:
+      break;
+    case 4:
       radnDim = random([250, 300, 350, 400, 450, 500]);
       mt = createGraphics(radnDim, radnDim, WEBGL);
-
+      mt.strokeWeight(6);
+      mt.ortho();
+      mt.background(255);
+      for (let i = 0; i < 10; i++) {
+        mt.rotateX(random() * TWO_PI);
+        mt.rotateY(random() * TWO_PI);
+        mt.box(radnDim * random());
+      }
       tileFill(pg, mt);
       delete(mt);
       break;
@@ -99,7 +108,7 @@ function generateArt(){
   switch(foregroundChoice) {
     case 0:
       medallion(pg);
-      temp = initPage();
+      temp = createGraphics(docHeight/2, docHeight/2);
       mandala1(pg, temp, docWidth/2, docHeight/2);
       delete(temp);
       temp = createGraphics(3*docWidth/4, 3*docWidth/4);

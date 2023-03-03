@@ -95,7 +95,7 @@ function addWordDiagonallyDown(word, grid){
   ypos = max(floor(random() * (rows - ceil(word.length / 1.4) - 1)), 0);
   try {
     for (let i = 0; i < word.length; i++){
-      if (grid[xpos + i][ypos + i] == '' || grid[xpos + i][ypos + i] == word[i]) {
+      if (grid[xpos - i][ypos + i] == '' || grid[xpos - i][ypos + i] == word[i]) {
         score++;
       }
     }
@@ -105,7 +105,7 @@ function addWordDiagonallyDown(word, grid){
   }
   if (score == word.length) {
     for (let i = 0; i < word.length; i++){
-      grid[xpos + i][ypos + i] = word[i];
+      grid[xpos - i][ypos + i] = word[i];
     }
     added=true;
   }
@@ -134,6 +134,22 @@ function addWordDiagonallyUp(word, grid){
     }
     added=true;
   }
+  return added;
+}
+
+function addRevWordDiagonallyDown(word, grid){
+  let t = word.split("");
+  let r = t.reverse();
+  let w = r.join("");
+  let added = addWordDiagonallyDown(w, grid);
+  return added;
+}
+
+function addRevWordDiagonallyUp(word, grid){
+  let t = word.split("");
+  let r = t.reverse();
+  let w = r.join("");
+  let added = addWordDiagonallyUp(w, grid);
   return added;
 }
 
@@ -170,7 +186,7 @@ function generate() {
     let word = list[i].replace(/\s+/g, '');
     let added = false;
     while (added == false) {
-      let choice = int(random() * 5);
+      let choice = int(random() * 7);
       switch (choice) {
         case 0:
           // horizontal
@@ -188,6 +204,12 @@ function generate() {
           break;
         case 4:
           added = addWordDiagonallyUp(word, finderGrid);
+          break;
+        case 5:
+          added = addRevWordDiagonallyDown(word, finderGrid);
+          break;
+        case 6:
+          added = addRevWordDiagonallyUp(word, finderGrid);
           break;
       }
     }

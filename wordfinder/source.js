@@ -21,6 +21,7 @@ var solution;
 var fullPage;
 var fullPageSolutions;
 var title;
+var examples;
 
 function windowResized() {
   setupScreen();
@@ -37,7 +38,6 @@ function addWordHorizontally(word, grid){
       score++;
     }
   }
-
   if (score == word.length) {
     for (let i = 0; i < word.length; i++){
       grid[xpos + i][ypos] = word[i];
@@ -163,6 +163,11 @@ function generate() {
   
   for (let i = 0; i < list.length; i++) {
     list[i] = list[i].toUpperCase(); //or lower case
+    list[i] = list[i].replace(/'/, '');
+    if (list[i][0] == " ") {
+      list[i] = list[i].substr(1)
+    }
+
   }
   letters = letters.toUpperCase();
   let letterGrid = [];
@@ -320,6 +325,10 @@ function setupScreen() {
   mainDiv.size(min(400, 0.25 * windowWidth), windowHeight - 40);
 }
 
+function preload() {
+  examples = loadJSON('egs.json'); 
+}
+
 function setup() {
   mainDiv = createDiv('Word Finder Maker');
   mainDiv.style('background', 'white');
@@ -372,8 +381,15 @@ function setup() {
 }
 
 function testSetup() {
-  titleInput.elt.value = 'SINGERS';
-  wordListTextArea.elt.value = 'Lennon, McCartney, Jagger, Richards, Dylan, Hendrix, Morrison, Simon, Garfunkel, King, Franklin, Redding, Cooke, Gaye, Wonder, Jones, Turner, Presley, Orbison, Cash';
+  
+  let choice = floor(random(examples.length))
+  let theme = examples.data[choice];
+  titleInput.elt.value = theme.title;
+  myString = ''
+  for (let i = 0; i < theme.content.length; i++) {
+    myString += theme.content[i] + ', ';
+  }
+  wordListTextArea.elt.value = myString;
   generate();
 }
 

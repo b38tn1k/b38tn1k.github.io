@@ -29,46 +29,114 @@ function windowResized() {
 function addWordHorizontally(word, grid){
   let added = false;
   let xpos, ypos;
-  while (added == false) {
-    xpos = floor(random() * (cols - word.length));
-    ypos = floor(random() * (rows));
-    let score = 0;
-    for (let i = 0; i < word.length; i++){
-      if (grid[xpos + i][ypos] == '' || grid[xpos + i][ypos] == word[i]) {
-        score++;
-      }
-    }
-
-    if (score == word.length) {
-      for (let i = 0; i < word.length; i++){
-        grid[xpos + i][ypos] = word[i];
-      }
-      added=true;
+  xpos = floor(random() * (cols - word.length));
+  ypos = floor(random() * (rows));
+  let score = 0;
+  for (let i = 0; i < word.length; i++){
+    if (grid[xpos + i][ypos] == '' || grid[xpos + i][ypos] == word[i]) {
+      score++;
     }
   }
+
+  if (score == word.length) {
+    for (let i = 0; i < word.length; i++){
+      grid[xpos + i][ypos] = word[i];
+    }
+    added=true;
+  }
+  return added;
 }
 
-function addWordVertically(word, grid){
+function addWordVerticallyDown(word, grid){
   let added = false;
   let xpos, ypos;
-  while (added == false) {
-    xpos = floor(random() * (cols - word.length));
-    ypos = floor(random() * (rows));
-    let score = 0;
+  xpos = floor(random() * (cols - word.length));
+  ypos = floor(random() * (rows));
+  let score = 0;
+  for (let i = 0; i < word.length; i++){
+    if (grid[xpos][ypos + i] == '' || grid[xpos][ypos + i] == word[i]) {
+      score++;
+    }
+  }
+  if (score == word.length) {
     for (let i = 0; i < word.length; i++){
-      if (grid[xpos][ypos + i] == '' || grid[xpos][ypos + i] == word[i]) {
+      grid[xpos][ypos + i] = word[i];
+    }
+    added=true;
+  }
+  return added;
+}
+
+function addWordVerticallyUp(word, grid){
+  let added = false;
+  let xpos, ypos;
+  xpos = word.length + floor(random() * (cols - word.length));
+  ypos = floor(random() * (rows));
+  let score = 0;
+  for (let i = 0; i < word.length; i++){
+    if (grid[xpos][ypos - i] == '' || grid[xpos][ypos - i] == word[i]) {
+      score++;
+    }
+  }
+  if (score == word.length) {
+    for (let i = 0; i < word.length; i++){
+      grid[xpos][ypos - i] = word[i];
+    }
+    added=true;
+  }
+  return added;
+}
+
+function addWordDiagonallyDown(word, grid){
+  let added = false;
+  let xpos, ypos;
+  let score = 0;
+  xpos = max(floor(random() * (cols - ceil(word.length / 1.4) - 1)), 0);
+  ypos = max(floor(random() * (rows - ceil(word.length / 1.4) - 1)), 0);
+  try {
+    for (let i = 0; i < word.length; i++){
+      if (grid[xpos + i][ypos + i] == '' || grid[xpos + i][ypos + i] == word[i]) {
         score++;
       }
     }
-
-    if (score == word.length) {
-      for (let i = 0; i < word.length; i++){
-        grid[xpos][ypos + i] = word[i];
-      }
-      added=true;
-    }
+  } catch {
+    score = 0;
+    return false;
   }
+  if (score == word.length) {
+    for (let i = 0; i < word.length; i++){
+      grid[xpos + i][ypos + i] = word[i];
+    }
+    added=true;
+  }
+  return added;
 }
+
+function addWordDiagonallyUp(word, grid){
+  let added = false;
+  let xpos, ypos;
+  let score = 0;
+  xpos = ceil(word.length / 1.4) + floor(random() * (cols - ceil(word.length / 1.4) - 1));
+  ypos = ceil(word.length / 1.4) + floor(random() * (rows - ceil(word.length / 1.4) - 1));
+  try {
+    for (let i = 0; i < word.length; i++){
+      if (grid[xpos - i][ypos - i] == '' || grid[xpos - i][ypos - i] == word[i]) {
+        score++;
+      }
+    }
+  } catch {
+    score = 0;
+    return false;
+  }
+  if (score == word.length) {
+    for (let i = 0; i < word.length; i++){
+      grid[xpos - i][ypos - i] = word[i];
+    }
+    added=true;
+  }
+  return added;
+}
+
 
 function generate() {
   let list = wordListTextArea.elt.value.split(',');
@@ -79,7 +147,6 @@ function generate() {
   
   for (let i = 0; i < list.length; i++) {
     list[i] = list[i].toUpperCase(); //or lower case
-    list[i] = list[i].replace(/\s+/g, '');
   }
   letters = letters.toUpperCase();
   let letterGrid = [];
@@ -100,22 +167,29 @@ function generate() {
   // finderGrid[0][0] = 'H';finderGrid[0][1] = 'E';finderGrid[0][2] = 'L';finderGrid[0][3] = 'L';finderGrid[0][4] = 'O';
   for (let i = 0; i < list.length; i++) {
     // let choice = int(random() * 4);
-    let choice = int(random() * 2);
-    switch (choice) {
-      case 0:
-        // horizontal
-        addWordHorizontally(list[i], finderGrid);
-        break;
-      case 1:
-        // vertical
-        addWordVertically(list[i], finderGrid);
-        break;
-      case 2:
-        // diag up
-        break;
-      case 3:
-        // diag down
-        break;
+    let word = list[i].replace(/\s+/g, '');
+    let added = false;
+    while (added == false) {
+      let choice = int(random() * 5);
+      switch (choice) {
+        case 0:
+          // horizontal
+          added = addWordHorizontally(word, finderGrid);
+          break;
+        case 1:
+          // vertical
+          added = addWordVerticallyDown(word, finderGrid);
+          break;
+        case 2:
+          added = addWordVerticallyUp(word, finderGrid);
+          break;
+        case 3:
+          added = addWordDiagonallyDown(word, finderGrid);
+          break;
+        case 4:
+          added = addWordDiagonallyUp(word, finderGrid);
+          break;
+      }
     }
   }
 
@@ -212,7 +286,10 @@ function generate() {
     fit -= 0.05;
   }
 
+  fit *= 0.5;
+  image(fullPageSolutions, 40 + mainDiv.width + fullPage.width*fit, 10, fit * docWidth, fit * docHeight);
   image(fullPage, 20 + mainDiv.width, 10, fit * docWidth, fit * docHeight);
+  
 }
 
 function setupScreen() {

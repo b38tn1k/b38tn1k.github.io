@@ -153,14 +153,12 @@ function addRevWordDiagonallyUp(word, grid){
   return added;
 }
 
-
 function generate() {
   let list = wordListTextArea.elt.value.split(',');
   title = "Puzzle";
   if (titleInput.value()) {
     title = titleInput.value();
   }
-  
   for (let i = 0; i < list.length; i++) {
     list[i] = list[i].toUpperCase(); //or lower case
     list[i] = list[i].replace(/'/, '');
@@ -232,6 +230,10 @@ function generate() {
   // letterGrid = finderGrid;
 
   var gWidth = docWidth - (border*6);
+  delete(solution);
+  delete(grid);
+  delete(fullPage);
+  delete(fullPageSolutions);
 
   solution = createGraphics(gWidth, gWidth);
   grid = createGraphics(gWidth, gWidth);

@@ -82,6 +82,7 @@ function createPoints(number, gap, gap2){
     }
     target.imageMode(CENTER);
     target.image(temp, target.width/2, target.height/2);
+    delete(temp);
   
   }
   
@@ -177,6 +178,7 @@ function createPoints(number, gap, gap2){
     }
     g.imageMode(CENTER);
     g.image(temp, g.width/2, g.height/2);
+    delete(temp);
   }
 
 

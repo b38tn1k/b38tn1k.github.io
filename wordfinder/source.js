@@ -27,6 +27,20 @@ function windowResized() {
   setupScreen();
 }
 
+function cleanCanvases() {
+  var canvases = document.getElementsByTagName('canvas');
+  var toRemove = [];
+  for (let i = 0; i < canvases.length; i++) {
+    if (canvases[i].id.includes('default') != true) {
+      toRemove.push(canvases[i]);
+    }
+  }
+  console.log(canvases.length, toRemove.length);
+  for (let i = 0; i < toRemove.length; i++) {
+    toRemove[i].remove();
+  }
+}
+
 function addWordHorizontally(word, grid){
   let added = false;
   let xpos, ypos;
@@ -154,6 +168,7 @@ function addRevWordDiagonallyUp(word, grid){
 }
 
 function generate() {
+  cleanCanvases();
   let list = wordListTextArea.elt.value.split(',');
   title = "Puzzle";
   if (titleInput.value()) {
@@ -277,22 +292,18 @@ function generate() {
   fullPageSolutions.text(title.toUpperCase(), docWidth/2, border);
   fullPage.text(title.toUpperCase(), docWidth/2, 2*border);
 
-  fullPage.textSize(fontSize);
-
-  fullPageSolutions.textSize(fontSize);
+  fullPage.textSize(0.7* fontSize);
+  fullPageSolutions.textSize(0.7* fontSize);
 
   fullPage.stroke(0);
   fullPage.strokeWeight(3);
   fullPage.rect(border*3, border * 4, grid.width, grid.height);
   fullPage.image(grid, border*3, border * 4);
-
-  
   fullPageSolutions.stroke(0);
   fullPageSolutions.strokeWeight(3);
   fullPageSolutions.rect(border*3, border * 3, grid.width, grid.height);
   fullPageSolutions.image(solution, border*3, border * 3);
   fullPageSolutions.image(grid, border*3, border * 3);
-
   let listX = 3*border;
   spacing = (docWidth - 6* border)/4;
   let listY = grid.height + border * 4;
@@ -309,19 +320,17 @@ function generate() {
     fullPageSolutions.text(list[i], listX, listY);
     listX += spacing;
   }
-
   let fit = 1.0;
   while (docWidth * fit > windowWidth || docHeight * fit > windowHeight) {
     fit -= 0.05;
   }
-
   fit *= 0.5;
   image(fullPageSolutions, 40 + mainDiv.width + fullPage.width*fit, 10, fit * docWidth, fit * docHeight);
   image(fullPage, 20 + mainDiv.width, 10, fit * docWidth, fit * docHeight);
-  
 }
 
 function setupScreen() {
+  cleanCanvases();
   createCanvas(windowWidth, windowHeight);
   mainDiv.position(10, 10);
   mainDiv.size(min(400, 0.25 * windowWidth), windowHeight - 40);

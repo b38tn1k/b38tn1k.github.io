@@ -203,10 +203,10 @@ function addMultiples(t, s, pos) {
         else if (c < 2) {
           g.line(x,y+size,x+size,y)
         } else if (c<3){
-          line(x,y,x,y+size)
+          g.line(x,y,x,y+size)
         }
         else if (c<4){
-          line(x,y,x+size,y)
+          g.line(x,y,x+size,y)
         }
       }
     }  

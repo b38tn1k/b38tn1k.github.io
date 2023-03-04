@@ -86,20 +86,6 @@ function generateArt(){
       break;
     case 3:
       break;
-    case 4:
-      radnDim = random([250, 300, 350, 400, 450, 500]);
-      mt = createGraphics(radnDim, radnDim, WEBGL);
-      mt.strokeWeight(6);
-      mt.ortho();
-      mt.background(255);
-      for (let i = 0; i < 10; i++) {
-        mt.rotateX(random() * TWO_PI);
-        mt.rotateY(random() * TWO_PI);
-        mt.box(radnDim * random());
-      }
-      tileFill(pg, mt);
-      delete(mt);
-      break;
   }
 
   // foregrounds

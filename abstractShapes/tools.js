@@ -216,6 +216,7 @@ function addMultiples(t, s, pos) {
   function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
     temp.strokeWeight(3);
     temp.fill(255);
+    let shapeSetting = random() > 0.5;
     // let noFill = false
     let backwards = random() > 0.5;
     let w = temp.width;
@@ -275,8 +276,13 @@ function addMultiples(t, s, pos) {
       count = floor(random(3, 7));
     }
     let inc = TWO_PI / count
-    for (let a = -TWO_PI; a < TWO_PI; a+= inc) {
+    if (shapeSetting == false) {
       temp.beginShape();
+    }
+    for (let a = -TWO_PI; a < TWO_PI; a+= inc) {
+      if (shapeSetting == true) {
+        temp.beginShape();
+      }
       // if (noFill == true) {
       //   temp.noFill();
       // }
@@ -308,9 +314,12 @@ function addMultiples(t, s, pos) {
   
       }
       
-  
+      if (shapeSetting == true) {
+        temp.endShape();
+      }
+    }
+    if (shapeSetting == false) {
       temp.endShape();
-  
     }
   
     g.imageMode(CENTER);

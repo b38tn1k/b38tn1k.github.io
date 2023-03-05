@@ -18,7 +18,7 @@ function keyPressed() {
 function dl() {
   var img = createImage(pg.width, pg.height);
   img.copy(pg, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
-  img.save('pattern', 'png'); 
+  img.save('pattern', 'png');
 }
 
 function deviceTurned() {
@@ -34,7 +34,7 @@ function setupScreen() {
   setAttributes('context', 'willReadFrequently');
   createCanvas(windowWidth, windowHeight);
   mainDiv.size(min(200, 0.25 * windowWidth));
-  mainDiv.position(10, windowHeight - (mainDiv.height + 20));
+  mainDiv.position(10, windowHeight - (mainDiv.height));
   generateArt();
 }
 
@@ -51,13 +51,13 @@ function cleanCanvases() {
   }
 }
 
-function generateArt(){
+function generateArt() {
   cleanCanvases();
   pg = initPage();
   pg.background(255);
   // backgrounds
   let backgroundChoice = floor(random() * 4);
-  switch(backgroundChoice) {
+  switch (backgroundChoice) {
     case 0:
       squigBG();
       break;
@@ -72,7 +72,8 @@ function generateArt(){
   }
   // foregrounds
   let foregroundChoice = floor(random() * 4);
-  switch(foregroundChoice) {
+  // foregroundChoice = 4;
+  switch (foregroundChoice) {
     case 0:
       frontNCenterFG();
       break;
@@ -85,6 +86,8 @@ function generateArt(){
     case 3:
       surroundedLargeFG();
       break;
+    case 4:
+      // medallion(pg);
   }
   //finalise
   border();
@@ -97,12 +100,12 @@ function setup() {
   mainDiv = createDiv('Abstract Shape Maker');
   mainDiv.style('background', 'white');
   mainDiv.style('padding', '10px');
-  mainDiv.html('<br>',true);
+  mainDiv.html('<br>', true);
 
   generateButton = createButton('Generate');
   generateButton.parent(mainDiv);
   generateButton.mousePressed(generateArt);
-  mainDiv.html('<br>',true);
+  mainDiv.html(' ', true);
 
   saveImageButton = createButton('Save');
   saveImageButton.mousePressed(dl);

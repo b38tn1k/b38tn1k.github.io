@@ -38,18 +38,18 @@ function setupScreen() {
   generateArt();
 }
 
-function cleanCanvases() {
-  var canvases = document.getElementsByTagName('canvas');
-  var toRemove = [];
-  for (let i = 0; i < canvases.length; i++) {
-    if (canvases[i].id.includes('default') != true) {
-      toRemove.push(canvases[i]);
-    }
-  }
-  for (let i = 0; i < toRemove.length; i++) {
-    toRemove[i].remove();
-  }
-}
+// function cleanCanvases() {
+//   var canvases = document.getElementsByTagName('canvas');
+//   var toRemove = [];
+//   for (let i = 0; i < canvases.length; i++) {
+//     if (canvases[i].id.includes('default') != true) {
+//       toRemove.push(canvases[i]);
+//     }
+//   }
+//   for (let i = 0; i < toRemove.length; i++) {
+//     toRemove[i].remove();
+//   }
+// }
 
 function generateArt() {
   cleanCanvases();

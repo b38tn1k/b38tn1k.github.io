@@ -138,9 +138,7 @@ function medallion(g) {
   let borderType = floor(random() * 3);
   let offset = random();
   let offset2 = 1 + random();
-  let tempRad = radius - weaveRadius;
   let x, y;
-  borderType = 1;
   switch (borderType) {
     case 0:
       offset = random() * TWO_PI;
@@ -244,8 +242,8 @@ function maze(g) {
 function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
   temp.strokeWeight(3);
   temp.fill(255);
-  if (random() > 0.7) {
-    flower(g, 0.5, 0.5);
+  if (random() > 0.7 && simple == false) {
+    flower(temp, 0.5, 0.5);
   }
   let shapeSetting = random() > 0.5;
   let backwards = random() > 0.5;
@@ -348,8 +346,10 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
     temp.endShape();
   }
 
-  g.imageMode(CENTER);
-  g.image(temp, finalx, finaly);
+  if (g) {
+    g.imageMode(CENTER);
+    g.image(temp, finalx, finaly);
+  }
 }
 
 function border() {
@@ -419,6 +419,7 @@ function frontNCenterFG() {
   temp = createGraphics(docWidth * 0.9, docWidth * 0.9);
   mandala1(pg, temp, docWidth / 2, docHeight / 2);
   delete (temp);
+  cleanCanvases();
   temp = createGraphics(docWidth * 0.7, docWidth * 0.7);
   if (random() > 0.5) {
     mandala1(pg, temp, docWidth / 2, docHeight / 2);
@@ -427,6 +428,7 @@ function frontNCenterFG() {
     addMultiples(pg, temp, [[0.5, 0.5]]);
   }
   delete (temp);
+  cleanCanvases();
   temp = createGraphics(docWidth * 0.5, docWidth * 0.5);
   if (random() > 0.5) {
     mandala1(pg, temp, docWidth / 2, docHeight / 2);
@@ -435,115 +437,100 @@ function frontNCenterFG() {
     addMultiples(pg, temp, [[0.5, 0.5]]);
   }
   delete (temp);
+  cleanCanvases();
   temp = createGraphics(docWidth * 0.3, docWidth * 0.3);
   mandala1(pg, temp, docWidth / 2, docHeight / 2);
   delete (temp);
 }
 
 function threeInAColFG() {
-  let temp, temp2;
+  let temp;
   temp = createGraphics(docHeight / 2, docHeight / 2);
   medallion(temp);
   addMultiples(pg, temp, [[0.5, 3 / 16], [0.5, 13 / 16], [0.5, 0.5]]);
   delete (temp);
   temp = createGraphics(docHeight / 4, docHeight / 4);
-  temp2 = createGraphics(docHeight / 4, docHeight / 4);
-  mandala1(temp2, temp, 0, 0);
+  mandala1(null, temp, 0, 0);
   addMultiples(pg, temp, [[0.5, 3 / 16], [0.5, 13 / 16]]);
   temp.clear();
-  temp2.clear();
-  mandala1(temp2, temp, 0, 0);
+  mandala1(null, temp, 0, 0);
   addMultiples(pg, temp, [[0.5, 0.5]]);
   delete (temp);
-  delete (temp2);
+  cleanCanvases();
   temp = createGraphics(docHeight / 5, docHeight / 5);
-  temp2 = createGraphics(docHeight / 5, docHeight / 5);
-  mandala1(temp2, temp, 0, 0);
+  mandala1(null, temp, 0, 0);
   addMultiples(pg, temp, [[0.5, 3 / 16], [0.5, 13 / 16]]);
   temp.clear();
-  temp2.clear();
-  mandala1(temp2, temp, 0, 0);
+  mandala1(null, temp, 0, 0);
   addMultiples(pg, temp, [[0.5, 0.5]]);
   delete (temp);
-  delete (temp2);
 }
 
 function surroundedSmallFG() {
 
-  let temp, temp2;
+  let temp;
   temp = createGraphics(docHeight / 4, docHeight / 4);
   medallion(temp);
   addMultiples(pg, temp, [[0.25, 0.25], [0.25, 0.75], [0.75, 0.25], [0.75, 0.75]]);
   delete (temp);
   temp = createGraphics(docHeight / 4, docHeight / 4);
-  temp2 = createGraphics(docHeight / 4, docHeight / 4);
-  mandala1(temp2, temp, 0, 0);
+  mandala1(null, temp, 0, 0);
   addMultiples(pg, temp, [[0.25, 0.25], [0.25, 0.75], [0.75, 0.25], [0.75, 0.75]]);
   delete (temp);
-  delete (temp2);
   temp = createGraphics(docHeight / 6, docHeight / 6);
-  temp2 = createGraphics(docHeight / 6, docHeight / 6);
-  mandala1(temp2, temp, 0, 0);
+  mandala1(null, temp, 0, 0);
   addMultiples(pg, temp, [[0.25, 0.25], [0.25, 0.75], [0.75, 0.25], [0.75, 0.75]]);
   temp = createGraphics(docHeight / 2, docHeight / 2);
   medallion(temp);
   addMultiples(pg, temp, [[0.5, 0.5]]);
   temp.clear();
-  mandala1(temp2, temp, 0, 0);
+  mandala1(null, temp, 0, 0);
   addMultiples(pg, temp, [[0.5, 0.5]]);
   delete (temp);
   temp = createGraphics(docHeight / 4, docHeight / 4);
-  mandala1(temp2, temp, 0, 0);
+  mandala1(null, temp, 0, 0);
   addMultiples(pg, temp, [[0.5, 0.5]]);
   delete (temp);
-  delete (temp2);
 }
 
 function surroundedLargeFG() {
-  let temp, temp2;
+  let temp;
   temp = createGraphics(docHeight, docHeight);
-  temp2 = createGraphics(docHeight, docHeight);
   medallion(temp);
   addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
   delete (temp);
-  delete (temp2);
-  temp = createGraphics(docWidth, docWidth);
-  temp2 = createGraphics(docWidth, docWidth);
-  mandala1(temp2, temp, 0, 0);
-  addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
-  temp.clear();
-  mandala1(temp2, temp, 0, 0);
-  addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
-  delete (temp);
-  delete (temp2);
-  temp = createGraphics(3 * docWidth / 4, 3 * docWidth / 4);
-  temp2 = createGraphics(3 * docWidth / 4, 3 * docWidth / 4);
-  mandala1(temp2, temp, 0, 0);
-  addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
-  delete (temp);
-  temp = createGraphics(docWidth / 2, docWidth / 2);
-  temp2 = createGraphics(docWidth / 2, docWidth / 2);
-  mandala1(temp2, temp, 0, 0);
-  addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
-  delete (temp);
+  let dims = [1.0, 0.75, 0.5, 0.25];
+  for (let h = 0; h < dims.length; h++) {
+    temp = createGraphics(docWidth * dims[h], docWidth * dims[h]);
+    mandala1(null, temp, 0, 0);
+    addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
+    delete(temp);
+  }
+  cleanCanvases();
   temp = createGraphics(docHeight / 2, docHeight / 2);
   medallion(temp);
   addMultiples(pg, temp, [[0.5, 0.5]]);
   temp.clear();
-  mandala1(temp2, temp, 0, 0);
-  addMultiples(pg, temp, [[0.5, 0.5]]);
-  delete (temp);
-  temp = createGraphics(docHeight / 4, docHeight / 4);
-  mandala1(temp2, temp, 0, 0);
-  addMultiples(pg, temp, [[0.5, 0.5]]);
-  delete (temp);
-  delete (temp2);
+  dims = [0.6, 0.4, 0.2];
+  for (let h = 0; h < dims.length; h++) {
+    temp = createGraphics(docWidth * dims[h], docWidth * dims[h]);
+    mandala1(null, temp, 0, 0);
+    addMultiples(pg, temp, [[0.5, 0.5]]);
+    delete(temp);
+  }
 }
 
-function flowerTestFG() {
-  temp = createGraphics(docWidth, docWidth);
-  flower(temp, 0.5, 0.5);
-  addMultiples(pg, temp, [[0.5, 0.5]]);
+function cleanCanvases() {
+  var canvases = document.getElementsByTagName('canvas');
+  var toRemove = [];
+  for (let i = 0; i < canvases.length; i++) {
+    if (canvases[i].id.includes('default') != true) {
+      toRemove.push(canvases[i]);
+    }
+  }
+  for (let i = 0; i < toRemove.length; i++) {
+    toRemove[i].remove();
+  }
 }
 
 function flower(g, x, y) {

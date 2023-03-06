@@ -453,11 +453,11 @@ function threeInAColFG() {
 
 function surroundedSmallFG() {
   let temp;
-  temp = createGraphics(docHeight / 4, docHeight / 4);
+  temp = createGraphics(docHeight / 3, docHeight / 3);
   medallion(temp);
   addMultiples(pg, temp, [[0.25, 0.25], [0.25, 0.75], [0.75, 0.25], [0.75, 0.75]]);
   delete (temp);
-  temp = stackedMandalas(docHeight / 4, docHeight / 4, 2);
+  temp = stackedMandalas(docHeight / 3, docHeight / 3, 2);
   addMultiples(pg, temp, [[0.25, 0.25], [0.25, 0.75], [0.75, 0.25], [0.75, 0.75]]);
   temp = createGraphics(docHeight / 2, docHeight / 2);
   medallion(temp);
@@ -562,11 +562,12 @@ function fontIconCheat(font) {
   radnDim = random([350, 400, 450, 500, 550, 600]);
   mt = createGraphics(radnDim, radnDim);
   mt.fill(255);
-  mt.strokeWeight(3);
+  mt.strokeWeight(6);
   mt.stroke(0);
   mt.textFont(font);
   mt.textAlign(CENTER, CENTER);
-  mt.textSize(mt.width * 0.8);
+  let rSize = random(0.8, 2.3);
+  mt.textSize(mt.width * rSize);
   myStr = 'qwertyuiopasdhjlzxcvbnm';
   myStr += myStr.toUpperCase();
   selection = floor(random() * myStr.length);

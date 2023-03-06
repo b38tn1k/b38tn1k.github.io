@@ -122,7 +122,7 @@ function dSymmetrise(g) {
 }
 
 function medallion(g) {
-  let radius = random((g.width - 500) / 2, g.width / 5);
+  let radius = random((g.width * 0.8) / 2, g.width / 5);
   let count = floor(random(100, 200));
   let cir = 2 * PI * radius
   let temp = createGraphics(radius * 2.5, radius * 2.5);
@@ -382,7 +382,6 @@ function showPage() {
   image(pg, 10, 10, fit * docWidth, fit * docHeight);
 }
 
-
 function squigBG() {
   let tile = squiggleTile(random([250, 300, 350, 400, 450, 500]));
   tile = vSymmetrise(tile);
@@ -416,108 +415,95 @@ function miniMandalasBG() {
 function frontNCenterFG() {
   let temp;
   medallion(pg);
-  temp = createGraphics(docWidth * 0.9, docWidth * 0.9);
-  mandala1(pg, temp, docWidth / 2, docHeight / 2);
-  delete (temp);
-  cleanCanvases();
-  temp = createGraphics(docWidth * 0.7, docWidth * 0.7);
-  if (random() > 0.5) {
-    mandala1(pg, temp, docWidth / 2, docHeight / 2);
-  } else {
-    flower(temp, 0.5, 0.5);
-    addMultiples(pg, temp, [[0.5, 0.5]]);
-  }
-  delete (temp);
-  cleanCanvases();
-  temp = createGraphics(docWidth * 0.5, docWidth * 0.5);
-  if (random() > 0.5) {
-    mandala1(pg, temp, docWidth / 2, docHeight / 2);
-  } else {
-    flower(temp, 0.5, 0.5);
-    addMultiples(pg, temp, [[0.5, 0.5]]);
-  }
-  delete (temp);
-  cleanCanvases();
-  temp = createGraphics(docWidth * 0.3, docWidth * 0.3);
-  mandala1(pg, temp, docWidth / 2, docHeight / 2);
-  delete (temp);
+  temp = stackedMandalas(docWidth * 0.9, docWidth * 0.9, 5);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
+  temp = fascinator(docWidth / 2, docWidth / 2);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
+  temp = fascinator(docWidth / 4, docWidth / 4);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
 }
 
 function threeInAColFG() {
   let temp;
+  let pos;
+  let pChoice = floor(random() * 3);
+  switch (pChoice) {
+    case 0:
+      pos = [[0.5, 3 / 16], [0.5, 13 / 16], [0.5, 0.5]]
+      break;
+    case 1:
+      pos = [[0.33, 3 / 16], [0.66, 13 / 16], [0.5, 0.5]]
+      break;
+    case 2:
+      pos = [[0.66, 3 / 16], [0.33, 13 / 16], [0.5, 0.5]]
+      break;
+  }
+
   temp = createGraphics(docHeight / 2, docHeight / 2);
   medallion(temp);
-  addMultiples(pg, temp, [[0.5, 3 / 16], [0.5, 13 / 16], [0.5, 0.5]]);
+  addMultiples(pg, temp, pos);
   delete (temp);
-  temp = createGraphics(docHeight / 4, docHeight / 4);
-  mandala1(null, temp, 0, 0);
-  addMultiples(pg, temp, [[0.5, 3 / 16], [0.5, 13 / 16]]);
-  temp.clear();
-  mandala1(null, temp, 0, 0);
+  temp = stackedMandalas(docHeight / 4, docHeight / 4, 2);
+  addMultiples(pg, temp, [pos[0], pos[1]]);
+  temp = stackedMandalas(docHeight / 2, docHeight / 2, 3);
+  addMultiples(pg, temp, [pos[2]]);
+  temp = fascinator(docWidth / 2, docWidth / 2);
   addMultiples(pg, temp, [[0.5, 0.5]]);
-  delete (temp);
-  cleanCanvases();
-  temp = createGraphics(docHeight / 5, docHeight / 5);
-  mandala1(null, temp, 0, 0);
-  addMultiples(pg, temp, [[0.5, 3 / 16], [0.5, 13 / 16]]);
-  temp.clear();
-  mandala1(null, temp, 0, 0);
-  addMultiples(pg, temp, [[0.5, 0.5]]);
-  delete (temp);
 }
 
 function surroundedSmallFG() {
-
   let temp;
   temp = createGraphics(docHeight / 4, docHeight / 4);
   medallion(temp);
   addMultiples(pg, temp, [[0.25, 0.25], [0.25, 0.75], [0.75, 0.25], [0.75, 0.75]]);
   delete (temp);
-  temp = createGraphics(docHeight / 4, docHeight / 4);
-  mandala1(null, temp, 0, 0);
-  addMultiples(pg, temp, [[0.25, 0.25], [0.25, 0.75], [0.75, 0.25], [0.75, 0.75]]);
-  delete (temp);
-  temp = createGraphics(docHeight / 6, docHeight / 6);
-  mandala1(null, temp, 0, 0);
+  temp = stackedMandalas(docHeight / 4, docHeight / 4, 2);
   addMultiples(pg, temp, [[0.25, 0.25], [0.25, 0.75], [0.75, 0.25], [0.75, 0.75]]);
   temp = createGraphics(docHeight / 2, docHeight / 2);
   medallion(temp);
   addMultiples(pg, temp, [[0.5, 0.5]]);
-  temp.clear();
-  mandala1(null, temp, 0, 0);
+  temp = stackedMandalas(docHeight / 2, docHeight / 2, 3);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
+  temp = fascinator(docWidth / 2, docWidth / 2);
   addMultiples(pg, temp, [[0.5, 0.5]]);
   delete (temp);
-  temp = createGraphics(docHeight / 4, docHeight / 4);
-  mandala1(null, temp, 0, 0);
-  addMultiples(pg, temp, [[0.5, 0.5]]);
-  delete (temp);
+}
+
+function stackedMandalas(w, h, stacks) {
+  let canvas = createGraphics(w, h);
+  let temp;
+  let increment = 1 / (stacks);
+  for (let i = 1.0; i >= increment; i -= increment) {
+    temp = createGraphics(w * i, h * i);
+    mandala1(canvas, temp, w / 2, h / 2, false, i == increment);
+    delete (temp);
+  }
+  return canvas;
 }
 
 function surroundedLargeFG() {
   let temp;
+  stackedMandalas(docHeight, docHeight, 4);
   temp = createGraphics(docHeight, docHeight);
   medallion(temp);
   addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
   delete (temp);
-  let dims = [1.0, 0.75, 0.5, 0.25];
-  for (let h = 0; h < dims.length; h++) {
-    temp = createGraphics(docWidth * dims[h], docWidth * dims[h]);
-    mandala1(null, temp, 0, 0);
-    addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
-    delete(temp);
-  }
+  temp = stackedMandalas(docHeight, docHeight, 4);
+  addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
+  temp = fascinator(docWidth / 3, docWidth / 3);
+  addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
+  temp = fascinator(docWidth / 2, docWidth / 2);
+  addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
   cleanCanvases();
   temp = createGraphics(docHeight / 2, docHeight / 2);
   medallion(temp);
   addMultiples(pg, temp, [[0.5, 0.5]]);
-  temp.clear();
-  dims = [0.6, 0.4, 0.2];
-  for (let h = 0; h < dims.length; h++) {
-    temp = createGraphics(docWidth * dims[h], docWidth * dims[h]);
-    mandala1(null, temp, 0, 0);
-    addMultiples(pg, temp, [[0.5, 0.5]]);
-    delete(temp);
-  }
+  temp = stackedMandalas(docHeight / 2, docHeight / 2, 4);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
+  temp = fascinator(docWidth / 2, docWidth / 2);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
+  temp = fascinator(docWidth / 3, docWidth / 3);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
 }
 
 function cleanCanvases() {
@@ -568,7 +554,61 @@ function flower(g, x, y) {
     g.curveVertex(x, y);
     g.endShape();
   }
+}
 
+function fontIconCheat(font) {
+  let radnDim;
+  let mt;
+  radnDim = random([350, 400, 450, 500, 550, 600]);
+  mt = createGraphics(radnDim, radnDim);
+  mt.fill(255);
+  mt.strokeWeight(3);
+  mt.stroke(0);
+  mt.textFont(font);
+  mt.textAlign(CENTER, CENTER);
+  mt.textSize(mt.width * 0.8);
+  myStr = 'qwertyuiopasdhjlzxcvbnm';
+  myStr += myStr.toUpperCase();
+  selection = floor(random() * myStr.length);
+  mt.text(myStr[selection], mt.width / 2, mt.width / 2);
+  selection = floor(random() * myStr.length);
+  mt.text(myStr[selection], mt.width, mt.height);
+  mt.text(myStr[selection], mt.width, 0);
+  mt.text(myStr[selection], 0, mt.height);
+  mt.text(myStr[selection], 0, 0);
 
+  tileFill(pg, mt);
+  delete (mt);
+}
 
+function fascinator(w, h) {
+  temp = createGraphics(2 * w, 2 * h);
+  if (random() > 0.5) {
+    return temp;
+  }
+  temp.stroke(0);
+  temp.strokeWeight(3);
+  let x = w;
+  let y = h;
+  let r = min(w, h);
+  let count = floor(random(3, 20));
+  let inc = TWO_PI / count;
+  let start = random(0.1, 0.8);
+  let end = random(start, 1.0);
+  let mid = random(start, end);
+  let width = TWO_PI / floor(random(count, 60));
+  // r, alpha // start, start, out, apex, out_inv, start
+  let points = [[start, 0], [start, 0], [mid, width / 2], [end, 0], [mid, -width / 2], [start, 0], [start, 0]]
+  let a = 0;
+  for (let j = 0; j < count; j++) {
+    temp.beginShape();
+    for (let i = 0; i < points.length; i++) {
+      let px = x + sin(points[i][1] + a) * points[i][0] * r;
+      let py = y + cos(points[i][1] + a) * points[i][0] * r;
+      temp.curveVertex(px, py);
+    }
+    temp.endShape();
+    a += inc;
+  }
+  return temp;
 }

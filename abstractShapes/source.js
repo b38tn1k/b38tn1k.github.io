@@ -4,6 +4,8 @@ var pg;
 var mainDiv;
 var generateButton;
 var saveImageButton;
+var font;
+var font2;
 
 
 function keyPressed() {
@@ -38,19 +40,6 @@ function setupScreen() {
   generateArt();
 }
 
-// function cleanCanvases() {
-//   var canvases = document.getElementsByTagName('canvas');
-//   var toRemove = [];
-//   for (let i = 0; i < canvases.length; i++) {
-//     if (canvases[i].id.includes('default') != true) {
-//       toRemove.push(canvases[i]);
-//     }
-//   }
-//   for (let i = 0; i < toRemove.length; i++) {
-//     toRemove[i].remove();
-//   }
-// }
-
 function generateArt() {
   cleanCanvases();
   pg = initPage();
@@ -68,11 +57,11 @@ function generateArt() {
       miniMandalasBG()
       break;
     case 3:
+      fontIconCheat(random([font, font2]));
       break;
   }
   // foregrounds
   let foregroundChoice = floor(random() * 4);
-  // foregroundChoice = 4;
   switch (foregroundChoice) {
     case 0:
       frontNCenterFG();
@@ -87,7 +76,7 @@ function generateArt() {
       surroundedLargeFG();
       break;
     case 4:
-      // medallion(pg);
+    // medallion(pg);
   }
   //finalise
   border();
@@ -95,6 +84,10 @@ function generateArt() {
   cleanCanvases();
 }
 
+function preload() {
+  font = loadFont('Kalocsai_Flowers.ttf');
+  font2 = loadFont('dingbatcobogo.ttf');
+}
 
 function setup() {
   mainDiv = createDiv('Abstract Shape Maker');

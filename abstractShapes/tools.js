@@ -236,7 +236,6 @@ function maze(g) {
       }
     }
   }
-
 }
 
 function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
@@ -307,6 +306,7 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
   if (shapeSetting == false) {
     temp.beginShape();
   }
+  let backOff = random([1, 2, 3]);
   for (let a = -TWO_PI; a < TWO_PI; a += inc) {
     if (shapeSetting == true) {
       temp.beginShape();
@@ -318,14 +318,14 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
         let y = h / 2 + cos(points[i]['aOff'] + a) * points[i]['r'];
         temp.curveVertex(x, y);
       }
-      for (let i = points.length - 1; i >= 0; i--) {
+      for (let i = points.length - backOff; i >= 0; i--) {
         let x = w / 2 + sin(a - points[i]['aOff']) * points[i]['r'];
         let y = h / 2 + cos(a - points[i]['aOff']) * points[i]['r'];
         temp.curveVertex(x, y);
       }
       temp.curveVertex(w / 2, h / 2);
     } else {
-      for (let i = points.length - 1; i >= 0; i--) {
+      for (let i = points.length - backOff; i >= 0; i--) {
         let x = w / 2 + sin(a - points[i]['aOff']) * points[i]['r'];
         let y = h / 2 + cos(a - points[i]['aOff']) * points[i]['r'];
         temp.curveVertex(x, y);

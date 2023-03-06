@@ -483,7 +483,6 @@ function stackedMandalas(w, h, stacks) {
 
 function surroundedLargeFG() {
   let temp;
-  stackedMandalas(docHeight, docHeight, 4);
   temp = createGraphics(docHeight, docHeight);
   medallion(temp);
   addMultiples(pg, temp, [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]);
@@ -503,6 +502,25 @@ function surroundedLargeFG() {
   temp = fascinator(docWidth / 2, docWidth / 2);
   addMultiples(pg, temp, [[0.5, 0.5]]);
   temp = fascinator(docWidth / 3, docWidth / 3);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
+}
+
+function bigTopBottomFG() {
+  let temp;
+  temp = createGraphics(docHeight, docHeight);
+  medallion(temp);
+  addMultiples(pg, temp, [[0.5, 0.0], [0.5, 1.0]]);
+  delete (temp);
+  temp = stackedMandalas(docHeight, docHeight, 4);
+  addMultiples(pg, temp, [[0.5, 0.0], [0.5, 1.0]]);
+  temp = fascinator(docWidth / 3, docWidth / 3);
+  addMultiples(pg, temp, [[0.5, 0.0], [0.5, 1.0]]);
+  medallion(pg);
+  temp = stackedMandalas(docWidth * 0.9, docWidth * 0.9, 5);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
+  temp = fascinator(docWidth / 2, docWidth / 2);
+  addMultiples(pg, temp, [[0.5, 0.5]]);
+  temp = fascinator(docWidth / 4, docWidth / 4);
   addMultiples(pg, temp, [[0.5, 0.5]]);
 }
 

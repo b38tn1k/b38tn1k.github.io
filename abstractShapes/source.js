@@ -61,7 +61,8 @@ function generateArt() {
       break;
   }
   // foregrounds
-  let foregroundChoice = floor(random() * 4);
+  let foregroundChoice = floor(random() * 5);
+  // foregroundChoice = 4;
   switch (foregroundChoice) {
     case 0:
       frontNCenterFG();
@@ -76,6 +77,7 @@ function generateArt() {
       surroundedLargeFG();
       break;
     case 4:
+      bigTopBottomFG();
     // medallion(pg);
   }
   //finalise

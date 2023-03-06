@@ -51,6 +51,7 @@ function generate() {
   for (var i = 0; i < 1; i++) {
     spiro(min(window.innerWidth, window.innerHeight), min(window.innerWidth, window.innerHeight), c1, c2);
   }
+  fill(random([color(255, 0, 0), color(0, 255, 0), color(0,0,255)]));
 }
 
 function spiro(r1, r2, c1, c2) {
@@ -122,10 +123,12 @@ function setup() {
   background(0);
   generate();
   noStroke();
+  fill(rcol());
 }
 
 function draw() {
   //generate();
+  circle(mouseX, mouseY, 40 + 30 * sin(0.1 * (mouseX + mouseY)));
 }
 
 window.onresize = function() {

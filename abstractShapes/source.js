@@ -45,7 +45,8 @@ function generateArt() {
   pg = initPage();
   pg.background(255);
   // backgrounds
-  let backgroundChoice = floor(random() * 4);
+  let backgroundChoice = floor(random() * 5);
+  // backgroundChoice = 5;
   switch (backgroundChoice) {
     case 0:
       squigBG();
@@ -59,10 +60,15 @@ function generateArt() {
     case 3:
       fontIconCheat(random([font, font2]));
       break;
+    case 4:
+      sinBubblesBG();
+      break;
+    case 5:
+      break;
   }
   // foregrounds
   let foregroundChoice = floor(random() * 5);
-  // foregroundChoice = 4;
+  // foregroundChoice = 10;
   switch (foregroundChoice) {
     case 0:
       frontNCenterFG();

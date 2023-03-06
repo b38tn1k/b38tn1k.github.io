@@ -412,6 +412,34 @@ function miniMandalasBG() {
   delete (mt);
 }
 
+function sinBubblesBG(g=pg) {
+  let radius = random(50, 100);
+  let minorRadius = random(30, radius);
+  let corners = random(minorRadius/2, radius/2);
+  let inc = random(radius, 2*radius);
+  let cx = g.width/2;
+  let cy = g.height/2;
+  let rx = random(-1, 1);
+  let ry = random(-1, 1);
+  let mod = random(-10, 10);
+  g.fill(255);
+  g.rectMode(CENTER);
+  for (let x = 0; x < cx; x += inc) {
+    for (let y = 0; y < cy; y += inc) {
+      let tx = cx + x;
+      let ty = cy + y;
+      g.square(tx, ty, radius + sin(mod*(rx*tx-rx*ty)) * minorRadius, corners);
+      tx = cx - x;
+      g.square(tx, ty, radius + sin(mod*(rx*tx-rx*ty)) * minorRadius, corners);
+      ty = cy - y;
+      g.square(tx, ty, radius + sin(mod*(rx*tx-rx*ty)) * minorRadius, corners);
+      tx = cx + x;
+      g.square(tx, ty, radius + sin(mod*(rx*tx-rx*ty)) * minorRadius, corners);
+    }
+  }
+  g.rectMode(CORNER);
+}
+
 function frontNCenterFG() {
   let temp;
   medallion(pg);

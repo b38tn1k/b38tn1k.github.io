@@ -64,7 +64,6 @@ let capabilities = [];
 let services = [];
 
 function setup() {
-  pixelDensity(1);
   createCanvas(windowWidth, windowHeight);
   capabilities.push (new Section('Integration Assesment', ['Process and Workflow Assesment', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds & KPI management']));
   capabilities.push (new Section('Solution Engineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance Management']));

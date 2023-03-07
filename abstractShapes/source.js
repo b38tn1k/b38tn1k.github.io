@@ -45,8 +45,8 @@ function generateArt() {
   pg = initPage();
   pg.background(255);
   // backgrounds
-  let backgroundChoice = floor(random() * 6);
-  // backgroundChoice = 6;
+  let backgroundChoice = floor(random() * 7);
+  // backgroundChoice = 7;
   switch (backgroundChoice) {
     case 0:
       squigBG();
@@ -72,7 +72,7 @@ function generateArt() {
   }
   // foregrounds
   let foregroundChoice = floor(random() * 5);
-  // foregroundChoice = 11;
+  // foregroundChoice = 0;
   switch (foregroundChoice) {
     case 0:
       frontNCenterFG();
@@ -90,6 +90,7 @@ function generateArt() {
       bigTopBottomFG();
       break;
     case 5:
+      // westworldFG();
       break;
   }
   //finalise

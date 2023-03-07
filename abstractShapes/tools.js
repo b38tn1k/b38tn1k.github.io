@@ -23,6 +23,7 @@ function createPoints(number, gap, gap2) {
 }
 
 function drawPointsCurved(g, pts, off) {
+  // g.curveTightness(random(0, -5));
   g.beginShape();
   for (let i = 0; i < pts.length; i++) {
     g.curveVertex(pts[i]['x'] + off, pts[i]['y'] + off);
@@ -134,6 +135,7 @@ function medallion(g) {
   temp.circle(offx, offy, 2 * radius);
   temp.strokeWeight(3);
   temp.stroke(0);
+  // temp.curveTightness(random(0, -5));
   let start = 0;
   let borderType = floor(random() * 3);
   let offset = random();
@@ -174,15 +176,15 @@ function medallion(g) {
       for (let k = 0; k < dims.length; k++) {
         let radi = dims[k] * radius;
         temp.beginShape();
-        curveVertex(offx + radi * sin(0 + offs[k]), offy + radi * cos(0 + offs[k]));
-        curveVertex(offx + radi * sin(0 + offs[k]), offy + radi * cos(0 + offs[k]));
+        temp.curveVertex(offx + radi * sin(0 + offs[k]), offy + radi * cos(0 + offs[k]));
+        temp.curveVertex(offx + radi * sin(0 + offs[k]), offy + radi * cos(0 + offs[k]));
         let j = 0;
         for (let i = 0; i < TWO_PI; i += inc) {
           let nr = radi + amplitude * radi * sin(period * i);;
-          curveVertex(offx + nr * sin(i + offs[k]), offy + nr * cos(i + offs[k]));
+          temp.curveVertex(offx + nr * sin(i + offs[k]), offy + nr * cos(i + offs[k]));
         }
-        curveVertex(offx + radi * sin(0 + offs[k]), offy + radi * cos(0 + offs[k]));
-        curveVertex(offx + radi * sin(0 + offs[k]), offy + radi * cos(0 + offs[k]));
+        temp.curveVertex(offx + radi * sin(0 + offs[k]), offy + radi * cos(0 + offs[k]));
+        temp.curveVertex(offx + radi * sin(0 + offs[k]), offy + radi * cos(0 + offs[k]));
         temp.endShape();
       }
       break;
@@ -241,6 +243,7 @@ function maze(g) {
 function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
   temp.strokeWeight(3);
   temp.fill(255);
+  // temp.curveTightness(random(0, -5));
   if (random() > 0.7 && simple == false) {
     flower(temp, 0.5, 0.5);
   }
@@ -298,8 +301,6 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
     points.push(pt);
     // points.reverse();
   }
-  
-
   let count = floor(random(2, 10));
   if (simple == true) {
     count = floor(random(3, 7));
@@ -318,11 +319,15 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
       for (let i = 0; i < points.length; i++) {
         let x = w / 2 + sin(points[i]['aOff'] + a) * points[i]['r'];
         let y = h / 2 + cos(points[i]['aOff'] + a) * points[i]['r'];
+        x = checkXY(x, w, h);
+        y = checkXY(y, w, h);
         temp.curveVertex(min(max(x, 0), temp.width), min(max(y, 0), temp.height));
       }
       for (let i = points.length - backOff; i >= 0; i--) {
         let x = w / 2 + sin(a - points[i]['aOff']) * points[i]['r'];
         let y = h / 2 + cos(a - points[i]['aOff']) * points[i]['r'];
+        x = checkXY(x, w, h);
+        y = checkXY(y, w, h);
         temp.curveVertex(min(max(x, 0), temp.width), min(max(y, 0), temp.height));
       }
       temp.curveVertex(w / 2, h / 2);
@@ -330,16 +335,18 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
       for (let i = points.length - backOff; i >= 0; i--) {
         let x = w / 2 + sin(a - points[i]['aOff']) * points[i]['r'];
         let y = h / 2 + cos(a - points[i]['aOff']) * points[i]['r'];
+        x = checkXY(x, w, h);
+        y = checkXY(y, w, h);
         temp.curveVertex(min(max(x, 0), temp.width), min(max(y, 0), temp.height));
       }
       for (let i = 0; i < points.length; i++) {
         let x = w / 2 + sin(points[i]['aOff'] + a) * points[i]['r'];
         let y = h / 2 + cos(points[i]['aOff'] + a) * points[i]['r'];
+        x = checkXY(x, w, h);
+        y = checkXY(y, w, h);
         temp.curveVertex(min(max(x, 0), temp.width), min(max(y, 0), temp.height));
       }
-
     }
-
     if (shapeSetting == true) {
       temp.endShape();
     }
@@ -350,12 +357,21 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
   if (simple == false) {
     temp.circle(temp.width/2, temp.height/2, min(temp.width, temp.height) * random(0.1, 0.2))
   }
-  
-
   if (g) {
     g.imageMode(CENTER);
     g.image(temp, finalx, finaly);
   }
+}
+
+function checkXY(x, w, h) {
+  w = min(w, h);
+  if (x > 0.9 * w) {
+    x -= 0.1 * w;
+  }
+  if (x < 0.1 * w) {
+    x += 0.1 * w;
+  }
+  return x;
 }
 
 function border() {
@@ -401,6 +417,7 @@ function mazeBG() {
   let mt;
   radnDim = random([250, 300, 350, 400, 450, 500]);
   mt = createGraphics(radnDim, radnDim);
+  // mt.curveTightness(random(0, -5));
   maze(mt);
   mt = vSymmetrise(mt);
   mt = hSymmetrise(mt);
@@ -419,6 +436,7 @@ function miniMandalasBG() {
 }
 
 function sinBubblesBG(g = pg) {
+  // g.curveTightness(random(0, -5));
   let radius = random(50, 100);
   let minorRadius = random(30, radius);
   let corners = random(minorRadius / 2, radius / 2);
@@ -524,12 +542,16 @@ function stackedMandalas(w, h, stacks) {
   let canvas = createGraphics(w, h);
   let temp;
   let increment = 1 / (stacks);
+  let alreadyDone = false;
   for (let i = 1.0; i >= increment; i -= increment) {
-    let method = floor(random() * 2);
+    let method = floor(random() * 3);
+    if (alreadyDone == true) {
+      method = floor(random() * 2);
+    }
     switch (method) {
       case 0:
         temp = createGraphics(w * i, h * i);
-        mandala1(canvas, temp, w / 2, h / 2, i == 1.0, i == increment);
+        mandala1(canvas, temp, w / 2, h / 2, i == 1.0, i <= (stacks/2) * increment);
         delete (temp);
         break;
       case 1:
@@ -539,7 +561,9 @@ function stackedMandalas(w, h, stacks) {
         break;
       case 2:
         canvas.imageMode(CENTER);
-        temp = geometric(w * i, h * i);
+        temp = createGraphics(w * i, h * i);
+        westworldFG(temp);
+        alreadyDone = true;
         canvas.image(temp, w / 2, h / 2);
         break;
     }
@@ -605,6 +629,7 @@ function cleanCanvases() {
 
 function flower(g, x, y) {
   g.strokeWeight(3);
+  // g.curveTightness(random(0, -5));
   g.fill(255);
   x *= g.width;
   y *= g.height; //center location
@@ -674,6 +699,7 @@ function fascinator(w, h, bypass = true) {
   }
   temp.stroke(0);
   temp.strokeWeight(3);
+  // temp.curveTightness(random(0, -5));
   let x = w / 2;
   let y = h / 2;
   let r = (min(w, h)) * 0.4;
@@ -730,6 +756,7 @@ function geometric(w, h) {
 }
 
 function wavesBG(g = pg) {
+  // g.curveTightness(random(0, -5));
   g.strokeWeight(3);
   g.fill(255);
   let yinc = g.height / floor(random(20, 50));
@@ -756,6 +783,7 @@ function wavesBG(g = pg) {
 }
 
 function contourBG(g = pg) {
+  // g.curveTightness(random(0, -5));
   let mod = random();
   let start;
   let inc = random();
@@ -799,4 +827,64 @@ function contourBG(g = pg) {
     });
     g.endShape();
   });
+}
+
+function westworldFG(g = pg){
+  let w = g.width;
+  let h = g.height;
+  let sections = floor(random(4, w/200));
+  let fullAngle = TWO_PI/sections;
+  let gap = random(0.3, 0.9) * fullAngle;
+  let mod = random();
+  let x = w/2;
+  let y = h/2;
+  // g.curveTightness(random(0, -5));
+  g.ellipseMode(CENTER);
+  g.strokeWeight(3);
+  let r = w * random(0.7, 0.9);
+  let concentrics = floor(random(4, w/200));
+  console.log(concentrics);
+  let concentricMax = w/concentrics;
+  let ir = w;
+  ir -= random(0.3*concentricMax, concentricMax);
+  g.circle(x, y, w);
+  while (ir > concentricMax) {
+    ir = r - random(0.3*concentricMax, concentricMax);
+    sections = floor(random(4, 37));
+    fullAngle = TWO_PI/sections;
+    gap = random(0.2, 0.8) * fullAngle;
+    mod = random();
+    oneRev(g, x, y, r, ir, mod, gap, fullAngle);
+    r -= concentricMax * 1.1;
+  }
+  temp = fascinator(g.width, g.width);
+  addMultiples(g, temp, [[0.5, 0.5]]);
+}
+
+function oneRev(g, x, y, r, ir, mod, gap, fullAngle){
+  let pos = 0;
+    while (pos < TWO_PI) {
+      g.arc(x, y, r, r, pos + mod, pos + gap  + mod);
+      pos += fullAngle;
+    }
+    pos = 0;
+    while (pos < TWO_PI) {
+      g.arc(x, y, ir, ir, pos + mod, pos + gap  + mod);
+      pos += fullAngle;
+    }
+    pos = 0;
+    while (pos < TWO_PI) {
+      let x1, x2, y1, y2;
+      x1 = x + cos(pos + mod) * r/2;
+      y1 = y + sin(pos + mod) * r/2;
+      x2 = x + cos(pos + mod) * ir/2;
+      y2 = y + sin(pos + mod) * ir/2;
+      g.line(x1, y1, x2, y2);
+      x1 = x + cos(pos + mod + gap) * r/2;
+      y1 = y + sin(pos + mod + gap) * r/2;
+      x2 = x + cos(pos + mod + gap) * ir/2;
+      y2 = y + sin(pos + mod + gap) * ir/2;
+      g.line(x1, y1, x2, y2);
+      pos += fullAngle;
+    }
 }

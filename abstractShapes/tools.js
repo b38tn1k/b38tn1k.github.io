@@ -285,7 +285,7 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
   }
   if (perfect == true) {
     pt = {};
-    pt['r'] = w / 2 * 0.9;
+    pt['r'] = w * 0.5;
     pt['aOff'] = random(0, QUARTER_PI);
     points.push(pt);
   }
@@ -412,29 +412,46 @@ function miniMandalasBG() {
   delete (mt);
 }
 
-function sinBubblesBG(g=pg) {
+function sinBubblesBG(g = pg) {
   let radius = random(50, 100);
   let minorRadius = random(30, radius);
-  let corners = random(minorRadius/2, radius/2);
-  let inc = random(radius, 2*radius);
-  let cx = g.width/2;
-  let cy = g.height/2;
+  let corners = random(minorRadius / 2, radius / 2);
+  let inc = random(radius, 2 * radius);
+  let cx = g.width / 2;
+  let cy = g.height / 2;
   let rx = random(-1, 1);
   let ry = random(-1, 1);
   let mod = random(-10, 10);
   g.fill(255);
   g.rectMode(CENTER);
+  let coin = random() > 0.5;
   for (let x = 0; x < cx; x += inc) {
     for (let y = 0; y < cy; y += inc) {
       let tx = cx + x;
       let ty = cy + y;
-      g.square(tx, ty, radius + sin(mod*(rx*tx-rx*ty)) * minorRadius, corners);
+      if (coin == true) {
+        g.square(tx, ty, radius + sin(mod * (rx * tx - ry * ty)) * minorRadius, corners);
+      } else {
+        g.square(tx, ty, radius + sin(mod * sqrt((rx * x) * (rx * x) * (ry * y) * (ry * y))) * minorRadius, corners);
+      }
       tx = cx - x;
-      g.square(tx, ty, radius + sin(mod*(rx*tx-rx*ty)) * minorRadius, corners);
+      if (coin == true) {
+        g.square(tx, ty, radius + sin(mod * (rx * tx - ry * ty)) * minorRadius, corners);
+      } else {
+        g.square(tx, ty, radius + sin(mod * sqrt((rx * x) * (rx * x) * (ry * y) * (ry * y))) * minorRadius, corners);
+      }
       ty = cy - y;
-      g.square(tx, ty, radius + sin(mod*(rx*tx-rx*ty)) * minorRadius, corners);
+      if (coin == true) {
+        g.square(tx, ty, radius + sin(mod * (rx * tx - ry * ty)) * minorRadius, corners);
+      } else {
+        g.square(tx, ty, radius + sin(mod * sqrt((rx * x) * (rx * x) * (ry * y) * (ry * y))) * minorRadius, corners);
+      }
       tx = cx + x;
-      g.square(tx, ty, radius + sin(mod*(rx*tx-rx*ty)) * minorRadius, corners);
+      if (coin == true) {
+        g.square(tx, ty, radius + sin(mod * (rx * tx - ry * ty)) * minorRadius, corners);
+      } else {
+        g.square(tx, ty, radius + sin(mod * sqrt((rx * x) * (rx * x) * (ry * y) * (ry * y))) * minorRadius, corners);
+      }
     }
   }
   g.rectMode(CORNER);
@@ -502,9 +519,24 @@ function stackedMandalas(w, h, stacks) {
   let temp;
   let increment = 1 / (stacks);
   for (let i = 1.0; i >= increment; i -= increment) {
-    temp = createGraphics(w * i, h * i);
-    mandala1(canvas, temp, w / 2, h / 2, false, i == increment);
-    delete (temp);
+    let method = floor(random() * 2);
+    switch (method) {
+      case 0:
+        temp = createGraphics(w * i, h * i);
+        mandala1(canvas, temp, w / 2, h / 2, i == 1.0, i == increment);
+        delete (temp);
+        break;
+      case 1:
+        canvas.imageMode(CENTER);
+        temp = flowerMandala(w * i, h * i);
+        canvas.image(temp, w / 2, h / 2);
+        break;
+      case 2:
+        canvas.imageMode(CENTER);
+        temp = geometric(w * i, h * i);
+        canvas.image(temp, w / 2, h / 2);
+        break;
+    }
   }
   return canvas;
 }
@@ -628,20 +660,24 @@ function fontIconCheat(font) {
   delete (mt);
 }
 
-function fascinator(w, h) {
-  temp = createGraphics(2 * w, 2 * h);
-  if (random() > 0.5) {
+function fascinator(w, h, bypass = true) {
+  temp = createGraphics(w, h);
+  if (random() > 0.5 && bypass == true) {
     return temp;
   }
   temp.stroke(0);
   temp.strokeWeight(3);
-  let x = w;
-  let y = h;
-  let r = min(w, h);
+  let x = w / 2;
+  let y = h / 2;
+  let r = (min(w, h)) * 0.4;
   let count = floor(random(3, 20));
   let inc = TWO_PI / count;
   let start = random(0.1, 0.8);
   let end = random(start, 1.0);
+  if (bypass == true) {
+    end = random(end, 1.0);
+    end = random(end, 1.0);
+  }
   let mid = random(start, end);
   let width = TWO_PI / floor(random(count, 60));
   // r, alpha // start, start, out, apex, out_inv, start
@@ -658,4 +694,101 @@ function fascinator(w, h) {
     a += inc;
   }
   return temp;
+}
+
+function flowerMandala(w, h) {
+  let temp = createGraphics(w, h);
+  temp.imageMode(CENTER);
+  let f = fascinator(w, h, false);
+  temp.image(f, w / 2, h / 2);
+  let inc = 1.0 / floor(random() * 10 + 3);
+  for (let i = 1.0; i > inc; i -= inc) {
+    f = fascinator(i * w, i * h);
+    temp.image(f, w / 2, h / 2);
+  }
+  return temp;
+}
+
+function geometric(w, h) {
+  let temp = createGraphics(w, h);
+  temp.strokeWeight(3);
+  let inc = 1.0 / floor(random() * 10 + 3);
+  let r = min(w, h);
+  temp.circle(w / 2, h / 2, r);
+  for (let i = 1.0; i > inc; i -= inc) {
+    temp.circle(w / 2, h / 2, r * inc);
+  }
+  return temp;
+}
+
+function wavesBG(g = pg) {
+  g.strokeWeight(3);
+  g.fill(255);
+  let yinc = g.height / floor(random(20, 50));
+  let xinc = g.width / floor(random(20, 50));
+  let amp = random(yinc * 0.5, yinc);
+  let mod = random();
+  let j = 0;
+  for (let y = 0; y < g.height; y += yinc) {
+    g.beginShape();
+    g.vertex(0, y);
+    g.vertex(0, y);
+    let off;
+    j % 2 == 0 ? off = 0 : off = PI;
+    for (x = 0; x < g.width + 5 * xinc; x += xinc) {
+      g.curveVertex(x, y + amp * sin(x * mod + off));
+    }
+    j++;
+    g.vertex(g.width, y);
+    g.vertex(g.width, g.height);
+    g.vertex(0, g.height);
+    g.vertex(0, y);
+    g.endShape();
+  }
+}
+
+function contourBG(g = pg) {
+  let mod = random();
+  let start;
+  let inc = random();
+  let initLine = [];
+  let lines = [];
+  let curvyLinesCount = 100;
+  initLine = [];
+  lines = [];
+  let amp = random(300, 700);
+  let amp2 = random(50, 150);
+  start = g.height + amp;
+  initLine.push({ x: -200, y: start, diff: 0 });
+  initLine.push({ x: -200, y: start, diff: 0 });
+  for (let x = -200; x < g.width; x += 100) {
+    let n = noise(inc * mod);
+    let randY = map(n, 0, 1, -amp, amp);
+    initLine.push({ x: x, y: start + randY, diff: start - (start - randY) });
+    inc += inc;
+  }
+  initLine.push({ x: g.width, y: start, diff: 0 });
+  initLine.push({ x: g.width, y: start, diff: 0 });
+  initLine.push({ x: g.width, y: start, diff: 0 });
+
+  for (let x = 0; x < curvyLinesCount; x++) {
+    lines[x] = initLine.map((point, index) => {
+      return {
+        x: point.x,
+        y: point.y - x * amp2 - (point.diff / curvyLinesCount) * x,
+      };
+    });
+  }
+
+  g.strokeWeight(3);
+  g.stroke(0);
+  g.noFill();
+
+  lines.forEach((myLine, index) => {
+    g.beginShape();
+    myLine.forEach((point) => {
+      g.curveVertex(point.x, point.y);
+    });
+    g.endShape();
+  });
 }

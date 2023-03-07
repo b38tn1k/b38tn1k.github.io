@@ -45,8 +45,8 @@ function generateArt() {
   pg = initPage();
   pg.background(255);
   // backgrounds
-  let backgroundChoice = floor(random() * 5);
-  // backgroundChoice = 5;
+  let backgroundChoice = floor(random() * 6);
+  // backgroundChoice = 6;
   switch (backgroundChoice) {
     case 0:
       squigBG();
@@ -64,11 +64,15 @@ function generateArt() {
       sinBubblesBG();
       break;
     case 5:
+      wavesBG();
+      break;
+    case 6:
+      contourBG();
       break;
   }
   // foregrounds
   let foregroundChoice = floor(random() * 5);
-  // foregroundChoice = 10;
+  // foregroundChoice = 11;
   switch (foregroundChoice) {
     case 0:
       frontNCenterFG();
@@ -84,7 +88,9 @@ function generateArt() {
       break;
     case 4:
       bigTopBottomFG();
-    // medallion(pg);
+      break;
+    case 5:
+      break;
   }
   //finalise
   border();

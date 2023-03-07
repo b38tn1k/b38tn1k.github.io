@@ -1,15 +1,34 @@
 ---
-layout: default
-title: "404: Page not found"
+layout: empty
+title: "oops"
 permalink: 404.html
 ---
 
+
+<html>
+<head>
+<title>404</title>
+
+<!-- CSS -->	
+<style type="text/css">
+html, 
+body {
+height: 100%;
+}
+
+body {
+background-image: url(https://cataas.com/cat/says/404);
+background-repeat: no-repeat;
+background-size: 100% 100%;
+}
+
+/* 
 <div class="page">
   <!-- <h1 class="page-title">404: Page not found</h1>
   <p class="lead">Sorry, we've misplaced that URL or it's pointing to something that doesn't exist. <a href="{{ site.baseurl }}/">Head back home</a> to try finding it again.</p> -->
   <img src="https://cataas.com/cat/says/404" alt="404 dummy">
 </div>
-<div class="post-categories">
+<!-- <div class="post-categories">
   {% if post %}
     {% assign categories = post.categories %}
   {% else %}
@@ -19,4 +38,4 @@ permalink: 404.html
   <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
   {% unless forloop.last %}&nbsp;{% endunless %}
   {% endfor %}
-</div>
+</div> --> */

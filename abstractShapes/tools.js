@@ -289,14 +289,16 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
     pt['aOff'] = random(0, QUARTER_PI);
     points.push(pt);
   }
+  let innerRad = random(0.05, 0.2) * w/2;
   if (backwards == true) {
     pt = {};
-    pt['r'] = 1;
+    pt['r'] = innerRad;
     pt['aOff'] = 0;
     points.push(pt);
     points.push(pt);
     // points.reverse();
   }
+  
 
   let count = floor(random(2, 10));
   if (simple == true) {
@@ -312,28 +314,28 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
       temp.beginShape();
     }
     if (backwards == false) {
-      temp.curveVertex(w / 2, h / 2);
+      temp.curveVertex(w / 2 + sin(a) * innerRad, h / 2 + cos(a) * innerRad);
       for (let i = 0; i < points.length; i++) {
         let x = w / 2 + sin(points[i]['aOff'] + a) * points[i]['r'];
         let y = h / 2 + cos(points[i]['aOff'] + a) * points[i]['r'];
-        temp.curveVertex(x, y);
+        temp.curveVertex(min(max(x, 0), temp.width), min(max(y, 0), temp.height));
       }
       for (let i = points.length - backOff; i >= 0; i--) {
         let x = w / 2 + sin(a - points[i]['aOff']) * points[i]['r'];
         let y = h / 2 + cos(a - points[i]['aOff']) * points[i]['r'];
-        temp.curveVertex(x, y);
+        temp.curveVertex(min(max(x, 0), temp.width), min(max(y, 0), temp.height));
       }
       temp.curveVertex(w / 2, h / 2);
     } else {
       for (let i = points.length - backOff; i >= 0; i--) {
         let x = w / 2 + sin(a - points[i]['aOff']) * points[i]['r'];
         let y = h / 2 + cos(a - points[i]['aOff']) * points[i]['r'];
-        temp.curveVertex(x, y);
+        temp.curveVertex(min(max(x, 0), temp.width), min(max(y, 0), temp.height));
       }
       for (let i = 0; i < points.length; i++) {
         let x = w / 2 + sin(points[i]['aOff'] + a) * points[i]['r'];
         let y = h / 2 + cos(points[i]['aOff'] + a) * points[i]['r'];
-        temp.curveVertex(x, y);
+        temp.curveVertex(min(max(x, 0), temp.width), min(max(y, 0), temp.height));
       }
 
     }
@@ -345,6 +347,10 @@ function mandala1(g, temp, finalx, finaly, perfect = false, simple = false) {
   if (shapeSetting == false) {
     temp.endShape();
   }
+  if (simple == false) {
+    temp.circle(temp.width/2, temp.height/2, min(temp.width, temp.height) * random(0.1, 0.2))
+  }
+  
 
   if (g) {
     g.imageMode(CENTER);
@@ -632,6 +638,7 @@ function flower(g, x, y) {
     g.curveVertex(x, y);
     g.endShape();
   }
+  g.circle(g.width/2, g.height/2, min(g.width, g.height) * random(0.2, 0.3))
 }
 
 function fontIconCheat(font) {
@@ -706,6 +713,7 @@ function flowerMandala(w, h) {
     f = fascinator(i * w, i * h);
     temp.image(f, w / 2, h / 2);
   }
+  g.circle(g.width/2, g.height/2, min(g.width, g.height) * random(0.2, 0.3))
   return temp;
 }
 

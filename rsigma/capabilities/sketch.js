@@ -3,15 +3,15 @@ let upperCase = true;
 let baseArrowColors = ['#EC9F05', '#BFD7EA', '#FF6663', '#E0FF4F', '#7EB77F'];
 let baseTextColor = (50, 50, 50);
 let baseCapabilityHighlight = ['#78A1BB', '#D2F898', '#BFA89E'];
-let capabilityHighlightLerp = 0.3;
-let capabilityZoneLerp = 0.5;
+let capabilityHighlightLerp = 0.5;
+let capabilityZoneLerp = 0.75;
 
 // meta layout;
 let pCSeperationMult = 2;
 
 //arrow geom
 let arrowPointPx = 20;
-let arrowWidthPr = 0.3;
+let arrowWidthPr = 0.5;
 let arrowHeightPr = 0.5;
 //capability border geom
 let cbWidthPr = 0.8;

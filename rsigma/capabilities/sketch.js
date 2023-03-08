@@ -175,6 +175,7 @@ let capabilities = [];
 let services = [];
 
 function windowResized() {
+  textSize(windowWidth/100);
   setupCoords();
 }
 
@@ -213,7 +214,6 @@ function setupCoords() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   textFont('Georgia');
-  // textSize(32);
   capabilities.push (new Section('Integration Assesment', ['Process & Workflow', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds','KPI management']));
   capabilities.push (new Section('Solution Engineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance']));
   capabilities.push (new Section('Ownership Transfer', ['SOP Generation', 'Operator Training', 'IP Development', 'Integrator Relationships', 'Reporting & Documentation']));

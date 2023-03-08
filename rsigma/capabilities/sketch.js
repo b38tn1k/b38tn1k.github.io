@@ -3,10 +3,11 @@ let upperCase = true;
 let baseArrowColors = ['#EC9F05', '#BFD7EA', '#FF6663', '#E0FF4F', '#7EB77F'];
 let baseTextColor = (50, 50, 50);
 let baseCapabilityHighlight = ['#78A1BB', '#D2F898', '#BFA89E'];
-let capabilityHighlightLerp = 0.2;
+let capabilityHighlightLerp = 0.3;
+let capabilityZoneLerp = 0.5;
 
 // meta layout;
-let pCSeperationMult = 3;
+let pCSeperationMult = 2;
 
 //arrow geom
 let arrowPointPx = 20;
@@ -37,6 +38,7 @@ class Section {
     this.hovered = false;
     this.geometry = [];
     this.colors = {};
+    this.children = [];
   }
   setPosition(x, y, w, h) {
     this.x = x;
@@ -77,7 +79,6 @@ class Section {
     beginShape();
     for (let i = 0; i < this.geometry.length; i++) {
       vertex(this.geometry[i].x, this.geometry[i].y);
-      console.log(this.geometry);
     }
     endShape();
     fill(this.colors['text']);
@@ -95,9 +96,17 @@ class Section {
 
   capabilityHBG() {
     noStroke();
+    rectMode(CORNER);
+    fill(this.colors['box-zone']);
+    
+    let w = this.children[this.children.length-1].x2 - this.children[0].x1;
+    let h = this.height + (this.y2 + this.height * this.keywords.length) - this.children[0].y1;
+    rect(this.children[0].x1, this.children[0].y1, w, h);
+
     rectMode(CENTER);
     fill(this.colors['box-lo']);
-    let h = (this.height + 1) * this.keywords.length;
+    h = (this.height + 1) * this.keywords.length;
+    
     rect(this.x, this.y + this.height/2 + h/2, this.width * cbWidthPr, h);
   }
 
@@ -110,6 +119,18 @@ class Section {
       this.drawHoveredBG();
     }
     this.drawStatics();
+    if (this.hovered == true && this.keywords != null) {
+      this.drawHoveredFG();
+    }
+  }
+
+  drawBG() {
+    if (this.hovered == true) {
+      this.drawHoveredBG();
+    }
+  }
+
+  drawFG() {
     if (this.hovered == true && this.keywords != null) {
       this.drawHoveredFG();
     }
@@ -197,6 +218,7 @@ function setup() {
   for (let i = 0; i < capabilities.length; i++) {
     capabilities[i].colors['text'] = color(baseTextColor);
     capabilities[i].colors['box-lo'] = lerpColor(color(baseCapabilityHighlight[i]), color(255), capabilityHighlightLerp);
+    capabilities[i].colors['box-zone'] = lerpColor(color(baseCapabilityHighlight[i]), color(255), capabilityZoneLerp);
     capabilities[i].colors['box-hi'] = color(baseCapabilityHighlight[i]);
   }
   services.push (new Section('Asses'));
@@ -204,6 +226,13 @@ function setup() {
   services.push (new Section('Build'));
   services.push (new Section('Implement'));
   services.push (new Section('Support'));
+  capabilities[0].children.push(services[0]);
+  capabilities[0].children.push(services[1]);
+  capabilities[1].children.push(services[1]);
+  capabilities[1].children.push(services[2]);
+  capabilities[1].children.push(services[3]);
+  capabilities[2].children.push(services[3]);
+  capabilities[2].children.push(services[4]);
   for (let i = 0; i < services.length; i++) {
     services[i].colors['text'] = color(baseTextColor);
     services[i].colors['arrow'] = color(baseArrowColors[i]);
@@ -215,11 +244,28 @@ function setup() {
 function draw() {
   clear();
   for (let i = 0; i < capabilities.length; i++) {
-    capabilities[i].draw();
     capabilities[i].checkHover(mouseX, mouseY);
   }
-  for (let i = 0; i < services.length; i++) {
-    services[i].draw();
-    services[i].checkHover(mouseX, mouseY);
+  // for (let i = 0; i < services.length; i++) {
+  //   services[i].checkHover(mouseX, mouseY);
+  // }
+  for (let i = 0; i < capabilities.length; i++) {
+    capabilities[i].drawBG();
   }
+  for (let i = 0; i < services.length; i++) {
+    services[i].drawBG();
+  }
+  for (let i = 0; i < capabilities.length; i++) {
+    capabilities[i].drawStatics();
+  }
+  for (let i = 0; i < services.length; i++) {
+    services[i].drawStatics();
+  }
+  for (let i = 0; i < capabilities.length; i++) {
+    capabilities[i].drawFG();
+  }
+  for (let i = 0; i < services.length; i++) {
+    services[i].drawFG();
+  }
+
 }

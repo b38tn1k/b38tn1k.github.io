@@ -9,6 +9,7 @@ var titleInput;
 var generateButton;
 var testButton;
 var saveImageButton;
+var batchProcessButton;
 var sizeSlider;
 var sizeSliderLabel;
 var fontSlider;
@@ -49,10 +50,15 @@ function addWordHorizontally(word, grid){
   xpos = floor(random() * (cols - word.length));
   ypos = floor(random() * (rows));
   let score = 0;
-  for (let i = 0; i < word.length; i++){
-    if (grid[xpos + i][ypos] == '' || grid[xpos + i][ypos] == word[i]) {
-      score++;
+  try {
+    for (let i = 0; i < word.length; i++){
+      if (grid[xpos + i][ypos] == '' || grid[xpos + i][ypos] == word[i]) {
+        score++;
+      }
     }
+  } catch {
+    score = 0;
+    return false;
   }
   if (score == word.length) {
     for (let i = 0; i < word.length; i++){
@@ -69,10 +75,15 @@ function addWordVerticallyDown(word, grid){
   xpos = floor(random() * (cols - word.length));
   ypos = floor(random() * (rows));
   let score = 0;
-  for (let i = 0; i < word.length; i++){
-    if (grid[xpos][ypos + i] == '' || grid[xpos][ypos + i] == word[i]) {
-      score++;
+  try {
+    for (let i = 0; i < word.length; i++){
+      if (grid[xpos][ypos + i] == '' || grid[xpos][ypos + i] == word[i]) {
+        score++;
+      }
     }
+  } catch {
+    score = 0;
+    return false;
   }
   if (score == word.length) {
     for (let i = 0; i < word.length; i++){
@@ -89,10 +100,15 @@ function addWordVerticallyUp(word, grid){
   xpos = word.length + floor(random() * (cols - word.length));
   ypos = floor(random() * (rows));
   let score = 0;
-  for (let i = 0; i < word.length; i++){
-    if (grid[xpos][ypos - i] == '' || grid[xpos][ypos - i] == word[i]) {
-      score++;
+  try {
+    for (let i = 0; i < word.length; i++){
+      if (grid[xpos][ypos - i] == '' || grid[xpos][ypos - i] == word[i]) {
+        score++;
+      }
     }
+  } catch {
+    score = 0;
+    return false;
   }
   if (score == word.length) {
     for (let i = 0; i < word.length; i++){
@@ -201,11 +217,18 @@ function generate() {
 
   // add words
   // finderGrid[0][0] = 'H';finderGrid[0][1] = 'E';finderGrid[0][2] = 'L';finderGrid[0][3] = 'L';finderGrid[0][4] = 'O';
-  for (let i = 0; i < list.length; i++) {
+  let sortedList = [];
+  for (let i = list.length-1; i >=0 ; i--) {
+    sortedList.push(list[i]);
+
+  }
+  sortedList.sort((a, b) => a.length - b.length);
+  for (let i = list.length-1; i >=0 ; i--) {
     // let choice = int(random() * 4);
-    let word = list[i].replace(/\s+/g, '');
+    let word = sortedList[i].replace(/\s+/g, '');
     let added = false;
     while (added == false) {
+      console.log(title, word);
       let choice = int(random() * 7);
       switch (choice) {
         case 0:
@@ -409,6 +432,11 @@ function setup() {
   saveImageButton = createButton('Save Puzzle & Solution');
   saveImageButton.mousePressed(saveAll);
   saveImageButton.parent(mainDiv);
+  mainDiv.html('<br>',true);
+
+  batchProcessButton = createButton('Batch Process');
+  batchProcessButton.parent(mainDiv);
+  batchProcessButton.mousePressed(batchStep);
 
   fullPage = createGraphics(docWidth, docHeight);
   fullPage.elt.id = 'puzzle';
@@ -422,7 +450,6 @@ function setup() {
 }
 
 function testSetup() {
-  
   let choice = floor(random(examples.length))
   let theme = examples.data[choice];
   titleInput.elt.value = theme.title;
@@ -448,16 +475,55 @@ function updateFontSize () {
 function saveAll() {
   var img = createImage(fullPage.width, fullPage.height);
   img.copy(fullPage, 0, 0, fullPage.width, fullPage.height, 0, 0, fullPage.width, fullPage.height);
-  let myStr = (solutionGridCounter).toString() + '_' + title;
+  let myStr = format_file_name(title);
   img.save(myStr, 'png'); 
   img.copy(fullPageSolutions, 0, 0, fullPageSolutions.width, fullPageSolutions.height, 0, 0, fullPageSolutions.width, fullPageSolutions.height);
-  myStr = (solutionGridCounter).toString() + '_' + title + "_solutions";
+  myStr = format_file_name(title + 'solution');
   img.save(myStr, 'png'); 
+  myStr = format_file_name('grid');
   img = createImage(fullPage.width, fullPage.height);
   img.copy(solutionGrid, 0, 0, fullPageSolutions.width, fullPageSolutions.height, 0, 0, fullPageSolutions.width, fullPageSolutions.height);
-  img.save((floor(solutionGridCounter / 4)).toString() + '_grid', 'png'); 
+  img.save(myStr, 'png'); 
 }
 
 function draw() {
 
+}
+
+function batchStep() {
+  let theme = examples.data[solutionGridCounter];
+  titleInput.elt.value = theme.title;
+  console.log(theme.title)
+  myString = ''
+  for (let i = 0; i < theme.content.length; i++) {
+    myString += theme.content[i] + ', ';
+  }
+  wordListTextArea.elt.value = myString;
+  generate();
+  smartSave();
+}
+
+function format_file_name(n, special=false) {
+  let numStr;
+  n = n.toUpperCase();
+  if (special == true) {
+    numStr = 'z' + ((solutionGridCounter / 4) + 1000).toString().substring(2);
+  } else {
+    numStr = (solutionGridCounter + 1000).toString().substring(2);
+  }
+  return numStr + '_' + n.replaceAll(' ', '_');
+}
+
+function smartSave() {
+  var img = createImage(fullPage.width, fullPage.height);
+    img.copy(fullPage, 0, 0, fullPage.width, fullPage.height, 0, 0, fullPage.width, fullPage.height);
+    let myStr = format_file_name(title);
+    img.save(myStr, 'png'); 
+
+  if (solutionGridCounter % 4 == 0 || solutionGridCounter == examples.length) {
+    myStr = format_file_name('solution', true);
+    img = createImage(fullPage.width, fullPage.height);
+    img.copy(solutionGrid, 0, 0, fullPageSolutions.width, fullPageSolutions.height, 0, 0, fullPageSolutions.width, fullPageSolutions.height);
+    img.save(myStr, 'png'); 
+  }
 }

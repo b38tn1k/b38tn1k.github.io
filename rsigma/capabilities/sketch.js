@@ -8,6 +8,10 @@ class Section {
       this.title = this.title.toUpperCase();
     }
     this.keywords = keywords;
+    this.type = 'capability';
+    if (keywords == null) {
+      this.type = 'service';
+    }
     this.hovered = false;
   }
   setPosition(x, y, w, h) {
@@ -21,13 +25,38 @@ class Section {
     this.height = h + padding;
   }
   drawStatics() {
+    if (this.type == 'capability') {
+      this.capabilityStatics();
+    } else {
+      this.serviceStatics();
+    }
+  }
+
+  capabilityStatics() {
+    textAlign(CENTER, CENTER);
+    text(this.title, this.x, this.y);
+  }
+
+  serviceStatics() {
     textAlign(CENTER, CENTER);
     text(this.title, this.x, this.y);
   }
 
   drawHoveredBG() {
+    if (this.type == 'capability') {
+      this.capabilityHBG();
+    } else {
+      this.serviceHBG()
+    }
+  }
+
+  capabilityHBG() {
     rectMode(CENTER);
     rect(this.x, this.y, this.width, this.height);
+  }
+
+  serviceHBG() {
+    
   }
 
   draw () {
@@ -40,14 +69,27 @@ class Section {
     }
   }
 
-  drawHoveredFG(){
+  capabilityHFG() {
     let x = this.x - textWidth(this.title)/2;
-    let y = this.y + this.height;
-    textAlign(LEFT);
-    for (let i = 0; i < this.keywords.length; i++) {
-      text(this.keywords[i], x, y);
-      y += this.height;
+      let y = this.y + this.height;
+      textAlign(LEFT);
+      for (let i = 0; i < this.keywords.length; i++) {
+        text(this.keywords[i], x, y);
+        y += this.height;
+      }
+  }
+
+  serviceHFG() {
+
+  }
+
+  drawHoveredFG(){
+    if (this.type == 'capability') {
+      this.capabilityHFG();
+    } else {
+      this.serviceHFG()
     }
+    
   }
 
   checkHover(x, y) {
@@ -65,6 +107,7 @@ let services = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  textFont('Georgia');
   capabilities.push (new Section('Integration Assesment', ['Process and Workflow Assesment', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds & KPI management']));
   capabilities.push (new Section('Solution Engineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance Management']));
   capabilities.push (new Section('Ownership Transfer', ['SOP Generation', 'Operator Training', 'Patent Guidance & IP Development', 'Integrator Relationship Management', 'Transition Reporting & Documentation']));

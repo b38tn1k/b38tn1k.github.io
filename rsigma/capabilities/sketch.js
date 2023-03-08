@@ -1,10 +1,12 @@
 let padding = 20;
 let upperCase = true;
-let baseArrowColors = ['#EC9F05', '#BFD7EA', '#FF6663', '#E0FF4F', '#7EB77F'];
+let baseArrowColors = ['#accbff', '#92bbff', '#78aaff', '#649eff', '#4188ff'];//['#EC9F05', '#BFD7EA', '#FF6663', '#E0FF4F', '#7EB77F'];
 let baseTextColor = (50, 50, 50);
-let baseCapabilityHighlight = ['#78A1BB', '#D2F898', '#BFA89E'];
+let baseCapabilityHighlight = ['#ffa07a','#ff7f50','#ff6347'];//['#78A1BB', '#D2F898', '#BFA89E'];
 let capabilityHighlightLerp = 0.5;
 let capabilityZoneLerp = 0.75;
+
+
 
 // meta layout;
 let pCSeperationMult = 2;
@@ -162,7 +164,9 @@ class Section {
   }
 
   checkHover(x, y) {
-    this.hovered = false;
+    // if (mouseIsPressed == true) {
+      this.hovered = false;
+    // }
     if (x > this.x1 && x < this.x2) {
       if (y > this.y1 && y < this.y2) {
         this.hovered = true;

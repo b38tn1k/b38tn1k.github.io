@@ -375,7 +375,7 @@ function checkXY(x, w, h) {
 }
 
 function border() {
-  let border = 60;
+  let border = 114;
   pg.fill(255);
   pg.noStroke();
   pg.rect(0, 0, border, docHeight);

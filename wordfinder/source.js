@@ -20,6 +20,8 @@ var grid;
 var solution;
 var fullPage;
 var fullPageSolutions;
+var solutionGrid;
+var solutionGridCounter = 0;
 var title;
 var examples;
 
@@ -31,7 +33,8 @@ function cleanCanvases() {
   var canvases = document.getElementsByTagName('canvas');
   var toRemove = [];
   for (let i = 0; i < canvases.length; i++) {
-    if (canvases[i].id.includes('default') != true) {
+    let id = canvases[i].id;
+    if (id.includes('default') == false && id.includes('puzzle') == false && id.includes('solution') == false && id.includes('solutiongrid') == false) {
       toRemove.push(canvases[i]);
     }
   }
@@ -251,8 +254,6 @@ function generate() {
 
   solution = createGraphics(gWidth, gWidth);
   grid = createGraphics(gWidth, gWidth);
-  fullPage = createGraphics(docWidth, docHeight);
-  fullPageSolutions = createGraphics(docWidth, docHeight);
 
   solution.background(255);
   solution.fill(200);
@@ -280,7 +281,6 @@ function generate() {
     }
   }
 
-  let area = min((windowWidth - (100 + mainDiv.width)), windowHeight-500);
   // fullPage.textSize(1.5*fontSize);
   // fullPageSolutions.textSize(1.5*fontSize);
   fullPageSolutions.stroke(0);
@@ -323,9 +323,32 @@ function generate() {
   while (docWidth * fit > windowWidth || docHeight * fit > windowHeight) {
     fit -= 0.05;
   }
-  fit *= 0.5;
+  fit *= 0.3;
+  if (solutionGridCounter % 4 == 0) {
+    solutionGrid.background(255);
+  }
+  let scaleDim = 6/16;
+  solutionGridCounter += 1;
+  let x = 1/16 * docWidth;
+  let y = 1/16 * docHeight;
+  switch (solutionGridCounter % 4) {
+    case 1:
+      solutionGrid.image(fullPageSolutions, x + 1/32 * docWidth, y + 1/32 * docHeight, scaleDim * docWidth, scaleDim*docHeight);
+      break;
+    case 2:
+      solutionGrid.image(fullPageSolutions, 9 * x - 1/32 * docWidth, y + 1/32 * docHeight, scaleDim * docWidth, scaleDim*docHeight);
+      break;
+    case 3:
+      solutionGrid.image(fullPageSolutions, x + 1/32 * docWidth, 9 * y - 1/32 * docHeight, scaleDim * docWidth, scaleDim*docHeight);
+      break;
+    case 0:
+      solutionGrid.image(fullPageSolutions, 9 * x - 1/32 * docWidth, 9 * y - 1/32 * docHeight, scaleDim * docWidth, scaleDim*docHeight);
+      break;
+  }
   image(fullPageSolutions, 40 + mainDiv.width + fullPage.width*fit, 10, fit * docWidth, fit * docHeight);
+  image(solutionGrid, 60 + mainDiv.width + fullPage.width*fit + fullPageSolutions.width*fit, 10, fit * docWidth, fit * docHeight);
   image(fullPage, 20 + mainDiv.width, 10, fit * docWidth, fit * docHeight);
+  cleanCanvases();
 }
 
 function setupScreen() {
@@ -384,8 +407,16 @@ function setup() {
   mainDiv.html('<br>',true);
 
   saveImageButton = createButton('Save Puzzle & Solution');
-  saveImageButton.mousePressed(saveBoth);
+  saveImageButton.mousePressed(saveAll);
   saveImageButton.parent(mainDiv);
+
+  fullPage = createGraphics(docWidth, docHeight);
+  fullPage.elt.id = 'puzzle';
+  fullPageSolutions = createGraphics(docWidth, docHeight);
+  fullPageSolutions.elt.id = 'solutions';
+  solutionGrid = createGraphics(docWidth, docHeight);
+  solutionGrid.elt.id = 'solutiongrid';
+  solutionGrid.background(255);
 
   setupScreen();
 }
@@ -414,15 +445,17 @@ function updateFontSize () {
   fontSize = int(fontSlider.value());
 }
 
-function saveBoth() {
+function saveAll() {
   var img = createImage(fullPage.width, fullPage.height);
   img.copy(fullPage, 0, 0, fullPage.width, fullPage.height, 0, 0, fullPage.width, fullPage.height);
-  let myStr = title;
+  let myStr = (solutionGridCounter).toString() + '_' + title;
   img.save(myStr, 'png'); 
   img.copy(fullPageSolutions, 0, 0, fullPageSolutions.width, fullPageSolutions.height, 0, 0, fullPageSolutions.width, fullPageSolutions.height);
-  myStr = title + "_solutions";
+  myStr = (solutionGridCounter).toString() + '_' + title + "_solutions";
   img.save(myStr, 'png'); 
-
+  img = createImage(fullPage.width, fullPage.height);
+  img.copy(solutionGrid, 0, 0, fullPageSolutions.width, fullPageSolutions.height, 0, 0, fullPageSolutions.width, fullPageSolutions.height);
+  img.save((floor(solutionGridCounter / 4)).toString() + '_grid', 'png'); 
 }
 
 function draw() {

@@ -49,6 +49,7 @@ class Section {
     this.y2 = y + h/2 + padding;
     this.width = w;
     this.height = h + padding;
+    console.log(this.height);
   }
   drawStatics() {
     if (this.type == 'capability') {
@@ -180,10 +181,11 @@ function windowResized() {
 function setupCoords() {
   createCanvas(windowWidth, windowHeight);
   let maxHeight = 0;
+  let startHeight = 0.1 * height;
   for (let i = 0; i < services.length; i++) {
     let border = (width / (services.length + 1))
     let x = (i + 1) * border;
-    let y = 0.25 * height;
+    let y = startHeight;
     services[i].setPosition(x, y, border, textSize());
     if (services[i].height > maxHeight) {
       maxHeight = services[i].height;
@@ -192,7 +194,7 @@ function setupCoords() {
   for (let i = 0; i < capabilities.length; i++) {
     let border = (width / (capabilities.length + 1))
     let x = (i + 1) * border;
-    let y = 0.25 * height + pCSeperationMult * maxHeight;
+    let y = startHeight + pCSeperationMult * maxHeight;
     capabilities[i].setPosition(x, y, border, textSize());
   }
   for (let i = 0; i < services.length; i++) {

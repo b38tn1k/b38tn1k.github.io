@@ -190,9 +190,10 @@ function setupCoords() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   textFont('Georgia');
-  capabilities.push (new Section('Integration Assesment', ['Process and Workflow Assesment', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds & KPI management']));
-  capabilities.push (new Section('Solution Engineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance Management']));
-  capabilities.push (new Section('Ownership Transfer', ['SOP Generation', 'Operator Training', 'Patent Guidance & IP Development', 'Integrator Relationship Management', 'Transition Reporting & Documentation']));
+  // textSize(32);
+  capabilities.push (new Section('Integration Assesment', ['Process & Workflow', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds','KPI management']));
+  capabilities.push (new Section('Solution Engineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance']));
+  capabilities.push (new Section('Ownership Transfer', ['SOP Generation', 'Operator Training', 'IP Development', 'Integrator Relationships', 'Reporting & Documentation']));
   for (let i = 0; i < capabilities.length; i++) {
     capabilities[i].colors['text'] = color(baseTextColor);
     capabilities[i].colors['box-lo'] = lerpColor(color(baseCapabilityHighlight[i]), color(255), capabilityHighlightLerp);

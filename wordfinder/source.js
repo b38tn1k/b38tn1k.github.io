@@ -229,7 +229,9 @@ function generate() {
     let added = false;
     while (added == false) {
       console.log(title, word);
-      let choice = int(random() * 7);
+      // let choice = int(random() * 7);
+      // Fun, Entertaining, Stimulating, Addictive, Relaxing, Interesting, challenging, rewarding
+      let choice = int(random() * 3);
       switch (choice) {
         case 0:
           // horizontal
@@ -240,19 +242,19 @@ function generate() {
           added = addWordVerticallyDown(word, finderGrid);
           break;
         case 2:
-          added = addWordVerticallyUp(word, finderGrid);
+          added = addRevWordDiagonallyUp(word, finderGrid);
           break;
         case 3:
-          added = addWordDiagonallyDown(word, finderGrid);
+          added = addWordVerticallyUp(word, finderGrid);
           break;
         case 4:
-          added = addWordDiagonallyUp(word, finderGrid);
+          added = addWordDiagonallyDown(word, finderGrid);
           break;
         case 5:
           added = addRevWordDiagonallyDown(word, finderGrid);
           break;
         case 6:
-          added = addRevWordDiagonallyUp(word, finderGrid);
+          added = addWordDiagonallyUp(word, finderGrid);
           break;
       }
     }
@@ -405,7 +407,7 @@ function setup() {
   wordListTextArea.style('resize', 'vertical');
   mainDiv.html('<br>',true);
 
-  sizeSlider = createSlider(20, 100, 20, 1);
+  sizeSlider = createSlider(10, 100, 20, 1);
   sizeSlider.parent(mainDiv);
   sizeSlider.input(updateSize);
   sizeSliderLabel = createDiv("Grid Size: " + cols.toString());

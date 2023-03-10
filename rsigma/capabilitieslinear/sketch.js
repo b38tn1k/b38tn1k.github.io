@@ -3,11 +3,8 @@ let upperCase = true;
 let baseArrowColors = ['#accbff', '#92bbff', '#78aaff', '#649eff', '#4188ff'];//['#EC9F05', '#BFD7EA', '#FF6663', '#E0FF4F', '#7EB77F'];
 let baseTextColor = (50, 50, 50);
 let baseCapabilityHighlight = ['#ffa07a','#ff7f50','#ff6347'];//['#78A1BB', '#D2F898', '#BFA89E'];
-let capabilityHighlightLerp = 0.5;
-let capabilityZoneLerp = 0.75;
+let capabilityHighlightLerp = 0.85;
 let phaseCounter = 0;
-
-
 
 // meta layout;
 let pCSeperationMult = 2;
@@ -53,10 +50,10 @@ class Section {
     noStroke();
     rectMode(CENTER);
     if (this.hovered == false && this.lerpDir > 0.0) {
-      this.lerpDir -= 0.05;
+      this.lerpDir -= 0.04;
     }
     if (this.hovered == true && this.lerpDir < 1.0) {
-      this.lerpDir += 0.05;
+      this.lerpDir += 0.04;
     }
     fill(lerpColor(this.colors['box-lo'], this.colors['box-hi'], this.lerpDir));
     beginShape();
@@ -155,7 +152,7 @@ function draw() {
     services[i].drawStatics();
     services[i].hovered = false;
   }
-  if (frameCount % 30 == 0) {
+  if (frameCount % 60 == 0) {
     phaseCounter += 1;
   }
   capabilities[phaseCounter % 3].hovered = true;

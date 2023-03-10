@@ -96,7 +96,6 @@ function setupCoords() {
     capabilities[i].geometry.push(new Coord(capabilities[i].x + capabilities[i].width * cbWidthPr, capabilities[i].y - capabilities[i].height * arrowHeightPr));
     capabilities[i].geometry.push(new Coord(capabilities[i].x - capabilities[i].width * cbWidthPr, capabilities[i].y - capabilities[i].height * arrowHeightPr));
   }
-  console.log(width/60);
   for (let i = 0; i < services.length; i++) {
     services[i].geometry = [];
     services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr, services[i].y - services[i].height * arrowHeightPr));

@@ -84,7 +84,6 @@ function setupCoords() {
   let increment = (((width * fullness) - border * 2 * arrowWidthPr) / (services.length-1));
   let x = increment/2 + width * pad;
   for (let i = 0; i < services.length; i++) {
-    // x = (i + 1) * (border);
     services[i].setPosition(x - 2*(width*arrowPointPr), y, border, textSize());
     x += increment;
   }

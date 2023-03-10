@@ -41,6 +41,7 @@ class Section {
     this.geometry = [];
     this.colors = {};
     this.children = [];
+    this.lerpDir = 0.0;
   }
   setPosition(x, y, w, h) {
     this.x = x;
@@ -51,11 +52,13 @@ class Section {
   drawStatics() {
     noStroke();
     rectMode(CENTER);
-    if (this.hovered == false) {
-      fill(this.colors['box-lo']);
-    } else {
-      fill(this.colors['box-hi']);
+    if (this.hovered == false && this.lerpDir > 0.0) {
+      this.lerpDir -= 0.05;
     }
+    if (this.hovered == true && this.lerpDir < 1.0) {
+      this.lerpDir += 0.05;
+    }
+    fill(lerpColor(this.colors['box-lo'], this.colors['box-hi'], this.lerpDir));
     beginShape();
     for (let i = 0; i < this.geometry.length; i++) {
       vertex(this.geometry[i].x, this.geometry[i].y);
@@ -87,7 +90,6 @@ function setupCoords() {
   for (let i = 0; i < capabilities.length; i++) {
     let border = (width / (capabilities.length + 1))
     let x = (i + 1) * border;
-    // let y = startHeight + pCSeperationMult * services[0].height;
     let y = 0.5 * height;
     capabilities[i].setPosition(x, y, border, textSize());
     capabilities[i].geometry = [];

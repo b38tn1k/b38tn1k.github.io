@@ -131,7 +131,7 @@ function setup() {
 
 function draw() {
   clear();
-  background(255, 0, 0);
+  // background(255, 0, 0);
   // for (let i = 0; i < capabilities.length; i++) {
   //   capabilities[i].drawStatics();
   //   capabilities[i].hovered = false;

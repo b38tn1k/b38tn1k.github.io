@@ -77,17 +77,18 @@ function windowResized() {
 
 function setupCoords() {
   createCanvas(windowWidth, windowHeight);
-  let startHeight = 0.1 * height;
+  let startHeight = 0.4 * height;
   for (let i = 0; i < services.length; i++) {
     let border = (width / (services.length + 1))
     let x = (i + 1) * border;
-    let y = startHeight;
+    let y = 0.4 * height;;
     services[i].setPosition(x, y, border, textSize());
   }
   for (let i = 0; i < capabilities.length; i++) {
     let border = (width / (capabilities.length + 1))
     let x = (i + 1) * border;
-    let y = startHeight + pCSeperationMult * services[0].height;
+    // let y = startHeight + pCSeperationMult * services[0].height;
+    let y = 0.5 * height;
     capabilities[i].setPosition(x, y, border, textSize());
     capabilities[i].geometry = [];
     capabilities[i].geometry.push(new Coord(capabilities[i].x - capabilities[i].width * cbWidthPr, capabilities[i].y - capabilities[i].height * arrowHeightPr));
@@ -112,6 +113,7 @@ function setupCoords() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   textFont('Georgia');
+  textSize(height/50);
   capabilities.push (new Section('Integration Assesment', ['Process & Workflow', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds','KPI management']));
   capabilities.push (new Section('Solution Engineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance']));
   capabilities.push (new Section('Ownership Transfer', ['SOP Generation', 'Operator Training', 'IP Development', 'Integrator Relationships', 'Reporting & Documentation']));

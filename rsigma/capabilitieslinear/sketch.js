@@ -23,7 +23,6 @@ class Coord {
   }
 }
 
-
 class Section {
   constructor(title, keywords = null) {
     this.title = title;
@@ -71,24 +70,24 @@ let capabilities = [];
 let services = [];
 
 function windowResized() {
-  textSize(min(height/12, width/85));
+  textSize(min(height/12, width/60));
   setupCoords();
 }
 
 function setupCoords() {
   createCanvas(windowWidth, 100);
-  textSize(min(height/6, width/85));
-  let startHeight = 0.4 * height;
+  textSize(min(height/5, width/70));
+  let startHeight = 0.3 * height;
   for (let i = 0; i < services.length; i++) {
     let border = (width / (services.length + 1))
     let x = (i + 1) * border;
-    let y = 0.3 * height;;
+    let y = startHeight;
     services[i].setPosition(x, y, border, textSize());
   }
   for (let i = 0; i < capabilities.length; i++) {
     let border = (width / (capabilities.length + 1))
     let x = (i + 1) * border;
-    let y = 0.7 * height;
+    let y = max(0.7 * height, startHeight + services[0].height + padding/2);
     capabilities[i].setPosition(x, y, border, textSize());
     capabilities[i].geometry = [];
     capabilities[i].geometry.push(new Coord(capabilities[i].x - capabilities[i].width * cbWidthPr, capabilities[i].y - capabilities[i].height * arrowHeightPr));
@@ -114,7 +113,7 @@ function setupCoords() {
 function setup() {
   createCanvas(windowWidth, 100);
   textFont('Georgia');
-  textSize(min(height/6, width/85));
+  textSize(min(height/5, width/70));
   capabilities.push (new Section('Integration Assesment', ['Process & Workflow', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds','KPI management']));
   capabilities.push (new Section('Solution Engineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance']));
   capabilities.push (new Section('Ownership Transfer', ['SOP Generation', 'Operator Training', 'IP Development', 'Integrator Relationships', 'Reporting & Documentation']));

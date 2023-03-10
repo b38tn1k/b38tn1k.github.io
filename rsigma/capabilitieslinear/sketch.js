@@ -10,7 +10,7 @@ let phaseCounter = 0;
 let pCSeperationMult = 2;
 
 //arrow geom
-let arrowPointPx = 20;
+let arrowPointPr = 0.01;
 let arrowWidthPr = 0.5;
 let arrowHeightPr = 0.5;
 //capability border geom
@@ -76,8 +76,8 @@ function windowResized() {
 }
 
 function setupCoords() {
-  createCanvas(windowWidth, 200);
-  textSize(min(height/12, width/85));
+  createCanvas(windowWidth, 100);
+  textSize(min(height/6, width/85));
   let startHeight = 0.4 * height;
   for (let i = 0; i < services.length; i++) {
     let border = (width / (services.length + 1))
@@ -97,23 +97,24 @@ function setupCoords() {
     capabilities[i].geometry.push(new Coord(capabilities[i].x + capabilities[i].width * cbWidthPr, capabilities[i].y - capabilities[i].height * arrowHeightPr));
     capabilities[i].geometry.push(new Coord(capabilities[i].x - capabilities[i].width * cbWidthPr, capabilities[i].y - capabilities[i].height * arrowHeightPr));
   }
+  console.log(width/60);
   for (let i = 0; i < services.length; i++) {
     services[i].geometry = [];
     services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr, services[i].y - services[i].height * arrowHeightPr));
-    services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr + arrowPointPx, services[i].y));
+    services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr + width*arrowPointPr, services[i].y));
     services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr, services[i].y + services[i].height * arrowHeightPr));
-    services[i].geometry.push(new Coord(services[i].x + services[i].width * arrowWidthPr - arrowPointPx, services[i].y + services[i].height * arrowHeightPr));
+    services[i].geometry.push(new Coord(services[i].x + services[i].width * arrowWidthPr - width*arrowPointPr, services[i].y + services[i].height * arrowHeightPr));
     services[i].geometry.push(new Coord(services[i].x + services[i].width * arrowWidthPr, services[i].y));
-    services[i].geometry.push(new Coord(services[i].x + services[i].width * arrowWidthPr  - arrowPointPx, services[i].y - services[i].height * arrowHeightPr));
+    services[i].geometry.push(new Coord(services[i].x + services[i].width * arrowWidthPr  - width*arrowPointPr, services[i].y - services[i].height * arrowHeightPr));
     services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr, services[i].y - services[i].height * arrowHeightPr));
   }
   
 }
 
 function setup() {
-  createCanvas(windowWidth, 200);
+  createCanvas(windowWidth, 100);
   textFont('Georgia');
-  textSize(min(height/12, width/85));
+  textSize(min(height/6, width/85));
   capabilities.push (new Section('Integration Assesment', ['Process & Workflow', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds','KPI management']));
   capabilities.push (new Section('Solution Engineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance']));
   capabilities.push (new Section('Ownership Transfer', ['SOP Generation', 'Operator Training', 'IP Development', 'Integrator Relationships', 'Reporting & Documentation']));

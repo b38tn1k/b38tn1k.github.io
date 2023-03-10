@@ -77,13 +77,16 @@ function windowResized() {
 function setupCoords() {
   createCanvas(windowWidth, 100);
   textSize(min(height/2, width/50));
-  let startHeight = 0.5 * height;
+  let y = 0.5 * height;
   let border = (width / (services.length + 1));
+  let increment = ((width - border * 2 * arrowWidthPr) / (services.length-1)) - 1;
+  let x = increment/2 + 1;
   for (let i = 0; i < services.length; i++) {
-    let x = (i + 1) * (border);
-    let y = startHeight;
-    services[i].setPosition(x, y, border, textSize());
+    // x = (i + 1) * (border);
+    services[i].setPosition(x - 2*(width*arrowPointPr), y, border, textSize());
+    x += increment;
   }
+
   for (let i = 0; i < services.length; i++) {
     services[i].geometry = [];
     services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr, services[i].y - services[i].height * arrowHeightPr));

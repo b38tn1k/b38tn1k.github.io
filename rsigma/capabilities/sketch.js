@@ -61,7 +61,6 @@ class Section {
     if (this.keywords) {
       this.tHeight += h * this.keywords.length;
     }
-    console.log(this.height);
   }
   drawStatics() {
     if (this.type == 'capability') {
@@ -87,7 +86,7 @@ class Section {
 
   drawCapabilityStatics() {
     rectMode(CENTER);
-    fill(this.colors['box-lo']);
+    fill(this.colors['box-hi']);
     rect(this.x, this.y, this.width * cbWidthPr, this.height);
     fill(this.colors['text']);
     let ts = textSize();
@@ -103,7 +102,7 @@ class Section {
 
   drawCapabilityHFG() {
     rectMode(CENTER);
-    fill(this.colors['box-hi']);
+    fill(this.colors['box-lo']);
     rect(this.x, this.y, this.width * cbWidthPr, this.height);
     fill(this.colors['text']);
     textAlign(CENTER, CENTER);

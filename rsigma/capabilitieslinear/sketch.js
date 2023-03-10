@@ -5,6 +5,7 @@ let baseTextColor = (50, 50, 50);
 let baseCapabilityHighlight = ['#ffa07a','#ff7f50','#ff6347'];//['#78A1BB', '#D2F898', '#BFA89E'];
 let capabilityHighlightLerp = 0.5;
 let capabilityZoneLerp = 0.75;
+let phaseCounter = 0;
 
 
 
@@ -16,7 +17,7 @@ let arrowPointPx = 20;
 let arrowWidthPr = 0.5;
 let arrowHeightPr = 0.5;
 //capability border geom
-let cbWidthPr = 0.8;
+let cbWidthPr = 0.4;
 
 class Coord {
   constructor(x, y) {
@@ -32,7 +33,6 @@ class Section {
     if (upperCase == true) {
       this.title = this.title.toUpperCase();
     }
-    this.keywords = keywords;
     this.type = 'capability';
     if (keywords == null) {
       this.type = 'service';
@@ -45,40 +45,17 @@ class Section {
   setPosition(x, y, w, h) {
     this.x = x;
     this.y = y;
-    this.x1 = x - w/2 - padding;
-    this.y1 = y - h/2 - padding;
-    this.x2 = x + w/2 + padding;
-    this.y2 = y + h/2 + padding;
     this.width = w;
     this.height = h + padding;
-    console.log(this.height);
   }
   drawStatics() {
-    if (this.type == 'capability') {
-      this.capabilityStatics();
-    } else {
-      this.serviceStatics();
-    }
-  }
-
-  capabilityStatics() {
     noStroke();
     rectMode(CENTER);
     if (this.hovered == false) {
-      fill(this.colors['box-hi']);
-    } else {
       fill(this.colors['box-lo']);
+    } else {
+      fill(this.colors['box-hi']);
     }
-    
-    rect(this.x, this.y, this.width * cbWidthPr, this.height);
-    textAlign(CENTER, CENTER);
-    fill(this.colors['text']);
-    text(this.title, this.x, this.y);
-  }
-
-  serviceStatics() {
-    noStroke();
-    fill(this.colors['arrow']);
     beginShape();
     for (let i = 0; i < this.geometry.length; i++) {
       vertex(this.geometry[i].x, this.geometry[i].y);
@@ -87,91 +64,6 @@ class Section {
     fill(this.colors['text']);
     textAlign(CENTER, CENTER);
     text(this.title, this.x, this.y);
-  }
-
-  drawHoveredBG() {
-    if (this.type == 'capability') {
-      this.capabilityHBG();
-    } else {
-      this.serviceHBG()
-    }
-  }
-
-  capabilityHBG() {
-    noStroke();
-    rectMode(CORNER);
-    fill(this.colors['box-zone']);
-    
-    let w = this.children[this.children.length-1].x2 - this.children[0].x1;
-    let h = this.height + (this.y2 + this.height * this.keywords.length) - this.children[0].y1;
-    rect(this.children[0].x1, this.children[0].y1, w, h);
-
-    rectMode(CENTER);
-    fill(this.colors['box-lo']);
-    h = (this.height + 1) * this.keywords.length;
-    
-    rect(this.x, this.y + this.height/2 + h/2, this.width * cbWidthPr, h);
-  }
-
-  serviceHBG() {
-    
-  }
-
-  draw () {
-    if (this.hovered == true) {
-      this.drawHoveredBG();
-    }
-    this.drawStatics();
-    if (this.hovered == true && this.keywords != null) {
-      this.drawHoveredFG();
-    }
-  }
-
-  drawBG() {
-    if (this.hovered == true) {
-      this.drawHoveredBG();
-    }
-  }
-
-  drawFG() {
-    if (this.hovered == true && this.keywords != null) {
-      this.drawHoveredFG();
-    }
-  }
-
-  capabilityHFG() {
-    let x = this.x - textWidth(this.title)/2;
-    let y = this.y + this.height;
-    textAlign(LEFT);
-    fill(this.colors['text']);
-    for (let i = 0; i < this.keywords.length; i++) {
-      text(this.keywords[i], x, y);
-      y += this.height;
-    }
-  }
-
-  serviceHFG() {
-
-  }
-
-  drawHoveredFG(){
-    if (this.type == 'capability') {
-      this.capabilityHFG();
-    } else {
-      this.serviceHFG()
-    }
-    
-  }
-
-  checkHover(x, y) {
-    // if (mouseIsPressed == true) {
-      this.hovered = false;
-    // }
-    if (x > this.x1 && x < this.x2) {
-      if (y > this.y1 && y < this.y2) {
-        this.hovered = true;
-      }
-    }
   }
 };
 
@@ -185,22 +77,24 @@ function windowResized() {
 
 function setupCoords() {
   createCanvas(windowWidth, windowHeight);
-  let maxHeight = 0;
   let startHeight = 0.1 * height;
   for (let i = 0; i < services.length; i++) {
     let border = (width / (services.length + 1))
     let x = (i + 1) * border;
     let y = startHeight;
     services[i].setPosition(x, y, border, textSize());
-    if (services[i].height > maxHeight) {
-      maxHeight = services[i].height;
-    }
   }
   for (let i = 0; i < capabilities.length; i++) {
     let border = (width / (capabilities.length + 1))
     let x = (i + 1) * border;
-    let y = startHeight + pCSeperationMult * maxHeight;
+    let y = startHeight + pCSeperationMult * services[0].height;
     capabilities[i].setPosition(x, y, border, textSize());
+    capabilities[i].geometry = [];
+    capabilities[i].geometry.push(new Coord(capabilities[i].x - capabilities[i].width * cbWidthPr, capabilities[i].y - capabilities[i].height * arrowHeightPr));
+    capabilities[i].geometry.push(new Coord(capabilities[i].x - capabilities[i].width * cbWidthPr, capabilities[i].y + capabilities[i].height * arrowHeightPr));
+    capabilities[i].geometry.push(new Coord(capabilities[i].x + capabilities[i].width * cbWidthPr, capabilities[i].y + capabilities[i].height * arrowHeightPr));
+    capabilities[i].geometry.push(new Coord(capabilities[i].x + capabilities[i].width * cbWidthPr, capabilities[i].y - capabilities[i].height * arrowHeightPr));
+    capabilities[i].geometry.push(new Coord(capabilities[i].x - capabilities[i].width * cbWidthPr, capabilities[i].y - capabilities[i].height * arrowHeightPr));
   }
   for (let i = 0; i < services.length; i++) {
     services[i].geometry = [];
@@ -224,7 +118,6 @@ function setup() {
   for (let i = 0; i < capabilities.length; i++) {
     capabilities[i].colors['text'] = color(baseTextColor);
     capabilities[i].colors['box-lo'] = lerpColor(color(baseCapabilityHighlight[i]), color(255), capabilityHighlightLerp);
-    capabilities[i].colors['box-zone'] = lerpColor(color(baseCapabilityHighlight[i]), color(255), capabilityZoneLerp);
     capabilities[i].colors['box-hi'] = color(baseCapabilityHighlight[i]);
   }
   services.push (new Section('Asses'));
@@ -241,37 +134,27 @@ function setup() {
   capabilities[2].children.push(services[4]);
   for (let i = 0; i < services.length; i++) {
     services[i].colors['text'] = color(baseTextColor);
-    services[i].colors['arrow'] = color(baseArrowColors[i]);
+    services[i].colors['box-hi'] = color(baseArrowColors[i]);
+    services[i].colors['box-lo'] = lerpColor(color(baseArrowColors[i]), color(255), capabilityHighlightLerp);
   }
   setupCoords();
-  
 }
 
 function draw() {
   clear();
   for (let i = 0; i < capabilities.length; i++) {
-    capabilities[i].checkHover(mouseX, mouseY);
-  }
-  // for (let i = 0; i < services.length; i++) {
-  //   services[i].checkHover(mouseX, mouseY);
-  // }
-  for (let i = 0; i < capabilities.length; i++) {
-    capabilities[i].drawBG();
-  }
-  for (let i = 0; i < services.length; i++) {
-    services[i].drawBG();
-  }
-  for (let i = 0; i < capabilities.length; i++) {
     capabilities[i].drawStatics();
+    capabilities[i].hovered = false;
   }
   for (let i = 0; i < services.length; i++) {
     services[i].drawStatics();
+    services[i].hovered = false;
   }
-  for (let i = 0; i < capabilities.length; i++) {
-    capabilities[i].drawFG();
+  if (frameCount % 30 == 0) {
+    phaseCounter += 1;
   }
-  for (let i = 0; i < services.length; i++) {
-    services[i].drawFG();
+  capabilities[phaseCounter % 3].hovered = true;
+  for (let i = 0; i < capabilities[phaseCounter % 3].children.length; i++) {
+    capabilities[phaseCounter % 3].children[i].hovered = true;
   }
-
 }

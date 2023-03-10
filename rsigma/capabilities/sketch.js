@@ -5,6 +5,7 @@ let baseTextColor = (50, 50, 50);
 let baseCapabilityHighlight = ['#ffa07a','#ff7f50','#ff6347'];//['#78A1BB', '#D2F898', '#BFA89E'];
 let capabilityHighlightLerp = 0.5;
 let capabilityZoneLerp = 0.75;
+let c;
 
 
 
@@ -177,7 +178,7 @@ function setupCoords() {
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  var myCanvas = createCanvas(windowWidth, windowHeight);
   textFont('Georgia');
   capabilities.push (new Section('Integration\nAssesment', ['Process & Workflow', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds','KPI management']));
   capabilities.push (new Section('Solution\nEngineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance']));

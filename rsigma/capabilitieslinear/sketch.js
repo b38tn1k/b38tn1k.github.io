@@ -3,7 +3,7 @@ let upperCase = true;
 let baseArrowColors = ['#accbff', '#92bbff', '#78aaff', '#649eff', '#4188ff'];//['#EC9F05', '#BFD7EA', '#FF6663', '#E0FF4F', '#7EB77F'];
 let baseTextColor = (50, 50, 50);
 let baseCapabilityHighlight = ['#ffa07a','#ff7f50','#ff6347'];//['#78A1BB', '#D2F898', '#BFA89E'];
-let capabilityHighlightLerp = 0.3;
+let capabilityHighlightLerp = 0.4;
 let phaseCounter = 0;
 
 // meta layout;

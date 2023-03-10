@@ -100,7 +100,7 @@ class Section {
   capabilityHBG() {
     noStroke();
     rectMode(CORNER);
-    fill(this.colors['box-zone']);
+    fill(this.colors['box-lo']);
     
     let w = this.children[this.children.length-1].x2 - this.children[0].x1;
     let h = this.height + (this.y2 + this.height * this.keywords.length) - this.children[0].y1;
@@ -218,7 +218,7 @@ function setupCoords() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   textFont('Georgia');
-  capabilities.push (new Section('Integration Assesment', ['Process & Workflow', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds','KPI management']));
+  capabilities.push (new Section('Project Assessment', ['Process & Workflow', 'Project Specification', 'System Integration Vetting', 'Goal Setting & Exit Planning', 'ROI thresholds','KPI management']));
   capabilities.push (new Section('Solution Engineering', ['Process Certification', 'Testing & Simulation', 'Reliability & Forecasting', 'Safety Audit', 'Regulatory & Compliance']));
   capabilities.push (new Section('Ownership Transfer', ['SOP Generation', 'Operator Training', 'IP Development', 'Integrator Relationships', 'Reporting & Documentation']));
   for (let i = 0; i < capabilities.length; i++) {
@@ -227,7 +227,7 @@ function setup() {
     capabilities[i].colors['box-zone'] = lerpColor(color(baseCapabilityHighlight[i]), color(255), capabilityZoneLerp);
     capabilities[i].colors['box-hi'] = color(baseCapabilityHighlight[i]);
   }
-  services.push (new Section('Asses'));
+  services.push (new Section('Scope'));
   services.push (new Section('Design'));
   services.push (new Section('Build'));
   services.push (new Section('Implement'));

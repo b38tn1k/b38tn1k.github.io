@@ -121,7 +121,7 @@ function setup() {
     capabilities[i].colors['box-lo'] = lerpColor(color(baseCapabilityHighlight[i]), color(255), capabilityHighlightLerp);
     capabilities[i].colors['box-hi'] = color(baseCapabilityHighlight[i]);
   }
-  services.push (new Section('Asses'));
+  services.push (new Section('Assess'));
   services.push (new Section('Design'));
   services.push (new Section('Build'));
   services.push (new Section('Implement'));

@@ -13,7 +13,7 @@ let pCSeperationMult = 2;
 
 //arrow geom
 let arrowPointPx = 20;
-let arrowWidthPr = 0.5;
+let arrowWidthPr = 0.3;
 let arrowHeightPr = 0.5;
 //capability border geom
 let cbWidthPr = 0.8;
@@ -57,10 +57,6 @@ class Section {
     this.y2 = y + h/2;// + padding;
     this.width = w;
     this.height = h + padding;
-    this.tHeight = h + padding;
-    if (this.keywords) {
-      this.tHeight += h * this.keywords.length;
-    }
   }
   drawStatics() {
     if (this.type == 'capability') {
@@ -97,7 +93,16 @@ class Section {
   }
 
   drawServiceStatics() {
-
+    noStroke();
+    fill(this.colors['arrow']);
+    beginShape();
+    for (let i = 0; i < this.geometry.length; i++) {
+      vertex(this.geometry[i].x, this.geometry[i].y);
+    }
+    endShape();
+    fill(this.colors['text']);
+    textAlign(CENTER, CENTER);
+    text(this.title, this.x, this.y);
   }
 
   drawCapabilityHFG() {
@@ -135,6 +140,7 @@ function windowResized() {
 function setupCoords() {
   createCanvas(windowWidth, windowHeight);
   let maxHeight = 0;
+  let maxY;
   let leaderCap;
   let startHeight = 0.1 * height;
   let border = (width / (capabilities.length + 1))
@@ -144,12 +150,30 @@ function setupCoords() {
     capabilities[i].setPosition(x, y, border, 1.2 * textSize() * capabilities[i].keywords.length);
     if (capabilities[i].height > maxHeight) {
       maxHeight = capabilities[i].height;
-      leaderCap = capabilities[i];
+      maxY = capabilities[i].y;
     }
   }
   for (let i = 0; i < capabilities.length; i++) {
-    capabilities[i].setPosition(capabilities[i].x, leaderCap.y, border, leaderCap.height - padding);
+    capabilities[i].setPosition(capabilities[i].x, maxY, border, maxHeight);
   }
+  let x1 = capabilities[0].x; // start
+  let inc = (capabilities[capabilities.length-1].x - x1)/(services.length-1); // increment
+  let y = capabilities[0].y + capabilities[0].height/2 + padding;
+  // x1 -= capabilities[0].width;
+
+  for (let i = 0; i < services.length; i++) {
+    services[i].setPosition(x1, y, border, textSize());
+    x1 += inc;
+    services[i].geometry = [];
+    services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr, services[i].y - services[i].height * arrowHeightPr));
+    services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr + arrowPointPx, services[i].y));
+    services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr, services[i].y + services[i].height * arrowHeightPr));
+    services[i].geometry.push(new Coord(services[i].x + services[i].width * arrowWidthPr - arrowPointPx, services[i].y + services[i].height * arrowHeightPr));
+    services[i].geometry.push(new Coord(services[i].x + services[i].width * arrowWidthPr, services[i].y));
+    services[i].geometry.push(new Coord(services[i].x + services[i].width * arrowWidthPr  - arrowPointPx, services[i].y - services[i].height * arrowHeightPr));
+    services[i].geometry.push(new Coord(services[i].x - services[i].width * arrowWidthPr, services[i].y - services[i].height * arrowHeightPr));
+  }
+  
 }
 
 function setup() {

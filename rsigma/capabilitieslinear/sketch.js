@@ -79,8 +79,10 @@ function setupCoords() {
   textSize(min(height/2, width/50));
   let y = 0.5 * height;
   let border = (width / (services.length + 1));
-  let increment = ((width - border * 2 * arrowWidthPr) / (services.length-1)) - width*arrowPointPr/(services.length + 1);
-  let x = increment/2 + width*arrowPointPr/(services.length + 1);
+  let fullness = 0.98;
+  let pad = (1.0 - fullness) / 2;
+  let increment = (((width * fullness) - border * 2 * arrowWidthPr) / (services.length-1));
+  let x = increment/2 + width * pad;
   for (let i = 0; i < services.length; i++) {
     // x = (i + 1) * (border);
     services[i].setPosition(x - 2*(width*arrowPointPr), y, border, textSize());

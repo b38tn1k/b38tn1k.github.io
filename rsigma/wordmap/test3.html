@@ -1,0 +1,281 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+<div id='container2' style='width:100%; min-height:600px;margin:auto;'></div>
+<script>
+    let sketch = function (p2) {
+        var root;
+        const nodeSize = 5;
+        var dWidth, dHeight;
+        var OGlengths = [50, 150, 75, 75, 65];
+        var lengths = [50, 150, 75, 75, 65];
+        var vectorLengths = [0.05, 0.15, 0.15, 0.15, 0.15, 0.15, 0.15];
+        var baseTextSize = 8;
+
+        p2.setup = function () {
+            setupScr();
+        }
+
+        p2.windowResized = function () {
+            setupScr();
+            setupScr();
+        }
+
+        function setupScr() {
+            let myDiv = window.document.getElementById('container2');
+            p2.createCanvas(myDiv.offsetWidth, myDiv.offsetHeight);
+            dWidth = myDiv.offsetWidth;
+            dHeight = myDiv.offsetHeight;
+            root = new Node(dWidth / 2, 4 * p2.textSize(), 'R Sigma');
+            let tr = 1;
+            addChildren(root, tr, 'R Sigma', ['Hardware', 'Process', 'Software']);
+            tr = 2;
+            addChildren(root, tr, 'Hardware', ['Robots', 'Embedded']);
+            addChildren(root, tr, 'Software', ['Languages', 'AI/ML', 'Design/Sim', 'Cloud']);
+            tr = 3;
+            addChildren(root, tr, 'Process', ['QA', 'FMEA', 'RCA', 'ROI', 'Agile', 'IR4.0', 'HCD']);
+            addChildren(root, tr, 'Robots', ['UAS', 'AMRs', 'UGVs', 'Arms', 'Legged']);
+            tr = 4;
+            addChildren(root, tr, 'Embedded', ['Arduino', 'NVIDIA', 'Yocto', 'rPi', 'Beaglebone', 'teensy', 'NuttX']);
+            tr = 5;
+            addChildren(root, tr, 'UAS', ['PX4', 'QGC', 'Ardupilot', 'Part 104']);
+            addChildren(root, tr, 'Legged', ['Agility Digit', 'BD Spot']);
+            addChildren(root, tr, 'Arms', ['Universal Robotics']);
+            addChildren(root, tr, 'Languages', ['Python', 'C++', 'Javascript', 'Lua', 'MATLAB']);
+            addChildren(root, tr, 'AI/ML', ['TensorFlow', 'OpenCV']);
+            addChildren(root, tr, 'Design/Sim', ['ROS', 'Unity3D', 'KiCAD', 'SolidWorks', 'Fusion360', 'MoveItStudio']);
+            addChildren(root, tr, 'Cloud', ['AWS', 'GCP']);
+            p2.textFont('Georgia');
+            p2.textAlign(p2.CENTER, p2.CENTER);
+            p2.rectMode(p2.CENTER);
+            baseTextSize = p2.max(8, p2.min(12, 0.007246376811594203 * dWidth));
+            p2.textSize(baseTextSize);
+            for (let i = 0; i < vectorLengths.length; i++) {
+                lengths[i] = p2.min(OGlengths[i], dWidth * vectorLengths[i]);
+            }
+            // tidy(root);
+            // p2.background(255, 0, 230);
+            root.draw();
+        }
+
+        function tidy(root) {
+            
+        }
+
+        function addChildren(root, tr, nodeName, childNames) {
+            // let tier = root.tier + 1;
+            let tier = tr;
+            let res = false;
+            let childRadius = lengths[tier];
+            if (root.title == nodeName) {
+                res = true;
+                let x, y;
+                y = tr * dHeight/6;
+                let xInc = (dWidth/(childNames.length +2)) / tr;
+                let xWave = p2.TWO_PI/(xInc * childNames.length);
+                x = root.x - (childNames.length -1)/2 * xInc;
+                for (let i = 0; i < childNames.length; i++) {
+                    root.children.push(new Node(x, y + tr * 10 * Math.cos(x * xWave), childNames[i], 0, tier));
+                    x += xInc;
+                }
+            } else {
+                for (let i = 0; i < root.children.length; i++) {
+                    if (addChildren(root.children[i], tr, nodeName, childNames, childRadius) == true) {
+                        res = true;
+                    }
+                }
+            }
+            return res;
+        }
+
+        class Node {
+            constructor(x, y, title, enterAngle = 0, tier = 0) {
+                this.x = x;
+                this.y = y;
+                this.title = title;
+                this.children = [];
+                this.enterAngle = enterAngle;
+                this.tier = tier
+            }
+
+            quantise(x, y){
+                this.x = Math.floor(this.x/(x - 1)) * x;
+                this.y = Math.floor(this.y/(y - 1)) * y;
+                for (let child of this.children) {
+                    child.quantise(x, y);
+                }
+            }
+
+            reSortChildren(pN = null) {
+                let fix = 0;
+                if (pN != null) {
+                    if (pN.y > this.y) {
+                        fix = p2.atan((this.y - pN.y)/(this.x - pN.x));
+                        fix/=2;
+                    } else {
+                        fix = p2.atan((pN.y-this.y)/(pN.x - this.x));
+                        // if (pN.x > this.x) {
+                        if (this.x > dWidth/2) {
+                            fix = - fix;
+                        }
+                    }
+                }
+                for (let child of this.children) {
+                    let childRadius = lengths[child.tier];
+                    child.x = this.x + Math.cos(child.enterAngle + fix) * (childRadius);
+                    child.y = this.y + Math.sin(child.enterAngle + fix) * (childRadius);
+                    child.reSortChildren();
+                }
+            }
+
+            findChild(title) {
+                if (this.title == title) {
+                    return this;
+                }
+                for (let child of this.children) {
+                    let temp = child.findChild(title);
+                    if (temp != null) {
+                        return temp;
+                    }
+                }
+
+            }
+
+
+            findLongest() {
+                let lngst= this.title;
+                p2.textSize(this.calcTextSize());
+                let lengthOflngst= p2.textWidth(this.title);
+                for (let child of this.children) {
+                    let temp = child.findLongest();
+                    p2.textSize(child.calcTextSize());
+                    let tempLength = p2.textWidth(temp);
+                    if ( tempLength > lengthOflngst) {
+                        lngst = temp;
+                        lengthOflngst= tempLength;
+                    }
+                }
+                return lngst;
+            }
+
+            xStretch(sub, prevRange, border) {
+                // if (this.tier > 1) {
+                    let newRange = (dWidth) - 2*border;
+                    this.x = p2.map(this.x, sub, prevRange, 0, newRange) + border;
+                // }
+                
+                for (let child of this.children) {
+                    child.xStretch(sub, prevRange, border);
+                }
+            }
+
+            yStretch(oldRange, newRange, border) {
+                this.y = p2.map(this.y, 0, oldRange, 0, newRange);
+                for (let child of this.children) {
+                    child.yStretch(oldRange, newRange, border);
+                }
+            }
+
+            move(x, y) {
+                this.x -= x;
+                this.y -= y;
+                for (let child of this.children) {
+                    child.move(x, y);
+                }
+            }
+
+            findSmallest() {
+                let res = [this.x, this.y];
+                for (let child of this.children) {
+                    let temp = child.findSmallest();
+                    if (temp[0] < res[0]) {
+                        res[0] = temp[0];
+                    }
+                    if (temp[1] < res[1]) {
+                        res[1] = temp[1];
+                    }
+                }
+                return res;
+            }
+
+            findLargest() {
+                let res = [this.x, this.y];
+                for (let child of this.children) {
+                    let temp = child.findLargest();
+                    if (temp[0] > res[0]) {
+                        res[0] = temp[0];
+                    }
+                    if (temp[1] > res[1]) {
+                        res[1] = temp[1];
+                    }
+                }
+                return res;
+            }
+
+            drawGraphics() {
+                p2.fill(0);
+                p2.stroke(0);
+                p2.strokeWeight(p2.max(1, 4 - this.tier));
+                p2.circle(this.x, this.y, nodeSize);
+                // let x2, y2;
+                // x2 = this.x + 20 * Math.cos(this.enterAngle - p2.HALF_PI);
+                // y2 = this.y + 20 * Math.sin(this.enterAngle - p2.HALF_PI);
+                // p2.line(this.x, this.y, x2, y2);
+                p2.strokeWeight(1);
+                for (let child of this.children) {
+                    // p2.strokeWeight(p2.max(1, 4 - child.tier));
+                    p2.line(this.x, this.y, child.x, child.y);
+                    child.drawGraphics();
+                }
+            }
+
+            calcTextSize() {
+                let ts = p2.max(baseTextSize, baseTextSize + 10 - this.tier) + 2;
+                if (this.tier <= 1) {
+                    ts += 2;
+                }
+                // if (this.tier <= 2) {
+                //     ts += 2;
+                // }
+                return ts;
+            }
+
+            drawText() {
+                for (let child of this.children) {
+                    child.drawText();
+                }
+                p2.noStroke();
+                p2.fill(50);
+                p2.textSize(this.calcTextSize());
+                let ypos;
+                // if (this.tier <=2) {
+                    ypos = this.y;
+                // } else {
+                //     ypos = this.y - p2.textSize();
+                // }
+                p2.rect(this.x, ypos, p2.textWidth(this.title) * 1.1, p2.textSize() * 1.1);
+                p2.fill(255);
+                switch(this.tier) {
+                    case 0:
+                        p2.fill(255);
+                        break;
+                    case 1:
+                        p2.fill(245);
+                        break;
+                    case 2:
+                        p2.fill(240);
+                        break;
+                    default:
+                        p2.fill(235);
+                }
+                p2.text(this.title, this.x, ypos);
+                
+            }
+
+            draw() {
+                this.drawGraphics();
+                this.drawText();
+            }
+        }
+
+    };
+    new p5(sketch, 'container2');
+</script>

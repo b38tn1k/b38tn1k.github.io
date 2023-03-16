@@ -1,5 +1,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-<div id='container' style='width:100%; min-height:400px;margin:auto;'></div>
+<!-- <div id='container' style='width:100%; height:400px;'></div> -->
+<div id='container' style='width:100%; height:400px;'></div>
 <script>
     let sketch = function (p) {
         var root;
@@ -7,7 +8,7 @@
         var dWidth, dHeight;
         var OGlengths = [50, 150, 75, 75, 65];
         var lengths = [50, 150, 75, 75, 65];
-        var vectorLengths = [0.05, 0.15, 0.07, 0.07, 0.06];
+        var vectorLengths = [0.05, 0.15, 0.07, 0.07, 0.065];
         var baseTextSize = 8;
 
         p.setup = function () {
@@ -16,9 +17,10 @@
             dHeight = myDiv.offsetHeight;
             root = new Node(dWidth / 2, dHeight / 2 + 4 * p.textSize(), 'R Sigma');
             let tr = 1;
-            addChildren(root, tr, 'R Sigma', ['Hardware', 'Process', 'Software']);
+            addChildren(root, tr, 'R Sigma', ['Hardware', 'Software']);
             tr = 2;
             addChildren(root, tr, 'Hardware', ['Robots', 'Embedded']);
+            addChildren(root, tr, 'R Sigma', ['Process']);
             addChildren(root, tr, 'Software', ['Languages', 'AI/ML', 'Design/Sim', 'Cloud']);
             tr = 3;
             addChildren(root, tr, 'Process', ['QA', 'FMEA', 'RCA', 'ROI', 'Agile', 'IR4.0', 'HCD']);
@@ -34,38 +36,146 @@
             addChildren(root, tr, 'Cloud', ['AWS', 'GCP']);
             setupScr();
         }
-
         p.windowResized = function () {
             setupScr();
-            setupScr();
         }
-
         function setupScr() {
             let myDiv = window.document.getElementById('container');
             p.createCanvas(myDiv.offsetWidth, myDiv.offsetHeight);
             dWidth = myDiv.offsetWidth;
             dHeight = myDiv.offsetHeight;
+            // console.log(dWidth, dHeight);
             p.textFont('Georgia');
             p.textAlign(p.CENTER, p.CENTER);
             p.rectMode(p.CENTER);
-            baseTextSize = p.max(8, p.min(12, 0.007246376811594203 * dWidth));
+            baseTextSize = p.max(7, p.min(12, 0.006246376811594203 * dWidth));
+            console.log(baseTextSize);
             p.textSize(baseTextSize);
             for (let i = 0; i < vectorLengths.length; i++) {
                 lengths[i] = p.min(OGlengths[i], dWidth * vectorLengths[i]);
             }
-            console.log(lengths);
-            
+            // p.background(255, 40, 230);
             tidy(root);
             root.draw();
         }
-
         function tidy(root) {
+            let ratio = dWidth / dHeight;
+            // console.log(ratio);
+            if (ratio > 16 / 9) {
+                portrait(root);
+            } else {
+                landscape(root);
+            }            // FIT
+            let border = 30;
+            smol = root.findSmallest();
+            root.move(0, smol[1] - border);
+            larg = root.findLargest();
+            let wid = larg[0] - smol[0];
+            root.xStretch(smol[0], larg[0], 2 * border);
+            root.yStretch(larg[1], dHeight - border, border);
+        }
+        function landscape(root) {
+            root.x = 0.5 * dWidth;
+            root.y = 0.5 * dHeight;
+            let process = root.findChild('Process');
+            process.x = dWidth * 0.75;
+            process.y = dHeight * 0.55;
+            process.reSortChildren(root.findChild('R Sigma'));
+            let sw = root.findChild('Software');
+            sw.x = dWidth * 0.45;
+            sw.y = dHeight * 0.4;
+            sw.reSortChildren(root.findChild('R Sigma'));
+            let HW = root.findChild('Hardware');
+            HW.x = dWidth * 0.55;
+            HW.y = dHeight * 0.6;
+            HW.reSortChildren(root.findChild('R Sigma'));
+            let lang = root.findChild('Languages');
+            lang.x = dWidth * 0.75;
+            lang.y = dHeight * 0.15;
+            lang.reSortChildren(root.findChild('Software'));
+            let cloud = root.findChild('Cloud');
+            cloud.x = dWidth * 0.3;
+            cloud.y = dHeight * 0.4;
+            cloud.reSortChildren(sw, p.PI + p.QUARTER_PI);
+            let AIML = root.findChild('AI/ML');
+            AIML.x = dWidth * 0.4;
+            AIML.y = dHeight * 0.1;
+            AIML.reSortChildren(sw);
+            let DESVIS = root.findChild('Design/Sim');
+            DESVIS.x = dWidth * 0.15;
+            DESVIS.y = dHeight * 0.2;
+            DESVIS.reSortChildren(root.findChild('Software'), -p.HALF_PI);
+
+            let EB = root.findChild('Embedded');
+            EB.x = dWidth * 0.75;
+            EB.y = dHeight * 0.85;
+            EB.reSortChildren(root.findChild('Hardware'));
+            let RB = root.findChild('Robots');
+            RB.x = dWidth * 0.3;
+            RB.y = dHeight * 0.75;
+            RB.reSortChildren(root.findChild('Hardware'), -p.PI);
+            let UAS = root.findChild('UAS');
+            UAS.x = dWidth * 0.45;
+            UAS.y = dHeight * 0.85;
+            UAS.reSortChildren(RB, p.PI);
+            let legged = root.findChild('Legged');
+            legged.x = dWidth * 0.1;
+            legged.y = dHeight * 0.65;
+            legged.reSortChildren(RB, p.PI);
+            let arm = root.findChild('Arms');
+            arm.x = dWidth * 0.15;
+            arm.y = dHeight * 0.8;
+            arm.reSortChildren(RB, p.PI);
+        }        function addChildren(root, tr, nodeName, childNames) {
+            // let tier = root.tier + 1;
+            let tier = tr;
+            let res = false;
+            let childRadius = lengths[tier];
+            if (root.title == nodeName) {
+                res = true;
+                let startAngle;
+                let childAngle;
+                if (root.tier == 0) {
+                    childAngle = (p.TWO_PI) / childNames.length;
+                    startAngle = childAngle / 3;
+                } else if (root.tier > 3) {
+                    childAngle = (p.HALF_PI) / (childNames.length);
+                    startAngle = root.enterAngle - (childNames.length / 2) * childAngle;
+
+                } else {
+                    childAngle = (p.PI) / (childNames.length);
+                    startAngle = root.enterAngle - p.HALF_PI;
+                    childAngle += childAngle / childNames.length;
+                    // if (childNames.length % 2 == 0) {
+                    //     startAngle += childAngle/2;
+                    // }
+                }
+                if (childNames.length == 1) {
+                    startAngle = root.enterAngle;
+                }
+                let x, y;
+                for (let i = 0; i < childNames.length; i++) {
+                    let a = startAngle + i * childAngle;
+                    x = root.x + Math.cos(a) * (childRadius); //+ 0.1 * childRadius * Math.sin(a*childNames.length));
+                    y = root.y + Math.sin(a) * (childRadius);// + 0.1 * childRadius * Math.sin(a*childNames.length));
+                    root.children.push(new Node(x, y, childNames[i], a, tier));
+                }
+            } else {
+                for (let i = 0; i < root.children.length; i++) {
+                    if (addChildren(root.children[i], tr, nodeName, childNames, childRadius) == true) {
+                        res = true;
+                    }
+                }
+            }
+            return res;
+        }
+        function portrait(root) {
             root.x = 0.5 * dWidth;
             root.y = 0.5 * dHeight;
             let process = root.findChild('Process');
             process.x = dWidth * 0.4;
             process.y = dHeight * 0.75;
-            process.reSortChildren();
+            process.reSortChildren(root.findChild('R Sigma'), p.PI);
             let sw = root.findChild('Software');
             sw.x = dWidth * 0.25;
             sw.y = dHeight * 0.4;
@@ -108,67 +218,7 @@
             legged.x = dWidth * 0.85;
             legged.y = dHeight * 0.7;
             legged.reSortChildren();
-
-            let border = 30;
-            smol = root.findSmallest();
-            root.move(0, smol[1]  - border);
-            larg = root.findLargest();
-            let wid = larg[0] - smol[0];
-
-            root.xStretch(smol[0], larg[0], 2*border);
-            root.yStretch(larg[1], dHeight-border, border);
-            // lngst= root.findLongest();
-            // lngstNode = root.findChild(lngst)
-            // let Ygrid = p.int(root.calcTextSize() + 2);
-            // p.textSize(lngstNode.calcTextSize());
-            // let Xgrid = p.int((p.textWidth(lngstNode.title)/2 + 5));
-            // root.quantise(Xgrid, Ygrid);
         }
-
-        function addChildren(root, tr, nodeName, childNames) {
-            // let tier = root.tier + 1;
-            let tier = tr;
-            let res = false;
-            let childRadius = lengths[tier];
-            if (root.title == nodeName) {
-                res = true;
-                let startAngle;
-                let childAngle;
-                if (root.tier == 0) {
-                    childAngle = (p.TWO_PI) / childNames.length;
-                    startAngle = childAngle/3;
-                } else if (root.tier > 3) {
-                    childAngle = (p.HALF_PI) / (childNames.length);
-                    startAngle = root.enterAngle - (childNames.length/2) * childAngle;
-
-                } else {
-                    childAngle = (p.PI) / (childNames.length);
-                    startAngle = root.enterAngle - p.HALF_PI;
-                    childAngle += childAngle/childNames.length;
-                    // if (childNames.length % 2 == 0) {
-                    //     startAngle += childAngle/2;
-                    // }
-                }
-                if (childNames.length == 1) {
-                    startAngle = root.enterAngle;
-                }
-                let x, y;
-                for (let i = 0; i < childNames.length; i++) {
-                    let a = startAngle + i * childAngle;
-                    x = root.x + Math.cos(a) * (childRadius); //+ 0.1 * childRadius * Math.sin(a*childNames.length));
-                    y = root.y + Math.sin(a) * (childRadius);// + 0.1 * childRadius * Math.sin(a*childNames.length));
-                    root.children.push(new Node(x, y, childNames[i], a, tier));
-                }
-            } else {
-                for (let i = 0; i < root.children.length; i++) {
-                    if (addChildren(root.children[i], tr, nodeName, childNames, childRadius) == true) {
-                        res = true;
-                    }
-                }
-            }
-            return res;
-        }
-
         class Node {
             constructor(x, y, title, enterAngle = 0, tier = 0) {
                 this.x = x;
@@ -178,29 +228,32 @@
                 this.enterAngle = enterAngle;
                 this.tier = tier
             }
-
-            quantise(x, y){
-                this.x = Math.floor(this.x/(x - 1)) * x;
-                this.y = Math.floor(this.y/(y - 1)) * y;
+            quantise(x, y) {
+                this.x = Math.floor(this.x / (x - 1)) * x;
+                this.y = Math.floor(this.y / (y - 1)) * y;
                 for (let child of this.children) {
                     child.quantise(x, y);
                 }
             }
-
-            reSortChildren(pN = null) {
+            reSortChildren(pN = null, fx = 0) {
                 let fix = 0;
                 if (pN != null) {
                     if (pN.y > this.y) {
-                        fix = p.atan((this.y - pN.y)/(this.x - pN.x));
-                        fix/=2;
+                        fix = p.atan((this.y - pN.y) / (this.x - pN.x));
+                        fix /= 2;
+                        if (this.x > pN.x) {
+                            fix *= 2;
+                            fix -= p.PI;
+                        }
                     } else {
-                        fix = p.atan((pN.y-this.y)/(pN.x - this.x));
+                        fix = p.atan((pN.y - this.y) / (pN.x - this.x));
                         // if (pN.x > this.x) {
-                        if (this.x > dWidth/2) {
+                        if (this.x > dWidth / 2) {
                             fix = - fix;
                         }
                     }
                 }
+                fix += fx;
                 for (let child of this.children) {
                     let childRadius = lengths[child.tier];
                     child.x = this.x + Math.cos(child.enterAngle + fix) * (childRadius);
@@ -208,7 +261,6 @@
                     child.reSortChildren();
                 }
             }
-
             findChild(title) {
                 if (this.title == title) {
                     return this;
@@ -219,44 +271,36 @@
                         return temp;
                     }
                 }
-
-            }
-
-
-            findLongest() {
-                let lngst= this.title;
+            }            findLongest() {
+                let lngst = this.title;
                 p.textSize(this.calcTextSize());
-                let lengthOflngst= p.textWidth(this.title);
+                let lengthOflngst = p.textWidth(this.title);
                 for (let child of this.children) {
                     let temp = child.findLongest();
                     p.textSize(child.calcTextSize());
                     let tempLength = p.textWidth(temp);
-                    if ( tempLength > lengthOflngst) {
+                    if (tempLength > lengthOflngst) {
                         lngst = temp;
-                        lengthOflngst= tempLength;
+                        lengthOflngst = tempLength;
                     }
                 }
                 return lngst;
             }
-
             xStretch(sub, prevRange, border) {
                 // if (this.tier > 1) {
-                    let newRange = (dWidth) - 2*border;
-                    this.x = p.map(this.x, sub, prevRange, 0, newRange) + border;
+                let newRange = (dWidth) - 2 * border;
+                this.x = p.map(this.x, sub, prevRange, 0, newRange) + border;
                 // }
-                
                 for (let child of this.children) {
                     child.xStretch(sub, prevRange, border);
                 }
             }
-
             yStretch(oldRange, newRange, border) {
                 this.y = p.map(this.y, 0, oldRange, 0, newRange);
                 for (let child of this.children) {
                     child.yStretch(oldRange, newRange, border);
                 }
             }
-
             move(x, y) {
                 this.x -= x;
                 this.y -= y;
@@ -264,7 +308,6 @@
                     child.move(x, y);
                 }
             }
-
             findSmallest() {
                 let res = [this.x, this.y];
                 for (let child of this.children) {
@@ -278,7 +321,6 @@
                 }
                 return res;
             }
-
             findLargest() {
                 let res = [this.x, this.y];
                 for (let child of this.children) {
@@ -292,7 +334,6 @@
                 }
                 return res;
             }
-
             drawGraphics() {
                 p.fill(0);
                 p.stroke(0);
@@ -309,18 +350,16 @@
                     child.drawGraphics();
                 }
             }
-
             calcTextSize() {
-                let ts = p.max(baseTextSize, baseTextSize + 10 - 2*this.tier);
+                let ts = p.max(baseTextSize, baseTextSize + 10 - 2 * this.tier);
                 if (this.tier <= 1) {
-                    ts += 2;
+                    ts += 3;
                 }
                 if (this.tier <= 2) {
-                    ts += 2;
+                    ts += 1;
                 }
                 return ts;
             }
-
             drawText() {
                 for (let child of this.children) {
                     child.drawText();
@@ -330,13 +369,13 @@
                 p.textSize(this.calcTextSize());
                 let ypos;
                 // if (this.tier <=2) {
-                    ypos = this.y;
+                ypos = this.y;
                 // } else {
                 //     ypos = this.y - p.textSize();
                 // }
                 p.rect(this.x, ypos, p.textWidth(this.title) * 1.1, p.textSize() * 1.1);
                 p.fill(255);
-                switch(this.tier) {
+                switch (this.tier) {
                     case 0:
                         p.fill(255);
                         break;
@@ -350,15 +389,13 @@
                         p.fill(235);
                 }
                 p.text(this.title, this.x, ypos);
-                
-            }
 
+            }
             draw() {
                 this.drawGraphics();
                 this.drawText();
             }
         }
-
     };
     new p5(sketch, 'container');
 </script>

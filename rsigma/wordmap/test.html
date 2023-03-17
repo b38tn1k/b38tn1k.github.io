@@ -16,7 +16,9 @@
             dWidth = myDiv.offsetWidth;
             dHeight = myDiv.offsetHeight;
             root = new Node(dWidth / 2, dHeight / 2 + 4 * p.textSize(), 'R Sigma');
-            let tr = 1;
+            let tr = 0;
+            addChildren(root, tr, 'R Sigma', ['Client']);
+            tr = 1;
             addChildren(root, tr, 'R Sigma', ['Hardware', 'Software']);
             tr = 2;
             addChildren(root, tr, 'Hardware', ['Robots', 'Embedded']);
@@ -68,65 +70,68 @@
             }            // FIT
             let border = 30;
             smol = root.findSmallest();
-            root.move(0, smol[1] - border);
+            // root.move(0, smol[1] - border);
             larg = root.findLargest();
             let wid = larg[0] - smol[0];
-            root.xStretch(smol[0], larg[0], 2 * border);
-            root.yStretch(larg[1], dHeight - border, border);
+            root.xStretch(smol[0], larg[0]);
+            root.yStretch(smol[1], larg[1]);
         }
         function landscape(root) {
-            root.x = 0.5 * dWidth;
-            root.y = 0.5 * dHeight;
+            root.x = 0.15 * dWidth;
+            root.y = 0.2 * dHeight;
+            let client = root.findChild('Client');
+            client.x = dWidth * 0.15;
+            client.y = 0;
             let process = root.findChild('Process');
-            process.x = dWidth * 0.75;
-            process.y = dHeight * 0.55;
-            process.reSortChildren(root.findChild('R Sigma'));
+            process.x = dWidth * 0.1;
+            process.y = dHeight * 0.4;
+            process.reSortChildren(root, -p.PI);
             let sw = root.findChild('Software');
-            sw.x = dWidth * 0.45;
-            sw.y = dHeight * 0.4;
-            sw.reSortChildren(root.findChild('R Sigma'));
+            sw.x = dWidth * 0.5;
+            sw.y = dHeight * 0.3;
+            sw.reSortChildren(root);
             let HW = root.findChild('Hardware');
-            HW.x = dWidth * 0.55;
-            HW.y = dHeight * 0.6;
-            HW.reSortChildren(root.findChild('R Sigma'));
+            HW.x = dWidth * 0.5;
+            HW.y = dHeight * 0.5;
+            HW.reSortChildren(root);
             let lang = root.findChild('Languages');
             lang.x = dWidth * 0.75;
             lang.y = dHeight * 0.15;
             lang.reSortChildren(root.findChild('Software'));
             let cloud = root.findChild('Cloud');
-            cloud.x = dWidth * 0.3;
-            cloud.y = dHeight * 0.4;
+            cloud.x = dWidth * 0.4;
+            cloud.y = dHeight * 0.1;
             cloud.reSortChildren(sw, p.PI + p.QUARTER_PI);
             let AIML = root.findChild('AI/ML');
-            AIML.x = dWidth * 0.4;
+            AIML.x = dWidth * 0.55;
             AIML.y = dHeight * 0.1;
             AIML.reSortChildren(sw);
             let DESVIS = root.findChild('Design/Sim');
-            DESVIS.x = dWidth * 0.15;
-            DESVIS.y = dHeight * 0.2;
-            DESVIS.reSortChildren(root.findChild('Software'), -p.HALF_PI);
-
+            DESVIS.x = dWidth * 0.65;
+            DESVIS.y = dHeight * 0.35;
+            DESVIS.reSortChildren(root.findChild('Software'), p.PI);
             let EB = root.findChild('Embedded');
-            EB.x = dWidth * 0.75;
-            EB.y = dHeight * 0.85;
+            EB.x = dWidth * 0.7;
+            EB.y = dHeight * 0.75;
             EB.reSortChildren(root.findChild('Hardware'));
             let RB = root.findChild('Robots');
-            RB.x = dWidth * 0.3;
-            RB.y = dHeight * 0.75;
-            RB.reSortChildren(root.findChild('Hardware'), -p.PI);
+            RB.x = dWidth * 0.4;
+            RB.y = dHeight * 0.65;
+            RB.reSortChildren(HW);
             let UAS = root.findChild('UAS');
-            UAS.x = dWidth * 0.45;
+            UAS.x = dWidth * 0.5;
             UAS.y = dHeight * 0.85;
             UAS.reSortChildren(RB, p.PI);
             let legged = root.findChild('Legged');
-            legged.x = dWidth * 0.1;
+            legged.x = dWidth * 0.25;
             legged.y = dHeight * 0.65;
             legged.reSortChildren(RB, p.PI);
             let arm = root.findChild('Arms');
-            arm.x = dWidth * 0.15;
+            arm.x = dWidth * 0.35;
             arm.y = dHeight * 0.8;
             arm.reSortChildren(RB, p.PI);
-        }        function addChildren(root, tr, nodeName, childNames) {
+        }
+        function addChildren(root, tr, nodeName, childNames) {
             // let tier = root.tier + 1;
             let tier = tr;
             let res = false;
@@ -172,6 +177,9 @@
         function portrait(root) {
             root.x = 0.5 * dWidth;
             root.y = 0.5 * dHeight;
+            let client = root.findChild('Client');
+            client.x = dWidth * 0.5;
+            client.y = 0;
             let process = root.findChild('Process');
             process.x = dWidth * 0.4;
             process.y = dHeight * 0.75;
@@ -184,7 +192,6 @@
             HW.x = dWidth * 0.75;
             HW.y = dHeight * 0.55;
             HW.reSortChildren();
-
             let lang = root.findChild('Languages');
             lang.x = dWidth * 0.15;
             lang.y = dHeight * 0.75;
@@ -200,8 +207,7 @@
             let DESVIS = root.findChild('Design/Sim');
             DESVIS.x = dWidth * 0.25;
             DESVIS.y = dHeight * 0.2;
-            DESVIS.reSortChildren(root.findChild('Software'));
-
+            DESVIS.reSortChildren(root.findChild('Software'), p.QUARTER_PI);
             let EB = root.findChild('Embedded');
             EB.x = dWidth * 0.6;
             EB.y = dHeight * 0.75;
@@ -228,6 +234,7 @@
                 this.enterAngle = enterAngle;
                 this.tier = tier
             }
+            
             quantise(x, y) {
                 this.x = Math.floor(this.x / (x - 1)) * x;
                 this.y = Math.floor(this.y / (y - 1)) * y;
@@ -286,19 +293,32 @@
                 }
                 return lngst;
             }
-            xStretch(sub, prevRange, border) {
-                // if (this.tier > 1) {
-                let newRange = (dWidth) - 2 * border;
-                this.x = p.map(this.x, sub, prevRange, 0, newRange) + border;
-                // }
+            xStretch(sub, prevRange) {
+                let newRange = dWidth;
+                this.x = p.map(this.x, sub, prevRange, 0, newRange);
+                p.textSize(this.calcTextSize());
+                let tw = p.textWidth(this.title);
+                if ((this.x - tw) < 0) {
+                    this.x = tw/2;
+                }
+                if ((this.x + tw) > dWidth) {
+                    this.x = dWidth - (tw/2 + 2);
+                }
                 for (let child of this.children) {
-                    child.xStretch(sub, prevRange, border);
+                    child.xStretch(sub, prevRange);
                 }
             }
-            yStretch(oldRange, newRange, border) {
-                this.y = p.map(this.y, 0, oldRange, 0, newRange);
+            yStretch(oldSmall, oldRange) {
+                this.y = p.map(this.y, oldSmall, oldRange, 0, dHeight);
+                let ts = this.calcTextSize();
+                if (this.y <= ts) {
+                    this.y = ts + 2;
+                }
+                if ((this.y + ts) > dHeight) {
+                    this.y = dHeight -(ts + 2);
+                }
                 for (let child of this.children) {
-                    child.yStretch(oldRange, newRange, border);
+                    child.yStretch(oldSmall, oldRange);
                 }
             }
             move(x, y) {

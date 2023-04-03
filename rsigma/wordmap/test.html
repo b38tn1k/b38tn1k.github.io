@@ -9,7 +9,9 @@
         var OGlengths = [50, 150, 75, 75, 65];
         var lengths = [50, 150, 75, 75, 65];
         var vectorLengths = [0.05, 0.15, 0.07, 0.07, 0.065];
+        var vectorTS = [0.01, 0.015, 0.008, 0.007, 0.008];
         var baseTextSize = 8;
+        var mapGraphic;
 
         p.setup = function () {
             let myDiv = window.document.getElementById('container');
@@ -41,32 +43,67 @@
         p.windowResized = function () {
             setupScr();
         }
+        // p.draw = function () {
+        //     p.clear();
+        //     p.imageMode(p.CENTER)
+        //     p.image(mapGraphic, p.width / 2, p.height / 2)
+
+        //     const zoomSize = 150
+        //     const zoomAmount = 2
+        //     // If the mouse (mx, my) is on the canvas, draw a zoomed rectangle.
+        //     if (p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+        //         p.fill(p.color('#BFBFBF'));
+        //         p.stroke('#51557a')
+        //         p.strokeWeight(2)
+        //         p.rectMode(p.CENTER)
+        //         p.rect(p.mouseX, p.mouseY, zoomSize * zoomAmount, zoomSize * zoomAmount)
+
+        //         // Make the destination size 2x the source size to zoom in
+        //         p.image(
+        //             mapGraphic,
+        //             p.mouseX, // destination x
+        //             p.mouseY, // destination y
+        //             zoomAmount * zoomSize, // destination width
+        //             zoomAmount * zoomSize, // destination height
+        //             p.mouseX - zoomSize / 2, // source x
+        //             p.mouseY - zoomSize / 2, // source y
+        //             zoomSize, // source width
+        //             zoomSize // source height
+        //         )
+        //     }
+        // }
         function setupScr() {
             let myDiv = window.document.getElementById('container');
             p.createCanvas(myDiv.offsetWidth, myDiv.offsetHeight);
-            dWidth = myDiv.offsetWidth;
-            dHeight = myDiv.offsetHeight;
+            dWidth = p.width;
+            dHeight = p.height;
             // console.log(dWidth, dHeight);
             p.textFont('Georgia');
             p.textAlign(p.CENTER, p.CENTER);
             p.rectMode(p.CENTER);
             baseTextSize = p.max(7, p.min(12, 0.006246376811594203 * dWidth));
-            console.log(baseTextSize);
             p.textSize(baseTextSize);
             for (let i = 0; i < vectorLengths.length; i++) {
                 lengths[i] = p.min(OGlengths[i], dWidth * vectorLengths[i]);
             }
             // p.background(255, 40, 230);
             tidy(root);
+            mapGraphic = p.createGraphics(p.width, p.height);
+            mapGraphic.textFont('Georgia');
+            mapGraphic.textAlign(p.CENTER, p.CENTER);
+            mapGraphic.rectMode(p.CENTER);
+            mapGraphic.textSize(baseTextSize);
             root.draw();
+            p.imageMode(p.CENTER)
+            p.image(mapGraphic, p.width / 2, p.height / 2)
         }
         function tidy(root) {
             let ratio = dWidth / dHeight;
             // console.log(ratio);
-            if (ratio > 16 / 9) {
-                portrait(root);
+            if (ratio > 4 / 3) {
+                desktop(root);
             } else {
-                landscape(root);
+                mobile(root);
             }            // FIT
             let border = 30;
             smol = root.findSmallest();
@@ -76,12 +113,15 @@
             root.xStretch(smol[0], larg[0]);
             root.yStretch(smol[1], larg[1]);
         }
-        function landscape(root) {
-            root.x = 0.15 * dWidth;
-            root.y = 0.2 * dHeight;
+
+        function mobile(root) {
+            baseTextSize = 5;
             let client = root.findChild('Client');
-            client.x = dWidth * 0.15;
+            p.textSize(root.calcTextSize());
+            client.x = 0;
             client.y = 0;
+            root.x = 1.5 * p.textWidth(' Client ');
+            root.y = 0;
             let process = root.findChild('Process');
             process.x = dWidth * 0.1;
             process.y = dHeight * 0.4;
@@ -174,7 +214,8 @@
             }
             return res;
         }
-        function portrait(root) {
+        function desktop(root) {
+            baseTextSize = 8;
             root.x = 0.5 * dWidth;
             root.y = 0.5 * dHeight;
             let client = root.findChild('Client');
@@ -234,7 +275,7 @@
                 this.enterAngle = enterAngle;
                 this.tier = tier
             }
-            
+
             quantise(x, y) {
                 this.x = Math.floor(this.x / (x - 1)) * x;
                 this.y = Math.floor(this.y / (y - 1)) * y;
@@ -278,7 +319,7 @@
                         return temp;
                     }
                 }
-            }            findLongest() {
+            } findLongest() {
                 let lngst = this.title;
                 p.textSize(this.calcTextSize());
                 let lengthOflngst = p.textWidth(this.title);
@@ -299,10 +340,10 @@
                 p.textSize(this.calcTextSize());
                 let tw = p.textWidth(this.title);
                 if ((this.x - tw) < 0) {
-                    this.x = tw/2;
+                    this.x = tw / 2;
                 }
                 if ((this.x + tw) > dWidth) {
-                    this.x = dWidth - (tw/2 + 2);
+                    this.x = dWidth - (tw / 2 + 2);
                 }
                 for (let child of this.children) {
                     child.xStretch(sub, prevRange);
@@ -315,7 +356,7 @@
                     this.y = ts + 2;
                 }
                 if ((this.y + ts) > dHeight) {
-                    this.y = dHeight -(ts + 2);
+                    this.y = dHeight - (ts + 2);
                 }
                 for (let child of this.children) {
                     child.yStretch(oldSmall, oldRange);
@@ -355,18 +396,18 @@
                 return res;
             }
             drawGraphics() {
-                p.fill(0);
-                p.stroke(0);
-                p.strokeWeight(p.max(1, 4 - this.tier));
-                p.circle(this.x, this.y, nodeSize);
+                mapGraphic.fill(0);
+                mapGraphic.stroke(0);
+                mapGraphic.strokeWeight(p.max(1, 4 - this.tier));
+                mapGraphic.circle(this.x, this.y, nodeSize);
                 // let x2, y2;
                 // x2 = this.x + 20 * Math.cos(this.enterAngle - p.HALF_PI);
                 // y2 = this.y + 20 * Math.sin(this.enterAngle - p.HALF_PI);
                 // p.line(this.x, this.y, x2, y2);
-                p.strokeWeight(1);
+                mapGraphic.strokeWeight(1);
                 for (let child of this.children) {
                     // p.strokeWeight(p.max(1, 4 - child.tier));
-                    p.line(this.x, this.y, child.x, child.y);
+                    mapGraphic.line(this.x, this.y, child.x, child.y);
                     child.drawGraphics();
                 }
             }
@@ -378,14 +419,17 @@
                 if (this.tier <= 2) {
                     ts += 1;
                 }
+                // console.log(this.tier, ts, ts/dWidth);
+                // let ts = vectorTS[this.tier] * dWidth;
                 return ts;
             }
             drawText() {
                 for (let child of this.children) {
                     child.drawText();
                 }
-                p.noStroke();
-                p.fill(50);
+                mapGraphic.noStroke();
+                mapGraphic.fill(50);
+                mapGraphic.textSize(this.calcTextSize());
                 p.textSize(this.calcTextSize());
                 let ypos;
                 // if (this.tier <=2) {
@@ -393,22 +437,22 @@
                 // } else {
                 //     ypos = this.y - p.textSize();
                 // }
-                p.rect(this.x, ypos, p.textWidth(this.title) * 1.1, p.textSize() * 1.1);
-                p.fill(255);
+                mapGraphic.rect(this.x, ypos, p.textWidth(this.title) * 1.1, p.textSize() * 1.1);
+                mapGraphic.fill(255);
                 switch (this.tier) {
                     case 0:
-                        p.fill(255);
+                        mapGraphic.fill(255);
                         break;
                     case 1:
-                        p.fill(245);
+                        mapGraphic.fill(245);
                         break;
                     case 2:
-                        p.fill(240);
+                        mapGraphic.fill(240);
                         break;
                     default:
-                        p.fill(235);
+                        mapGraphic.fill(235);
                 }
-                p.text(this.title, this.x, ypos);
+                mapGraphic.text(this.title, this.x, ypos);
 
             }
             draw() {

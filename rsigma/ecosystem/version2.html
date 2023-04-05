@@ -1,0 +1,101 @@
+<style>
+    body{
+        background-color:black;
+    }
+    
+</style>
+
+<div id='wwdcontainer' style='width:100%; height:200px; padding:0px;'></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+<script>
+    let sketch = function (p) {
+        var myTextSize = 18;
+        var XDIM, YDIM;
+        p.setup = function () {
+            setupScr();
+        }
+        p.windowResized = function () {
+            setupScr();
+        }
+        function setupScr() {
+            
+            let myDiv = window.document.getElementById('wwdcontainer');
+            p.createCanvas(myDiv.offsetWidth, myDiv.offsetHeight);
+            dWidth = myDiv.offsetWidth;
+            myTextSize = p.min(dWidth/50, 18);
+            dHeight = myDiv.offsetHeight;
+            XDIM = dWidth;
+            YDIM = dHeight; // incase I wanna rotate later
+            p.textFont('Georgia');
+            p.textAlign(p.CENTER, p.CENTER);
+            p.rectMode(p.CENTER);
+            var root = new Node(0.5, 0.15, 'Client');
+            root.addChild(new Node(0.5, 0.4, 'R Sigma'));
+            var ecosystem = ['Integrators', 'Suppliers', 'SMEs', 'OEMs'];
+            let interval = 1 / (ecosystem.length + 1);
+            let x = interval;
+            for (let i of ecosystem) {
+                root.children[0].addChild(new Node(x, 0.9, i));
+                x += interval;
+            }
+            root.draw(true);
+        }
+        class Node {
+            constructor(x, y, title, tier = 0) {
+                this.x = x;
+                this.y = y;
+                this.title = title;
+                this.children = [];
+                this.tier = tier
+                this.childTrunk = this.y;
+                this.parentTrunk = this.y;
+            }
+            addChild(node) {
+                this.childTrunk = (this.y + node.y) / 2;
+                node.parentTrunk = this.childTrunk;
+                this.children.push(node);
+            }
+            drawGraphics(root = false) {
+                p.fill(0);
+                p.stroke(255);
+                p.strokeWeight(1);
+                let offs = 0.6 * myTextSize;
+                if (this.children.length == 0) {
+                    p.line(this.x * XDIM, this.y * YDIM, this.x * XDIM, this.childTrunk * YDIM);
+                } else {
+                    p.line(this.x * XDIM, this.y * YDIM + offs, this.x * XDIM, this.childTrunk * YDIM);
+                }
+                if (root == false) {
+                    p.line(this.x * XDIM, this.y * YDIM - offs, this.x * XDIM, this.parentTrunk * YDIM);
+                }
+                if (this.children.length > 0) {
+                    let lc = this.children[this.children.length - 1];
+                    let fc = this.children[0];
+                    p.line(fc.x * XDIM, fc.parentTrunk * YDIM, lc.x * XDIM, lc.parentTrunk * YDIM);
+                    for (let child of this.children) {
+                        child.drawGraphics();
+                    }
+                }
+            }
+            drawText() {
+                for (let child of this.children) {
+                    child.drawText();
+                }
+                p.noFill();
+                p.stroke(255);
+                p.textSize(myTextSize);
+                let ypos = this.y * YDIM;
+                let xpos = this.x * XDIM;
+                p.rect(xpos, ypos, p.textWidth(this.title) * 1.2, p.textSize() * 1.2);
+                p.noStroke();
+                p.fill(255);
+                p.text(this.title, xpos, ypos);
+            }
+            draw(root = false) {
+                this.drawGraphics(root);
+                this.drawText();
+            }
+        }
+    };
+    new p5(sketch, 'wwdcontainer');
+</script>

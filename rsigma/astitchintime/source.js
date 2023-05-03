@@ -102,6 +102,42 @@ function drawLightbulb(x, y, w, h, on=true) {
   rect(x - baseWidth / 2, y + bulbHeight / 2, baseWidth, baseHeight);
 }
 
+function drawMonitor(xCenter, yCenter, w, h) {
+  // calculate some dimensions
+  const monitorPadding = w * 0.05;
+  const screenPadding = w * 0.1;
+  const screenBorder = w * 0.02;
+  const screenWidth = w - screenPadding * 2;
+  const screenHeight = h - screenPadding * 2;
+  
+  // draw the monitor body
+  fill(50);
+  stroke(0);
+  strokeWeight(2);
+  rectMode(CENTER);
+  rect(xCenter, yCenter, w, h);
+  
+  // draw the monitor screen
+  fill('red');
+  noStroke();
+  rect(xCenter, yCenter, screenWidth, screenHeight);
+  
+  // draw the screen border
+  stroke(255, 0, 0);
+  strokeWeight(screenBorder);
+  noFill();
+  rect(xCenter, yCenter, screenWidth, screenHeight);
+  
+  // draw the monitor stand
+  fill(50);
+  stroke(0);
+  strokeWeight(2);
+  rect(xCenter, yCenter + h/2 + h/8, w/3, h/4);
+  rect(xCenter, yCenter + h/2 + h/16, w/3, h/8);
+  rectMode(CORNER);
+}
+
+
 let boxSize;
 let scrollSpeed;
 let currentY;
@@ -137,11 +173,46 @@ function draw() {
   drawCamera(width*0.3, height*0.25, -width*0.15, width*0.1)
   drawLightbulb(width*0.2, height*0.15, width*0.05, width*0.05, !lightOn);
 
+  let x1 = width*0.3 + boxSize;
+  let y1 = height*0.25 + width*0.05 - boxSize/2;
+  let x2 = width*0.7-boxSize;
+  let y2 = height*0.25 + width*0.05 - boxSize/2;
+
+  let xe1 = width*0.5;
+  let ye1 = height*0.75;
+  let xe2 = width*0.5;
+  let ye2 = height*0.75;
+
+  noFill();
+
+  // first line
+  beginShape();
+  vertex(x1, y1);
+  curveVertex(x1, y1);
+  curveVertex(x1, (y1 + ye1) / 2);
+  curveVertex(xe1, (y1 + ye1) / 2);
+  curveVertex(xe1, ye1);
+  vertex(xe1, ye1);
+  endShape();
+
+  // second line
+  beginShape();
+  vertex(x2, y2);
+  curveVertex(x2, y2);
+  curveVertex(x2, (y2 + ye2) / 2);
+  curveVertex(xe2, (y2 + ye2) / 2);
+  curveVertex(xe2, ye2);
+  vertex(xe2, ye2);
+  endShape();
+  
+  x1 -= boxSize;
   fill(lightOn ? "black" : "red");
-  rect(width*0.3, height*0.25 + width*0.05 - boxSize/2, boxSize, boxSize);
+  rect(x1, y1, boxSize, boxSize);
 
   fill(lightOn ? "red" : "black");
-  rect(width*0.7-boxSize, height*0.25 + width*0.05 - boxSize/2, boxSize, boxSize);
+  rect(x2, y2, boxSize, boxSize);
+
+  drawMonitor(xe2, ye2, width * 0.15, width * 0.15);
 
 
   // loop through and draw the boxes
@@ -162,3 +233,8 @@ function draw() {
   }
 
 }
+
+
+
+
+{/* <iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:1000px; overflow: hidden;"  scrolling="no" src="https://b38tn1k.com/rsigma/astitchintime/"></iframe> */}

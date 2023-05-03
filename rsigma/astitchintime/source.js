@@ -165,18 +165,19 @@ function toggleLight() {
 
 
 function draw() {
-  drawLightbulb(width*0.8, height*0.15, width*0.05, width*0.05, lightOn);
-  drawCamera(width*0.7, height*0.25, width*0.15, width*0.1);
-  drawLightbulb(width*0.8, height*0.25 + width*0.1 + height * 0.1, width*0.05, width*0.05, lightOn);
+  clear();
+  drawLightbulb(width*0.8, 9.5 * boxSize, width*0.05, width*0.05, lightOn);
+  drawCamera(width*0.7, 5.5 * boxSize, width*0.15, width*0.1);
+  drawLightbulb(width*0.8, 3 * boxSize, width*0.05, width*0.05, lightOn);
 
-  drawLightbulb(width*0.2, height*0.25 + width*0.1 + height * 0.1, width*0.05, width*0.05, !lightOn);
-  drawCamera(width*0.3, height*0.25, -width*0.15, width*0.1)
-  drawLightbulb(width*0.2, height*0.15, width*0.05, width*0.05, !lightOn);
+  drawLightbulb(width*0.2, 9.5 * boxSize, width*0.05, width*0.05, !lightOn);
+  drawCamera(width*0.3, 5.5 * boxSize, -width*0.15, width*0.1)
+  drawLightbulb(width*0.2, 3 * boxSize, width*0.05, width*0.05, !lightOn);
 
   let x1 = width*0.3 + boxSize;
-  let y1 = height*0.25 + width*0.05 - boxSize/2;
+  let y1 = 5.5 * boxSize + width*0.05 - boxSize/2;
   let x2 = width*0.7-boxSize;
-  let y2 = height*0.25 + width*0.05 - boxSize/2;
+  let y2 = 5.5 * boxSize + width*0.05 - boxSize/2;
 
   let xe1 = width*0.5;
   let ye1 = height*0.75;

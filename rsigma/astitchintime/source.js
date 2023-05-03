@@ -137,6 +137,12 @@ function draw() {
   drawCamera(width*0.3, height*0.25, -width*0.15, width*0.1)
   drawLightbulb(width*0.2, height*0.15, width*0.05, width*0.05, !lightOn);
 
+  fill(lightOn ? "black" : "red");
+  rect(width*0.3, height*0.25 + width*0.05 - boxSize/2, boxSize, boxSize);
+
+  fill(lightOn ? "red" : "black");
+  rect(width*0.7-boxSize, height*0.25 + width*0.05 - boxSize/2, boxSize, boxSize);
+
 
   // loop through and draw the boxes
   for (let i = 0; i < boxes.length; i++) {

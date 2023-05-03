@@ -171,7 +171,7 @@ function draw() {
   clear();
   drawLightbulb(width - 3.5 * boxSize, 9 * boxSize, boxSize, boxSize, lightOn);
   drawCamera(width - 3.5 * boxSize, 5 * boxSize, 2*boxSize, 2*boxSize);
-  drawLightbulb(width - 3.5 * boxSize, 3 * boxSize, width*0.05, width*0.05, lightOn);
+  drawLightbulb(width - 3.5 * boxSize, 3 * boxSize, boxSize, boxSize, lightOn);
 
   drawLightbulb(3.5 * boxSize, 9 * boxSize, boxSize, boxSize, !lightOn);
   drawCamera(3.5 * boxSize, 5 * boxSize, -2*boxSize, 2*boxSize);

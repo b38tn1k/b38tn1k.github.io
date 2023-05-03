@@ -37,6 +37,16 @@ function setupScreen() {
   createCanvas(windowWidth, windowHeight);
   widthOnTwo = windowWidth / 2;
   heightOnTwo = windowHeight / 2;
+  lightOn = false;
+  boxes = [];
+  FPS = 15;
+  boxSize = height * 0.05;
+  currentY = boxSize;
+  scrollSpeed = boxSize / FPS;
+  currentY = boxSize;
+  for (let i = 0; i < height/boxSize + 1; i++) {
+    boxes.push((i % 2 == 0) ? "black" : "red");
+  }
 }
 
 
@@ -146,17 +156,10 @@ let boxes = [];
 let FPS = 15;
 
 function setup() {
-  setupScreen();
+  
   frameRate(FPS);
   setInterval(toggleLight, 1000);
-  boxSize = height * 0.05;
-  currentY = boxSize;
-  scrollSpeed = boxSize / FPS;
-  currentY = boxSize;
-  for (let i = 0; i < height/boxSize + 1; i++) {
-    boxes.push((i % 2 == 0) ? "black" : "red");
-  }
-  
+  setupScreen();
 }
 
 function toggleLight() {

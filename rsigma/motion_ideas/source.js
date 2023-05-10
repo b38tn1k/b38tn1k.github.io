@@ -212,10 +212,12 @@ function drawHead(x, y, w, h) {
 
 function draw() {
   clear();
+  
   let monitorX = min(height, width) * 0.1;
   let monitorDims = min(height, width) * 0.15;
   for (let i = 0.25; i < 1.0; i += 0.25) {
     drawMonitor(monitorX, i * height, monitorDims, monitorDims, "grey");
+    noStroke();
     drawSpar(0.2 * width, 0.95 * width, i * height, monitorDims);
   }
 
@@ -262,4 +264,4 @@ function draw() {
 
 
 
-{/* <iframe class='embeddedblocks' style="width:100%; zoom:1.0; height:1000px; overflow: hidden;"  scrolling="no" src="https://b38tn1k.com/rsigma/astitchintime/"></iframe> */ }
+{/* <iframe style="width:100%; zoom:1.0; height:1000px; overflow: hidden;"  scrolling="no" src="https://b38tn1k.com/rsigma/motion_ideas/"></iframe> */}

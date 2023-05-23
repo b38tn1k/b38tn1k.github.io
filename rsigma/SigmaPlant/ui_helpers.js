@@ -15,8 +15,8 @@ function getColor(field) {
 // mouseXBoard = boardMouse.x;
 // mouseYBoard = boardMouse.y;
 function screenToBoard(x, y) {
-  let boardX = (x - width / 2) / zoom + scrollX;
-  let boardY = (y - height / 2) / zoom + scrollY;
+  let boardX = (x - width / 2) / zoom + scrollX ;//+ width/2;
+  let boardY = (y - height / 2) / zoom + scrollY;// + height/2;
   return createVector(boardX, boardY);
 }
 
@@ -65,12 +65,17 @@ function setupMenu(){
   menu = new CircularMenu();
   let buttons = []
   for (let theme in themes) {
-    buttons.push(new Button(theme, 0, 0, () => COLOR_THEME = theme, 1));
+    buttons.push(new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
   }
   menu.newSubMenu(buttons, 'themes');
-  menu.addButton('New Station', () => console.log('New Station Action'));
+  menu.addButton('New Station', newStation);
   menu.addButton('Save', () => console.log('Save Action'));
   menu.addButton('Close', () => menu.dismiss());
   menu.addButton('Select Theme', () => menu.activateSubMenu('themes'));
-  
+}
+
+function newStation() {
+  const pos = screenToBoard(mouseX, mouseY);
+  menu.dismiss();
+  stations.push(new Station(pos.x + width/2, pos.y + height/2));
 }

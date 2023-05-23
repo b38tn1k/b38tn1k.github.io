@@ -1,4 +1,4 @@
-class Button {
+class MenuButton {
     constructor(label, x, y, action, level = 0) {
         this.label = label;
         this.x = x;
@@ -19,7 +19,6 @@ class Button {
         }
         stroke(getColor("outline"));
         ellipse(this.x, this.y, this.buttonRadius * 2, this.buttonRadius * 2);
-
         fill(getColor("text"));
         noStroke();
         textAlign(CENTER, CENTER);
@@ -83,7 +82,7 @@ class CircularMenu {
     }
 
     addButton(label, action) {
-        const button = new Button(label, 0, 0, action);
+        const button = new MenuButton(label, 0, 0, action);
         this.buttons.push(button);
         return button;
     }

@@ -31,7 +31,7 @@ function setupScreen() {
 
 function mouseWheel(event) {
   zoom -= event.deltaY * 0.001;
-  zoom = constrain(zoom, 0.5, 4);
+  zoom = constrain(zoom, 0.25, 4);
   fpsEvent();
 }
 
@@ -51,8 +51,12 @@ function draw() {
   scrollBoard();
   drawGrid();
 
+  for (let i = 0; i < stations.length; i++) {
+    stations[i].display(scrollX, scrollY);
+  }
+
   if (menu.isActive) {
-    menu.display();
+    menu.display(); // next do updates for buttons coords and stuff
   }
 
 }

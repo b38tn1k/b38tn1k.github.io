@@ -13,3 +13,5 @@ let inputTimeout = 1000;
 
 let menu;
 
+let stations = [];
+

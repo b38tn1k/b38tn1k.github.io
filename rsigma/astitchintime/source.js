@@ -45,7 +45,7 @@ function setupScreen() {
   scrollSpeed = boxSize / FPS;
   currentY = boxSize;
   for (let i = 0; i < height/boxSize + 1; i++) {
-    boxes.push((i % 2 == 0) ? "black" : "red");
+    boxes.push((i % 2 == 0) ? "yellow" : "red");
   }
 }
 
@@ -112,7 +112,7 @@ function drawLightbulb(x, y, w, h, on=true) {
   rect(x - baseWidth / 2, y + bulbHeight / 2, baseWidth, baseHeight);
 }
 
-function drawMonitor(xCenter, yCenter, w, h) {
+function drawMonitor(xCenter, yCenter, w, h, screen_fill='red') {
   // calculate some dimensions
   const monitorPadding = w * 0.05;
   const screenPadding = w * 0.1;
@@ -128,12 +128,12 @@ function drawMonitor(xCenter, yCenter, w, h) {
   rect(xCenter, yCenter, w, h);
   
   // draw the monitor screen
-  fill('red');
+  fill(screen_fill);
   noStroke();
   rect(xCenter, yCenter, screenWidth, screenHeight);
   
   // draw the screen border
-  stroke(255, 0, 0);
+  stroke(screen_fill);
   strokeWeight(screenBorder);
   noFill();
   rect(xCenter, yCenter, screenWidth, screenHeight);
@@ -170,11 +170,11 @@ function toggleLight() {
 function draw() {
   clear();
   drawLightbulb(width - 3.5 * boxSize, 9 * boxSize, boxSize, boxSize, lightOn);
-  drawCamera(width - 3.5 * boxSize, 5 * boxSize, 2*boxSize, 2*boxSize);
+  drawCamera(width - 3.5 * boxSize, 5 * boxSize, 2*boxSize, 3*boxSize);
   drawLightbulb(width - 3.5 * boxSize, 3 * boxSize, boxSize, boxSize, lightOn);
 
   drawLightbulb(3.5 * boxSize, 9 * boxSize, boxSize, boxSize, !lightOn);
-  drawCamera(3.5 * boxSize, 5 * boxSize, -2*boxSize, 2*boxSize);
+  drawCamera(3.5 * boxSize, 5 * boxSize, -2*boxSize, 3*boxSize);
   drawLightbulb(3.5 * boxSize, 3 * boxSize, boxSize, boxSize, !lightOn);
 
   let x1 = 5*boxSize;
@@ -210,29 +210,32 @@ function draw() {
   endShape();
   
   x1 -= boxSize;
-  fill(lightOn ? "black" : "red");
+  fill(lightOn ? "yellow" : "red");
   rect(x1, y1, boxSize, boxSize);
 
-  fill(lightOn ? "red" : "black");
+  fill(lightOn ? "red" : "yellow");
   rect(x2, y2, boxSize, boxSize);
 
-  drawMonitor(xe2, ye2, width * 0.15, width * 0.15);
+  drawMonitor(xe2, ye2, width * 0.15, width * 0.15, lightOn ? "red" : "yellow");
 
 
   // loop through and draw the boxes
   for (let i = 0; i < boxes.length; i++) {
     fill(boxes[i]);
     rect(0, i * boxSize - currentY, boxSize, boxSize);
-    fill(boxes[i] == "black" ? "red" : "black");
+    // fill(boxes[i] == "yellow" ? "red" : "yellow");
     rect(width-boxSize, i * boxSize - currentY, boxSize, boxSize);
   }
 
   // update the scroll position
-  currentY += scrollSpeed;
+  // currentY += scrollSpeed;
+  if (second() % 2 == 1) { // check if current second is odd
+    currentY += scrollSpeed; // update currentY only if second is odd
+  }
 
   if (currentY >= boxSize) {
     boxes.shift();
-    boxes.push((boxes[boxes.length - 1] == "black") ? "red" : "black");
+    boxes.push((boxes[boxes.length - 1] == "yellow") ? "red" : "yellow");
     currentY -= boxSize;
   }
 

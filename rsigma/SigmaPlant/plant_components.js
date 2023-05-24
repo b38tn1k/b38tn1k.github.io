@@ -1,83 +1,51 @@
-class PlantButton {
-    constructor(label, x, y, size, action) {
-        this.label = label;
-        this.x = x;
-        this.y = y;
-        this.action = action;
-        this.buttonSize = size;
-        this.bsOn2 = size / 2;
-        this.offX = (x == 1);
-        this.offY = (y == 1);
-    }
-
-    update(zoom) {
-        this.oSBs = this.buttonSize * zoom;
-        this.oSBsOn2 = this.oSBs / 2;
-    }
-
-    display(x, y, w, h, zoom) {
-        fill(getColor("secondary"));
-        stroke(getColor("outline"));
-        let xa = x + this.x * w;
-        let ya = y + this.y * h;
-        if (this.offY === true) {
-            ya -= this.oSBs;
-        }
-        if (this.offX === true) {
-            xa -= this.oSBs;
-        }
-        square(xa, ya, this.oSBs);
-        if (zoom > 0.7) {
-            fill(getColor("text"));
-            noStroke();
-            textAlign(CENTER, CENTER);
-            text(this.label, xa + this.oSBsOn2, ya + this.oSBsOn2);
-        }
-    }
-
-    checkMouseClick(x, y, w, h) {
-        let xa = x + this.x * w;
-        let ya = y + this.y * h;
-        if (this.offY === true) {
-            ya -= this.oSBs;
-        }
-        if (this.offX === true) {
-            xa -= this.oSBs;
-        }
-        const clickX = xa + this.oSBsOn2;
-        const clickY = ya + this.oSBsOn2;
-        if (dist(mouseX, mouseY, clickX, clickY) < this.oSBs) {
-            this.action();
-        }
-    }
-}
-
 class Station {
     constructor(x, y, w = 400, h = 280) {
         this.x = x;
         this.y = y;
         this.width = w;
         this.height = h;
-        this.mode = null;
+        this.mode = 'idle';
 
         // Create buttons
         this.buttons = [];
-        this.initButtons();
-
+        this.initButtons(20);
+        // Create data labels
+        this.dataLabels = [];
+        this.initDataLabels(20);
     }
 
-    initButtons() {
-        const buttonSize = 20;
-        this.buttons.push(new PlantButton('M', 0, 0, buttonSize, () => this.setMode('move'))); // top left
-        this.buttons.push(new PlantButton('X', 1, 0, buttonSize, () => this.setMode('delete'))); // top right
-        this.buttons.push(new PlantButton('E', 0, 1, buttonSize, () => this.setMode('edit'))); // bottom left
-        this.buttons.push(new PlantButton('I', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
-        this.buttons.push(new PlantButton('O', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
+    initDataLabels() {
+        
+    }
+
+    initButtons(buttonSize) {
+        this.buttons.push(new PlantUIButton('M', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButton('X', 1, 0, buttonSize, () => this.setMode('delete'))); // top right
+        // this.buttons.push(new PlantUIButton('E', 0, 1, buttonSize, () => this.setMode('edit'))); // bottom left
+        this.buttons.push(new PlantUIButton('I', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
+        this.buttons.push(new PlantUIButton('O', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
     }
 
     setMode(mode) {
         this.mode = mode;
         console.log(mode);
+    }
+
+    moveToMouse() {
+        let mob = screenToBoard(mouseX, mouseY);
+        this.x = mob.x;
+        this.y = mob.y;
+    }
+
+    resizeToMouse() {
+        let mob = screenToBoard(mouseX, mouseY);
+        let pWidth = mob.x - this.x;
+        let pHeight = mob.y - this.y;
+        if (pWidth > 50 && pHeight > 50) {
+            this.width = pWidth;
+            this.height = pHeight;
+        }
+
     }
 
     update(zoom) {
@@ -88,9 +56,24 @@ class Station {
         for (let button of this.buttons) {
             button.update(zoom);
         }
+        // yucky work around to closing mode from dialog boxes
+        let counter = 0;
+        for (let label of this.dataLabels){
+            if (label.mode != 'idle') {
+                this.mode = label.mode;
+            } else {
+                counter ++;
+            }
+        }
+        if (counter == this.dataLabels.length) {
+            this.mode = 'idle';
+        }
 
         switch (this.mode) {
             case 'move':
+                if (mouseIsPressed == false) {
+                    this.setMode('idle');
+                }
                 break;
             case 'delete':
                 break;
@@ -101,9 +84,8 @@ class Station {
             case 'o_connect':
                 break;
             case 'resize':
-                print('resize');
                 if (mouseIsPressed == false) {
-                    this.mode = 'null';
+                    this.setMode('idle');
                 }
                 break;
         }
@@ -114,11 +96,20 @@ class Station {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+        this.drawButtonsAndLabels();
 
+        
+    }
+
+    drawButtonsAndLabels() {
         // Draw buttons
         for (let button of this.buttons) {
             // Convert button position to screen coordinates
             button.display(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, zoom);
+        }
+        // Draw data labels
+        for (let label of this.dataLabels) {
+            label.display(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, this.buttons[0].oSBs, zoom);
         }
     }
 
@@ -126,6 +117,10 @@ class Station {
         if (mouseButton === LEFT) {
             for (let button of this.buttons) {
                 button.checkMouseClick(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+            }
+            // Handle data label click checks
+            for (let label of this.dataLabels) {
+                label.checkMouseClick(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, this.buttons[0].oSBs);
             }
         }
     }
@@ -136,13 +131,15 @@ class Zone extends Station {
         super(x, y, width, height); // Call the parent constructor
     }
 
-    initButtons() {
-        // Overwrite the parent's initButtons method
-        let buttonSize = 20; // Update this as needed
-        this.buttons.push(new PlantButton('M', 0, 0, buttonSize, () => this.setMode('move'))); // top left
-        this.buttons.push(new PlantButton('X', 1, 0, buttonSize, () => this.setMode('delete'))); // top right
-        this.buttons.push(new PlantButton('E', 0, 1, buttonSize, () => this.setMode('edit'))); // bottom left
-        this.buttons.push(new PlantButton('R', 1, 1, buttonSize, () => this.setMode('resize')));
+    initButtons(buttonSize) {
+        this.buttons.push(new PlantUIButton('M', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButton('X', 1, 0, buttonSize, () => this.setMode('delete'))); // top right
+        // this.buttons.push(new PlantUIButton('E', 0, 1, buttonSize, () => this.setMode('edit'))); // bottom left
+        this.buttons.push(new PlantUIButton('R', 1, 1, buttonSize, () => this.setMode('resize')));
+    }
+
+    initDataLabels(buttonSize) {
+        this.dataLabels.push(new PlantDataTextLabel(0, 0, 'ZONE NAME', buttonSize, openDialog));
     }
 
     display(zoom) {
@@ -151,11 +148,8 @@ class Zone extends Station {
         stroke(getColor("accent"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
 
-        // Draw buttons
-        for (let button of this.buttons) {
-            // Convert button position to screen coordinates
-            button.display(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, zoom);
-        }
+        this.drawButtonsAndLabels();
+
     }
 }
 
@@ -177,31 +171,58 @@ class Plant {
     handleMousePress() {
         for (let i = 0; i < this.features.length; i++) {
             this.features[i].handleMousePress();
-          }
+        }
 
     }
 
     update(zoom) {
+        this.mode = 'idle';
+        let activeFeature;
         for (let i = 0; i < this.features.length; i++) {
             let feature = this.features[i];
-
             // Check for non-null mode
-            if (feature.mode !== null) {
+            if (feature.mode !== 'idle') {
                 this.mode = feature.mode;
+                activeFeature = feature;
             }
-
             // Check for delete mode
             if (feature.mode === 'delete') {
                 this.features.splice(i, 1); // Remove the feature from the array
                 //   delete feature; // Delete the feature
+                activeFeature = null;
                 i--; // Adjust the index after removal
-                this.mode = null;
             } else {
                 // Update and display feature
                 feature.update(zoom);
                 feature.display(zoom);
             }
         }
-        this.isActive = this.mode != null;
+        this.isActive = this.mode !== 'idle';
+        if (this.isActive == true) {
+            switch (this.mode) {
+                case 'delete':
+                    this.mode = 'idle';
+                    break;
+                case 'edit':
+                    this.mode = 'idle';
+                    break;
+                case 'move':
+                    activeFeature.moveToMouse();
+                    break;
+                case 'resize':
+                    activeFeature.resizeToMouse();
+                    break;
+                case 'i_connect':
+                    this.mode = 'idle';
+                    break;
+                case 'o_connect':
+                    this.mode = 'idle';
+                    break;
+                default:
+                    this.mode = 'idle';
+                    break;
+            }
+
+        }
     }
 }

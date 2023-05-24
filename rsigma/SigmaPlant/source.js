@@ -7,6 +7,7 @@ function windowResized() {
 }
 
 function mousePressed() {
+  fpsEvent();
   if (mouseButton === RIGHT) {
     menu.activate();
     menu.setPosition(mouseX, mouseY);
@@ -37,9 +38,11 @@ function setupScreen() {
 }
 
 function mouseWheel(event) {
-  zoom -= event.deltaY * 0.001;
-  zoom = constrain(zoom, 0.25, 1);
-  fpsEvent();
+  if (menu.isActive == false && plant.isActive == false) {
+    zoom -= event.deltaY * 0.001;
+    zoom = constrain(zoom, 0.2, 2);
+    fpsEvent();
+  }
 }
 
 function setup() {
@@ -49,6 +52,7 @@ function setup() {
 }
 
 function draw() {
+  textSize(myTextSize);
   if (millis() - lastInputTime > inputTimeout) {
     frameRate(lowFrameRate);
   } else {

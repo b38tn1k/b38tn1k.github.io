@@ -9,12 +9,18 @@ class MenuButton {
         this.numEdges = 5;
         this.isAnimating = false;
         this.animationCountDown = 0.0;
+        this.resetAnimation();
     }
 
     resetAnimation() {
-        // this.animationCountDown = 0.0;
-        // this.isAnimating = true;
-        this.animationCountDown = 1;
+        this.animationCountDown = 0.0;
+        this.isAnimating = true;
+        // this.animationCountDown = 1;
+        // this.isAnimating = false;
+    }
+
+    noAnimation () {
+        this.animationCountDown = 1.0;
         this.isAnimating = false;
     }
 
@@ -89,11 +95,20 @@ class SubMenu {
         this.label = label;
     }
 
-    activate() {
-        this.isActive = true;
+    resetAnimation() {
         for (let i = 0; i < this.buttons.length; i++) {
             this.buttons[i].resetAnimation();
         }
+    }
+
+    noAnimation() {
+        for (let i = 0; i < this.buttons.length; i++) {
+            this.buttons[i].noAnimation();
+        }
+    }
+
+    activate() {
+        this.isActive = true;
     }
 
     deactivate() {
@@ -153,10 +168,10 @@ class CircularMenu {
     }
 
     resetAnimation() {
-        // this.animationCountDown = radians(90);
-        // this.isAnimating = true;
-        this.isAnimating = false;
-        this.animationCountDown = 0;
+        this.animationCountDown = radians(90);
+        this.isAnimating = true;
+        // this.isAnimating = false;
+        // this.animationCountDown = 0;
     }
 
     dismiss() {
@@ -206,6 +221,7 @@ class CircularMenu {
         // } else {
             this.activeSubMenu = this.subMenus.find(subMenu => subMenu.label === label);
             if (this.activeSubMenu) {
+                this.activeSubMenu.noAnimation();
                 this.activeSubMenu.activate();
             }
         // }

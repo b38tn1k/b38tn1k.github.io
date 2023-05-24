@@ -31,7 +31,7 @@ function fpsEvent() {
 }
 
 function scrollBoard() {
-  if (mouseIsPressed && !menu.isActive) {
+  if (mouseIsPressed && !menu.isActive && !plant.isActive) {
     scrollX += (pmouseX - mouseX) / zoom;
     scrollY += (pmouseY - mouseY) / zoom;
     fpsEvent();
@@ -48,6 +48,12 @@ function drawGrid() {
   stroke(getColor('gridline'));
   strokeWeight(1);
   let resolution = 50; // Grid resolution
+  if (zoom <= 0.5) {
+    resolution = 100;
+  }
+  if (zoom <= 0.25) {
+    resolution = 200;
+  }
   
   // Convert the screen edges to board coordinates
   let topLeftBoard = screenToBoard(0, 0);
@@ -79,22 +85,18 @@ function setupMenu(){
 
   // Create buttons for each theme group
   let buttons1 = themeGroup1.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
-  buttons1.push(new MenuButton( 'More', 0, 0, () => menu.activateSubMenu('themes2'), 1));
+  buttons1.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes2'), 1));
   let buttons2 = themeGroup2.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
-  buttons2.push(new MenuButton( 'More', 0, 0, () => menu.activateSubMenu('themes3'), 1));
+  buttons2.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes3'), 1));
   let buttons3 = themeGroup3.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
-  buttons3.push(new MenuButton( 'More', 0, 0, () => menu.activateSubMenu('themes1'), 1));
+  buttons3.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes1'), 1));
 
   // Add each theme group as a separate submenu
   menu.newSubMenu(buttons1, 'themes1');
   menu.newSubMenu(buttons2, 'themes2');
   menu.newSubMenu(buttons3, 'themes3');
-
-  // Cycle through the theme groups when the 'Theme' button is clicked
-  let themeGroupIndex = 1;
   menu.addButton('Theme', () => {
-    menu.activateSubMenu('themes' + themeGroupIndex);
-    // themeGroupIndex = themeGroupIndex % 3 + 1;
+    menu.activateSubMenu('themes1');
   });
 
   menu.addButton('New Station', newStation);

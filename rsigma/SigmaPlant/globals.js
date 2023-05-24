@@ -14,6 +14,7 @@ let inputTimeout = 1000;
 
 let menu;
 
-let stations = [];
 let plant;
+let myTextSize = 12;
+
 

@@ -40,8 +40,8 @@ function scrollBoard() {
 
 function drawGrid() {
   stroke(getColor('gridline'));
-  strokeWeight(2);
-  let resolution = 10; // Grid resolution
+  strokeWeight(1);
+  let resolution = 50; // Grid resolution
   
   // Convert the screen edges to board coordinates
   let topLeftBoard = screenToBoard(0, 0);
@@ -70,6 +70,7 @@ function setupMenu(){
   menu.newSubMenu(buttons, 'themes');
   menu.addButton('New Station', newStation);
   menu.addButton('Save', () => console.log('Save Action'));
+  menu.addButton('Load', () => console.log('Load Action'));
   menu.addButton('Close', () => menu.dismiss());
   menu.addButton('Select Theme', () => menu.activateSubMenu('themes'));
 }
@@ -77,5 +78,6 @@ function setupMenu(){
 function newStation() {
   const pos = screenToBoard(mouseX, mouseY);
   menu.dismiss();
-  stations.push(new Station(pos.x + width/2, pos.y + height/2));
+  // stations.push(new Station(pos.x + width/2, pos.y + height/2));
+  stations.push(new Station(pos.x, pos.y));
 }

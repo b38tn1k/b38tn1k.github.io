@@ -121,11 +121,17 @@ class PlantData {
     checkMouseClick(x, y, w, h, border) {
         if (this.mode != 'busy') {
             const [xa, ya] = this.getXaYa(x, y, w, h, border);
-            const centerX = xa + w / 2; // Calculate the X coordinate of the center of the button
-            const centerY = ya + h / 2; // Calculate the Y coordinate of the center of the button
+            textSize((myTextSize * zoom));
+            let wa = textWidth(this.data) * 1.2;
+            if (wa == 0) {
+                wa = this.height;
+            }
+            const centerX = xa + wa / 2; // Calculate the X coordinate of the center of the button
+            const centerY = ya + this.height / 2; // Calculate the Y coordinate of the center of the button
             const distanceX = Math.abs(mouseX - centerX);
             const distanceY = Math.abs(mouseY - centerY);
-            if (distanceX < w / 2 && distanceY < h / 2) {
+            console.log(distanceX, distanceY);
+            if (distanceX < wa / 2 && distanceY < (this.height * zoom) / 2) {
                 this.mode = 'busy';
                 this.action(this, xa, ya);
             }
@@ -146,6 +152,9 @@ class PlantDataTextLabel extends PlantData {
         let [xa, ya] = this.getXaYa(x, y, w, h, border);
         textSize((myTextSize * zoom));
         let wa = textWidth(this.data) * 1.2;
+        if (wa == 0) {
+            wa = this.height;
+        }
         rect(xa, ya, wa, this.height * zoom);
 
         fill(getColor("text"));
@@ -166,7 +175,7 @@ function openDialog(plantData, xa, ya) {
     dialog.style('background-color', getColor('primary'));
 
     // Set the position of the dialog box
-    dialog.position(xa-2, ya-4);
+    dialog.position(xa - 2, ya - 4);
 
     // Set a callback function to update the data field when the user presses Enter
     dialog.changed(() => {
@@ -174,5 +183,28 @@ function openDialog(plantData, xa, ya) {
         plantData.mode = 'idle';
         dialog.remove(); // Remove the dialog box from the DOM
         console.log('hey');
+    });
+
+    // Prevent event propagation within the dialog
+    dialog.mouseClicked((event) => {
+        event.stopPropagation();
+    });
+
+    // Add an event listener to remove the dialog if mouse is pressed outside the dialog box
+    const removeDialog = () => {
+        if (plantData.mode === 'busy') {
+            plantData.mode = 'idle';
+            dialog.remove(); // Remove the dialog box from the DOM
+            console.log('removed');
+            document.removeEventListener('mousedown', removeDialog);
+        }
+    };
+
+    // Add an event listener to dismiss the dialog if mouse is pressed outside the dialog box
+    document.addEventListener('mousedown', removeDialog);
+
+    // Add an event listener to prevent dismissing the dialog if clicking inside the dialog box
+    dialog.elt.addEventListener('mousedown', (event) => {
+        event.stopPropagation();
     });
 }

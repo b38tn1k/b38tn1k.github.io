@@ -193,6 +193,7 @@ function openDialog(plantData, xa, ya) {
     // Add an event listener to remove the dialog if mouse is pressed outside the dialog box
     const removeDialog = () => {
         if (plantData.mode === 'busy') {
+            plantData.data = dialog.value(); // not sure if this is the right UX
             plantData.mode = 'idle';
             dialog.remove(); // Remove the dialog box from the DOM
             console.log('removed');

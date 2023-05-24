@@ -228,6 +228,7 @@ class CircularMenu {
     }
 
     display() {
+        textSize(myTextSize);
         if (this.isAnimating == true) {
             const baseDecrement = radians(9);
             const desiredFrameRate = highFrameRate; // adjust this to the frame rate you designed the animation for

@@ -57,17 +57,17 @@ class Station {
             button.update(zoom);
         }
         // yucky work around to closing mode from dialog boxes
-        let counter = 0;
-        for (let label of this.dataLabels){
-            if (label.mode != 'idle') {
-                this.mode = label.mode;
-            } else {
-                counter ++;
-            }
-        }
-        if (counter == this.dataLabels.length) {
-            this.mode = 'idle';
-        }
+        // let counter = 0;
+        // for (let label of this.dataLabels){
+        //     if (label.mode != 'idle') {
+        //         this.mode = label.mode;
+        //     } else {
+        //         counter ++;
+        //     }
+        // }
+        // if (counter == this.dataLabels.length) {
+        //     this.mode = 'idle';
+        // }
 
         switch (this.mode) {
             case 'move':

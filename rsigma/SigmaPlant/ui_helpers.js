@@ -31,7 +31,7 @@ function fpsEvent() {
 }
 
 function scrollBoard() {
-  if (mouseIsPressed && !mouseHasFocus) {
+  if (mouseIsPressed && !menu.isActive) {
     scrollX += (pmouseX - mouseX) / zoom;
     scrollY += (pmouseY - mouseY) / zoom;
     fpsEvent();
@@ -40,7 +40,7 @@ function scrollBoard() {
 
 function drawGrid() {
   stroke(getColor('gridline'));
-  strokeWeight(1);
+  strokeWeight(2);
   let resolution = 50; // Grid resolution
   
   // Convert the screen edges to board coordinates
@@ -61,19 +61,51 @@ function drawGrid() {
 }
 
 
+// function setupMenu(){
+//   menu = new CircularMenu();
+//   let buttons = []
+//   for (let theme in themes) {
+//     buttons.push(new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+//   }
+//   menu.newSubMenu(buttons, 'themes');
+//   menu.addButton('New Station', newStation);
+//   menu.addButton('Save', () => console.log('Save Action'));
+//   menu.addButton('Load', () => console.log('Load Action'));
+//   menu.addButton('Theme', () => menu.activateSubMenu('themes'));
+// }
+
 function setupMenu(){
   menu = new CircularMenu();
-  let buttons = []
-  for (let theme in themes) {
-    buttons.push(new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
-  }
-  menu.newSubMenu(buttons, 'themes');
+
+  let themesArray = Object.keys(themes);
+
+  // Divide the themes into three groups
+  let themeGroup1 = themesArray.slice(0, themesArray.length / 3);
+  let themeGroup2 = themesArray.slice(themesArray.length / 3, 2 * themesArray.length / 3);
+  let themeGroup3 = themesArray.slice(2 * themesArray.length / 3);
+
+  // Create buttons for each theme group
+  let buttons1 = themeGroup1.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+  let buttons2 = themeGroup2.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+  let buttons3 = themeGroup3.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+
+  // Add each theme group as a separate submenu
+  menu.newSubMenu(buttons1, 'themes1');
+  menu.newSubMenu(buttons2, 'themes2');
+  menu.newSubMenu(buttons3, 'themes3');
+
+  // Cycle through the theme groups when the 'Theme' button is clicked
+  let themeGroupIndex = 1;
+  menu.addButton('Theme', () => {
+    menu.activateSubMenu('themes' + themeGroupIndex);
+    themeGroupIndex = themeGroupIndex % 3 + 1;
+  });
+
   menu.addButton('New Station', newStation);
   menu.addButton('Save', () => console.log('Save Action'));
   menu.addButton('Load', () => console.log('Load Action'));
-  menu.addButton('Close', () => menu.dismiss());
-  menu.addButton('Select Theme', () => menu.activateSubMenu('themes'));
 }
+
 
 function newStation() {
   const pos = screenToBoard(mouseX, mouseY);

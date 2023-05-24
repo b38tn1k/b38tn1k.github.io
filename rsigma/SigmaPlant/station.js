@@ -5,33 +5,48 @@ class StationButton {
         this.y = y;
         this.action = action;
         this.buttonSize = size;
+        this.bsOn2 = size / 2;
         this.offX = (x == 1);
         this.offY = (y == 1);
     }
 
+    update(zoom) {
+        this.oSBs = this.buttonSize * zoom;
+        this.oSBsOn2 = this.oSBs / 2;
+    }
+
     display(x, y, w, h, zoom) {
-        fill(getColor("primary"));
+        fill(getColor("secondary"));
         stroke(getColor("outline"));
-        const bs = this.buttonSize * zoom;
         let xa = x + this.x * w;
         let ya = y + this.y * h;
         if (this.offY === true) {
-            ya -= bs;
+            ya -= this.oSBs;
         }
         if (this.offX === true) {
-            xa -= bs;
+            xa -= this.oSBs;
         }
-        square(xa, ya, bs);
+        square(xa, ya, this.oSBs);
         if (zoom > 0.7) {
             fill(getColor("text"));
             noStroke();
             textAlign(CENTER, CENTER);
-            text(this.label[0], xa + bs/2, ya + bs/2);
+            text(this.label[0], xa + this.oSBsOn2, ya + this.oSBsOn2);
         }
     }
 
-    checkMouseClick() {
-        if (dist(mouseX, mouseY, this.x + bs/2, this.y + bs/2) < this.buttonSize) {
+    checkMouseClick(x, y, w, h) {
+        let xa = x + this.x * w;
+        let ya = y + this.y * h;
+        if (this.offY === true) {
+            ya -= this.oSBs;
+        }
+        if (this.offX === true) {
+            xa -= this.oSBs;
+        }
+        const clickX = xa + this.oSBsOn2;
+        const clickY = ya + this.oSBsOn2;
+        if (dist(mouseX, mouseY, clickX, clickY) < this.oSBs) {
             this.action();
         }
     }
@@ -50,37 +65,43 @@ class Station {
         const buttonSize = 20;
         this.buttons.push(new StationButton('M', 0, 0, buttonSize, () => this.setMode('move'))); // top left
         this.buttons.push(new StationButton('D', 1, 0, buttonSize, () => this.setMode('delete'))); // top right
-        this.buttons.push(new StationButton('E', 1, 1, buttonSize, () => this.setMode('edit'))); // bottom right
+        this.buttons.push(new StationButton('I', 1, 1, buttonSize, () => this.setMode('edit'))); // bottom right
         this.buttons.push(new StationButton('C1', 0.5, 0, buttonSize, () => this.setMode('connect'))); // top center
         this.buttons.push(new StationButton('C2', 0.5, 1, buttonSize, () => this.setMode('connect'))); // bottom center
     }
 
     setMode(mode) {
         this.mode = mode;
+        console.log(mode);
     }
 
-    display(scrollX, scrollY, zoom) {
+    update(zoom) {
         // Convert the station position to screen coordinates
-        const screenPos = boardToScreen(this.x, this.y);
-        const w = this.width * zoom;
-        const h = this.height * zoom;
-        
+        this.screenPos = boardToScreen(this.x, this.y);
+        this.onScreenWidth = this.width * zoom;
+        this.onScreenHeight = this.height * zoom;
+        for (let button of this.buttons) {
+            button.update(zoom);
+        }
+    }
+
+    display(zoom) {
         // Draw the station
-        fill(getColor("secondary"));
+        fill(getColor("primary"));
         stroke(getColor("outline"));
-        rect(screenPos.x, screenPos.y, w, h);
-        
+        rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+
         // Draw buttons
         for (let button of this.buttons) {
             // Convert button position to screen coordinates
-            button.display(screenPos.x, screenPos.y, w, h, zoom);
+            button.display(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, zoom);
         }
     }
 
     handleMousePress() {
         if (mouseButton === LEFT) {
             for (let button of this.buttons) {
-                button.checkMouseClick();
+                button.checkMouseClick(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
             }
         }
     }

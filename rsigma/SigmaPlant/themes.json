@@ -1,8 +1,8 @@
 {
   "midnight": {
-    "outline": "black",
-    "text": "black",
-    "primary": "periwinkle",
+    "outline": "ghostWhite",
+    "text": "ghostWhite",
+    "primary": "mediumPurple",
     "secondary": "royalBlue",
     "tertiary": "mediumBlue",
     "accent": "deepPink",
@@ -14,8 +14,8 @@
     "outline": "ghostWhite",
     "text": "ghostWhite",
     "primary": "red",
-    "secondary": "darkOrange",
-    "tertiary": "gold",
+    "secondary": "brown",
+    "tertiary": "darkOrange",
     "accent": "aqua",
     "background": "black",
     "gridline": "fireBrick",

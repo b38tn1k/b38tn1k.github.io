@@ -12,14 +12,23 @@ function mousePressed() {
     menu.setPosition(mouseX, mouseY);
   }
 
+  if (mouseButton === LEFT && menu.isActive == false) {
+    for (let i = 0; i < stations.length; i++) {
+      stations[i].handleMousePress();
+    }
+  }
+
   if (mouseButton === LEFT && menu.isActive == true) {
-    menu.handleMousePress();
+    const pressed = menu.handleMousePress();
+    if (pressed === false) {
+      menu.dismiss();
+    }
   }
 }
 
 function preload() {
   loadJSON('colors.json', loadColors);
-  themes = loadJSON('themes.json');
+  themes = loadJSON('themes2.json');
 }
 
 function setupScreen() {
@@ -52,7 +61,8 @@ function draw() {
   drawGrid();
 
   for (let i = 0; i < stations.length; i++) {
-    stations[i].display(scrollX, scrollY, zoom);
+    stations[i].update(zoom)
+    stations[i].display(zoom);
   }
 
   if (menu.isActive) {

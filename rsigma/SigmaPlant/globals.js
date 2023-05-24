@@ -1,6 +1,6 @@
 let colors = {};
 let themes = {};
-let COLOR_THEME = "blossom";//"dark";
+let COLOR_THEME = "dark";
 
 
 let scrollX = 0;
@@ -15,4 +15,5 @@ let inputTimeout = 1000;
 let menu;
 
 let stations = [];
+let plant;
 

@@ -38,9 +38,15 @@ function scrollBoard() {
   }
 }
 
+function drawCross(x, y, size) {
+  line(x - size / 2, y, x + size / 2, y); // Horizontal line
+  line(x, y - size / 2, x, y + size / 2); // Vertical line
+}
+
+
 function drawGrid() {
   stroke(getColor('gridline'));
-  strokeWeight(2);
+  strokeWeight(1);
   let resolution = 50; // Grid resolution
   
   // Convert the screen edges to board coordinates
@@ -55,24 +61,11 @@ function drawGrid() {
   for (let boardX = startX; boardX < bottomRightBoard.x; boardX += resolution) {
     for (let boardY = startY; boardY < bottomRightBoard.y; boardY += resolution) {
       let intersection = boardToScreen(boardX, boardY);
-      point(intersection.x, intersection.y);
+      // point(intersection.x, intersection.y);
+      drawCross(intersection.x, intersection.y, 5);
     }
   }
 }
-
-
-// function setupMenu(){
-//   menu = new CircularMenu();
-//   let buttons = []
-//   for (let theme in themes) {
-//     buttons.push(new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
-//   }
-//   menu.newSubMenu(buttons, 'themes');
-//   menu.addButton('New Station', newStation);
-//   menu.addButton('Save', () => console.log('Save Action'));
-//   menu.addButton('Load', () => console.log('Load Action'));
-//   menu.addButton('Theme', () => menu.activateSubMenu('themes'));
-// }
 
 function setupMenu(){
   menu = new CircularMenu();
@@ -86,8 +79,11 @@ function setupMenu(){
 
   // Create buttons for each theme group
   let buttons1 = themeGroup1.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+  buttons1.push(new MenuButton( 'More', 0, 0, () => menu.activateSubMenu('themes2'), 1));
   let buttons2 = themeGroup2.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+  buttons2.push(new MenuButton( 'More', 0, 0, () => menu.activateSubMenu('themes3'), 1));
   let buttons3 = themeGroup3.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+  buttons3.push(new MenuButton( 'More', 0, 0, () => menu.activateSubMenu('themes1'), 1));
 
   // Add each theme group as a separate submenu
   menu.newSubMenu(buttons1, 'themes1');
@@ -98,18 +94,28 @@ function setupMenu(){
   let themeGroupIndex = 1;
   menu.addButton('Theme', () => {
     menu.activateSubMenu('themes' + themeGroupIndex);
-    themeGroupIndex = themeGroupIndex % 3 + 1;
+    // themeGroupIndex = themeGroupIndex % 3 + 1;
   });
 
   menu.addButton('New Station', newStation);
+  menu.addButton('New Zone', newZone);
   menu.addButton('Save', () => console.log('Save Action'));
   menu.addButton('Load', () => console.log('Load Action'));
+}
+
+function setupPlant() {
+  plant = new Plant();
 }
 
 
 function newStation() {
   const pos = screenToBoard(mouseX, mouseY);
   menu.dismiss();
-  // stations.push(new Station(pos.x + width/2, pos.y + height/2));
-  stations.push(new Station(pos.x, pos.y));
+  plant.addStation(pos.x, pos.y);
+}
+
+function newZone() {
+  const pos = screenToBoard(mouseX, mouseY);
+  menu.dismiss();
+  plant.addZone(pos.x, pos.y);
 }

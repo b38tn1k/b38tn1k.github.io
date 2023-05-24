@@ -200,15 +200,15 @@ class CircularMenu {
     }
 
     activateSubMenu(label) {
-        if (this.activeSubMenu) {
-            this.activeSubMenu.deactivate();
-            this.activeSubMenu = null;
-        } else {
+        // if (this.activeSubMenu) {
+        //     this.activeSubMenu.deactivate();
+        //     this.activeSubMenu = null;
+        // } else {
             this.activeSubMenu = this.subMenus.find(subMenu => subMenu.label === label);
             if (this.activeSubMenu) {
                 this.activeSubMenu.activate();
             }
-        }
+        // }
     }
 
     display() {

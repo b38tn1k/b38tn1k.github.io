@@ -13,9 +13,7 @@ function mousePressed() {
   }
 
   if (mouseButton === LEFT && menu.isActive == false) {
-    for (let i = 0; i < stations.length; i++) {
-      stations[i].handleMousePress();
-    }
+    plant.handleMousePress();
   }
 
   if (mouseButton === LEFT && menu.isActive == true) {
@@ -45,6 +43,7 @@ function mouseWheel(event) {
 }
 
 function setup() {
+  setupPlant();
   setupMenu();
   setupScreen();
 }
@@ -59,11 +58,12 @@ function draw() {
   background(getColor('background'));
   scrollBoard();
   drawGrid();
+  plant.update(zoom)
 
-  for (let i = 0; i < stations.length; i++) {
-    stations[i].update(zoom)
-    stations[i].display(zoom);
-  }
+  // for (let i = 0; i < stations.length; i++) {
+    
+  //   stations[i].display(zoom);
+  // }
 
   if (menu.isActive) {
     menu.display();

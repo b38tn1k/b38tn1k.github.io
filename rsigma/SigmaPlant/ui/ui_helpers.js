@@ -9,11 +9,6 @@ function getColor(field) {
   return colors[themes[COLOR_THEME][field]];
 }
 
-// convert between coordinate systems, e.g.
-// let mouseXBoard, mouseYBoard;
-// let boardMouse = screenToBoard(mouseX, mouseY);
-// mouseXBoard = boardMouse.x;
-// mouseYBoard = boardMouse.y;
 function screenToBoard(x, y) {
   let boardX = (x - width / 2) / zoom + scrollX ;//+ width/2;
   let boardY = (y - height / 2) / zoom + scrollY;// + height/2;
@@ -28,6 +23,7 @@ function boardToScreen(boardX, boardY) {
 
 function fpsEvent() {
   lastInputTime = millis();  // I wish js had decorators
+  frameRate(highFrameRate);
 }
 
 function scrollBoard() {
@@ -84,11 +80,11 @@ function setupMenu(){
   let themeGroup3 = themesArray.slice(2 * themesArray.length / 3);
 
   // Create buttons for each theme group
-  let buttons1 = themeGroup1.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+  let buttons1 = themeGroup1.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
   buttons1.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes2'), 1));
-  let buttons2 = themeGroup2.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+  let buttons2 = themeGroup2.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
   buttons2.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes3'), 1));
-  let buttons3 = themeGroup3.map(theme => new MenuButton(theme, 0, 0, () => COLOR_THEME = theme, 1));
+  let buttons3 = themeGroup3.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
   buttons3.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes1'), 1));
 
   // Add each theme group as a separate submenu
@@ -107,6 +103,12 @@ function setupMenu(){
 
 function setupPlant() {
   plant = new Plant();
+}
+
+function setTheme(theme) {
+  COLOR_THEME = theme;
+  document.body.style.backgroundColor = getColor('background');
+
 }
 
 

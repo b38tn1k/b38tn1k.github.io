@@ -10,7 +10,7 @@ let mouseHasFocus = false;
 let lastInputTime;
 let highFrameRate = 30;
 let lowFrameRate = 5;
-let inputTimeout = 1000;
+let inputTimeout = 500;
 
 let menu;
 

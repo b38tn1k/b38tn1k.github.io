@@ -38,7 +38,7 @@ class MenuButton {
             ellipse(this.x, this.y, this.buttonRadius * 2, this.buttonRadius * 2);
         } else {
             if (this.isAnimating) {
-                const baseIncrement = 0.2;
+                const baseIncrement = 0.1;
                 const desiredFrameRate = highFrameRate; // adjust this to the frame rate you designed the animation for
                 const currentFrameRate = frameRate();
                 const increment = baseIncrement * (desiredFrameRate / currentFrameRate);

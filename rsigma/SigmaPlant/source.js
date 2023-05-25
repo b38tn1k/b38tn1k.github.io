@@ -38,14 +38,16 @@ function mousePressed() {
 }
 
 function preload() {
-  loadJSON('colors.json', loadColors);
-  themes = loadJSON('themes2.json');
+  loadJSON('/assets/colors.json', loadColors);
+  themes = loadJSON('/assets/themes2.json');
+  // robotoMono = loadFont('/assets/Roboto_Mono/static/RobotoMono-Medium.ttf');
 }
 
 function setupScreen() {
   createCanvas(windowWidth, windowHeight);
   background(getColor('background'));
   frameRate(lowFrameRate);
+  // textFont(robotoMono);
   lastInputTime = millis();
 }
 
@@ -60,6 +62,7 @@ function mouseWheel(event) {
 function setup() {
   setupPlant();
   setupMenu();
+  setTheme(COLOR_THEME);
   setupScreen();
 }
 
@@ -67,23 +70,20 @@ function draw() {
   textSize(myTextSize);
   if (millis() - lastInputTime > inputTimeout) {
     frameRate(lowFrameRate);
-  } else {
-    frameRate(highFrameRate);
+  }
+  if (mouseIsPressed) {
+    lastInputTime = millis();
   }
   clear();
-  background(getColor('background'));
   scrollBoard();
   drawGrid();
   plant.update(zoom)
-
-  // for (let i = 0; i < stations.length; i++) {
-    
-  //   stations[i].display(zoom);
-  // }
-
   if (menu.isActive) {
     menu.display();
   }
+  noStroke();
+  fill(255);
+  text('FPS: ' + int(frameRate()).toString(), windowWidth - 75, 50);
 
 }
 

@@ -10,7 +10,7 @@ class Station {
         this.buttons = [];
         this.initButtons(20);
         // Create data labels
-        this.dataLabels = [];
+        this.dataLabels = {};
         this.initDataLabels(20);
     }
 
@@ -28,7 +28,7 @@ class Station {
 
     setMode(mode) {
         this.mode = mode;
-        console.log(mode);
+        // console.log(mode);
     }
 
     moveToMouse() {
@@ -56,18 +56,16 @@ class Station {
         for (let button of this.buttons) {
             button.update(zoom);
         }
-        // yucky work around to closing mode from dialog boxes
-        // let counter = 0;
-        // for (let label of this.dataLabels){
-        //     if (label.mode != 'idle') {
-        //         this.mode = label.mode;
-        //     } else {
-        //         counter ++;
-        //     }
-        // }
-        // if (counter == this.dataLabels.length) {
-        //     this.mode = 'idle';
-        // }
+
+        for (let label in this.dataLabels){
+            if (this.dataLabels[label].mode == 'busy') {
+                this.mode = this.dataLabels[label].mode;
+            } else if  (this.dataLabels[label].mode == 'cleared') {
+                this.dataLabels[label].mode = 'idle';
+                this.mode = 'idle';
+            }
+        }
+
 
         switch (this.mode) {
             case 'move':
@@ -108,8 +106,8 @@ class Station {
             button.display(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, zoom);
         }
         // Draw data labels
-        for (let label of this.dataLabels) {
-            label.display(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, this.buttons[0].oSBs, zoom);
+        for (let label in this.dataLabels) {
+            this.dataLabels[label].display(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, this.buttons[0].oSBs, zoom);
         }
     }
 
@@ -119,8 +117,8 @@ class Station {
                 button.checkMouseClick(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
             }
             // Handle data label click checks
-            for (let label of this.dataLabels) {
-                label.checkMouseClick(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, this.buttons[0].oSBs);
+            for (let label in this.dataLabels) {
+                this.dataLabels[label].checkMouseClick(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight, this.buttons[0].oSBs);
             }
         }
     }
@@ -139,7 +137,7 @@ class Zone extends Station {
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels.push(new PlantDataTextLabel(0, 0, 'ZONE NAME', buttonSize, openDialog));
+        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'ZONE NAME', buttonSize, openDialog);
     }
 
     display(zoom) {

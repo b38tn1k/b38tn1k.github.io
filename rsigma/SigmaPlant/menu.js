@@ -78,7 +78,7 @@ class MenuButton {
     checkMouseClick() {
         let pressed = false;
         if (dist(mouseX, mouseY, this.x, this.y) < this.buttonRadius) {
-            console.log(this.label);
+            // console.log(this.label);
             pressed = true;
             if (this.action) {
                 this.action();

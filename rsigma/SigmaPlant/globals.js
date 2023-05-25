@@ -17,4 +17,6 @@ let menu;
 let plant;
 let myTextSize = 12;
 
-
+let mousePressTime;
+let mouseHoldDurationValue = 200;
+let mouseOldPos;

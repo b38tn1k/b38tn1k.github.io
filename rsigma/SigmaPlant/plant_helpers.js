@@ -122,7 +122,7 @@ class PlantData {
         if (this.mode != 'busy') {
             const [xa, ya] = this.getXaYa(x, y, w, h, border);
             textSize((myTextSize * zoom));
-            let wa = textWidth(this.data) * 1.2;
+            let wa = textWidth(this.data) * 1.5;
             if (wa == 0) {
                 wa = this.height;
             }
@@ -130,7 +130,6 @@ class PlantData {
             const centerY = ya + this.height / 2; // Calculate the Y coordinate of the center of the button
             const distanceX = Math.abs(mouseX - centerX);
             const distanceY = Math.abs(mouseY - centerY);
-            console.log(distanceX, distanceY);
             if (distanceX < wa / 2 && distanceY < (this.height * zoom) / 2) {
                 this.mode = 'busy';
                 this.action(this, xa, ya);
@@ -151,7 +150,7 @@ class PlantDataTextLabel extends PlantData {
         // The logic should consider the zoom level and the component's dimensions (w, h)
         let [xa, ya] = this.getXaYa(x, y, w, h, border);
         textSize((myTextSize * zoom));
-        let wa = textWidth(this.data) * 1.2;
+        let wa = textWidth(this.data) * 1.5;
         if (wa == 0) {
             wa = this.height;
         }
@@ -180,7 +179,7 @@ function openDialog(plantData, xa, ya) {
     // Set a callback function to update the data field when the user presses Enter
     dialog.changed(() => {
         plantData.data = dialog.value();
-        plantData.mode = 'idle';
+        plantData.mode = 'cleared';
         dialog.remove(); // Remove the dialog box from the DOM
         console.log('hey');
     });
@@ -194,9 +193,8 @@ function openDialog(plantData, xa, ya) {
     const removeDialog = () => {
         if (plantData.mode === 'busy') {
             plantData.data = dialog.value(); // not sure if this is the right UX
-            plantData.mode = 'idle';
+            plantData.mode = 'cleared';
             dialog.remove(); // Remove the dialog box from the DOM
-            console.log('removed');
             document.removeEventListener('mousedown', removeDialog);
         }
     };

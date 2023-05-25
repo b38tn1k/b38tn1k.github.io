@@ -6,8 +6,20 @@ function windowResized() {
   setupScreen();
 }
 
+function mouseReleased() {
+  const mouseHoldDuration = millis() - mousePressTime;
+
+  if (mouseHoldDuration > mouseHoldDurationValue && dist(mouseX, mouseY, mouseOldPos.x, mouseOldPos.y) < 20 && plant.isActive == false) {
+    menu.activate();
+    menu.setPosition(mouseX, mouseY);
+  }
+  fpsEvent();
+}
+
 function mousePressed() {
   fpsEvent();
+  mousePressTime = millis();
+  mouseOldPos = createVector(mouseX, mouseY);
   if (mouseButton === RIGHT) {
     menu.activate();
     menu.setPosition(mouseX, mouseY);

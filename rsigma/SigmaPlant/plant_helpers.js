@@ -154,6 +154,8 @@ class PlantDataTextLabel extends PlantData {
         if (wa == 0) {
             wa = this.height;
         }
+        fill(getColor("primary"));
+        stroke(getColor("outline"));
         rect(xa, ya, wa, this.height * zoom);
 
         fill(getColor("text"));

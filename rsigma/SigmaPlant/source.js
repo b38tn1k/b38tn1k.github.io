@@ -21,8 +21,10 @@ function mousePressed() {
   mousePressTime = millis();
   mouseOldPos = createVector(mouseX, mouseY);
   if (mouseButton === RIGHT) {
-    menu.activate();
-    menu.setPosition(mouseX, mouseY);
+    setTimeout(() => {
+      menu.activate();
+      menu.setPosition(mouseX, mouseY);
+    }, 100);
   }
 
   if (mouseButton === LEFT && menu.isActive == false) {
@@ -83,10 +85,11 @@ function draw() {
   }
   noStroke();
   fill(255);
+  textSize(12);
   text('FPS: ' + int(frameRate()).toString(), windowWidth - 75, 50);
 
 }
 
-document.addEventListener("contextmenu", function(event) {
+document.addEventListener("contextmenu", function (event) {
   event.preventDefault();
 });

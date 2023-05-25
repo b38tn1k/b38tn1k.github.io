@@ -3,13 +3,17 @@ class Feature {
         this.id = getUnsecureHash()
         this.x = x;
         this.y = y;
-        this.width = w;
-        this.height = h;
+        this.width = 0;
+        this.height = 0;
         this.mode = 'idle';
         this.buttons = [];
         this.initButtons(20);
         this.dataLabels = {};
         this.initDataLabels(20);
+        this.isAnimating = true;
+        this.animationValue = 0.0;
+        this.animationW = w;
+        this.animationH = h;
     }
 
     initDataLabels(buttonSize) { }
@@ -108,6 +112,22 @@ class Feature {
     }
 
     display() {
+        if (this.isAnimating) {
+            fpsEvent();
+            const baseIncrement = 0.07;
+            const desiredFrameRate = highFrameRate;
+            const currentFrameRate = frameRate();
+            const increment = baseIncrement * (desiredFrameRate / currentFrameRate);
+            this.animationValue += increment;
+            this.height = this.animationH * this.animationValue;
+            this.width = this.animationW * this.animationValue;
+            if (this.animationValue >= 1.0) {
+                this.isAnimating = false;
+                this.height = this.animationH;
+                this.width = this.animationW;
+            }
+        }
+        
         if (this.isInScreen() == true) {
             this.draw();
         }
@@ -195,24 +215,17 @@ class Connector extends Feature {
         this.source = this.input != null ? this.input : this.output;
         this.sourceType = this.input != null ? 'Input' : 'Output';
         this.anchors = {};
-        this.setupAnchors();
+        this.anchors[this.sourceType] = this.source.buttons.find(button => button.label === this.sourceType);
         this.mode = 'idle';
         this.untethered = true;
-    }
-
-    setupAnchors() {
-        this.anchors[this.sourceType] = this.source.buttons.find(button => button.label === this.sourceType);
-        for (let anchor in this.anchors) {
-            console.log(anchor, this.anchors[anchor]);
-        }
+        this.untetheredClicks = 0;
     }
 
     attach(dest) {
         this.untethered = false;
         this.input ? this.output = dest : this.input = dest;
         let key = this.sourceType == 'Output' ? 'Input' : 'Output';
-        print(this.input, this.output, this.sourceType, key);
-        this.anchors[key] = this.source.buttons.find(button => button.label === key);
+        this.anchors[key] = dest.buttons.find(button => button.label === key);
     }
 
     update() {
@@ -231,10 +244,17 @@ class Connector extends Feature {
     draw(zoom) {
         noFill();
         stroke(getColor("outline"));
-        for (let anchor in this.anchors) {
-            circle(this.anchors[anchor].screen.x, this.anchors[anchor].screen.y, 100);
+        if (this.untethered == false) {
+            line(this.anchors['Input'].screen.x + this.anchors['Input'].screenDimOn2, this.anchors['Input'].screen.y, this.anchors['Output'].screen.x + this.anchors['Output'].screenDimOn2, this.anchors['Output'].screen.y + this.anchors['Output'].screenDim);
+        } else {
+            for (let anchor in this.anchors) {
+                if (anchor == "Input") {
+                    line(this.anchors['Input'].screen.x + this.anchors['Input'].screenDimOn2, this.anchors['Input'].screen.y, mouseX, mouseY);
+                } else {
+                    line(mouseX, mouseY, this.anchors['Output'].screen.x + this.anchors['Output'].screenDimOn2, this.anchors['Output'].screen.y + this.anchors['Output'].screenDim);
+                }
+            }
         }
-
     }
 }
 
@@ -258,33 +278,53 @@ class Plant {
     }
 
     handleMousePress() {
+        this.clearHangingConnector();
         for (let i = 0; i < this.features.length; i++) {
             this.features[i].handleMousePress();
         }
     }
 
     isHangingConnector(type) {
-        console.log(type);
         let hangingConnector = null;
+        let alreadyUntethered = false;
         for (let feature of this.features) {
             if (feature.type == 'connector') {
-                if (feature.untethered == true && feature.sourceType == type) {
-                    hangingConnector = feature;
+                if (feature.untethered == true) {
+                    alreadyUntethered = true;
+                    if (feature.sourceType == type) {
+                        hangingConnector = feature;   
+                    }
                 }
             }
         }
-        return hangingConnector;
+        return [alreadyUntethered, hangingConnector];
+    }
+
+    clearHangingConnector() {
+        for (let feature of this.features) {
+            if (feature.type == 'connector') {
+                if (feature.untethered == true) {
+                    if (feature.untetheredClicks >= 1) {
+                        feature.mode = 'delete';
+                    } else {
+                        feature.untetheredClicks += 1;
+                    }
+                } 
+            }
+        }
+
     }
 
     doConnectorLogic(activeFeature, searchType, action) {
-        print('looking for' + searchType)
-        let connector = this.isHangingConnector(searchType); // look for the other one
+        let [alreadyUntethered, connector] = this.isHangingConnector(searchType); // look for the other one
         if (connector) {
-            console.log('found: ', connector.sourceType);
-            connector.attach(activeFeature);
+            if (connector.source.id != activeFeature.id) {
+                connector.attach(activeFeature);
+            }
         } else {
-            console.log('none found')
-            action();
+            if (alreadyUntethered == false) {
+                action();
+            }
         }
         this.mode = 'idle';
         activeFeature.mode = 'idle';
@@ -307,6 +347,9 @@ class Plant {
             } else {
                 feature.update(zoom);
                 feature.display(zoom);
+            }
+            if (feature.type == 'connector' && feature.untethered) {
+                fpsEvent();
             }
         }
         this.isActive = this.mode !== 'idle';

@@ -13,10 +13,10 @@
   "light": {
     "outline": "black",
     "text": "black",
-    "primary": "lightGrey",
-    "secondary": "warmGrey",
+    "primary": "warmGrey",
+    "secondary": "lightGrey",
     "tertiary": "charcoal",
-    "accent": "mediumSpringGreen",
+    "accent": "orangeRed",
     "background": "ghostWhite",
     "gridline": "dimGrey",
     "connector": "black"

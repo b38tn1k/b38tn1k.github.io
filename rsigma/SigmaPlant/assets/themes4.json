@@ -8,7 +8,7 @@
     "accent": "deepSkyBlue",
     "background": "onyx",
     "gridline": "darkOrange",
-    "connector": "orangeRed"
+    "connector": "yellowGreen"
   },
   "light": {
     "outline": "black",
@@ -19,7 +19,7 @@
     "accent": "mediumSpringGreen",
     "background": "ghostWhite",
     "gridline": "dimGrey",
-    "connector": "darkCyan"
+    "connector": "black"
   },
   "flamingo": {
     "outline": "charcoal",
@@ -30,7 +30,8 @@
     "accent": "yellowGreen",
     "background": "cream",
     "gridline": "pewter",
-    "quaternary": "cocoa"
+    "quaternary": "cocoa",
+    "connector": "charcoal"
   },
   "tangerine": {
     "outline": "charcoal",
@@ -41,7 +42,8 @@
     "accent": "honey",
     "background": "cream",
     "gridline": "pewter",
-    "quaternary": "cocoa"
+    "quaternary": "cocoa",
+    "connector": "charcoal"
   },
   "honey": {
     "outline": "charcoal",
@@ -52,7 +54,8 @@
     "accent": "fireBrick",
     "background": "cream",
     "gridline": "pewter",
-    "quaternary": "cocoa"
+    "quaternary": "cocoa",
+    "connector": "charcoal"
   },
   "sage": {
     "outline": "charcoal",
@@ -63,7 +66,8 @@
     "accent": "teal",
     "background": "cream",
     "gridline": "pewter",
-    "quaternary": "cocoa"
+    "quaternary": "cocoa",
+    "connector": "charcoal"
   },
   "ocean": {
     "outline": "charcoal",
@@ -74,7 +78,8 @@
     "accent": "teal",
     "background": "cream",
     "gridline": "pewter",
-    "quaternary": "cocoa"
+    "quaternary": "cocoa",
+    "connector": "charcoal"
   },
   "lilac": {
     "outline": "charcoal",
@@ -85,7 +90,8 @@
     "accent": "purpleHeart",
     "background": "cream",
     "gridline": "pewter",
-    "quaternary": "cocoa"
+    "quaternary": "cocoa",
+    "connector": "charcoal"
   },
   "bloodOrange": {
     "outline": "snow",
@@ -96,7 +102,8 @@
     "accent": "emerald",
     "background": "slate",
     "gridline": "granite",
-    "quaternary": "obsidian"
+    "quaternary": "obsidian",
+    "connector": "snow"
   },
   "lemonade": {
     "outline": "obsidian",
@@ -107,7 +114,8 @@
     "accent": "sapphire",
     "background": "slate",
     "gridline": "granite",
-    "quaternary": "obsidian"
+    "quaternary": "obsidian",
+    "connector": "snow"
   },
   "emerald": {
     "outline": "snow",
@@ -118,7 +126,8 @@
     "accent": "lemonade",
     "background": "slate",
     "gridline": "granite",
-    "quaternary": "obsidian"
+    "quaternary": "obsidian",
+    "connector": "snow"
   },
   "sapphire": {
     "outline": "snow",
@@ -129,7 +138,8 @@
     "accent": "lemonade",
     "background": "slate",
     "gridline": "granite",
-    "quaternary": "obsidian"
+    "quaternary": "obsidian",
+    "connector": "snow"
   },
   "amethyst": {
     "outline": "snow",
@@ -140,6 +150,7 @@
     "accent": "lemonade",
     "background": "slate",
     "gridline": "granite",
-    "quaternary": "obsidian"
+    "quaternary": "obsidian",
+    "connector": "snow"
   }
 }

@@ -219,8 +219,17 @@ class Source extends Feature {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+    
+        // Draw triangle
+        fill(getColor("secondary")); // Set the fill color for the triangle
+        noStroke(); // Remove stroke for the triangle
+        const centerX = this.screenPos.x + this.onScreenWidth / 2;
+        const baseY = this.screenPos.y;
+        triangle(centerX, this.screenPos.y + this.onScreenHeight, this.screenPos.x, baseY, this.screenPos.x + this.onScreenWidth, baseY);
+    
         this.drawButtonsAndLabels();
     }
+    
 }
 
 class Sink extends Feature {
@@ -243,8 +252,17 @@ class Sink extends Feature {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+    
+        // Draw triangle
+        fill(getColor("secondary")); // Set the fill color for the triangle
+        noStroke(); // Remove stroke for the triangle
+        const centerX = this.screenPos.x + this.onScreenWidth / 2;
+        const baseY = this.screenPos.y + this.onScreenHeight;
+        triangle(centerX, this.screenPos.y, this.screenPos.x, baseY, this.screenPos.x + this.onScreenWidth, baseY);
+    
         this.drawButtonsAndLabels();
     }
+    
 }
 
 class Zone extends Feature {
@@ -330,7 +348,7 @@ class Connector extends Feature {
 
     draw(zoom) {
         noFill();
-        stroke(getColor("outline"));
+        stroke(getColor("connector"));
         if (this.untethered == false) {
             line(this.anchors['Input'].screen.x + this.anchors['Input'].screenDimOn2, this.anchors['Input'].screen.y, this.anchors['Output'].screen.x + this.anchors['Output'].screenDimOn2, this.anchors['Output'].screen.y + this.anchors['Output'].screenDim);
         } else {

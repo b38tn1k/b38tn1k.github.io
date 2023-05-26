@@ -34,10 +34,7 @@ function mousePressed() {
   if (mouseButton === LEFT && menu.isActive == true) {
     const pressed = menu.handleMousePress();
     if (pressed === false) {
-      setTimeout(() => {
-        menu.dismiss();
-      }, 100);
-      
+      menu.dismiss();
     }
   }
 }
@@ -52,7 +49,6 @@ function setupScreen() {
   createCanvas(windowWidth, windowHeight);
   background(getColor('background'));
   frameRate(lowFrameRate);
-  // textFont(robotoMono);
   lastInputTime = millis();
 }
 

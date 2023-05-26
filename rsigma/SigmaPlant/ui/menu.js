@@ -185,15 +185,16 @@ class CircularMenu {
     }
 
     dismiss() {
-        if (this.isActive) {
-            this.isActive = false;
-            this.resetAnimation(false);
-            if (this.activeSubMenu) {
-                this.activeSubMenu.deactivate();
-                this.activeSubMenu = null;
+        setTimeout(() => {
+            if (this.isActive) {
+                this.isActive = false;
+                this.resetAnimation(false);
+                if (this.activeSubMenu) {
+                    this.activeSubMenu.deactivate();
+                    this.activeSubMenu = null;
+                }
             }
-
-        }
+        }, 100);
     }
 
     setPosition(x, y) {

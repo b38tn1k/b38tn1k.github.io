@@ -118,8 +118,10 @@ function setTheme(theme) {
 
 function newSource() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  menu.dismiss();
   plant.addSource(pos.x, pos.y);
+  setTimeout(() => {
+    menu.dismiss();
+  }, 100);
 }
 
 function newSink() {

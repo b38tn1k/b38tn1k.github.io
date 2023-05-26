@@ -1,5 +1,5 @@
 class Feature {
-    constructor(x, y, w = 400, h = 280) {
+    constructor(x, y, w = 400, h = 280, type) {
         this.id = getUnsecureHash()
         this.x = x;
         this.y = y;
@@ -7,6 +7,7 @@ class Feature {
         this.height = 0;
         this.mode = 'idle';
         this.buttons = [];
+        this.type = type;
         this.initButtons(20);
         this.dataLabels = {};
         this.initDataLabels(20);
@@ -15,6 +16,8 @@ class Feature {
         this.animationW = w;
         this.animationH = h;
         this.shouldRender = true;
+        this.adoptable = true;
+        
     }
 
     initDataLabels(buttonSize) { }
@@ -173,20 +176,19 @@ class Feature {
 
 class Station extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, width, height); // Call the parent constructor
-        this.type = 'feature';
+        super(x, y, width, height, 'station'); // Call the parent constructor
     }
 
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'STATION NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataTextLabel(0, 1, this.id, buttonSize, NOP);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.type + ": " + this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButton('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
-        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
-        this.buttons.push(new PlantUIButton('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
-        this.buttons.push(new PlantUIButton('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
+        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
+        this.buttons.push(new PlantUIButtonLetterLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
+        this.buttons.push(new PlantUIButtonLetterLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
     }
 
     draw() {
@@ -199,19 +201,18 @@ class Station extends Feature {
 
 class Source extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, 300, 196); // Call the parent constructor
-        this.type = 'feature';
+        super(x, y, 300, 196, 'source'); // Call the parent constructor
     }
 
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'SOURCE NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataTextLabel(0, 1, this.id, buttonSize, NOP);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.type + ": " + this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButton('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
-        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
-        this.buttons.push(new PlantUIButton('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
+        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
+        this.buttons.push(new PlantUIButtonLetterLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
     }
 
     draw() {
@@ -224,19 +225,18 @@ class Source extends Feature {
 
 class Sink extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, 300, 196); // Call the parent constructor
-        this.type = 'feature';
+        super(x, y, 300, 196, 'sink'); // Call the parent constructor
     }
 
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'SINK NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataTextLabel(0, 1, this.id, buttonSize, NOP);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.type + ": " + this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButton('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
-        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
-        this.buttons.push(new PlantUIButton('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
+        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
+        this.buttons.push(new PlantUIButtonLetterLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
     }
 
     draw() {
@@ -249,18 +249,20 @@ class Sink extends Feature {
 
 class Zone extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, width, height); // Call the parent constructor
+        super(x, y, width, height, 'zone' ); // Call the parent constructor
         this.type = 'zone';
+        this.children = [];
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButton('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
-        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
-        this.buttons.push(new PlantUIButton('Resize', 1, 1, buttonSize, () => this.setMode('resize')));
+        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
+        this.buttons.push(new PlantUIButtonResize('Resize', 1, 1, buttonSize, () => this.setMode('resize')));
     }
 
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'ZONE NAME', buttonSize, openDialog);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.type + ": " + this.id, buttonSize, NOP);
     }
 
     draw() {
@@ -269,11 +271,21 @@ class Zone extends Feature {
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
         this.drawButtonsAndLabels(getColor("accent"));
     }
+
+    checkIfChild(feature) {
+        
+    }
+
+    addChild(feature) {
+        
+    }
+
+
 }
 
 class Connector extends Feature {
     constructor(x, y, input, output) {
-        super(x, y); // Call the parent constructor
+        super(x, y, 0, 0, 'connector' ); // Call the parent constructor
         this.isAnimating = false;
         this.type = 'connector';
         this.input = input;
@@ -285,6 +297,7 @@ class Connector extends Feature {
         this.mode = 'idle';
         this.untethered = true;
         this.untetheredClicks = 0;
+        this.adoptable = false;
     }
 
     attach(dest) {
@@ -408,8 +421,24 @@ class Plant {
     update(zoom) {
         this.mode = 'idle';
         let activeFeature;
+
+        let zones = [];
+        for (let i = 0; i < this.features.length; i++) {
+            if (this.features[i].type === 'zone') {
+                zones.push(this.features[i]);
+            }
+        }
+
         for (let i = 0; i < this.features.length; i++) {
             let feature = this.features[i];
+            if (feature.adoptable === true) {
+                for (let j = 0; j < zones.length; j++) {
+                    if (zones[j].checkIfChild(feature)) {
+                        zones[j].addChild(feature);
+                        break;
+                    }
+                }
+            }
             if (feature.mode !== 'idle') {
                 this.mode = feature.mode;
                 activeFeature = feature;

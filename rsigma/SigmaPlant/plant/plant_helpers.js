@@ -77,21 +77,7 @@ class PlantUIButton extends FeatureComponent {
         fill(fillColor);
         stroke(strokeColor);
         square(this.screen.x, this.screen.y, this.screenDim);
-        let off;
-        switch (this.label) {
-            case 'Xdelete':
-                this.drawXIcon(this.screen.x, this.screen.y);
-                break;
-            case 'Move':
-                this.drawMoveIcon(this.screen.x, this.screen.y);
-                break;
-            case 'Resize':
-                this.drawResizeIcon(this.screen.x, this.screen.y);
-                break;
-            default:
-                this.drawLabelLetterIcon(this.screen.x, this.screen.y, zoom, strokeColor);
-                break;
-        }
+        this.draw(this.screen.x, this.screen.y, zoom, strokeColor);
     }
 
     checkMouseClick() {
@@ -100,6 +86,60 @@ class PlantUIButton extends FeatureComponent {
         if (dist(mouseX, mouseY, clickX, clickY) < this.screenDim) {
             this.action(this);
         }
+    }
+}
+
+class PlantUIButtonClose extends PlantUIButton {
+    constructor(label, x, y, size, action) {
+        super(label, x, y, size, action);
+    }
+    draw(xa, ya, zoom, textColor) {
+        let off = 0.2 * this.screenDim;
+        let xs = xa + off;
+        let xe = xa + this.screenDim - off;
+        let ys = ya + off;
+        let ye = ya + this.screenDim - off;
+        line(xs, ys, xe, ye)
+        line(xe, ys, xs, ye)
+    }
+}
+
+class PlantUIButtonMove extends PlantUIButton {
+    constructor(label, x, y, size, action) {
+        super(label, x, y, size, action);
+    }
+    draw(xa, ya, zoom, textColor) {
+        let off = 0.2 * this.screenDim;
+        line(xa + this.screenDimOn2, ya + off, xa + this.screenDimOn2, ya + this.screenDim - off)
+        line(xa + off, ya + this.screenDimOn2, xa + this.screenDim - off, ya + this.screenDimOn2)
+    }
+}
+
+class PlantUIButtonResize extends PlantUIButton {
+    constructor(label, x, y, size, action) {
+        super(label, x, y, size, action);
+    }
+    draw(xa, ya, zoom, textColor) {
+        const ratio = 0.5;
+        const offset = this.screenDim * (1 - ratio) / 2;
+        const arrowSize = this.screenDim * ratio;
+        line(xa + offset, ya + offset, xa + arrowSize, ya + offset);
+        line(xa + offset, ya + offset, xa + offset, ya + arrowSize);
+        line(xa + offset + arrowSize, ya + offset + arrowSize, xa + offset + arrowSize, ya + 2 * offset);
+        line(xa + 2 * offset, ya + offset + arrowSize, xa + offset + arrowSize, ya + offset + arrowSize);
+    }
+}
+
+class PlantUIButtonLetterLabel extends PlantUIButton {
+    constructor(label, x, y, size, action) {
+        super(label, x, y, size, action);
+    }
+    draw(xa, ya, zoom, textColor) {
+        textSize((myTextSize * zoom));
+        fill(textColor);
+        noStroke();
+        textAlign(CENTER, CENTER);
+        text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
     }
 }
 
@@ -118,6 +158,12 @@ class PlantData extends FeatureComponent {
         this.updateScreenCoords(x, y, w, h);
     }
 
+    display(zoom, strokeColor, fillColor) {
+        textSize((myTextSize * zoom));
+        let wa = this.calculateWidth(zoom);
+        this.draw(zoom, strokeColor, fillColor, wa);
+    }
+
     updateScreenCoords(x, y, w, h) {
         const offsX = this.board.x * w;
         const offsY = this.board.y * h;
@@ -129,7 +175,7 @@ class PlantData extends FeatureComponent {
         if (offsY > h - this.screenDim) {
             ya = y + h - this.screenDim;
         }
-        
+
         this.screen = createVector(xa, ya);
     }
 
@@ -170,15 +216,14 @@ class PlantDataTextLabel extends PlantData {
         return (distanceX < wa / 2 && distanceY < (this.screenDim * zoom) / 2);
     }
 
-    display(zoom, strokeColor, fillColor) {
-        let wa = this.calculateWidth(zoom);
+    draw(zoom, strokeColor, fillColor, width) {
         fill(fillColor);
         stroke(strokeColor);
-        rect(this.screen.x, this.screen.y, wa, this.screenDim);
+        rect(this.screen.x, this.screen.y, width, this.screenDim);
         fill(strokeColor);
         noStroke();
         textAlign(CENTER, CENTER);
-        text(this.data, this.screen.x + wa / 2, this.screen.y + this.screenDim / 2); // Center the text within the rectangle
+        text(this.data, this.screen.x + width / 2, this.screen.y + this.screenDim / 2); // Center the text within the rectangle
     }
 }
 
@@ -186,4 +231,18 @@ function getUnsecureHash() {
     let myStr = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     myStr += myStr + myStr;
     return myStr.substring(0, 10);
+}
+
+class PlantDataIDLabel extends PlantDataTextLabel {
+    constructor(x, y, data, height) {
+        super(x, y, data, height, NOP);
+    }
+
+    draw(zoom, strokeColor, fillColor, width) {
+        fill(strokeColor);
+        noStroke();
+        textAlign(LEFT, TOP);
+        textSize((myTextSize * zoom)/2);
+        text(this.data, this.screen.x + this.screenDim * 0.2, this.screen.y + this.screenDim * 0.6); // Center the text within the rectangle
+    }
 }

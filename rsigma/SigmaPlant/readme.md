@@ -8,3 +8,10 @@
   - station list
 - [ ] Load and Save via JSON 
 - [ ] Mobile touch input
+- [ ] Feature Tagging:
+  - Value Add
+  - No-Value Add
+  - Mandated Necessary
+  - Waste
+  - Rework
+  - Handoff

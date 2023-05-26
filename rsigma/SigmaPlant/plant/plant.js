@@ -17,12 +17,13 @@ class Feature {
         this.animationH = h;
         this.shouldRender = true;
         this.adoptable = true;
+        this.notYetDrawnLabelAndButtons = true;
         
     }
 
     initDataLabels(buttonSize) { }
     initButtons(buttonSize) { }
-    draw() { }
+    draw(zoom) { }
 
     delete() {
         for (let i = 0; i < this.buttons.length; i++) {
@@ -39,7 +40,6 @@ class Feature {
 
     setMode(mode) {
         this.mode = mode;
-        console.log(mode);
     }
 
     moveToMouse() {
@@ -79,16 +79,24 @@ class Feature {
         }
     }
 
-    drawButtonsAndLabels(myStrokeColor = getColor("outline"), myFillColor = getColor("secondary")) {
-        // Draw buttons
-        for (let button of this.buttons) {
-            // Convert button position to screen coordinates
-            button.display(zoom, myStrokeColor, myFillColor);
+    drawButtonsAndLabels(zoom, myStrokeColor = getColor("outline"), myFillColor = getColor("secondary")) {
+        if (this.notYetDrawnLabelAndButtons) {
+            if (this.mode == 'deleting') {
+                zoom = this.animationValue;
+            }
+            if (this.mode != 'delete') {
+                // Draw buttons
+                for (let button of this.buttons) {
+                    // Convert button position to screen coordinates
+                    button.display(zoom, myStrokeColor, myFillColor);
+                }
+                // Draw data labels
+                for (let label in this.dataLabels) {
+                    this.dataLabels[label].display(zoom, myStrokeColor, myFillColor);
+                }
+            }
         }
-        // Draw data labels
-        for (let label in this.dataLabels) {
-            this.dataLabels[label].display(zoom, myStrokeColor, myFillColor);
-        }
+        this.notYetDrawnLabelAndButtons = false;
     }
 
     update(zoom) {
@@ -122,7 +130,7 @@ class Feature {
         this.isAnimating = true;
     }
 
-    display() {
+    display(zoom) {
         if (this.isAnimating) {
             fpsEvent();
             const baseIncrement = 0.07;
@@ -148,7 +156,9 @@ class Feature {
         }
         
         if (this.shouldRender == true) {
-            this.draw();
+            this.notYetDrawnLabelAndButtons = true;
+            this.draw(zoom);
+            this.drawButtonsAndLabels(zoom);
         }
     }
 
@@ -191,11 +201,10 @@ class Station extends Feature {
         this.buttons.push(new PlantUIButtonLetterLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
     }
 
-    draw() {
+    draw(zoom) {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
-        this.drawButtonsAndLabels();
     }
 }
 
@@ -215,7 +224,7 @@ class Source extends Feature {
         this.buttons.push(new PlantUIButtonLetterLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
     }
 
-    draw() {
+    draw(zoom) {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -226,8 +235,6 @@ class Source extends Feature {
         const centerX = this.screenPos.x + this.onScreenWidth / 2;
         const baseY = this.screenPos.y;
         triangle(centerX, this.screenPos.y + this.onScreenHeight, this.screenPos.x, baseY, this.screenPos.x + this.onScreenWidth, baseY);
-    
-        this.drawButtonsAndLabels();
     }
     
 }
@@ -248,7 +255,7 @@ class Sink extends Feature {
         this.buttons.push(new PlantUIButtonLetterLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
     }
 
-    draw() {
+    draw(zoom) {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -259,8 +266,6 @@ class Sink extends Feature {
         const centerX = this.screenPos.x + this.onScreenWidth / 2;
         const baseY = this.screenPos.y + this.onScreenHeight;
         triangle(centerX, this.screenPos.y, this.screenPos.x, baseY, this.screenPos.x + this.onScreenWidth, baseY);
-    
-        this.drawButtonsAndLabels();
     }
     
 }
@@ -283,11 +288,12 @@ class Zone extends Feature {
         this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
-    draw() {
+    draw(zoom) {
         noFill();
         stroke(getColor("accent"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
-        this.drawButtonsAndLabels(getColor("accent"));
+        this.notYetDrawnLabelAndButtons = true;
+        this.drawButtonsAndLabels(zoom, getColor("accent"));
     }
 
     checkIfChild(feature) {

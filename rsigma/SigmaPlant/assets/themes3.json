@@ -1,0 +1,112 @@
+{
+    "midnight": {
+        "outline": "mintCream",
+        "text": "mintCream",
+        "primary": "mediumBlue",
+        "secondary": "royalBlue",
+        "tertiary": "deepPink",
+        "accent": "yellowGreen",
+        "background": "onyx",
+        "gridline": "mediumPurple",
+        "quaternary": "deepSkyBlue"
+    },
+    "volcanic": {
+        "outline": "ghostWhite",
+        "text": "ghostWhite",
+        "primary": "onyx",
+        "secondary": "gunmetal",
+        "tertiary": "aqua",
+        "accent": "darkOrange",
+        "background": "black",
+        "gridline": "red",
+        "quaternary": "fireBrick"
+    },
+    "spring": {
+        "outline": "darkGreen",
+        "text": "darkGreen",
+        "primary": "mintCream",
+        "secondary": "aquamarine",
+        "tertiary": "mediumVioletRed",
+        "accent": "limeGreen",
+        "background": "green",
+        "gridline": "deepPink",
+        "quaternary": "mediumSpringGreen"
+    },
+    "ms": {
+        "outline": "ghostWhite",
+        "text": "ghostWhite",
+        "primary": "outerSpace",
+        "secondary": "gunmetal",
+        "tertiary": "deepSkyBlue",
+        "accent": "orangeRed",
+        "background": "dimGrey",
+        "gridline": "aqua",
+        "quaternary": "lightGrey"
+    },
+    "dark": {
+        "outline": "yellowGreen",
+        "text": "yellowGreen",
+        "primary": "outerSpace",
+        "secondary": "gunmetal",
+        "tertiary": "coral",
+        "accent": "deepSkyBlue",
+        "background": "onyx",
+        "gridline": "darkOrange",
+        "quaternary": "orchid"
+    },
+    "light": {
+        "outline": "black",
+        "text": "black",
+        "primary": "ghostWhite",
+        "secondary": "lightGrey",
+        "tertiary": "darkCyan",
+        "accent": "deepSkyBlue",
+        "background": "warmGrey",
+        "gridline": "dimGrey",
+        "quaternary": "charcoal"
+    },
+    "sunrise": {
+        "outline": "coral",
+        "text": "crimson",
+        "primary": "moccasin",
+        "secondary": "peachPuff",
+        "tertiary": "orangeRed",
+        "accent": "gold",
+        "background": "lightGrey",
+        "gridline": "grey",
+        "quaternary": "darkOrange"
+    },
+    "twilight": {
+        "outline": "ghostWhite",
+        "text": "ghostWhite",
+        "primary": "mediumBlue",
+        "secondary": "mediumPurple",
+        "tertiary": "periwinkle",
+        "accent": "plum",
+        "background": "lavender",
+        "gridline": "slateGrey",
+        "quaternary": "davysGrey"
+    },
+    "coastal": {
+        "outline": "deepSkyBlue",
+        "text": "blue",
+        "primary": "turquoise",
+        "secondary": "aqua",
+        "tertiary": "babyBlueEyes",
+        "accent": "seaGreen",
+        "background": "powderBlue",
+        "gridline": "lightSeaGreen",
+        "quaternary": "teal"
+    },
+    "forest": {
+        "outline": "mintCream",
+        "text": "mintCream",
+        "primary": "pineGreen",
+        "secondary": "forestGreen",
+        "tertiary": "chocolate",
+        "accent": "limeGreen",
+        "background": "darkGreen",
+        "gridline": "yellowGreen",
+        "quaternary": "coral"
+    }
+}

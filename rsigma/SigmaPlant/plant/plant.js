@@ -1,6 +1,6 @@
 class Feature {
     constructor(x, y, w = 400, h = 280, type) {
-        this.id = getUnsecureHash()
+        this.id = type + '->' + getUnsecureHash()
         this.x = x;
         this.y = y;
         this.width = 0;
@@ -181,7 +181,7 @@ class Station extends Feature {
 
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'STATION NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.type + ": " + this.id, buttonSize, NOP);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
@@ -206,7 +206,7 @@ class Source extends Feature {
 
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'SOURCE NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.type + ": " + this.id, buttonSize, NOP);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
@@ -217,9 +217,9 @@ class Source extends Feature {
 
     draw() {
         fill(getColor("primary"));
-        stroke(getColor("quaternary"));
+        stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
-        this.drawButtonsAndLabels(getColor("quaternary"));
+        this.drawButtonsAndLabels();
     }
 }
 
@@ -230,7 +230,7 @@ class Sink extends Feature {
 
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'SINK NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.type + ": " + this.id, buttonSize, NOP);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
@@ -241,9 +241,9 @@ class Sink extends Feature {
 
     draw() {
         fill(getColor("primary"));
-        stroke(getColor("tertiary"));
+        stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
-        this.drawButtonsAndLabels(getColor("tertiary"));
+        this.drawButtonsAndLabels();
     }
 }
 
@@ -262,7 +262,7 @@ class Zone extends Feature {
 
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'ZONE NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.type + ": " + this.id, buttonSize, NOP);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     draw() {
@@ -273,11 +273,18 @@ class Zone extends Feature {
     }
 
     checkIfChild(feature) {
-        
+        // The feature is considered to be in the zone if its x and y positions are within the zone's width and height.
+        // This assumes x and y are the top left coordinates and the feature's size is negligible or already accounted for.
+        return (feature.x >= this.x && feature.x <= this.x + this.width) && 
+               (feature.y >= this.y && feature.y <= this.y + this.height) && feature.id != this.id;
     }
 
     addChild(feature) {
-        
+        this.children.push(feature);
+    }
+
+    emptyChildren() {
+        this.children = [];
     }
 
 
@@ -426,6 +433,7 @@ class Plant {
         for (let i = 0; i < this.features.length; i++) {
             if (this.features[i].type === 'zone') {
                 zones.push(this.features[i]);
+                this.features[i].emptyChildren();
             }
         }
 
@@ -479,7 +487,7 @@ class Plant {
                     this.mode = 'idle';
                     break;
             }
-
+            
         }
     }
 }

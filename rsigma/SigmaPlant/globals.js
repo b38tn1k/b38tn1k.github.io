@@ -1,6 +1,6 @@
 let colors = {};
 let themes = {};
-let COLOR_THEME = "dark";
+let COLOR_THEME = 'sage';//"dark";
 
 
 let scrollX = 0;

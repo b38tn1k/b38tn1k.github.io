@@ -40,8 +40,8 @@ function mousePressed() {
 }
 
 function preload() {
-  loadJSON('/assets/colors.json', loadColors);
-  themes = loadJSON('/assets/themes2.json');
+  loadJSON('colors.json', loadColors);
+  themes = loadJSON('themes2.json');
   // robotoMono = loadFont('/assets/Roboto_Mono/static/RobotoMono-Medium.ttf');
 }
 

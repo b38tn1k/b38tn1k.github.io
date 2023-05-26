@@ -65,17 +65,17 @@ class PlantUIButton extends FeatureComponent {
         line(xa + 2 * offset, ya + offset + arrowSize, xa + offset + arrowSize, ya + offset + arrowSize);
     }
 
-    drawLabelLetterIcon(xa, ya, zoom) {
+    drawLabelLetterIcon(xa, ya, zoom, textColor) {
         textSize((myTextSize * zoom));
-        fill(getColor("text"));
+        fill(textColor);
         noStroke();
         textAlign(CENTER, CENTER);
         text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
     }
 
-    display(zoom) {
-        fill(getColor("secondary"));
-        stroke(getColor("outline"));
+    display(zoom, strokeColor, fillColor) {
+        fill(fillColor);
+        stroke(strokeColor);
         square(this.screen.x, this.screen.y, this.screenDim);
         let off;
         switch (this.label) {
@@ -89,7 +89,7 @@ class PlantUIButton extends FeatureComponent {
                 this.drawResizeIcon(this.screen.x, this.screen.y);
                 break;
             default:
-                this.drawLabelLetterIcon(this.screen.x, this.screen.y, zoom);
+                this.drawLabelLetterIcon(this.screen.x, this.screen.y, zoom, strokeColor);
                 break;
         }
     }
@@ -170,12 +170,12 @@ class PlantDataTextLabel extends PlantData {
         return (distanceX < wa / 2 && distanceY < (this.screenDim * zoom) / 2);
     }
 
-    display(zoom) {
+    display(zoom, strokeColor, fillColor) {
         let wa = this.calculateWidth(zoom);
-        fill(getColor("primary"));
-        stroke(getColor("outline"));
+        fill(fillColor);
+        stroke(strokeColor);
         rect(this.screen.x, this.screen.y, wa, this.screenDim);
-        fill(getColor("text"));
+        fill(strokeColor);
         noStroke();
         textAlign(CENTER, CENTER);
         text(this.data, this.screen.x + wa / 2, this.screen.y + this.screenDim / 2); // Center the text within the rectangle

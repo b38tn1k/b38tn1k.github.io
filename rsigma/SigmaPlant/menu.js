@@ -7,48 +7,57 @@ class MenuButton {
         this.buttonRadius = 50;
         this.level = level;
         this.numEdges = 5;
-        this.isAnimating = false;
-        this.animationCountDown = 0.0;
-        this.resetAnimation();
-    }
-
-    resetAnimation() {
-        this.animationCountDown = 0.0;
         this.isAnimating = true;
-        // this.animationCountDown = 1;
-        // this.isAnimating = false;
+        this.animationCountDown = 0.0;
+        this.animateForward = true;
     }
 
-    noAnimation () {
-        this.animationCountDown = 1.0;
+    resetAnimation(forward) {
+        this.animateForward = forward;
+        if (forward) {
+            this.animationCountDown = 0.0;
+        } else {
+            this.animationCountDown = 1.0;
+        }
+        this.isAnimating = true;
+    }
+
+    noAnimation() {
         this.isAnimating = false;
     }
 
     display(offAlpha = 0) {
         switch (this.level) {
             case 1:
-                fill(getColor("secondary"));
+                fill(getColor('secondary'));
                 break;
             default:
-                fill(getColor("primary"));
+                fill(getColor('primary'));
 
         }
-        stroke(getColor("outline"));
+        stroke(getColor('outline'));
         if (this.numEdges === 0) {
             ellipse(this.x, this.y, this.buttonRadius * 2, this.buttonRadius * 2);
         } else {
+            let br;
             if (this.isAnimating) {
                 const baseIncrement = 0.1;
                 const desiredFrameRate = highFrameRate; // adjust this to the frame rate you designed the animation for
                 const currentFrameRate = frameRate();
                 const increment = baseIncrement * (desiredFrameRate / currentFrameRate);
-                this.animationCountDown += increment;
-                if (this.animationCountDown >= 1) {
+                if (this.animateForward) {
+                    this.animationCountDown += increment;
+                } else {
+                    this.animationCountDown -= increment;
+                }
+                if ((this.animationCountDown >= 1 && this.animateForward) || (this.animationCountDown <= 0 && !this.animateForward)) {
                     this.animationCountDown = 1;
                     this.isAnimating = false;
                 }
+                br = this.animationCountDown * this.buttonRadius;
+            } else {
+                br = this.buttonRadius;
             }
-            const br = this.animationCountDown * this.buttonRadius;
             push();
             translate(this.x, this.y);
             rotate(PI / 2); // To have one vertex pointing to the center
@@ -63,7 +72,7 @@ class MenuButton {
             pop();
         }
         if (!this.isAnimating) {
-            fill(getColor("text"));
+            fill(getColor('text'));
             noStroke();
             textAlign(CENTER, CENTER);
             text(this.label, this.x, this.y);
@@ -78,7 +87,6 @@ class MenuButton {
     checkMouseClick() {
         let pressed = false;
         if (dist(mouseX, mouseY, this.x, this.y) < this.buttonRadius) {
-            // console.log(this.label);
             pressed = true;
             if (this.action) {
                 this.action();
@@ -160,28 +168,31 @@ class CircularMenu {
     }
 
     activate() {
-        this.isActive = true;
-        this.resetAnimation();
-        for (let i = 0; i < this.buttons.length; i++) {
-            this.buttons[i].resetAnimation();
+        if (!this.isActive) {
+            this.isActive = true;
+            this.resetAnimation(true);
         }
     }
 
-    resetAnimation() {
+    resetAnimation(forward) {
         this.animationCountDown = radians(90);
         this.isAnimating = true;
+        for (let i = 0; i < this.buttons.length; i++) {
+            this.buttons[i].resetAnimation(forward);
+        }
         // this.isAnimating = false;
         // this.animationCountDown = 0;
     }
 
     dismiss() {
-        this.isActive = false;
-        for (let i = 0; i < this.buttons.length; i++) {
-            this.buttons[i].resetAnimation();
-        }
-        if (this.activeSubMenu) {
-            this.activeSubMenu.deactivate();
-            this.activeSubMenu = null;
+        if (this.isActive) {
+            this.isActive = false;
+            this.resetAnimation(false);
+            if (this.activeSubMenu) {
+                this.activeSubMenu.deactivate();
+                this.activeSubMenu = null;
+            }
+
         }
     }
 
@@ -214,41 +225,65 @@ class CircularMenu {
         return subMenu;
     }
 
+    deactivateSubMenu() {
+        this.activeSubMenu.deactivate();
+        this.activeSubMenu = null;
+    }
+
     activateSubMenu(label) {
         // if (this.activeSubMenu) {
         //     this.activeSubMenu.deactivate();
         //     this.activeSubMenu = null;
         // } else {
-            this.activeSubMenu = this.subMenus.find(subMenu => subMenu.label === label);
-            if (this.activeSubMenu) {
-                this.activeSubMenu.noAnimation();
-                this.activeSubMenu.activate();
-            }
+        this.activeSubMenu = this.subMenus.find(subMenu => subMenu.label === label);
+        if (this.activeSubMenu) {
+            this.activeSubMenu.noAnimation();
+            this.activeSubMenu.activate();
+        }
         // }
     }
 
     display() {
-        textSize(myTextSize);
-        if (this.isAnimating == true) {
+        if (this.isActive) {
+            textSize(myTextSize);
+            if (this.isAnimating) {
+                const baseDecrement = radians(9);
+                const desiredFrameRate = highFrameRate; // adjust this to the frame rate you designed the animation for
+                const currentFrameRate = frameRate();
+                const decrement = baseDecrement * (desiredFrameRate / currentFrameRate);
+                this.animationCountDown -= decrement;
+                if (this.animationCountDown <= 0) {
+                    // this.animationCountDown = 0;
+                    this.isAnimating = false;
+                }
+                this.updateButtonPositions();
+            }
+            strokeWeight(1);
+            if (this.activeSubMenu) {
+                this.activeSubMenu.display();
+            }
+            for (let i = 0; i < this.buttons.length; i++) {
+                this.buttons[i].display(map(i, 0, this.buttons.length, 0, TWO_PI) - radians(90));
+            }
+        }
+        if (this.isAnimating) {
             const baseDecrement = radians(9);
             const desiredFrameRate = highFrameRate; // adjust this to the frame rate you designed the animation for
             const currentFrameRate = frameRate();
             const decrement = baseDecrement * (desiredFrameRate / currentFrameRate);
             this.animationCountDown -= decrement;
-            if (this.animationCountDown <= 0) {
-                this.animationCountDown = 0;
+            if (this.animationCountDown <= 0.0) {
+                // this.animationCountDown = 0;
                 this.isAnimating = false;
             }
-            this.updateButtonPositions();
-        }
-        strokeWeight(1);
-        if (this.activeSubMenu) {
-            this.activeSubMenu.display();
-        }
-        for (let i = 0; i < this.buttons.length; i++) {
-            this.buttons[i].display(map(i, 0, this.buttons.length, 0, TWO_PI) - radians(90));
         }
 
+        if (this.isAnimating) {
+            this.updateButtonPositions();
+            for (let i = 0; i < this.buttons.length; i++) {
+                this.buttons[i].display(map(i, 0, this.buttons.length, 0, TWO_PI) - radians(90));
+            }
+        }
     }
 
     handleMousePress() {

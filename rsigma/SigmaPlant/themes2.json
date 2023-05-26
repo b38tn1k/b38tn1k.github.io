@@ -8,7 +8,7 @@
         "accent": "deepPink",
         "background": "teal",
         "gridline": "yellowGreen",
-        "connector": "pinkFlamingo"
+        "quaternary": "pinkFlamingo"
     },
     "volcanic": {
         "outline": "ghostWhite",
@@ -19,7 +19,7 @@
         "accent": "aqua",
         "background": "black",
         "gridline": "fireBrick",
-        "connector": "babyBlueEyes"
+        "quaternary": "babyBlueEyes"
     },
     "spring": {
         "outline": "deepPink",
@@ -30,7 +30,7 @@
         "accent": "mediumVioletRed",
         "background": "aquamarine",
         "gridline": "green",
-        "connector": "crimson"
+        "quaternary": "crimson"
     },
     "ms": {
         "outline": "black",
@@ -41,18 +41,18 @@
         "accent": "deepSkyBlue",
         "background": "dimGrey",
         "gridline": "aqua",
-        "connector": "orangeRed"
+        "quaternary": "orangeRed"
     },
     "dark": {
         "outline": "yellowGreen",
         "text": "yellowGreen",
         "primary": "outerSpace",
         "secondary": "gunmetal",
-        "tertiary": "charcoal",
+        "tertiary": "coral",
         "accent": "deepSkyBlue",
         "background": "onyx",
         "gridline": "darkOrange",
-        "connector": "orangeRed"
+        "quaternary": "orchid"
     },
     "light": {
         "outline": "black",
@@ -63,7 +63,7 @@
         "accent": "deepSkyBlue",
         "background": "ghostWhite",
         "gridline": "dimGrey",
-        "connector": "darkCyan"
+        "quaternary": "darkCyan"
     },
     "sunrise": {
         "outline": "peachPuff",
@@ -74,7 +74,7 @@
         "accent": "gold",
         "background": "lightGrey",
         "gridline": "grey",
-        "connector": "dimGrey"
+        "quaternary": "dimGrey"
     },
     "twilight": {
         "outline": "periwinkle",
@@ -85,7 +85,7 @@
         "accent": "plum",
         "background": "lavender",
         "gridline": "slateGrey",
-        "connector": "davysGrey"
+        "quaternary": "davysGrey"
     },
     "coastal": {
         "outline": "deepSkyBlue",
@@ -96,7 +96,7 @@
         "accent": "mintCream",
         "background": "moccasin",
         "gridline": "charcoal",
-        "connector": "grey"
+        "quaternary": "grey"
     },
     "desert": {
         "outline": "darkGoldenRod",
@@ -107,7 +107,7 @@
         "accent": "darkOrange",
         "background": "brown",
         "gridline": "grey",
-        "connector": "dimGrey"
+        "quaternary": "dimGrey"
     },
     "forest": {
         "outline": "green",
@@ -118,7 +118,7 @@
         "accent": "mintCream",
         "background": "darkCyan",
         "gridline": "slateGrey",
-        "connector": "grey"
+        "quaternary": "grey"
     },
     "concrete": {
         "outline": "black",
@@ -129,7 +129,7 @@
         "accent": "red",
         "background": "grey",
         "gridline": "lightGrey",
-        "connector": "ghostWhite"
+        "quaternary": "ghostWhite"
     },
     "carnival": {
         "outline": "red",
@@ -140,7 +140,7 @@
         "accent": "gold",
         "background": "moccasin",
         "gridline": "lightGrey",
-        "connector": "grey"
+        "quaternary": "grey"
     },
     "winter": {
         "outline": "ghostWhite",
@@ -151,7 +151,7 @@
         "accent": "periwinkle",
         "background": "slateGrey",
         "gridline": "lightGrey",
-        "connector": "dimGrey"
+        "quaternary": "dimGrey"
     },
     "autumn": {
         "outline": "fireBrick",
@@ -162,7 +162,7 @@
         "accent": "brown",
         "background": "peachPuff",
         "gridline": "saddleBrown",
-        "connector": "dimGrey"
+        "quaternary": "dimGrey"
     },
     "fiesta": {
         "outline": "yellowGreen",
@@ -173,7 +173,7 @@
         "accent": "deepSkyBlue",
         "background": "mintCream",
         "gridline": "forestGreen",
-        "connector": "green"
+        "quaternary": "green"
     },
     "mystery": {
         "outline": "mediumBlueDark",
@@ -184,7 +184,7 @@
         "accent": "orchid",
         "background": "teal",
         "gridline": "onyx",
-        "connector": "davysGrey"
+        "quaternary": "davysGrey"
     },
     "blossom": {
         "outline": "thistle",
@@ -195,6 +195,6 @@
         "accent": "deepPink",
         "background": "babyBlueEyes",
         "gridline": "darkOrange",
-        "connector": "mediumBlue"
+        "quaternary": "mediumBlue"
     }
 }

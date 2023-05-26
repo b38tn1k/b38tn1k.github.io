@@ -20,7 +20,7 @@ function mousePressed() {
   fpsEvent();
   mousePressTime = millis();
   mouseOldPos = createVector(mouseX, mouseY);
-  if (mouseButton === RIGHT) {
+  if (mouseButton === RIGHT && menu.isActive == false) {
     setTimeout(() => {
       menu.activate();
       menu.setPosition(mouseX, mouseY);
@@ -34,7 +34,10 @@ function mousePressed() {
   if (mouseButton === LEFT && menu.isActive == true) {
     const pressed = menu.handleMousePress();
     if (pressed === false) {
-      menu.dismiss();
+      setTimeout(() => {
+        menu.dismiss();
+      }, 100);
+      
     }
   }
 }
@@ -80,9 +83,7 @@ function draw() {
   scrollBoard();
   drawGrid();
   plant.update(zoom)
-  if (menu.isActive) {
-    menu.display();
-  }
+  menu.display();
   noStroke();
   fill(255);
   textSize(12);

@@ -14,6 +14,7 @@ class Feature {
         this.animationValue = 0.0;
         this.animationW = w;
         this.animationH = h;
+        this.shouldRender = true;
     }
 
     initDataLabels(buttonSize) { }
@@ -35,6 +36,7 @@ class Feature {
 
     setMode(mode) {
         this.mode = mode;
+        console.log(mode);
     }
 
     moveToMouse() {
@@ -74,19 +76,20 @@ class Feature {
         }
     }
 
-    drawButtonsAndLabels() {
+    drawButtonsAndLabels(myStrokeColor = getColor("outline"), myFillColor = getColor("secondary")) {
         // Draw buttons
         for (let button of this.buttons) {
             // Convert button position to screen coordinates
-            button.display(zoom);
+            button.display(zoom, myStrokeColor, myFillColor);
         }
         // Draw data labels
         for (let label in this.dataLabels) {
-            this.dataLabels[label].display(zoom);
+            this.dataLabels[label].display(zoom, myStrokeColor, myFillColor);
         }
     }
 
     update(zoom) {
+        this.shouldRender = this.isInScreen();
         this.updateScreenCoords(zoom);
         this.updateButtonsAndLabels(zoom);
         switch (this.mode) {
@@ -111,6 +114,11 @@ class Feature {
         }
     }
 
+    startDelete() {
+        this.mode = 'deleting';
+        this.isAnimating = true;
+    }
+
     display() {
         if (this.isAnimating) {
             fpsEvent();
@@ -118,17 +126,25 @@ class Feature {
             const desiredFrameRate = highFrameRate;
             const currentFrameRate = frameRate();
             const increment = baseIncrement * (desiredFrameRate / currentFrameRate);
-            this.animationValue += increment;
+            if (this.mode == 'deleting') {
+                this.animationValue -= increment;
+            } else {
+                this.animationValue += increment;
+            }
+            
             this.height = this.animationH * this.animationValue;
             this.width = this.animationW * this.animationValue;
-            if (this.animationValue >= 1.0) {
+            if (this.animationValue >= 1.0 && this.mode != 'deleting') {
                 this.isAnimating = false;
                 this.height = this.animationH;
                 this.width = this.animationW;
             }
+            if (this.animationValue <= 0.0 && this.mode == 'deleting') {
+                this.mode = 'delete';
+            }
         }
         
-        if (this.isInScreen() == true) {
+        if (this.shouldRender == true) {
             this.draw();
         }
     }
@@ -168,7 +184,7 @@ class Station extends Feature {
 
     initButtons(buttonSize) {
         this.buttons.push(new PlantUIButton('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
-        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.setMode('delete'))); // top right
+        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
         this.buttons.push(new PlantUIButton('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
         this.buttons.push(new PlantUIButton('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
     }
@@ -179,7 +195,56 @@ class Station extends Feature {
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
         this.drawButtonsAndLabels();
     }
+}
 
+class Source extends Feature {
+    constructor(x, y, width, height) {
+        super(x, y, 300, 196); // Call the parent constructor
+        this.type = 'feature';
+    }
+
+    initDataLabels(buttonSize) {
+        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'SOURCE NAME', buttonSize, openDialog);
+        this.dataLabels['id'] = new PlantDataTextLabel(0, 1, this.id, buttonSize, NOP);
+    }
+
+    initButtons(buttonSize) {
+        this.buttons.push(new PlantUIButton('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
+        this.buttons.push(new PlantUIButton('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect'))); // bottom center
+    }
+
+    draw() {
+        fill(getColor("primary"));
+        stroke(getColor("quaternary"));
+        rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+        this.drawButtonsAndLabels(getColor("quaternary"));
+    }
+}
+
+class Sink extends Feature {
+    constructor(x, y, width, height) {
+        super(x, y, 300, 196); // Call the parent constructor
+        this.type = 'feature';
+    }
+
+    initDataLabels(buttonSize) {
+        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'SINK NAME', buttonSize, openDialog);
+        this.dataLabels['id'] = new PlantDataTextLabel(0, 1, this.id, buttonSize, NOP);
+    }
+
+    initButtons(buttonSize) {
+        this.buttons.push(new PlantUIButton('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
+        this.buttons.push(new PlantUIButton('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
+    }
+
+    draw() {
+        fill(getColor("primary"));
+        stroke(getColor("tertiary"));
+        rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+        this.drawButtonsAndLabels(getColor("tertiary"));
+    }
 }
 
 class Zone extends Feature {
@@ -190,7 +255,7 @@ class Zone extends Feature {
 
     initButtons(buttonSize) {
         this.buttons.push(new PlantUIButton('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
-        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.setMode('delete'))); // top right
+        this.buttons.push(new PlantUIButton('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
         this.buttons.push(new PlantUIButton('Resize', 1, 1, buttonSize, () => this.setMode('resize')));
     }
 
@@ -202,13 +267,14 @@ class Zone extends Feature {
         noFill();
         stroke(getColor("accent"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
-        this.drawButtonsAndLabels();
+        this.drawButtonsAndLabels(getColor("accent"));
     }
 }
 
 class Connector extends Feature {
     constructor(x, y, input, output) {
         super(x, y); // Call the parent constructor
+        this.isAnimating = false;
         this.type = 'connector';
         this.input = input;
         this.output = output;
@@ -229,6 +295,7 @@ class Connector extends Feature {
     }
 
     update() {
+        this.shouldRender = true;
         if (this.input && this.output) {
             if (this.input.mode == 'delete' || this.output.mode == 'delete') {
                 this.mode = 'delete';
@@ -267,6 +334,14 @@ class Plant {
 
     addStation(x, y) {
         this.features.push(new Station(x, y));
+    }
+
+    addSink(x, y) {
+        this.features.push(new Sink(x, y));
+    }
+
+    addSource(x, y) {
+        this.features.push(new Source(x, y));
     }
 
     addZone(x, y) {

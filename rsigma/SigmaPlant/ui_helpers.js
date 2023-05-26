@@ -91,14 +91,19 @@ function setupMenu(){
   menu.newSubMenu(buttons1, 'themes1');
   menu.newSubMenu(buttons2, 'themes2');
   menu.newSubMenu(buttons3, 'themes3');
-  menu.addButton('Theme', () => {
-    menu.activateSubMenu('themes1');
-  });
-
+  // Create Buttons for a Settings submenu
+  let settings = [];
+  settings.push(new MenuButton( 'Themes', 0, 0, () => menu.activateSubMenu('themes1'), 1));
+  settings.push(new MenuButton( 'Save', 0, 0, () => console.log('Save Button Press'), 1));
+  settings.push(new MenuButton( 'Load', 0, 0, () => console.log('Load Button Press'), 1));
+  menu.newSubMenu(settings, 'settings');
   menu.addButton('New Station', newStation);
   menu.addButton('New Zone', newZone);
-  menu.addButton('Save', () => console.log('Save Action'));
-  menu.addButton('Load', () => console.log('Load Action'));
+  menu.addButton('New Source', newSource);
+  menu.addButton('New Sink', newSink);
+  menu.addButton('Settings', () => {menu.activateSubMenu('settings');});
+  // settings.push(new MenuButton( 'Demo', 0, 0, console.log('Demo Button Press'), 1));
+  
 }
 
 function setupPlant() {
@@ -111,15 +116,26 @@ function setTheme(theme) {
 
 }
 
+function newSource() {
+  const pos = screenToBoard(menu.position.x, menu.position.y);
+  menu.dismiss();
+  plant.addSource(pos.x, pos.y);
+}
+
+function newSink() {
+  const pos = screenToBoard(menu.position.x, menu.position.y);
+  menu.dismiss();
+  plant.addSink(pos.x, pos.y);
+}
 
 function newStation() {
-  const pos = screenToBoard(mouseX, mouseY);
+  const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
   plant.addStation(pos.x, pos.y);
 }
 
 function newZone() {
-  const pos = screenToBoard(mouseX, mouseY);
+  const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
   plant.addZone(pos.x, pos.y);
 }

@@ -40,8 +40,8 @@ function drawCross(x, y, size) {
 }
 
 
-function drawGrid() {
-  stroke(getColor('gridline'));
+function drawGrid(color) {
+  stroke(color);
   strokeWeight(1);
   let resolution = 50; // Grid resolution
   if (zoom <= 0.5) {

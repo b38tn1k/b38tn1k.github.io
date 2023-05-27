@@ -154,7 +154,7 @@ class CircularMenu {
         this.activeSubMenu = null;
         this.isAnimating = false;
         this.animationCountDown = null;
-        this.resetAnimation();
+        // this.resetAnimation();
     }
 
     addButton(label, action) {

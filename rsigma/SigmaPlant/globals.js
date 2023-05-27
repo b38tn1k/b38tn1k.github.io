@@ -20,3 +20,8 @@ let myTextSize = 12;
 let mousePressTime;
 let mouseHoldDurationValue = 200;
 let mouseOldPos;
+
+let app;
+let NO_CHANGE = 0;
+let APPLICATION = 2;
+let LANDING = 1;

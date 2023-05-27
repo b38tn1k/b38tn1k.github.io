@@ -58,6 +58,11 @@ class Application extends Mode {
         fill(255);
         textSize(12);
         text('FPS: ' + int(frameRate()).toString(), windowWidth - 75, 50);
+        if (isTouchDevice()) {
+            text('touch', windowWidth - 75, 65);
+        } else {
+            text('mouse', windowWidth - 75, 65);
+        }
     }
 
 }

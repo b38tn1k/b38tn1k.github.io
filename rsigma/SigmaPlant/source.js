@@ -68,6 +68,10 @@ function draw() {
     }
 }
 
+function isTouchDevice() {
+  return 'ontouchstart' in window || navigator.maxTouchPoints;
+}
+
 document.addEventListener("contextmenu", function (event) {
   event.preventDefault();
 });

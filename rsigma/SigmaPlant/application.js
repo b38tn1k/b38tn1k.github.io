@@ -122,25 +122,26 @@ class Loading extends Mode {
     constructor() {
         super();
         this.trigger = 0;
-        const charWidth = 50 //windowWidth / 10;
-        const spacer = 25;
-        const charHeight = 50 //windowWidth / 10;
+        const charWidth = min(windowWidth / 10, windowHeight/10);
+        const spacer = min(windowWidth / 40, windowHeight/40);
+        const charHeight = min(windowWidth / 10, windowHeight/10);
         const startX = (windowWidth - (charWidth * 5 + 1.75 * spacer)) / 2;  // Center 5 characters
+        const startY = windowHeight / 2 -  charHeight * 2; // windowH eight / 2 - charHeight * 0.5
+
         this.middleX = (windowWidth - charWidth) / 2;
         this.middleY = (windowHeight - charHeight) / 2;
         this.ratio = 1.0;
         this.letterPos = [];
-        this.letterPos.push([startX, windowHeight / 2 - charHeight * 2, charWidth, charHeight])
-        this.letterPos.push([startX + charWidth + spacer / 2, windowHeight / 2 - charHeight * 2, charWidth, charHeight])
-        this.letterPos.push([startX + charWidth * 2 + spacer, windowHeight / 2 - charHeight * 2, charWidth, charHeight])
-        this.letterPos.push([startX + charWidth * 3 + spacer * 2, windowHeight / 2 - charHeight * 2, charWidth, charHeight])
-        this.letterPos.push([startX + charWidth * 4 + spacer * 3, windowHeight / 2 - charHeight * 2, charWidth, charHeight])
-        this.letterPos.push([startX, windowHeight / 2 - charHeight * 0.5, charWidth, charHeight])
-        this.letterPos.push([startX + charWidth + spacer * 1.5, windowHeight / 2 - charHeight * 0.5, charWidth, charHeight])
-        this.letterPos.push([startX + (charWidth) * 2 + spacer, windowHeight / 2 - charHeight * 0.5, charWidth, charHeight])
-        this.letterPos.push([startX + (charWidth) * 3 + 2 * spacer, windowHeight / 2 - charHeight * 0.5, charWidth, charHeight])
-        this.letterPos.push([startX + (charWidth) * 4 + spacer * 3, windowHeight / 2 - charHeight * 0.5, charWidth, charHeight])
-        this.letterPos.push([startX, windowHeight / 2 - charHeight * 2, charWidth, charHeight]);
+        this.letterPos.push([startX, startY, charWidth, charHeight])
+        this.letterPos.push([startX + charWidth + spacer / 2, startY, charWidth, charHeight])
+        this.letterPos.push([startX + charWidth * 2 + spacer, startY, charWidth, charHeight])
+        this.letterPos.push([startX + charWidth * 3 + spacer * 2, startY, charWidth, charHeight])
+        this.letterPos.push([startX + charWidth * 4 + spacer * 3, startY, charWidth, charHeight])
+        this.letterPos.push([startX, startY + charHeight * 1.5, charWidth, charHeight])
+        this.letterPos.push([startX + charWidth + spacer * 1.5, startY + charHeight * 1.5, charWidth, charHeight])
+        this.letterPos.push([startX + (charWidth) * 2 + spacer, startY + charHeight * 1.5, charWidth, charHeight])
+        this.letterPos.push([startX + (charWidth) * 3 + 2 * spacer, startY + charHeight * 1.5, charWidth, charHeight])
+        this.letterPos.push([startX + (charWidth) * 4 + spacer * 3, startY + charHeight * 1.5, charWidth, charHeight])
     }
     mouseReleased(event) { }
 

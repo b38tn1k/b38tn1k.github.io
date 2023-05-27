@@ -122,9 +122,9 @@ class Loading extends Mode {
     constructor() {
         super();
         this.trigger = 0;
-        const charWidth = 100;
+        const charWidth = 50 //windowWidth / 10;
         const spacer = 25;
-        const charHeight = 100;
+        const charHeight = 50 //windowWidth / 10;
         const startX = (windowWidth - (charWidth * 5 + 1.75 * spacer)) / 2;  // Center 5 characters
         this.middleX = (windowWidth - charWidth) / 2;
         this.middleY = (windowHeight - charHeight) / 2;

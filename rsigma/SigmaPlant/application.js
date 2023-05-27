@@ -182,7 +182,7 @@ class Loading extends Mode {
                 let colorRatio = (frameCount - (this.trigger - 30))/30.0;
                 let interpColor = lerpColor(getColor('background'), getColor('gridline'), colorRatio);
                 drawGrid(interpColor);
-                interpColor = lerpColor(getColor('outline'), getColor('background'), colorRatio);
+                interpColor = lerpColor(getColor('outline'), color(12, 11, 29, 0), colorRatio); // hard coded transparent onyx
                 stroke(interpColor);
             }
         } else {

@@ -147,6 +147,9 @@ class Loading extends Mode {
         this.letterPos.push([startX + (charWidth) * 2 + spacer, startY + charHeight * 1.5, charWidth, charHeight])
         this.letterPos.push([startX + (charWidth) * 3 + 2 * spacer, startY + charHeight * 1.5, charWidth, charHeight])
         this.letterPos.push([startX + (charWidth) * 4 + spacer * 3, startY + charHeight * 1.5, charWidth, charHeight])
+        this.transparentBG = getColor('background').levels;
+        this.transparentBG[3] = 0;
+        this.transparentBG = color(this.transparentBG);
     }
     mouseReleased(event) { }
 
@@ -188,7 +191,7 @@ class Loading extends Mode {
                 let colorRatio = (frameCount - (this.trigger - 30))/30.0;
                 let interpColor = lerpColor(getColor('background'), getColor('gridline'), colorRatio);
                 drawGrid(interpColor);
-                interpColor = lerpColor(getColor('outline'), color(12, 11, 29, 0), colorRatio); // hard coded transparent onyx
+                interpColor = lerpColor(getColor('outline'), this.transparentBG, colorRatio); // hard coded transparent onyx
                 stroke(interpColor);
             }
         } else {

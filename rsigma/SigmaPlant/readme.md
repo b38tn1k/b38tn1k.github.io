@@ -16,7 +16,7 @@
 
 - [ ] Split Block with Percentages (two way only, slider split maybe)
 
-- [ ] Delay / Duration Block
+- [ ] Delay / Duration Block 
 
 - [ ] Feature Tagging:
   - Value Add

@@ -270,6 +270,66 @@ class Sink extends Feature {
     
 }
 
+class Input extends Feature {
+    constructor(x, y, width, height) {
+        super(x, y, 98, 98, 'input'); // Call the parent constructor
+    }
+
+    initDataLabels(buttonSize) {
+        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'INPUT', buttonSize, openDialog);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
+    }
+
+    initButtons(buttonSize) {
+        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
+        this.buttons.push(new PlantUIButtonLetterLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect'))); // top center
+    }
+
+    draw(zoom) {
+        fill(getColor("primary"));
+        stroke(getColor("outline"));
+        rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+    
+        // Draw triangle
+        fill(getColor("secondary")); // Set the fill color for the triangle
+        noStroke(); // Remove stroke for the triangle
+        const centerX = this.screenPos.x + this.onScreenWidth / 2;
+        const baseY = this.screenPos.y + this.onScreenHeight;
+        triangle(centerX, this.screenPos.y, this.screenPos.x, baseY, this.screenPos.x + this.onScreenWidth, baseY);
+    }
+    
+}
+
+class Output extends Feature {
+    constructor(x, y, width, height) {
+        super(x, y, 98, 98, 'output'); // Call the parent constructor
+    }
+
+    initDataLabels(buttonSize) {
+        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'OUTPUT', buttonSize, openDialog);
+        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
+    }
+
+    initButtons(buttonSize) {
+        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move'))); // top left
+        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete())); // top right
+        this.buttons.push(new PlantUIButtonLetterLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
+    }
+
+    draw(zoom) {
+        fill(getColor("primary"));
+        stroke(getColor("outline"));
+        rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+    
+        fill(getColor("secondary")); // Set the fill color for the triangle
+        noStroke(); // Remove stroke for the triangle
+        const centerX = this.screenPos.x + this.onScreenWidth / 2;
+        const baseY = this.screenPos.y;
+        triangle(centerX, this.screenPos.y + this.onScreenHeight, this.screenPos.x, baseY, this.screenPos.x + this.onScreenWidth, baseY);
+    }
+}
+
 class Zone extends Feature {
     constructor(x, y, width, height) {
         super(x, y, width, height, 'zone' ); // Call the parent constructor
@@ -381,15 +441,37 @@ class Plant {
     }
 
     addSink(x, y) {
+        console.log('new sink');
         this.features.push(new Sink(x, y));
     }
 
     addSource(x, y) {
+        console.log('new source');
         this.features.push(new Source(x, y));
     }
 
     addZone(x, y) {
         this.features.push(new Zone(x, y));
+    }
+
+    addInput(x, y) {
+        console.log('new input');
+        this.features.push(new Input(x, y));
+    }
+
+    addOutput(x, y) {
+        console.log('new output');
+        this.features.push(new Output(x, y));
+    }
+
+    addDelay(x, y) {
+        console.log('new delay');
+        // this.features.push(new Delay(x, y));
+    }
+
+    addProcess(x, y) {
+        console.log('new process');
+        // this.features.push(new Process(x, y));
     }
 
     addConnector(x, y, input, output) {

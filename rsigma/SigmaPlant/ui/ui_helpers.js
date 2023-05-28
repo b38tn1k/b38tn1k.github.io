@@ -94,14 +94,32 @@ function setupMenu(){
   // Create Buttons for a Settings submenu
   let settings = [];
   settings.push(new MenuButton( 'Themes', 0, 0, () => menu.activateSubMenu('themes1'), 1));
-  settings.push(new MenuButton( 'Save', 0, 0, () => console.log('Save Button Press'), 1));
-  settings.push(new MenuButton( 'Load', 0, 0, () => console.log('Load Button Press'), 1));
+
+  let busButtonGroup = [];
+  busButtonGroup.push(new MenuButton( 'New Source', 0, 0, newSource, 1));
+  busButtonGroup.push(new MenuButton( 'New Sink', 0, 0, newSink, 1));
+  busButtonGroup.push(new MenuButton( 'New Input', 0, 0, newInput, 1));
+  busButtonGroup.push(new MenuButton( 'New Output', 0, 0, newOutput, 1));
+  
+  menu.newSubMenu(busButtonGroup, 'omnibus');
   menu.newSubMenu(settings, 'settings');
+
   menu.addButton('New Station', newStation);
   menu.addButton('New Zone', newZone);
-  menu.addButton('New Source', newSource);
-  menu.addButton('New Sink', newSink);
+  menu.addButton('New Delay', newDelay);
+  menu.addButton('New Process', newProcess);
+  menu.addButton('New Bus', () => {menu.activateSubMenu('omnibus');});
   menu.addButton('Settings', () => {menu.activateSubMenu('settings');});
+  
+
+  
+
+  // menu.addButton('New Source', newSource);
+  // menu.addButton('New Sink', newSink);
+  // menu.addButton('New Input', newInput);
+  // menu.addButton('New Output', newOutput);
+  
+  
   // settings.push(new MenuButton( 'Demo', 0, 0, console.log('Demo Button Press'), 1));
   
 }
@@ -119,9 +137,7 @@ function setTheme(theme) {
 function newSource() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   plant.addSource(pos.x, pos.y);
-  setTimeout(() => {
-    menu.dismiss();
-  }, 100);
+  menu.dismiss();
 }
 
 function newSink() {
@@ -140,4 +156,28 @@ function newZone() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
   plant.addZone(pos.x, pos.y);
+}
+
+function newOutput() {
+  const pos = screenToBoard(menu.position.x, menu.position.y);
+  plant.addOutput(pos.x, pos.y);
+  menu.dismiss();
+}
+
+function newInput() {
+  const pos = screenToBoard(menu.position.x, menu.position.y);
+  plant.addInput(pos.x, pos.y);
+  menu.dismiss();
+}
+
+function newProcess() {
+  const pos = screenToBoard(menu.position.x, menu.position.y);
+  plant.addProcess(pos.x, pos.y);
+  menu.dismiss();
+}
+
+function newDelay() {
+  const pos = screenToBoard(menu.position.x, menu.position.y);
+  plant.addDelay(pos.x, pos.y);
+  menu.dismiss();
 }

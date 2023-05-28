@@ -6,8 +6,18 @@
   - [ ] group moving
   - [ ] duplication
   - [ ] station list
-- [ ] Load and Save via JSON 
-- [ ] Mobile touch input
+
+- [ ] Processes can have 'sub process' which are actually 'Sub Plants'
+  - to show sub processes need a level naviagation widget as above 
+  - sub process plants need special Source / Sink zones for the input and output of the higher level process
+
+- [ ] Inputs and Outputs should be addable components to subprocesse
+  - Tags for Material / Informational /  Energy / Mechanical / Custom
+
+- [ ] Split Block with Percentages (two way only, slider split maybe)
+
+- [ ] Delay / Duration Block
+
 - [ ] Feature Tagging:
   - Value Add
   - No-Value Add
@@ -15,10 +25,14 @@
   - Waste
   - Rework
   - Handoff
-- [ ] Undo
-- [ ] real time collaboration 
-- [ ] Processes can have 'sub process' which are actually 'Sub Plants'
-  - to show sub processes need a level naviagation widget as above 
-  - sub process plants need special Source / Sink zones for the input and output of the higher level process
-- [ ] Inputs and Outputs should be addable components to subprocesses, so can determine percentage split or material split
+
+- [ ] Map and time between any Source and Sink
+
+- [ ] Mobile touch input
+
+
+### Requires Server
+- [ ] Undo and constant save 
+- [ ] Real Time collaboration 
+
 

@@ -100,6 +100,7 @@ function setupMenu(){
   busButtonGroup.push(new MenuButton( 'New Sink', 0, 0, newSink, 1));
   busButtonGroup.push(new MenuButton( 'New Input', 0, 0, newInput, 1));
   busButtonGroup.push(new MenuButton( 'New Output', 0, 0, newOutput, 1));
+  busButtonGroup.push(new MenuButton( 'New Split', 0, 0, newSplit, 1));
   
   menu.newSubMenu(busButtonGroup, 'omnibus');
   menu.newSubMenu(settings, 'settings');
@@ -137,6 +138,12 @@ function setTheme(theme) {
 function newSource() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   plant.addSource(pos.x, pos.y);
+  menu.dismiss();
+}
+
+function newSplit() {
+  const pos = screenToBoard(menu.position.x, menu.position.y);
+  plant.addSplit(pos.x, pos.y);
   menu.dismiss();
 }
 

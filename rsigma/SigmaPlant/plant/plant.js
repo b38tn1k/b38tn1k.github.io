@@ -469,6 +469,11 @@ class Plant {
         // this.features.push(new Delay(x, y));
     }
 
+    addSplit(x, y) {
+        console.log('new splitter');
+        // this.features.push(new Delay(x, y));
+    }
+
     addProcess(x, y) {
         console.log('new process');
         // this.features.push(new Process(x, y));

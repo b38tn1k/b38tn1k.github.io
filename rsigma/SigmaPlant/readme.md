@@ -17,3 +17,8 @@
   - Handoff
 - [ ] Undo
 - [ ] real time collaboration 
+- [ ] Processes can have 'sub process' which are actually 'Sub Plants'
+  - to show sub processes need a level naviagation widget as above 
+  - sub process plants need special Source / Sink zones for the input and output of the higher level process
+- [ ] Inputs and Outputs should be addable components to subprocesses, so can determine percentage split or material split
+

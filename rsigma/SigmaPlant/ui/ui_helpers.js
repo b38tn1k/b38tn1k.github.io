@@ -75,52 +75,44 @@ function setupMenu(){
   let themesArray = Object.keys(themes);
 
   // Divide the themes into three groups
-  let themeGroup1 = themesArray.slice(0, themesArray.length / 3);
-  let themeGroup2 = themesArray.slice(themesArray.length / 3, 2 * themesArray.length / 3);
-  let themeGroup3 = themesArray.slice(2 * themesArray.length / 3);
+  let themeGroup1 = themesArray.slice(0, themesArray.length / 2);
+  let themeGroup2 = themesArray.slice(themesArray.length / 2);
+  // let themeGroup3 = themesArray.slice(2 * themesArray.length / 3);
 
   // Create buttons for each theme group
   let buttons1 = themeGroup1.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
   buttons1.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes2'), 1));
   let buttons2 = themeGroup2.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
-  buttons2.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes3'), 1));
-  let buttons3 = themeGroup3.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
-  buttons3.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes1'), 1));
+  buttons2.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes1'), 1));
+  // let buttons3 = themeGroup3.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
+  // buttons3.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes1'), 1));
 
   // Add each theme group as a separate submenu
   menu.newSubMenu(buttons1, 'themes1');
   menu.newSubMenu(buttons2, 'themes2');
-  menu.newSubMenu(buttons3, 'themes3');
+  // menu.newSubMenu(buttons3, 'themes3');
   // Create Buttons for a Settings submenu
   let settings = [];
   settings.push(new MenuButton( 'Themes', 0, 0, () => menu.activateSubMenu('themes1'), 1));
 
-  let busButtonGroup = [];
-  busButtonGroup.push(new MenuButton( 'New Source', 0, 0, newSource, 1));
-  busButtonGroup.push(new MenuButton( 'New Sink', 0, 0, newSink, 1));
-  busButtonGroup.push(new MenuButton( 'New Input', 0, 0, newInput, 1));
-  busButtonGroup.push(new MenuButton( 'New Output', 0, 0, newOutput, 1));
-  busButtonGroup.push(new MenuButton( 'New Split', 0, 0, newSplit, 1));
-  
-  menu.newSubMenu(busButtonGroup, 'omnibus');
+  // let busButtonGroup = [];
+  // busButtonGroup.push(new MenuButton( 'New Source', 0, 0, newSource, 1));
+  // busButtonGroup.push(new MenuButton( 'New Sink', 0, 0, newSink, 1));
+  // busButtonGroup.push(new MenuButton( 'New Input', 0, 0, newInput, 1));
+  // busButtonGroup.push(new MenuButton( 'New Output', 0, 0, newOutput, 1));
+  // busButtonGroup.push(new MenuButton( 'New Split', 0, 0, newSplit, 1));
+  // menu.newSubMenu(busButtonGroup, 'omnibus');
   menu.newSubMenu(settings, 'settings');
-
-  menu.addButton('New Station', newStation);
   menu.addButton('New Zone', newZone);
-  menu.addButton('New Delay', newDelay);
   menu.addButton('New Process', newProcess);
-  menu.addButton('New Bus', () => {menu.activateSubMenu('omnibus');});
+  menu.addButton('New Source', newSource);
+  menu.addButton('New Sink', newSink);
+  menu.addButton('New Delay', newDelay);
+  menu.addButton('New Split', newSplit);
+  // menu.addButton('New Bus', () => {menu.activateSubMenu('omnibus');});
   menu.addButton('Settings', () => {menu.activateSubMenu('settings');});
-  
-
-  
-
-  // menu.addButton('New Source', newSource);
-  // menu.addButton('New Sink', newSink);
   // menu.addButton('New Input', newInput);
   // menu.addButton('New Output', newOutput);
-  
-  
   // settings.push(new MenuButton( 'Demo', 0, 0, console.log('Demo Button Press'), 1));
   
 }
@@ -141,46 +133,28 @@ function newSource() {
   menu.dismiss();
 }
 
-function newSplit() {
-  const pos = screenToBoard(menu.position.x, menu.position.y);
-  plant.addSplit(pos.x, pos.y);
-  menu.dismiss();
-}
-
 function newSink() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
   plant.addSink(pos.x, pos.y);
 }
 
-function newStation() {
+function newSplit() {
+  const pos = screenToBoard(menu.position.x, menu.position.y);
+  plant.addSplit(pos.x, pos.y);
+  menu.dismiss();
+}
+
+function newProcess() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
-  plant.addStation(pos.x, pos.y);
+  plant.addProcess(pos.x, pos.y);
 }
 
 function newZone() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
   plant.addZone(pos.x, pos.y);
-}
-
-function newOutput() {
-  const pos = screenToBoard(menu.position.x, menu.position.y);
-  plant.addOutput(pos.x, pos.y);
-  menu.dismiss();
-}
-
-function newInput() {
-  const pos = screenToBoard(menu.position.x, menu.position.y);
-  plant.addInput(pos.x, pos.y);
-  menu.dismiss();
-}
-
-function newProcess() {
-  const pos = screenToBoard(menu.position.x, menu.position.y);
-  plant.addProcess(pos.x, pos.y);
-  menu.dismiss();
 }
 
 function newDelay() {

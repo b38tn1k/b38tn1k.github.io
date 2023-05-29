@@ -154,6 +154,7 @@ class CircularMenu {
         this.activeSubMenu = null;
         this.isAnimating = false;
         this.animationCountDown = null;
+        this.menuRadius = 110;
         // this.resetAnimation();
     }
 
@@ -203,18 +204,17 @@ class CircularMenu {
     }
 
     updateButtonPositions() {
-        const buttonRadius = 80;
         for (let i = 0; i < this.buttons.length; i++) {
             const angle = map(i, 0, this.buttons.length, 0, TWO_PI);
-            const x = this.position.x + cos(angle + this.animationCountDown) * buttonRadius;
-            const y = this.position.y + sin(angle + this.animationCountDown) * buttonRadius;
+            const x = this.position.x + cos(angle + this.animationCountDown) * this.menuRadius;
+            const y = this.position.y + sin(angle + this.animationCountDown) * this.menuRadius;
             this.buttons[i].setPosition(x, y);
         }
         for (let i = 0; i < this.subMenus.length; i++) {
             for (let j = 0; j < this.subMenus[i].buttons.length; j++) {
                 const angle = map(j, 0, this.subMenus[i].buttons.length, 0, TWO_PI);
-                const x = this.position.x + cos(angle - this.animationCountDown) * buttonRadius * 2;
-                const y = this.position.y + sin(angle - this.animationCountDown) * buttonRadius * 2;
+                const x = this.position.x + cos(angle - this.animationCountDown) * this.menuRadius * 2;
+                const y = this.position.y + sin(angle - this.animationCountDown) * this.menuRadius * 2;
                 this.subMenus[i].buttons[j].setPosition(x, y);
             }
         }

@@ -20,22 +20,42 @@ class Application extends Mode {
         }
     }
 
-    mousePressed(mouseButton) {
-        if (mouseButton === RIGHT && menu.isActive == false) {
+    activateMenuOnRightClick() {
+        if (menu.isActive == false) {
             setTimeout(() => {
                 menu.activate();
                 menu.setPosition(mouseX, mouseY);
             }, 100);
         }
+    }
 
-        if (mouseButton === LEFT && menu.isActive == false) {
+    plantMousePassThrough() {
+        if (menu.isActive == false) {
             plant.handleMousePress();
         }
+    }
 
-        if (mouseButton === LEFT && menu.isActive == true) {
+    menuMousePassThrough() {
+        if (menu.isActive == true) {
             const pressed = menu.handleMousePress();
             if (pressed === false) {
                 menu.dismiss();
+            }
+        }
+    }
+
+    mousePressed(mouseButton) {
+
+        if (isTouchDevice()) {
+            this.plantMousePassThrough();
+            this.menuMousePassThrough();
+        } else {
+            if (mouseButton === RIGHT) {
+                this.activateMenuOnRightClick();
+            }
+            if (mouseButton === LEFT) {
+                this.plantMousePassThrough();
+                this.menuMousePassThrough();
             }
         }
     }
@@ -127,11 +147,11 @@ class Loading extends Mode {
     constructor() {
         super();
         this.trigger = 0;
-        const charWidth = min(windowWidth / 10, windowHeight/10);
-        const spacer = min(windowWidth / 40, windowHeight/40);
-        const charHeight = min(windowWidth / 10, windowHeight/10);
+        const charWidth = min(windowWidth / 10, windowHeight / 10);
+        const spacer = min(windowWidth / 40, windowHeight / 40);
+        const charHeight = min(windowWidth / 10, windowHeight / 10);
         const startX = (windowWidth - (charWidth * 5 + 1.75 * spacer)) / 2;  // Center 5 characters
-        const startY = windowHeight / 2 -  charHeight * 2; // windowH eight / 2 - charHeight * 0.5
+        const startY = windowHeight / 2 - charHeight * 2; // windowH eight / 2 - charHeight * 0.5
 
         this.middleX = (windowWidth - charWidth) / 2;
         this.middleY = (windowHeight - charHeight) / 2;
@@ -188,7 +208,7 @@ class Loading extends Mode {
                     this.trigger = frameCount + 30;
                 }
                 scrollBoard();
-                let colorRatio = (frameCount - (this.trigger - 30))/30.0;
+                let colorRatio = (frameCount - (this.trigger - 30)) / 30.0;
                 let interpColor = lerpColor(getColor('background'), getColor('gridline'), colorRatio);
                 drawGrid(interpColor);
                 interpColor = lerpColor(getColor('outline'), this.transparentBG, colorRatio); // hard coded transparent onyx
@@ -202,7 +222,6 @@ class Loading extends Mode {
         if (frameCount > this.trigger && this.trigger != 0) {
             this.modeHandOff = APPLICATION;
         }
-
     }
 }
 

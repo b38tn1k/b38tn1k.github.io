@@ -3,10 +3,18 @@ class Plant {
         this.features = [];
         this.mode = null; // to capture non-null modes
         this.isActive = false;
+        this.parent = null;
+    }
+
+    addParent(parent) {
+        this.parent = parent;
+        this.features.push(new ParentLink(-196, 0));
     }
 
     addProcess(x, y, zoom) {
-        this.features.push(new Process(x, y));
+        let p = new Process(x, y);
+        p.addPlantParent(this);
+        this.features.push(p);
     }
 
     addSink(x, y) {
@@ -27,6 +35,10 @@ class Plant {
 
     addSplit(x, y) {
         this.features.push(new Split(x, y));
+    }
+
+    addMerge(x, y) {
+        this.features.push(new Merge(x, y));
     }
 
     addConnector(x, y, input, output) {

@@ -199,6 +199,10 @@ class Process extends Feature {
         // this.plant.addConnector(0, 0, this.plant.features[0], this.plant.features[1]);
     }
 
+    addPlantParent(parent) {
+        this.plant.addParent(parent);
+    }
+
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'PROCESS', buttonSize, openDialog);
         this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
@@ -254,6 +258,26 @@ class Source extends Feature {
 
     }
 
+}
+
+class ParentLink extends Feature {
+    constructor(x, y, width, height) {
+        super(x, y, 98, 98, 'sink'); // Call the parent constructor
+    }
+
+    initDataLabels(buttonSize) {
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.3, 'PARENT', buttonSize, () => plant = plant.parent); // bad, fix with a mode
+    }
+
+    initButtons(buttonSize) {
+        this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
+    }
+
+    draw(zoom) {
+        fill(getColor("primary"));
+        stroke(getColor("outline"));
+        rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+    }
 }
 
 class Sink extends Feature {
@@ -395,6 +419,49 @@ class Split extends Feature {
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
 
         fill(getColor("secondary"));
+        noStroke();// Calculate the center of the rectangle
+        // Calculate the center of the rectangle
+        const centerX = this.screenPos.x + this.onScreenWidth / 2;
+        const centerY = this.screenPos.y + this.onScreenHeight / 2;
+
+        // Calculate dimensions for the hourglass
+        const top = this.screenPos.y;
+        const bottom = this.screenPos.y + this.onScreenHeight;
+        const left = this.screenPos.x;
+        const right = this.screenPos.x + this.onScreenWidth;
+
+        // Draw the top triangle
+        triangle(centerX, top, left, centerY, right, centerY);
+
+        // Draw the bottom triangle
+        triangle(centerX, bottom, left, centerY, right, centerY);
+    }
+}
+
+class Merge extends Feature {
+    constructor(x, y, width, height) {
+        super(x, y, 196, 196, 'merge'); // Call the parent constructor
+    }
+
+    initDataLabels(buttonSize) {
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'MERGE', buttonSize, NOP);
+        this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
+    }
+
+    initButtons(buttonSize) {
+        this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
+        this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
+        this.buttons.push(new FeatureUIInputLabel('Input', 0.3, 0, buttonSize, () => this.setMode('i_connect')));
+        this.buttons.push(new FeatureUIOutputLabel('Input', 0.6, 0, buttonSize, () => this.setMode('i_connect')));
+        this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
+    }
+
+    draw(zoom) {
+        fill(getColor("secondary"));
+        stroke(getColor("outline"));
+        rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+
+        fill(getColor("primary"));
         noStroke();// Calculate the center of the rectangle
         // Calculate the center of the rectangle
         const centerX = this.screenPos.x + this.onScreenWidth / 2;

@@ -84,24 +84,14 @@ function setupMenu(){
   buttons1.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes2'), 1));
   let buttons2 = themeGroup2.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
   buttons2.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes1'), 1));
-  // let buttons3 = themeGroup3.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
-  // buttons3.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes1'), 1));
 
   // Add each theme group as a separate submenu
   menu.newSubMenu(buttons1, 'themes1');
   menu.newSubMenu(buttons2, 'themes2');
-  // menu.newSubMenu(buttons3, 'themes3');
   // Create Buttons for a Settings submenu
   let settings = [];
   settings.push(new MenuButton( 'Themes', 0, 0, () => menu.activateSubMenu('themes1'), 1));
 
-  // let busButtonGroup = [];
-  // busButtonGroup.push(new MenuButton( 'New Source', 0, 0, newSource, 1));
-  // busButtonGroup.push(new MenuButton( 'New Sink', 0, 0, newSink, 1));
-  // busButtonGroup.push(new MenuButton( 'New Input', 0, 0, newInput, 1));
-  // busButtonGroup.push(new MenuButton( 'New Output', 0, 0, newOutput, 1));
-  // busButtonGroup.push(new MenuButton( 'New Split', 0, 0, newSplit, 1));
-  // menu.newSubMenu(busButtonGroup, 'omnibus');
   menu.newSubMenu(settings, 'settings');
   menu.addButton('New Zone', newZone);
   menu.addButton('New Process', newProcess);
@@ -109,12 +99,8 @@ function setupMenu(){
   menu.addButton('New Sink', newSink);
   menu.addButton('New Delay', newDelay);
   menu.addButton('New Split', newSplit);
-  // menu.addButton('New Bus', () => {menu.activateSubMenu('omnibus');});
-  menu.addButton('Settings', () => {menu.activateSubMenu('settings');});
-  // menu.addButton('New Input', newInput);
-  // menu.addButton('New Output', newOutput);
-  // settings.push(new MenuButton( 'Demo', 0, 0, console.log('Demo Button Press'), 1));
-  
+  menu.addButton('New Merge', newMerge);
+  // menu.addButton('Settings', () => {menu.activateSubMenu('settings');}); 
 }
 
 function setupPlant() {
@@ -142,6 +128,12 @@ function newSink() {
 function newSplit() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   plant.addSplit(pos.x, pos.y);
+  menu.dismiss();
+}
+
+function newMerge() {
+  const pos = screenToBoard(menu.position.x, menu.position.y);
+  plant.addMerge(pos.x, pos.y);
   menu.dismiss();
 }
 

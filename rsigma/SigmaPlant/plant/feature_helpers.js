@@ -6,6 +6,7 @@ class FeatureComponent {
         this.offY = (y == 1);
         this.screenDim;
         this.screenDimOn2;
+        this.id = getUnsecureHash();
     }
 
     updateScreenCoords(x, y, w, h) {
@@ -24,13 +25,12 @@ class FeatureComponent {
     }
 }
 
-class PlantUIButton extends FeatureComponent {
+class FeatureUIButton extends FeatureComponent {
     constructor(label, x, y, size, action) {
         super(x, y);
         this.label = label;
         this.action = action;
         this.boardDim = size;
-
     }
 
     update(zoom, x, y, w, h) {
@@ -49,30 +49,6 @@ class PlantUIButton extends FeatureComponent {
         line(xe, ys, xs, ye)
     }
 
-    drawMoveIcon(xa, ya) {
-        let off = 0.2 * this.screenDim;
-        line(xa + this.screenDimOn2, ya + off, xa + this.screenDimOn2, ya + this.screenDim - off)
-        line(xa + off, ya + this.screenDimOn2, xa + this.screenDim - off, ya + this.screenDimOn2)
-    }
-
-    drawResizeIcon(xa, ya) {
-        const ratio = 0.5;
-        const offset = this.screenDim * (1 - ratio) / 2;
-        const arrowSize = this.screenDim * ratio;
-        line(xa + offset, ya + offset, xa + arrowSize, ya + offset);
-        line(xa + offset, ya + offset, xa + offset, ya + arrowSize);
-        line(xa + offset + arrowSize, ya + offset + arrowSize, xa + offset + arrowSize, ya + 2 * offset);
-        line(xa + 2 * offset, ya + offset + arrowSize, xa + offset + arrowSize, ya + offset + arrowSize);
-    }
-
-    drawLabelLetterIcon(xa, ya, zoom, textColor) {
-        textSize((myTextSize * zoom));
-        fill(textColor);
-        noStroke();
-        textAlign(CENTER, CENTER);
-        text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
-    }
-
     display(zoom, strokeColor, fillColor) {
         fill(fillColor);
         stroke(strokeColor);
@@ -83,13 +59,16 @@ class PlantUIButton extends FeatureComponent {
     checkMouseClick() {
         const clickX = this.screen.x + this.screenDimOn2;
         const clickY = this.screen.y + this.screenDimOn2;
+        let caller = false;
         if (dist(mouseX, mouseY, clickX, clickY) < this.screenDim) {
             this.action(this);
+            caller = true;
         }
+        return caller;
     }
 }
 
-class PlantUIButtonClose extends PlantUIButton {
+class FeatureUIButtonClose extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
     }
@@ -104,7 +83,7 @@ class PlantUIButtonClose extends PlantUIButton {
     }
 }
 
-class PlantUIButtonMove extends PlantUIButton {
+class FeatureUIButtonMove extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
     }
@@ -115,7 +94,7 @@ class PlantUIButtonMove extends PlantUIButton {
     }
 }
 
-class PlantUIButtonResize extends PlantUIButton {
+class FeatureUIButtonResize extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
     }
@@ -130,7 +109,7 @@ class PlantUIButtonResize extends PlantUIButton {
     }
 }
 
-class PlantUIButtonLetterLabel extends PlantUIButton {
+class FeatureUIButtonLetterLabel extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
     }
@@ -141,6 +120,37 @@ class PlantUIButtonLetterLabel extends PlantUIButton {
         textAlign(CENTER, CENTER);
         text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
     }
+}
+
+class FeatureUIOutputLabel extends FeatureUIButton {
+    constructor(label, x, y, size, action) {
+        super(label, x, y, size, action);
+    }
+
+    draw(xa, ya, zoom, textColor) {
+        textSize((myTextSize * zoom));
+        fill(textColor);
+        noStroke();
+        textAlign(CENTER, CENTER);
+        text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
+    }
+
+}
+
+class FeatureUIInputLabel extends FeatureUIButton {
+    constructor(label, x, y, size, action) {
+        super(label, x, y, size, action);
+        this.id = getUnsecureHash();
+    }
+
+    draw(xa, ya, zoom, textColor) {
+        textSize((myTextSize * zoom));
+        fill(textColor);
+        noStroke();
+        textAlign(CENTER, CENTER);
+        text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
+    }
+
 }
 
 class PlantData extends FeatureComponent {
@@ -193,7 +203,7 @@ class PlantData extends FeatureComponent {
     }
 }
 
-class PlantDataTextLabel extends PlantData {
+class FeatureDataTextLabel extends PlantData {
     constructor(x, y, data, height, action) {
         super(x, y, data, height, action);
     }
@@ -233,7 +243,7 @@ function getUnsecureHash() {
     return myStr.substring(0, 10);
 }
 
-class PlantDataIDLabel extends PlantDataTextLabel {
+class FeatureDataIDLabel extends FeatureDataTextLabel {
     constructor(x, y, data, height) {
         super(x, y, data, height, NOP);
     }

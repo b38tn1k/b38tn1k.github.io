@@ -5,17 +5,15 @@ class Plant {
         this.isActive = false;
     }
 
-    addProcess(x, y) {
+    addProcess(x, y, zoom) {
         this.features.push(new Process(x, y));
     }
 
     addSink(x, y) {
-        console.log('new sink');
         this.features.push(new Sink(x, y));
     }
 
     addSource(x, y) {
-        console.log('new source');
         this.features.push(new Source(x, y));
     }
 
@@ -24,12 +22,10 @@ class Plant {
     }
 
     addDelay(x, y) {
-        console.log('new delay');
         this.features.push(new Delay(x, y));
     }
 
     addSplit(x, y) {
-        console.log('new splitter'); //  should split be 'oppotunistic' too or percentage based only? probably percent only, outputs opp if req
         this.features.push(new Split(x, y));
     }
 

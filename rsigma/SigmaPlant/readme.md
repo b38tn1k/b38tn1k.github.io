@@ -10,7 +10,11 @@
 - [ ] Processes can have 'sub process' which are actually 'Sub Plants'
   - to show sub processes need a level naviagation widget as above 
   - sub process plants need special Source / Sink zones for the input and output of the higher level process
-  - 'add sub process' on station block
+  - ~~'add sub process' on station block~~ All Processes have a Source, Delay, and Sink. THey can have a description on a higher level. They can also have more blocks inside them, but this is how they shoudl initialise.
+
+- [ ] Conectors should come straight out, then choose a sensible path the the source
+- [ ] Conectors should be deletable
+- [ ] Connectors should be initi w/ both inp and outp
 
 - [ ] Inputs and Outputs should be addable components to subprocesse
   - Tags for Material / Informational /  Energy / Mechanical / Custom

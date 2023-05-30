@@ -18,6 +18,7 @@ class Feature {
         this.shouldRender = true;
         this.adoptable = true;
         this.notYetDrawnLabelAndButtons = true;
+        this.caller = null;
 
     }
 
@@ -175,7 +176,10 @@ class Feature {
     handleMousePress() {
         if (mouseButton === LEFT) {
             for (let button of this.buttons) {
-                button.checkMouseClick();
+                const res = button.checkMouseClick();
+                if (res) {
+                    this.caller = button;
+                }
             }
             for (let label in this.dataLabels) {
                 this.dataLabels[label].checkMouseClick(zoom);
@@ -187,18 +191,28 @@ class Feature {
 class Process extends Feature {
     constructor(x, y, width, height) {
         super(x, y, width, height, 'process'); // Call the parent constructor
+        this.plant = new Plant();
+        this.plant.addSource(0, -246);
+        this.plant.addDelay(0, 0);
+        this.plant.addSink(0, 246);
+        // this.plant.update(1.0);
+        // this.plant.addConnector(0, 0, this.plant.features[0], this.plant.features[1]);
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'PROCESS NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'PROCESS', buttonSize, openDialog);
+        this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
-        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
-        this.buttons.push(new PlantUIButtonLetterLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
-        this.buttons.push(new PlantUIButtonLetterLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
+        this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
+        this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
+        this.buttons.push(new FeatureUIInputLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
+        this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
+        this.buttons.push(new FeatureUIButtonResize('Resize', 1, 1, buttonSize, () => this.setMode('resize')));
+        ////// TESTING
+        this.buttons.push(new FeatureUIButtonLetterLabel('Edit', 1, 0.5, buttonSize, () => plant = this.plant));
+        
     }
 
     draw(zoom) {
@@ -210,18 +224,18 @@ class Process extends Feature {
 
 class Source extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, 300, 196, 'source'); // Call the parent constructor
+        super(x, y, 196, 196, 'source'); // Call the parent constructor
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'SOURCE NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'SOURCE', buttonSize, openDialog);
+        this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
-        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
-        this.buttons.push(new PlantUIButtonLetterLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
+        this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
+        this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
+        this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
     }
 
     draw(zoom) {
@@ -244,18 +258,18 @@ class Source extends Feature {
 
 class Sink extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, 300, 196, 'sink'); // Call the parent constructor
+        super(x, y, 196, 196, 'sink'); // Call the parent constructor
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'SINK NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'SINK', buttonSize, openDialog);
+        this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
-        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
-        this.buttons.push(new PlantUIButtonLetterLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
+        this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
+        this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
+        this.buttons.push(new FeatureUIOutputLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
     }
 
     draw(zoom) {
@@ -281,14 +295,14 @@ class Zone extends Feature {
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
-        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
-        this.buttons.push(new PlantUIButtonResize('Resize', 1, 1, buttonSize, () => this.setMode('resize')));
+        this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
+        this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
+        this.buttons.push(new FeatureUIButtonResize('Resize', 1, 1, buttonSize, () => this.setMode('resize')));
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'ZONE NAME', buttonSize, openDialog);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'ZONE', buttonSize, openDialog);
+        this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     draw(zoom) {
@@ -321,15 +335,15 @@ class Delay extends Feature {
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'DELAY', buttonSize, NOP);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'DELAY', buttonSize, NOP);
+        this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
-        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
-        this.buttons.push(new PlantUIButtonLetterLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
-        this.buttons.push(new PlantUIButtonLetterLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
+        this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
+        this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
+        this.buttons.push(new FeatureUIInputLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
+        this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
     }
 
     draw(zoom) {
@@ -363,16 +377,16 @@ class Split extends Feature {
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new PlantDataTextLabel(0, 0, 'SPLIT', buttonSize, NOP);
-        this.dataLabels['id'] = new PlantDataIDLabel(0, 1, this.id, buttonSize, NOP);
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'SPLIT', buttonSize, NOP);
+        this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
     initButtons(buttonSize) {
-        this.buttons.push(new PlantUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
-        this.buttons.push(new PlantUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
-        this.buttons.push(new PlantUIButtonLetterLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
-        this.buttons.push(new PlantUIButtonLetterLabel('Output', 1, 1, buttonSize, () => this.setMode('o_connect')));
-        this.buttons.push(new PlantUIButtonLetterLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
+        this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
+        this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
+        this.buttons.push(new FeatureUIInputLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
+        this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
+        this.buttons.push(new FeatureUIOutputLabel('Output', 1, 1, buttonSize, () => this.setMode('o_connect')));
     }
 
     draw(zoom) {
@@ -410,18 +424,20 @@ class Connector extends Feature {
         this.source = this.input != null ? this.input : this.output;
         this.sourceType = this.input != null ? 'Input' : 'Output';
         this.anchors = {};
-        this.anchors[this.sourceType] = this.source.buttons.find(button => button.label === this.sourceType);
+        this.anchors[this.sourceType] = this.source.caller; //buttons.find(button => button.label === this.sourceType);
         this.mode = 'idle';
         this.untethered = true;
         this.untetheredClicks = 0;
         this.adoptable = false;
+        console.log(this.input, this.output)
+        
     }
 
     attach(dest) {
         this.untethered = false;
         this.input ? this.output = dest : this.input = dest;
         let key = this.sourceType == 'Output' ? 'Input' : 'Output';
-        this.anchors[key] = dest.buttons.find(button => button.label === key);
+        this.anchors[key] = dest.caller; //dest.buttons.find(button => button.id === key);
     }
 
     update() {

@@ -31,7 +31,7 @@ class Application extends Mode {
 
     plantMousePassThrough() {
         if (menu.isActive == false) {
-            plant.handleMousePress();
+            plant.handleMousePress(globalZoom);
         }
     }
 
@@ -62,17 +62,18 @@ class Application extends Mode {
 
     mouseWheel(event) {
         if (menu.isActive == false && plant.isActive == false) {
-            zoom -= event.deltaY * 0.001;
-            zoom = constrain(zoom, 0.2, 2);
+            globalZoom -= event.deltaY * 0.001;
+            globalZoom = constrain(globalZoom, 0.2, 2);
             fpsEvent();
         }
     }
 
     draw() {
         textSize(myTextSize);
-        scrollBoard();
-        drawGrid(getColor('gridline'));
-        plant.update(zoom)
+        scrollBoard(globalZoom);
+        drawGrid(getColor('gridline'), globalZoom);
+        plant.update(globalZoom);
+        plant.draw(globalZoom);
         menu.display();
         noStroke();
         fill(255);

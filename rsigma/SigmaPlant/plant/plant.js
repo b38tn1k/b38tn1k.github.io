@@ -45,10 +45,10 @@ class Plant {
         this.features.push(new Connector(x, y, input, output));
     }
 
-    handleMousePress() {
+    handleMousePress(zoom) {
         this.clearHangingConnector();
         for (let i = 0; i < this.features.length; i++) {
-            this.features[i].handleMousePress();
+            this.features[i].handleMousePress(zoom);
         }
     }
 
@@ -98,6 +98,13 @@ class Plant {
         activeFeature.mode = 'idle';
     }
 
+    draw(zoom) {
+        for (let i = 0; i < this.features.length; i++) {
+            let feature = this.features[i];
+            feature.display(zoom);
+        }
+    }
+
     update(zoom) {
         this.mode = 'idle';
         let activeFeature;
@@ -131,7 +138,6 @@ class Plant {
                 i--;
             } else {
                 feature.update(zoom);
-                feature.display(zoom);
             }
             if (feature.type == 'connector' && feature.untethered) {
                 fpsEvent();

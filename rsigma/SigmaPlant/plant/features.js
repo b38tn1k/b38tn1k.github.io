@@ -173,10 +173,10 @@ class Feature {
             this.y + this.height > screenTopLeft.y;
     }
 
-    handleMousePress() {
+    handleMousePress(zoom) {
 
         for (let button of this.buttons) {
-            const res = button.checkMouseClick();
+            const res = button.checkMouseClick(zoom);
             if (res) {
                 this.caller = button;
             }
@@ -195,8 +195,16 @@ class Process extends Feature {
         this.plant.addSource(0, -246);
         this.plant.addDelay(0, 0);
         this.plant.addSink(0, 246);
-        // this.plant.update(1.0);
-        // this.plant.addConnector(0, 0, this.plant.features[0], this.plant.features[1]);
+        this.plant.addConnector(0, 0, this.plant.features[1], this.plant.features[0]);
+        this.plant.addConnector(0, 0, this.plant.features[2], this.plant.features[1]);
+        for (let i = 0; i < this.plant.length; i++) { // why isnt this working
+            this.plant[i].isAnimating = false;
+        }
+    }
+
+    update(zoom) {
+        super.update(zoom);
+        this.plant.update(zoom);
     }
 
     addPlantParent(parent) {
@@ -488,16 +496,22 @@ class Connector extends Feature {
         this.type = 'connector';
         this.input = input;
         this.output = output;
-        this.source = this.input != null ? this.input : this.output;
-        this.sourceType = this.input != null ? 'Input' : 'Output';
         this.anchors = {};
-        this.anchors[this.sourceType] = this.source.caller; //buttons.find(button => button.label === this.sourceType);
-        this.mode = 'idle';
         this.untethered = true;
+        if (this.input && this.output) {
+            this.untethered = false;
+            let inputAnchor = input.buttons.find(button => button.label === 'Input');
+            this.anchors['Input'] = inputAnchor;
+            let outputAnchor = output.buttons.find(button => button.label === 'Output');
+            this.anchors['Output'] = outputAnchor;
+        } else {
+            this.source = this.input != null ? this.input : this.output;
+            this.sourceType = this.input != null ? 'Input' : 'Output';
+            this.anchors[this.sourceType] = this.source.caller; //buttons.find(button => button.label === this.sourceType);
+        }
+        this.mode = 'idle';
         this.untetheredClicks = 0;
         this.adoptable = false;
-        console.log(this.input, this.output)
-
     }
 
     attach(dest) {

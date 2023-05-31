@@ -56,7 +56,7 @@ class FeatureUIButton extends FeatureComponent {
         this.draw(this.screen.x, this.screen.y, zoom, strokeColor);
     }
 
-    checkMouseClick() {
+    checkMouseClick(zoom) {
         const clickX = this.screen.x + this.screenDimOn2;
         const clickY = this.screen.y + this.screenDimOn2;
         let caller = false;
@@ -189,13 +189,13 @@ class PlantData extends FeatureComponent {
         this.screen = createVector(xa, ya);
     }
 
-    checkClicked() {
+    checkClicked(zoom) {
         return false;
     }
 
     checkMouseClick(zoom) {
         if (this.mode != 'busy') {
-            if (this.checkClicked()) {
+            if (this.checkClicked(zoom)) {
                 this.mode = 'busy';
                 this.action(this, this.screen.x, this.screen.y);
             }
@@ -217,7 +217,7 @@ class FeatureDataTextLabel extends PlantData {
         return wa;
     }
 
-    checkClicked() {
+    checkClicked(zoom) {
         let wa = this.calculateWidth(zoom);
         const centerX = this.screen.x + wa / 2; // Calculate the X coordinate of the center of the button
         const centerY = this.screen.y + this.screenDim / 2; // Calculate the Y coordinate of the center of the button

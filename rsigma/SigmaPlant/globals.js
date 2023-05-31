@@ -5,7 +5,7 @@ let COLOR_THEME = 'dark';
 
 let scrollX = 0;
 let scrollY = 0;
-let zoom = 1;
+let globalZoom = 1;
 let mouseHasFocus = false;
 let lastInputTime;
 let highFrameRate = 30;
@@ -14,7 +14,7 @@ let inputTimeout = 500;
 
 let menu;
 
-let plant;
+let session;
 let myTextSize = 12;
 
 let mousePressTime;

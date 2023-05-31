@@ -1,6 +1,7 @@
 class Mode {
     constructor() {
         this.modeHandOff = NO_CHANGE;
+        this.ready = false;
     }
     mouseReleased(event) { }
 
@@ -13,8 +14,13 @@ class Mode {
 
 class Application extends Mode {
 
+    constructor() {
+        super();
+        this.ready = true;
+    }
+
     mouseReleased() {
-        if (plant.isActive == false) {
+        if (plant.isActive == false && this.ready) {
             menu.activate();
             menu.setPosition(mouseX, mouseY);
         }
@@ -46,22 +52,24 @@ class Application extends Mode {
 
     mousePressed(mouseButton) {
 
-        if (isTouchDevice()) {
-            this.plantMousePassThrough();
-            this.menuMousePassThrough();
-        } else {
-            if (mouseButton === RIGHT) {
-                this.activateMenuOnRightClick();
-            }
-            if (mouseButton === LEFT) {
+        if (this.ready) {
+            if (isTouchDevice()) {
                 this.plantMousePassThrough();
                 this.menuMousePassThrough();
+            } else {
+                if (mouseButton === RIGHT) {
+                    this.activateMenuOnRightClick();
+                }
+                if (mouseButton === LEFT) {
+                    this.plantMousePassThrough();
+                    this.menuMousePassThrough();
+                }
             }
         }
     }
 
     mouseWheel(event) {
-        if (menu.isActive == false && plant.isActive == false) {
+        if (menu.isActive == false && plant.isActive == false && this.ready) {
             globalZoom -= event.deltaY * 0.001;
             globalZoom = constrain(globalZoom, 0.2, 2);
             fpsEvent();
@@ -172,11 +180,17 @@ class Loading extends Mode {
         this.transparentBG[3] = 0;
         this.transparentBG = color(this.transparentBG);
     }
-    mouseReleased(event) { }
+    mouseReleased(event) {
+        return;
+    }
 
-    mousePressed(mouseButton) { }
+    mousePressed(mouseButton) {
+        return;
+    }
 
-    mouseWheel(event) { }
+    mouseWheel(event) {
+        return;
+    }
 
     drawTitle() {
         drawS(lerp(this.letterPos[0][0], this.middleX, this.ratio), lerp(this.letterPos[0][1], this.middleY, this.ratio), this.letterPos[0][2], this.letterPos[0][3]);

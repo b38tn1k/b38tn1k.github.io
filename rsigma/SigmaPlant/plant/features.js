@@ -104,6 +104,10 @@ class Feature {
         this.shouldRender = this.isInScreen();
         this.updateScreenCoords(zoom);
         this.updateButtonsAndLabels(zoom);
+        this.checkModeAndAct();
+    }
+
+    checkModeAndAct() {
         switch (this.mode) {
             case 'move':
                 if (mouseIsPressed == false) {

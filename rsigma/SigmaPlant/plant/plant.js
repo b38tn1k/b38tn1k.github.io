@@ -107,66 +107,85 @@ class Plant {
 
     update(zoom) {
         this.mode = 'idle';
-        let activeFeature;
-
-        let zones = [];
-        for (let i = 0; i < this.features.length; i++) {
-            if (this.features[i].type === 'zone') {
-                zones.push(this.features[i]);
-                this.features[i].emptyChildren();
-            }
-        }
-
-        for (let i = 0; i < this.features.length; i++) {
-            let feature = this.features[i];
-            if (feature.adoptable === true) {
-                for (let j = 0; j < zones.length; j++) {
-                    if (zones[j].checkIfChild(feature)) {
-                        zones[j].addChild(feature);
-                        break;
-                    }
-                }
-            }
-            if (feature.mode !== 'idle') {
-                this.mode = feature.mode;
-                activeFeature = feature;
-            }
-            if (feature.mode === 'delete') {
-                activeFeature.delete(); // delink references
-                this.features.splice(i, 1);
-                activeFeature = null;
-                i--;
-            } else {
-                feature.update(zoom);
-            }
-            if (feature.type == 'connector' && feature.untethered) {
-                fpsEvent();
-            }
-        }
+    
+        const zones = this.filterZones();
+        this.processFeatures(zoom, zones);
+    
         this.isActive = this.mode !== 'idle';
-        if (this.isActive == true) {
-            let connector;
-            switch (this.mode) {
-                case 'delete':
-                    this.mode = 'idle';
-                    break;
-                case 'move':
-                    activeFeature.moveToMouse();
-                    break;
-                case 'resize':
-                    activeFeature.resizeToMouse();
-                    break;
-                case 'i_connect':
-                    this.doConnectorLogic(activeFeature, 'Output', () => this.addConnector(0, 0, activeFeature, null));
-                    break;
-                case 'o_connect':
-                    this.doConnectorLogic(activeFeature, 'Input', () => this.addConnector(0, 0, null, activeFeature));
-                    break;
-                default:
-                    this.mode = 'idle';
-                    break;
-            }
-            
+        if (this.isActive) {
+          this.processActiveFeature();
         }
-    }
+      }
+    
+      filterZones() {
+        const zones = this.features.filter(feature => feature.type === 'zone');
+        zones.forEach(zone => zone.emptyChildren());
+        return zones;
+      }
+    
+      processFeatures(zoom, zones) {
+        for (let i = 0; i < this.features.length; i++) {
+          const feature = this.features[i];
+    
+          if (feature.adoptable) {
+            this.adoptFeatureIntoZone(zones, feature);
+          }
+    
+          if (feature.mode !== 'idle') {
+            this.setActiveMode(feature);
+          }
+    
+          if (feature.mode === 'delete') {
+            this.deleteFeature(i);
+            continue;
+          }
+    
+          feature.update(zoom);
+    
+          if (feature.type == 'connector' && feature.untethered) {
+            fpsEvent();
+          }
+        }
+      }
+    
+      adoptFeatureIntoZone(zones, feature) {
+        const suitableZone = zones.find(zone => zone.checkIfChild(feature));
+        if (suitableZone) {
+          suitableZone.addChild(feature);
+        }
+      }
+    
+      setActiveMode(feature) {
+        this.mode = feature.mode;
+        this.activeFeature = feature;
+      }
+    
+      deleteFeature(index) {
+        this.activeFeature.delete();
+        this.features.splice(index, 1);
+        this.activeFeature = null;
+      }
+    
+      processActiveFeature() {
+        switch (this.mode) {
+          case 'delete':
+            this.mode = 'idle';
+            break;
+          case 'move':
+            this.activeFeature.moveToMouse();
+            break;
+          case 'resize':
+            this.activeFeature.resizeToMouse();
+            break;
+          case 'i_connect':
+            this.doConnectorLogic(this.activeFeature, 'Output', () => this.addConnector(0, 0, this.activeFeature, null));
+            break;
+          case 'o_connect':
+            this.doConnectorLogic(this.activeFeature, 'Input', () => this.addConnector(0, 0, null, this.activeFeature));
+            break;
+          default:
+            this.mode = 'idle';
+            break;
+        }
+      }
 }

@@ -136,7 +136,7 @@ class SubMenu {
 
     handleMousePress() {
         let pressed = false;
-        if (mouseButton === LEFT && this.isActive) {
+        if (this.isActive) {
             for (let i = 0; i < this.buttons.length; i++) {
                 pressed = pressed || this.buttons[i].checkMouseClick();
             }
@@ -289,7 +289,7 @@ class CircularMenu {
 
     handleMousePress() {
         let pressed = false;
-        if (mouseButton === LEFT && this.isActive) {
+        if (this.isActive) {
             for (let i = 0; i < this.buttons.length; i++) {
                 pressed = pressed || this.buttons[i].checkMouseClick();
             }

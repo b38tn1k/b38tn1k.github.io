@@ -174,17 +174,17 @@ class Feature {
     }
 
     handleMousePress() {
-        if (mouseButton === LEFT) {
-            for (let button of this.buttons) {
-                const res = button.checkMouseClick();
-                if (res) {
-                    this.caller = button;
-                }
-            }
-            for (let label in this.dataLabels) {
-                this.dataLabels[label].checkMouseClick(zoom);
+
+        for (let button of this.buttons) {
+            const res = button.checkMouseClick();
+            if (res) {
+                this.caller = button;
             }
         }
+        for (let label in this.dataLabels) {
+            this.dataLabels[label].checkMouseClick(zoom);
+        }
+
     }
 }
 
@@ -216,7 +216,7 @@ class Process extends Feature {
         this.buttons.push(new FeatureUIButtonResize('Resize', 1, 1, buttonSize, () => this.setMode('resize')));
         ////// TESTING
         this.buttons.push(new FeatureUIButtonLetterLabel('Edit', 1, 0.5, buttonSize, () => plant = this.plant));
-        
+
     }
 
     draw(zoom) {
@@ -497,7 +497,7 @@ class Connector extends Feature {
         this.untetheredClicks = 0;
         this.adoptable = false;
         console.log(this.input, this.output)
-        
+
     }
 
     attach(dest) {

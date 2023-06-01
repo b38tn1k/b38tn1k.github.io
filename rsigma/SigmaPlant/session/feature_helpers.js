@@ -7,6 +7,10 @@ class FeatureComponent {
         this.screenDim;
         this.screenDimOn2;
         this.id = getUnsecureHash();
+        this.targetID = 'none';
+        this.doCheckMouseOver = false;
+        this.hasMouseOver = false;
+        this.mouseOverData = 'none';
     }
 
     updateScreenCoords(x, y, w, h) {
@@ -54,6 +58,15 @@ class FeatureUIButton extends FeatureComponent {
         stroke(strokeColor);
         square(this.screen.x, this.screen.y, this.screenDim);
         this.draw(this.screen.x, this.screen.y, zoom, strokeColor);
+    }
+
+    checkMouseOver(zoom) {
+        if (this.doCheckMouseOver) {
+            const clickX = this.screen.x + this.screenDimOn2;
+            const clickY = this.screen.y + this.screenDimOn2;
+            this.hasMouseOver = (dist(mouseX, mouseY, clickX, clickY) < this.screenDim)
+        }
+        return this.hasMouseOver;
     }
 
     checkMouseClick(zoom) {
@@ -112,6 +125,7 @@ class FeatureUIButtonResize extends FeatureUIButton {
 class FeatureUIButtonLetterLabel extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
+        console.log(this.targetID);
     }
     draw(xa, ya, zoom, textColor) {
         textSize((myTextSize * zoom));
@@ -133,6 +147,10 @@ class FeatureUIOutputLabel extends FeatureUIButton {
         noStroke();
         textAlign(CENTER, CENTER);
         text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
+        if (this.hasMouseOver) {
+            // console.log(this.id, this.targetID, this.mouseOverData);
+            text(this.mouseOverData, xa + this.screenDimOn2, ya + 2*this.screenDim);
+        }
     }
 
 }
@@ -149,6 +167,10 @@ class FeatureUIInputLabel extends FeatureUIButton {
         noStroke();
         textAlign(CENTER, CENTER);
         text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
+        if (this.hasMouseOver) {
+            // console.log(this.id, this.targetID, this.mouseOverData);
+            text(this.mouseOverData, xa + this.screenDimOn2, ya - this.screenDim);
+        }
     }
 
 }

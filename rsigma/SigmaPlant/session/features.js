@@ -1,3 +1,5 @@
+let BUTTON_SIZE = 20;
+
 class Feature {
     constructor(x, y, w = 400, h = 280, type) {
         this.id = type + '->' + getUnsecureHash()
@@ -8,9 +10,10 @@ class Feature {
         this.mode = 'idle';
         this.buttons = [];
         this.type = type;
-        this.initButtons(20);
+        this.initButtons(BUTTON_SIZE);
         this.dataLabels = {};
-        this.initDataLabels(20);
+        this.data = {};
+        this.initDataLabels(BUTTON_SIZE);
         this.isAnimating = true;
         this.animationValue = 0.0;
         this.animationW = w;
@@ -66,8 +69,10 @@ class Feature {
     }
 
     updateButtonsAndLabels(zoom) {
+        this.buttons = this.buttons.filter(button => button.mode !== 'delete');
         for (let button of this.buttons) {
             button.update(zoom, this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+            button.checkMouseOver();
         }
         for (let label in this.dataLabels) {
             this.dataLabels[label].update(zoom, this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -200,8 +205,9 @@ class Process extends Feature {
         this.buses = {}
         this.buses = {
             'source': new Set(),
-            'output': new Set()
+            'sink': new Set()
         };
+        this.setupFromSubProcess();
     }
 
     collectBuses() {
@@ -216,11 +222,80 @@ class Process extends Feature {
         this.buses['sink'] = new Set(outputIndices);
     }
 
+    setupIOButtons(buttonSize = BUTTON_SIZE) {
+        // Determine the number of source and sink buses
+        const numSourceBuses = this.buses['source'].size;
+        const numSinkBuses = this.buses['sink'].size;
+
+        // Get all the valid source and sink ids from plant features
+        let validSourceIds = Array.from(this.buses['source']).map(index => this.plant.features[index].id);
+        let validSinkIds = Array.from(this.buses['sink']).map(index => this.plant.features[index].id);
+
+
+        // remove any hanging buttons
+        this.buttons = this.buttons.filter(button => {
+            if (button instanceof FeatureUIInputLabel && !validSourceIds.includes(button.targetID)) {
+                button.mode = 'delete';
+                // return false;
+
+            } else if (button instanceof FeatureUIOutputLabel && !validSinkIds.includes(button.targetID)) {
+                button.mode = 'delete';
+                // return false;
+            }
+            return true;
+        });
+
+        // Calculate the increment for each button based on the number of buttons and the range 0.2 to 0.8
+        const xIncrementSource = numSourceBuses > 1 ? (0.8 - 0.2) / (numSourceBuses - 1) : 0;
+        const xIncrementSink = numSinkBuses > 1 ? (0.8 - 0.2) / (numSinkBuses - 1) : 0;
+
+        // For each source bus, create an input button
+        let xSource = 0.2; // Start at the minimum x value
+        for (let index of this.buses['source']) {
+            let sourceId = this.plant.features[index].id;
+            console.log(this.plant.features[index].dataLabels['title'].data);
+            // Check if a button with the same targetID already exists
+            let existingButton = this.buttons.find(button => button.targetID === sourceId);
+            let mouseOverData = this.plant.features[index].dataLabels['title'].data;
+            if (!existingButton) {
+                // If no such button exists, create a new one
+                let b = new FeatureUIInputLabel('Input', xSource, 0, buttonSize, () => this.setMode('i_connect'));
+                b.targetID = sourceId;
+                b.doCheckMouseOver = true;
+                b.mouseOverData = mouseOverData;
+                this.buttons.push(b);
+            } else {
+                existingButton.mouseOverData = mouseOverData;
+            }
+            xSource += xIncrementSource;
+        }
+        // For each sink bus, create an output button
+        let xSink = 0.2; // Start at the minimum x value
+        for (let index of this.buses['sink']) {
+            let sinkId = this.plant.features[index].id;
+            let existingButton = this.buttons.find(button => button.targetID === sinkId);
+            let mouseOverData = this.plant.features[index].dataLabels['title'].data;
+            if (!existingButton) {
+                // If no such button exists, create a new one
+                let b = new FeatureUIOutputLabel('Output', xSink, 1, buttonSize, () => this.setMode('o_connect'));
+                b.targetID = sinkId;
+                b.doCheckMouseOver = true;
+                b.mouseOverData = mouseOverData;
+                this.buttons.push(b);
+                xSink += xIncrementSink;
+            } else {
+                existingButton.mouseOverData = mouseOverData;
+            }
+        }
+    }
+
+    setupFromSubProcess() {
+        this.collectBuses();
+        this.setupIOButtons();
+    }
+
 
     update(zoom) {
-        this.collectBuses();
-        console.log("source bus indices: ", Array.from(this.buses['source']));
-        console.log("sink bus indices: ", Array.from(this.buses['sink']));
         super.update(zoom);
         if (this.mode == 'deleting' || this.mode == 'delete') {
             this.plant = null;
@@ -237,10 +312,7 @@ class Process extends Feature {
     initButtons(buttonSize) {
         this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
         this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
-        this.buttons.push(new FeatureUIInputLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
-        this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
         this.buttons.push(new FeatureUIButtonResize('Resize', 1, 1, buttonSize, () => this.setMode('resize')));
-        ////// TESTING
         this.buttons.push(new FeatureUIButtonLetterLabel('Edit', 1, 0.5, buttonSize, () => this.transitionPlant()));
 
     }
@@ -551,7 +623,7 @@ class Connector extends Feature {
     update() {
         this.shouldRender = true;
         if (this.input && this.output) {
-            if (this.input.mode == 'delete' || this.output.mode == 'delete') {
+            if (this.input.mode == 'delete' || this.output.mode == 'delete' || this.anchors['Input'].mode == 'delete' || this.anchors['Output'].mode == 'delete') {
                 this.mode = 'delete';
             }
         } else {

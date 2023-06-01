@@ -94,6 +94,10 @@ class Plant {
         }
     }
 
+    enter() {
+      this.features.filter(feature => feature.type === 'process').forEach(process => process.setupFromSubProcess());
+    }
+
     update(zoom) {
         this.mode = 'idle';
     

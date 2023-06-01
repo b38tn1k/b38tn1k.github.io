@@ -2,6 +2,7 @@ let colors = {};
 let themes = {};
 let COLOR_THEME = 'dark';
 
+let cnv
 
 let scrollX = 0;
 let scrollY = 0;
@@ -14,7 +15,7 @@ let inputTimeout = 500;
 
 let menu;
 
-let session;
+let sess;
 let myTextSize = 12;
 
 let mousePressTime;

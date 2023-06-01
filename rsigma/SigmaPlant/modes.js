@@ -52,7 +52,7 @@ class Application extends Mode {
     }
 
     mouseReleased() {
-        if (session.plant.isActive == false && this.ready) {
+        if (sess.plant.isActive == false && this.ready) {
             menu.activate();
             menu.setPosition(mouseX, mouseY);
         }
@@ -69,7 +69,7 @@ class Application extends Mode {
 
     plantMousePassThrough() {
         if (menu.isActive == false) {
-            session.plant.handleMousePress(globalZoom);
+            sess.plant.handleMousePress(globalZoom);
         }
     }
 
@@ -101,7 +101,7 @@ class Application extends Mode {
     }
 
     mouseWheel(event) {
-        if (menu.isActive == false && session.plant.isActive == false && this.ready) {
+        if (menu.isActive == false && sess.plant.isActive == false && this.ready) {
             globalZoom -= event.deltaY * 0.001;
             globalZoom = constrain(globalZoom, 0.2, 2);
             fpsEvent();
@@ -112,8 +112,8 @@ class Application extends Mode {
         textSize(myTextSize);
         scrollBoard(globalZoom);
         drawGrid(getColor('gridline'), globalZoom);
-        session.update(globalZoom);
-        session.draw(globalZoom);
+        sess.update(globalZoom);
+        sess.draw(globalZoom);
         menu.display();
         // noStroke();
         // fill(255);

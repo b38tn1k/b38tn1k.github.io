@@ -12,10 +12,10 @@ class Session {
         this.plant.update(zoom);
         if (this.plant.mode == 'transition_plant') {
             this.plant.mode = 'idle';
-            console.log(this.plant.targetPlant);
             let targetPlant = this.plant.targetPlant;
             this.plant.targetPlant = null;
             this.plantsPointer = targetPlant;
+            this.plant.enter();
         }
     }
 
@@ -38,6 +38,8 @@ class Session {
         }
         this.plants.push(newPlant);
         let newProcess = new Process(x, y, 400, 280, newPlant, this.plants.length - 1);
+        // newPlant.collectBuses();
+        // newPlant.setupIOButtons();
         this.plant.features.push(newProcess);
 
     }

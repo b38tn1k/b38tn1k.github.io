@@ -27,7 +27,7 @@ function fpsEvent() {
 }
 
 function scrollBoard(zoom) {
-  if (mouseIsPressed && !menu.isActive && !session.plant.isActive) {
+  if (mouseIsPressed && !menu.isActive && !sess.plant.isActive) {
     scrollX += (pmouseX - mouseX) / zoom;
     scrollY += (pmouseY - mouseY) / zoom;
     fpsEvent();
@@ -111,42 +111,42 @@ function setTheme(theme) {
 
 function newSource() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  session.addSource(pos.x, pos.y);
+  sess.addSource(pos.x, pos.y);
   menu.dismiss();
 }
 
 function newSink() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
-  session.addSink(pos.x, pos.y);
+  sess.addSink(pos.x, pos.y);
 }
 
 function newSplit() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  session.addSplit(pos.x, pos.y);
+  sess.addSplit(pos.x, pos.y);
   menu.dismiss();
 }
 
 function newMerge() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  session.addMerge(pos.x, pos.y);
+  sess.addMerge(pos.x, pos.y);
   menu.dismiss();
 }
 
 function newProcess() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
-  session.addProcess(pos.x, pos.y);
+  sess.addProcess(pos.x, pos.y);
 }
 
 function newZone() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
-  session.addZone(pos.x, pos.y);
+  sess.addZone(pos.x, pos.y);
 }
 
 function newSigma() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  session.addSigma(pos.x, pos.y);
+  sess.addSigma(pos.x, pos.y);
   menu.dismiss();
 }

@@ -87,10 +87,10 @@ class Plant {
         activeFeature.mode = 'idle';
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         for (let i = 0; i < this.features.length; i++) {
             let feature = this.features[i];
-            feature.display(zoom);
+            feature.display(zoom, cnv);
         }
     }
 

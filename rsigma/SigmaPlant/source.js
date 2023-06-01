@@ -42,6 +42,11 @@ function mouseWheel(event) {
   mode.mouseWheel(event);
 }
 
+function touchMoved() {
+  mode.touchMoved();
+  return false;
+}
+
 function setup() {
   mode = new Loading();
   sess = new Session();

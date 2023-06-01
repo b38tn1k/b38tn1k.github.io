@@ -53,11 +53,11 @@ class FeatureUIButton extends FeatureComponent {
         line(xe, ys, xs, ye)
     }
 
-    display(zoom, strokeColor, fillColor) {
+    display(zoom, cnv, strokeColor, fillColor) {
         fill(fillColor);
         stroke(strokeColor);
         square(this.screen.x, this.screen.y, this.screenDim);
-        this.draw(this.screen.x, this.screen.y, zoom, strokeColor);
+        this.draw(this.screen.x, this.screen.y, zoom, cnv, strokeColor);
     }
 
     checkMouseOver(zoom) {
@@ -85,7 +85,7 @@ class FeatureUIButtonClose extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
     }
-    draw(xa, ya, zoom, textColor) {
+    draw(xa, ya, zoom, cnv, textColor) {
         let off = 0.2 * this.screenDim;
         let xs = xa + off;
         let xe = xa + this.screenDim - off;
@@ -100,7 +100,7 @@ class FeatureUIButtonMove extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
     }
-    draw(xa, ya, zoom, textColor) {
+    draw(xa, ya, zoom, cnv, textColor) {
         let off = 0.2 * this.screenDim;
         line(xa + this.screenDimOn2, ya + off, xa + this.screenDimOn2, ya + this.screenDim - off)
         line(xa + off, ya + this.screenDimOn2, xa + this.screenDim - off, ya + this.screenDimOn2)
@@ -111,7 +111,7 @@ class FeatureUIButtonResize extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
     }
-    draw(xa, ya, zoom, textColor) {
+    draw(xa, ya, zoom, cnv, textColor) {
         const ratio = 0.5;
         const offset = this.screenDim * (1 - ratio) / 2;
         const arrowSize = this.screenDim * ratio;
@@ -127,7 +127,7 @@ class FeatureUIButtonLetterLabel extends FeatureUIButton {
         super(label, x, y, size, action);
         console.log(this.targetID);
     }
-    draw(xa, ya, zoom, textColor) {
+    draw(xa, ya, zoom, cnv, textColor) {
         textSize((myTextSize * zoom));
         fill(textColor);
         noStroke();
@@ -141,7 +141,7 @@ class FeatureUIOutputLabel extends FeatureUIButton {
         super(label, x, y, size, action);
     }
 
-    draw(xa, ya, zoom, textColor) {
+    draw(xa, ya, zoom, cnv, textColor) {
         textSize((myTextSize * zoom));
         fill(textColor);
         noStroke();
@@ -161,7 +161,7 @@ class FeatureUIInputLabel extends FeatureUIButton {
         this.id = getUnsecureHash();
     }
 
-    draw(xa, ya, zoom, textColor) {
+    draw(xa, ya, zoom, cnv, textColor) {
         textSize((myTextSize * zoom));
         fill(textColor);
         noStroke();
@@ -190,10 +190,10 @@ class PlantData extends FeatureComponent {
         this.updateScreenCoords(x, y, w, h);
     }
 
-    display(zoom, strokeColor, fillColor) {
+    display(zoom, cnv, strokeColor, fillColor) {
         textSize((myTextSize * zoom));
         let wa = this.calculateWidth(zoom);
-        this.draw(zoom, strokeColor, fillColor, wa);
+        this.draw(zoom, cnv, strokeColor, fillColor, wa);
     }
 
     updateScreenCoords(x, y, w, h) {
@@ -248,7 +248,7 @@ class FeatureDataTextLabel extends PlantData {
         return (distanceX < wa / 2 && distanceY < (this.screenDim * zoom) / 2);
     }
 
-    draw(zoom, strokeColor, fillColor, width) {
+    draw(zoom, cnv, strokeColor, fillColor, width) {
         fill(fillColor);
         stroke(strokeColor);
         rect(this.screen.x, this.screen.y, width, this.screenDim);
@@ -279,7 +279,7 @@ class FeatureDataIDLabel extends FeatureDataTextLabel {
         super(x, y, data, height, NOP);
     }
 
-    draw(zoom, strokeColor, fillColor, width) {
+    draw(zoom, cnv, strokeColor, fillColor, width) {
         fill(strokeColor);
         noStroke();
         textAlign(LEFT, TOP);

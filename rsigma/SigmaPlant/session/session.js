@@ -19,8 +19,8 @@ class Session {
         }
     }
 
-    draw(zoom) {
-        this.plant.draw(zoom);
+    draw(zoom, cnv) {
+        this.plant.draw(zoom, cnv);
     }
 
     addProcess(x, y) {
@@ -33,8 +33,8 @@ class Session {
         let parentLink = new ParentLink(-196, 0);
         parentLink.targetPlant = this.plantsPointer;
         newPlant.features.push(parentLink);
-        for (let i = 0; i < newPlant.length; i++) { // why isnt this working
-            newPlant[i].isAnimating = false;
+        for (let i = 0; i < newPlant.features.length; i++) { // why isnt this working
+            newPlant.features[i].turnOffAnimations();
         }
         this.plants.push(newPlant);
         let newProcess = new Process(x, y, 400, 280, newPlant, this.plants.length - 1);

@@ -10,6 +10,8 @@ class Mode {
     mouseWheel(event) { }
 
     draw() { }
+
+    touchMoved() { }
 }
 
 class Application extends Mode {
@@ -30,12 +32,14 @@ class Application extends Mode {
             this.sel.option(themeNamesArray[i]);
         }
         // set a callback function to be called whenever the selected option changes
-        this.changeTheme = this.changeTheme.bind(this); 
+        this.changeTheme = this.changeTheme.bind(this);
         this.sel.changed(this.changeTheme);
         let color = getColor('text');
         let backgroundColor = getColor('secondary');
         this.sel.style('color', color);
         this.sel.style('background-color', backgroundColor);
+        this.touchDevice = isTouchDevice();
+        this.previousDistance = 0;
     }
 
     delete() {
@@ -85,7 +89,7 @@ class Application extends Mode {
     mousePressed(mouseButton) {
 
         if (this.ready) {
-            if (isTouchDevice()) {
+            if (this.touchDevice) {
                 this.plantMousePassThrough();
                 this.menuMousePassThrough();
             } else {
@@ -108,12 +112,41 @@ class Application extends Mode {
         }
     }
 
-    draw() {
+    touchMoved() {
+        // Only perform pinch zoom when there are exactly two touch points
+        if (touches.length === 2 && menu.isActive == false && sess.plant.isActive == false && this.ready) {
+            let touchA = touches[0];
+            let touchB = touches[1];
+
+            // Calculate the current distance between two touches
+            let currentDistance = dist(touchA.x, touchA.y, touchB.x, touchB.y);
+
+            if (this.previousDistance > 0) {
+                // The difference in distance represents the zooming action
+                let difference = currentDistance - this.previousDistance;
+
+                // Adjust globalZoom by the difference
+                // You may want to apply a scaling factor to difference, similar to your mouseWheel() implementation
+                globalZoom -= difference * 0.001;
+                globalZoom = constrain(globalZoom, 0.2, 2);
+                fpsEvent();
+            }
+
+            // Store the distance for the next frame
+            this.previousDistance = currentDistance;
+        } else {
+            // Reset the previous distance if the screen is not currently being pinched
+            this.previousDistance = 0;
+        }
+    }
+
+
+    draw(cnv) {
         textSize(myTextSize);
         scrollBoard(globalZoom);
         drawGrid(getColor('gridline'), globalZoom);
         sess.update(globalZoom);
-        sess.draw(globalZoom);
+        sess.draw(globalZoom, cnv);
         menu.display();
         // noStroke();
         // fill(255);

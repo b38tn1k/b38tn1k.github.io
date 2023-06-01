@@ -15,6 +15,7 @@ class Feature {
         this.data = {};
         this.initDataLabels(BUTTON_SIZE);
         this.isAnimating = true;
+        this.doAnimations = true;
         this.animationValue = 0.0;
         this.animationW = w;
         this.animationH = h;
@@ -27,7 +28,7 @@ class Feature {
 
     initDataLabels(buttonSize) { }
     initButtons(buttonSize) { }
-    draw(zoom) { }
+    draw(zoom, cnv) { }
 
     delete() {
         for (let i = 0; i < this.buttons.length; i++) {
@@ -44,6 +45,13 @@ class Feature {
 
     setMode(mode) {
         this.mode = mode;
+    }
+
+    turnOffAnimations() {
+        this.doAnimations = false;
+        this.animationValue = 1;
+        this.height = this.animationH;
+        this.width = this.animationW;
     }
 
     moveToMouse() {
@@ -85,7 +93,7 @@ class Feature {
         }
     }
 
-    drawButtonsAndLabels(zoom, myStrokeColor = getColor("outline"), myFillColor = getColor("secondary")) {
+    drawButtonsAndLabels(zoom, cnv, myStrokeColor = getColor("outline"), myFillColor = getColor("secondary")) {
         if (this.notYetDrawnLabelAndButtons) {
             if (this.mode == 'deleting') {
                 zoom = this.animationValue;
@@ -94,11 +102,11 @@ class Feature {
                 // Draw buttons
                 for (let button of this.buttons) {
                     // Convert button position to screen coordinates
-                    button.display(zoom, myStrokeColor, myFillColor);
+                    button.display(zoom, cnv, myStrokeColor, myFillColor);
                 }
                 // Draw data labels
                 for (let label in this.dataLabels) {
-                    this.dataLabels[label].display(zoom, myStrokeColor, myFillColor);
+                    this.dataLabels[label].display(zoom, cnv, myStrokeColor, myFillColor);
                 }
             }
         }
@@ -136,12 +144,13 @@ class Feature {
     }
 
     startDelete() {
-        this.mode = 'deleting';
+        this.setMode('deleting');
+        this.doAnimations = true;
         this.isAnimating = true;
     }
 
-    display(zoom) {
-        if (this.isAnimating) {
+    display(zoom, cnv) {
+        if (this.isAnimating && this.doAnimations) {
             fpsEvent();
             const baseIncrement = 0.07;
             const desiredFrameRate = highFrameRate;
@@ -167,8 +176,8 @@ class Feature {
 
         if (this.shouldRender == true) {
             this.notYetDrawnLabelAndButtons = true;
-            this.draw(zoom);
-            this.drawButtonsAndLabels(zoom);
+            this.draw(zoom, cnv);
+            this.drawButtonsAndLabels(zoom, cnv);
         }
     }
 
@@ -223,71 +232,52 @@ class Process extends Feature {
     }
 
     setupIOButtons(buttonSize = BUTTON_SIZE) {
-        // Determine the number of source and sink buses
         const numSourceBuses = this.buses['source'].size;
         const numSinkBuses = this.buses['sink'].size;
-
+    
         // Get all the valid source and sink ids from plant features
-        let validSourceIds = Array.from(this.buses['source']).map(index => this.plant.features[index].id);
-        let validSinkIds = Array.from(this.buses['sink']).map(index => this.plant.features[index].id);
-
-
-        // remove any hanging buttons
-        this.buttons = this.buttons.filter(button => {
-            if (button instanceof FeatureUIInputLabel && !validSourceIds.includes(button.targetID)) {
-                button.mode = 'delete';
-                // return false;
-
-            } else if (button instanceof FeatureUIOutputLabel && !validSinkIds.includes(button.targetID)) {
-                button.mode = 'delete';
-                // return false;
-            }
-            return true;
-        });
-
-        // Calculate the increment for each button based on the number of buttons and the range 0.2 to 0.8
+        const validSourceIds = Array.from(this.buses['source']).map(index => this.plant.features[index].id);
+        const validSinkIds = Array.from(this.buses['sink']).map(index => this.plant.features[index].id);
+    
+        // Remove invalid buttons
+        this.removeInvalidButtons(validSourceIds, validSinkIds);
+    
         const xIncrementSource = numSourceBuses > 1 ? (0.8 - 0.2) / (numSourceBuses - 1) : 0;
         const xIncrementSink = numSinkBuses > 1 ? (0.8 - 0.2) / (numSinkBuses - 1) : 0;
-
-        // For each source bus, create an input button
-        let xSource = 0.2; // Start at the minimum x value
-        for (let index of this.buses['source']) {
-            let sourceId = this.plant.features[index].id;
-            console.log(this.plant.features[index].dataLabels['title'].data);
-            // Check if a button with the same targetID already exists
-            let existingButton = this.buttons.find(button => button.targetID === sourceId);
-            let mouseOverData = this.plant.features[index].dataLabels['title'].data;
-            if (!existingButton) {
-                // If no such button exists, create a new one
-                let b = new FeatureUIInputLabel('Input', xSource, 0, buttonSize, () => this.setMode('i_connect'));
-                b.targetID = sourceId;
-                b.doCheckMouseOver = true;
-                b.mouseOverData = mouseOverData;
-                this.buttons.push(b);
-            } else {
-                existingButton.mouseOverData = mouseOverData;
-            }
-            xSource += xIncrementSource;
-        }
-        // For each sink bus, create an output button
-        let xSink = 0.2; // Start at the minimum x value
-        for (let index of this.buses['sink']) {
-            let sinkId = this.plant.features[index].id;
-            let existingButton = this.buttons.find(button => button.targetID === sinkId);
-            let mouseOverData = this.plant.features[index].dataLabels['title'].data;
-            if (!existingButton) {
-                // If no such button exists, create a new one
-                let b = new FeatureUIOutputLabel('Output', xSink, 1, buttonSize, () => this.setMode('o_connect'));
-                b.targetID = sinkId;
-                b.doCheckMouseOver = true;
-                b.mouseOverData = mouseOverData;
-                this.buttons.push(b);
-                xSink += xIncrementSink;
-            } else {
-                existingButton.mouseOverData = mouseOverData;
-            }
+    
+        // Create input and output buttons
+        this.createIOButtons('source', FeatureUIInputLabel, 'Input', 'i_connect', xIncrementSource, buttonSize);
+        this.createIOButtons('sink', FeatureUIOutputLabel, 'Output', 'o_connect', xIncrementSink, buttonSize);
+    }
+    
+    removeInvalidButtons(validSourceIds, validSinkIds) {
+    for (let button of this.buttons) {
+        if ((button instanceof FeatureUIInputLabel && !validSourceIds.includes(button.targetID)) 
+            || (button instanceof FeatureUIOutputLabel && !validSinkIds.includes(button.targetID))) {
+            button.mode = 'delete';
         }
     }
+}
+    
+    createIOButtons(busType, ButtonType, label, mode, xIncrement, buttonSize) {
+        let x = 0.2; // Start at the minimum x value
+        for (let index of this.buses[busType]) {
+            let id = this.plant.features[index].id;
+            let existingButton = this.buttons.find(button => button.targetID === id);
+            let mouseOverData = this.plant.features[index].dataLabels['title'].data;
+            if (!existingButton) {
+                let b = new ButtonType(label, x, busType === 'source' ? 0 : 1, buttonSize, () => this.setMode(mode));
+                b.targetID = id;
+                b.doCheckMouseOver = true;
+                b.mouseOverData = mouseOverData;
+                this.buttons.push(b);
+            } else {
+                existingButton.mouseOverData = mouseOverData;
+            }
+            x += xIncrement;
+        }
+    }
+    
 
     setupFromSubProcess() {
         this.collectBuses();
@@ -321,7 +311,7 @@ class Process extends Feature {
         this.mode = 'transition_plant';
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -344,7 +334,7 @@ class Source extends Feature {
         this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         fill(getColor("secondary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -354,12 +344,9 @@ class Source extends Feature {
         // Calculate the center of the rectangle
         const centerX = this.screenPos.x + this.onScreenWidth / 2;
         const centerY = this.screenPos.y + this.onScreenHeight / 2;
-
         // Draw the ellipse
         ellipse(centerX, centerY, this.onScreenWidth, this.onScreenHeight);
-
     }
-
 }
 
 class ParentLink extends Feature {
@@ -376,7 +363,7 @@ class ParentLink extends Feature {
         this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -403,7 +390,7 @@ class Sink extends Feature {
         this.buttons.push(new FeatureUIOutputLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -436,12 +423,12 @@ class Zone extends Feature {
         this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         noFill();
         stroke(getColor("accent"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
         this.notYetDrawnLabelAndButtons = true;
-        this.drawButtonsAndLabels(zoom, getColor("accent"));
+        this.drawButtonsAndLabels(zoom, cnv, getColor("accent"));
     }
 
     checkIfChild(feature) {
@@ -466,7 +453,7 @@ class Sigma extends Feature {
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'Sigma', buttonSize, NOP);
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'SIGMA', buttonSize, NOP);
         this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
@@ -477,7 +464,7 @@ class Sigma extends Feature {
         this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -520,7 +507,7 @@ class Split extends Feature {
         this.buttons.push(new FeatureUIOutputLabel('Output', 1, 1, buttonSize, () => this.setMode('o_connect')));
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -563,7 +550,7 @@ class Merge extends Feature {
         this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         fill(getColor("secondary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
@@ -611,7 +598,38 @@ class Connector extends Feature {
         this.mode = 'idle';
         this.untetheredClicks = 0;
         this.adoptable = false;
+        this.path = [];
     }
+
+    computePath(zoom) {
+        if (this.input && this.output) {
+            let buffer = 20 * zoom;
+    
+            let x1 = this.anchors['Input'].screen.x + this.anchors['Input'].screenDimOn2;
+            let y1 = this.anchors['Input'].screen.y;
+      
+            let x2 = this.anchors['Output'].screen.x + this.anchors['Output'].screenDimOn2;
+            let y2 = this.anchors['Output'].screen.y + this.anchors['Output'].screenDim;
+            buffer = min(buffer, Math.abs(y2 - y1)/3);
+    
+            // Calculate the midpoints
+            let midY = (y1 + y2)/2;
+            let midX = (x1 + x2)/2;
+            // Calculate the connection points
+            let cpY1 = y1 - buffer;
+            let cpY4 = y2 + buffer;
+            // Update path with the new points
+            this.path = [
+                {x: x1, y: y1},
+                {x: x1, y: cpY1},
+                {x: midX, y: cpY1},
+                {x: midX, y: cpY4},
+                {x: x2, y: cpY4},
+                {x: x2, y: y2}
+            ];
+        }
+    }
+    
 
     attach(dest) {
         this.untethered = false;
@@ -620,12 +638,13 @@ class Connector extends Feature {
         this.anchors[key] = dest.caller; //dest.buttons.find(button => button.id === key);
     }
 
-    update() {
+    update(zoom) {
         this.shouldRender = true;
         if (this.input && this.output) {
-            if (this.input.mode == 'delete' || this.output.mode == 'delete' || this.anchors['Input'].mode == 'delete' || this.anchors['Output'].mode == 'delete') {
+            if (this.input.mode == 'delete' || this.output.mode == 'delete' || this.input.mode == 'deleting' || this.output.mode == 'deleting' || this.anchors['Input'].mode == 'delete' || this.anchors['Output'].mode == 'delete') {
                 this.mode = 'delete';
             }
+            this.computePath(zoom);
         } else {
             this.untethered = true;
             if (this.source.mode == 'delete') {
@@ -634,11 +653,16 @@ class Connector extends Feature {
         }
     }
 
-    draw(zoom) {
+    draw(zoom, cnv) {
         noFill();
         stroke(getColor("connector"));
         if (this.untethered == false) {
-            line(this.anchors['Input'].screen.x + this.anchors['Input'].screenDimOn2, this.anchors['Input'].screen.y, this.anchors['Output'].screen.x + this.anchors['Output'].screenDimOn2, this.anchors['Output'].screen.y + this.anchors['Output'].screenDim);
+            for (let i = 0; i < this.path.length - 1; i++) {
+                let point1 = this.path[i];
+                let point2 = this.path[i + 1];
+                line(point1.x, point1.y, point2.x, point2.y);
+            }
+            // line(this.anchors['Input'].screen.x + this.anchors['Input'].screenDimOn2, this.anchors['Input'].screen.y, this.anchors['Output'].screen.x + this.anchors['Output'].screenDimOn2, this.anchors['Output'].screen.y + this.anchors['Output'].screenDim);
         } else {
             for (let anchor in this.anchors) {
                 if (anchor == "Input") {

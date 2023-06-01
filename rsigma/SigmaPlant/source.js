@@ -28,7 +28,11 @@ function preload() {
 }
 
 function setupScreen() {
-  createCanvas(windowWidth, windowHeight);
+  cnv = createCanvas(windowWidth, windowHeight);
+  cnv.style('user-select', 'none');
+  cnv.style('-webkit-user-select', 'none');
+  cnv.style('-moz-user-select', 'none');
+  cnv.style('-ms-user-select', 'none');
   background(getColor('background'));
   frameRate(highFrameRate);
   lastInputTime = millis();
@@ -55,7 +59,7 @@ function draw() {
   }
   clear();
 
-  mode.draw();
+  mode.draw(cnv);
     switch (mode.modeHandOff) {
       case APPLICATION:
         mode = new Application();

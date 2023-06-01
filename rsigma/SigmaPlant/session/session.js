@@ -1,24 +1,76 @@
+function slerp(start, end, t) {
+    t = 0.5 * (1 - Math.cos(Math.PI * t)); // Sinusoidal easing
+    return start * (1 - t) + end * t;
+}
+
+
 class Session {
     constructor () {
         this.plants = [new Plant()];
         this.plantsPointer = 0;
+        this.mode = 'idle';
+        this.transitionTimer = 0;
+        this.transitionDuration = 15;
     }
 
     get plant() {
         return this.plants[this.plantsPointer];
     }
 
+    beginTransition(zoom) {
+        this.transitionTimer += 1;
+        let t = this.transitionTimer / this.transitionDuration;  // calculate normalized progress
+        globalZoom = lerp(zoom, 0.2, t);  // use lerp for smooth transition
+        if (this.transitionTimer >= this.transitionDuration) {
+            this.mode = 'do_transition';
+            this.transitionTimer = 0;
+        }
+    }
+    
+    doTransition(zoom) {
+        let targetPlant = this.plant.targetPlant;
+        this.plant.targetPlant = null;
+        this.plantsPointer = targetPlant;
+        this.plant.enter();
+        scrollX = 0;
+        scrollY = 0;
+        this.plant.update(zoom);
+        this.mode = 'end_transition';
+        fpsEvent();
+    }
+    
+    endTransition(zoom) {
+        this.transitionTimer += 1;
+        let t = this.transitionTimer / this.transitionDuration;  // calculate normalized progress
+        globalZoom = lerp(0.2, 1.0, t);  // use lerp for smooth transition
+        if (this.transitionTimer >= this.transitionDuration) {
+            this.mode = 'idle';
+            this.transitionTimer = 0;
+        }
+    }
+    
+
     update(zoom) {
         this.plant.update(zoom);
         if (this.plant.mode == 'transition_plant') {
+            this.mode = 'begin_transition';
             this.plant.mode = 'idle';
-            let targetPlant = this.plant.targetPlant;
-            this.plant.targetPlant = null;
-            this.plantsPointer = targetPlant;
-            this.plant.enter();
+            fpsEvent();
+        }
+        
+        switch (this.mode) {
+            case 'begin_transition':
+                this.beginTransition(zoom);
+                break;
+            case 'do_transition':
+                this.doTransition(zoom);
+                break;
+            case 'end_transition':
+                this.endTransition(zoom);
+                break;
         }
     }
-
+    
     draw(zoom, cnv) {
         this.plant.draw(zoom, cnv);
     }
@@ -38,8 +90,6 @@ class Session {
         }
         this.plants.push(newPlant);
         let newProcess = new Process(x, y, 400, 280, newPlant, this.plants.length - 1);
-        // newPlant.collectBuses();
-        // newPlant.setupIOButtons();
         this.plant.features.push(newProcess);
 
     }

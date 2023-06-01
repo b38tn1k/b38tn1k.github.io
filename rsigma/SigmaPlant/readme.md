@@ -50,7 +50,7 @@
 ## Process Evaluation
 - [ ] Value Stream Mapping
 
-'''
+```
 
 Supplier   Frame Assembly   Wheel Assembly   Final Assembly   Customer
   |            |                |                |                |
@@ -58,8 +58,8 @@ Supplier   Frame Assembly   Wheel Assembly   Final Assembly   Customer
 Raw Materials->Frames---------->Frames with----->Finished Bikes-->Delivered
                (Data)           Wheels           (Data)
                (Data)           (Data)
-'''
 
+```
 (missing Work In Progress inventory and information flow)
 
 Value Stream Mapping (VSM) is a visualization tool used in the Lean methodology that helps to understand the flow of value in a process, from the start of production to delivering the end product to the customer. It's a powerful tool for identifying waste and inefficiencies, enabling targeted improvements.

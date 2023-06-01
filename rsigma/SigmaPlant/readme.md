@@ -48,7 +48,6 @@
 - [ ] Real Time collaboration 
 
 ## Process Evaluation
-- [ ] Value Stream Mapping
 
 ```
 

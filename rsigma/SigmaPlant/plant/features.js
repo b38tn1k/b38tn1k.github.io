@@ -193,26 +193,40 @@ class Feature {
 }
 
 class Process extends Feature {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, plant, targetPlant) {
         super(x, y, width, height, 'process'); // Call the parent constructor
-        this.plant = new Plant();
-        this.plant.addSource(0, -246);
-        this.plant.addDelay(0, 0);
-        this.plant.addSink(0, 246);
-        this.plant.addConnector(0, 0, this.plant.features[1], this.plant.features[0]);
-        this.plant.addConnector(0, 0, this.plant.features[2], this.plant.features[1]);
-        for (let i = 0; i < this.plant.length; i++) { // why isnt this working
-            this.plant[i].isAnimating = false;
-        }
+        this.plant = plant;
+        this.targetPlant = targetPlant
+        this.buses = {}
+        this.buses = {
+            'source': new Set(),
+            'output': new Set()
+        };
     }
+
+    collectBuses() {
+        let inputIndices = this.plant.features
+            .map((feature, index) => feature.type == 'source' ? index : null)
+            .filter(index => index !== null);
+        this.buses['source'] = new Set(inputIndices);
+
+        let outputIndices = this.plant.features
+            .map((feature, index) => feature.type == 'sink' ? index : null)
+            .filter(index => index !== null);
+        this.buses['sink'] = new Set(outputIndices);
+    }
+
 
     update(zoom) {
+        this.collectBuses();
+        console.log("source bus indices: ", Array.from(this.buses['source']));
+        console.log("sink bus indices: ", Array.from(this.buses['sink']));
         super.update(zoom);
-        this.plant.update(zoom);
-    }
-
-    addPlantParent(parent) {
-        this.plant.addParent(parent);
+        if (this.mode == 'deleting' || this.mode == 'delete') {
+            this.plant = null;
+        } else {
+            this.plant.update(zoom);
+        }
     }
 
     initDataLabels(buttonSize) {
@@ -227,8 +241,12 @@ class Process extends Feature {
         this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
         this.buttons.push(new FeatureUIButtonResize('Resize', 1, 1, buttonSize, () => this.setMode('resize')));
         ////// TESTING
-        this.buttons.push(new FeatureUIButtonLetterLabel('Edit', 1, 0.5, buttonSize, () => plant = this.plant));
+        this.buttons.push(new FeatureUIButtonLetterLabel('Edit', 1, 0.5, buttonSize, () => this.transitionPlant()));
 
+    }
+
+    transitionPlant() {
+        this.mode = 'transition_plant';
     }
 
     draw(zoom) {
@@ -274,11 +292,12 @@ class Source extends Feature {
 
 class ParentLink extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, 98, 98, 'sink'); // Call the parent constructor
+        super(x, y, 98, 98, 'parentLink'); // Call the parent constructor
+        this.targetPlant = null;
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.3, 'PARENT', buttonSize, () => plant = plant.parent); // bad, fix with a mode
+        this.dataLabels['title'] = new FeatureDataTextLabelTrigger(0, 0.3, 'PARENT', buttonSize, () => this.transitionPlant()); // bad, fix with a mode
     }
 
     initButtons(buttonSize) {
@@ -289,6 +308,10 @@ class ParentLink extends Feature {
         fill(getColor("primary"));
         stroke(getColor("outline"));
         rect(this.screenPos.x, this.screenPos.y, this.onScreenWidth, this.onScreenHeight);
+    }
+
+    transitionPlant() {
+        this.mode = 'transition_plant';
     }
 }
 
@@ -365,13 +388,13 @@ class Zone extends Feature {
     }
 }
 
-class Delay extends Feature {
+class Sigma extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, 196, 196, 'delay'); // Call the parent constructor
+        super(x, y, 196, 196, 'sigma'); // Call the parent constructor
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'DELAY', buttonSize, NOP);
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'Sigma', buttonSize, NOP);
         this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 

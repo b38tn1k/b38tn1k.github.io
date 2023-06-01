@@ -27,7 +27,7 @@ function fpsEvent() {
 }
 
 function scrollBoard(zoom) {
-  if (mouseIsPressed && !menu.isActive && !plant.isActive) {
+  if (mouseIsPressed && !menu.isActive && !session.plant.isActive) {
     scrollX += (pmouseX - mouseX) / zoom;
     scrollY += (pmouseY - mouseY) / zoom;
     fpsEvent();
@@ -97,7 +97,7 @@ function setupMenu(){
   menu.addButton('New Process', newProcess);
   menu.addButton('New Source', newSource);
   menu.addButton('New Sink', newSink);
-  menu.addButton('New Delay', newDelay);
+  menu.addButton('New Sigma', newSigma);
   menu.addButton('New Split', newSplit);
   menu.addButton('New Merge', newMerge);
   // menu.addButton('Settings', () => {menu.activateSubMenu('settings');}); 
@@ -111,42 +111,42 @@ function setTheme(theme) {
 
 function newSource() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  plant.addSource(pos.x, pos.y);
+  session.addSource(pos.x, pos.y);
   menu.dismiss();
 }
 
 function newSink() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
-  plant.addSink(pos.x, pos.y);
+  session.addSink(pos.x, pos.y);
 }
 
 function newSplit() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  plant.addSplit(pos.x, pos.y);
+  session.addSplit(pos.x, pos.y);
   menu.dismiss();
 }
 
 function newMerge() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  plant.addMerge(pos.x, pos.y);
+  session.addMerge(pos.x, pos.y);
   menu.dismiss();
 }
 
 function newProcess() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
-  plant.addProcess(pos.x, pos.y);
+  session.addProcess(pos.x, pos.y);
 }
 
 function newZone() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
   menu.dismiss();
-  plant.addZone(pos.x, pos.y);
+  session.addZone(pos.x, pos.y);
 }
 
-function newDelay() {
+function newSigma() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  plant.addDelay(pos.x, pos.y);
+  session.addSigma(pos.x, pos.y);
   menu.dismiss();
 }

@@ -243,6 +243,15 @@ function getUnsecureHash() {
     return myStr.substring(0, 10);
 }
 
+
+class FeatureDataTextLabelTrigger extends FeatureDataTextLabel {
+    checkMouseClick(zoom) {
+        if (this.checkClicked(zoom)) {
+            this.action(this, this.screen.x, this.screen.y);
+        }
+    }
+}
+
 class FeatureDataIDLabel extends FeatureDataTextLabel {
     constructor(x, y, data, height) {
         super(x, y, data, height, NOP);
@@ -252,7 +261,7 @@ class FeatureDataIDLabel extends FeatureDataTextLabel {
         fill(strokeColor);
         noStroke();
         textAlign(LEFT, TOP);
-        textSize((myTextSize * zoom)/2);
+        textSize((myTextSize * zoom) / 2);
         text(this.data, this.screen.x + this.screenDim * 0.2, this.screen.y + this.screenDim * 0.6); // Center the text within the rectangle
     }
 }

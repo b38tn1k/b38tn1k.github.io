@@ -16,11 +16,43 @@ class Application extends Mode {
 
     constructor() {
         super();
-        this.ready = true;
+        this.ready = false;
+        setTimeout(() => {
+            this.ready = true;
+        }, 100);
+
+        let themeNamesArray = Object.keys(themes); // get the names of all themes
+        // create the drop-down menu and position it at the top of the screen
+        this.sel = createSelect();
+        this.sel.position(10, 10);
+        // add an option to the menu for each theme
+        for (let i = 0; i < themeNamesArray.length; i++) {
+            this.sel.option(themeNamesArray[i]);
+        }
+        // set a callback function to be called whenever the selected option changes
+        this.changeTheme = this.changeTheme.bind(this); 
+        this.sel.changed(this.changeTheme);
+        let color = getColor('text');
+        let backgroundColor = getColor('secondary');
+        this.sel.style('color', color);
+        this.sel.style('background-color', backgroundColor);
+    }
+
+    delete() {
+        this.sel.remove(); // check all of this :-P
+    }
+
+    changeTheme() {
+        let themeName = this.sel.value(); // get the name of the selected theme
+        setTheme(themeName); // set the theme
+        let color = getColor('text');
+        let backgroundColor = getColor('secondary');
+        this.sel.style('color', color);
+        this.sel.style('background-color', backgroundColor);
     }
 
     mouseReleased() {
-        if (plant.isActive == false && this.ready) {
+        if (session.plant.isActive == false && this.ready) {
             menu.activate();
             menu.setPosition(mouseX, mouseY);
         }
@@ -37,7 +69,7 @@ class Application extends Mode {
 
     plantMousePassThrough() {
         if (menu.isActive == false) {
-            plant.handleMousePress(globalZoom);
+            session.plant.handleMousePress(globalZoom);
         }
     }
 
@@ -69,7 +101,7 @@ class Application extends Mode {
     }
 
     mouseWheel(event) {
-        if (menu.isActive == false && plant.isActive == false && this.ready) {
+        if (menu.isActive == false && session.plant.isActive == false && this.ready) {
             globalZoom -= event.deltaY * 0.001;
             globalZoom = constrain(globalZoom, 0.2, 2);
             fpsEvent();
@@ -80,18 +112,18 @@ class Application extends Mode {
         textSize(myTextSize);
         scrollBoard(globalZoom);
         drawGrid(getColor('gridline'), globalZoom);
-        plant.update(globalZoom);
-        plant.draw(globalZoom);
+        session.update(globalZoom);
+        session.draw(globalZoom);
         menu.display();
-        noStroke();
-        fill(255);
-        textSize(12);
-        text('FPS: ' + int(frameRate()).toString(), windowWidth - 75, 50);
-        if (isTouchDevice()) {
-            text('touch', windowWidth - 75, 65);
-        } else {
-            text('mouse', windowWidth - 75, 65);
-        }
+        // noStroke();
+        // fill(255);
+        // textSize(12);
+        // text('FPS: ' + int(frameRate()).toString(), windowWidth - 75, 50);
+        // if (isTouchDevice()) {
+        //     text('touch', windowWidth - 75, 65);
+        // } else {
+        //     text('mouse', windowWidth - 75, 65);
+        // }
     }
 
 }
@@ -181,15 +213,15 @@ class Loading extends Mode {
         this.transparentBG = color(this.transparentBG);
     }
     mouseReleased(event) {
-        return;
+        return true;
     }
 
     mousePressed(mouseButton) {
-        return;
+        return true;
     }
 
     mouseWheel(event) {
-        return;
+        return true;
     }
 
     drawTitle() {
@@ -222,7 +254,7 @@ class Loading extends Mode {
                 if (this.trigger == 0) {
                     this.trigger = frameCount + 30;
                 }
-                scrollBoard();
+                scrollBoard(1.0);
                 let colorRatio = (frameCount - (this.trigger - 30)) / 30.0;
                 let interpColor = lerpColor(getColor('background'), getColor('gridline'), colorRatio);
                 drawGrid(interpColor);

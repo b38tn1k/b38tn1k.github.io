@@ -40,7 +40,6 @@ function mouseWheel(event) {
 
 function setup() {
   mode = new Loading();
-  plant = new Plant();
   session = new Session();
   setupMenu();
   setTheme(COLOR_THEME);

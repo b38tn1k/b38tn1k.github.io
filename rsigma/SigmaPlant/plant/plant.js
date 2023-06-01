@@ -3,18 +3,7 @@ class Plant {
         this.features = [];
         this.mode = null; // to capture non-null modes
         this.isActive = false;
-        this.parent = null;
-    }
-
-    addParent(parent) {
-        this.parent = parent;
-        this.features.push(new ParentLink(-196, 0));
-    }
-
-    addProcess(x, y, zoom) {
-        let p = new Process(x, y);
-        p.addPlantParent(this);
-        this.features.push(p);
+        this.targetPlant = null;
     }
 
     addSink(x, y) {
@@ -29,8 +18,8 @@ class Plant {
         this.features.push(new Zone(x, y));
     }
 
-    addDelay(x, y) {
-        this.features.push(new Delay(x, y));
+    addSigma(x, y) {
+        this.features.push(new Sigma(x, y));
     }
 
     addSplit(x, y) {
@@ -182,6 +171,11 @@ class Plant {
             break;
           case 'o_connect':
             this.doConnectorLogic(this.activeFeature, 'Input', () => this.addConnector(0, 0, null, this.activeFeature));
+            break;
+          case 'transition_plant':
+            this.mode = 'transition_plant'
+            this.targetPlant = this.activeFeature.targetPlant;
+            this.activeFeature.mode = 'idle';
             break;
           default:
             this.mode = 'idle';

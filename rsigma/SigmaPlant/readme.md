@@ -12,6 +12,7 @@
   -  [X] sub process plants need special Source / Sink zones for the input and output of the higher level process
   - [X] ~~'add sub process' on station block~~ All Processes have a Source, Delay, and Sink. THey can have a description on a higher level. They can also have more blocks inside them, but this is how they shoudl initialise.
   - [ ] formalize parent navigation
+  - move components between themes (copy paste I guess)
 
 - [ ] Conectors should come straight out, then choose a sensible path the the source
 - [ ] Conectors should be deletable
@@ -25,8 +26,9 @@
   - [X] Implment base
   - [ ] Handle multiple outputs (on Connector side?)
 
-- [ ] Delay / Duration Block (should be a Cost block also? or mode change Sigma)
+- [ ] Sigma Block
   - [X] Implment base
+  - [ ] Time and Cost modes, what else?
 
 - [ ] Feature Tagging:
   - Value Add

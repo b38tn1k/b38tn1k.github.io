@@ -48,4 +48,4 @@
 - [ ] Real Time collaboration 
 
 ## Process Evaluation
- ![Something like this](screenshot.png)
+ ![Something like this](assets/screenshot.png)

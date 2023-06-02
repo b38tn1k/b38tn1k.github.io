@@ -109,7 +109,7 @@ class FeatureDataTextLabel extends PlantData {
     checkClicked(zoom) {
         let wa = this.calculateWidth(zoom);
         const waOn2 = wa/2;
-        const centerX = this.screen.x + waOn2; // Calculate the X coordinate of the center of the button
+        const centerX = this.screen.x; // Calculate the X coordinate of the center of the button
         const centerY = this.screen.y + this.screenDimOn2; // Calculate the Y coordinate of the center of the button
         const distanceX = Math.abs(mouseX - centerX);
         const distanceY = Math.abs(mouseY - centerY);
@@ -119,11 +119,13 @@ class FeatureDataTextLabel extends PlantData {
     draw(zoom, cnv, strokeColor, fillColor, width) {
         fill(fillColor);
         stroke(strokeColor);
-        rect(this.screen.x, this.screen.y, width, this.screenDim);
+        const won2 = width/2;
+        const x = this.screen.x - won2;
+        rect(x, this.screen.y, width, this.screenDim);
         fill(strokeColor);
         noStroke();
         textAlign(CENTER, CENTER);
-        text(this.data, this.screen.x + width / 2, this.screen.y + this.screenDim / 2); // Center the text within the rectangle
+        text(this.data, x + won2, this.screen.y + this.screenDimOn2); // Center the text within the rectangle
     }
 }
 

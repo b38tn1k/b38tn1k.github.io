@@ -14,6 +14,7 @@
   - [X] ~~'add sub process' on station block~~ All Processes have a Source, Delay, and Sink. THey can have a description on a higher level. They can also have more blocks inside them, but this is how they shoudl initialise.
   - [ ] formalize parent navigation
   - move components between themes (copy paste I guess)
+  - [ ] data should be stored in a tab style layout INFO, TAGs, special tab to enter sub process, 
 
 - [X] Conectors should come straight out, then choose a sensible path the the source
 - [X] Conectors should be deletable

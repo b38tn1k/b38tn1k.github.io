@@ -127,7 +127,7 @@ class Application extends Mode {
 
                 // Adjust globalZoom by the difference
                 // You may want to apply a scaling factor to difference, similar to your mouseWheel() implementation
-                globalZoom -= difference * 0.001;
+                globalZoom += difference * 0.001;
                 globalZoom = constrain(globalZoom, 0.2, 2);
                 fpsEvent();
             }

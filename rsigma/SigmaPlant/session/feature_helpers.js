@@ -43,14 +43,19 @@ class FeatureUIButton extends FeatureComponent {
         this.updateScreenCoords(x, y, w, h);
     }
 
-    drawXIcon(xa, ya) {
-        let off = 0.2 * this.screenDim;
+    drawXIcon(xa, ya, offval = 0.2) {
+        let off = offval * this.screenDim;
         let xs = xa + off;
         let xe = xa + this.screenDim - off;
         let ys = ya + off;
         let ye = ya + this.screenDim - off;
         line(xs, ys, xe, ye)
         line(xe, ys, xs, ye)
+    }
+    drawCross(xa, ya, offval = 0.2) {
+        let off = offval * this.screenDim;
+        line(xa + this.screenDimOn2, ya + off, xa + this.screenDimOn2, ya + this.screenDim - off)
+        line(xa + off, ya + this.screenDimOn2, xa + this.screenDim - off, ya + this.screenDimOn2)
     }
 
     display(zoom, cnv, strokeColor, fillColor) {
@@ -86,13 +91,7 @@ class FeatureUIButtonClose extends FeatureUIButton {
         super(label, x, y, size, action);
     }
     draw(xa, ya, zoom, cnv, textColor) {
-        let off = 0.2 * this.screenDim;
-        let xs = xa + off;
-        let xe = xa + this.screenDim - off;
-        let ys = ya + off;
-        let ye = ya + this.screenDim - off;
-        line(xs, ys, xe, ye)
-        line(xe, ys, xs, ye)
+        this.drawXIcon(xa, ya);
     }
 }
 
@@ -101,9 +100,7 @@ class FeatureUIButtonMove extends FeatureUIButton {
         super(label, x, y, size, action);
     }
     draw(xa, ya, zoom, cnv, textColor) {
-        let off = 0.2 * this.screenDim;
-        line(xa + this.screenDimOn2, ya + off, xa + this.screenDimOn2, ya + this.screenDim - off)
-        line(xa + off, ya + this.screenDimOn2, xa + this.screenDim - off, ya + this.screenDimOn2)
+        this.drawCross(xa, ya);
     }
 }
 
@@ -125,7 +122,6 @@ class FeatureUIButtonResize extends FeatureUIButton {
 class FeatureUIButtonLetterLabel extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
-        console.log(this.targetID);
     }
     draw(xa, ya, zoom, cnv, textColor) {
         textSize((myTextSize * zoom));
@@ -139,39 +135,64 @@ class FeatureUIButtonLetterLabel extends FeatureUIButton {
 class FeatureUIOutputLabel extends FeatureUIButton {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
+        this.connected = false;
+        this.associatedConnector = null;
+    }
+
+    update(zoom, x, y, w, h) {
+        super.update(zoom, x, y, w, h);
+    }
+
+    checkMouseClick(zoom) {
+        if (this.connected) {
+            const clickX = this.screen.x + this.screenDimOn2;
+            const clickY = this.screen.y + this.screenDimOn2;
+            if (dist(mouseX, mouseY, clickX, clickY) < this.screenDim) {
+                this.associatedConnector.markToDelete();
+            }
+        } else {
+            return super.checkMouseClick(zoom);
+        }
     }
 
     draw(xa, ya, zoom, cnv, textColor) {
-        textSize((myTextSize * zoom));
-        fill(textColor);
-        noStroke();
-        textAlign(CENTER, CENTER);
-        text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
+        if (this.connected) {
+            this.drawXIcon(xa, ya, 0.3);
+        } else {
+            textSize((myTextSize * zoom));
+            fill(textColor);
+            noStroke();
+            textAlign(CENTER, CENTER);
+            text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
+        }
+
         if (this.hasMouseOver) {
-            // console.log(this.id, this.targetID, this.mouseOverData);
-            text(this.mouseOverData, xa + this.screenDimOn2, ya + 2*this.screenDim);
+            textSize((myTextSize * zoom));
+            fill(textColor);
+            noStroke();
+            text(this.mouseOverData, xa + this.screenDimOn2, ya - this.screenDim);
         }
     }
 
 }
 
-class FeatureUIInputLabel extends FeatureUIButton {
+class FeatureUIInputLabel extends FeatureUIOutputLabel {
     constructor(label, x, y, size, action) {
         super(label, x, y, size, action);
         this.id = getUnsecureHash();
     }
 
-    draw(xa, ya, zoom, cnv, textColor) {
-        textSize((myTextSize * zoom));
-        fill(textColor);
-        noStroke();
-        textAlign(CENTER, CENTER);
-        text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
-        if (this.hasMouseOver) {
-            // console.log(this.id, this.targetID, this.mouseOverData);
-            text(this.mouseOverData, xa + this.screenDimOn2, ya - this.screenDim);
-        }
-    }
+    // draw(xa, ya, zoom, cnv, textColor) {
+    //     textSize((myTextSize * zoom));
+    //     fill(textColor);
+    //     noStroke();
+    //     textAlign(CENTER, CENTER);
+    //     text(this.label[0], xa + this.screenDimOn2, ya + this.screenDimOn2);
+    //     if (this.hasMouseOver) {
+    //         // console.log(this.id, this.targetID, this.mouseOverData);
+    //         text(this.mouseOverData, xa + this.screenDimOn2, ya - this.screenDim);
+    //     }
+    // }
 
 }
 
@@ -245,7 +266,7 @@ class FeatureDataTextLabel extends PlantData {
         const centerY = this.screen.y + this.screenDim / 2; // Calculate the Y coordinate of the center of the button
         const distanceX = Math.abs(mouseX - centerX);
         const distanceY = Math.abs(mouseY - centerY);
-        return (distanceX < wa / 2 && distanceY < (this.screenDim * zoom) / 2);
+        return(distanceX < wa / 2 && distanceY < (this.screenDim * zoom) / 2);
     }
 
     draw(zoom, cnv, strokeColor, fillColor, width) {

@@ -20,7 +20,7 @@ class Session {
     beginTransition(zoom) {
         this.transitionTimer += 1;
         let t = this.transitionTimer / this.transitionDuration;  // calculate normalized progress
-        globalZoom = lerp(zoom, 0.2, t);  // use lerp for smooth transition
+        globalZoom = slerp(zoom, 0.2, t);  // use lerp for smooth transition
         if (this.transitionTimer >= this.transitionDuration) {
             this.mode = 'do_transition';
             this.transitionTimer = 0;
@@ -42,7 +42,7 @@ class Session {
     endTransition(zoom) {
         this.transitionTimer += 1;
         let t = this.transitionTimer / this.transitionDuration;  // calculate normalized progress
-        globalZoom = lerp(0.2, 1.0, t);  // use lerp for smooth transition
+        globalZoom = slerp(0.2, 1.0, t);  // use lerp for smooth transition
         if (this.transitionTimer >= this.transitionDuration) {
             this.mode = 'idle';
             this.transitionTimer = 0;
@@ -78,7 +78,7 @@ class Session {
     addProcess(x, y) {
         let newPlant = new Plant();
         newPlant.addSource(0, -246);
-        newPlant.addSigma(0, 0);
+        newPlant.addMetric(0, 0);
         newPlant.addSink(0, 246);
         newPlant.addConnector(0, 0, newPlant.features[1], newPlant.features[0]);
         newPlant.addConnector(0, 0, newPlant.features[2], newPlant.features[1]);
@@ -106,8 +106,8 @@ class Session {
         this.plant.features.push(new Zone(x, y));
     }
 
-    addSigma(x, y) {
-        this.plant.features.push(new Sigma(x, y));
+    addMetric(x, y) {
+        this.plant.features.push(new Metric(x, y));
     }
 
     addSplit(x, y) {

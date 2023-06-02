@@ -387,7 +387,7 @@ class Sink extends Feature {
     initButtons(buttonSize) {
         this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
         this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
-        this.buttons.push(new FeatureUIOutputLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
+        this.buttons.push(new FeatureUIInputLabel('Input', 0.5, 0, buttonSize, () => this.setMode('i_connect')));
     }
 
     draw(zoom, cnv) {
@@ -447,13 +447,13 @@ class Zone extends Feature {
     }
 }
 
-class Sigma extends Feature {
+class Metric extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, 196, 196, 'sigma'); // Call the parent constructor
+        super(x, y, 196, 196, 'metric'); // Call the parent constructor
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'SIGMA', buttonSize, NOP);
+        this.dataLabels['title'] = new FeatureDataTextLabel(0, 0.15, 'METRIC', buttonSize, NOP);
         this.dataLabels['id'] = new FeatureDataIDLabel(0, 1, this.id, buttonSize, NOP);
     }
 
@@ -546,7 +546,7 @@ class Merge extends Feature {
         this.buttons.push(new FeatureUIButtonMove('Move', 0, 0, buttonSize, () => this.setMode('move')));
         this.buttons.push(new FeatureUIButtonClose('Xdelete', 1, 0, buttonSize, () => this.startDelete()));
         this.buttons.push(new FeatureUIInputLabel('Input', 0.3, 0, buttonSize, () => this.setMode('i_connect')));
-        this.buttons.push(new FeatureUIOutputLabel('Input', 0.6, 0, buttonSize, () => this.setMode('i_connect')));
+        this.buttons.push(new FeatureUIInputLabel('Input', 0.6, 0, buttonSize, () => this.setMode('i_connect')));
         this.buttons.push(new FeatureUIOutputLabel('Output', 0.5, 1, buttonSize, () => this.setMode('o_connect')));
     }
 
@@ -590,6 +590,7 @@ class Connector extends Feature {
             this.anchors['Input'] = inputAnchor;
             let outputAnchor = output.buttons.find(button => button.label === 'Output');
             this.anchors['Output'] = outputAnchor;
+            this.setupAnchors();
         } else {
             this.source = this.input != null ? this.input : this.output;
             this.sourceType = this.input != null ? 'Input' : 'Output';
@@ -629,6 +630,13 @@ class Connector extends Feature {
             ];
         }
     }
+
+    setupAnchors() {
+        for (let anchor in this.anchors) {
+            this.anchors[anchor].connected = true;
+            this.anchors[anchor].associatedConnector = this;
+        }
+    }
     
 
     attach(dest) {
@@ -636,6 +644,7 @@ class Connector extends Feature {
         this.input ? this.output = dest : this.input = dest;
         let key = this.sourceType == 'Output' ? 'Input' : 'Output';
         this.anchors[key] = dest.caller; //dest.buttons.find(button => button.id === key);
+        this.setupAnchors();
     }
 
     update(zoom) {
@@ -643,13 +652,23 @@ class Connector extends Feature {
         if (this.input && this.output) {
             if (this.input.mode == 'delete' || this.output.mode == 'delete' || this.input.mode == 'deleting' || this.output.mode == 'deleting' || this.anchors['Input'].mode == 'delete' || this.anchors['Output'].mode == 'delete') {
                 this.mode = 'delete';
+                this.anchors['Input'].connected = false;
+                this.anchors['Output'].connected = false;
             }
             this.computePath(zoom);
         } else {
             this.untethered = true;
             if (this.source.mode == 'delete') {
-                this.mode = 'delete';
+                this.markToDelete();
             }
+        }
+    }
+
+    markToDelete() {
+        this.mode = 'delete';
+        for (let anchor in this.anchors) {
+            this.anchors[anchor].connected = false;
+            this.anchors[anchor].associatedConnector = null;
         }
     }
 

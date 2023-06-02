@@ -18,8 +18,8 @@ class Plant {
         this.features.push(new Zone(x, y));
     }
 
-    addSigma(x, y) {
-        this.features.push(new Sigma(x, y));
+    addMetric(x, y) {
+        this.features.push(new Metric(x, y));
     }
 
     addSplit(x, y) {
@@ -35,7 +35,7 @@ class Plant {
     }
 
     handleMousePress(zoom) {
-        this.clearHangingConnector();
+      this.clearHangingConnector();
         for (let i = 0; i < this.features.length; i++) {
             this.features[i].handleMousePress(zoom);
         }
@@ -61,10 +61,10 @@ class Plant {
         for (let feature of this.features) {
             if (feature.type == 'connector') {
                 if (feature.untethered == true) {
-                    if (feature.untetheredClicks >= 1) {
+                  feature.untetheredClicks += 1;
+                  console.log(feature.untetheredClicks);
+                    if (feature.untetheredClicks > 1) {
                         feature.mode = 'delete';
-                    } else {
-                        feature.untetheredClicks += 1;
                     }
                 } 
             }
@@ -166,9 +166,11 @@ class Plant {
             break;
           case 'move':
             this.activeFeature.moveToMouse();
+            this.mode = 'idle';
             break;
           case 'resize':
             this.activeFeature.resizeToMouse();
+            this.mode = 'idle';
             break;
           case 'i_connect':
             this.doConnectorLogic(this.activeFeature, 'Output', () => this.addConnector(0, 0, this.activeFeature, null));

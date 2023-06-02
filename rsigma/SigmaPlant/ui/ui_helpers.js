@@ -97,7 +97,7 @@ function setupMenu(){
   menu.addButton('New Process', newProcess);
   menu.addButton('New Source', newSource);
   menu.addButton('New Sink', newSink);
-  menu.addButton('New Sigma', newSigma);
+  menu.addButton('New Metric', newMetric);
   menu.addButton('New Split', newSplit);
   menu.addButton('New Merge', newMerge);
   // menu.addButton('Settings', () => {menu.activateSubMenu('settings');}); 
@@ -145,8 +145,8 @@ function newZone() {
   sess.addZone(pos.x, pos.y);
 }
 
-function newSigma() {
+function newMetric() {
   const pos = screenToBoard(menu.position.x, menu.position.y);
-  sess.addSigma(pos.x, pos.y);
+  sess.addMetric(pos.x, pos.y);
   menu.dismiss();
 }

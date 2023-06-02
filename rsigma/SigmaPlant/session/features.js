@@ -232,15 +232,17 @@ class Process extends Feature {
     }
 
     setupIOButtons(buttonSize = BUTTON_SIZE) {
+        this.collectBuses();
+        console.log(this.buses);
         const numSourceBuses = this.buses['source'].size;
         const numSinkBuses = this.buses['sink'].size;
     
         // Get all the valid source and sink ids from plant features
         const validSourceIds = Array.from(this.buses['source']).map(index => this.plant.features[index].id);
         const validSinkIds = Array.from(this.buses['sink']).map(index => this.plant.features[index].id);
-    
+        const validIDs = [...validSourceIds, ...validSinkIds];
         // Remove invalid buttons
-        this.removeInvalidButtons(validSourceIds, validSinkIds);
+        this.removeInvalidButtons(validIDs);
     
         const xIncrementSource = numSourceBuses > 1 ? (0.8 - 0.2) / (numSourceBuses - 1) : 0;
         const xIncrementSink = numSinkBuses > 1 ? (0.8 - 0.2) / (numSinkBuses - 1) : 0;
@@ -250,10 +252,9 @@ class Process extends Feature {
         this.createIOButtons('sink', FeatureUIOutputLabel, 'Output', 'o_connect', xIncrementSink, buttonSize);
     }
     
-    removeInvalidButtons(validSourceIds, validSinkIds) {
+    removeInvalidButtons(validIDs) {
     for (let button of this.buttons) {
-        if ((button instanceof FeatureUIInputLabel && !validSourceIds.includes(button.targetID)) 
-            || (button instanceof FeatureUIOutputLabel && !validSinkIds.includes(button.targetID))) {
+        if ((button instanceof FeatureUIInputLabel || button instanceof FeatureUIOutputLabel) && !validIDs.includes(button.targetID)) {
             button.mode = 'delete';
         }
     }
@@ -280,7 +281,7 @@ class Process extends Feature {
     
 
     setupFromSubProcess() {
-        this.collectBuses();
+        
         this.setupIOButtons();
     }
 

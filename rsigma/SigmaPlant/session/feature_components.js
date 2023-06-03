@@ -164,7 +164,7 @@ class FeatureDataIDLabel extends FeatureDataTextLabel {
 class FeatureDataTabGroup extends FeatureComponent {
   constructor(x, y, feature) {
     super(x, y);
-    this.feature = feature
+    this.feature = feature;
     this.modelData = model.modelData;
     this.tabs = {};
     this.currentTab = null;
@@ -207,7 +207,7 @@ class FeatureDataTabGroup extends FeatureComponent {
   }
 
   display(zoom, cnv, myStrokeColor, myFillColor) {
-    console.log('hi - draw a tab group here I guess')
+    console.log('hi - draw a tab group here I guess');
     stroke(myStrokeColor);
     noFill();
     // rect(this.screen.x, this.screen.y, 100, 100);

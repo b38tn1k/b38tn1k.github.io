@@ -10,8 +10,8 @@ function getColor(field) {
 }
 
 function screenToBoard(x, y) {
-  let boardX = (x - width / 2) / globalZoom + scrollX ;//+ width/2;
-  let boardY = (y - height / 2) / globalZoom + scrollY;// + height/2;
+  let boardX = (x - width / 2) / globalZoom + scrollX; //+ width/2;
+  let boardY = (y - height / 2) / globalZoom + scrollY; // + height/2;
   return createVector(boardX, boardY);
 }
 
@@ -22,7 +22,7 @@ function boardToScreen(boardX, boardY) {
 }
 
 function fpsEvent() {
-  lastInputTime = millis();  // I wish js had decorators
+  lastInputTime = millis(); // I wish js had decorators
   frameRate(highFrameRate);
 }
 
@@ -39,7 +39,6 @@ function drawCross(x, y, size) {
   line(x, y - size / 2, x, y + size / 2); // Vertical line
 }
 
-
 function drawGrid(color, zoom) {
   stroke(color);
   strokeWeight(1);
@@ -50,7 +49,7 @@ function drawGrid(color, zoom) {
   if (zoom <= 0.25) {
     resolution = 200;
   }
-  
+
   // Convert the screen edges to board coordinates
   let topLeftBoard = screenToBoard(0, 0);
   let bottomRightBoard = screenToBoard(width, height);
@@ -61,7 +60,11 @@ function drawGrid(color, zoom) {
 
   // Iterate over the grid intersections
   for (let boardX = startX; boardX < bottomRightBoard.x; boardX += resolution) {
-    for (let boardY = startY; boardY < bottomRightBoard.y; boardY += resolution) {
+    for (
+      let boardY = startY;
+      boardY < bottomRightBoard.y;
+      boardY += resolution
+    ) {
       let intersection = boardToScreen(boardX, boardY);
       // point(intersection.x, intersection.y);
       drawCross(intersection.x, intersection.y, 5);
@@ -69,7 +72,7 @@ function drawGrid(color, zoom) {
   }
 }
 
-function setupMenu(){
+function setupMenu() {
   menu = new CircularMenu();
 
   let themesArray = Object.keys(themes);
@@ -80,17 +83,27 @@ function setupMenu(){
   // let themeGroup3 = themesArray.slice(2 * themesArray.length / 3);
 
   // Create buttons for each theme group
-  let buttons1 = themeGroup1.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
-  buttons1.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes2'), 1));
-  let buttons2 = themeGroup2.map(theme => new MenuButton(theme, 0, 0, () => setTheme(theme), 1));
-  buttons2.push(new MenuButton( '...', 0, 0, () => menu.activateSubMenu('themes1'), 1));
+  let buttons1 = themeGroup1.map(
+    (theme) => new MenuButton(theme, 0, 0, () => setTheme(theme), 1)
+  );
+  buttons1.push(
+    new MenuButton('...', 0, 0, () => menu.activateSubMenu('themes2'), 1)
+  );
+  let buttons2 = themeGroup2.map(
+    (theme) => new MenuButton(theme, 0, 0, () => setTheme(theme), 1)
+  );
+  buttons2.push(
+    new MenuButton('...', 0, 0, () => menu.activateSubMenu('themes1'), 1)
+  );
 
   // Add each theme group as a separate submenu
   menu.newSubMenu(buttons1, 'themes1');
   menu.newSubMenu(buttons2, 'themes2');
   // Create Buttons for a Settings submenu
   let settings = [];
-  settings.push(new MenuButton( 'Themes', 0, 0, () => menu.activateSubMenu('themes1'), 1));
+  settings.push(
+    new MenuButton('Themes', 0, 0, () => menu.activateSubMenu('themes1'), 1)
+  );
 
   menu.newSubMenu(settings, 'settings');
   menu.addButton('New Zone', newZone);
@@ -100,13 +113,12 @@ function setupMenu(){
   menu.addButton('New Metric', newMetric);
   menu.addButton('New Split', newSplit);
   menu.addButton('New Merge', newMerge);
-  // menu.addButton('Settings', () => {menu.activateSubMenu('settings');}); 
+  // menu.addButton('Settings', () => {menu.activateSubMenu('settings');});
 }
 
 function setTheme(theme) {
   COLOR_THEME = theme;
   document.body.style.backgroundColor = getColor('background');
-
 }
 
 function newSource() {

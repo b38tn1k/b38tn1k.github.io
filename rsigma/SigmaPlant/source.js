@@ -9,7 +9,10 @@ function windowResized() {
 function mouseReleased() {
   const mouseHoldDuration = millis() - mousePressTime;
 
-  if (mouseHoldDuration > mouseHoldDurationValue && dist(mouseX, mouseY, mouseOldPos.x, mouseOldPos.y) < 20) {
+  if (
+    mouseHoldDuration > mouseHoldDurationValue &&
+    dist(mouseX, mouseY, mouseOldPos.x, mouseOldPos.y) < 20
+  ) {
     mode.mouseReleased();
   }
   fpsEvent();
@@ -65,22 +68,22 @@ function draw() {
   clear();
 
   mode.draw(cnv);
-    switch (mode.modeHandOff) {
-      case APPLICATION:
-        mode = new Application();
-        break;
-      case LANDING:
-        mode = new Loading();
-        break;
-      default: // NO_CHANGE
-        break;
-    }
+  switch (mode.modeHandOff) {
+    case APPLICATION:
+      mode = new Application();
+      break;
+    case LANDING:
+      mode = new Loading();
+      break;
+    default: // NO_CHANGE
+      break;
+  }
 }
 
 function isTouchDevice() {
   return 'ontouchstart' in window || navigator.maxTouchPoints;
 }
 
-document.addEventListener("contextmenu", function (event) {
+document.addEventListener('contextmenu', function (event) {
   event.preventDefault();
 });

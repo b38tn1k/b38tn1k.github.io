@@ -3,37 +3,43 @@
 ## TODO:
 
 - [ ] Zone should have knowledge of contained features:
+
   - [ ] group moving
   - [ ] duplication
   - [ ] station list
 
 - [ ] Processes can have 'sub process' which are actually 'Sub Plants'
-  - [ ] to show sub processes need a level naviagation widget as above 
-  -  [X] sub process plants need special Source / Sink zones for the input and output of the higher level process
-  - [X] figure out why they are dissapearing sometimes when levels change
-  - [X] ~~'add sub process' on station block~~ All Processes have a Source, Delay, and Sink. THey can have a description on a higher level. They can also have more blocks inside them, but this is how they shoudl initialise.
+
+  - [ ] to show sub processes need a level naviagation widget as above
+  - [x] sub process plants need special Source / Sink zones for the input and output of the higher level process
+  - [x] figure out why they are dissapearing sometimes when levels change
+  - [x] ~~'add sub process' on station block~~ All Processes have a Source, Delay, and Sink. THey can have a description on a higher level. They can also have more blocks inside them, but this is how they shoudl initialise.
   - [ ] formalize parent navigation
   - move components between themes (copy paste I guess)
-  - [ ] data should be stored in a tab style layout INFO, TAGs, special tab to enter sub process, 
+  - [ ] data should be stored in a tab style layout INFO, TAGs, special tab to enter sub process,
 
-- [X] Conectors should come straight out, then choose a sensible path the the source
-- [X] Conectors should be deletable
-- [X] Connectors should be initi w/ both inp and outp
+- [x] Conectors should come straight out, then choose a sensible path the the source
+- [x] Conectors should be deletable
+- [x] Connectors should be initi w/ both inp and outp
 - [ ] Connectors should be categorizable
 
 - [ ] Inputs and Outputs should be addable components to subprocesse
-  - [ ] Tags for Material / Informational /  Energy / Mechanical / Custom
+
+  - [ ] Tags for Material / Informational / Energy / Mechanical / Custom
   - [ ] Created by adding sources or sinks in the process, consider the Station block above as now having multiple ins/outs (update to match + tags)
 
 - [ ] Split/Merge Block with Percentages (two way only, slider split maybe)
-  - [X] Implment base
+
+  - [x] Implment base
   - [ ] Handle multiple outputs (on Connector side?)
 
 - [ ] Sigma Block
-  - [X] Implment base
+
+  - [x] Implment base
   - [ ] Time and Cost modes, what else?
 
 - [ ] Feature Tagging:
+
   - Value Add
   - No-Value Add
   - Mandated Necessary
@@ -43,12 +49,12 @@
 
 - [ ] Map and time between any Source and Sink
 
-- [X] Mobile touch input
-
+- [x] Mobile touch input
 
 ### Requires Server
-- [ ] Undo and constant save 
-- [ ] Real Time collaboration 
+
+- [ ] Undo and constant save
+- [ ] Real Time collaboration
 
 ## Process Evaluation
 
@@ -62,6 +68,7 @@ Raw Materials->Frames---------->Frames with----->Finished Bikes-->Delivered
                (Data)           (Data)
 
 ```
+
 (missing Work In Progress inventory and information flow)
 
 Value Stream Mapping (VSM) is a visualization tool used in the Lean methodology that helps to understand the flow of value in a process, from the start of production to delivering the end product to the customer. It's a powerful tool for identifying waste and inefficiencies, enabling targeted improvements.
@@ -96,7 +103,7 @@ Beneath each process (Frame Assembly, Wheel Assembly, and Final Assembly), we wo
 
 Once we have this map, we can start looking for ways to improve the process. This might involve reducing cycle time, decreasing inventory, improving the flow of information, or other strategies. By identifying these opportunities and making improvements, we can increase the value delivered to the customer and reduce waste.
 
- ![Something like this](assets/screenshot.png)
+![Something like this](assets/screenshot.png)
 
 Process mapping in the context of a plant or factory operations is a technique for visualizing and understanding the sequential steps involved in the production or operations process. It can be a very effective tool for generating quantitative data regarding the operations. Here's how:
 
@@ -113,4 +120,3 @@ Process mapping in the context of a plant or factory operations is a technique f
 6. **Value Stream Mapping**: This is a lean-management method for analyzing the current state and designing a future state for the series of events that take a product or service from the beginning of the specific process until it reaches the customer. This can provide a lot of quantitative data, including process times, lead times, and information relating to waste.
 
 7. **Throughput and Capacity**: Process mapping can help quantify the throughput (the rate at which a system generates its products/services per unit of time) and capacity (the maximum output that the system can produce) of the overall system or of specific subprocesses.
-

@@ -2,6 +2,8 @@ const TEXT_WIDTH_MULTIPLIER = 1.5;
 const TIGHT_DIM_GAP_PERCENT = 0.2;
 const LOW_MID_DIM_GAP_PERCENT = 0.4;
 const MID_DIM_GAP_PERCENT = 0.6;
+const TAB_GROUP_BORDER = 40;
+
 
 function getUnsecureHash() {
   let myStr =
@@ -165,13 +167,13 @@ class FeatureDataTabGroup extends FeatureComponent {
   constructor(x, y, feature) {
     super(x, y);
     this.feature = feature;
-    this.modelData = model.modelData;
+    this.modelData = feature.modelData;
     this.tabs = {};
     this.currentTab = null;
     this.createTabs();
   }
 
-  update(x, y, w, h) {
+  update(zoom, x, y, w, h) {
     this.updateScreenCoords(x, y, w, h);
   }
 
@@ -185,6 +187,7 @@ class FeatureDataTabGroup extends FeatureComponent {
         const tabData = this.modelData[tabNameKey];
         const tab = new FeatureDataTab(tabNameKey, tabData);
         this.tabs[tabNameKey] = tab;
+        console.log(tabNameKey);
       }
     }
   }
@@ -195,22 +198,21 @@ class FeatureDataTabGroup extends FeatureComponent {
     }
   }
 
-  updateScreenCoords(zoom, x, y, w) {
+  updateScreenCoords(x, y, w, h) {
     this.screen.x = x;
     this.screen.y = y;
     for (const tabNameKey in this.tabs) {
       if (this.tabs.hasOwnProperty(tabNameKey)) {
         const tab = this.tabs[tabNameKey];
-        tab.updateScreenCoords(zoom, this.screen.x, this.screen.y, w, h);
+        tab.updateScreenCoords(this.screen.x, this.screen.y, w, h);
       }
     }
   }
 
   display(zoom, cnv, myStrokeColor, myFillColor) {
-    console.log('hi - draw a tab group here I guess');
     stroke(myStrokeColor);
     noFill();
-    // rect(this.screen.x, this.screen.y, 100, 100);
+    textSize(myTextSize * zoom);
     this.draw(zoom, cnv);
   }
 
@@ -246,11 +248,11 @@ class FeatureDataTab extends FeatureComponent {
     }
   }
 
-  updateScreenCoords(zoom, x, y, w, h) {
+  updateScreenCoords(x, y, w, h) {
     this.screen.x = x;
     this.screen.y = y;
     for (const button of this.buttons) {
-      button.updateScreenCoords(zoom, this.screen.x, this.screen.y, w, h);
+      button.updateScreenCoords(this.screen.x, this.screen.y, w, h);
     }
   }
 
@@ -285,7 +287,7 @@ class FeatureDataButton extends FeatureComponent {
     }
   }
 
-  updateScreenCoords(zoom, x, y, w, h) {
+  updateScreenCoords(x, y, w, h) {
     this.screen.x = x;
     this.screen.y = y;
   }

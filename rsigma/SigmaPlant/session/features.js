@@ -3,27 +3,30 @@ const BUTTON_SIZE = 20;
 class Feature {
   constructor(x, y, w = 400, h = 280, type) {
     this.id = type + '->' + getUnsecureHash();
-    this.x = x;
-    this.y = y;
+
+    this.g = new Geometry(x, y, w, h);
+
+    this.board = createVector(x, y);
     this.width = 0;
     this.height = 0;
-    this.mode = 'idle';
-    this.buttons = [];
-    this.type = type;
-    this.initButtons(BUTTON_SIZE);
-    this.dataLabels = {};
-    this.data = {};
-    this.initDataLabels(BUTTON_SIZE);
-    this.isAnimating = true;
-    this.doAnimations = true;
-    this.animationValue = 0.0;
     this.animationW = w;
     this.animationH = h;
     this.shouldRender = true;
+
+    this.mode = 'idle';
+    this.buttons = [];
+    this.type = type;
+    this.dataLabels = {};
+    this.data = {};
+    this.isAnimating = true;
+    this.doAnimations = true;
+    this.animationValue = 0.0;
     this.adoptable = true;
     this.notYetDrawnLabelAndButtons = true;
     this.caller = null;
     this.modelData = {};
+    this.initButtons(BUTTON_SIZE);
+    this.initDataLabels(BUTTON_SIZE);
   }
 
   initDataLabels(buttonSize) {}
@@ -48,14 +51,14 @@ class Feature {
 
   moveToMouse() {
     let mob = screenToBoard(mouseX, mouseY);
-    this.x = mob.x;
-    this.y = mob.y;
+    this.board.x = mob.x;
+    this.board.y = mob.y;
   }
 
   resizeToMouse() {
     let mob = screenToBoard(mouseX, mouseY);
-    let pWidth = mob.x - this.x;
-    let pHeight = mob.y - this.y;
+    let pWidth = mob.x - this.board.x;
+    let pHeight = mob.y - this.board.y;
     if (pWidth > 50 && pHeight > 50) {
       this.width = pWidth;
       this.height = pHeight;
@@ -63,7 +66,7 @@ class Feature {
   }
 
   updateScreenCoords(zoom) {
-    this.screen = boardToScreen(this.x, this.y);
+    this.screen = boardToScreen(this.board.x, this.board.y);
     this.onScreenWidth = this.width * zoom;
     this.onScreenHeight = this.height * zoom;
   }
@@ -194,10 +197,10 @@ class Feature {
     let screenBottomRight = screenToBoard(windowWidth, windowHeight);
 
     return (
-      this.x < screenBottomRight.x &&
-      this.x + this.width > screenTopLeft.x &&
-      this.y < screenBottomRight.y &&
-      this.y + this.height > screenTopLeft.y
+      this.board.x < screenBottomRight.x &&
+      this.board.x + this.width > screenTopLeft.x &&
+      this.board.y < screenBottomRight.y &&
+      this.board.y + this.height > screenTopLeft.y
     );
   }
 
@@ -224,21 +227,8 @@ class Process extends Feature {
       source: new Set(),
       sink: new Set()
     };
-    this.setupFromSubProcess();
-    // test
-    this.modelData['INFO'] = {};
-    this.modelData['TAGS'] = {};
     this.modelData = {};
-    this.modelData['INFO'] = {};
-    this.modelData['INFO']['NAME'] = 'a process';
-    this.modelData['INFO']['YEAR'] = 2010;
-    this.modelData['INFO']['COST'] = 100000;
-    this.modelData['TAGS'] = [];
-    this.modelData['TAGS'].push('mandated');
-    this.modelData['TAGS'].push('no value add');
-    this.modelData['TAGS'].push('no AI');
-    this.modelData['ACTIONS'] = {};
-    this.modelData['ACTIONS']['TEST ACTION'] = () => console.log('test');
+    this.setupFromSubProcess();
   }
 
   collectBuses() {
@@ -345,13 +335,13 @@ class Process extends Feature {
   }
 
   initDataLabels(buttonSize) {
-    this.dataLabels['title'] = new FeatureDataTextLabel(
-      0,
-      0.15,
-      'PROCESS',
-      buttonSize,
-      openDialog
-    );
+    // this.dataLabels['title'] = new FeatureDataTextLabel(
+    //   0,
+    //   0.15,
+    //   'PROCESS',
+    //   buttonSize,
+    //   openDialog
+    // );
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
       1,
@@ -359,7 +349,23 @@ class Process extends Feature {
       buttonSize,
       NOP
     );
-    this.dataLabels['tab'] = new FeatureDataTabGroup(this.x, this.y, this);
+    // test
+
+    this.modelData['INFO'] = {};
+    this.modelData['INFO']['NAME'] = 'a process';
+    this.modelData['INFO']['YEAR'] = 2010;
+    this.modelData['INFO']['COST'] = 100000;
+    this.modelData['TAGS'] = [];
+    this.modelData['TAGS'].push('mandated');
+    this.modelData['TAGS'].push('no value add');
+    this.modelData['TAGS'].push('no AI');
+    this.modelData['ACTIONS'] = {};
+    this.modelData['ACTIONS']['TEST ACTION'] = () => console.log('test');
+    this.dataLabels['tab'] = new FeatureDataTabGroup(
+      this.board.x,
+      this.board.y,
+      this
+    );
   }
 
   initButtons(buttonSize) {
@@ -392,12 +398,7 @@ class Process extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(
-      this.screen.x,
-      this.screen.y,
-      this.onScreenWidth,
-      this.onScreenHeight
-    );
+    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
   }
 }
 
@@ -444,12 +445,7 @@ class Source extends Feature {
   draw(zoom, cnv) {
     fill(getColor('secondary'));
     stroke(getColor('outline'));
-    rect(
-      this.screen.x,
-      this.screen.y,
-      this.onScreenWidth,
-      this.onScreenHeight
-    );
+    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
 
     fill(getColor('primary'));
     noStroke();
@@ -488,12 +484,7 @@ class ParentLink extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(
-      this.screen.x,
-      this.screen.y,
-      this.onScreenWidth,
-      this.onScreenHeight
-    );
+    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
   }
 
   transitionPlant() {
@@ -544,12 +535,7 @@ class Sink extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(
-      this.screen.x,
-      this.screen.y,
-      this.onScreenWidth,
-      this.onScreenHeight
-    );
+    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
 
     fill(getColor('secondary'));
     noStroke(); // Calculate the center of the rectangle
@@ -606,12 +592,7 @@ class Zone extends Feature {
   draw(zoom, cnv) {
     noFill();
     stroke(getColor('accent'));
-    rect(
-      this.screen.x,
-      this.screen.y,
-      this.onScreenWidth,
-      this.onScreenHeight
-    );
+    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
     this.notYetDrawnLabelAndButtons = true;
     this.drawButtonsAndLabels(zoom, cnv, getColor('accent'));
   }
@@ -621,10 +602,10 @@ class Zone extends Feature {
     // within the zone's width and height. This assumes x and y are the top left
     // coordinates and the feature's size is negligible or already accounted for.
     return (
-      feature.x >= this.x &&
-      feature.x <= this.x + this.width &&
-      feature.y >= this.y &&
-      feature.y <= this.y + this.height &&
+      feature.x >= this.board.x &&
+      feature.x <= this.board.x + this.width &&
+      feature.y >= this.board.y &&
+      feature.y <= this.board.y + this.height &&
       feature.id != this.id
     );
   }
@@ -686,12 +667,7 @@ class Metric extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(
-      this.screen.x,
-      this.screen.y,
-      this.onScreenWidth,
-      this.onScreenHeight
-    );
+    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
 
     fill(getColor('secondary'));
     noStroke();
@@ -766,12 +742,7 @@ class Split extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(
-      this.screen.x,
-      this.screen.y,
-      this.onScreenWidth,
-      this.onScreenHeight
-    );
+    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
 
     fill(getColor('secondary'));
     noStroke();
@@ -846,12 +817,7 @@ class Merge extends Feature {
   draw(zoom, cnv) {
     fill(getColor('secondary'));
     stroke(getColor('outline'));
-    rect(
-      this.screen.x,
-      this.screen.y,
-      this.onScreenWidth,
-      this.onScreenHeight
-    );
+    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
 
     fill(getColor('primary'));
     noStroke();

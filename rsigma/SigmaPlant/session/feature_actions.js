@@ -23,6 +23,7 @@ function openDialog(plantData, xa, ya) {
   const doTheThing = () => {
     plantData.data = dialog.value();
     plantData.mode = 'cleared';
+    plantData.changed = true;
     fpsEvent();
     plantData.g.setBDimsWidth(myTextSize, TEXT_WIDTH_MULTIPLIER, dialog.value());
     setTimeout(() => {
@@ -62,7 +63,7 @@ function openDialog(plantData, xa, ya) {
       doTheThing();
     }
   });
-  
+
 }
 
 

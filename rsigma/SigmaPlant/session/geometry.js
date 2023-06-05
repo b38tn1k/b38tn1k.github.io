@@ -31,6 +31,23 @@ class Geometry {
     );
   }
 
+  selfDescribe() {
+    const info = {};
+    info['properties'] = {};
+    Object.keys(this).forEach(key => {
+      if (this[key] instanceof p5.Vector) {
+        info['properties'][key] = {
+          x: this[key].x,
+          y: this[key].y,
+          z: this[key].z,
+        };
+      } else {
+        info['properties'][key] = this[key];
+      }
+    });
+    return info;
+  }
+
   update(zoom) {
     this.sCart = boardToScreen(this.bCart.x, this.bCart.y);
     this.sDims.w = this.bDims.w * zoom;
@@ -40,10 +57,11 @@ class Geometry {
   }
 }
 
-class ParentDefinedGeometry {
+class ParentDefinedGeometry extends Geometry {
     constructor(x, y, size) {
-      this.bCart = createVector(x, y);
-      this.sCart = createVector(0, 0);
+      super(x, y, size, size)
+      // this.bCart = createVector(x, y);
+      // this.sCart = createVector(0, 0);
       this.bSqrDim = size;
       this.static = true;
       this.sSqrDim = size;

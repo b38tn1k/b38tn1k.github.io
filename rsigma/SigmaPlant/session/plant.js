@@ -4,33 +4,41 @@ class Plant {
     this.mode = null; // to capture non-null modes
     this.isActive = false;
     this.targetPlant = null;
+    this.changed = false;
   }
 
   addSink(x, y) {
+    this.changed = true;
     this.features.push(new Sink(x, y));
   }
 
   addSource(x, y) {
+    this.changed = true;
     this.features.push(new Source(x, y));
   }
 
   addZone(x, y) {
+    this.changed = true;
     this.features.push(new Zone(x, y));
   }
 
   addMetric(x, y) {
+    this.changed = true;
     this.features.push(new Metric(x, y));
   }
 
   addSplit(x, y) {
+    this.changed = true;
     this.features.push(new Split(x, y));
   }
 
   addMerge(x, y) {
+    this.changed = true;
     this.features.push(new Merge(x, y));
   }
 
   addConnector(x, y, input, output) {
+    this.changed = true;
     this.features.push(new Connector(x, y, input, output));
   }
 
@@ -73,7 +81,7 @@ class Plant {
   doConnectorLogic(activeFeature, searchType, action) {
     let [alreadyUntethered, connector] = this.isHangingConnector(searchType); // look for the other one
     if (connector) {
-      if (connector.source.id != activeFeature.id) {
+      if (connector.source.data['id'] != activeFeature.data['id']) {
         connector.attach(activeFeature);
       }
     } else {
@@ -110,19 +118,28 @@ class Plant {
     }
   }
 
+  selfDescribe() {
+    let info = []
+    for (let i = 0; i < this.features.length; i++) {
+      const res = this.features[i].selfDescribe();
+      if (res) {
+        info.push(res);
+      }
+      
+    }
+    return info;
+  }
+
   filterZones() {
     const zones = this.features.filter((feature) => feature.type === 'zone');
-    zones.forEach((zone) => zone.emptyChildren());
+    // zones.forEach((zone) => zone.emptyChildren());
     return zones;
   }
 
   updateFeatures(zoom, zones) {
     for (let i = 0; i < this.features.length; i++) {
       const feature = this.features[i];
-
-      if (feature.adoptable) {
-        this.adoptFeatureIntoZone(zones, feature);
-      }
+      this.changed = this.features[i].changed || this.changed;
 
       if (feature.mode !== 'idle') {
         this.setActiveMode(feature);
@@ -135,6 +152,10 @@ class Plant {
 
       feature.update(zoom);
 
+      if (feature.adoptable) {
+        this.adoptFeatureIntoZone(zones, feature);
+      }
+
       if (feature.type == 'connector' && feature.untethered) {
         fpsEvent();
       }
@@ -142,9 +163,22 @@ class Plant {
   }
 
   adoptFeatureIntoZone(zones, feature) {
-    const suitableZone = zones.find((zone) => zone.checkIfChild(feature));
-    if (suitableZone) {
-      suitableZone.addChild(feature);
+    let zoneHasChanged = zones.some(zone => zone.changed === true); // UX question - do we wanna be able to drop zones ontop?
+    // const zoneHasChanged = false;
+    if (feature.changed || zoneHasChanged) {
+      for (let i = 0; i < zones.length; i++) {
+        const zone = zones[i];
+        const shouldBeChild = zones[i].checkIfShouldBeChild(feature);
+        const isChild = zones[i].checkIfIsChild(feature);
+        if (shouldBeChild && !isChild) {
+          zones[i].addChild(feature);
+          break;
+        }
+        if (!shouldBeChild && isChild) {
+          zones[i].removeChild(feature);
+          break;
+        }
+      }
     }
   }
 
@@ -189,6 +223,7 @@ class Plant {
         break;
       default:
         this.mode = 'idle';
+        this.changed = false;
         break;
     }
   }

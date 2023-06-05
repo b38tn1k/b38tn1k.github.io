@@ -2,7 +2,6 @@ const BUTTON_SIZE = 20;
 
 class Feature {
   constructor(x, y, w = 400, h = 280, type) {
-    this.id = type + '->' + getUnsecureHash();
     this.g = new Geometry(x, y, w, h);
     this.g.clearBDims();
     this.mode = 'idle';
@@ -10,6 +9,7 @@ class Feature {
     this.type = type;
     this.dataLabels = {};
     this.data = {};
+    this.data['id'] = type + '->' + getUnsecureHash();
     this.isAnimating = true;
     this.doAnimations = true;
     this.animationValue = 0.0;
@@ -19,6 +19,7 @@ class Feature {
     this.modelData = {};
     this.initButtons(BUTTON_SIZE);
     this.initDataLabels(BUTTON_SIZE);
+    this.changed = true;
   }
 
   initDataLabels(buttonSize) {}
@@ -70,7 +71,62 @@ class Feature {
         this.dataLabels[label].mode = 'idle';
         this.mode = 'idle';
       }
+      if (this.dataLabels[label].changed == true) {
+        this.changed = true;
+        this.dataLabels[label].changed = false;
+      }
     }
+    this.data['title'] = this.dataLabels['title'].data;
+  }
+
+  selfDescribe() {
+    let info = {};
+    info['this'] = this.constructor.name;
+    info['subclasses'] = {};
+    info['subclasses'][this.g.constructor.name] = this.g.selfDescribe();
+    
+    info['subclasses']['buttons'] = [];
+    for (let button of this.buttons) {
+      info['subclasses']['buttons'].push(button.selfDescribe());
+    }
+    info['subclasses']['dataLabels'] = {};
+    for (let label in this.dataLabels) {
+      info['subclasses']['dataLabels'][label] = this.dataLabels[label].selfDescribe();
+    }
+
+    info['properties'] = {};
+    Object.keys(this).forEach((key) => {
+      if (this[key] instanceof p5.Vector) {
+        info['properties'][key] = {
+          x: this[key].x,
+          y: this[key].y,
+          z: this[key].z
+        };
+      } else if (key == 'g') {
+        info['properties'][key] = this.g.constructor.name;
+      } else if (key == 'action') {
+        1;
+      } else if (key == 'buttons') {
+        1;
+      } else if (key == 'dataLabels') {
+        1;
+      } else if (key == 'anchors') {
+        info['properties'][key] = {};
+        info['properties'][key]['Input'] = this[key]['Input'].id;
+        info['properties'][key]['Output'] = this[key]['Output'].id;
+      } else if (key == 'input') {
+        1;//TODO;
+      } else if (key == 'output') {
+        1;//TODO;
+      } else if (key == 'plant') {
+        info['properties'][key] = [];
+        info['properties'][key].push(this.plant.selfDescribe());
+      } else {
+        info['properties'][key] = this[key];
+      }
+    });
+
+    return info;
   }
 
   drawButtonsAndLabels(
@@ -99,6 +155,7 @@ class Feature {
   }
 
   update(zoom) {
+    this.changed = false;
     this.g.update(zoom);
     if (this.g.isOnScreen) {
       this.updateButtonsAndLabels(zoom);
@@ -111,19 +168,13 @@ class Feature {
       case 'move':
         if (mouseIsPressed == false) {
           this.setMode('idle');
+          this.changed = true;
         }
-        break;
-      case 'delete':
-        break;
-      case 'edit':
-        break;
-      case 'i_connect':
-        break;
-      case 'o_connect':
         break;
       case 'resize':
         if (mouseIsPressed == false) {
           this.setMode('idle');
+          this.changed = true;
         }
         break;
     }
@@ -224,10 +275,10 @@ class Process extends Feature {
 
     // Get all the valid source and sink ids from plant features
     const validSourceIds = Array.from(this.buses['source']).map(
-      (index) => this.plant.features[index].id
+      (index) => this.plant.features[index].data['id']
     );
     const validSinkIds = Array.from(this.buses['sink']).map(
-      (index) => this.plant.features[index].id
+      (index) => this.plant.features[index].data['id']
     );
     const validIDs = [...validSourceIds, ...validSinkIds];
     // Remove invalid buttons
@@ -270,7 +321,7 @@ class Process extends Feature {
   createIOButtons(busType, ButtonType, label, mode, xIncrement, buttonSize) {
     let x = 0.2; // Start at the minimum x value
     for (let index of this.buses[busType]) {
-      let id = this.plant.features[index].id;
+      let id = this.plant.features[index].data['id'];
       let existingButton = this.buttons.find(
         (button) => button.targetID === id
       );
@@ -302,8 +353,6 @@ class Process extends Feature {
     super.update(zoom);
     if (this.mode == 'deleting' || this.mode == 'delete') {
       this.plant = null;
-    } else {
-      // this.plant.update(zoom);
     }
   }
 
@@ -318,7 +367,7 @@ class Process extends Feature {
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
       1,
-      this.id,
+      this.data['id'],
       buttonSize,
       NOP
     );
@@ -391,7 +440,7 @@ class Source extends Feature {
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
       1,
-      this.id,
+      this.data['id'],
       buttonSize,
       NOP
     );
@@ -434,6 +483,7 @@ class ParentLink extends Feature {
   constructor(x, y, width, height) {
     super(x, y, 98, 98, 'parentLink'); // Call the parent constructor
     this.targetPlant = null;
+    this.adoptable = false;
   }
 
   initDataLabels(buttonSize) {
@@ -481,7 +531,7 @@ class Sink extends Feature {
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
       1,
-      this.id,
+      this.data['id'],
       buttonSize,
       NOP
     );
@@ -556,7 +606,7 @@ class Zone extends Feature {
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
       1,
-      this.id,
+      this.data['id'],
       buttonSize,
       NOP
     );
@@ -570,18 +620,38 @@ class Zone extends Feature {
     this.drawButtonsAndLabels(zoom, cnv, getColor('accent'));
   }
 
-  checkIfChild(feature) {
+  checkIfShouldBeChild(feature) {
     // The feature is considered to be in the zone if its x and y positions are
     // within the zone's width and height. This assumes x and y are the top left
     // coordinates and the feature's size is negligible or already accounted for.
     return (
-      feature.x >= this.g.bCart.x &&
-      feature.x <= this.g.bCart.x + this.g.bDims.w &&
-      feature.y >= this.g.bCart.y &&
-      feature.y <= this.g.bCart.y + this.g.bDims.h &&
-      feature.id != this.id
+      feature.g.bCart.x >= this.g.bCart.x &&
+      feature.g.bCart.x <= this.g.bCart.x + this.g.bDims.w &&
+      feature.g.bCart.y >= this.g.bCart.y &&
+      feature.g.bCart.y <= this.g.bCart.y + this.g.bDims.h &&
+      feature.data['id'] != this.data['id']
     );
   }
+
+  moveToMouse() {
+    const mob = screenToBoard(mouseX, mouseY);
+    const oldX = this.g.bCart.x;
+    const oldY = this.g.bCart.y;
+    this.g.bCart.x = mob.x;
+    this.g.bCart.y = mob.y;
+    const delta = createVector(this.g.bCart.x - oldX, this.g.bCart.y - oldY);
+    for (let i = 0; i < this.children.length; i++) {
+      this.children[i].g.bCart.add(delta);
+    }
+  }
+
+  checkIfIsChild(feature) {
+    return this.children.includes(feature);
+  }
+
+  removeChild(feature) {
+    this.children = this.children.filter(child => child !== feature);
+  }  
 
   addChild(feature) {
     this.children.push(feature);
@@ -608,7 +678,7 @@ class Metric extends Feature {
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
       1,
-      this.id,
+      this.data['id'],
       buttonSize,
       NOP
     );
@@ -678,7 +748,7 @@ class Split extends Feature {
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
       1,
-      this.id,
+      this.data['id'],
       buttonSize,
       NOP
     );
@@ -753,7 +823,7 @@ class Merge extends Feature {
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
       1,
-      this.id,
+      this.data['id'],
       buttonSize,
       NOP
     );
@@ -815,6 +885,7 @@ class Merge extends Feature {
 class Connector extends Feature {
   constructor(x, y, input, output) {
     super(x, y, 0, 0, 'connector'); // Call the parent constructor
+    this.changed = false;
     this.g.manualOnScreen = true;
     this.isAnimating = false;
     this.type = 'connector';
@@ -843,6 +914,15 @@ class Connector extends Feature {
     this.untetheredClicks = 0;
     this.adoptable = false;
     this.path = [];
+  }
+
+  selfDescribe() {
+    let res;
+    console.log(this.untethered);
+    if (!this.untethered) {
+      res = super.selfDescribe();
+    }
+    return res;
   }
 
   computePath(zoom) {
@@ -906,11 +986,13 @@ class Connector extends Feature {
     this.untethered = false;
     this.input ? (this.output = dest) : (this.input = dest);
     let key = this.sourceType == 'Output' ? 'Input' : 'Output';
-    this.anchors[key] = dest.caller; // dest.buttons.find(button => button.id === key);
+    this.anchors[key] = dest.caller; // dest.buttons.find(button => button.data['id'] === key);
     this.setupAnchors();
+    this.changed = true;
   }
 
   update(zoom) {
+    this.changed = false;
     if (this.input && this.output) {
       this.g.manualOnScreen = ((this.input.g.isOnScreen || this.output.g.isOnScreen));
         if (
@@ -941,6 +1023,7 @@ class Connector extends Feature {
       this.anchors[anchor].connected = false;
       this.anchors[anchor].associatedConnector = null;
     }
+    this.changed = true;
   }
 
   draw(zoom, cnv) {

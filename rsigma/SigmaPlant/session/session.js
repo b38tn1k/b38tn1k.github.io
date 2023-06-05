@@ -67,6 +67,11 @@ class Session {
         this.endTransition(zoom);
         break;
     }
+    if (this.plant.changed === true) {
+      console.log(this.plants[0].selfDescribe());
+      this.plant.changed = false;
+      console.log('change!');
+    }
   }
 
   draw(zoom, cnv) {
@@ -100,30 +105,37 @@ class Session {
   }
 
   addSink(x, y) {
-    this.plant.features.push(new Sink(x, y));
+    this.plant.addSink(x, y);
+    // this.plant.features.push(new Sink(x, y));
   }
 
   addSource(x, y) {
-    this.plant.features.push(new Source(x, y));
+    this.plant.addSource(x, y);
+    // this.plant.features.push(new Source(x, y));
   }
 
   addZone(x, y) {
-    this.plant.features.push(new Zone(x, y));
+    this.plant.addZone(x, y)
+    // this.plant.features.push(new Zone(x, y));
   }
 
   addMetric(x, y) {
-    this.plant.features.push(new Metric(x, y));
+    this.plant.addMetric(x, y);
+    // this.plant.features.push(new Metric(x, y));
   }
 
   addSplit(x, y) {
-    this.plant.features.push(new Split(x, y));
+    this.plant.addSplit(x, y)
+    // this.plant.features.push(new Split(x, y));
   }
 
   addMerge(x, y) {
-    this.plant.features.push(new Merge(x, y));
+    this.plant.addMerge(x, y);
+    // this.plant.features.push(new Merge(x, y));
   }
 
   addConnector(x, y, input, output) {
-    this.plant.features.push(new Connector(x, y, input, output));
+    this.plant.addConnector(x, y, input, output);
+    // this.plant.features.push(new Connector(x, y, input, output));
   }
 }

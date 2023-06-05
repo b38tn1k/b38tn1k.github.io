@@ -6,11 +6,12 @@
 
 - [X] Zone should have knowledge of contained features:
 
+  - [ ] station list
   - [ ] group moving
   - [ ] duplication
-  - [ ] station list
+  
 
-- [ ] Processes can have 'sub process' which are actually 'Sub Plants'
+- [X] Processes can have 'sub process' which are actually 'Sub Plants'
 
   - [ ] to show sub processes need a level naviagation widget as above
   - [x] sub process plants need special Source / Sink zones for the input and output of the higher level process

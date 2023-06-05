@@ -22,21 +22,32 @@
 - [x] Conectors should be deletable
 - [x] Connectors should be initi w/ both inp and outp
 - [ ] Connectors should be categorizable
+  - [ ] Tag target for connectors - on the corners??
 
-- [ ] Inputs and Outputs should be addable components to subprocesse
-
+- [X] Inputs and Outputs should be addable components to subprocesse
+  
   - [ ] Tags for Material / Informational / Energy / Mechanical / Custom
   - [ ] Created by adding sources or sinks in the process, consider the Station block above as now having multiple ins/outs (update to match + tags)
 
 - [ ] Split/Merge Block with Percentages (two way only, slider split maybe)
 
   - [x] Implment base
-  - [ ] Handle multiple outputs (on Connector side?)
+  - [ ] Allow use defined additional buses 
 
-- [ ] Sigma Block
+- [ ] Metric Block
 
   - [x] Implment base
   - [ ] Time and Cost modes, what else?
+
+- [ ] Special screen-locked blocks:
+  - [ ] Tag Pool
+    - add
+    - delete
+  - [ ] Field Pool
+    - add
+    - delete
+  - in both cases, data types and formates can be defined here, then draged and dropped onto blocks (or removed from all blocks through deleting)
+  - tag and field blocks should have move and delete buttons
 
 - [ ] Feature Tagging:
 

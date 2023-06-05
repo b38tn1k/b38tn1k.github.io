@@ -4,7 +4,7 @@
 
 - [ ] Feature level change detection!
 
-- [ ] Zone should have knowledge of contained features:
+- [X] Zone should have knowledge of contained features:
 
   - [ ] group moving
   - [ ] duplication

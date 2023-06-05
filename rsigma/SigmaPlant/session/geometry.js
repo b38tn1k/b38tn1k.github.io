@@ -100,36 +100,3 @@ class ParentDefinedGeometry {
       return createVector(clickX, clickY);
     }
   }
-
-  
-//   // this class is currently unudes but should be used with some FeatureDataTextLabel classes
-// class ParentDefinedGeometryRect extends ParentDefinedGeometry  {
-//   constructor(x, y, size) {
-//     super(x, y, size);
-//     this.bDims = {w: size, h: size};
-//     this.sDims = {w: size, h: size};
-//   }
-
-//   calculateWidth(data, zoom) {
-//     textSize(this.myTextSize);
-//     let width = textWidth(data) * this.textSizeMultiplier;
-//     if (width == 0) {
-//       width = this.sSqrDim;
-//     }
-//     this.bDims.w = width;
-//     this.sDims.w = width * zoom;
-//     return width;
-//   }
-
-//   checkClicked(mouseX, mouseY) {
-//     // const halfWidth = this.sDims.w / 2;
-//     // const centerX = this.sCart.x;
-//     // const centerY = this.sCart.y + this.sSqrDimOn2;
-//     // const distanceX = Math.abs(mouseX - centerX);
-//     // const distanceY = Math.abs(mouseY - centerY);
-//     // return distanceX < halfWidth && distanceY < this.sSqrDimOn2;
-//     const inX = mouseX > this.
-//     const inY = Math.abs(mouseY - centerY);
-//     return distanceX < halfWidth && distanceY < this.sSqrDimOn2;
-//   }
-// }

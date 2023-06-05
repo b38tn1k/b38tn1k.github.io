@@ -3,16 +3,7 @@ const BUTTON_SIZE = 20;
 class Feature {
   constructor(x, y, w = 400, h = 280, type) {
     this.id = type + '->' + getUnsecureHash();
-
     this.g = new Geometry(x, y, w, h);
-
-    this.board = createVector(x, y);
-    this.width = 0;
-    this.height = 0;
-    this.animationW = w;
-    this.animationH = h;
-    this.shouldRender = true;
-
     this.mode = 'idle';
     this.buttons = [];
     this.type = type;
@@ -45,51 +36,33 @@ class Feature {
   turnOffAnimations() {
     this.doAnimations = false;
     this.animationValue = 1;
-    this.height = this.animationH;
-    this.width = this.animationW;
+    this.g.bDims.h = this.g.aDims.h;
+    this.g.bDims.w = this.g.aDims.w;
   }
 
   moveToMouse() {
     let mob = screenToBoard(mouseX, mouseY);
-    this.board.x = mob.x;
-    this.board.y = mob.y;
+    this.g.bPos.x = mob.x;
+    this.g.bPos.y = mob.y;
   }
 
   resizeToMouse() {
     let mob = screenToBoard(mouseX, mouseY);
-    let pWidth = mob.x - this.board.x;
-    let pHeight = mob.y - this.board.y;
+    let pWidth = mob.x - this.g.bPos.x;
+    let pHeight = mob.y - this.g.bPos.y;
     if (pWidth > 50 && pHeight > 50) {
-      this.width = pWidth;
-      this.height = pHeight;
+      this.g.bDims.w = pWidth;
+      this.g.bDims.h = pHeight;
     }
-  }
-
-  updateScreenCoords(zoom) {
-    this.screen = boardToScreen(this.board.x, this.board.y);
-    this.onScreenWidth = this.width * zoom;
-    this.onScreenHeight = this.height * zoom;
   }
 
   updateButtonsAndLabels(zoom) {
     this.buttons = this.buttons.filter((button) => button.mode !== 'delete');
     for (let button of this.buttons) {
-      button.update(
-        zoom,
-        this.screen.x,
-        this.screen.y,
-        this.onScreenWidth,
-        this.onScreenHeight
-      );
+      button.update(zoom, this.g);
     }
     for (let label in this.dataLabels) {
-      this.dataLabels[label].update(
-        zoom,
-        this.screen.x,
-        this.screen.y,
-        this.onScreenWidth,
-        this.onScreenHeight
-      );
+      this.dataLabels[label].update(zoom, this.g);
       if (this.dataLabels[label].mode == 'busy') {
         this.mode = this.dataLabels[label].mode;
       } else if (this.dataLabels[label].mode == 'cleared') {
@@ -125,10 +98,11 @@ class Feature {
   }
 
   update(zoom) {
-    this.shouldRender = this.isInScreen();
-    this.updateScreenCoords(zoom);
-    this.updateButtonsAndLabels(zoom);
-    this.checkModeAndAct();
+    this.g.update(zoom);
+    if (this.g.isOnScreen) {
+      this.updateButtonsAndLabels(zoom);
+      this.checkModeAndAct();
+    }
   }
 
   checkModeAndAct() {
@@ -172,47 +146,45 @@ class Feature {
       } else {
         this.animationValue += increment;
       }
-
-      this.height = this.animationH * this.animationValue;
-      this.width = this.animationW * this.animationValue;
+      this.g.bDims.h = this.g.aDims.h * this.animationValue;
+      this.g.bDims.w = this.g.aDims.w * this.animationValue;
       if (this.animationValue >= 1.0 && this.mode != 'deleting') {
         this.isAnimating = false;
-        this.height = this.animationH;
-        this.width = this.animationW;
+        this.g.bDims.h = this.g.aDims.h;
+        this.g.bDims.w = this.g.aDims.w;
       }
       if (this.animationValue <= 0.0 && this.mode == 'deleting') {
         this.mode = 'delete';
       }
     }
 
-    if (this.shouldRender == true) {
+    if (this.g.isOnScreen == true) {
       this.notYetDrawnLabelAndButtons = true;
       this.draw(zoom, cnv);
       this.drawButtonsAndLabels(zoom, cnv);
     }
   }
 
-  isInScreen() {
-    let screenTopLeft = screenToBoard(0, 0);
-    let screenBottomRight = screenToBoard(windowWidth, windowHeight);
-
+  checkIsOnScreen() {
     return (
-      this.board.x < screenBottomRight.x &&
-      this.board.x + this.width > screenTopLeft.x &&
-      this.board.y < screenBottomRight.y &&
-      this.board.y + this.height > screenTopLeft.y
+      this.g.sPos.x < windowWidth &&
+      this.g.sPos.x + this.g.sDims.w > 0 &&
+      this.g.sPos.y < windowHeight &&
+      this.g.sPos.y + this.g.sDims.h > 0
     );
   }
 
   handleMousePress(zoom) {
-    for (let button of this.buttons) {
-      const res = button.checkMouseClick(zoom);
-      if (res) {
-        this.caller = button;
+    if (this.g.isOnScreen == true) {
+      for (let button of this.buttons) {
+        const res = button.checkMouseClick(zoom);
+        if (res) {
+          this.caller = button;
+        }
       }
-    }
-    for (let label in this.dataLabels) {
-      this.dataLabels[label].checkMouseClick(zoom);
+      for (let label in this.dataLabels) {
+        this.dataLabels[label].checkMouseClick(zoom);
+      }
     }
   }
 }
@@ -361,11 +333,11 @@ class Process extends Feature {
     this.modelData['TAGS'].push('no AI');
     this.modelData['ACTIONS'] = {};
     this.modelData['ACTIONS']['TEST ACTION'] = () => console.log('test');
-    this.dataLabels['tab'] = new FeatureDataTabGroup(
-      this.board.x,
-      this.board.y,
-      this
-    );
+    // this.dataLabels['tab'] = new FeatureDataTabGroup(
+    //   this.g.bPos.x,
+    //   this.g.bPos.y,
+    //   this
+    // );
   }
 
   initButtons(buttonSize) {
@@ -398,7 +370,7 @@ class Process extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
+    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
   }
 }
 
@@ -445,15 +417,15 @@ class Source extends Feature {
   draw(zoom, cnv) {
     fill(getColor('secondary'));
     stroke(getColor('outline'));
-    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
+    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('primary'));
     noStroke();
     // Calculate the center of the rectangle
-    const centerX = this.screen.x + this.onScreenWidth / 2;
-    const centerY = this.screen.y + this.onScreenHeight / 2;
+    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
+    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
     // Draw the ellipse
-    ellipse(centerX, centerY, this.onScreenWidth, this.onScreenHeight);
+    ellipse(centerX, centerY, this.g.sDims.w, this.g.sDims.h);
   }
 }
 
@@ -484,7 +456,7 @@ class ParentLink extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
+    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
   }
 
   transitionPlant() {
@@ -535,15 +507,15 @@ class Sink extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
+    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('secondary'));
     noStroke(); // Calculate the center of the rectangle
-    const centerX = this.screen.x + this.onScreenWidth / 2;
-    const centerY = this.screen.y + this.onScreenHeight / 2;
+    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
+    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
 
     // Draw the ellipse
-    ellipse(centerX, centerY, this.onScreenWidth, this.onScreenHeight);
+    ellipse(centerX, centerY, this.g.sDims.w, this.g.sDims.h);
   }
 }
 
@@ -592,7 +564,7 @@ class Zone extends Feature {
   draw(zoom, cnv) {
     noFill();
     stroke(getColor('accent'));
-    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
+    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
     this.notYetDrawnLabelAndButtons = true;
     this.drawButtonsAndLabels(zoom, cnv, getColor('accent'));
   }
@@ -602,10 +574,10 @@ class Zone extends Feature {
     // within the zone's width and height. This assumes x and y are the top left
     // coordinates and the feature's size is negligible or already accounted for.
     return (
-      feature.x >= this.board.x &&
-      feature.x <= this.board.x + this.width &&
-      feature.y >= this.board.y &&
-      feature.y <= this.board.y + this.height &&
+      feature.x >= this.g.bPos.x &&
+      feature.x <= this.g.bPos.x + this.g.bDims.w &&
+      feature.y >= this.g.bPos.y &&
+      feature.y <= this.g.bPos.y + this.g.bDims.h &&
       feature.id != this.id
     );
   }
@@ -667,19 +639,19 @@ class Metric extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
+    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('secondary'));
     noStroke();
     // Calculate the center of the rectangle Calculate the center of the rectangle
-    const centerX = this.screen.x + this.onScreenWidth / 2;
-    const centerY = this.screen.y + this.onScreenHeight / 2;
+    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
+    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
 
     // Calculate dimensions for the hourglass
-    const top = this.screen.y;
-    const bottom = this.screen.y + this.onScreenHeight;
-    const left = this.screen.x;
-    const right = this.screen.x + this.onScreenWidth;
+    const top = this.g.sPos.y;
+    const bottom = this.g.sPos.y + this.g.sDims.h;
+    const left = this.g.sPos.x;
+    const right = this.g.sPos.x + this.g.sDims.w;
 
     // Draw the top triangle
     triangle(centerX, centerY, left, top, right, top);
@@ -742,19 +714,19 @@ class Split extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
+    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('secondary'));
     noStroke();
     // Calculate the center of the rectangle Calculate the center of the rectangle
-    const centerX = this.screen.x + this.onScreenWidth / 2;
-    const centerY = this.screen.y + this.onScreenHeight / 2;
+    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
+    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
 
     // Calculate dimensions for the hourglass
-    const top = this.screen.y;
-    const bottom = this.screen.y + this.onScreenHeight;
-    const left = this.screen.x;
-    const right = this.screen.x + this.onScreenWidth;
+    const top = this.g.sPos.y;
+    const bottom = this.g.sPos.y + this.g.sDims.h;
+    const left = this.g.sPos.x;
+    const right = this.g.sPos.x + this.g.sDims.w;
 
     // Draw the top triangle
     triangle(centerX, top, left, centerY, right, centerY);
@@ -817,19 +789,19 @@ class Merge extends Feature {
   draw(zoom, cnv) {
     fill(getColor('secondary'));
     stroke(getColor('outline'));
-    rect(this.screen.x, this.screen.y, this.onScreenWidth, this.onScreenHeight);
+    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('primary'));
     noStroke();
     // Calculate the center of the rectangle Calculate the center of the rectangle
-    const centerX = this.screen.x + this.onScreenWidth / 2;
-    const centerY = this.screen.y + this.onScreenHeight / 2;
+    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
+    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
 
     // Calculate dimensions for the hourglass
-    const top = this.screen.y;
-    const bottom = this.screen.y + this.onScreenHeight;
-    const left = this.screen.x;
-    const right = this.screen.x + this.onScreenWidth;
+    const top = this.g.sPos.y;
+    const bottom = this.g.sPos.y + this.g.sDims.h;
+    const left = this.g.sPos.x;
+    const right = this.g.sPos.x + this.g.sDims.w;
 
     // Draw the top triangle
     triangle(centerX, top, left, centerY, right, centerY);
@@ -842,8 +814,10 @@ class Merge extends Feature {
 class Connector extends Feature {
   constructor(x, y, input, output) {
     super(x, y, 0, 0, 'connector'); // Call the parent constructor
+    this.g.manualOnScreen = true;
     this.isAnimating = false;
     this.type = 'connector';
+    this.connectorIsOnScreen = true;
     this.input = input;
     this.output = output;
     this.anchors = {};
@@ -936,23 +910,24 @@ class Connector extends Feature {
   }
 
   update(zoom) {
-    this.shouldRender = true;
     if (this.input && this.output) {
-      if (
-        this.input.mode == 'delete' ||
-        this.output.mode == 'delete' ||
-        this.input.mode == 'deleting' ||
-        this.output.mode == 'deleting' ||
-        this.anchors['Input'].mode == 'delete' ||
-        this.anchors['Output'].mode == 'delete'
-      ) {
-        this.mode = 'delete';
-        this.anchors['Input'].connected = false;
-        this.anchors['Output'].connected = false;
-      }
-      this.computePath(zoom);
+      this.g.manualOnScreen = ((this.input.g.isOnScreen || this.output.g.isOnScreen));
+        if (
+          this.input.mode == 'delete' ||
+          this.output.mode == 'delete' ||
+          this.input.mode == 'deleting' ||
+          this.output.mode == 'deleting' ||
+          this.anchors['Input'].mode == 'delete' ||
+          this.anchors['Output'].mode == 'delete'
+        ) {
+          this.mode = 'delete';
+          this.anchors['Input'].connected = false;
+          this.anchors['Output'].connected = false;
+        }
+        this.computePath(zoom);
     } else {
       this.untethered = true;
+      this.connectorIsOnScreen = true;
       if (this.source.mode == 'delete') {
         this.markToDelete();
       }
@@ -971,15 +946,11 @@ class Connector extends Feature {
     noFill();
     stroke(getColor('connector'));
     if (this.untethered == false) {
-      for (let i = 0; i < this.path.length - 1; i++) {
-        let point1 = this.path[i];
-        let point2 = this.path[i + 1];
-        line(point1.x, point1.y, point2.x, point2.y);
-      }
-      // line(this.anchors['Input'].screen.x + this.anchors['Input'].screenDimOn2,
-      // this.anchors['Input'].screen.y, this.anchors['Output'].screen.x +
-      // this.anchors['Output'].screenDimOn2, this.anchors['Output'].screen.y +
-      // this.anchors['Output'].screenDim);
+        for (let i = 0; i < this.path.length - 1; i++) {
+          let point1 = this.path[i];
+          let point2 = this.path[i + 1];
+          line(point1.x, point1.y, point2.x, point2.y);
+        }
     } else {
       for (let anchor in this.anchors) {
         if (anchor == 'Input') {

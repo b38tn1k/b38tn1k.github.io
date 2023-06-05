@@ -17,8 +17,6 @@ class FeatureComponent {
   constructor(x, y) {
     this.board = createVector(x, y);
     this.screen = createVector(0, 0);
-    this.offX = x == 1; // or 1.0
-    this.offY = y == 1;
     this.screenDim;
     this.screenDimOn2;
     this.id = getUnsecureHash();
@@ -26,22 +24,6 @@ class FeatureComponent {
     this.doCheckMouseOver = false;
     this.hasMouseOver = false;
     this.mouseOverData = 'none';
-  }
-
-  updateScreenCoords(x, y, w, h) {
-    let xa = x + this.board.x * w;
-    let ya = y + this.board.y * h;
-    if (this.offY === true) {
-      ya -= this.screenDim;
-    }
-    if (this.offX === true) {
-      xa -= this.screenDim;
-    }
-    if (this.board.x == 0.5) {
-      // Magic number: half way
-      xa -= this.screenDimOn2;
-    }
-    this.screen = createVector(xa, ya);
   }
 }
 
@@ -54,10 +36,11 @@ class FeatureLabel extends FeatureComponent {
     this.mode = 'idle';
   }
 
-  update(zoom, x, y, w, h) {
+  update(zoom, gp){ //x, y, w, h) {
+
     this.screenDim = this.boardDim * zoom;
     this.screenDimOn2 = this.screenDim / 2;
-    this.updateScreenCoords(x, y, w, h);
+    this.updateScreenCoords(gp);
   }
 
   display(zoom, cnv, strokeColor, fillColor) {
@@ -66,16 +49,17 @@ class FeatureLabel extends FeatureComponent {
     this.draw(zoom, cnv, strokeColor, fillColor, wa);
   }
 
-  updateScreenCoords(x, y, w, h) {
-    const offsX = this.board.x * w;
-    const offsY = this.board.y * h;
-    let xa = x + offsX;
+  updateScreenCoords(gp){//x, y, w, h) {
+    
+    const offsX = this.board.x * gp.sDims.w;
+    const offsY = this.board.y * gp.sDims.h;
+    let xa = gp.sPos.x + offsX;
     if (offsX < this.screenDim && offsY < this.screenDim) {
-      xa = x + TEXT_WIDTH_MULTIPLIER * this.screenDim;
+      xa = gp.sPos.x + TEXT_WIDTH_MULTIPLIER * this.screenDim;
     }
-    let ya = y + this.board.y * h;
-    if (offsY > h - this.screenDim) {
-      ya = y + h - this.screenDim;
+    let ya = gp.sPos.y + this.board.y * gp.sDims.h;
+    if (offsY > gp.sDims.h - this.screenDim) {
+      ya = gp.sPos.y + gp.sDims.h - this.screenDim;
     }
     this.screen = createVector(xa, ya);
   }
@@ -157,148 +141,6 @@ class FeatureDataIDLabel extends FeatureDataTextLabel {
       this.data,
       this.screen.x + this.screenDim * TIGHT_DIM_GAP_PERCENT,
       this.screen.y + this.screenDim * MID_DIM_GAP_PERCENT
-    ); // Center the text within the rectangle
-  }
-}
-
-// FEATURE DATA TAB GROUP
-
-class FeatureDataTabGroup extends FeatureComponent {
-  constructor(x, y, feature) {
-    super(x, y);
-    this.feature = feature;
-    this.modelData = feature.modelData;
-    this.tabs = {};
-    this.currentTab = null;
-    this.createTabs();
-  }
-
-  update(zoom, x, y, w, h) {
-    this.updateScreenCoords(x, y, w, h);
-  }
-
-  checkMouseClick(zoom) {
-    return false;
-  }
-
-  createTabs() {
-    for (const tabNameKey in this.modelData) {
-      if (this.modelData.hasOwnProperty(tabNameKey)) {
-        const tabData = this.modelData[tabNameKey];
-        const tab = new FeatureDataTab(tabNameKey, tabData);
-        this.tabs[tabNameKey] = tab;
-        console.log(tabNameKey);
-      }
-    }
-  }
-
-  selectTab(tabName) {
-    if (this.tabs.hasOwnProperty(tabName)) {
-      this.currentTab = this.tabs[tabName];
-    }
-  }
-
-  updateScreenCoords(x, y, w, h) {
-    this.screen.x = x;
-    this.screen.y = y;
-    for (const tabNameKey in this.tabs) {
-      if (this.tabs.hasOwnProperty(tabNameKey)) {
-        const tab = this.tabs[tabNameKey];
-        tab.updateScreenCoords(this.screen.x, this.screen.y, w, h);
-      }
-    }
-  }
-
-  display(zoom, cnv, myStrokeColor, myFillColor) {
-    stroke(myStrokeColor);
-    noFill();
-    textSize(myTextSize * zoom);
-    this.draw(zoom, cnv);
-  }
-
-  draw(zoom, cnv) {
-    if (this.currentTab) {
-      this.currentTab.draw(zoom, cnv);
-    }
-  }
-
-  handleMousePress(zoom) {
-    if (this.currentTab) {
-      this.currentTab.handleMousePress(zoom);
-    }
-  }
-}
-
-class FeatureDataTab extends FeatureComponent {
-  constructor(tabName, tabData) {
-    super(0, 0);
-    this.tabName = tabName;
-    this.tabData = tabData;
-    this.buttons = [];
-    this.createButtons();
-  }
-
-  createButtons() {
-    for (const key in this.tabData) {
-      if (this.tabData.hasOwnProperty(key)) {
-        const data = this.tabData[key];
-        const button = new FeatureDataButton(key, data);
-        this.buttons.push(button);
-      }
-    }
-  }
-
-  updateScreenCoords(x, y, w, h) {
-    this.screen.x = x;
-    this.screen.y = y;
-    for (const button of this.buttons) {
-      button.updateScreenCoords(this.screen.x, this.screen.y, w, h);
-    }
-  }
-
-  draw(zoom, cnv) {
-    for (const button of this.buttons) {
-      button.draw(zoom, cnv);
-    }
-  }
-
-  handleMousePress(zoom) {
-    for (const button of this.buttons) {
-      button.handleMousePress(zoom);
-    }
-  }
-}
-
-class FeatureDataButton extends FeatureComponent {
-  constructor(key, data) {
-    super(0, 0);
-    this.key = key;
-    this.data = data;
-    this.isTextInputOpen = false;
-    this.textInput = null;
-  }
-
-  draw(zoom, cnv) {
-    // Draw button with key and current data
-
-    if (this.isTextInputOpen) {
-      // Draw text input using p5 methods
-      // ...
-    }
-  }
-
-  updateScreenCoords(x, y, w, h) {
-    this.screen.x = x;
-    this.screen.y = y;
-  }
-
-  handleMousePress(zoom) {
-    if (this.isTextInputOpen) {
-      // Handle mouse press events for text input
-      // ...
-    } else {
-      // Handle mouse press events for button
-      // ...
-    }
+    );
   }
 }

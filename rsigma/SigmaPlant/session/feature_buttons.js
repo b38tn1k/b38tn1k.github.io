@@ -1,15 +1,33 @@
 class FeatureUIButton extends FeatureComponent {
   constructor(label, x, y, size, action) {
     super(x, y);
+    this.offX = x == 1; // or 1.0
+    this.offY = y == 1;
     this.label = label;
     this.action = action;
     this.boardDim = size;
   }
 
-  update(zoom, x, y, w, h) {
+  update(zoom, gp) {
     this.screenDim = this.boardDim * zoom;
     this.screenDimOn2 = this.screenDim / 2;
-    this.updateScreenCoords(x, y, w, h);
+    this.updateScreenCoords(gp);
+  }
+
+  updateScreenCoords(gp){
+    let xa = gp.sPos.x + this.board.x * gp.sDims.w;
+    let ya = gp.sPos.y + this.board.y * gp.sDims.h;
+    if (this.offY === true) {
+      ya -= this.screenDim;
+    }
+    if (this.offX === true) {
+      xa -= this.screenDim;
+    }
+    if (this.board.x == 0.5) {
+      // Magic number: half way
+      xa -= this.screenDimOn2;
+    }
+    this.screen = createVector(xa, ya);
   }
 
   drawXIcon(xa, ya, offval = TIGHT_DIM_GAP_PERCENT) {

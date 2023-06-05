@@ -62,7 +62,6 @@ class Plant {
       if (feature.type == 'connector') {
         if (feature.untethered == true) {
           feature.untetheredClicks += 1;
-          console.log(feature.untetheredClicks);
           if (feature.untetheredClicks > 1) {
             feature.mode = 'delete';
           }
@@ -103,7 +102,7 @@ class Plant {
     this.mode = 'idle';
 
     const zones = this.filterZones();
-    this.processFeatures(zoom, zones);
+    this.updateFeatures(zoom, zones);
 
     this.isActive = this.mode !== 'idle';
     if (this.isActive) {
@@ -117,7 +116,7 @@ class Plant {
     return zones;
   }
 
-  processFeatures(zoom, zones) {
+  updateFeatures(zoom, zones) {
     for (let i = 0; i < this.features.length; i++) {
       const feature = this.features[i];
 

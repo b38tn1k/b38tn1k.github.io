@@ -1,9 +1,3 @@
-const TEXT_WIDTH_MULTIPLIER = 1.5;
-const TIGHT_DIM_GAP_PERCENT = 0.2;
-const LOW_MID_DIM_GAP_PERCENT = 0.4;
-const MID_DIM_GAP_PERCENT = 0.6;
-const TAB_GROUP_BORDER = 40;
-
 function getUnsecureHash() {
   let myStr =
     Math.random().toString(36).substring(2, 15) +
@@ -37,15 +31,19 @@ class FeatureLabel extends FeatureComponent {
 
   display(zoom, cnv, strokeColor, fillColor) {
     textSize(myTextSize * zoom);
-    let wa = this.calculateWidth(zoom);
-    this.draw(zoom, cnv, strokeColor, fillColor, wa);
+    this.draw(zoom, cnv, strokeColor, fillColor);
+  }
+
+  update(zoom, gp) {
+    super.update(zoom, gp);
+    this.g.setBDimsWidth(myTextSize, TEXT_WIDTH_MULTIPLIER, this.data)
   }
 
   checkClicked(zoom) {
     return false;
   }
 
-  checkMouseClick(zoom) {
+  mouseClickActionHandler(zoom) {
     if (this.mode != 'busy') {
       if (this.checkClicked(zoom)) {
         this.mode = 'busy';
@@ -60,40 +58,24 @@ class FeatureDataTextLabel extends FeatureLabel {
     super(x, y, data, size, action);
   }
 
-  calculateWidth(zoom) {
-    textSize(myTextSize * zoom);
-    let wa = textWidth(this.data) * TEXT_WIDTH_MULTIPLIER;
-    if (wa == 0) {
-      wa = this.g.sSqrDim;
-    }
-    return wa;
-  }
-
   checkClicked(zoom) {
-    let wa = this.calculateWidth(zoom);
-    const waOn2 = wa / 2;
-    const centerX = this.g.sCart.x; // Calculate the X coordinate of the center of the button
-    const centerY = this.g.sCart.y + this.g.sSqrDimOn2; // Calculate the Y coordinate of the center of the button
-    const distanceX = Math.abs(mouseX - centerX);
-    const distanceY = Math.abs(mouseY - centerY);
-    return distanceX < waOn2 && distanceY < this.g.sSqrDimOn2 * zoom;
+    this.g.setBDimsWidth(myTextSize, TEXT_WIDTH_MULTIPLIER, this.data);
+    return this.g.checkMouseOver(mouseX, mouseY);
   }
 
-  draw(zoom, cnv, strokeColor, fillColor, width) {
+  draw(zoom, cnv, strokeColor, fillColor) {
     fill(fillColor);
     stroke(strokeColor);
-    const won2 = width / 2;
-    const x = this.g.sCart.x - won2;
-    rect(x, this.g.sCart.y, width, this.g.sSqrDim);
+    rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
     fill(strokeColor);
     noStroke();
     textAlign(CENTER, CENTER);
-    text(this.data, x + won2, this.g.sCart.y + this.g.sSqrDimOn2); // Center the text within the rectangle
+    text(this.data, this.g.sCart.x + this.g.sDims.w/2, this.g.sCart.y + this.g.sSqrDimOn2); // Center the text within the rectangle
   }
 }
 
 class FeatureDataTextLabelTrigger extends FeatureDataTextLabel {
-  checkMouseClick(zoom) {
+  mouseClickActionHandler(zoom) {
     if (this.checkClicked(zoom)) {
       this.action(this, this.g.sCart.x, this.g.sCart.y);
     }

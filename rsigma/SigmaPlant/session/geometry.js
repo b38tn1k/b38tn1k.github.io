@@ -1,3 +1,9 @@
+const TEXT_WIDTH_MULTIPLIER = 1.5;
+const TIGHT_DIM_GAP_PERCENT = 0.2;
+const LOW_MID_DIM_GAP_PERCENT = 0.4;
+const MID_DIM_GAP_PERCENT = 0.6;
+const TAB_GROUP_BORDER = 40;
+
 class Geometry {
   constructor(x, y, width, height) {
     this.bCart = createVector(x, y); // board position
@@ -41,33 +47,53 @@ class ParentDefinedGeometry {
       this.bSqrDim = size;
       this.sSqrDim = size;
       this.sSqrDimOn2 = size/2;
+      this.bDims = {w: this.bSqrDim, h: this.bSqrDim};
+      this.sDims = {w: this.sSqrDim, h: this.sSqrDim};
       this.bOffset = createVector(0, 0);
-      if (x == 1) {
-        this.bOffset.x = -size;
+      this.calculateOffsets();
+    }
+
+    setBDimsWidth(myTextSize, textWidthMultiplier, data) {
+      textSize(myTextSize);
+      let wa = textWidth(data) * textWidthMultiplier;
+      
+      if (this.bDims.w != wa) {
+        if (wa == 0) {
+          wa = this.bSqrDim;
+        }
+        this.bDims.w = wa;
+        this.calculateOffsets();
       }
-      if (x == 0.5) {
-        this.bOffset.x = -this.sSqrDimOn2;
+    }
+
+    calculateOffsets() {
+      if (this.bCart.x === 1.0) {
+        this.bOffset.x = -this.bDims.w;
       }
-      if (y == 1) {
-        this.bOffset.y = -size;
+      if (this.bCart.x === 0.5) {
+        this.bOffset.x = -this.bDims.w/2;
+      }
+      if (this.bCart.y === 1.0) {
+        this.bOffset.y = -this.bDims.h;
       }
     }
   
     update(zoom, gp){ 
-      this.sSqrDim = this.bSqrDim * zoom;
-      this.sSqrDimOn2 = this.sSqrDim / 2;
+      this.sDims.w = this.bDims.w * zoom;
+      this.sDims.h = this.bDims.h * zoom;
+      this.sSqrDim = this.sDims.h;
+      this.sSqrDimOn2 = this.sSqrDim/2;
       let xa = gp.sCart.x + this.bCart.x * gp.sDims.w + this.bOffset.x * zoom;
       let ya = gp.sCart.y + this.bCart.y * gp.sDims.h + this.bOffset.y * zoom;
       this.sCart = createVector(xa, ya);
     }
 
     checkMouseOver(mouseX, mouseY) {
-        let inXRange = mouseX >= this.sCart.x && mouseX <= this.sCart.x + this.sSqrDim;
-        let inYRange = mouseY >= this.sCart.y && mouseY <= this.sCart.y + this.sSqrDim;
+        let inXRange = mouseX >= this.sCart.x && mouseX <= this.sCart.x + this.sDims.w;
+        let inYRange = mouseY >= this.sCart.y && mouseY <= this.sCart.y + this.sDims.h;
         return inXRange && inYRange;
     }
     
-  
     getCenter() {
       const clickY = this.sCart.y + this.sSqrDimOn2;
       const clickX = this.sCart.x + this.sSqrDimOn2;
@@ -75,33 +101,35 @@ class ParentDefinedGeometry {
     }
   }
 
-  // this class is currently unudes but should be used with some FeatureDataTextLabel classes
-  class ParentDefinedGeometryOblong extends ParentDefinedGeometry {
-    constructor(x, y, height, data, textSizeMultiplier, myTextSize) {
-      super(x, y, height);
-      this.data = data;
-      this.textSizeMultiplier = textSizeMultiplier;
-      this.myTextSize = myTextSize;
-      this.width = this.calculateWidth();
-    }
   
-    calculateWidth() {
-      textSize(this.myTextSize);
-      let width = textWidth(this.data) * this.textSizeMultiplier;
-      if (width == 0) {
-        width = this.sSqrDim;
-      }
-      return width;
-    }
-  
-    checkClicked(mouseX, mouseY) {
-      const halfWidth = this.width / 2;
-      const centerX = this.sCart.x;
-      const centerY = this.sCart.y + this.sSqrDimOn2;
-      const distanceX = Math.abs(mouseX - centerX);
-      const distanceY = Math.abs(mouseY - centerY);
-      return distanceX < halfWidth && distanceY < this.sSqrDimOn2;
-    }
-    
-  }
-  
+//   // this class is currently unudes but should be used with some FeatureDataTextLabel classes
+// class ParentDefinedGeometryRect extends ParentDefinedGeometry  {
+//   constructor(x, y, size) {
+//     super(x, y, size);
+//     this.bDims = {w: size, h: size};
+//     this.sDims = {w: size, h: size};
+//   }
+
+//   calculateWidth(data, zoom) {
+//     textSize(this.myTextSize);
+//     let width = textWidth(data) * this.textSizeMultiplier;
+//     if (width == 0) {
+//       width = this.sSqrDim;
+//     }
+//     this.bDims.w = width;
+//     this.sDims.w = width * zoom;
+//     return width;
+//   }
+
+//   checkClicked(mouseX, mouseY) {
+//     // const halfWidth = this.sDims.w / 2;
+//     // const centerX = this.sCart.x;
+//     // const centerY = this.sCart.y + this.sSqrDimOn2;
+//     // const distanceX = Math.abs(mouseX - centerX);
+//     // const distanceY = Math.abs(mouseY - centerY);
+//     // return distanceX < halfWidth && distanceY < this.sSqrDimOn2;
+//     const inX = mouseX > this.
+//     const inY = Math.abs(mouseY - centerY);
+//     return distanceX < halfWidth && distanceY < this.sSqrDimOn2;
+//   }
+// }

@@ -30,7 +30,10 @@ class DrawUtils {
 class FeatureUIButton extends FeatureComponent {
   constructor(label, x, y, size, action) {
     super(x, y, size);
+    this.g = new ParentDefinedGeometry(x, y, size);
     this.label = label;
+    this.mouseOverData = label.toUpperCase();
+    this.hasMouseOver = false;
     this.action = action;
   }
 
@@ -41,7 +44,17 @@ class FeatureUIButton extends FeatureComponent {
     this.draw(this.g.sCart.x, this.g.sCart.y, zoom, cnv, strokeColor);
   }
 
-  checkMouseClick(zoom) {
+  doMouseOverText(zoom, textColor){
+    if (this.hasMouseOver) {
+      textAlign(LEFT, CENTER);
+      textSize(myTextSize * zoom);
+      fill(textColor);
+      noStroke();
+      text(this.mouseOverData, this.g.sCart.x, this.g.sCart.y - this.g.sSqrDim);
+    }
+  }
+
+  mouseClickActionHandler(zoom) {
     let caller = false;
     if (this.g.checkMouseOver(mouseX, mouseY)) {
       this.action(this);
@@ -64,12 +77,18 @@ class FeatureUIButtonClose extends FeatureUIButton {
 class FeatureUIButtonMove extends FeatureUIButton {
   constructor(label, x, y, size, action) {
     super(label, x, y, size, action);
+    this.mouseOverData = label.toUpperCase();
   }
+
+  update(zoom, x, y, w, h) {
+    super.update(zoom, x, y, w, h);
+    this.hasMouseOver = this.g.checkMouseOver(mouseX, mouseY);
+  }
+
   draw(xa, ya, zoom, cnv, textColor) {
     // this.drawCross(xa, ya);
     DrawUtils.drawCross(this.g, xa, ya);
-
-    
+    this.doMouseOverText(zoom, textColor);
   }
 }
 
@@ -116,8 +135,7 @@ class FeatureUIOutputButton extends FeatureUIButton {
     super(label, x, y, size, action);
     this.connected = false;
     this.associatedConnector = null;
-    this.hasMouseOver = false;
-    this.mouseOverData = label;
+    this.mouseOverData = label.toUpperCase();
   }
 
   update(zoom, x, y, w, h) {
@@ -125,13 +143,13 @@ class FeatureUIOutputButton extends FeatureUIButton {
     this.hasMouseOver = this.g.checkMouseOver(mouseX, mouseY);
   }
 
-  checkMouseClick(zoom) {
+  mouseClickActionHandler(zoom) {
     if (this.connected) {
       if (this.g.checkMouseOver(mouseX, mouseY)) {
         this.associatedConnector.markToDelete();
       }
     } else {
-      return super.checkMouseClick(zoom);
+      return super.mouseClickActionHandler(zoom);
     }
   }
 
@@ -145,13 +163,7 @@ class FeatureUIOutputButton extends FeatureUIButton {
       textAlign(CENTER, CENTER);
       text(this.label[0], xa + this.g.sSqrDimOn2, ya + this.g.sSqrDimOn2);
     }
-
-    if (this.hasMouseOver) {
-      textSize(myTextSize * zoom);
-      fill(textColor);
-      noStroke();
-      text(this.mouseOverData, xa + this.g.sSqrDimOn2, ya - this.g.sSqrDim);
-    }
+    this.doMouseOverText(zoom, textColor);
   }
 }
 

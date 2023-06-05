@@ -178,13 +178,13 @@ class Feature {
   handleMousePress(zoom) {
     if (this.g.isOnScreen == true) {
       for (let button of this.buttons) {
-        const res = button.checkMouseClick(zoom);
+        const res = button.mouseClickActionHandler(zoom);
         if (res) {
           this.caller = button;
         }
       }
       for (let label in this.dataLabels) {
-        this.dataLabels[label].checkMouseClick(zoom);
+        this.dataLabels[label].mouseClickActionHandler(zoom);
       }
     }
   }
@@ -308,13 +308,13 @@ class Process extends Feature {
   }
 
   initDataLabels(buttonSize) {
-    // this.dataLabels['title'] = new FeatureDataTextLabel(
-    //   0,
-    //   0.15,
-    //   'PROCESS',
-    //   buttonSize,
-    //   openDialog
-    // );
+    this.dataLabels['title'] = new FeatureDataTextLabel(
+      0,
+      0.15,
+      'PROCESS',
+      buttonSize,
+      openDialog
+    );
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
       1,
@@ -343,7 +343,7 @@ class Process extends Feature {
 
   initButtons(buttonSize) {
     this.buttons.push(
-      new FeatureUIButtonMove('Move', 0, 0, buttonSize, () =>
+      new FeatureUIButtonMove(this.type, 0, 0, buttonSize, () =>
         this.setMode('move')
       )
     );
@@ -399,7 +399,7 @@ class Source extends Feature {
 
   initButtons(buttonSize) {
     this.buttons.push(
-      new FeatureUIButtonMove('Move', 0, 0, buttonSize, () =>
+      new FeatureUIButtonMove(this.type, 0, 0, buttonSize, () =>
         this.setMode('move')
       )
     );
@@ -448,7 +448,7 @@ class ParentLink extends Feature {
 
   initButtons(buttonSize) {
     this.buttons.push(
-      new FeatureUIButtonMove('Move', 0, 0, buttonSize, () =>
+      new FeatureUIButtonMove(this.type, 0, 0, buttonSize, () =>
         this.setMode('move')
       )
     );
@@ -489,7 +489,7 @@ class Sink extends Feature {
 
   initButtons(buttonSize) {
     this.buttons.push(
-      new FeatureUIButtonMove('Move', 0, 0, buttonSize, () =>
+      new FeatureUIButtonMove(this.type, 0, 0, buttonSize, () =>
         this.setMode('move')
       )
     );
@@ -529,7 +529,7 @@ class Zone extends Feature {
 
   initButtons(buttonSize) {
     this.buttons.push(
-      new FeatureUIButtonMove('Move', 0, 0, buttonSize, () =>
+      new FeatureUIButtonMove(this.type, 0, 0, buttonSize, () =>
         this.setMode('move')
       )
     );
@@ -616,7 +616,7 @@ class Metric extends Feature {
 
   initButtons(buttonSize) {
     this.buttons.push(
-      new FeatureUIButtonMove('Move', 0, 0, buttonSize, () =>
+      new FeatureUIButtonMove(this.type, 0, 0, buttonSize, () =>
         this.setMode('move')
       )
     );
@@ -686,7 +686,7 @@ class Split extends Feature {
 
   initButtons(buttonSize) {
     this.buttons.push(
-      new FeatureUIButtonMove('Move', 0, 0, buttonSize, () =>
+      new FeatureUIButtonMove(this.type, 0, 0, buttonSize, () =>
         this.setMode('move')
       )
     );
@@ -761,7 +761,7 @@ class Merge extends Feature {
 
   initButtons(buttonSize) {
     this.buttons.push(
-      new FeatureUIButtonMove('Move', 0, 0, buttonSize, () =>
+      new FeatureUIButtonMove(this.type, 0, 0, buttonSize, () =>
         this.setMode('move')
       )
     );

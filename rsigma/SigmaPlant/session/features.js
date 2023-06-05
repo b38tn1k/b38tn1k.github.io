@@ -4,6 +4,7 @@ class Feature {
   constructor(x, y, w = 400, h = 280, type) {
     this.id = type + '->' + getUnsecureHash();
     this.g = new Geometry(x, y, w, h);
+    this.g.clearBDims();
     this.mode = 'idle';
     this.buttons = [];
     this.type = type;
@@ -42,14 +43,14 @@ class Feature {
 
   moveToMouse() {
     let mob = screenToBoard(mouseX, mouseY);
-    this.g.bPos.x = mob.x;
-    this.g.bPos.y = mob.y;
+    this.g.bCart.x = mob.x;
+    this.g.bCart.y = mob.y;
   }
 
   resizeToMouse() {
     let mob = screenToBoard(mouseX, mouseY);
-    let pWidth = mob.x - this.g.bPos.x;
-    let pHeight = mob.y - this.g.bPos.y;
+    let pWidth = mob.x - this.g.bCart.x;
+    let pHeight = mob.y - this.g.bCart.y;
     if (pWidth > 50 && pHeight > 50) {
       this.g.bDims.w = pWidth;
       this.g.bDims.h = pHeight;
@@ -167,10 +168,10 @@ class Feature {
 
   checkIsOnScreen() {
     return (
-      this.g.sPos.x < windowWidth &&
-      this.g.sPos.x + this.g.sDims.w > 0 &&
-      this.g.sPos.y < windowHeight &&
-      this.g.sPos.y + this.g.sDims.h > 0
+      this.g.sCart.x < windowWidth &&
+      this.g.sCart.x + this.g.sDims.w > 0 &&
+      this.g.sCart.y < windowHeight &&
+      this.g.sCart.y + this.g.sDims.h > 0
     );
   }
 
@@ -334,8 +335,8 @@ class Process extends Feature {
     this.modelData['ACTIONS'] = {};
     this.modelData['ACTIONS']['TEST ACTION'] = () => console.log('test');
     // this.dataLabels['tab'] = new FeatureDataTabGroup(
-    //   this.g.bPos.x,
-    //   this.g.bPos.y,
+    //   this.g.bCart.x,
+    //   this.g.bCart.y,
     //   this
     // );
   }
@@ -370,7 +371,7 @@ class Process extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
+    rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
   }
 }
 
@@ -417,13 +418,13 @@ class Source extends Feature {
   draw(zoom, cnv) {
     fill(getColor('secondary'));
     stroke(getColor('outline'));
-    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
+    rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('primary'));
     noStroke();
     // Calculate the center of the rectangle
-    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
-    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
+    const centerX = this.g.sCart.x + this.g.sDims.w / 2;
+    const centerY = this.g.sCart.y + this.g.sDims.h / 2;
     // Draw the ellipse
     ellipse(centerX, centerY, this.g.sDims.w, this.g.sDims.h);
   }
@@ -456,7 +457,7 @@ class ParentLink extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
+    rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
   }
 
   transitionPlant() {
@@ -507,12 +508,12 @@ class Sink extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
+    rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('secondary'));
     noStroke(); // Calculate the center of the rectangle
-    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
-    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
+    const centerX = this.g.sCart.x + this.g.sDims.w / 2;
+    const centerY = this.g.sCart.y + this.g.sDims.h / 2;
 
     // Draw the ellipse
     ellipse(centerX, centerY, this.g.sDims.w, this.g.sDims.h);
@@ -564,7 +565,7 @@ class Zone extends Feature {
   draw(zoom, cnv) {
     noFill();
     stroke(getColor('accent'));
-    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
+    rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
     this.notYetDrawnLabelAndButtons = true;
     this.drawButtonsAndLabels(zoom, cnv, getColor('accent'));
   }
@@ -574,10 +575,10 @@ class Zone extends Feature {
     // within the zone's width and height. This assumes x and y are the top left
     // coordinates and the feature's size is negligible or already accounted for.
     return (
-      feature.x >= this.g.bPos.x &&
-      feature.x <= this.g.bPos.x + this.g.bDims.w &&
-      feature.y >= this.g.bPos.y &&
-      feature.y <= this.g.bPos.y + this.g.bDims.h &&
+      feature.x >= this.g.bCart.x &&
+      feature.x <= this.g.bCart.x + this.g.bDims.w &&
+      feature.y >= this.g.bCart.y &&
+      feature.y <= this.g.bCart.y + this.g.bDims.h &&
       feature.id != this.id
     );
   }
@@ -639,19 +640,19 @@ class Metric extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
+    rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('secondary'));
     noStroke();
     // Calculate the center of the rectangle Calculate the center of the rectangle
-    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
-    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
+    const centerX = this.g.sCart.x + this.g.sDims.w / 2;
+    const centerY = this.g.sCart.y + this.g.sDims.h / 2;
 
     // Calculate dimensions for the hourglass
-    const top = this.g.sPos.y;
-    const bottom = this.g.sPos.y + this.g.sDims.h;
-    const left = this.g.sPos.x;
-    const right = this.g.sPos.x + this.g.sDims.w;
+    const top = this.g.sCart.y;
+    const bottom = this.g.sCart.y + this.g.sDims.h;
+    const left = this.g.sCart.x;
+    const right = this.g.sCart.x + this.g.sDims.w;
 
     // Draw the top triangle
     triangle(centerX, centerY, left, top, right, top);
@@ -714,19 +715,19 @@ class Split extends Feature {
   draw(zoom, cnv) {
     fill(getColor('primary'));
     stroke(getColor('outline'));
-    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
+    rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('secondary'));
     noStroke();
     // Calculate the center of the rectangle Calculate the center of the rectangle
-    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
-    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
+    const centerX = this.g.sCart.x + this.g.sDims.w / 2;
+    const centerY = this.g.sCart.y + this.g.sDims.h / 2;
 
     // Calculate dimensions for the hourglass
-    const top = this.g.sPos.y;
-    const bottom = this.g.sPos.y + this.g.sDims.h;
-    const left = this.g.sPos.x;
-    const right = this.g.sPos.x + this.g.sDims.w;
+    const top = this.g.sCart.y;
+    const bottom = this.g.sCart.y + this.g.sDims.h;
+    const left = this.g.sCart.x;
+    const right = this.g.sCart.x + this.g.sDims.w;
 
     // Draw the top triangle
     triangle(centerX, top, left, centerY, right, centerY);
@@ -789,19 +790,19 @@ class Merge extends Feature {
   draw(zoom, cnv) {
     fill(getColor('secondary'));
     stroke(getColor('outline'));
-    rect(this.g.sPos.x, this.g.sPos.y, this.g.sDims.w, this.g.sDims.h);
+    rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
 
     fill(getColor('primary'));
     noStroke();
     // Calculate the center of the rectangle Calculate the center of the rectangle
-    const centerX = this.g.sPos.x + this.g.sDims.w / 2;
-    const centerY = this.g.sPos.y + this.g.sDims.h / 2;
+    const centerX = this.g.sCart.x + this.g.sDims.w / 2;
+    const centerY = this.g.sCart.y + this.g.sDims.h / 2;
 
     // Calculate dimensions for the hourglass
-    const top = this.g.sPos.y;
-    const bottom = this.g.sPos.y + this.g.sDims.h;
-    const left = this.g.sPos.x;
-    const right = this.g.sPos.x + this.g.sDims.w;
+    const top = this.g.sCart.y;
+    const bottom = this.g.sCart.y + this.g.sDims.h;
+    const left = this.g.sCart.x;
+    const right = this.g.sCart.x + this.g.sDims.w;
 
     // Draw the top triangle
     triangle(centerX, top, left, centerY, right, centerY);
@@ -849,13 +850,13 @@ class Connector extends Feature {
       let buffer = 20 * zoom;
 
       let x1 =
-        this.anchors['Input'].screen.x + this.anchors['Input'].screenDimOn2;
-      let y1 = this.anchors['Input'].screen.y;
+        this.anchors['Input'].g.sCart.x + this.anchors['Input'].g.sSqrDimOn2;;
+      let y1 = this.anchors['Input'].g.sCart.y;
 
       let x2 =
-        this.anchors['Output'].screen.x + this.anchors['Output'].screenDimOn2;
+        this.anchors['Output'].g.sCart.x + this.anchors['Output'].g.sSqrDimOn2;;
       let y2 =
-        this.anchors['Output'].screen.y + this.anchors['Output'].screenDim;
+        this.anchors['Output'].g.sCart.y + this.anchors['Output'].g.sSqrDim;
       buffer = min(buffer, Math.abs(y2 - y1) / 3);
 
       // Calculate the midpoints
@@ -955,8 +956,8 @@ class Connector extends Feature {
       for (let anchor in this.anchors) {
         if (anchor == 'Input') {
           line(
-            this.anchors['Input'].screen.x + this.anchors['Input'].screenDimOn2,
-            this.anchors['Input'].screen.y,
+            this.anchors['Input'].g.sCart.x + this.anchors['Input'].g.sSqrDimOn2,
+            this.anchors['Input'].g.sCart.y,
             mouseX,
             mouseY
           );
@@ -964,9 +965,9 @@ class Connector extends Feature {
           line(
             mouseX,
             mouseY,
-            this.anchors['Output'].screen.x +
-              this.anchors['Output'].screenDimOn2,
-            this.anchors['Output'].screen.y + this.anchors['Output'].screenDim
+            this.anchors['Output'].g.sCart.x +
+              this.anchors['Output'].g.sSqrDimOn2,
+            this.anchors['Output'].g.sCart.y + this.anchors['Output'].g.sSqrDim
           );
         }
       }

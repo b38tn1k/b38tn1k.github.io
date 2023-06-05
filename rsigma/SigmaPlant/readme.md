@@ -2,7 +2,7 @@
 
 ## TODO:
 
-- [ ] Feature level change detection!
+- [ ] Feature level change detection based in User!
 
 - [X] Zone should have knowledge of contained features:
 
@@ -64,10 +64,14 @@
 
 - [x] Mobile touch input
 
-### Requires Server
+### Requires Server or just a future thing
 
 - [ ] Undo and constant save
 - [ ] Real Time collaboration
+- [ ] pdf export 
+- [ ] value stream mapping workflow
+- [ ] RCA workflow
+- [ ] model -> tracker with endpoints
 
 ## Process Evaluation
 

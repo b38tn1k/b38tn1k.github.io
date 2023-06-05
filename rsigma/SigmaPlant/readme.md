@@ -2,6 +2,8 @@
 
 ## TODO:
 
+- [ ] Feature level change detection!
+
 - [ ] Zone should have knowledge of contained features:
 
   - [ ] group moving

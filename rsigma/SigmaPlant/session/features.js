@@ -603,7 +603,7 @@ class Metric extends Feature {
       0.15,
       'METRIC',
       buttonSize,
-      NOP
+      openDialog
     );
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
@@ -673,7 +673,7 @@ class Split extends Feature {
       0.15,
       'SPLIT',
       buttonSize,
-      NOP
+      openDialog
     );
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,
@@ -748,7 +748,7 @@ class Merge extends Feature {
       0.15,
       'MERGE',
       buttonSize,
-      NOP
+      openDialog
     );
     this.dataLabels['id'] = new FeatureDataIDLabel(
       0,

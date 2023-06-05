@@ -45,6 +45,7 @@ class ParentDefinedGeometry {
       this.bCart = createVector(x, y);
       this.sCart = createVector(0, 0);
       this.bSqrDim = size;
+      this.static = true;
       this.sSqrDim = size;
       this.sSqrDimOn2 = size/2;
       this.bDims = {w: this.bSqrDim, h: this.bSqrDim};
@@ -58,9 +59,7 @@ class ParentDefinedGeometry {
       let wa = textWidth(data) * textWidthMultiplier;
       
       if (this.bDims.w != wa) {
-        if (wa == 0) {
-          wa = this.bSqrDim;
-        }
+        wa = max(wa, this.bSqrDim);
         this.bDims.w = wa;
         this.calculateOffsets();
       }
@@ -83,9 +82,15 @@ class ParentDefinedGeometry {
       this.sDims.h = this.bDims.h * zoom;
       this.sSqrDim = this.sDims.h;
       this.sSqrDimOn2 = this.sSqrDim/2;
-      let xa = gp.sCart.x + this.bCart.x * gp.sDims.w + this.bOffset.x * zoom;
-      let ya = gp.sCart.y + this.bCart.y * gp.sDims.h + this.bOffset.y * zoom;
-      this.sCart = createVector(xa, ya);
+      if (this.static == true) {
+        const xs = gp.sCart.x + (this.bCart.x * gp.aDims.w + this.bOffset.x) * zoom;
+        const ys = gp.sCart.y + (this.bCart.y * gp.aDims.h + this.bOffset.y) * zoom;
+        this.sCart = createVector(xs, ys);
+      } else {
+        const xd = gp.sCart.x + this.bCart.x * gp.sDims.w + this.bOffset.x * zoom;
+        const yd = gp.sCart.y + this.bCart.y * gp.sDims.h + this.bOffset.y * zoom;
+        this.sCart = createVector(xd, yd);
+      }
     }
 
     checkMouseOver(mouseX, mouseY) {

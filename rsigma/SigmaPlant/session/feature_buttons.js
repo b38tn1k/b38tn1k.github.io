@@ -30,11 +30,11 @@ class DrawUtils {
 class FeatureUIButton extends FeatureComponent {
   constructor(label, x, y, size, action) {
     super(x, y, size);
-    this.g = new ParentDefinedGeometry(x, y, size);
     this.label = label;
     this.mouseOverData = label.toUpperCase();
     this.hasMouseOver = false;
     this.action = action;
+    this.g.static = false;
   }
 
   display(zoom, cnv, strokeColor, fillColor) {

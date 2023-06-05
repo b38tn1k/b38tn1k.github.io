@@ -36,7 +36,7 @@ class FeatureLabel extends FeatureComponent {
 
   update(zoom, gp) {
     super.update(zoom, gp);
-    this.g.setBDimsWidth(myTextSize, TEXT_WIDTH_MULTIPLIER, this.data)
+    this.g.setBDimsWidth(myTextSize, TEXT_WIDTH_MULTIPLIER, this.data);
   }
 
   checkClicked(zoom) {
@@ -70,7 +70,11 @@ class FeatureDataTextLabel extends FeatureLabel {
     fill(strokeColor);
     noStroke();
     textAlign(CENTER, CENTER);
-    text(this.data, this.g.sCart.x + this.g.sDims.w/2, this.g.sCart.y + this.g.sSqrDimOn2); // Center the text within the rectangle
+    text(
+      this.data,
+      this.g.sCart.x + this.g.sDims.w / 2,
+      this.g.sCart.y + this.g.sSqrDimOn2
+    ); // Center the text within the rectangle
   }
 }
 
@@ -85,6 +89,7 @@ class FeatureDataTextLabelTrigger extends FeatureDataTextLabel {
 class FeatureDataIDLabel extends FeatureDataTextLabel {
   constructor(x, y, data, size) {
     super(x, y, data, size, NOP);
+    this.g.static = false;
   }
 
   checkClicked(zoom) {

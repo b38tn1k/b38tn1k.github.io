@@ -68,7 +68,7 @@ class Session {
         break;
     }
     if (this.plant.changed === true) {
-      console.log(JSON.stringify(this.plants[0].selfDescribe()));
+      // console.log(JSON.stringify(this.plants[0].selfDescribe()));
       this.plant.setChangedFalse();
       console.log('change!');
     }

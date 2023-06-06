@@ -9,6 +9,7 @@ const excludedKeys = new Set([
     'mode',
     'notYetDrawnLabelAndButtons',
     'manualOnScreen',
+    'source',
     'hasMouseOver'
 ]);
 const toDoKeys = new Set([

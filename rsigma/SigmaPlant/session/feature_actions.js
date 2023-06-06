@@ -1,6 +1,6 @@
 function openDialog(plantData, xa, ya) {
     // Create a dialog box for text input
-    const dialog = createInput(plantData.data);
+    const dialog = createInput(plantData.data['data']);
 
     // Create a container div for the dialog box
     const container = createDiv();
@@ -21,7 +21,7 @@ function openDialog(plantData, xa, ya) {
     dialog.style('background-color', getColor('primary'));
 
     const doTheThing = () => {
-        plantData.data = dialog.value();
+        plantData.data['data'] = dialog.value();
         plantData.mode = 'cleared';
         plantData.changed = true;
         fpsEvent();

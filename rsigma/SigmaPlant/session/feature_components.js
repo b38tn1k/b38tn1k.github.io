@@ -10,9 +10,10 @@ class FeatureComponent extends Introspector {
     constructor(x, y, size) {
         super();
         this.g = new ParentDefinedGeometry(x, y, size);
-        this.id = getUnsecureHash();
         this.targetID = 'none';
         this.doCheckMouseOver = false;
+        this.data = {};
+        this.data['id'] = getUnsecureHash();
         this.hasMouseOver = false;
         this.mouseOverData = 'none';
     }
@@ -25,7 +26,7 @@ class FeatureComponent extends Introspector {
 class FeatureLabel extends FeatureComponent {
     constructor(x, y, data, size, action) {
         super(x, y, size);
-        this.data = data;
+        this.data['data'] = data;
         this.action = action;
         this.mode = 'idle';
     }
@@ -37,7 +38,11 @@ class FeatureLabel extends FeatureComponent {
 
     update(zoom, gp) {
         super.update(zoom, gp);
-        this.g.setBDimsWidth(myTextSize, TEXT_WIDTH_MULTIPLIER, this.data);
+        this.g.setBDimsWidth(
+            myTextSize,
+            TEXT_WIDTH_MULTIPLIER,
+            this.data['data']
+        );
     }
 
     checkClicked(zoom) {
@@ -60,7 +65,11 @@ class FeatureDataTextLabel extends FeatureLabel {
     }
 
     checkClicked(zoom) {
-        this.g.setBDimsWidth(myTextSize, TEXT_WIDTH_MULTIPLIER, this.data);
+        this.g.setBDimsWidth(
+            myTextSize,
+            TEXT_WIDTH_MULTIPLIER,
+            this.data['data']
+        );
         return this.g.checkMouseOver(mouseX, mouseY);
     }
 
@@ -72,7 +81,7 @@ class FeatureDataTextLabel extends FeatureLabel {
         noStroke();
         textAlign(CENTER, CENTER);
         text(
-            this.data,
+            this.data['data'],
             this.g.sCart.x + this.g.sDims.w / 2,
             this.g.sCart.y + this.g.sSqrDimOn2
         ); // Center the text within the rectangle
@@ -103,7 +112,7 @@ class FeatureDataIDLabel extends FeatureDataTextLabel {
         textAlign(LEFT, TOP);
         textSize((myTextSize * zoom) / 2);
         text(
-            this.data,
+            this.data['data'],
             this.g.sCart.x + this.g.sSqrDim * TIGHT_DIM_GAP_PERCENT,
             this.g.sCart.y + this.g.sSqrDim * MID_DIM_GAP_PERCENT
         );

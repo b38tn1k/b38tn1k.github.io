@@ -3,6 +3,28 @@ function slerp(start, end, t) {
     return start * (1 - t) + end * t;
 }
 
+function compressString(input, keyMap) {
+    let compressed = input;
+    for (let key in keyMap) {
+        if (keyMap.hasOwnProperty(key)) {
+            const regex = new RegExp(key, 'g');
+            compressed = compressed.replace(regex, keyMap[key]);
+        }
+    }
+    return compressed;
+}
+
+function decompressString(compressed, keyMap) {
+    let decompressed = compressed;
+    for (let key in keyMap) {
+        if (keyMap.hasOwnProperty(key)) {
+            const regex = new RegExp(keyMap[key], 'g');
+            decompressed = decompressed.replace(regex, key);
+        }
+    }
+    return decompressed;
+}
+
 class Session {
     constructor() {
         this.plants = [new Plant()];
@@ -68,8 +90,15 @@ class Session {
                 break;
         }
         if (this.plant.changed === true) {
-          // this.generateJSON()
-            console.log(this.generateJSON());
+
+            const res = this.generateJSON();
+            const shrunk = compressString(res, keyMap);
+            const rede = decompressString(shrunk, keyMap);
+            const jsonObject = JSON.parse(rede);
+            console.log(shrunk);
+            console.log(res.length, shrunk.length, rede.length);
+            // console.log(JSON.stringify(keyMap, Object.keys(keyMap).sort()));
+            
             this.plant.setChangedFalse();
         }
     }

@@ -79,7 +79,7 @@ class Feature extends Introspector {
                 this.dataLabels[label].changed = false;
             }
         }
-        this.data['title'] = this.dataLabels['title'].data;
+        this.data['title'] = this.dataLabels['title'].data['data'];
     }
 
     drawButtonsAndLabels(
@@ -860,18 +860,18 @@ class Connector extends Feature {
         if (this.input && this.output) {
             this.untethered = false;
             let inputAnchor = input.buttons.find(
-                (button) => button.label === 'Input'
+                (button) => button.data['data'] === 'Input'
             );
             this.anchors['Input'] = inputAnchor;
             let outputAnchor = output.buttons.find(
-                (button) => button.label === 'Output'
+                (button) => button.data['data'] === 'Output'
             );
             this.anchors['Output'] = outputAnchor;
             this.setupAnchors();
         } else {
             this.source = this.input != null ? this.input : this.output;
             this.sourceType = this.input != null ? 'Input' : 'Output';
-            this.anchors[this.sourceType] = this.source.caller; // buttons.find(button => button.label === this.sourceType);
+            this.anchors[this.sourceType] = this.source.caller;
         }
         this.mode = 'idle';
         this.untetheredClicks = 0;

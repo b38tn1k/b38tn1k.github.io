@@ -29,7 +29,7 @@ class DrawUtils {
 class FeatureUIButton extends FeatureComponent {
     constructor(label, x, y, size, action) {
         super(x, y, size);
-        this.label = label;
+        this.data['data'] = label;
         this.mouseOverData = label.toUpperCase();
         this.hasMouseOver = false;
         this.action = action;
@@ -129,7 +129,7 @@ class FeatureUIButtonLetterLabel extends FeatureUIButton {
         fill(textColor);
         noStroke();
         textAlign(CENTER, CENTER);
-        text(this.label[0], xa + this.g.sSqrDimOn2, ya + this.g.sSqrDimOn2);
+        text(this.data['data'][0], xa + this.g.sSqrDimOn2, ya + this.g.sSqrDimOn2);
     }
 }
 
@@ -164,7 +164,7 @@ class FeatureUIOutputButton extends FeatureUIButton {
             fill(textColor);
             noStroke();
             textAlign(CENTER, CENTER);
-            text(this.label[0], xa + this.g.sSqrDimOn2, ya + this.g.sSqrDimOn2);
+            text(this.data['data'][0], xa + this.g.sSqrDimOn2, ya + this.g.sSqrDimOn2);
         }
         this.doMouseOverText(zoom, textColor);
     }

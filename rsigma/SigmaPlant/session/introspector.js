@@ -17,7 +17,10 @@ const excludedKeys = new Set([
     'sMids',
     'sSqrDim',
     'sSqrDimOn2',
-
+    'untethered',
+    'untetheredClicks',
+    'connectorIsOnScreen',
+    'static'
 ]);
 const toDoKeys = new Set([
     'input',
@@ -29,6 +32,13 @@ const toDoKeys = new Set([
 ]);
 const selfDescriberKeys = new Set(['plant', 'g']);
 const selfDescriberGroups = new Set(['buttons', 'dataLabels']);
+
+function isNotEmpty(variable) {
+    if (Array.isArray(variable) || typeof variable === 'object') {
+        return Object.keys(variable).length !== 0;
+    }
+    return true;
+}
 
 class ReportFilter {
     constructor(criteria, action) {
@@ -42,11 +52,7 @@ function isVector(key, obj) {
 }
 
 function isVectorAction(info, key, obj) {
-    info[key] = {
-        x: obj[key].x,
-        y: obj[key].y,
-        z: obj[key].z
-    };
+    info[key] = [obj[key].x, obj[key].y, obj[key].z];
 }
 
 function isExcluded(key, obj) {
@@ -85,7 +91,7 @@ function catchAll(key, obj) {
 }
 
 function catchAllAction(info, key, obj) {
-    if (obj[key] != 'none') {
+    if (obj[key] != 'none' && isNotEmpty(obj[key])) {
         info[key] = obj[key];
     }
 }

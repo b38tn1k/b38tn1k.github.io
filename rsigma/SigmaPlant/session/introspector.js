@@ -42,7 +42,7 @@ function isVectorAction(info, key, obj) {
 }
 
 function isExcluded(key, obj) {
-    return (excludedKeys.has(String(key)) || toDoKeys.has(String(key)));
+    return excludedKeys.has(String(key)) || toDoKeys.has(String(key));
 }
 function noAction() {}
 
@@ -72,7 +72,7 @@ function isSelfDescriberGroupAction(info, key, obj) {
 }
 
 function catchAll(key, obj) {
-    return !(isExcluded(key, obj));
+    return !isExcluded(key, obj);
 }
 
 function catchAllAction(info, key, obj) {

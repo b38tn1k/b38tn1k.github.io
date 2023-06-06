@@ -33,6 +33,8 @@ class FeatureComponent {
         info['properties'][key] = this.g.constructor.name;
       } else if (key == 'action') {
         1;
+      } else if (key == 'associatedConnector') {
+        1;
       } else {
         info['properties'][key] = this[key];
       }

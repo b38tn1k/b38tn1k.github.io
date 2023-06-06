@@ -25,7 +25,11 @@ function openDialog(plantData, xa, ya) {
     plantData.mode = 'cleared';
     plantData.changed = true;
     fpsEvent();
-    plantData.g.setBDimsWidth(myTextSize, TEXT_WIDTH_MULTIPLIER, dialog.value());
+    plantData.g.setBDimsWidth(
+      myTextSize,
+      TEXT_WIDTH_MULTIPLIER,
+      dialog.value()
+    );
     setTimeout(() => {
       dialog.remove();
       container.remove(); // Remove the dialog box and the container div from the DOM
@@ -50,8 +54,8 @@ function openDialog(plantData, xa, ya) {
   // Add an event listener to remove the dialog and the container if mouse is pressed outside the dialog box or the container
   const removeDialog = () => {
     // if (plantData.mode === 'busy') {
-      doTheThing();
-      document.removeEventListener('mousedown', removeDialog);
+    doTheThing();
+    document.removeEventListener('mousedown', removeDialog);
     // }
   };
 
@@ -63,9 +67,7 @@ function openDialog(plantData, xa, ya) {
       doTheThing();
     }
   });
-
 }
-
 
 function NOP(plantData) {
   plantData.mode = 'cleared';

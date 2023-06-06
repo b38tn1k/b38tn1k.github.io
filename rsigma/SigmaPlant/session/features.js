@@ -82,16 +82,18 @@ class Feature {
   selfDescribe() {
     let info = {};
     info['this'] = this.constructor.name;
+    // console.log(this.g.constructor.name);
     info['subclasses'] = {};
     info['subclasses'][this.g.constructor.name] = this.g.selfDescribe();
-    
+
     info['subclasses']['buttons'] = [];
     for (let button of this.buttons) {
       info['subclasses']['buttons'].push(button.selfDescribe());
     }
     info['subclasses']['dataLabels'] = {};
     for (let label in this.dataLabels) {
-      info['subclasses']['dataLabels'][label] = this.dataLabels[label].selfDescribe();
+      info['subclasses']['dataLabels'][label] =
+        this.dataLabels[label].selfDescribe();
     }
 
     info['properties'] = {};
@@ -115,9 +117,13 @@ class Feature {
         info['properties'][key]['Input'] = this[key]['Input'].id;
         info['properties'][key]['Output'] = this[key]['Output'].id;
       } else if (key == 'input') {
-        1;//TODO;
+        1; //TODO;
       } else if (key == 'output') {
-        1;//TODO;
+        1; //TODO;
+      } else if (key == 'buses') {
+        1; //TODO;
+      } else if (key == 'children') {
+        1; //TODO;
       } else if (key == 'plant') {
         info['properties'][key] = [];
         info['properties'][key].push(this.plant.selfDescribe());
@@ -155,7 +161,7 @@ class Feature {
   }
 
   update(zoom) {
-    this.changed = false;
+    // this.changed = false;
     this.g.update(zoom);
     if (this.g.isOnScreen) {
       this.updateButtonsAndLabels(zoom);
@@ -650,8 +656,8 @@ class Zone extends Feature {
   }
 
   removeChild(feature) {
-    this.children = this.children.filter(child => child !== feature);
-  }  
+    this.children = this.children.filter((child) => child !== feature);
+  }
 
   addChild(feature) {
     this.children.push(feature);
@@ -918,7 +924,6 @@ class Connector extends Feature {
 
   selfDescribe() {
     let res;
-    console.log(this.untethered);
     if (!this.untethered) {
       res = super.selfDescribe();
     }
@@ -930,11 +935,11 @@ class Connector extends Feature {
       let buffer = 20 * zoom;
 
       let x1 =
-        this.anchors['Input'].g.sCart.x + this.anchors['Input'].g.sSqrDimOn2;;
+        this.anchors['Input'].g.sCart.x + this.anchors['Input'].g.sSqrDimOn2;
       let y1 = this.anchors['Input'].g.sCart.y;
 
       let x2 =
-        this.anchors['Output'].g.sCart.x + this.anchors['Output'].g.sSqrDimOn2;;
+        this.anchors['Output'].g.sCart.x + this.anchors['Output'].g.sSqrDimOn2;
       let y2 =
         this.anchors['Output'].g.sCart.y + this.anchors['Output'].g.sSqrDim;
       buffer = min(buffer, Math.abs(y2 - y1) / 3);
@@ -994,20 +999,21 @@ class Connector extends Feature {
   update(zoom) {
     this.changed = false;
     if (this.input && this.output) {
-      this.g.manualOnScreen = ((this.input.g.isOnScreen || this.output.g.isOnScreen));
-        if (
-          this.input.mode == 'delete' ||
-          this.output.mode == 'delete' ||
-          this.input.mode == 'deleting' ||
-          this.output.mode == 'deleting' ||
-          this.anchors['Input'].mode == 'delete' ||
-          this.anchors['Output'].mode == 'delete'
-        ) {
-          this.mode = 'delete';
-          this.anchors['Input'].connected = false;
-          this.anchors['Output'].connected = false;
-        }
-        this.computePath(zoom);
+      this.g.manualOnScreen =
+        this.input.g.isOnScreen || this.output.g.isOnScreen;
+      if (
+        this.input.mode == 'delete' ||
+        this.output.mode == 'delete' ||
+        this.input.mode == 'deleting' ||
+        this.output.mode == 'deleting' ||
+        this.anchors['Input'].mode == 'delete' ||
+        this.anchors['Output'].mode == 'delete'
+      ) {
+        this.mode = 'delete';
+        this.anchors['Input'].connected = false;
+        this.anchors['Output'].connected = false;
+      }
+      this.computePath(zoom);
     } else {
       this.untethered = true;
       this.connectorIsOnScreen = true;
@@ -1030,16 +1036,17 @@ class Connector extends Feature {
     noFill();
     stroke(getColor('connector'));
     if (this.untethered == false) {
-        for (let i = 0; i < this.path.length - 1; i++) {
-          let point1 = this.path[i];
-          let point2 = this.path[i + 1];
-          line(point1.x, point1.y, point2.x, point2.y);
-        }
+      for (let i = 0; i < this.path.length - 1; i++) {
+        let point1 = this.path[i];
+        let point2 = this.path[i + 1];
+        line(point1.x, point1.y, point2.x, point2.y);
+      }
     } else {
       for (let anchor in this.anchors) {
         if (anchor == 'Input') {
           line(
-            this.anchors['Input'].g.sCart.x + this.anchors['Input'].g.sSqrDimOn2,
+            this.anchors['Input'].g.sCart.x +
+              this.anchors['Input'].g.sSqrDimOn2,
             this.anchors['Input'].g.sCart.y,
             mouseX,
             mouseY

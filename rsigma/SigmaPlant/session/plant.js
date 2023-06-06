@@ -118,14 +118,20 @@ class Plant {
     }
   }
 
+  setChangedFalse() {
+    for (let i = 0; i < this.features.length; i++) {
+      this.features[i].changed = false;
+    }
+    this.changed = false;
+  }
+
   selfDescribe() {
-    let info = []
+    let info = [];
     for (let i = 0; i < this.features.length; i++) {
       const res = this.features[i].selfDescribe();
       if (res) {
         info.push(res);
       }
-      
     }
     return info;
   }
@@ -163,7 +169,7 @@ class Plant {
   }
 
   adoptFeatureIntoZone(zones, feature) {
-    let zoneHasChanged = zones.some(zone => zone.changed === true); // UX question - do we wanna be able to drop zones ontop?
+    let zoneHasChanged = zones.some((zone) => zone.changed === true); // UX question - do we wanna be able to drop zones ontop?
     // const zoneHasChanged = false;
     if (feature.changed || zoneHasChanged) {
       for (let i = 0; i < zones.length; i++) {
@@ -223,7 +229,7 @@ class Plant {
         break;
       default:
         this.mode = 'idle';
-        this.changed = false;
+        // this.changed = false;
         break;
     }
   }

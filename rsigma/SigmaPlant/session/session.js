@@ -68,8 +68,8 @@ class Session {
         break;
     }
     if (this.plant.changed === true) {
-      console.log(this.plants[0].selfDescribe());
-      this.plant.changed = false;
+      console.log(JSON.stringify(this.plants[0].selfDescribe()));
+      this.plant.setChangedFalse();
       console.log('change!');
     }
   }
@@ -115,7 +115,7 @@ class Session {
   }
 
   addZone(x, y) {
-    this.plant.addZone(x, y)
+    this.plant.addZone(x, y);
     // this.plant.features.push(new Zone(x, y));
   }
 
@@ -125,7 +125,7 @@ class Session {
   }
 
   addSplit(x, y) {
-    this.plant.addSplit(x, y)
+    this.plant.addSplit(x, y);
     // this.plant.features.push(new Split(x, y));
   }
 

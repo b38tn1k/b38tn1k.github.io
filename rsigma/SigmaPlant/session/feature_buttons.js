@@ -1,4 +1,3 @@
-
 class DrawUtils {
   static drawXIcon(g, xa, ya, offval = TIGHT_DIM_GAP_PERCENT) {
     let off = offval * g.sSqrDim;
@@ -12,18 +11,8 @@ class DrawUtils {
 
   static drawCross(g, xa, ya, offval = TIGHT_DIM_GAP_PERCENT) {
     let off = offval * g.sSqrDim;
-    line(
-      xa + g.sSqrDimOn2,
-      ya + off,
-      xa + g.sSqrDimOn2,
-      ya + g.sSqrDim - off
-    );
-    line(
-      xa + off,
-      ya + g.sSqrDimOn2,
-      xa + g.sSqrDim - off,
-      ya + g.sSqrDimOn2
-    );
+    line(xa + g.sSqrDimOn2, ya + off, xa + g.sSqrDimOn2, ya + g.sSqrDim - off);
+    line(xa + off, ya + g.sSqrDimOn2, xa + g.sSqrDim - off, ya + g.sSqrDimOn2);
   }
 }
 
@@ -44,7 +33,7 @@ class FeatureUIButton extends FeatureComponent {
     this.draw(this.g.sCart.x, this.g.sCart.y, zoom, cnv, strokeColor);
   }
 
-  doMouseOverText(zoom, textColor){
+  doMouseOverText(zoom, textColor) {
     if (this.hasMouseOver) {
       textAlign(LEFT, CENTER);
       textSize(myTextSize * zoom);

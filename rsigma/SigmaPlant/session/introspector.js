@@ -7,7 +7,7 @@ const excludedKeys = new Set([
     'doAnimations',
     'isAnimating',
     'mode',
-    'notYetDrawLabelAndButtons',
+    'notYetDrawnLabelAndButtons',
     'manualOnScreen',
     'hasMouseOver'
 ]);
@@ -41,12 +41,8 @@ function isVectorAction(info, key, obj) {
     };
 }
 
-function isToDo(key, obj) {
-    return toDoKeys.has(String(key));
-}
-
 function isExcluded(key, obj) {
-    return excludedKeys.has(String(key));
+    return (excludedKeys.has(String(key)) || toDoKeys.has(String(key)));
 }
 function noAction() {}
 
@@ -76,7 +72,7 @@ function isSelfDescriberGroupAction(info, key, obj) {
 }
 
 function catchAll(key, obj) {
-    return !(isExcluded(key, obj) || isToDo(key, obj));
+    return !(isExcluded(key, obj));
 }
 
 function catchAllAction(info, key, obj) {
@@ -87,7 +83,7 @@ class Introspector {
     constructor() {
         this.rFilters = [];
         this.rFilters.push(new ReportFilter(isExcluded, noAction));
-        this.rFilters.push(new ReportFilter(isToDo, noAction));
+        // this.rFilters.push(new ReportFilter(isToDo, noAction));
         this.rFilters.push(new ReportFilter(isVector, isVectorAction));
         this.rFilters.push(
             new ReportFilter(isSelfDescriber, isSelfDescriberAction)
@@ -104,6 +100,7 @@ class Introspector {
         };
 
         Object.keys(this).forEach((key) => {
+            console.log(key, catchAll(key, this));
             for (let rf of this.rFilters) {
                 if (rf.criteria(String(key), this)) {
                     rf.action(info, key, this);

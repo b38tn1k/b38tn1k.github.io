@@ -4,8 +4,9 @@ const LOW_MID_DIM_GAP_PERCENT = 0.4;
 const MID_DIM_GAP_PERCENT = 0.6;
 const TAB_GROUP_BORDER = 40;
 
-class Geometry {
+class Geometry  extends Introspector {
   constructor(x, y, width, height) {
+    super();
     this.bCart = createVector(x, y); // board position
     this.sCart = createVector(x, y); // screen position
     this.bDims = { w: width, h: height }; // board dims
@@ -29,23 +30,6 @@ class Geometry {
         this.sCart.y + this.sDims.h > 0) ||
       this.manualOnScreen // and the manual force
     );
-  }
-
-  selfDescribe() {
-    const info = {};
-    info['properties'] = {};
-    Object.keys(this).forEach((key) => {
-      if (this[key] instanceof p5.Vector) {
-        info['properties'][key] = {
-          x: this[key].x,
-          y: this[key].y,
-          z: this[key].z
-        };
-      } else {
-        info['properties'][key] = this[key];
-      }
-    });
-    return info;
   }
 
   update(zoom) {

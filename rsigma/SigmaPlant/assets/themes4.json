@@ -5,9 +5,10 @@
     "primary": "outerSpace",
     "secondary": "gunmetal",
     "tertiary": "charcoal",
-    "accent": "deepSkyBlue",
-    "background": "onyx",
-    "gridline": "darkOrange",
+    "accent": "emerald",
+    "background": "slate",
+    "gridline": "granite",
+    "quaternary": "obsidian",
     "connector": "yellowGreen"
   },
   "light": {

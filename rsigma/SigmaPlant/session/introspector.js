@@ -73,7 +73,8 @@ function isSelfDescriberGroupAction(info, key, obj) {
 }
 
 function catchAll(key, obj) {
-    return !isExcluded(key, obj);
+    // return !isExcluded(key, obj);
+    return true;
 }
 
 function catchAllAction(info, key, obj) {
@@ -101,7 +102,6 @@ class Introspector {
         };
 
         Object.keys(this).forEach((key) => {
-            console.log(key, catchAll(key, this));
             for (let rf of this.rFilters) {
                 if (rf.criteria(String(key), this)) {
                     rf.action(info, key, this);

@@ -10,7 +10,7 @@ class Feature extends Introspector {
         this.type = type;
         this.dataLabels = {};
         this.data = {};
-        this.data['id'] = type + '->' + getUnsecureHash();
+        this.data['id'] = getUnsecureHash();
         this.isAnimating = true;
         this.doAnimations = true;
         this.animationValue = 0.0;
@@ -327,7 +327,7 @@ class Process extends Feature {
         this.dataLabels['id'] = new FeatureDataIDLabel(
             0,
             1,
-            this.data['id'],
+            this.type + '->' + this.data['id'],
             buttonSize,
             NOP
         );
@@ -400,7 +400,7 @@ class Source extends Feature {
         this.dataLabels['id'] = new FeatureDataIDLabel(
             0,
             1,
-            this.data['id'],
+            this.type + '->' + this.data['id'],
             buttonSize,
             NOP
         );
@@ -491,7 +491,7 @@ class Sink extends Feature {
         this.dataLabels['id'] = new FeatureDataIDLabel(
             0,
             1,
-            this.data['id'],
+            this.type + '->' + this.data['id'],
             buttonSize,
             NOP
         );
@@ -566,7 +566,7 @@ class Zone extends Feature {
         this.dataLabels['id'] = new FeatureDataIDLabel(
             0,
             1,
-            this.data['id'],
+            this.type + '->' + this.data['id'],
             buttonSize,
             NOP
         );
@@ -641,7 +641,7 @@ class Metric extends Feature {
         this.dataLabels['id'] = new FeatureDataIDLabel(
             0,
             1,
-            this.data['id'],
+            this.type + '->' + this.data['id'],
             buttonSize,
             NOP
         );
@@ -711,7 +711,7 @@ class Split extends Feature {
         this.dataLabels['id'] = new FeatureDataIDLabel(
             0,
             1,
-            this.data['id'],
+            this.type + '->' + this.data['id'],
             buttonSize,
             NOP
         );
@@ -786,7 +786,7 @@ class Merge extends Feature {
         this.dataLabels['id'] = new FeatureDataIDLabel(
             0,
             1,
-            this.data['id'],
+            this.type + '->' + this.data['id'],
             buttonSize,
             NOP
         );

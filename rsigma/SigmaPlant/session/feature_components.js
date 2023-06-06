@@ -3,7 +3,7 @@ function getUnsecureHash() {
         Math.random().toString(36).substring(2, 15) +
         Math.random().toString(36).substring(2, 15);
     myStr += myStr + myStr;
-    return myStr.substring(0, 10);
+    return myStr.substring(0, 8);
 }
 
 class FeatureComponent extends Introspector {

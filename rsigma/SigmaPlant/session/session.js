@@ -96,7 +96,7 @@ class Session {
             const rede = decompressString(shrunk, keyMap);
             const jsonObject = JSON.parse(rede);
             console.log(shrunk);
-            console.log(res.length, shrunk.length, rede.length);
+            console.log(res.length, shrunk.length, rede.length, shrunk.length / rede.length);
             // console.log(JSON.stringify(keyMap, Object.keys(keyMap).sort()));
             
             this.plant.setChangedFalse();

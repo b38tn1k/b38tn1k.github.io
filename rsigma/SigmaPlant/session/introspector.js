@@ -1,5 +1,15 @@
+class ReportFilter {
+    constructor() {
+        this.criterea = criteria;
+        this.action = action;
+      }
+
+}
+
 class Introspector {
-  constructor() {}
+  constructor() {
+    this.reportFilters = [];
+  }
 
   selfDescribe() {
     let info = {};

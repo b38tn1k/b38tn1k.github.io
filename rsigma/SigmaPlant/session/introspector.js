@@ -1,76 +1,116 @@
-class ReportFilter {
-    constructor() {
-        this.criterea = criteria;
-        this.action = action;
-      }
+const excludedKeys = new Set([
+    'action',
+    'rFilters',
+    'adoptable',
+    'animationValue',
+    'caller',
+    'doAnimations',
+    'isAnimating',
+    'mode',
+    'notYetDrawLabelAndButtons',
+    'manualOnScreen',
+    'hasMouseOver'
+]);
+const toDoKeys = new Set([
+    'input',
+    'output',
+    'buses',
+    'children',
+    'anchors',
+    'associatedConnector'
+]);
+const selfDescriberKeys = new Set(['plant', 'g']);
+const selfDescriberGroups = new Set(['buttons', 'dataLabels']);
 
+class ReportFilter {
+    constructor(criteria, action) {
+        this.criteria = criteria;
+        this.action = action;
+    }
+}
+
+function isVector(key, obj) {
+    return obj[key] instanceof p5.Vector;
+}
+
+function isVectorAction(info, key, obj) {
+    info[key] = {
+        x: obj[key].x,
+        y: obj[key].y,
+        z: obj[key].z
+    };
+}
+
+function isToDo(key, obj) {
+    return toDoKeys.has(String(key));
+}
+
+function isExcluded(key, obj) {
+    return excludedKeys.has(String(key));
+}
+function noAction() {}
+
+function isSelfDescriber(key, obj) {
+    return selfDescriberKeys.has(String(key));
+}
+
+function isSelfDescriberAction(info, key, obj) {
+    info[key] = obj[key].selfDescribe();
+}
+
+function isSelfDescriberGroup(key, obj) {
+    return selfDescriberGroups.has(String(key));
+}
+
+function isSelfDescriberGroupAction(info, key, obj) {
+    info[key] = [];
+    if (Array.isArray(obj[key])) {
+        for (let i = 0; i < obj[key].length; i++) {
+            info[key].push(obj[key][i].selfDescribe());
+        }
+    } else {
+        Object.keys(obj[key]).forEach((k) => {
+            info[key].push(obj[key][k].selfDescribe());
+        });
+    }
+}
+
+function catchAll(key, obj) {
+    return !(isExcluded(key, obj) || isToDo(key, obj));
+}
+
+function catchAllAction(info, key, obj) {
+    info[key] = obj[key];
 }
 
 class Introspector {
-  constructor() {
-    this.reportFilters = [];
-  }
-
-  selfDescribe() {
-    let info = {};
-    info['this'] = this.constructor.name;
-    // console.log(this.g.constructor.name);
-    info['subclasses'] = {};
-    if (this.g) {
-      info['subclasses'][this.g.constructor.name] = this.g.selfDescribe();
+    constructor() {
+        this.rFilters = [];
+        this.rFilters.push(new ReportFilter(isExcluded, noAction));
+        this.rFilters.push(new ReportFilter(isToDo, noAction));
+        this.rFilters.push(new ReportFilter(isVector, isVectorAction));
+        this.rFilters.push(
+            new ReportFilter(isSelfDescriber, isSelfDescriberAction)
+        );
+        this.rFilters.push(
+            new ReportFilter(isSelfDescriberGroup, isSelfDescriberGroupAction)
+        );
+        this.rFilters.push(new ReportFilter(catchAll, catchAllAction));
     }
 
-    if (this.buttons) {
-      info['subclasses']['buttons'] = [];
-      for (let button of this.buttons) {
-        info['subclasses']['buttons'].push(button.selfDescribe());
-      }
-    }
-
-    if (this.dataLabels) {
-      info['subclasses']['dataLabels'] = {};
-      for (let label in this.dataLabels) {
-        info['subclasses']['dataLabels'][label] =
-          this.dataLabels[label].selfDescribe();
-      }
-    }
-
-    info['properties'] = {};
-    Object.keys(this).forEach((key) => {
-      if (this[key] instanceof p5.Vector) {
-        info['properties'][key] = {
-          x: this[key].x,
-          y: this[key].y,
-          z: this[key].z
+    selfDescribe() {
+        let info = {
+            constructor: this.constructor.name
         };
-      } else if (key == 'g') {
-        info['properties'][key] = this.g.constructor.name;
-      } else if (key == 'action') {
-        1;
-      } else if (key == 'buttons') {
-        1;
-      } else if (key == 'dataLabels') {
-        1;
-      } else if (key == 'anchors') {
-        info['properties'][key] = {};
-        info['properties'][key]['Input'] = this[key]['Input'].id;
-        info['properties'][key]['Output'] = this[key]['Output'].id;
-      } else if (key == 'input') {
-        1; //TODO;
-      } else if (key == 'output') {
-        1; //TODO;
-      } else if (key == 'buses') {
-        1; //TODO;
-      } else if (key == 'children') {
-        1; //TODO;
-      } else if (key == 'plant') {
-        info['properties'][key] = [];
-        info['properties'][key].push(this.plant.selfDescribe());
-      } else {
-        info['properties'][key] = this[key];
-      }
-    });
 
-    return info;
-  }
+        Object.keys(this).forEach((key) => {
+            for (let rf of this.rFilters) {
+                if (rf.criteria(String(key), this)) {
+                    rf.action(info, key, this);
+                    break;
+                }
+            }
+        });
+        return info;
+    }
 }

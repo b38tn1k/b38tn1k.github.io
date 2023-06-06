@@ -68,8 +68,15 @@ class Session {
         break;
     }
     if (this.plant.changed === true) {
+      // this.plants[0].selfDescribe();
       // console.log(JSON.stringify(this.plants[0].selfDescribe()));
-      console.log(this.plants[0].selfDescribe());
+      const description = this.plants[0].selfDescribe();
+      try {
+        JSON.stringify(description);
+      } catch (error) {
+        console.error(error);
+        console.log(description);
+      }
       this.plant.setChangedFalse();
       console.log(millis(), ' change!');
     }

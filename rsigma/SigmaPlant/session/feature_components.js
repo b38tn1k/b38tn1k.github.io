@@ -6,8 +6,9 @@ function getUnsecureHash() {
   return myStr.substring(0, 10);
 }
 
-class FeatureComponent {
+class FeatureComponent extends Introspector {
   constructor(x, y, size) {
+    super();
     this.g = new ParentDefinedGeometry(x, y, size);
     this.id = getUnsecureHash();
     this.targetID = 'none';
@@ -16,31 +17,31 @@ class FeatureComponent {
     this.mouseOverData = 'none';
   }
 
-  selfDescribe() {
-    let info = {};
-    info['this'] = this.constructor.name;
-    info['subclasses'] = {};
-    info['subclasses'][this.g.constructor.name] = this.g.selfDescribe();
-    info['properties'] = {};
-    Object.keys(this).forEach((key) => {
-      if (this[key] instanceof p5.Vector) {
-        info['properties'][key] = {
-          x: this[key].x,
-          y: this[key].y,
-          z: this[key].z
-        };
-      } else if (key == 'g') {
-        info['properties'][key] = this.g.constructor.name;
-      } else if (key == 'action') {
-        1;
-      } else if (key == 'associatedConnector') {
-        1;
-      } else {
-        info['properties'][key] = this[key];
-      }
-    });
-    return info;
-  }
+  // selfDescribe() {
+  //   let info = {};
+  //   info['this'] = this.constructor.name;
+  //   info['subclasses'] = {};
+  //   info['subclasses'][this.g.constructor.name] = this.g.selfDescribe();
+  //   info['properties'] = {};
+  //   Object.keys(this).forEach((key) => {
+  //     if (this[key] instanceof p5.Vector) {
+  //       info['properties'][key] = {
+  //         x: this[key].x,
+  //         y: this[key].y,
+  //         z: this[key].z
+  //       };
+  //     } else if (key == 'g') {
+  //       info['properties'][key] = this.g.constructor.name;
+  //     } else if (key == 'action') {
+  //       1;
+  //     } else if (key == 'associatedConnector') {
+  //       1;
+  //     } else {
+  //       info['properties'][key] = this[key];
+  //     }
+  //   });
+  //   return info;
+  // }
 
   update(zoom, gp) {
     this.g.update(zoom, gp);

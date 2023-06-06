@@ -126,11 +126,14 @@ class Plant {
   }
 
   selfDescribe() {
-    let info = [];
+    let info = {
+      constructor: this.constructor.name
+  };
+  info.features = []
     for (let i = 0; i < this.features.length; i++) {
       const res = this.features[i].selfDescribe();
       if (res) {
-        info.push(res);
+        info.features.push(res);
       }
     }
     return info;

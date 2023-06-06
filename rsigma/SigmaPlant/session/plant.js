@@ -159,6 +159,7 @@ class Plant {
 
             if (feature.mode === 'delete') {
                 this.deleteFeature(i);
+                this.changed = true;
                 continue;
             }
 

@@ -68,18 +68,22 @@ class Session {
                 break;
         }
         if (this.plant.changed === true) {
-            // this.plants[0].selfDescribe();
-            // console.log(JSON.stringify(this.plants[0].selfDescribe()));
-            const description = this.plants[0].selfDescribe();
-            try {
-                JSON.stringify(description);
-            } catch (error) {
-                console.error(error);
-                console.log(description);
-            }
+          // this.generateJSON()
+            console.log(this.generateJSON());
             this.plant.setChangedFalse();
-            console.log(millis(), ' change!');
         }
+    }
+
+    generateJSON() {
+        const description = this.plants[0].selfDescribe();
+        let res = ' ';
+        try {
+            res = JSON.stringify(description);
+        } catch (error) {
+            console.error(error);
+            console.log(description);
+        }
+        return res;
     }
 
     draw(zoom, cnv) {

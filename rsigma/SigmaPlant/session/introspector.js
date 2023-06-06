@@ -9,8 +9,15 @@ const excludedKeys = new Set([
     'mode',
     'notYetDrawnLabelAndButtons',
     'manualOnScreen',
+    'doCheckMouseOver',
     'source',
-    'hasMouseOver'
+    'hasMouseOver',
+    'sCart',
+    'sDims',
+    'sMids',
+    'sSqrDim',
+    'sSqrDimOn2',
+
 ]);
 const toDoKeys = new Set([
     'input',
@@ -78,7 +85,9 @@ function catchAll(key, obj) {
 }
 
 function catchAllAction(info, key, obj) {
-    info[key] = obj[key];
+    if (obj[key] != 'none') {
+        info[key] = obj[key];
+    }
 }
 
 class Introspector {

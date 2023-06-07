@@ -231,7 +231,6 @@ class Process extends Feature {
         this.collectBuses();
         const numSourceBuses = this.buses['source'].size;
         const numSinkBuses = this.buses['sink'].size;
-
         // Get all the valid source and sink ids from plant features
         const validSourceIds = Array.from(this.buses['source']).map(
             (index) => this.plant.features[index].data['id']
@@ -285,7 +284,7 @@ class Process extends Feature {
                 (button) => button.targetID === id
             );
             let mouseOverData =
-                this.plant.features[index].dataLabels['title'].data;
+                this.plant.features[index].dataLabels['title'].data['data'];
             if (!existingButton) {
                 let b = new ButtonType(
                     label,

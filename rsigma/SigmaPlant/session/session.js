@@ -3,6 +3,42 @@ function slerp(start, end, t) {
     return start * (1 - t) + end * t;
 }
 
+function calculateStringSimilarity(str1, str2) {
+    const m = str1.length;
+    const n = str2.length;
+    
+    // Create a 2D array to store the distances
+    const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+    
+    // Initialize the first row and column of the array
+    for (let i = 0; i <= m; i++) {
+      dp[i][0] = i;
+    }
+    for (let j = 0; j <= n; j++) {
+      dp[0][j] = j;
+    }
+    
+    // Calculate the Levenshtein distance
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        if (str1[i - 1] === str2[j - 1]) {
+          dp[i][j] = dp[i - 1][j - 1];
+        } else {
+          dp[i][j] = Math.min(
+            dp[i - 1][j] + 1, // Deletion
+            dp[i][j - 1] + 1, // Insertion
+            dp[i - 1][j - 1] + 1 // Substitution
+          );
+        }
+      }
+    }
+    
+    // Return the similarity score (1 - normalized Levenshtein distance)
+    const maxLen = Math.max(m, n);
+    const similarity = 1 - (dp[m][n] / maxLen);
+    return similarity;
+  }
+
 function compressString(input, keyMap) {
     let compressed = input;
     for (let key in keyMap) {
@@ -95,8 +131,9 @@ class Session {
             const shrunk = compressString(res, keyMap);
             const rede = decompressString(shrunk, keyMap);
             const jsonObject = JSON.parse(rede);
-            console.log(shrunk);
+            // console.log(shrunk);
             console.log(res.length, shrunk.length, rede.length, shrunk.length / rede.length);
+            // console.log(calculateStringSimilarity(res, rede));
             // console.log(JSON.stringify(keyMap, Object.keys(keyMap).sort()));
             
             this.plant.setChangedFalse();
@@ -126,6 +163,11 @@ class Session {
         newPlant.addSink(0, 246);
         newPlant.addConnector(0, 0, newPlant.features[1], newPlant.features[0]);
         newPlant.addConnector(0, 0, newPlant.features[2], newPlant.features[1]);
+        // for compressions testing
+        newPlant.addSplit(-246, 0);
+        newPlant.addMerge(246, 0);
+        newPlant.addZone(246, 0);
+        // for compressions testing
         let parentLink = new ParentLink(-196, 0);
         parentLink.targetPlant = this.plantsPointer;
         newPlant.features.push(parentLink);

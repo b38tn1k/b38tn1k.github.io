@@ -25,7 +25,7 @@ const excludedKeys = new Set([
 const toDoKeys = new Set([
     'input',
     'output',
-    'buses',
+    // 'buses',
     'children',
     'anchors',
     'associatedConnector'
@@ -40,7 +40,7 @@ function isNotEmpty(variable) {
     return true;
 }
 
-class ReportFilter {
+class PropertyFilter {
     constructor(criteria, action) {
         this.criteria = criteria;
         this.action = action;
@@ -55,8 +55,39 @@ function isVectorAction(info, key, obj) {
     info[key] = [obj[key].x, obj[key].y, obj[key].z];
 }
 
+function isRequiresID(key, obj) {
+    return toDoKeys.has(String(key));
+}
+
+function isRequiresIDAction(info, key, obj) {
+    if (obj[key]) {
+        switch (String(key)) {
+            case 'input':
+            case 'output':
+            case 'associatedConnector':
+                info[key] = obj[key].data['id'];
+                break;
+            case 'children':
+                if (obj[key].length > 0) {
+                    info[key] = [];
+                }
+                for (let i = 0; i < obj[key].length; i++) {
+                    info[key].push(obj[key][i].data['id']);
+                }
+                break;
+            case 'anchors':
+                info[key] = {};
+                info[key]['Input'] = obj[key]['Input'].data['id'];
+                info[key]['Output'] = obj[key]['Output'].data['id'];
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 function isExcluded(key, obj) {
-    return excludedKeys.has(String(key)) || toDoKeys.has(String(key));
+    return excludedKeys.has(String(key));//|| toDoKeys.has(String(key));
 }
 function noAction() {}
 
@@ -99,16 +130,19 @@ function catchAllAction(info, key, obj) {
 class Introspector {
     constructor() {
         this.rFilters = [];
-        this.rFilters.push(new ReportFilter(isExcluded, noAction));
-        // this.rFilters.push(new ReportFilter(isToDo, noAction));
-        this.rFilters.push(new ReportFilter(isVector, isVectorAction));
+        
+        this.rFilters.push(new PropertyFilter(isExcluded, noAction));
+        this.rFilters.push(new PropertyFilter(isVector, isVectorAction));
         this.rFilters.push(
-            new ReportFilter(isSelfDescriber, isSelfDescriberAction)
+            new PropertyFilter(isSelfDescriber, isSelfDescriberAction)
         );
         this.rFilters.push(
-            new ReportFilter(isSelfDescriberGroup, isSelfDescriberGroupAction)
+            new PropertyFilter(isSelfDescriberGroup, isSelfDescriberGroupAction)
         );
-        this.rFilters.push(new ReportFilter(catchAll, catchAllAction));
+        this.rFilters.push(
+            new PropertyFilter(isRequiresID, isRequiresIDAction)
+        );
+        this.rFilters.push(new PropertyFilter(catchAll, catchAllAction));
     }
 
     selfDescribe() {

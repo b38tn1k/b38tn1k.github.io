@@ -8,7 +8,6 @@ function windowResized() {
 
 function mouseReleased() {
     const mouseHoldDuration = millis() - mousePressTime;
-
     if (
         mouseHoldDuration > mouseHoldDurationValue &&
         dist(mouseX, mouseY, mouseOldPos.x, mouseOldPos.y) < 20
@@ -17,6 +16,15 @@ function mouseReleased() {
     }
     fpsEvent();
 }
+
+function keyPressed() {
+    if (key === ' ') {
+      sess.saveSerializedPlant();
+    }
+    if (key === 'l') {
+        sess.loadFromObject(JSONloader);
+    }
+  }
 
 function mousePressed() {
     fpsEvent();
@@ -28,6 +36,7 @@ function mousePressed() {
 function preload() {
     loadJSON('assets/colors.json', loadColors);
     themes = loadJSON('assets/themes4.json');
+    JSONloader = loadJSON('myDataDoubleOut.json');
 }
 
 function setupScreen() {

@@ -24,6 +24,8 @@ let mouseOldPos;
 let NO_CHANGE = 0;
 let APPLICATION = 2;
 let LANDING = 1;
+// JSON loader
+let JSONloader;
 // Define key mapping for compression and uncompression
 const keyMap = {
     aDims: '<aD>',

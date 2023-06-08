@@ -106,6 +106,20 @@ class Session {
         }
     }
 
+    saveSerializedPlant() {
+        const description = this.plants[0].selfDescribe();
+        try {
+            saveJSON(description, "myData.json");
+        } catch (error) {
+            console.error(error);
+            console.log(description);
+        }
+    }
+
+    loadFromObject(info){
+        this.plants[0].selfConstruct(info, this);
+    }
+
     update(zoom) {
         this.plant.update(zoom);
         if (this.plant.mode == 'transition_plant') {
@@ -126,21 +140,11 @@ class Session {
                 break;
         }
         if (this.plant.changed === true) {
-
-            const res = this.generateJSON();
-            const shrunk = compressString(res, keyMap);
-            const rede = decompressString(shrunk, keyMap);
-            const jsonObject = JSON.parse(rede);
-            // console.log(shrunk);
-            console.log(res.length, shrunk.length, rede.length, shrunk.length / rede.length);
-            // console.log(calculateStringSimilarity(res, rede));
-            // console.log(JSON.stringify(keyMap, Object.keys(keyMap).sort()));
-            
             this.plant.setChangedFalse();
         }
     }
 
-    generateJSON() {
+    serializePlant() {
         const description = this.plants[0].selfDescribe();
         let res = ' ';
         try {
@@ -163,11 +167,6 @@ class Session {
         newPlant.addSink(0, 246);
         newPlant.addConnector(0, 0, newPlant.features[1], newPlant.features[0]);
         newPlant.addConnector(0, 0, newPlant.features[2], newPlant.features[1]);
-        // for compressions testing
-        newPlant.addSplit(-246, 0);
-        newPlant.addMerge(246, 0);
-        newPlant.addZone(246, 0);
-        // for compressions testing
         let parentLink = new ParentLink(-196, 0);
         parentLink.targetPlant = this.plantsPointer;
         newPlant.features.push(parentLink);

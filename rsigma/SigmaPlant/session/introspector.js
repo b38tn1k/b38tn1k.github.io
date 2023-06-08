@@ -1,5 +1,6 @@
 const excludedKeys = new Set([
     'action',
+    'capture',
     'rFilters',
     'adoptable',
     'animationValue',
@@ -20,9 +21,12 @@ const excludedKeys = new Set([
     'untethered',
     'untetheredClicks',
     'connectorIsOnScreen',
-    'static'
+    'static',
+    'keysRequiringIDLink',
+    'path',
+    'def'
 ]);
-const toDoKeys = new Set([
+const reqIdKeys = new Set([
     'input',
     'output',
     // 'buses',
@@ -34,16 +38,24 @@ const selfDescriberKeys = new Set(['plant', 'g']);
 const selfDescriberGroups = new Set(['buttons', 'dataLabels']);
 
 function isNotEmpty(variable) {
-    if (Array.isArray(variable) || typeof variable === 'object') {
-        return Object.keys(variable).length !== 0;
+    if (variable) {
+        if (Array.isArray(variable) || typeof variable === 'object') {
+            return Object.keys(variable).length !== 0;
+        }
+        return true;
     }
     return true;
 }
 
 class PropertyFilter {
-    constructor(criteria, action) {
+    constructor(criteria, capture, firstPass=null) {
         this.criteria = criteria;
-        this.action = action;
+        this.capture = capture;
+        if (firstPass) {
+            this.firstPass = firstPass;
+        } else {
+            this.firstPass = () => {};
+        }
     }
 }
 
@@ -51,15 +63,21 @@ function isVector(key, obj) {
     return obj[key] instanceof p5.Vector;
 }
 
-function isVectorAction(info, key, obj) {
+function isVectorCapture(info, key, obj) {
     info[key] = [obj[key].x, obj[key].y, obj[key].z];
 }
 
-function isRequiresID(key, obj) {
-    return toDoKeys.has(String(key));
+function isVectorConstruct(info, key, obj) {
+    obj[key].x = info[key][0];
+    obj[key].y = info[key][1];
+    obj[key].z = info[key][2];
 }
 
-function isRequiresIDAction(info, key, obj) {
+function isRequiresID(key, obj) {
+    return reqIdKeys.has(String(key));
+}
+
+function isRequiresIDCapture(info, key, obj) {
     if (obj[key]) {
         switch (String(key)) {
             case 'input':
@@ -70,9 +88,9 @@ function isRequiresIDAction(info, key, obj) {
             case 'children':
                 if (obj[key].length > 0) {
                     info[key] = [];
-                }
-                for (let i = 0; i < obj[key].length; i++) {
-                    info[key].push(obj[key][i].data['id']);
+                    for (let i = 0; i < obj[key].length; i++) {
+                        info[key].push(obj[key][i].data['id']);
+                    }
                 }
                 break;
             case 'anchors':
@@ -86,8 +104,12 @@ function isRequiresIDAction(info, key, obj) {
     }
 }
 
+function isRequiresIDConstruct(info, key, obj) {
+    obj.keysRequiringIDLink.push(key);
+}
+
 function isExcluded(key, obj) {
-    return excludedKeys.has(String(key));//|| toDoKeys.has(String(key));
+    return excludedKeys.has(String(key));//|| reqIdKeys.has(String(key));
 }
 function noAction() {}
 
@@ -95,23 +117,47 @@ function isSelfDescriber(key, obj) {
     return selfDescriberKeys.has(String(key));
 }
 
-function isSelfDescriberAction(info, key, obj) {
+function isSelfDescriberCapture(info, key, obj) {
     info[key] = obj[key].selfDescribe();
+}
+
+function isSelfDescriberConstruct(info, key, obj) {
+    // console.log('isSelfDescriberConstruct', key);
+    if (key != 'plant') {
+        obj[key].def = info[key];
+        obj[key].selfConstruct();
+    }
 }
 
 function isSelfDescriberGroup(key, obj) {
     return selfDescriberGroups.has(String(key));
 }
 
-function isSelfDescriberGroupAction(info, key, obj) {
-    info[key] = [];
+function isSelfDescriberGroupCapture(info, key, obj) {
     if (Array.isArray(obj[key])) {
+        info[key] = [];
         for (let i = 0; i < obj[key].length; i++) {
             info[key].push(obj[key][i].selfDescribe());
         }
     } else {
+        info[key] = {};
         Object.keys(obj[key]).forEach((k) => {
-            info[key].push(obj[key][k].selfDescribe());
+            // info[key].push(obj[key][k].selfDescribe());
+            info[key][k] = obj[key][k].selfDescribe();
+        });
+    }
+}
+
+function isSelfDescriberGroupConstruct(info, key, obj) {
+    if (Array.isArray(obj[key])) {
+        for (let i = 0; i < obj[key].length; i++) {
+            obj[key][i].def = info[key][i];
+            obj[key][i].selfConstruct();
+        }
+    } else {
+        Object.keys(obj[key]).forEach((k) => {
+            obj[key][k].def = info[key][k];
+            obj[key][k].selfConstruct();
         });
     }
 }
@@ -121,39 +167,57 @@ function catchAll(key, obj) {
     return true;
 }
 
-function catchAllAction(info, key, obj) {
-    if (obj[key] != 'none' && isNotEmpty(obj[key])) {
+function catchAllConstruct(info, key, obj) {
+    obj[key] = info[key];
+}
+
+function catchAllCapture(info, key, obj) {
+    if (obj[key] != null && isNotEmpty(obj[key])) {
         info[key] = obj[key];
     }
 }
 
 class Introspector {
-    constructor() {
+    constructor(placeholder=false) {
+        this.placeholder = placeholder;
+        this.def = null; // for self construction
+        this.keysRequiringIDLink = []
         this.rFilters = [];
-        
         this.rFilters.push(new PropertyFilter(isExcluded, noAction));
-        this.rFilters.push(new PropertyFilter(isVector, isVectorAction));
+        this.rFilters.push(new PropertyFilter(isVector, isVectorCapture, isVectorConstruct));
         this.rFilters.push(
-            new PropertyFilter(isSelfDescriber, isSelfDescriberAction)
+            new PropertyFilter(isSelfDescriber, isSelfDescriberCapture, isSelfDescriberConstruct)
         );
         this.rFilters.push(
-            new PropertyFilter(isSelfDescriberGroup, isSelfDescriberGroupAction)
+            new PropertyFilter(isSelfDescriberGroup, isSelfDescriberGroupCapture, isSelfDescriberGroupConstruct)
         );
         this.rFilters.push(
-            new PropertyFilter(isRequiresID, isRequiresIDAction)
+            new PropertyFilter(isRequiresID, isRequiresIDCapture, isRequiresIDConstruct)
         );
-        this.rFilters.push(new PropertyFilter(catchAll, catchAllAction));
+        this.rFilters.push(new PropertyFilter(catchAll, catchAllCapture, catchAllConstruct));
+    }
+
+    selfConstruct() {
+        if (this.placeholder == false) {
+            Object.keys(this.def).forEach((key) => {
+                for (let rf of this.rFilters) { // if I reverse, I need to write more filters anyway
+                    if (rf.criteria(String(key), this)) {
+                        rf.firstPass(this.def, key, this);
+                        break;
+                    }
+                }
+            });
+        }
     }
 
     selfDescribe() {
         let info = {
             constructor: this.constructor.name
         };
-
         Object.keys(this).forEach((key) => {
             for (let rf of this.rFilters) {
                 if (rf.criteria(String(key), this)) {
-                    rf.action(info, key, this);
+                    rf.capture(info, key, this);
                     break;
                 }
             }

@@ -845,8 +845,11 @@ class Merge extends Feature {
 }
 
 class Connector extends Feature {
-    constructor(x, y, input, output) {
+    constructor(x, y, input, output, id=null) {
         super(x, y, 0, 0, 'connector'); // Call the parent constructor
+        if (id) {
+          this.data['id'] = id;
+        }
         this.changed = false;
         this.g.manualOnScreen = true;
         this.isAnimating = false;

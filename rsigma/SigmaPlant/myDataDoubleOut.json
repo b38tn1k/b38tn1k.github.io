@@ -1,0 +1,1338 @@
+{
+  "constructor": "Plant",
+  "features": [
+    {
+      "constructor": "Process",
+      "placeholder": false,
+      "g": {
+        "constructor": "Geometry",
+        "placeholder": false,
+        "bCart": [
+          5,
+          -54,
+          0
+        ],
+        "bDims": {
+          "w": 400,
+          "h": 280
+        },
+        "aDims": {
+          "w": 400,
+          "h": 280
+        }
+      },
+      "buttons": [
+        {
+          "constructor": "FeatureUIButtonMove",
+          "placeholder": false,
+          "g": {
+            "constructor": "ParentDefinedGeometry",
+            "placeholder": false,
+            "bCart": [
+              0,
+              0,
+              0
+            ],
+            "bDims": {
+              "w": 20,
+              "h": 20
+            },
+            "aDims": {
+              "w": 20,
+              "h": 20
+            },
+            "bSqrDim": 20,
+            "bOffset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "targetID": "none",
+          "data": {
+            "id": "hqu2pm06",
+            "data": "process"
+          },
+          "mouseOverData": "PROCESS"
+        },
+        {
+          "constructor": "FeatureUIButtonClose",
+          "placeholder": false,
+          "g": {
+            "constructor": "ParentDefinedGeometry",
+            "placeholder": false,
+            "bCart": [
+              1,
+              0,
+              0
+            ],
+            "bDims": {
+              "w": 20,
+              "h": 20
+            },
+            "aDims": {
+              "w": 20,
+              "h": 20
+            },
+            "bSqrDim": 20,
+            "bOffset": [
+              -20,
+              0,
+              0
+            ]
+          },
+          "targetID": "none",
+          "data": {
+            "id": "x297hnjl",
+            "data": "Xdelete"
+          },
+          "mouseOverData": "XDELETE"
+        },
+        {
+          "constructor": "FeatureUIButtonResize",
+          "placeholder": false,
+          "g": {
+            "constructor": "ParentDefinedGeometry",
+            "placeholder": false,
+            "bCart": [
+              1,
+              1,
+              0
+            ],
+            "bDims": {
+              "w": 20,
+              "h": 20
+            },
+            "aDims": {
+              "w": 20,
+              "h": 20
+            },
+            "bSqrDim": 20,
+            "bOffset": [
+              -20,
+              -20,
+              0
+            ]
+          },
+          "targetID": "none",
+          "data": {
+            "id": "a2mxcrd1",
+            "data": "Resize"
+          },
+          "mouseOverData": "RESIZE"
+        },
+        {
+          "constructor": "FeatureUIButtonLetterLabel",
+          "placeholder": false,
+          "g": {
+            "constructor": "ParentDefinedGeometry",
+            "placeholder": false,
+            "bCart": [
+              1,
+              0.5,
+              0
+            ],
+            "bDims": {
+              "w": 20,
+              "h": 20
+            },
+            "aDims": {
+              "w": 20,
+              "h": 20
+            },
+            "bSqrDim": 20,
+            "bOffset": [
+              -20,
+              0,
+              0
+            ]
+          },
+          "targetID": "none",
+          "data": {
+            "id": "zqhfzt65",
+            "data": "Edit"
+          },
+          "mouseOverData": "EDIT"
+        },
+        {
+          "constructor": "FeatureUIInputButton",
+          "placeholder": false,
+          "g": {
+            "constructor": "ParentDefinedGeometry",
+            "placeholder": false,
+            "bCart": [
+              0.2,
+              0,
+              0
+            ],
+            "bDims": {
+              "w": 20,
+              "h": 20
+            },
+            "aDims": {
+              "w": 20,
+              "h": 20
+            },
+            "bSqrDim": 20,
+            "bOffset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "targetID": "xqupixk1",
+          "data": {
+            "id": "9k416wd2",
+            "data": "Input"
+          },
+          "mouseOverData": "SOURCE",
+          "connected": false
+        },
+        {
+          "constructor": "FeatureUIOutputButton",
+          "placeholder": false,
+          "g": {
+            "constructor": "ParentDefinedGeometry",
+            "placeholder": false,
+            "bCart": [
+              0.2,
+              1,
+              0
+            ],
+            "bDims": {
+              "w": 20,
+              "h": 20
+            },
+            "aDims": {
+              "w": 20,
+              "h": 20
+            },
+            "bSqrDim": 20,
+            "bOffset": [
+              0,
+              -20,
+              0
+            ]
+          },
+          "targetID": "5ewy8gxd",
+          "data": {
+            "id": "cr5i151e",
+            "data": "Output"
+          },
+          "mouseOverData": "SINK",
+          "connected": false
+        },
+        {
+          "constructor": "FeatureUIInputButton",
+          "placeholder": false,
+          "g": {
+            "constructor": "ParentDefinedGeometry",
+            "placeholder": false,
+            "bCart": [
+              0.8,
+              0,
+              0
+            ],
+            "bDims": {
+              "w": 20,
+              "h": 20
+            },
+            "aDims": {
+              "w": 20,
+              "h": 20
+            },
+            "bSqrDim": 20,
+            "bOffset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "targetID": "a3mrj3y3",
+          "data": {
+            "id": "jnat8ksk",
+            "data": "Input"
+          },
+          "mouseOverData": "SOURCE",
+          "connected": false
+        }
+      ],
+      "type": "process",
+      "dataLabels": {
+        "title": {
+          "constructor": "FeatureDataTextLabel",
+          "placeholder": false,
+          "g": {
+            "constructor": "ParentDefinedGeometry",
+            "placeholder": false,
+            "bCart": [
+              0,
+              0.15,
+              0
+            ],
+            "bDims": {
+              "w": 88.0224609375,
+              "h": 20
+            },
+            "aDims": {
+              "w": 20,
+              "h": 20
+            },
+            "bSqrDim": 20,
+            "bOffset": [
+              0,
+              0,
+              0
+            ]
+          },
+          "targetID": "none",
+          "data": {
+            "id": "33yil15v",
+            "data": "PROCESS"
+          },
+          "mouseOverData": "none"
+        },
+        "id": {
+          "constructor": "FeatureDataIDLabel",
+          "placeholder": false,
+          "g": {
+            "constructor": "ParentDefinedGeometry",
+            "placeholder": false,
+            "bCart": [
+              0,
+              1,
+              0
+            ],
+            "bDims": {
+              "w": 156.5859375,
+              "h": 20
+            },
+            "aDims": {
+              "w": 20,
+              "h": 20
+            },
+            "bSqrDim": 20,
+            "bOffset": [
+              0,
+              -20,
+              0
+            ]
+          },
+          "targetID": "none",
+          "data": {
+            "id": "u8f62p42",
+            "data": "process->nv00dwf0"
+          },
+          "mouseOverData": "none"
+        }
+      },
+      "data": {
+        "id": "nv00dwf0",
+        "title": "PROCESS"
+      },
+      "changed": false,
+      "plant": {
+        "constructor": "Plant",
+        "features": [
+          {
+            "constructor": "Source",
+            "placeholder": false,
+            "g": {
+              "constructor": "Geometry",
+              "placeholder": false,
+              "bCart": [
+                0,
+                -246,
+                0
+              ],
+              "bDims": {
+                "w": 196,
+                "h": 196
+              },
+              "aDims": {
+                "w": 196,
+                "h": 196
+              }
+            },
+            "buttons": [
+              {
+                "constructor": "FeatureUIButtonMove",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "x44wltvj",
+                  "data": "source"
+                },
+                "mouseOverData": "SOURCE"
+              },
+              {
+                "constructor": "FeatureUIButtonClose",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    1,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -20,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "7rldzgtl",
+                  "data": "Xdelete"
+                },
+                "mouseOverData": "XDELETE"
+              },
+              {
+                "constructor": "FeatureUIOutputButton",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0.5,
+                    1,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -10,
+                    -20,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "w1q1vibo",
+                  "data": "Output"
+                },
+                "mouseOverData": "OUTPUT",
+                "connected": true,
+                "associatedConnector": "sscjhg3j"
+              }
+            ],
+            "type": "source",
+            "dataLabels": {
+              "title": {
+                "constructor": "FeatureDataTextLabel",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    0.15,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 77.009765625,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "ckcbggtf",
+                  "data": "SOURCE"
+                },
+                "mouseOverData": "none"
+              },
+              "id": {
+                "constructor": "FeatureDataIDLabel",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 141.57421875,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    -20,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "4zb7efvb",
+                  "data": "source->xqupixk1"
+                },
+                "mouseOverData": "none"
+              }
+            },
+            "data": {
+              "id": "xqupixk1",
+              "title": "SOURCE"
+            },
+            "changed": false
+          },
+          {
+            "constructor": "Metric",
+            "placeholder": false,
+            "g": {
+              "constructor": "Geometry",
+              "placeholder": false,
+              "bCart": [
+                0,
+                0,
+                0
+              ],
+              "bDims": {
+                "w": 196,
+                "h": 196
+              },
+              "aDims": {
+                "w": 196,
+                "h": 196
+              }
+            },
+            "buttons": [
+              {
+                "constructor": "FeatureUIButtonMove",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "hdfj30oo",
+                  "data": "metric"
+                },
+                "mouseOverData": "METRIC"
+              },
+              {
+                "constructor": "FeatureUIButtonClose",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    1,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -20,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "fyg7km7e",
+                  "data": "Xdelete"
+                },
+                "mouseOverData": "XDELETE"
+              },
+              {
+                "constructor": "FeatureUIInputButton",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0.5,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -10,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "lvfw5mfk",
+                  "data": "Input"
+                },
+                "mouseOverData": "INPUT",
+                "connected": true,
+                "associatedConnector": "sscjhg3j"
+              },
+              {
+                "constructor": "FeatureUIOutputButton",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0.5,
+                    1,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -10,
+                    -20,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "xpjvao9d",
+                  "data": "Output"
+                },
+                "mouseOverData": "OUTPUT",
+                "connected": true,
+                "associatedConnector": "y89bxjrw"
+              }
+            ],
+            "type": "metric",
+            "dataLabels": {
+              "title": {
+                "constructor": "FeatureDataTextLabel",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    0.15,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 68.994140625,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "n2f15riy",
+                  "data": "METRIC"
+                },
+                "mouseOverData": "none"
+              },
+              "id": {
+                "constructor": "FeatureDataIDLabel",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 144.5361328125,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    -20,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "95g8yivk",
+                  "data": "metric->wzpwofza"
+                },
+                "mouseOverData": "none"
+              }
+            },
+            "data": {
+              "id": "wzpwofza",
+              "title": "METRIC"
+            },
+            "changed": false
+          },
+          {
+            "constructor": "Sink",
+            "placeholder": false,
+            "g": {
+              "constructor": "Geometry",
+              "placeholder": false,
+              "bCart": [
+                0,
+                246,
+                0
+              ],
+              "bDims": {
+                "w": 196,
+                "h": 196
+              },
+              "aDims": {
+                "w": 196,
+                "h": 196
+              }
+            },
+            "buttons": [
+              {
+                "constructor": "FeatureUIButtonMove",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "7o2jw2mo",
+                  "data": "sink"
+                },
+                "mouseOverData": "SINK"
+              },
+              {
+                "constructor": "FeatureUIButtonClose",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    1,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -20,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "dbq4w883",
+                  "data": "Xdelete"
+                },
+                "mouseOverData": "XDELETE"
+              },
+              {
+                "constructor": "FeatureUIInputButton",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0.5,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -10,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "lu9c2qxz",
+                  "data": "Input"
+                },
+                "mouseOverData": "INPUT",
+                "connected": true,
+                "associatedConnector": "y89bxjrw"
+              }
+            ],
+            "type": "sink",
+            "dataLabels": {
+              "title": {
+                "constructor": "FeatureDataTextLabel",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    0.15,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 42.01171875,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "tk3h3wgd",
+                  "data": "SINK"
+                },
+                "mouseOverData": "none"
+              },
+              "id": {
+                "constructor": "FeatureDataIDLabel",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 129.568359375,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    -20,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "ml8dkt48",
+                  "data": "sink->5ewy8gxd"
+                },
+                "mouseOverData": "none"
+              }
+            },
+            "data": {
+              "id": "5ewy8gxd",
+              "title": "SINK"
+            },
+            "changed": false
+          },
+          {
+            "constructor": "Connector",
+            "placeholder": false,
+            "g": {
+              "constructor": "Geometry",
+              "placeholder": false,
+              "bCart": [
+                0,
+                0,
+                0
+              ],
+              "bDims": {
+                "w": 0,
+                "h": 0
+              },
+              "aDims": {
+                "w": 0,
+                "h": 0
+              }
+            },
+            "buttons": [],
+            "type": "connector",
+            "dataLabels": {},
+            "data": {
+              "id": "sscjhg3j"
+            },
+            "changed": false,
+            "input": "wzpwofza",
+            "output": "xqupixk1",
+            "anchors": {
+              "Input": "lvfw5mfk",
+              "Output": "w1q1vibo"
+            }
+          },
+          {
+            "constructor": "Connector",
+            "placeholder": false,
+            "g": {
+              "constructor": "Geometry",
+              "placeholder": false,
+              "bCart": [
+                0,
+                0,
+                0
+              ],
+              "bDims": {
+                "w": 0,
+                "h": 0
+              },
+              "aDims": {
+                "w": 0,
+                "h": 0
+              }
+            },
+            "buttons": [],
+            "type": "connector",
+            "dataLabels": {},
+            "data": {
+              "id": "y89bxjrw"
+            },
+            "changed": false,
+            "input": "5ewy8gxd",
+            "output": "wzpwofza",
+            "anchors": {
+              "Input": "lu9c2qxz",
+              "Output": "xpjvao9d"
+            }
+          },
+          {
+            "constructor": "ParentLink",
+            "placeholder": false,
+            "g": {
+              "constructor": "Geometry",
+              "placeholder": false,
+              "bCart": [
+                -196,
+                0,
+                0
+              ],
+              "bDims": {
+                "w": 98,
+                "h": 98
+              },
+              "aDims": {
+                "w": 98,
+                "h": 98
+              }
+            },
+            "buttons": [
+              {
+                "constructor": "FeatureUIButtonMove",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "lxdw7ydj",
+                  "data": "parentLink"
+                },
+                "mouseOverData": "PARENTLINK"
+              }
+            ],
+            "type": "parentLink",
+            "dataLabels": {
+              "title": {
+                "constructor": "FeatureDataTextLabelTrigger",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0.5,
+                    0.3,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 71.68359375,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -35.841796875,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "1mf5jvuc",
+                  "data": "PARENT"
+                },
+                "mouseOverData": "none"
+              }
+            },
+            "data": {
+              "id": "jwkam7hs",
+              "title": "PARENT"
+            },
+            "changed": false,
+            "targetPlant": 0
+          },
+          {
+            "constructor": "Source",
+            "placeholder": false,
+            "g": {
+              "constructor": "Geometry",
+              "placeholder": false,
+              "bCart": [
+                311,
+                -261,
+                0
+              ],
+              "bDims": {
+                "w": 196,
+                "h": 196
+              },
+              "aDims": {
+                "w": 196,
+                "h": 196
+              }
+            },
+            "buttons": [
+              {
+                "constructor": "FeatureUIButtonMove",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "axgydl5d",
+                  "data": "source"
+                },
+                "mouseOverData": "SOURCE"
+              },
+              {
+                "constructor": "FeatureUIButtonClose",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    1,
+                    0,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -20,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "m6q0bbaw",
+                  "data": "Xdelete"
+                },
+                "mouseOverData": "XDELETE"
+              },
+              {
+                "constructor": "FeatureUIOutputButton",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0.5,
+                    1,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    -10,
+                    -20,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "6v431nag",
+                  "data": "Output"
+                },
+                "mouseOverData": "OUTPUT",
+                "connected": false
+              }
+            ],
+            "type": "source",
+            "dataLabels": {
+              "title": {
+                "constructor": "FeatureDataTextLabel",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    0.15,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 77.009765625,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    0,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "fmpwx2wl",
+                  "data": "SOURCE"
+                },
+                "mouseOverData": "none"
+              },
+              "id": {
+                "constructor": "FeatureDataIDLabel",
+                "placeholder": false,
+                "g": {
+                  "constructor": "ParentDefinedGeometry",
+                  "placeholder": false,
+                  "bCart": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "bDims": {
+                    "w": 144.5625,
+                    "h": 20
+                  },
+                  "aDims": {
+                    "w": 20,
+                    "h": 20
+                  },
+                  "bSqrDim": 20,
+                  "bOffset": [
+                    0,
+                    -20,
+                    0
+                  ]
+                },
+                "targetID": "none",
+                "data": {
+                  "id": "kxj9xp81",
+                  "data": "source->a3mrj3y3"
+                },
+                "mouseOverData": "none"
+              }
+            },
+            "data": {
+              "id": "a3mrj3y3",
+              "title": "SOURCE"
+            },
+            "changed": false
+          }
+        ]
+      },
+      "targetPlant": 1,
+      "buses": {
+        "source": {},
+        "sink": {}
+      }
+    }
+  ]
+}

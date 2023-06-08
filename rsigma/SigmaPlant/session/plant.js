@@ -126,6 +126,111 @@ class Plant {
         this.changed = false;
     }
 
+    selfConstruct(info, sess) {
+        // first, instantiate all the objects in features, in order, recursively for plants
+        const f = info.features;
+        for (let i = 0; i < f.length; i++) {
+            switch (f[i].constructor) {
+                case 'Process':
+                    let newPlant = new Plant();
+                    sess.plants.push(newPlant);
+                    newPlant.selfConstruct(f[i].plant);
+                    let newProcess = new Process(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1],
+                        f[i].g.bDims.w,
+                        f[i].g.bDims.h,
+                        newPlant,
+                        f[i].targetPlant
+                    );
+                    newProcess.def = f[i];
+                    newProcess.setupFromSubProcess();
+                    this.features.push(newProcess);
+                    break;
+                case 'ParentLink':
+                    let newParentLink = new ParentLink(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1]
+                    );
+                    newParentLink.def = f[i];
+                    this.features.push(newParentLink);
+                    break;
+                case 'Source':
+                    let newSource = new Source(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1]
+                    );
+                    newSource.def = f[i];
+                    this.features.push(newSource);
+                    break;
+                case 'Sink':
+                    let newSink = new Sink(f[i].g.bCart[0], f[i].g.bCart[1]);
+                    newSink.def = f[i];
+                    this.features.push(newSink);
+                    break;
+                case 'Zone':
+                    let newZone = new Zone(f[i].g.bCart[0], f[i].g.bCart[1]);
+                    newZone.def = f[i];
+                    this.features.push(newZone);
+                    break;
+                case 'Metric':
+                    let newMetric = new Metric(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1]
+                    );
+                    newMetric.def = f[i];
+                    this.features.push(newMetric);
+                    break;
+                case 'Split':
+                    let newSplit = new Split(f[i].g.bCart[0], f[i].g.bCart[1]);
+                    newSplit.def = f[i];
+                    this.features.push(newSplit);
+                    break;
+                case 'Merge':
+                    let newMerge = new Merge(f[i].g.bCart[0], f[i].g.bCart[1]);
+                    newMerge.def = f[i];
+                    this.features.push(newMerge);
+                    break;
+                case 'Connector':
+                    let placeHolder = new Introspector(true);
+                    placeHolder.def = f[i];
+                    this.features.push(placeHolder);
+                    break;
+            }
+        }
+
+        // set non-linking properties for each object in features, in order
+        for (let i = 0; i < this.features.length; i++) {
+            this.features[i].isAnimating = false;
+            this.features[i].animationValue = 1;
+            this.features[i].selfConstruct();
+        }
+        // set the linking properties for each object in features, in order
+        for (let i = 0; i < this.features.length; i++) {
+            if (this.features[i].placeholder == true) {
+                let d = this.features[i].def;
+                switch (d.constructor) {
+                    case 'Connector':
+                        try {
+                            const inp = this.findID(d.input);
+                            const oup = this.findID(d.output);
+                            this.features[i] = new Connector(0, 0, inp, oup, d.data.id);
+                        } catch (error) {
+                            console.log('No Connector Created', error);
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    findID(id) {
+        const foundFeature = this.features.find(
+            (feature) => feature.data['id'] === id
+        );
+        return foundFeature;
+    }
+
     selfDescribe() {
         let info = {
             constructor: this.constructor.name

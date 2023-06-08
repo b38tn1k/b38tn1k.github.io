@@ -21,6 +21,7 @@ class Feature extends Introspector {
         this.initButtons(BUTTON_SIZE);
         this.initDataLabels(BUTTON_SIZE);
         this.changed = true;
+        this.command = {};
     }
 
     initDataLabels(buttonSize) {}
@@ -45,12 +46,29 @@ class Feature extends Introspector {
 
     moveToMouse() {
         let mob = screenToBoard(mouseX, mouseY);
-        this.move(mob.x, mob.y);
+        this.move(mob.x-2, mob.y-2); // could be board dims on 2 but i dont trust I implemented it
     }
 
-    move(x, y) {
+    packCommand(d, f, r) {
+      this.command = {id: this.data['id'], command: d, forwards: f, reverse: r};
+    }
+
+    updateCommand(f) {
+      this.command.forwards = f;
+    }
+
+    move(x, y, record=true) {
+        this.g.bCartOld.x = this.g.bCart.x;
+        this.g.bCartOld.y = this.g.bCart.y;
         this.g.bCart.x = x;
         this.g.bCart.y = y;
+        if (record) {
+          if (Object.keys(this.command).length === 0) {
+            this.packCommand('move', [x, y], [this.g.bCartOld.x, this.g.bCartOld.y]);
+          } else {
+            this.updateCommand([x, y]);
+          }
+        }
     }
 
     resizeToMouse() {
@@ -139,6 +157,9 @@ class Feature extends Introspector {
                     this.changed = true;
                 }
                 break;
+            case 'idle':
+              this.command = {};
+              break;
         }
     }
 
@@ -596,18 +617,22 @@ class Zone extends Feature {
         );
     }
 
-    moveToMouse() {
-        const mob = screenToBoard(mouseX, mouseY);
-        const oldX = this.g.bCart.x;
-        const oldY = this.g.bCart.y;
-        this.g.bCart.x = mob.x;
-        this.g.bCart.y = mob.y;
+    move(x, y, record=true) {
+        // const oldX = this.g.bCart.x;
+        // const oldY = this.g.bCart.y;
+        // this.g.bCart.x = x;
+        // this.g.bCart.y = y;
+        super.move(x, y, record);
         const delta = createVector(
-            this.g.bCart.x - oldX,
-            this.g.bCart.y - oldY
+            this.g.bCart.x - this.g.bCartOld.x,
+            this.g.bCart.y - this.g.bCartOld.y
         );
         for (let i = 0; i < this.children.length; i++) {
-            this.children[i].g.bCart.add(delta);
+            this.children[i].move(
+                this.children[i].g.bCart.x + delta.x,
+                this.children[i].g.bCart.y + delta.y,
+                false
+            );
         }
     }
 
@@ -911,36 +936,36 @@ class Connector extends Feature {
             let ip = this.input.g.offDirection;
             let op = this.output.g.offDirection;
             if (ip.left) {
-              x1 = 0;
-              y1 = y2 + 2*buffer;
+                x1 = 0;
+                y1 = y2 + 2 * buffer;
             }
             if (ip.right) {
-              x1 = windowWidth;
-              y1 = y2 + 2*buffer;
+                x1 = windowWidth;
+                y1 = y2 + 2 * buffer;
             }
             if (ip.top) {
-              x1 = x2;
-              y1 = 0;
+                x1 = x2;
+                y1 = 0;
             }
             if (ip.bottom) {
-              x1 = x2;
-              y1 = windowHeight;
+                x1 = x2;
+                y1 = windowHeight;
             }
             if (op.left) {
-              x2 = 0;
-              y2 = y1 + 2*buffer;
+                x2 = 0;
+                y2 = y1 + 2 * buffer;
             }
             if (op.right) {
-              x2 = windowWidth;
-              y2 = y1 + 2*buffer;
+                x2 = windowWidth;
+                y2 = y1 + 2 * buffer;
             }
             if (op.top) {
-              x2 = x1;
-              y2 = 0;
+                x2 = x1;
+                y2 = 0;
             }
             if (op.bottom) {
-              x2 = x1;
-              y2 = windowHeight;
+                x2 = x1;
+                y2 = windowHeight;
             }
             // Calculate the midpoints
             let midY = (y1 + y2) / 2;

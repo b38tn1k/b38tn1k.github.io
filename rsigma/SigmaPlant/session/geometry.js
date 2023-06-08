@@ -8,6 +8,7 @@ class Geometry extends Introspector {
     constructor(x, y, width, height) {
         super();
         this.bCart = createVector(x, y); // board position
+        this.bCartOld = createVector(x, y); // board position
         this.sCart = createVector(x, y); // screen position
         this.bDims = { w: width, h: height }; // board dims
         this.sDims = { w: 0, h: 0 }; // screen dims

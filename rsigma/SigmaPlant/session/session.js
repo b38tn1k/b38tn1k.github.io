@@ -6,38 +6,40 @@ function slerp(start, end, t) {
 function calculateStringSimilarity(str1, str2) {
     const m = str1.length;
     const n = str2.length;
-    
+
     // Create a 2D array to store the distances
-    const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
-    
+    const dp = Array(m + 1)
+        .fill(null)
+        .map(() => Array(n + 1).fill(0));
+
     // Initialize the first row and column of the array
     for (let i = 0; i <= m; i++) {
-      dp[i][0] = i;
+        dp[i][0] = i;
     }
     for (let j = 0; j <= n; j++) {
-      dp[0][j] = j;
+        dp[0][j] = j;
     }
-    
+
     // Calculate the Levenshtein distance
     for (let i = 1; i <= m; i++) {
-      for (let j = 1; j <= n; j++) {
-        if (str1[i - 1] === str2[j - 1]) {
-          dp[i][j] = dp[i - 1][j - 1];
-        } else {
-          dp[i][j] = Math.min(
-            dp[i - 1][j] + 1, // Deletion
-            dp[i][j - 1] + 1, // Insertion
-            dp[i - 1][j - 1] + 1 // Substitution
-          );
+        for (let j = 1; j <= n; j++) {
+            if (str1[i - 1] === str2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
+            } else {
+                dp[i][j] = Math.min(
+                    dp[i - 1][j] + 1, // Deletion
+                    dp[i][j - 1] + 1, // Insertion
+                    dp[i - 1][j - 1] + 1 // Substitution
+                );
+            }
         }
-      }
     }
-    
+
     // Return the similarity score (1 - normalized Levenshtein distance)
     const maxLen = Math.max(m, n);
-    const similarity = 1 - (dp[m][n] / maxLen);
+    const similarity = 1 - dp[m][n] / maxLen;
     return similarity;
-  }
+}
 
 function compressString(input, keyMap) {
     let compressed = input;
@@ -68,6 +70,8 @@ class Session {
         this.mode = 'idle';
         this.transitionTimer = 0;
         this.transitionDuration = 15;
+        this.history = [];
+        this.undoCursor = 1;
     }
 
     get plant() {
@@ -109,14 +113,14 @@ class Session {
     saveSerializedPlant() {
         const description = this.plants[0].selfDescribe();
         try {
-            saveJSON(description, "myData.json");
+            saveJSON(description, 'myData.json');
         } catch (error) {
             console.error(error);
             console.log(description);
         }
     }
 
-    loadFromObject(info){
+    loadFromObject(info) {
         this.plants[0].selfConstruct(info, this);
     }
 
@@ -141,6 +145,32 @@ class Session {
         }
         if (this.plant.changed === true) {
             this.plant.setChangedFalse();
+        }
+        if (this.plant.command.length > 0) {
+            this.history.push({
+                plant: this.plantsPointer,
+                command: this.plant.command
+            });
+            this.plant.command = [];
+        }
+    }
+
+    doUndo() {
+        // console.log(this.history);
+        if (this.history.length >= this.undoCursor) {
+            let lastItem = this.history.pop();
+            // console.log(lastItem.command);
+            for (let i = 0; i < lastItem.command.length; i++) {
+                let target = this.plants[lastItem.plant].findID(lastItem.command[i].id);
+                // console.log(target);
+                switch (lastItem.command[i].command) {
+                    case 'move':
+                        target.move(lastItem.command[i].reverse[0],lastItem.command[i].reverse[1], false)
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 

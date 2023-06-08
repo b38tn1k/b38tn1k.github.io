@@ -5,6 +5,7 @@ class Plant {
         this.isActive = false;
         this.targetPlant = null;
         this.changed = false;
+        this.command = [];
     }
 
     addSink(x, y) {
@@ -279,6 +280,10 @@ class Plant {
 
             if (feature.mode !== 'idle') {
                 this.setActiveMode(feature);
+            } else {
+              if (Object.keys(feature.command).length > 0) {
+                this.command.push(feature.command);
+              }
             }
 
             if (feature.mode === 'delete') {
@@ -363,6 +368,9 @@ class Plant {
                 this.mode = 'idle';
                 // this.changed = false;
                 break;
+        }
+        for (let i = 0; i < this.features.length; i++) {
+          this.features[i].changed = true;
         }
     }
 }

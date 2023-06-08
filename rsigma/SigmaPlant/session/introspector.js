@@ -24,7 +24,9 @@ const excludedKeys = new Set([
     'static',
     'keysRequiringIDLink',
     'path',
-    'def'
+    'def',
+    'command',
+    'bCartOld'
 ]);
 const reqIdKeys = new Set([
     'input',

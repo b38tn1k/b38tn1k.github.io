@@ -25,6 +25,9 @@ function keyPressed() {
           if (key === 'l') {
               sess.loadFromObject(JSONloader);
           }
+          if (key === 'z') {
+            sess.doUndo();
+          }
     }
   }
 

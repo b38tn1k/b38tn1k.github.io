@@ -215,6 +215,25 @@ class Plant {
                             const inp = this.findID(d.input);
                             const oup = this.findID(d.output);
                             this.features[i] = new Connector(0, 0, inp, oup, d.data.id);
+                            let inpB, oupB;
+                            for (let t = 0; t < inp.buttons.length; t++) {
+                              if(d.anchors['Input'] == inp.buttons[t].data['id']) {
+                                inpB = inp.buttons[t];
+                                inp.buttons[t].associatedConnector = this.features[i];
+                                this.features[i].anchors['Input'] = inpB;
+                                break;
+                              }
+                            }
+                            for (let t = 0; t < oup.buttons.length; t++) {
+                              if(d.anchors['Output'] == oup.buttons[t].data['id']) {
+                                oupB = oup.buttons[t];
+                                oup.buttons[t].associatedConnector = this.features[i];
+                                this.features[i].anchors['Output'] = oupB;
+                                break;
+                              }
+                            }
+                            
+                            
                         } catch (error) {
                             console.log('No Connector Created', error);
                         }

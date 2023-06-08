@@ -49,8 +49,8 @@ class Feature extends Introspector {
     }
 
     move(x, y) {
-      this.g.bCart.x = x;
-      this.g.bCart.y = y;
+        this.g.bCart.x = x;
+        this.g.bCart.y = y;
     }
 
     resizeToMouse() {
@@ -849,10 +849,10 @@ class Merge extends Feature {
 }
 
 class Connector extends Feature {
-    constructor(x, y, input, output, id=null) {
+    constructor(x, y, input, output, id = null) {
         super(x, y, 0, 0, 'connector'); // Call the parent constructor
         if (id) {
-          this.data['id'] = id;
+            this.data['id'] = id;
         }
         this.changed = false;
         this.g.manualOnScreen = true;
@@ -863,6 +863,8 @@ class Connector extends Feature {
         this.output = output;
         this.anchors = {};
         this.untethered = true;
+        this.previousICart = createVector(0, 0);
+        this.previousOCart = createVector(0, 0);
         if (this.input && this.output) {
             this.untethered = false;
             let inputAnchor = input.buttons.find(
@@ -890,6 +892,20 @@ class Connector extends Feature {
         if (!this.untethered) {
             res = super.selfDescribe();
         }
+        return res;
+    }
+
+    ioHasMoved() {
+        let res = false;
+        if (this.anchors['Input'].g.sCart != this.previousICart) {
+            res = true;
+            this.previousICart = this.anchors['Input'].g.sCart;
+        }
+        if (this.anchors['Output'].g.sCart != this.previousICart) {
+            res = true;
+            this.previousICart = this.anchors['Output'].g.sCart;
+        }
+        console.log(res);
         return res;
     }
 

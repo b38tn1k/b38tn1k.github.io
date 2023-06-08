@@ -271,7 +271,7 @@
               0
             ],
             "bDims": {
-              "w": 88.0224609375,
+              "w": 42.029296875,
               "h": 20
             },
             "aDims": {
@@ -288,9 +288,10 @@
           "targetID": "none",
           "data": {
             "id": "33yil15v",
-            "data": "PROCESS"
+            "data": "helllo"
           },
-          "mouseOverData": "none"
+          "mouseOverData": "none",
+          "changed": false
         },
         "id": {
           "constructor": "FeatureDataIDLabel",
@@ -328,7 +329,7 @@
       },
       "data": {
         "id": "nv00dwf0",
-        "title": "PROCESS"
+        "title": "helllo"
       },
       "changed": false,
       "plant": {

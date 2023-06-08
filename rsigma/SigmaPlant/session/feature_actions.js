@@ -1,7 +1,8 @@
 function openDialog(plantData, xa, ya) {
+    // turn off shortcut keys
+    keyboardRequiresFocus = true;
     // Create a dialog box for text input
     const dialog = createInput(plantData.data['data']);
-
     // Create a container div for the dialog box
     const container = createDiv();
     container.position(xa - 2, ya - 6);
@@ -56,6 +57,8 @@ function openDialog(plantData, xa, ya) {
         // if (plantData.mode === 'busy') {
         doTheThing();
         document.removeEventListener('mousedown', removeDialog);
+        // turn on shortcut keys
+        keyboardRequiresFocus = false;
         // }
     };
 

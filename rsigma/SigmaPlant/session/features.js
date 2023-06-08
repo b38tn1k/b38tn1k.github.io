@@ -45,8 +45,12 @@ class Feature extends Introspector {
 
     moveToMouse() {
         let mob = screenToBoard(mouseX, mouseY);
-        this.g.bCart.x = mob.x;
-        this.g.bCart.y = mob.y;
+        this.move(mob.x, mob.y);
+    }
+
+    move(x, y) {
+      this.g.bCart.x = x;
+      this.g.bCart.y = y;
     }
 
     resizeToMouse() {

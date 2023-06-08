@@ -269,6 +269,7 @@ class Plant {
             }
 
             feature.update(zoom);
+            // console.log(feature.g.checkMouseOver(mouseX, mouseY));
 
             if (feature.adoptable) {
                 this.adoptFeatureIntoZone(zones, feature);

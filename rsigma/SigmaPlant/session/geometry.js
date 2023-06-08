@@ -21,6 +21,14 @@ class Geometry extends Introspector {
         this.bDims = { w: 0, h: 0 };
     }
 
+    checkMouseOver(mouseX, mouseY) {
+        let inXRange =
+            mouseX >= this.sCart.x && mouseX <= this.sCart.x + this.sDims.w;
+        let inYRange =
+            mouseY >= this.sCart.y && mouseY <= this.sCart.y + this.sDims.h;
+        return inXRange && inYRange;
+    }
+
     get isOnScreen() {
         // big boolean in screen space to see if object is onscreen
         return (
@@ -99,14 +107,6 @@ class ParentDefinedGeometry extends Geometry {
                 gp.sCart.y + this.bCart.y * gp.sDims.h + this.bOffset.y * zoom;
             this.sCart = createVector(xd, yd);
         }
-    }
-
-    checkMouseOver(mouseX, mouseY) {
-        let inXRange =
-            mouseX >= this.sCart.x && mouseX <= this.sCart.x + this.sDims.w;
-        let inYRange =
-            mouseY >= this.sCart.y && mouseY <= this.sCart.y + this.sDims.h;
-        return inXRange && inYRange;
     }
 
     getCenter() {

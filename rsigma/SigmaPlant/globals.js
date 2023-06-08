@@ -16,6 +16,7 @@ let inputTimeout = 500;
 // global singular
 let menu;
 let sess;
+let keyboardRequiresFocus = false;
 // global mouse timer
 let mousePressTime;
 let mouseHoldDurationValue = 200;

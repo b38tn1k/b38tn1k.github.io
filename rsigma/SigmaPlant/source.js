@@ -18,11 +18,13 @@ function mouseReleased() {
 }
 
 function keyPressed() {
-    if (key === ' ') {
-      sess.saveSerializedPlant();
-    }
-    if (key === 'l') {
-        sess.loadFromObject(JSONloader);
+    if (keyboardRequiresFocus == false) {
+        if (key === ' ') {
+            sess.saveSerializedPlant();
+          }
+          if (key === 'l') {
+              sess.loadFromObject(JSONloader);
+          }
     }
   }
 
@@ -36,7 +38,7 @@ function mousePressed() {
 function preload() {
     loadJSON('assets/colors.json', loadColors);
     themes = loadJSON('assets/themes4.json');
-    JSONloader = loadJSON('myDataDoubleOut.json');
+    JSONloader = loadJSON('sandwich.json');
 }
 
 function setupScreen() {

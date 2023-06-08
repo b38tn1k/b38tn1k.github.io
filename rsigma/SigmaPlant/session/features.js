@@ -863,8 +863,6 @@ class Connector extends Feature {
         this.output = output;
         this.anchors = {};
         this.untethered = true;
-        this.previousICart = createVector(0, 0);
-        this.previousOCart = createVector(0, 0);
         if (this.input && this.output) {
             this.untethered = false;
             let inputAnchor = input.buttons.find(
@@ -895,24 +893,9 @@ class Connector extends Feature {
         return res;
     }
 
-    ioHasMoved() {
-        let res = false;
-        if (this.anchors['Input'].g.sCart != this.previousICart) {
-            res = true;
-            this.previousICart = this.anchors['Input'].g.sCart;
-        }
-        if (this.anchors['Output'].g.sCart != this.previousICart) {
-            res = true;
-            this.previousICart = this.anchors['Output'].g.sCart;
-        }
-        console.log(res);
-        return res;
-    }
-
     computePath(zoom) {
         if (this.input && this.output) {
             let buffer = 20 * zoom;
-
             let x1 =
                 this.anchors['Input'].g.sCart.x +
                 this.anchors['Input'].g.sSqrDimOn2;
@@ -925,7 +908,40 @@ class Connector extends Feature {
                 this.anchors['Output'].g.sCart.y +
                 this.anchors['Output'].g.sSqrDim;
             buffer = min(buffer, Math.abs(y2 - y1) / 3);
-
+            let ip = this.input.g.offDirection;
+            let op = this.output.g.offDirection;
+            if (ip.left) {
+              x1 = 0;
+              y1 = y2 + 2*buffer;
+            }
+            if (ip.right) {
+              x1 = windowWidth;
+              y1 = y2 + 2*buffer;
+            }
+            if (ip.top) {
+              x1 = x2;
+              y1 = 0;
+            }
+            if (ip.bottom) {
+              x1 = x2;
+              y1 = windowHeight;
+            }
+            if (op.left) {
+              x2 = 0;
+              y2 = y1 + 2*buffer;
+            }
+            if (op.right) {
+              x2 = windowWidth;
+              y2 = y1 + 2*buffer;
+            }
+            if (op.top) {
+              x2 = x1;
+              y2 = 0;
+            }
+            if (op.bottom) {
+              x2 = x1;
+              y2 = windowHeight;
+            }
             // Calculate the midpoints
             let midY = (y1 + y2) / 2;
             let midX = (x1 + x2) / 2;

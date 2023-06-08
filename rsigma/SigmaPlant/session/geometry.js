@@ -29,6 +29,26 @@ class Geometry extends Introspector {
         return inXRange && inYRange;
     }
 
+    get isOffLeft() {
+        return (this.sCart.x + this.sDims.w < 0);
+    }
+
+    get isOffRight() {
+        return (this.sCart.x > windowWidth)
+    }
+
+    get isOffTop() {
+        return (this.sCart.y + this.sDims.h < 0);
+    }
+
+    get isOffBottom() {
+        return (this.sCart.y > windowHeight);
+    }
+
+    get offDirection () {
+        return {left: this.isOffLeft, right: this.isOffRight, top: this.isOffTop, bottom: this.isOffBottom};
+    }
+
     get isOnScreen() {
         // big boolean in screen space to see if object is onscreen
         return (

@@ -71,7 +71,9 @@ class Session {
         this.transitionTimer = 0;
         this.transitionDuration = 15;
         this.history = [];
-        this.undoCursor = 1;
+        this.undoStack = [];
+        this.redoStack = [];
+        this.undoCursor = 0;
     }
 
     get plant() {
@@ -143,35 +145,173 @@ class Session {
                 this.endTransition(zoom);
                 break;
         }
+
         if (this.plant.changed === true) {
             this.plant.setChangedFalse();
+            this.clearRedoStack();
         }
-        if (this.plant.command.length > 0) {
-            this.history.push({
+
+        if (this.plant.command.length > 0 && !this.plant.isActive) {
+            // Add the commands to the undo stack
+            this.undoStack.push({
                 plant: this.plantsPointer,
-                command: this.plant.command
+                commands: this.plant.command
             });
+
+            // Clear the redo stack
+            this.clearRedoStack();
+
+            // Reset the undo cursor
+            this.undoCursor = this.undoStack.length;
             this.plant.command = [];
         }
     }
 
     doUndo() {
-        // console.log(this.history);
-        if (this.history.length >= this.undoCursor) {
-            let lastItem = this.history.pop();
-            // console.log(lastItem.command);
-            for (let i = 0; i < lastItem.command.length; i++) {
-                let target = this.plants[lastItem.plant].findID(lastItem.command[i].id);
-                // console.log(target);
-                switch (lastItem.command[i].command) {
-                    case 'move':
-                        target.move(lastItem.command[i].reverse[0],lastItem.command[i].reverse[1], false)
-                        break;
-                    default:
-                        break;
+        if (this.undoCursor > 0) {
+          // Decrement the undo cursor
+          this.undoCursor--;
+      
+          // Get the commands from the undo stack and undo them
+          const commandObject = this.undoStack.pop();
+          this.undoCommands(commandObject);
+      
+          // Move the commands to the redo stack
+          this.redoStack.push(commandObject);
+        }
+      }
+      
+      doRedo() {
+        if (this.redoStack.length > 0) {
+          // Get the commands from the redo stack and redo them
+          const commandObject = this.redoStack.pop();
+          this.redoCommands(commandObject);
+      
+          // Move the commands to the undo stack
+          this.undoStack.push(commandObject);
+      
+          // Increment the undo cursor
+          this.undoCursor++;
+        }
+      }
+      
+
+    undoCommands(commandObject) {
+        const commands = commandObject.commands;
+        const plant = commandObject.plant;
+        for (let ftcmds of commands) {
+            let target = this.plants[plant].findID(ftcmds.id);
+            if (target) {
+                for (let i = 0; i < ftcmds.commands.length; i++) {
+                    let child;
+                    switch (ftcmds.commands[i].type) {
+                        case 'move':
+                            target.move(
+                                ftcmds.commands[i].reverse[0],
+                                ftcmds.commands[i].reverse[1],
+                                false
+                            );
+                            break;
+                        case 'addChild':
+                            child = this.plants[plant].findID(
+                                ftcmds.commands[i].reverse.id
+                            );
+                            if (child) {
+                                target.removeChild(child, false);
+                                child.move(
+                                    ftcmds.commands[i].reverse.x,
+                                    ftcmds.commands[i].reverse.y,
+                                    false
+                                );
+                            }
+                            break;
+                        case 'removeChild':
+                            child = this.plants[plant].findID(
+                                ftcmds.commands[i].reverse.id
+                            );
+                            if (child) {
+                                target.addChild(child, false);
+                                child.move(
+                                    ftcmds.commands[i].reverse.x,
+                                    ftcmds.commands[i].reverse.y,
+                                    false
+                                );
+                            }
+                            break;
+                        case 'resize':
+                            target.resize(
+                                ftcmds.commands[i].reverse[0],
+                                ftcmds.commands[i].reverse[1],
+                                false
+                            );
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
+    }
+
+    redoCommands(commandObject) {
+        const commands = commandObject.commands;
+        const plant = commandObject.plant;
+        for (let ftcmds of commands) {
+            let target = this.plants[plant].findID(ftcmds.id);
+            if (target) {
+                for (let i = 0; i < ftcmds.commands.length; i++) {
+                    let child;
+                    switch (ftcmds.commands[i].type) {
+                        case 'move':
+                            target.move(
+                                ftcmds.commands[i].forwards[0],
+                                ftcmds.commands[i].forwards[1],
+                                false
+                            );
+                            break;
+                        case 'addChild':
+                            child = this.plants[plant].findID(
+                                ftcmds.commands[i].reverse.id
+                            );
+                            if (child) {
+                                target.addChild(child, false);
+                                child.move(
+                                    ftcmds.commands[i].reverse.x,
+                                    ftcmds.commands[i].reverse.y,
+                                    false
+                                );
+                            }
+                            break;
+                        case 'removeChild':
+                            child = this.plants[plant].findID(
+                                ftcmds.commands[i].reverse.id
+                            );
+                            if (child) {
+                                target.removeChild(child, false);
+                                child.move(
+                                    ftcmds.commands[i].reverse.x,
+                                    ftcmds.commands[i].reverse.y,
+                                    false
+                                );
+                            }
+                            break;
+                        case 'resize':
+                            target.resize(
+                                ftcmds.commands[i].reverse[0],
+                                ftcmds.commands[i].reverse[1],
+                                false
+                            );
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    clearRedoStack() {
+        this.redoStack = [];
     }
 
     serializePlant() {

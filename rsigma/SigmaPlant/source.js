@@ -28,6 +28,9 @@ function keyPressed() {
           if (key === 'z') {
             sess.doUndo();
           }
+          if (key === 'r') {
+            sess.doRedo();
+          }
     }
   }
 

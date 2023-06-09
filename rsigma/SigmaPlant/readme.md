@@ -35,7 +35,8 @@
 - [ ] Split/Merge Block with Percentages (two way only, slider split maybe)
 
   - [x] Implment base
-  - [ ] Allow use defined additional buses 
+  - [ ] ~~Allow use defined additional buses~~
+  - [ ] percentage split
 
 - [ ] Metric Block
 

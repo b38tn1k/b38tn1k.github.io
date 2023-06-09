@@ -46,28 +46,50 @@ class Feature extends Introspector {
 
     moveToMouse() {
         let mob = screenToBoard(mouseX, mouseY);
-        this.move(mob.x-2, mob.y-2); // could be board dims on 2 but i dont trust I implemented it
+        this.move(mob.x - 2, mob.y - 2); // could be board dims on 2 but i dont trust I implemented it
     }
 
-    packCommand(d, f, r) {
-      this.command = {id: this.data['id'], command: d, forwards: f, reverse: r};
+    packCommand(record, d, f, r) {
+        if (!r) {
+            r = f;
+        }
+        if (record) {
+            if (Object.keys(this.command).length === 0) {
+                this.command = {
+                    id: this.data['id'],
+                    commands: [{ type: d, forwards: f, reverse: r }]
+                };
+            } else {
+                // Check if a command with type 'd' already exists
+                const existingCommandIndex = this.command.commands.findIndex(
+                    (cmd) => cmd.type === d
+                );
+
+                if (existingCommandIndex !== -1) {
+                    // Update the existing command with new forwards value
+                    this.command.commands[existingCommandIndex].forwards = f;
+                } else {
+                    // Create a new command with type, forwards, and reverse
+                    const newCommand = { type: d, forwards: f, reverse: r };
+                    this.command.commands.push(newCommand);
+                }
+            }
+        }
+        // console.info('SOCKET UPDATE:', this.data.id, d, r, f);
     }
 
-    updateCommand(f) {
-      this.command.forwards = f;
-    }
-
-    move(x, y, record=true) {
+    move(x, y, record = true) {
         this.g.bCartOld.x = this.g.bCart.x;
         this.g.bCartOld.y = this.g.bCart.y;
         this.g.bCart.x = x;
         this.g.bCart.y = y;
         if (record) {
-          if (Object.keys(this.command).length === 0) {
-            this.packCommand('move', [x, y], [this.g.bCartOld.x, this.g.bCartOld.y]);
-          } else {
-            this.updateCommand([x, y]);
-          }
+            this.packCommand(
+                record,
+                'move',
+                [x, y],
+                [this.g.bCartOld.x, this.g.bCartOld.y]
+            );
         }
     }
 
@@ -75,10 +97,24 @@ class Feature extends Introspector {
         let mob = screenToBoard(mouseX, mouseY);
         let pWidth = mob.x - this.g.bCart.x;
         let pHeight = mob.y - this.g.bCart.y;
-        if (pWidth > 50 && pHeight > 50) {
-            this.g.bDims.w = pWidth;
-            this.g.bDims.h = pHeight;
+        this.resize(pWidth, pHeight);
+        
+    }
+
+    resize(w, h, record=true) {
+        const oldw = this.g.bDims.w;
+        const oldh = this.g.bDims.h;
+        if (w > 50 && h > 50) {
+            this.g.bDims.w = w;
+            this.g.bDims.h = h;
+            this.packCommand(
+                record,
+                'resize',
+                [w, h],
+                [oldw, oldh]
+            );
         }
+        
     }
 
     updateButtonsAndLabels(zoom) {
@@ -158,8 +194,8 @@ class Feature extends Introspector {
                 }
                 break;
             case 'idle':
-              this.command = {};
-              break;
+                this.command = {};
+                break;
         }
     }
 
@@ -617,7 +653,7 @@ class Zone extends Feature {
         );
     }
 
-    move(x, y, record=true) {
+    move(x, y, record = true) {
         // const oldX = this.g.bCart.x;
         // const oldY = this.g.bCart.y;
         // this.g.bCart.x = x;
@@ -630,8 +666,7 @@ class Zone extends Feature {
         for (let i = 0; i < this.children.length; i++) {
             this.children[i].move(
                 this.children[i].g.bCart.x + delta.x,
-                this.children[i].g.bCart.y + delta.y,
-                false
+                this.children[i].g.bCart.y + delta.y
             );
         }
     }
@@ -640,11 +675,23 @@ class Zone extends Feature {
         return this.children.includes(feature);
     }
 
-    removeChild(feature) {
+    removeChild(feature, record = true) {
+        let c = {
+            id: feature.data['id'],
+            x: feature.g.bCart.x,
+            y: feature.g.bCart.y
+        };
+        this.packCommand(record, 'removeChild', c);
         this.children = this.children.filter((child) => child !== feature);
     }
 
-    addChild(feature) {
+    addChild(feature, record = true) {
+        let c = {
+            id: feature.data['id'],
+            x: feature.g.bCart.x,
+            y: feature.g.bCart.y
+        };
+        this.packCommand(record, 'addChild', c);
         this.children.push(feature);
     }
 

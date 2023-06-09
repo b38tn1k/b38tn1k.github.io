@@ -663,7 +663,7 @@ class Zone extends Feature {
 
     setChildMode(mode){
         for (let i = 0; i < this.children.length; i++) {
-            this.children[i].mode = mode;
+            this.children[i].setMode(mode);
         }
     }
 

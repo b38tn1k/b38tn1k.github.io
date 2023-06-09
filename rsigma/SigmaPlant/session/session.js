@@ -63,18 +63,18 @@ function decompressString(compressed, keyMap) {
     return decompressed;
 }
 
-function logCommand(commandObject, label='UPDATE') {
+function logCommand(commandObject, label = 'UPDATE') {
     let mystring = label + '\tPLANT: ';
     mystring += String(commandObject.plant);
-    mystring += "\n\t\t";
+    mystring += '\n\t\t';
     for (let cmd of commandObject.commands) {
-        mystring += ('ID: ') + cmd.id;
-        mystring += (' CMD: ');
+        mystring += 'ID: ' + cmd.id;
+        mystring += ' CMD: ';
         for (let c of cmd.commands) {
             mystring += c.type;
-            mystring += " ";
+            mystring += ' ';
         }
-        mystring += "\n\t";
+        mystring += '\n\t';
     }
     return mystring;
 }
@@ -87,9 +87,10 @@ class Session {
         this.transitionTimer = 0;
         this.transitionDuration = 15;
         this.history = [];
-        this.undoStack = [];
-        this.redoStack = [];
-        this.undoCursor = 0;
+        this.undoStack = [[]];
+        this.redoStack = [[]];
+        this.undoCursor = [0];
+        this.preserveStack = false;
     }
 
     get plant() {
@@ -164,7 +165,10 @@ class Session {
 
         if (this.plant.changed === true) {
             this.plant.setChangedFalse();
-            this.clearRedoStack();
+            if (!this.preserveStack) {
+                this.clearRedoStack();
+                this.preserveStack = false;
+            }
         }
 
         if (this.plant.command.length > 0 && !this.plant.isActive) {
@@ -172,8 +176,8 @@ class Session {
             const commandObject = {
                 plant: this.plantsPointer,
                 commands: this.plant.command
-            }
-            this.undoStack.push(commandObject);
+            };
+            this.undoStack[this.plantsPointer].push(commandObject);
 
             console.log(logCommand(commandObject));
 
@@ -181,38 +185,38 @@ class Session {
             this.clearRedoStack();
 
             // Reset the undo cursor
-            this.undoCursor = this.undoStack.length;
+            this.undoCursor[this.plantsPointer] = this.undoStack[this.plantsPointer].length;
             this.plant.command = [];
         }
     }
 
     doUndo() {
-        if (this.undoCursor > 0) {
+        if (this.undoCursor[this.plantsPointer] > 0) {
             // Decrement the undo cursor
-            this.undoCursor--;
+            this.undoCursor[this.plantsPointer]--;
 
             // Get the commands from the undo stack and undo them
-            const commandObject = this.undoStack.pop();
+            const commandObject = this.undoStack[this.plantsPointer].pop();
             console.log(logCommand(commandObject, 'UNDO'));
             this.undoCommands(commandObject);
 
             // Move the commands to the redo stack
-            this.redoStack.push(commandObject);
+            this.redoStack[this.plantsPointer].push(commandObject);
         }
     }
 
     doRedo() {
-        if (this.redoStack.length > 0) {
+        if (this.redoStack[this.plantsPointer].length > 0) {
             // Get the commands from the redo stack and redo them
-            const commandObject = this.redoStack.pop();
+            const commandObject = this.redoStack[this.plantsPointer].pop();
             console.log(logCommand(commandObject, 'REDO'));
             this.redoCommands(commandObject);
 
             // Move the commands to the undo stack
-            this.undoStack.push(commandObject);
+            this.undoStack[this.plantsPointer].push(commandObject);
 
             // Increment the undo cursor
-            this.undoCursor++;
+            this.undoCursor[this.plantsPointer]++;
         }
     }
 
@@ -225,45 +229,58 @@ class Session {
                 for (let i = 0; i < ftcmds.commands.length; i++) {
                     let child;
                     switch (ftcmds.commands[i].type) {
-                        case 'move':
-                            target.move(
-                                ftcmds.commands[i].reverse[0],
-                                ftcmds.commands[i].reverse[1],
-                                false
-                            );
+                        case 'newFeature':
+                            target.setMode('delete');
+                            target.delete();
+                            this.preserveStack = true;
                             break;
-                        case 'addChild':
-                            child = this.plants[plant].findID(
-                                ftcmds.commands[i].reverse.id
-                            );
-                            if (child) {
-                                target.removeChild(child, false);
-                                child.move(
-                                    ftcmds.commands[i].reverse.x,
-                                    ftcmds.commands[i].reverse.y,
+                        case 'move':
+                            if (target) {
+                                target.move(
+                                    ftcmds.commands[i].reverse[0],
+                                    ftcmds.commands[i].reverse[1],
                                     false
                                 );
+                            }
+                            break;
+                        case 'addChild':
+                            if (target) {
+                                child = this.plants[plant].findID(
+                                    ftcmds.commands[i].reverse.id
+                                );
+                                if (child) {
+                                    target.removeChild(child, false);
+                                    child.move(
+                                        ftcmds.commands[i].reverse.x,
+                                        ftcmds.commands[i].reverse.y,
+                                        false
+                                    );
+                                }
                             }
                             break;
                         case 'removeChild':
-                            child = this.plants[plant].findID(
-                                ftcmds.commands[i].reverse.id
-                            );
-                            if (child) {
-                                target.addChild(child, false);
-                                child.move(
-                                    ftcmds.commands[i].reverse.x,
-                                    ftcmds.commands[i].reverse.y,
-                                    false
+                            if (target) {
+                                child = this.plants[plant].findID(
+                                    ftcmds.commands[i].reverse.id
                                 );
+                                if (child) {
+                                    target.addChild(child, false);
+                                    child.move(
+                                        ftcmds.commands[i].reverse.x,
+                                        ftcmds.commands[i].reverse.y,
+                                        false
+                                    );
+                                }
                             }
                             break;
                         case 'resize':
-                            target.resize(
-                                ftcmds.commands[i].reverse[0],
-                                ftcmds.commands[i].reverse[1],
-                                false
-                            );
+                            if (target) {
+                                target.resize(
+                                    ftcmds.commands[i].reverse[0],
+                                    ftcmds.commands[i].reverse[1],
+                                    false
+                                );
+                            }
                             break;
                         default:
                             break;
@@ -271,6 +288,42 @@ class Session {
                 }
             }
         }
+    }
+    //TODODOODOD
+    reConstruct(type, info) {
+        const x = 0;
+        const y = 0;
+        switch (type) {
+            case 'process':
+                this.addProcess(x, y, false); // amm i adding extra plants?
+                break;
+            case 'sink':
+                this.addSink(x, y, false);
+                break;
+            case 'source':
+                this.addSource(x, y, false);
+                break;
+            case 'zone':
+                this.addZone(x, y, false);
+                break;
+            case 'metric':
+                this.addMetric(x, y, false);
+                break;
+            case 'split':
+                this.addSplit(x, y, false);
+                break;
+            case 'merge':
+                this.addMerge(x, y, false);
+                break;
+            case 'connector':
+                // this.addConnector(x, y, input, output, false);
+                break;
+        }
+        let newFeature = this.plant.getLastAdded();
+        newFeature.def = info;
+        newFeature.isAnimating = false;
+        newFeature.animationValue = 1;
+        newFeature.selfConstruct();
     }
 
     redoCommands(commandObject) {
@@ -278,18 +331,28 @@ class Session {
         const plant = commandObject.plant;
         for (let ftcmds of commands) {
             let target = this.plants[plant].findID(ftcmds.id);
-            if (target) {
-                for (let i = 0; i < ftcmds.commands.length; i++) {
-                    let child;
-                    switch (ftcmds.commands[i].type) {
-                        case 'move':
+
+            for (let i = 0; i < ftcmds.commands.length; i++) {
+                let child;
+                switch (ftcmds.commands[i].type) {
+                    case 'newFeature':
+                        this.reConstruct(
+                            ftcmds.commands[i].forwards,
+                            ftcmds.commands[i].reverse
+                        );
+                        this.preserveStack = true;
+                        break;
+                    case 'move':
+                        if (target) {
                             target.move(
                                 ftcmds.commands[i].forwards[0],
                                 ftcmds.commands[i].forwards[1],
                                 false
                             );
-                            break;
-                        case 'addChild':
+                        }
+                        break;
+                    case 'addChild':
+                        if (target) {
                             child = this.plants[plant].findID(
                                 ftcmds.commands[i].reverse.id
                             );
@@ -301,8 +364,10 @@ class Session {
                                     false
                                 );
                             }
-                            break;
-                        case 'removeChild':
+                        }
+                        break;
+                    case 'removeChild':
+                        if (target) {
                             child = this.plants[plant].findID(
                                 ftcmds.commands[i].reverse.id
                             );
@@ -314,24 +379,27 @@ class Session {
                                     false
                                 );
                             }
-                            break;
-                        case 'resize':
+                        }
+                        break;
+                    case 'resize':
+                        if (target) {
                             target.resize(
                                 ftcmds.commands[i].reverse[0],
                                 ftcmds.commands[i].reverse[1],
                                 false
                             );
-                            break;
-                        default:
-                            break;
-                    }
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
     }
 
     clearRedoStack() {
-        this.redoStack = [];
+        console.log('CLEAR REDO STACK');
+        this.redoStack[this.plantsPointer] = [];
     }
 
     serializePlant() {
@@ -350,64 +418,51 @@ class Session {
         this.plant.draw(zoom, cnv);
     }
 
-    addProcess(x, y) {
+    addProcess(x, y, record=true) {
         let newPlant = new Plant();
-        newPlant.addSource(0, -246);
-        newPlant.addMetric(0, 0);
-        newPlant.addSink(0, 246);
-        newPlant.addConnector(0, 0, newPlant.features[1], newPlant.features[0]);
-        newPlant.addConnector(0, 0, newPlant.features[2], newPlant.features[1]);
+        newPlant.addSource(0, -246, false);
+        newPlant.addMetric(0, 0, false);
+        newPlant.addSink(0, 246, false);
+        newPlant.addConnector(0, 0, newPlant.features[1], newPlant.features[0], false);
+        newPlant.addConnector(0, 0, newPlant.features[2], newPlant.features[1], false);
         let parentLink = new ParentLink(-196, 0);
         parentLink.targetPlant = this.plantsPointer;
         newPlant.features.push(parentLink);
         for (let i = 0; i < newPlant.features.length; i++) {
-            // why isnt this working
             newPlant.features[i].turnOffAnimations();
         }
         this.plants.push(newPlant);
-        let newProcess = new Process(
-            x,
-            y,
-            400,
-            280,
-            newPlant,
-            this.plants.length - 1
-        );
-        this.plant.features.push(newProcess);
+        this.undoStack.push([]);
+        this.redoStack.push([]);
+        this.undoCursor.push(0);
+        this.plant.addProcess(x, y, newPlant, this.plants.length - 1, record);
     }
 
-    addSink(x, y) {
-        this.plant.addSink(x, y);
-        // this.plant.features.push(new Sink(x, y));
+    addSink(x, y, record=true) {
+        this.plant.addSink(x, y, record);
     }
 
-    addSource(x, y) {
-        this.plant.addSource(x, y);
-        // this.plant.features.push(new Source(x, y));
+    addSource(x, y, record=true) {
+        this.plant.addSource(x, y, record);
     }
 
-    addZone(x, y) {
-        this.plant.addZone(x, y);
-        // this.plant.features.push(new Zone(x, y));
+    addZone(x, y, record=true) {
+        this.plant.addZone(x, y, record);
     }
 
-    addMetric(x, y) {
-        this.plant.addMetric(x, y);
-        // this.plant.features.push(new Metric(x, y));
+    addMetric(x, y, record=true) {
+        this.plant.addMetric(x, y, record);
     }
 
-    addSplit(x, y) {
-        this.plant.addSplit(x, y);
-        // this.plant.features.push(new Split(x, y));
+    addSplit(x, y, record=true) {
+        this.plant.addSplit(x, y, record);
     }
 
-    addMerge(x, y) {
-        this.plant.addMerge(x, y);
-        // this.plant.features.push(new Merge(x, y));
+    addMerge(x, y, record=true) {
+        this.plant.addMerge(x, y, record);
     }
 
-    addConnector(x, y, input, output) {
-        this.plant.addConnector(x, y, input, output);
-        // this.plant.features.push(new Connector(x, y, input, output));
+    addConnector(x, y, input, output, record=true) {
+        this.plant.addConnector(x, y, input, output, record);
     }
 }

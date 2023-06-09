@@ -8,39 +8,64 @@ class Plant {
         this.command = [];
     }
 
-    addSink(x, y) {
+    getLastAdded () {
+        return (this.features[this.features.length-1]);
+    }
+
+    addProcess(x, y, plant, plantID, record=true) {
+        this.changed = true;
+        this.features.push(new Process(x, y, 400, 280, plant, plantID));
+        const feat = this.getLastAdded();
+        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
+    }
+
+    addSink(x, y, record=true) {
         this.changed = true;
         this.features.push(new Sink(x, y));
+        const feat = this.getLastAdded();
+        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
     }
 
-    addSource(x, y) {
+    addSource(x, y, record=true) {
         this.changed = true;
         this.features.push(new Source(x, y));
+        const feat = this.getLastAdded();
+        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
     }
 
-    addZone(x, y) {
+    addZone(x, y, record=true) {
         this.changed = true;
         this.features.push(new Zone(x, y));
+        const feat = this.getLastAdded();
+        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
     }
 
-    addMetric(x, y) {
+    addMetric(x, y, record=true) {
         this.changed = true;
         this.features.push(new Metric(x, y));
+        const feat = this.getLastAdded();
+        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
     }
 
-    addSplit(x, y) {
+    addSplit(x, y, record=true) {
         this.changed = true;
         this.features.push(new Split(x, y));
+        const feat = this.getLastAdded();
+        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
     }
 
-    addMerge(x, y) {
+    addMerge(x, y, record=true) {
         this.changed = true;
         this.features.push(new Merge(x, y));
+        const feat = this.getLastAdded();
+        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
     }
 
-    addConnector(x, y, input, output) {
+    addConnector(x, y, input, output, record=true) {
         this.changed = true;
         this.features.push(new Connector(x, y, input, output));
+        const feat = this.getLastAdded();
+        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
     }
 
     handleMousePress(zoom) {
@@ -215,26 +240,38 @@ class Plant {
                         try {
                             const inp = this.findID(d.input);
                             const oup = this.findID(d.output);
-                            this.features[i] = new Connector(0, 0, inp, oup, d.data.id);
+                            this.features[i] = new Connector(
+                                0,
+                                0,
+                                inp,
+                                oup,
+                                d.data.id
+                            );
                             let inpB, oupB;
                             for (let t = 0; t < inp.buttons.length; t++) {
-                              if(d.anchors['Input'] == inp.buttons[t].data['id']) {
-                                inpB = inp.buttons[t];
-                                inp.buttons[t].associatedConnector = this.features[i];
-                                this.features[i].anchors['Input'] = inpB;
-                                break;
-                              }
+                                if (
+                                    d.anchors['Input'] ==
+                                    inp.buttons[t].data['id']
+                                ) {
+                                    inpB = inp.buttons[t];
+                                    inp.buttons[t].associatedConnector =
+                                        this.features[i];
+                                    this.features[i].anchors['Input'] = inpB;
+                                    break;
+                                }
                             }
                             for (let t = 0; t < oup.buttons.length; t++) {
-                              if(d.anchors['Output'] == oup.buttons[t].data['id']) {
-                                oupB = oup.buttons[t];
-                                oup.buttons[t].associatedConnector = this.features[i];
-                                this.features[i].anchors['Output'] = oupB;
-                                break;
-                              }
+                                if (
+                                    d.anchors['Output'] ==
+                                    oup.buttons[t].data['id']
+                                ) {
+                                    oupB = oup.buttons[t];
+                                    oup.buttons[t].associatedConnector =
+                                        this.features[i];
+                                    this.features[i].anchors['Output'] = oupB;
+                                    break;
+                                }
                             }
-                            
-                            
                         } catch (error) {
                             console.log('No Connector Created', error);
                         }
@@ -283,10 +320,10 @@ class Plant {
                     this.setActiveMode(feature);
                 }
             } else {
-              if (Object.keys(feature.command).length > 0) {
-                this.command.push(feature.command);
-                feature.command = {};
-              }
+                if (Object.keys(feature.command).length > 0) {
+                    this.command.push(feature.command);
+                    feature.command = {};
+                }
             }
 
             if (feature.mode === 'delete') {
@@ -373,7 +410,7 @@ class Plant {
                 break;
         }
         for (let i = 0; i < this.features.length; i++) {
-          this.features[i].changed = true;
+            this.features[i].changed = true;
         }
     }
 }

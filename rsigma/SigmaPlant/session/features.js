@@ -179,22 +179,30 @@ class Feature extends Introspector {
         }
     }
 
+    exitMove() {
+        if (mouseIsPressed == false) {
+            this.setMode('idle');
+            this.changed = true;
+        }
+    }
+
+    existResize() {
+        if (mouseIsPressed == false) {
+            this.setMode('idle');
+            this.changed = true;
+        }
+    }
+
     checkModeAndAct() {
         switch (this.mode) {
             case 'move':
-                if (mouseIsPressed == false) {
-                    this.setMode('idle');
-                    this.changed = true;
-                }
+                this.exitMove()
                 break;
             case 'resize':
-                if (mouseIsPressed == false) {
-                    this.setMode('idle');
-                    this.changed = true;
-                }
+                this.exitResize()
                 break;
             case 'idle':
-                this.command = {};
+                // this.command = {};
                 break;
         }
     }
@@ -653,6 +661,12 @@ class Zone extends Feature {
         );
     }
 
+    setChildMode(mode){
+        for (let i = 0; i < this.children.length; i++) {
+            this.children[i].mode = mode;
+        }
+    }
+
     move(x, y, record = true) {
         // const oldX = this.g.bCart.x;
         // const oldY = this.g.bCart.y;
@@ -663,11 +677,19 @@ class Zone extends Feature {
             this.g.bCart.x - this.g.bCartOld.x,
             this.g.bCart.y - this.g.bCartOld.y
         );
+        this.setChildMode('auto');
         for (let i = 0; i < this.children.length; i++) {
             this.children[i].move(
                 this.children[i].g.bCart.x + delta.x,
                 this.children[i].g.bCart.y + delta.y
             );
+        }
+    }
+
+    exitMove() {
+        super.exitMove();
+        if (this.mode == 'idle') {
+            this.setChildMode('idle')
         }
     }
 

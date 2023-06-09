@@ -279,10 +279,13 @@ class Plant {
             this.changed = this.features[i].changed || this.changed;
 
             if (feature.mode !== 'idle') {
-                this.setActiveMode(feature);
+                if (feature.mode !== 'auto') {
+                    this.setActiveMode(feature);
+                }
             } else {
               if (Object.keys(feature.command).length > 0) {
                 this.command.push(feature.command);
+                feature.command = {};
               }
             }
 

@@ -63,6 +63,22 @@ function decompressString(compressed, keyMap) {
     return decompressed;
 }
 
+function logCommand(commandObject, label='UPDATE') {
+    let mystring = label + '\tPLANT: ';
+    mystring += String(commandObject.plant);
+    mystring += "\n\t\t";
+    for (let cmd of commandObject.commands) {
+        mystring += ('ID: ') + cmd.id;
+        mystring += (' CMD: ');
+        for (let c of cmd.commands) {
+            mystring += c.type;
+            mystring += " ";
+        }
+        mystring += "\n\t";
+    }
+    return mystring;
+}
+
 class Session {
     constructor() {
         this.plants = [new Plant()];
@@ -153,10 +169,13 @@ class Session {
 
         if (this.plant.command.length > 0 && !this.plant.isActive) {
             // Add the commands to the undo stack
-            this.undoStack.push({
+            const commandObject = {
                 plant: this.plantsPointer,
                 commands: this.plant.command
-            });
+            }
+            this.undoStack.push(commandObject);
+
+            console.log(logCommand(commandObject));
 
             // Clear the redo stack
             this.clearRedoStack();
@@ -169,32 +188,33 @@ class Session {
 
     doUndo() {
         if (this.undoCursor > 0) {
-          // Decrement the undo cursor
-          this.undoCursor--;
-      
-          // Get the commands from the undo stack and undo them
-          const commandObject = this.undoStack.pop();
-          this.undoCommands(commandObject);
-      
-          // Move the commands to the redo stack
-          this.redoStack.push(commandObject);
+            // Decrement the undo cursor
+            this.undoCursor--;
+
+            // Get the commands from the undo stack and undo them
+            const commandObject = this.undoStack.pop();
+            console.log(logCommand(commandObject, 'UNDO'));
+            this.undoCommands(commandObject);
+
+            // Move the commands to the redo stack
+            this.redoStack.push(commandObject);
         }
-      }
-      
-      doRedo() {
+    }
+
+    doRedo() {
         if (this.redoStack.length > 0) {
-          // Get the commands from the redo stack and redo them
-          const commandObject = this.redoStack.pop();
-          this.redoCommands(commandObject);
-      
-          // Move the commands to the undo stack
-          this.undoStack.push(commandObject);
-      
-          // Increment the undo cursor
-          this.undoCursor++;
+            // Get the commands from the redo stack and redo them
+            const commandObject = this.redoStack.pop();
+            console.log(logCommand(commandObject, 'REDO'));
+            this.redoCommands(commandObject);
+
+            // Move the commands to the undo stack
+            this.undoStack.push(commandObject);
+
+            // Increment the undo cursor
+            this.undoCursor++;
         }
-      }
-      
+    }
 
     undoCommands(commandObject) {
         const commands = commandObject.commands;

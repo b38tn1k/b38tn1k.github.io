@@ -356,11 +356,6 @@ class Session {
                             );
                             if (child) {
                                 target.addChild(child, false);
-                                child.move(
-                                    ftcmds.commands[i].reverse.x,
-                                    ftcmds.commands[i].reverse.y,
-                                    false
-                                );
                             }
                         }
                         break;
@@ -371,11 +366,6 @@ class Session {
                             );
                             if (child) {
                                 target.removeChild(child, false);
-                                child.move(
-                                    ftcmds.commands[i].reverse.x,
-                                    ftcmds.commands[i].reverse.y,
-                                    false
-                                );
                             }
                         }
                         break;
@@ -438,9 +428,6 @@ class Session {
             newPlant.features[1],
             false
         );
-        // let parentLink = new ParentLink(-196, 0);
-        // parentLink.targetPlant = this.plantsPointer;
-        // newPlant.features.push(parentLink);
         newPlant.addParentLink(-196, 0, this.plantsPointer);
         for (let i = 0; i < newPlant.features.length; i++) {
             newPlant.features[i].turnOffAnimations();
@@ -450,49 +437,49 @@ class Session {
         this.redoStack.push([]);
         this.undoCursor.push(0);
         const feat = this.plant.addProcess(x, y, newPlant, this.plants.length - 1, record);
-        this.preserveStack = true;
+        // this.preserveStack = true;
         return feat;
     }
 
     addSink(x, y, record = true) {
         const feat = this.plant.addSink(x, y, record);
-        this.preserveStack = true;
+        // this.preserveStack = true;
         return feat;
     }
 
     addSource(x, y, record = true) {
         const feat = this.plant.addSource(x, y, record);
-        this.preserveStack = true;
+        // this.preserveStack = true;
         return feat;
     }
 
     addZone(x, y, record = true) {
         const feat = this.plant.addZone(x, y, record);
-        this.preserveStack = true;
+        // this.preserveStack = true;
         return feat;
     }
 
     addMetric(x, y, record = true) {
         const feat = this.plant.addMetric(x, y, record);
-        this.preserveStack = true;
+        // this.preserveStack = true;
         return feat;
     }
 
     addSplit(x, y, record = true) {
         const feat = this.plant.addSplit(x, y, record);
-        this.preserveStack = true;
+        // this.preserveStack = true;
         return feat;
     }
 
     addMerge(x, y, record = true) {
         const feat = this.plant.addMerge(x, y, record);
-        this.preserveStack = true;
+        // this.preserveStack = true;
         return feat;
     }
 
     addConnector(x, y, input, output, record = true) {
         const feat = this.plant.addConnector(x, y, input, output, record);
-        this.preserveStack = true;
+        // this.preserveStack = true;
         return feat;
     }
 }

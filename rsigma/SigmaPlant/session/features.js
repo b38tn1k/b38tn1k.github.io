@@ -678,16 +678,18 @@ class Zone extends Feature {
         // this.g.bCart.x = x;
         // this.g.bCart.y = y;
         super.move(x, y, record);
-        const delta = createVector(
-            this.g.bCart.x - this.g.bCartOld.x,
-            this.g.bCart.y - this.g.bCartOld.y
-        );
-        this.setChildMode('auto');
-        for (let i = 0; i < this.children.length; i++) {
-            this.children[i].move(
-                this.children[i].g.bCart.x + delta.x,
-                this.children[i].g.bCart.y + delta.y
+        if (record) { //otherwise would be double moving children on undo/redo things
+            const delta = createVector(
+                this.g.bCart.x - this.g.bCartOld.x,
+                this.g.bCart.y - this.g.bCartOld.y
             );
+            this.setChildMode('auto');
+            for (let i = 0; i < this.children.length; i++) {
+                this.children[i].move(
+                    this.children[i].g.bCart.x + delta.x,
+                    this.children[i].g.bCart.y + delta.y
+                );
+            }
         }
     }
 

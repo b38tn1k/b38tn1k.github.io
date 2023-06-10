@@ -283,6 +283,11 @@ class Process extends Feature {
         this.setupFromSubProcess();
     }
 
+    delete() {
+        super.delete();
+        this.plant = null;
+    }
+
     collectBuses() {
         let inputIndices = this.plant.features
             .map((feature, index) => (feature.type == 'source' ? index : null))

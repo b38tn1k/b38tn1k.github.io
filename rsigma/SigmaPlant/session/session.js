@@ -165,10 +165,7 @@ class Session {
 
         if (this.plant.changed === true) {
             this.plant.setChangedFalse();
-            if (!this.preserveStack) {
-                this.clearRedoStack();
-                this.preserveStack = false;
-            }
+            this.clearRedoStack();
         }
 
         if (this.plant.command.length > 0 && !this.plant.isActive) {
@@ -185,7 +182,8 @@ class Session {
             this.clearRedoStack();
 
             // Reset the undo cursor
-            this.undoCursor[this.plantsPointer] = this.undoStack[this.plantsPointer].length;
+            this.undoCursor[this.plantsPointer] =
+                this.undoStack[this.plantsPointer].length;
             this.plant.command = [];
         }
     }
@@ -293,33 +291,33 @@ class Session {
     reConstruct(type, info) {
         const x = 0;
         const y = 0;
+        let newFeature;
         switch (type) {
             case 'process':
-                this.addProcess(x, y, false); // amm i adding extra plants?
+                newFeature = this.addProcess(x, y, false); // amm i adding extra plants?
                 break;
             case 'sink':
-                this.addSink(x, y, false);
+                newFeature = this.addSink(x, y, false);
                 break;
             case 'source':
-                this.addSource(x, y, false);
+                newFeature = this.addSource(x, y, false);
                 break;
             case 'zone':
-                this.addZone(x, y, false);
+                newFeature = this.addZone(x, y, false);
                 break;
             case 'metric':
-                this.addMetric(x, y, false);
+                newFeature = this.addMetric(x, y, false);
                 break;
             case 'split':
-                this.addSplit(x, y, false);
+                newFeature = this.addSplit(x, y, false);
                 break;
             case 'merge':
-                this.addMerge(x, y, false);
+                newFeature = this.addMerge(x, y, false);
                 break;
             case 'connector':
                 // this.addConnector(x, y, input, output, false);
                 break;
         }
-        let newFeature = this.plant.getLastAdded();
         newFeature.def = info;
         newFeature.isAnimating = false;
         newFeature.animationValue = 1;
@@ -398,8 +396,11 @@ class Session {
     }
 
     clearRedoStack() {
-        console.log('CLEAR REDO STACK');
-        this.redoStack[this.plantsPointer] = [];
+        if (!this.preserveStack) {
+            console.log('CLEAR REDO STACK');
+            this.redoStack[this.plantsPointer] = [];
+            this.preserveStack = false;
+        }
     }
 
     serializePlant() {
@@ -418,16 +419,29 @@ class Session {
         this.plant.draw(zoom, cnv);
     }
 
-    addProcess(x, y, record=true) {
+    addProcess(x, y, record = true) {
         let newPlant = new Plant();
         newPlant.addSource(0, -246, false);
         newPlant.addMetric(0, 0, false);
         newPlant.addSink(0, 246, false);
-        newPlant.addConnector(0, 0, newPlant.features[1], newPlant.features[0], false);
-        newPlant.addConnector(0, 0, newPlant.features[2], newPlant.features[1], false);
-        let parentLink = new ParentLink(-196, 0);
-        parentLink.targetPlant = this.plantsPointer;
-        newPlant.features.push(parentLink);
+        newPlant.addConnector(
+            0,
+            0,
+            newPlant.features[1],
+            newPlant.features[0],
+            false
+        );
+        newPlant.addConnector(
+            0,
+            0,
+            newPlant.features[2],
+            newPlant.features[1],
+            false
+        );
+        // let parentLink = new ParentLink(-196, 0);
+        // parentLink.targetPlant = this.plantsPointer;
+        // newPlant.features.push(parentLink);
+        newPlant.addParentLink(-196, 0, this.plantsPointer);
         for (let i = 0; i < newPlant.features.length; i++) {
             newPlant.features[i].turnOffAnimations();
         }
@@ -435,34 +449,50 @@ class Session {
         this.undoStack.push([]);
         this.redoStack.push([]);
         this.undoCursor.push(0);
-        this.plant.addProcess(x, y, newPlant, this.plants.length - 1, record);
+        const feat = this.plant.addProcess(x, y, newPlant, this.plants.length - 1, record);
+        this.preserveStack = true;
+        return feat;
     }
 
-    addSink(x, y, record=true) {
-        this.plant.addSink(x, y, record);
+    addSink(x, y, record = true) {
+        const feat = this.plant.addSink(x, y, record);
+        this.preserveStack = true;
+        return feat;
     }
 
-    addSource(x, y, record=true) {
-        this.plant.addSource(x, y, record);
+    addSource(x, y, record = true) {
+        const feat = this.plant.addSource(x, y, record);
+        this.preserveStack = true;
+        return feat;
     }
 
-    addZone(x, y, record=true) {
-        this.plant.addZone(x, y, record);
+    addZone(x, y, record = true) {
+        const feat = this.plant.addZone(x, y, record);
+        this.preserveStack = true;
+        return feat;
     }
 
-    addMetric(x, y, record=true) {
-        this.plant.addMetric(x, y, record);
+    addMetric(x, y, record = true) {
+        const feat = this.plant.addMetric(x, y, record);
+        this.preserveStack = true;
+        return feat;
     }
 
-    addSplit(x, y, record=true) {
-        this.plant.addSplit(x, y, record);
+    addSplit(x, y, record = true) {
+        const feat = this.plant.addSplit(x, y, record);
+        this.preserveStack = true;
+        return feat;
     }
 
-    addMerge(x, y, record=true) {
-        this.plant.addMerge(x, y, record);
+    addMerge(x, y, record = true) {
+        const feat = this.plant.addMerge(x, y, record);
+        this.preserveStack = true;
+        return feat;
     }
 
-    addConnector(x, y, input, output, record=true) {
-        this.plant.addConnector(x, y, input, output, record);
+    addConnector(x, y, input, output, record = true) {
+        const feat = this.plant.addConnector(x, y, input, output, record);
+        this.preserveStack = true;
+        return feat;
     }
 }

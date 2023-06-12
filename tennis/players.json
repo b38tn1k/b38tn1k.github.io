@@ -1,0 +1,227 @@
+[
+  {
+    "firstName": "James",
+    "lastName": "Cameron",
+    "contact": "james.cameron@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Alex",
+    "lastName": "King",
+    "contact": "alex.king@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Tom",
+    "lastName": "Baker",
+    "contact": "tom.baker@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Jonas",
+    "lastName": "Barnes",
+    "contact": "jonas.barnes@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Ziggy",
+    "lastName": "Cox",
+    "contact": "ziggy.cox@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Jim",
+    "lastName": "Nelson",
+    "contact": "jim.nelson@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Sarah",
+    "lastName": "Miller",
+    "contact": "sarah.miller@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Emily",
+    "lastName": "Taylor",
+    "contact": "emily.taylor@example.com",
+    "availability": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Daniel",
+    "lastName": "Robinson",
+    "contact": "daniel.robinson@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Sophia",
+    "lastName": "Lewis",
+    "contact": "sophia.lewis@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  {
+    "firstName": "Ben",
+    "lastName": "Green",
+    "contact": "ben.green@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true
+    ]
+  },
+  {
+    "firstName": "Olivia",
+    "lastName": "Smith",
+    "contact": "olivia.smith@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  {
+    "firstName": "Michael",
+    "lastName": "Harris",
+    "contact": "michael.harris@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  {
+    "firstName": "Emma",
+    "lastName": "Parker",
+    "contact": "emma.parker@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true
+    ]
+  },
+  {
+    "firstName": "Jacob",
+    "lastName": "Wilson",
+    "contact": "jacob.wilson@example.com",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false
+    ]
+  }
+]

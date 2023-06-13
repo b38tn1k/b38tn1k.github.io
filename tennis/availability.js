@@ -1,6 +1,6 @@
 class Availability {
-    constructor(players) {
-        this.players = players;
+    constructor() {
+        this.players = [];
         this.title = "Player Availabilities";
         this.matchesPerWeek = 2;
         this.weeksInSession = 6;
@@ -9,11 +9,21 @@ class Availability {
         this.matchesPerWeekSlider = null;
         this.weeksInSessionSlider = null;
         this.playerDataDiv = null;
+        this.oldPlayerLength = this.players.length;
         this.setup();
     }
 
     draw() {
         // Placeholder draw function, can be implemented as needed
+        if (this.oldPlayerLength !== this.players.length) {
+            if (this.players.length > 0) {
+                this.generateScheduleButton.removeClass("disabled");
+            } else {
+                this.generateScheduleButton.addClass("disabled")
+            }
+            this.oldPlayerLength = this.players.length;
+        }
+        
     }
 
     toggleAllElements(show) {
@@ -27,15 +37,16 @@ class Availability {
             // select("#generateSchedule"),
         ];
     
-        const editPlayerDataSection = select("#editPlayerData");
-        if (editPlayerDataSection) {
-            editPlayerDataSection.style("display", show ? "none" : "block");
-    
-            // Adjust button width to 100%
-            const editPlayerButton = select("#editPlayerData button");
-            if (editPlayerButton) {
-                editPlayerButton.style("width", show ?  "auto" : "100%");
-            }
+        // const editPlayerDataSection = select("#editPlayerData");
+        // if (editPlayerDataSection) {
+        //     // editPlayerDataSection.style("display", show ? "none" : "block");
+        //     // Adjust button width to 100%
+            
+        // }
+
+        const editPlayerButton = select("#editPlayerData button");
+        if (editPlayerButton) {
+            editPlayerButton.style("width", "100%");
         }
     
         elementsToShow.forEach((element) => {
@@ -45,6 +56,14 @@ class Availability {
         });
     
         this.JSONLoadInput.style("display", "none");
+
+        for (let i = 0; i < elementsToShow.length; i++) {
+            const elementId = "#" + elementsToShow[i].id();
+            const button = select(elementId + " button");
+            if (button) {
+                button.style("width", show ? "100%" : "auto");
+            }
+        }
     }
     
     
@@ -64,6 +83,8 @@ class Availability {
         // Create the section for weeks in a session
         this.createWeeksInASessionSection(uiContainer);
 
+        this.createEditPlayerDataSection(uiContainer);
+
         // Create the section for loading player data
         this.createLoadPlayerDataSection(uiContainer);
 
@@ -74,7 +95,7 @@ class Availability {
 
         this.createGenerateScheduleSection(uiContainer);
 
-        this.createEditPlayerDataSection(uiContainer);
+        
 
         // Create the player data div
         this.createPlayerDataDiv();
@@ -91,7 +112,7 @@ class Availability {
         const section = createDiv();
         section.id("editPlayerData");
         section.parent(parent);
-        section.style("display", "none");
+        // section.style("display", "none");
 
         // Create the heading for schedule generation
         this.createHeading(section, "Edit Player Data");
@@ -102,6 +123,7 @@ class Availability {
         this.editPlayerButton.mousePressed(() => {
             mode = AVAILABILITY;
             this.toggleAllElements(true);
+            this.updatePlayerData();
         });
     }
 
@@ -180,7 +202,13 @@ class Availability {
         this.generateScheduleButton.parent(section);
         this.generateScheduleButton.addClass("disabled");
         this.generateScheduleButton.mousePressed(() => {
-            for (let player of this.players) {
+            this.generateScheduleButtonAction();
+            
+        });
+    }
+
+    generateScheduleButtonAction() {
+        for (let player of this.players) {
                 player.gamesPlayed = 0;
                 player.gamesCaptained = 0;
                 player.availability = player.checkboxes.map((checkbox) => checkbox.checked());
@@ -193,7 +221,6 @@ class Availability {
             scheduler.gameSchedule = [];
             scheduler.numMatchesPerWeek = this.matchesPerWeek;
             this.toggleAllElements(false);
-        });
     }
 
     createSavePlayerDataSection(parent) {
@@ -233,7 +260,11 @@ class Availability {
         const testButton = createButton("Test");
         testButton.parent(this.JSONLoadInput);
         testButton.mousePressed(() => {
+            // TEST SHORTCUTTING! need to untest too
             this.jsonInputField.value(join(globalPlayers, "\n"));
+            this.parseJsonInput();
+            this.toggleJsonInput.bind(this);
+            this.generateScheduleButtonAction();
         });
     }
 
@@ -308,9 +339,9 @@ class Availability {
     }
 
     updatePlayerData() {
-        if (this.players.length === 0) {
-            return;
-        }
+        // if (this.players.length === 0) {
+        //     return;
+        // }
 
         this.clearPlayerData();
         const table = this.createTable();

@@ -17,22 +17,38 @@ class Availability {
     }
 
     toggleAllElements(show) {
-        const elements = [
-          select("#sidebar"),
-          select("#matchesInAWeek"),
-          select("#weeksInASession"),
-          select("#loadPlayerData"),
-          select("#JSONLoadInput"),
-          select("#savePlayerData"),
-          select("#playerDataDiv")
+        const elementsToShow = [
+            // select("#sidebar"),
+            select("#matchesInAWeek"),
+            select("#weeksInASession"),
+            select("#loadPlayerData"),
+            select("#savePlayerData"),
+            select("#playerDataDiv"),
+            // select("#generateSchedule"),
         ];
-      
-        elements.forEach((element) => {
-          if (element) {
-            element.style("display", show ? "block" : "none");
-          }
+    
+        const editPlayerDataSection = select("#editPlayerData");
+        if (editPlayerDataSection) {
+            editPlayerDataSection.style("display", show ? "none" : "block");
+    
+            // Adjust button width to 100%
+            const editPlayerButton = select("#editPlayerData button");
+            if (editPlayerButton) {
+                editPlayerButton.style("width", show ?  "auto" : "100%");
+            }
+        }
+    
+        elementsToShow.forEach((element) => {
+            if (element) {
+                element.style("display", show ? "block" : "none");
+            }
         });
-      }
+    
+        this.JSONLoadInput.style("display", "none");
+    }
+    
+    
+    
 
     setup() {
         // Create the UI elements and set up the initial configuration
@@ -40,7 +56,7 @@ class Availability {
         uiContainer.id("sidebar");
 
         // Create the main heading
-        this.createHeading(uiContainer, "Player Schedules");
+        this.createHeading(uiContainer, "Player Availability");
 
         // Create the section for matches per week
         this.createMatchesInAWeekSection(uiContainer);
@@ -54,7 +70,11 @@ class Availability {
         // Create the input section for JSON data
         this.createJSONLoadInput(uiContainer);
 
-        this.createSavePlayerDataSection(uiContainer)
+        this.createSavePlayerDataSection(uiContainer);
+
+        this.createGenerateScheduleSection(uiContainer);
+
+        this.createEditPlayerDataSection(uiContainer);
 
         // Create the player data div
         this.createPlayerDataDiv();
@@ -62,8 +82,27 @@ class Availability {
 
     createHeading(parent, text) {
         // Create a heading element and add it to the parent container
-        const heading = createElement("h1", text);
+        const heading = createElement("h2", text);
         heading.parent(parent);
+    }
+
+    createEditPlayerDataSection(parent) {
+        // Create the section for triggering Schedule Generation
+        const section = createDiv();
+        section.id("editPlayerData");
+        section.parent(parent);
+        section.style("display", "none");
+
+        // Create the heading for schedule generation
+        this.createHeading(section, "Edit Player Data");
+
+        // Create the button for generating schedule
+        this.editPlayerButton = createButton("Edit Players");
+        this.editPlayerButton.parent(section);
+        this.editPlayerButton.mousePressed(() => {
+            mode = AVAILABILITY;
+            this.toggleAllElements(true);
+        });
     }
 
     createMatchesInAWeekSection(parent) {
@@ -112,42 +151,71 @@ class Availability {
         const section = createDiv();
         section.id("loadPlayerData");
         section.parent(parent);
-    
+
         // Create the heading for loading player data
         this.createHeading(section, "Load Player Data");
-    
+
         // Create the button for loading JSON data
         this.jsonInputButton = createButton("Load JSON");
         this.jsonInputButton.parent(section);
         this.jsonInputButton.mousePressed(this.toggleJsonInput.bind(this));
-    
+
         // Create the paragraph element for displaying load status
         this.jsonLoadStatus = createP();
         this.jsonLoadStatus.parent(section);
         this.jsonLoadStatus.style("display", "none");
     }
-    
+
+    createGenerateScheduleSection(parent) {
+        // Create the section for triggering Schedule Generation
+        const section = createDiv();
+        section.id("generateSchedule");
+        section.parent(parent);
+
+        // Create the heading for schedule generation
+        this.createHeading(section, "Generate Schedule");
+
+        // Create the button for generating schedule
+        this.generateScheduleButton = createButton("Generate");
+        this.generateScheduleButton.parent(section);
+        this.generateScheduleButton.addClass("disabled");
+        this.generateScheduleButton.mousePressed(() => {
+            for (let player of this.players) {
+                player.gamesPlayed = 0;
+                player.gamesCaptained = 0;
+                player.availability = player.checkboxes.map((checkbox) => checkbox.checked());
+                player.gamesMissed = 0;
+                player.teammates = [];
+            }
+            // mode change using global mode var
+            mode = SCHEDULER;
+            scheduler.generated = false;
+            scheduler.gameSchedule = [];
+            scheduler.numMatchesPerWeek = this.matchesPerWeek;
+            this.toggleAllElements(false);
+        });
+    }
+
     createSavePlayerDataSection(parent) {
         // Create the section for saving player data
         const section = createDiv();
         section.id("savePlayerData");
         section.parent(parent);
-    
+
         // Create the heading for saving player data
         this.createHeading(section, "Save Player Data");
-    
+
         // Create the button for saving player data
         this.saveDataButton = createButton("Save");
         this.saveDataButton.parent(section);
         this.saveDataButton.addClass("disabled");
         this.saveDataButton.mousePressed(this.savePlayerData.bind(this));
-    
+
         // Create the paragraph element for displaying save status
         this.playerDataSaveStatus = createP();
         this.playerDataSaveStatus.parent(section);
         this.playerDataSaveStatus.style("display", "none");
     }
-    
 
     createJSONLoadInput(parent) {
         // Create the input section for JSON data
@@ -160,6 +228,13 @@ class Availability {
         this.jsonInputField = createElement("textarea");
         this.jsonInputField.parent(this.JSONLoadInput);
         this.jsonInputField.addClass("textarea-input");
+
+        // Create the 'test' button
+        const testButton = createButton("Test");
+        testButton.parent(this.JSONLoadInput);
+        testButton.mousePressed(() => {
+            this.jsonInputField.value(join(globalPlayers, "\n"));
+        });
     }
 
     createPlayerDataDiv() {
@@ -204,20 +279,24 @@ class Availability {
                     this.playerDataDiv.style("display", "block");
                     console.log("JSON data loaded successfully!");
                     this.saveDataButton.removeClass("disabled");
+                    this.generateScheduleButton.removeClass("disabled");
                 } else {
                     this.showLoadStatus("Players List Incomplete!", "red");
                     console.error("Invalid players list!");
                     this.saveDataButton.addClass("disabled");
+                    this.generateScheduleButton.addClass("disabled");
                 }
             } else {
                 this.showLoadStatus("Invalid JSON format!", "red");
                 console.error("Invalid JSON format!");
                 this.saveDataButton.addClass("disabled");
+                this.generateScheduleButton.addClass("disabled");
             }
         } catch (error) {
             this.showLoadStatus("Error parsing JSON!", "red");
             console.error("Error parsing JSON:", error);
             this.saveDataButton.addClass("disabled");
+            this.generateScheduleButton.addClass("disabled");
         }
     }
 
@@ -232,14 +311,13 @@ class Availability {
         if (this.players.length === 0) {
             return;
         }
-    
+
         this.clearPlayerData();
         const table = this.createTable();
         this.createTableHeader(table);
         this.createPlayerRows(table);
         this.createAddPlayerRow(table);
     }
-    
 
     clearPlayerData() {
         this.playerDataDiv.html("");
@@ -269,19 +347,19 @@ class Availability {
 
     createPlayerRows(table) {
         this.players.forEach((player, playerIndex) => {
-          const row = createElement("tr");
-          row.parent(table);
-      
-          this.createTableCell(row, player.firstName);
-          this.createTableCell(row, player.lastName);
-          this.createTableCell(row, player.contact);
-          const checkboxRefs = this.createAvailabilityCells(row, player.availability);
-          this.createDeleteButton(row, player);
-      
-          // Store checkbox references for the player
-          player.checkboxes = checkboxRefs;
+            const row = createElement("tr");
+            row.parent(table);
+
+            this.createTableCell(row, player.firstName);
+            this.createTableCell(row, player.lastName);
+            this.createTableCell(row, player.contact);
+            const checkboxRefs = this.createAvailabilityCells(row, player.availability);
+            this.createDeleteButton(row, player);
+
+            // Store checkbox references for the player
+            player.checkboxes = checkboxRefs;
         });
-      }
+    }
 
     createTableCell(row, cellText) {
         const cell = createElement("td", cellText);
@@ -364,27 +442,26 @@ class Availability {
 
     savePlayerData() {
         const updatedPlayers = this.players.map((player) => {
-          const availability = player.checkboxes.map((checkbox) => checkbox.checked());
-          return {
-            firstName: player.firstName,
-            lastName: player.lastName,
-            contact: player.contact,
-            availability: availability,
-          };
+            const availability = player.checkboxes.map((checkbox) => checkbox.checked());
+            return {
+                firstName: player.firstName,
+                lastName: player.lastName,
+                contact: player.contact,
+                availability: availability,
+            };
         });
-      
+
         const jsonData = JSON.stringify(updatedPlayers, null, 2);
         console.log(jsonData);
-      
+
         saveJSON(updatedPlayers, "playerData.json");
-      
+
         this.showSaveStatus("Player data saved!", "green");
-      }
-    
+    }
+
     showSaveStatus(message, color) {
         this.playerDataSaveStatus.html(message);
         this.playerDataSaveStatus.style("color", color);
         this.playerDataSaveStatus.style("display", "block");
     }
-    
 }

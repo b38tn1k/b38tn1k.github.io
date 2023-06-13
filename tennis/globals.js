@@ -13,7 +13,7 @@ function fpsEvent() {
 }
 
 // Player data
-let players;
+let globalPlayers;
 
 // Mode constants
 const SCHEDULER = 0;

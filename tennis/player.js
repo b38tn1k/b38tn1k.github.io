@@ -1,7 +1,7 @@
 // Player Object
 class Player {
-    constructor(fn, ln) {
-        this.firstName = fn;
+    constructor(player) {
+        this.firstName = player.firstName;
         this.lastName = ln;
         this.contact = '';
         this.gamesPlayed = 0;

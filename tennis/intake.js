@@ -148,8 +148,11 @@ class Availability {
         this.jsonInputField = this.createTextarea(section, () => {}, "");
         const testButton = this.createButtonIn(section, "Test", () => {
             this.jsonInputField.value(join(globalPlayers, "\n"));
+            this.courtsInput.value("Monday: Court 3, Court 4");
+            this.timeSlotsInput.value("Monday: 6:30, 8:30");
             this.parseJsonInput();
             this.generateAction();
+            
         });
         this.jsonLoadStatus = this.createParagraph(section);
         this.saveDataButton = this.createButtonIn(section, "Save", this.savePlayerData.bind(this), "disabled");

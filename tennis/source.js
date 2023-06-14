@@ -46,9 +46,9 @@ class Shape {
   }
 }
 
-function preload() {
-  globalPlayers = loadStrings('t12Players.txt');
-}
+// function preload() {
+//   globalPlayers = loadStrings('t12Players.txt');
+// }
 
 
 function setupScreen() {

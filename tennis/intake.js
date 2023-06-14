@@ -147,7 +147,13 @@ class Availability {
         });
         this.jsonInputField = this.createTextarea(section, () => {}, "Paste text from a .json file here.");
         const testButton = this.createButtonIn(section, "Test", () => {
-            this.jsonInputField.value(join(globalPlayers, "\n"));
+            if(typeof globalPlayers === 'string') {
+                this.jsonInputField.value(globalPlayers);
+            } else if(Array.isArray(globalPlayers)) {
+                this.jsonInputField.value(join(globalPlayers, "\n"));
+            } else {
+                console.log('globalPlayers is neither a string nor an array');
+            }
             this.courtsInput.value("Monday: Court 3, Court 4");
             this.timeSlotsInput.value("Monday: 6:30, 8:30");
             this.parseJsonInput();

@@ -5,59 +5,6 @@ class Interpreter {
         this.img = img;
     }
 
-    generateReportCard() {
-        const reportCards = this.players.map((player) => {
-            const totalGamesPlayed = player.gamesPlayed;
-            const totalGamesMissed = player.gamesMissed;
-
-            // Compute longest consecutive streak of missed games that are not due to availability
-            const missedWeeksNotDueToAvailability = player.weeksMissed.filter(
-                (week) => player.availability[week - 1] === true
-            );
-            let longestMissingStreak = 0;
-            let currentStreak = 0;
-            for (let i = 1; i < missedWeeksNotDueToAvailability.length; i++) {
-                if (missedWeeksNotDueToAvailability[i] - missedWeeksNotDueToAvailability[i - 1] === 1) {
-                    currentStreak++;
-                } else {
-                    longestMissingStreak = Math.max(longestMissingStreak, currentStreak);
-                    currentStreak = 0;
-                }
-            }
-            longestMissingStreak = Math.max(longestMissingStreak, currentStreak); // consider the last streak
-
-            const gamesCaptained = player.gamesCaptained;
-
-            // Compute how often the player had the same team mate
-            const teammateCounts = player.teammates.reduce((counts, teammate) => {
-                const key = `${teammate.firstName} ${teammate.lastName}`;
-                counts[key] = (counts[key] || 0) + 1;
-                return counts;
-            }, {});
-            const maxSameTeammate = Math.max(...Object.values(teammateCounts));
-
-            // Compute how often the player had the same opponent
-            const opponentCounts = player.opponents.reduce((counts, opponent) => {
-                const key = `${opponent.firstName} ${opponent.lastName}`;
-                counts[key] = (counts[key] || 0) + 1;
-                return counts;
-            }, {});
-            const maxSameOpponent = Math.max(...Object.values(opponentCounts));
-
-            return {
-                fullName: player.fullName,
-                totalGamesPlayed,
-                totalGamesMissed,
-                longestMissingStreak,
-                gamesCaptained,
-                maxSameTeammate,
-                maxSameOpponent,
-            };
-        });
-        console.table(reportCards);
-        return reportCards;
-    }
-
     calculateOptimalConfiguration(numOfWeeks, mainBorderSize) {
         let optimalCols = 1;
         let optimalRows = numOfWeeks;

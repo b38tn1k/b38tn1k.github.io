@@ -47,7 +47,7 @@ class Shape {
 }
 
 function preload() {
-  globalPlayers = loadStrings('12PerfectPlayers.json');
+  globalPlayers = loadStrings('12Players.json');
 }
 
 
@@ -63,6 +63,7 @@ function setupScreen() {
   colors.push(color(153, 179, 77, 100));  // Medium Yellow-Green (75% opacity)
   colors.push(color(128, 153, 51, 100));  // Dark Yellow-Green (75% opacity)
 
+  if (shapes.length < 20) {
     // Create initial shapes
     for (let i = 0; i < 20; i++) {
       const x = random(width);
@@ -73,6 +74,7 @@ function setupScreen() {
       
       shapes.push(new Shape(x, y, size, c));
     }
+  }
 }
 
 function setup() {

@@ -4,7 +4,7 @@
 // 4 matches minimum accross the 6 weeks
 // history w.r.t time (favor older team mate / opponents if required to be teammate)
 
-//TODO: players occasionally getting duplicated to mukltiple matches. 
+//TODO: players occasionally getting duplicated to mukltiple matches.
 
 function drawTennisCourt(buffer, x, y, width, height) {
     const courtColor = color("#006400"); // Green color for the tennis court
@@ -32,6 +32,13 @@ function drawTennisCourt(buffer, x, y, width, height) {
     buffer.pop();
 }
 
+const CONSTANTS = {
+    PLAYERS_PER_MATCH: 4,
+    MINIMUM_REQUIRED_MATCHES: 4,
+    ALLOWED_REPEATED_ATTEMPTS: 15,
+    MINIMUM_REQUIRED_CAPTAIN: 1,
+};
+
 // Tennis League Matchmaking Tool
 class Scheduler {
     constructor() {
@@ -39,7 +46,6 @@ class Scheduler {
         this.gameSchedule = [];
         this.numWeeks;
         this.numMatchesPerWeek;
-        this.numPlayersPerMatch = 4;
         this.modeHandOff = -1;
         this.generated = false;
         // this.img = createGraphics(612, 792);
@@ -83,14 +89,25 @@ class Scheduler {
             this.players = availability.players;
             this.generated = true;
             this.generateSchedule();
+            let res = this.generateReportCard();
+
+            for (let i = 0; i < CONSTANTS.ALLOWED_REPEATED_ATTEMPTS; i++) {
+                if (this.ruleCheck(res)) {
+                    break;
+                } else {
+                    this.gameSchedule = [];
+                    this.generateSchedule();
+                    res = this.generateReportCard();
+                }
+            }
+            console.table(res);
             const inter = new Interpreter(this.players, this.gameSchedule, this.img);
             // this.logSchedule();
             inter.drawPoster();
-            inter.generateReportCard();
         }
     }
 
-    generateSchedule() {
+    initializePlayerStats() {
         // Initialize player statistics
         for (let i = 0; i < this.players.length; i++) {
             this.players[i].gamesPlayed = 0;
@@ -100,7 +117,20 @@ class Scheduler {
             this.players[i].teammates = [];
             this.players[i].opponents = [];
             this.players[i].availability = this.players[i].checkboxes.map((checkbox) => checkbox.checked());
+
+            // calculate unavailableScore
+            this.players[i].unavailableScore = 0; // start with 0
+            this.players[i].availability.forEach((available) => {
+                if (!available) {
+                    // if player is not available for a day
+                    this.players[i].unavailableScore++; // increase unavailableScore by 1
+                }
+            });
         }
+    }
+
+    generateSchedule() {
+        this.initializePlayerStats();
         // Create game schedule
         for (let week = 0; week < this.numWeeks; week++) {
             const matches = [];
@@ -149,34 +179,50 @@ class Scheduler {
         availablePlayers = shuffle(availablePlayers);
 
         let notSelectedPlayers = players.filter((player) => !player.availability[week]);
+        let numPlayersNeeded = this.numMatchesPerWeek * CONSTANTS.PLAYERS_PER_MATCH;
 
         const selectedPlayers = [];
         const remainingAvailablePlayers = [];
 
         availablePlayers.forEach((player) => {
-            if (player.weeksMissed.includes(week - 1)) {
+            if (
+                player.weeksMissed.includes(week - 1) ||
+                player.availability[week + 1] === false ||
+                (this.numMatchesPerWeek * week > CONSTANTS.MINIMUM_REQUIRED_MATCHES &&
+                    player.gamesPlayed < CONSTANTS.MINIMUM_REQUIRED_MATCHES)
+            ) {
                 selectedPlayers.push(player);
             } else {
                 remainingAvailablePlayers.push(player);
             }
         });
         availablePlayers = remainingAvailablePlayers;
-
+        availablePlayers.sort((a, b) => a.unavailableScore - b.unavailableScore);
         const numAvailablePlayers = selectedPlayers.length + availablePlayers.length;
-        let numPlayersNeeded = this.numMatchesPerWeek * this.numPlayersPerMatch;
 
         while (numAvailablePlayers < numPlayersNeeded) {
-            numPlayersNeeded -= 4;
+            numPlayersNeeded -= CONSTANTS.PLAYERS_PER_MATCH;
         }
 
         if (numAvailablePlayers >= numPlayersNeeded) {
             while (selectedPlayers.length < numPlayersNeeded) {
-                const randomIndex = Math.floor(Math.random() * availablePlayers.length);
-                const randomPlayer = availablePlayers.splice(randomIndex, 1)[0];
-                selectedPlayers.push(randomPlayer);
+                selectedPlayers.push(availablePlayers.pop());
+                // const randomIndex = Math.floor(Math.random() * availablePlayers.length);
+                // const randomPlayer = availablePlayers.splice(randomIndex, 1)[0];
+                // selectedPlayers.push(randomPlayer);
             }
         } else {
             console.warn(`Not enough players available for week ${week}`);
+        }
+
+        while (selectedPlayers.length % 4 != 0) {
+            let maxIndex = 0;
+            for (let i = 1; i < selectedPlayers.length; i++) {
+                if (selectedPlayers[i].gamesPlayed > selectedPlayers[maxIndex].gamesPlayed) {
+                    maxIndex = i;
+                }
+            }
+            selectedPlayers.splice(maxIndex, 1);
         }
 
         notSelectedPlayers = notSelectedPlayers.concat(availablePlayers);
@@ -196,7 +242,7 @@ class Scheduler {
 
     createPlayerGroups(selectedPlayers) {
         const numPlayersNeeded = selectedPlayers.length;
-        const numGroups = numPlayersNeeded / this.numPlayersPerMatch;
+        const numGroups = numPlayersNeeded / CONSTANTS.PLAYERS_PER_MATCH;
         let playerGroups = new Array(numGroups).fill(null).map(() => []);
 
         // First round: assign one player to each group
@@ -212,7 +258,7 @@ class Scheduler {
             // Calculate strangeness scores for each group that hasn't reached its maximum size
             let strangenessScores = playerGroups
                 .map((group, index) => {
-                    return group.length < this.numPlayersPerMatch
+                    return group.length < CONSTANTS.PLAYERS_PER_MATCH
                         ? {
                               index: index,
                               score: group.reduce((count, otherPlayer) => {
@@ -231,8 +277,8 @@ class Scheduler {
         }
 
         // Check if any group is overfilled and correct it
-        let overfilledGroups = playerGroups.filter((group) => group.length > this.numPlayersPerMatch);
-        let underfilledGroups = playerGroups.filter((group) => group.length < this.numPlayersPerMatch);
+        let overfilledGroups = playerGroups.filter((group) => group.length > CONSTANTS.PLAYERS_PER_MATCH);
+        let underfilledGroups = playerGroups.filter((group) => group.length < CONSTANTS.PLAYERS_PER_MATCH);
         while (overfilledGroups.length > 0 && underfilledGroups.length > 0) {
             let overfilledGroup = overfilledGroups[0];
             let underfilledGroup = underfilledGroups[0];
@@ -240,8 +286,8 @@ class Scheduler {
             underfilledGroup.push(overfilledGroup.pop());
 
             // Update the overfilled and underfilled groups arrays
-            overfilledGroups = playerGroups.filter((group) => group.length > this.numPlayersPerMatch);
-            underfilledGroups = playerGroups.filter((group) => group.length < this.numPlayersPerMatch);
+            overfilledGroups = playerGroups.filter((group) => group.length > CONSTANTS.PLAYERS_PER_MATCH);
+            underfilledGroups = playerGroups.filter((group) => group.length < CONSTANTS.PLAYERS_PER_MATCH);
         }
 
         return playerGroups;
@@ -320,5 +366,70 @@ class Scheduler {
     getRandomElement(array) {
         const randomIndex = Math.floor(Math.random() * array.length);
         return array[randomIndex];
+    }
+
+    generateReportCard() {
+        const reportCards = this.players.map((player) => {
+            const totalGamesPlayed = player.gamesPlayed;
+            const totalGamesMissed = player.gamesMissed;
+
+            // Compute longest consecutive streak of missed games that are not due to availability
+            const missedWeeksNotDueToAvailability = player.weeksMissed.filter(
+                (week) => player.availability[week - 1] === true
+            );
+            let longestMissingStreak = 0;
+            let currentStreak = 0;
+            for (let i = 1; i < missedWeeksNotDueToAvailability.length; i++) {
+                if (missedWeeksNotDueToAvailability[i] - missedWeeksNotDueToAvailability[i - 1] === 1) {
+                    currentStreak++;
+                } else {
+                    longestMissingStreak = Math.max(longestMissingStreak, currentStreak);
+                    currentStreak = 0;
+                }
+            }
+            longestMissingStreak = Math.max(longestMissingStreak, currentStreak); // consider the last streak
+
+            const gamesCaptained = player.gamesCaptained;
+
+            // Compute how often the player had the same team mate
+            const teammateCounts = player.teammates.reduce((counts, teammate) => {
+                const key = `${teammate.firstName} ${teammate.lastName}`;
+                counts[key] = (counts[key] || 0) + 1;
+                return counts;
+            }, {});
+            const maxSameTeammate = Math.max(...Object.values(teammateCounts));
+
+            // Compute how often the player had the same opponent
+            const opponentCounts = player.opponents.reduce((counts, opponent) => {
+                const key = `${opponent.firstName} ${opponent.lastName}`;
+                counts[key] = (counts[key] || 0) + 1;
+                return counts;
+            }, {});
+            const maxSameOpponent = Math.max(...Object.values(opponentCounts));
+
+            return {
+                fullName: player.fullName,
+                totalGamesPlayed,
+                totalGamesMissed,
+                longestMissingStreak,
+                gamesCaptained,
+                maxSameTeammate,
+                maxSameOpponent,
+            };
+        });
+        return reportCards;
+    }
+
+    ruleCheck(reportCard) {
+        let passed = true;
+        for (let r of reportCard) {
+            if (r.totalGamesPlayed < CONSTANTS.MINIMUM_REQUIRED_MATCHES) {
+                passed = false;
+            }
+            if (r.gamesCaptained < CONSTANTS.MINIMUM_REQUIRED_CAPTAIN) {
+                passed = false;
+            }
+        }
+        return passed;
     }
 }

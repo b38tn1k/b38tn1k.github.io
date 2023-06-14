@@ -6,6 +6,20 @@
 // balance time slots vs prioritising time slots setting
 // courts are locked out for their time slots for the entire session
 // 12 players in a flight (the league) best, next best, jrs.. they move around after every session
+// https://docs.google.com/spreadsheets/d/16RnoOF49E4NChldnqGQ5x5LmiNK9znnHlVaPn1Bdw98/edit#gid=1944998598
+
+// WEDNESDAY ARVO: next step is to work on updatePlayers to allow availability for timeslots per week.
+// maybe a drop down of unavailables would be smarter? think
+
+const ELEMENT_CLASSES = {
+    toolsDiv: "toolsDiv",
+    textareaInput: "textarea-input",
+    // etc.
+};
+
+const BUTTON_CLASSES = {
+    disabled: "disabled",
+};
 
 class Availability {
     constructor() {
@@ -26,9 +40,9 @@ class Availability {
         // Placeholder draw function, can be implemented as needed
         if (this.oldPlayerLength !== this.players.length) {
             if (this.players.length > 0) {
-                this.generateScheduleButton.removeClass("disabled");
+                this.generateButton.removeClass(BUTTON_CLASSES.disabled);
             } else {
-                this.generateScheduleButton.addClass("disabled");
+                this.generateButton.addClass(BUTTON_CLASSES.disabled);
             }
             this.oldPlayerLength = this.players.length;
         }
@@ -37,28 +51,13 @@ class Availability {
     // time slots
 
     toggleAllElements(show) {
-        const elementsToShow = [
-            // select("#sidebar"),
-            select("#matchesInAWeek"),
-            select("#weeksInASession"),
-            select("#loadPlayerData"),
-            select("#savePlayerData"),
-            select("#playerDataDiv"),
-            // select("#generateSchedule"),
-        ];
+        const elementsToShow = [select("#playerDataDiv")];
 
-        const editPlayerButton = select("#editPlayerData button");
-        if (editPlayerButton) {
-            editPlayerButton.style("width", "100%");
-        }
-
-        elementsToShow.forEach((element) => {
-            if (element) {
+        elementsToShow
+            .filter((element) => element !== null)
+            .forEach((element) => {
                 element.style("display", show ? "block" : "none");
-            }
-        });
-
-        this.JSONLoadInput.style("display", "none");
+            });
 
         for (let i = 0; i < elementsToShow.length; i++) {
             const elementId = "#" + elementsToShow[i].id();
@@ -75,27 +74,13 @@ class Availability {
         uiContainer.id("sidebar");
 
         // Create the main heading
-        this.createHeading(uiContainer, "Player Availability");
+        this.createHeading(uiContainer, "League Ninja");
 
-        // Create the section for matches per week
-        this.createMatchesInAWeekSection(uiContainer);
+        this.createLeagueToolsSection(uiContainer);
 
-        // Create the section for weeks in a session
-        this.createWeeksInASessionSection(uiContainer);
+        this.createPlayerToolsSection(uiContainer);
 
-        this.createEditPlayerDataSection(uiContainer);
-
-        // Create the section for loading player data
-        this.createLoadPlayerDataSection(uiContainer);
-
-        // Create the input section for JSON data
-        this.createJSONLoadInput(uiContainer);
-
-        this.createSavePlayerDataSection(uiContainer);
-
-        this.createGenerateScheduleSection(uiContainer);
-
-        this.createSaveScheduleSection(uiContainer);
+        this.createScheduleToolsSection(uiContainer);
 
         // Create the player data div
         this.createPlayerDataDiv();
@@ -107,132 +92,220 @@ class Availability {
         heading.parent(parent);
     }
 
-    createEditPlayerDataSection(parent) {
-        // Create the section for triggering Schedule Generation
+    // Helper Function for creating section
+    createSection(parent, id) {
         const section = createDiv();
-        section.id("editPlayerData");
+        section.id(id);
+        section.addClass(ELEMENT_CLASSES.toolsDiv);
         section.parent(parent);
-        // section.style("display", "none");
+        return section;
+    }
 
-        // Create the heading for schedule generation
-        this.createHeading(section, "Edit Player Data");
+    // Helper Function for creating button
+    createButtonIn(parent, label, action, buttonClass = null) {
+        const button = createButton(label);
+        button.parent(parent);
+        button.mousePressed(action);
+        if (buttonClass) {
+            button.addClass(buttonClass);
+        }
+        return button;
+    }
 
-        // Create the button for generating schedule
-        this.editPlayerButton = createButton("Edit Players");
-        this.editPlayerButton.parent(section);
-        this.editPlayerButton.mousePressed(() => {
+    // Helper Function for creating textarea
+    createTextarea(parent, validationFunction, placeholder = null) {
+        const textarea = createElement("textarea");
+        textarea.parent(parent);
+        textarea.input(validationFunction);
+        textarea.addClass(ELEMENT_CLASSES.textareaInput);
+        if (placeholder) {
+            textarea.attribute("placeholder", placeholder);
+        }
+        return textarea;
+    }
+
+    // Helper Function for creating paragraph
+    createParagraph(parent, displayStyle = "none") {
+        const paragraph = createP();
+        paragraph.parent(parent);
+        paragraph.style("display", displayStyle);
+        return paragraph;
+    }
+
+    // Revised Method Definitions
+    createPlayerToolsSection(parent) {
+        const section = this.createSection(parent, "playerTools");
+        this.createHeading(section, "Player Tools");
+        this.editPlayerButton = this.createButtonIn(section, "Edit Players", () => {
             mode = AVAILABILITY;
             this.toggleAllElements(true);
             this.updatePlayerData();
         });
-    }
-
-    createMatchesInAWeekSection(parent) {
-        // Create the section for matches per week
-        const section = createDiv();
-        section.id("matchesInAWeek");
-        section.parent(parent);
-
-        // Create the heading for matches per week
-        const heading = createElement("h2", `Matches in a Week: ${this.matchesPerWeek}`);
-        heading.parent(section);
-
-        // Create the slider for adjusting matches per week
-        this.matchesPerWeekSlider = createSlider(1, 14, this.matchesPerWeek);
-        this.matchesPerWeekSlider.parent(section);
-        this.matchesPerWeekSlider.id("matchesPerWeekSlider");
-        this.matchesPerWeekSlider.input(() => {
-            this.matchesPerWeek = this.matchesPerWeekSlider.value();
-            heading.html(`Matches in a Week: ${this.matchesPerWeek}`);
+        this.loadJsonButton = this.createButtonIn(section, "Load JSON", () => {
+            this.parseJsonInput();
+            this.generateAction();
         });
+        this.jsonInputField = this.createTextarea(section, () => {}, "");
+        const testButton = this.createButtonIn(section, "Test", () => {
+            this.jsonInputField.value(join(globalPlayers, "\n"));
+            this.parseJsonInput();
+            this.generateAction();
+        });
+        this.jsonLoadStatus = this.createParagraph(section);
+        this.saveDataButton = this.createButtonIn(section, "Save", this.savePlayerData.bind(this), "disabled");
+        this.playerDataSaveStatus = this.createParagraph(section);
     }
 
-    createWeeksInASessionSection(parent) {
-        // Create the section for weeks in a session
-        const section = createDiv();
-        section.id("weeksInASession");
-        section.parent(parent);
-
-        // Create the heading for weeks in a session
-        const heading = createElement("h2", `Weeks in a Session: ${this.weeksInSession}`);
-        heading.parent(section);
-
-        // Create the slider for adjusting weeks in a session
-        this.weeksInSessionSlider = createSlider(4, 10, this.weeksInSession);
+    createLeagueToolsSection(parent) {
+        const section = this.createSection(parent, "leagueTools");
+        this.createHeading(section, "League Setup");
+        this.timeSlotsInput = this.createTextarea(
+            section,
+            this.validateAndUpdatePlayerData.bind(this),
+            "e.g.\nMonday: 6:30, 8:30\nThursday: 6:30"
+        );
+        this.courtsInput = this.createTextarea(
+            section,
+            this.validateAndUpdatePlayerData.bind(this),
+            "e.g.\nMonday: Court 3, Court 4\nThursday: Court 4"
+        );
+        this.leagueDuration = createP(`League Duration: ${this.weeksInSession} weeks`);
+        this.leagueDuration.parent(section);
+        this.weeksInSessionSlider = createSlider(4, 12, this.weeksInSession);
         this.weeksInSessionSlider.parent(section);
         this.weeksInSessionSlider.id("weeksInSessionSlider");
         this.weeksInSessionSlider.input(() => {
             this.weeksInSession = this.weeksInSessionSlider.value();
-            heading.html(`Weeks in a Session: ${this.weeksInSession}`);
-            this.updatePlayerData();
+            this.validateAndUpdatePlayerData();
+            this.leagueDuration.html(`League Duration: ${this.weeksInSession} weeks`);
         });
     }
 
-    createLoadPlayerDataSection(parent) {
-        // Create the section for loading player data
-        const section = createDiv();
-        section.id("loadPlayerData");
-        section.parent(parent);
-
-        // Create the heading for loading player data
-        this.createHeading(section, "Load Player Data");
-
-        // Create the button for loading JSON data
-        this.jsonInputButton = createButton("Load JSON");
-        this.jsonInputButton.parent(section);
-        this.jsonInputButton.mousePressed(this.toggleJsonInput.bind(this));
-
-        // Create the paragraph element for displaying load status
-        this.jsonLoadStatus = createP();
-        this.jsonLoadStatus.parent(section);
-        this.jsonLoadStatus.style("display", "none");
+    createScheduleToolsSection(parent) {
+        const section = this.createSection(parent, "scheduleTools");
+        this.createHeading(section, "Schedule Tools");
+        this.generateButton = this.createButtonIn(
+            section,
+            "Generate",
+            () => {
+                this.generateAction();
+            },
+            "disabled"
+        );
+        this.imageSaveButton = this.createButtonIn(
+            section,
+            "Save Schedule",
+            () => {
+                save(scheduler.img, "schedule.jpg");
+            },
+            "disabled"
+        );
     }
 
-    createGenerateScheduleSection(parent) {
-        // Create the section for triggering Schedule Generation
-        const section = createDiv();
-        section.id("generateSchedule");
-        section.parent(parent);
-
-        // Create the heading for schedule generation
-        this.createHeading(section, "Generate Schedule");
-
-        // Create the button for generating schedule
-        this.generateScheduleButton = createButton("Generate");
-        this.generateScheduleButton.parent(section);
-        this.generateScheduleButton.addClass("disabled");
-        this.generateScheduleButton.mousePressed(() => {
-            this.generateScheduleButtonAction();
+    getTimeSchedule(str) {
+        if (!str.includes(":")) {
+            return false;
+        }
+        let daysTimes = str.split("\n"); // ["Monday: 6:30, 8:30", "Thursday: 6:30"]
+        let schedule = daysTimes.map((dayTime) => {
+            let colonIndex = dayTime.indexOf(":");
+            let day = dayTime.substring(0, colonIndex).trim();
+            let times = dayTime
+                .substring(colonIndex + 1)
+                .split(",")
+                .map((time) => time.trim());
+            return { day, times };
         });
+        return schedule;
     }
 
-    createSaveScheduleSection(parent) {
-        // Create the section for saving images
-        const section = createDiv();
-        section.id("saveSchedule");
-        section.parent(parent);
-    
-        // Create the heading for saving images
-        this.createHeading(section, "Save Schedule");
-    
-        // Create the button for saving images
-        this.imageSaveButton = createButton("Save Schedule");
-        this.imageSaveButton.parent(section);
-        this.imageSaveButton.addClass('disabled');
-        this.imageSaveButton.mousePressed(() => {
-            save(scheduler.img, 'schedule.jpg');
+    // Monday: Court 3, Court 4
+    // Thursday: Court 4
+    // Monday: 6:30, 8:30
+    // Thursday: 6:30
+
+    getCourtSchedule(str) {
+        if (!str.includes(":")) {
+            return false;
+        }
+        let daysCourts = str.split("\n"); // ["Monday: Court 3, Court 4", "Thursday: Court 4"]
+        let schedule = daysCourts.map((dayCourt) => {
+            let colonIndex = dayCourt.indexOf(":");
+            let day = dayCourt.substring(0, colonIndex).trim();
+            let courts = dayCourt
+                .substring(colonIndex + 1)
+                .split(",")
+                .map((court) => court.trim());
+            return { day, courts };
         });
-        // Create the paragraph element for displaying save status
-        this.imageSaveStatus = createP();
-        this.imageSaveStatus.parent(section);
-        this.imageSaveStatus.style("display", "none");
+        return schedule;
+    }
+
+    validateAndUpdatePlayerData() {
+        // Validate the input fields and sliders here
+        let courts = this.courtsInput.value();
+        let timeslots = this.timeSlotsInput.value();
+        let weeks = this.weeksInSessionSlider.value();
+        let ts, cs;
+        try {
+            ts = this.getTimeSchedule(timeslots);
+            cs = this.getCourtSchedule(courts);
+        } catch (e) {
+            console.log(e);
+        }
+        console.log("TS", ts);
+        console.log("CS", cs);
+        if (ts && cs) {
+            // Map each day in timeslots
+            let weeklySchedule = ts.flatMap(tsDay => {
+                // Find matching day in courts
+                let matchingCourtDay = cs.find(csDay => csDay.day === tsDay.day);
+                if (matchingCourtDay) {
+                    // If found, map each timeslot and each court of the matching day
+                    return tsDay.times.flatMap(time => {
+                        return matchingCourtDay.courts.map(court => {
+                            return {
+                                day: tsDay.day,
+                                timeslot: time,
+                                court: court
+                            }
+                        });
+                    });
+                } else {
+                    // If no matching day found, return empty array
+                    return [];
+                }
+            });
+    
+            // Create a schedule repeated for the number of weeks
+            let schedule = [];
+            for (let i = 1; i <= weeks; i++) {
+                let weekSchedule = weeklySchedule.map(game => {
+                    return {
+                        ...game,
+                        week: i
+                    };
+                });
+                schedule = schedule.concat(weekSchedule);
+            }
+    
+            console.log("Schedule", schedule);
+        }
+    
+        // If everything is valid, update the player data
+        this.updatePlayerData();
     }
     
+    
 
-    generateScheduleButtonAction() {
+    generateAction() {
         for (let player of this.players) {
             // player.availability = player.checkboxes.map((checkbox) => checkbox.checked());
-            player.fullName = player.firstName + " " + player.lastName;
+            player.fullName = `${player.firstName} ${player.lastName}`;
+        }
+
+        if (this.players.length == 0) {
+            return false;
         }
         // mode change using global mode var
         mode = SCHEDULER;
@@ -240,77 +313,19 @@ class Availability {
         scheduler.gameSchedule = [];
         scheduler.numWeeks = this.weeksInSession;
         scheduler.numMatchesPerWeek = this.matchesPerWeek;
-        this.imageSaveButton.removeClass('disabled');
-        
+        this.imageSaveButton.removeClass(BUTTON_CLASSES.disabled);
+
         this.toggleAllElements(false);
-    }
-
-    createSavePlayerDataSection(parent) {
-        // Create the section for saving player data
-        const section = createDiv();
-        section.id("savePlayerData");
-        section.parent(parent);
-
-        // Create the heading for saving player data
-        this.createHeading(section, "Save Player Data");
-
-        // Create the button for saving player data
-        this.saveDataButton = createButton("Save");
-        this.saveDataButton.parent(section);
-        this.saveDataButton.addClass("disabled");
-        this.saveDataButton.mousePressed(this.savePlayerData.bind(this));
-
-        // Create the paragraph element for displaying save status
-        this.playerDataSaveStatus = createP();
-        this.playerDataSaveStatus.parent(section);
-        this.playerDataSaveStatus.style("display", "none");
-    }
-
-    createJSONLoadInput(parent) {
-        // Create the input section for JSON data
-        this.JSONLoadInput = createDiv();
-        this.JSONLoadInput.id("JSONLoadInput");
-        this.JSONLoadInput.style("display", "none");
-        this.JSONLoadInput.parent(parent);
-
-        // Create the textarea for entering JSON data
-        this.jsonInputField = createElement("textarea");
-        this.jsonInputField.parent(this.JSONLoadInput);
-        this.jsonInputField.addClass("textarea-input");
-
-        // Create the 'test' button
-        const testButton = createButton("Test");
-        testButton.parent(this.JSONLoadInput);
-        testButton.mousePressed(() => {
-            // TEST SHORTCUTTING! need to untest too
-            this.jsonInputField.value(join(globalPlayers, "\n"));
-            this.parseJsonInput();
-            this.toggleJsonInput.bind(this);
-            this.generateScheduleButtonAction();
-        });
     }
 
     createPlayerDataDiv() {
         // Create the player data div
-        this.playerDataDiv = createDiv();
-        this.playerDataDiv.style("display", "none");
+        this.playerDataDiv = createDiv().style("display", "none");
         this.playerDataDiv.id("playerDataDiv");
     }
 
-    toggleJsonInput() {
-        // Toggle the visibility of the JSON input section
-        this.jsonInputVisible = !this.jsonInputVisible;
-        this.JSONLoadInput.style("display", this.jsonInputVisible ? "block" : "none");
-
-        if (!this.jsonInputVisible) {
-            this.parseJsonInput();
-        }
-
-        // Hide the playerDataDiv when JSON input is visible
-        this.playerDataDiv.style("display", this.jsonInputVisible ? "none" : "block");
-    }
-
     parseJsonInput() {
+        mode = AVAILABILITY;
         // Parse the entered JSON data and update the players array
         const inputText = this.jsonInputField.value();
 
@@ -331,29 +346,36 @@ class Availability {
                     this.updatePlayerData();
                     this.playerDataDiv.style("display", "block");
                     console.log("JSON data loaded successfully!");
-                    this.saveDataButton.removeClass("disabled");
-                    this.generateScheduleButton.removeClass("disabled");
+                    this.enableButtonsFirst();
                 } else {
                     this.showLoadStatus("Players List Incomplete!", "red");
                     console.error("Invalid players list!");
-                    this.saveDataButton.addClass("disabled");
-                    this.generateScheduleButton.addClass("disabled");
-                    this.imageSaveButton.addClass('disabled');
+                    this.disableButtons();
                 }
             } else {
                 this.showLoadStatus("Invalid JSON format!", "red");
                 console.error("Invalid JSON format!");
-                this.saveDataButton.addClass("disabled");
-                this.generateScheduleButton.addClass("disabled");
-                this.imageSaveButton.addClass('disabled');
+                this.disableButtons();
             }
         } catch (error) {
             this.showLoadStatus("Error parsing JSON!", "red");
             console.error("Error parsing JSON:", error);
-            this.saveDataButton.addClass("disabled");
-            this.generateScheduleButton.addClass("disabled");
-            this.imageSaveButton.addClass('disabled');
+            this.disableButtons();
         }
+        if (this.players.length > 0) {
+            this.enableButtonsFirst();
+        }
+    }
+
+    disableButtons() {
+        this.saveDataButton.addClass(BUTTON_CLASSES.disabled);
+        this.generateButton.addClass(BUTTON_CLASSES.disabled);
+        this.imageSaveButton.addClass(BUTTON_CLASSES.disabled);
+    }
+
+    enableButtonsFirst() {
+        this.saveDataButton.removeClass(BUTTON_CLASSES.disabled);
+        this.generateButton.removeClass(BUTTON_CLASSES.disabled);
     }
 
     showLoadStatus(message, color) {
@@ -364,10 +386,6 @@ class Availability {
     }
 
     updatePlayerData() {
-        // if (this.players.length === 0) {
-        //     return;
-        // }
-
         this.clearPlayerData();
         const table = this.createTable();
         this.createTableHeader(table);
@@ -459,21 +477,21 @@ class Availability {
         // Create a new table
         const addPlayerTable = createElement("table");
         addPlayerTable.parent(this.playerDataDiv);
-    
+
         // Create a row in the new table
         const addPlayerRow = createElement("tr");
         addPlayerRow.parent(addPlayerTable);
-    
+
         // Create the input elements
         const firstNameInput = createInput();
         const lastNameInput = createInput();
         const contactInput = createInput();
         const addPlayerButton = createButton("Add Player");
-    
+
         // Create an array of inputs and placeholders
         const inputs = [firstNameInput, lastNameInput, contactInput];
         const placeholders = ["First Name", "Last Name", "Contact"];
-    
+
         // Add the input fields to the table
         inputs.forEach((input, index) => {
             const tableCell = createElement("td");
@@ -482,13 +500,13 @@ class Availability {
             cellInput.attribute("placeholder", placeholders[index]); // This line adds the placeholder text
             tableCell.parent(addPlayerRow);
         });
-    
+
         // Add the button to the table
         const addPlayerCell = createElement("td");
         addPlayerButton.parent(addPlayerCell);
         addPlayerButton.style("width", "100%");
         addPlayerCell.parent(addPlayerRow);
-    
+
         // Add the functionality of the button
         addPlayerButton.mousePressed(() => {
             const newPlayer = {
@@ -497,13 +515,12 @@ class Availability {
                 contact: contactInput.value(),
                 availability: Array(this.weeksInSession).fill(false),
             };
-    
+
             this.players.push(newPlayer);
             this.updatePlayerData();
             inputs.forEach((input) => input.value(""));
         });
     }
-    
 
     savePlayerData() {
         const updatedPlayers = this.players.map((player) => {

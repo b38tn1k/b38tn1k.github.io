@@ -29,13 +29,6 @@
     width: calc(100% - 420px); /* Adjust the width based on the sidebar width and padding */ 
 }
 
-#JSONLoadInput .textarea-input {
-    width: calc(100% - 40px); /* Subtract the total horizontal padding */
-    height: calc(100% - 40px); /* Subtract the total vertical padding */
-    padding: 20px;
-    resize: none;
-}
-
 #playerDataDiv {
     position: fixed;
     background-color: rgba(240, 240, 240, 0.75);
@@ -64,7 +57,7 @@
     margin-bottom: 5px;
 }
 
-.toolsDiv textarea-input {
+.toolsDiv .textarea-input {
     /* width: calc(100% - 40px); */
     height: 4em; /* Subtract the total vertical padding */
     margin-top: 5px; 

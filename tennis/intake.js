@@ -145,7 +145,7 @@ class Availability {
             this.parseJsonInput();
             this.generateAction();
         });
-        this.jsonInputField = this.createTextarea(section, () => {}, "");
+        this.jsonInputField = this.createTextarea(section, () => {}, "Paste text from a .json file here.");
         const testButton = this.createButtonIn(section, "Test", () => {
             this.jsonInputField.value(join(globalPlayers, "\n"));
             this.courtsInput.value("Monday: Court 3, Court 4");

@@ -47,7 +47,7 @@ class Shape {
 }
 
 function preload() {
-  globalPlayers = loadStrings('players.json');
+  globalPlayers = loadStrings('12PerfectPlayers.json');
 }
 
 

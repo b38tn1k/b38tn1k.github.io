@@ -1,8 +1,17 @@
+// available courts count (2)
+// time slots per game day (2)
+// |-> add in time slots for each time
+// available courts per time slot changes
+// game days per week (1)
+// balance time slots vs prioritising time slots setting
+// courts are locked out for their time slots for the entire session
+// 12 players in a flight (the league) best, next best, jrs.. they move around after every session
+
 class Availability {
     constructor() {
         this.players = [];
         this.title = "Player Availabilities";
-        this.matchesPerWeek = 2;
+        this.matchesPerWeek = 4;
         this.weeksInSession = 6;
         this.jsonInputVisible = false;
         this.jsonInputField = null;
@@ -19,12 +28,13 @@ class Availability {
             if (this.players.length > 0) {
                 this.generateScheduleButton.removeClass("disabled");
             } else {
-                this.generateScheduleButton.addClass("disabled")
+                this.generateScheduleButton.addClass("disabled");
             }
             this.oldPlayerLength = this.players.length;
         }
-        
     }
+
+    // time slots
 
     toggleAllElements(show) {
         const elementsToShow = [
@@ -36,25 +46,18 @@ class Availability {
             select("#playerDataDiv"),
             // select("#generateSchedule"),
         ];
-    
-        // const editPlayerDataSection = select("#editPlayerData");
-        // if (editPlayerDataSection) {
-        //     // editPlayerDataSection.style("display", show ? "none" : "block");
-        //     // Adjust button width to 100%
-            
-        // }
 
         const editPlayerButton = select("#editPlayerData button");
         if (editPlayerButton) {
             editPlayerButton.style("width", "100%");
         }
-    
+
         elementsToShow.forEach((element) => {
             if (element) {
                 element.style("display", show ? "block" : "none");
             }
         });
-    
+
         this.JSONLoadInput.style("display", "none");
 
         for (let i = 0; i < elementsToShow.length; i++) {
@@ -65,9 +68,6 @@ class Availability {
             }
         }
     }
-    
-    
-    
 
     setup() {
         // Create the UI elements and set up the initial configuration
@@ -95,7 +95,7 @@ class Availability {
 
         this.createGenerateScheduleSection(uiContainer);
 
-        
+        this.createSaveScheduleSection(uiContainer);
 
         // Create the player data div
         this.createPlayerDataDiv();
@@ -203,24 +203,46 @@ class Availability {
         this.generateScheduleButton.addClass("disabled");
         this.generateScheduleButton.mousePressed(() => {
             this.generateScheduleButtonAction();
-            
         });
     }
 
+    createSaveScheduleSection(parent) {
+        // Create the section for saving images
+        const section = createDiv();
+        section.id("saveSchedule");
+        section.parent(parent);
+    
+        // Create the heading for saving images
+        this.createHeading(section, "Save Schedule");
+    
+        // Create the button for saving images
+        this.imageSaveButton = createButton("Save Schedule");
+        this.imageSaveButton.parent(section);
+        this.imageSaveButton.addClass('disabled');
+        this.imageSaveButton.mousePressed(() => {
+            save(scheduler.img, 'schedule.jpg');
+        });
+        // Create the paragraph element for displaying save status
+        this.imageSaveStatus = createP();
+        this.imageSaveStatus.parent(section);
+        this.imageSaveStatus.style("display", "none");
+    }
+    
+
     generateScheduleButtonAction() {
         for (let player of this.players) {
-                player.gamesPlayed = 0;
-                player.gamesCaptained = 0;
-                player.availability = player.checkboxes.map((checkbox) => checkbox.checked());
-                player.gamesMissed = 0;
-                player.teammates = [];
-            }
-            // mode change using global mode var
-            mode = SCHEDULER;
-            scheduler.generated = false;
-            scheduler.gameSchedule = [];
-            scheduler.numMatchesPerWeek = this.matchesPerWeek;
-            this.toggleAllElements(false);
+            // player.availability = player.checkboxes.map((checkbox) => checkbox.checked());
+            player.fullName = player.firstName + " " + player.lastName;
+        }
+        // mode change using global mode var
+        mode = SCHEDULER;
+        scheduler.generated = false;
+        scheduler.gameSchedule = [];
+        scheduler.numWeeks = this.weeksInSession;
+        scheduler.numMatchesPerWeek = this.matchesPerWeek;
+        this.imageSaveButton.removeClass('disabled');
+        
+        this.toggleAllElements(false);
     }
 
     createSavePlayerDataSection(parent) {
@@ -316,18 +338,21 @@ class Availability {
                     console.error("Invalid players list!");
                     this.saveDataButton.addClass("disabled");
                     this.generateScheduleButton.addClass("disabled");
+                    this.imageSaveButton.addClass('disabled');
                 }
             } else {
                 this.showLoadStatus("Invalid JSON format!", "red");
                 console.error("Invalid JSON format!");
                 this.saveDataButton.addClass("disabled");
                 this.generateScheduleButton.addClass("disabled");
+                this.imageSaveButton.addClass('disabled');
             }
         } catch (error) {
             this.showLoadStatus("Error parsing JSON!", "red");
             console.error("Error parsing JSON:", error);
             this.saveDataButton.addClass("disabled");
             this.generateScheduleButton.addClass("disabled");
+            this.imageSaveButton.addClass('disabled');
         }
     }
 
@@ -347,7 +372,7 @@ class Availability {
         const table = this.createTable();
         this.createTableHeader(table);
         this.createPlayerRows(table);
-        this.createAddPlayerRow(table);
+        this.createAddPlayerTable();
     }
 
     clearPlayerData() {
@@ -364,7 +389,7 @@ class Availability {
         const headerRow = createElement("tr");
         headerRow.parent(table);
 
-        const headerCells = ["First Name", "Last Name", "Contact"];
+        const headerCells = ["Name", "Contact"];
         for (let i = 1; i <= this.weeksInSession; i++) {
             headerCells.push(`W${i}`);
         }
@@ -381,8 +406,7 @@ class Availability {
             const row = createElement("tr");
             row.parent(table);
 
-            this.createTableCell(row, player.firstName);
-            this.createTableCell(row, player.lastName);
+            this.createTableCell(row, player.firstName + " " + player.lastName);
             this.createTableCell(row, player.contact);
             const checkboxRefs = this.createAvailabilityCells(row, player.availability);
             this.createDeleteButton(row, player);
@@ -419,6 +443,7 @@ class Availability {
         const deleteButton = createButton("Delete");
         const actionsCell = createElement("td");
         deleteButton.parent(actionsCell);
+        deleteButton.style("width", "100%");
         actionsCell.parent(row);
 
         deleteButton.mousePressed(() => {
@@ -430,33 +455,41 @@ class Availability {
         });
     }
 
-    createAddPlayerRow(table) {
+    createAddPlayerTable() {
+        // Create a new table
+        const addPlayerTable = createElement("table");
+        addPlayerTable.parent(this.playerDataDiv);
+    
+        // Create a row in the new table
         const addPlayerRow = createElement("tr");
-        addPlayerRow.parent(table);
-
+        addPlayerRow.parent(addPlayerTable);
+    
+        // Create the input elements
         const firstNameInput = createInput();
         const lastNameInput = createInput();
         const contactInput = createInput();
         const addPlayerButton = createButton("Add Player");
-
+    
+        // Create an array of inputs and placeholders
         const inputs = [firstNameInput, lastNameInput, contactInput];
-        inputs.forEach((input) => {
+        const placeholders = ["First Name", "Last Name", "Contact"];
+    
+        // Add the input fields to the table
+        inputs.forEach((input, index) => {
             const tableCell = createElement("td");
             const cellInput = input.parent(tableCell);
+            cellInput.style("width", "100%");
+            cellInput.attribute("placeholder", placeholders[index]); // This line adds the placeholder text
             tableCell.parent(addPlayerRow);
         });
-
-        Array(this.weeksInSession)
-            .fill()
-            .forEach(() => {
-                const tableCell = createElement("td");
-                tableCell.parent(addPlayerRow);
-            });
-
+    
+        // Add the button to the table
         const addPlayerCell = createElement("td");
         addPlayerButton.parent(addPlayerCell);
+        addPlayerButton.style("width", "100%");
         addPlayerCell.parent(addPlayerRow);
-
+    
+        // Add the functionality of the button
         addPlayerButton.mousePressed(() => {
             const newPlayer = {
                 firstName: firstNameInput.value(),
@@ -464,12 +497,13 @@ class Availability {
                 contact: contactInput.value(),
                 availability: Array(this.weeksInSession).fill(false),
             };
-
+    
             this.players.push(newPlayer);
             this.updatePlayerData();
             inputs.forEach((input) => input.value(""));
         });
     }
+    
 
     savePlayerData() {
         const updatedPlayers = this.players.map((player) => {

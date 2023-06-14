@@ -73,20 +73,34 @@
 
     <body scroll="no" style="overflow: hidden">
         <main>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
-            <script async src="globals.js"></script>
-            <script async src="modes.js"></script>
-            <script async src="ui/menu.js"></script>
-            <script async src="ui/ui_helpers.js"></script>
-            <script async src="session/introspector.js"></script>
-            <script async src="session/geometry.js"></script>
-            <script async src="session/feature_actions.js"></script>
-            <script async src="session/feature_components.js"></script>
-            <script async src="session/feature_buttons.js"></script>
-            <script async src="session/features.js"></script>
-            <script async src="session/plant.js"></script>
-            <script async src="session/session.js"></script>
-            <script async src="source.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/loadjs/4.2.0/loadjs.min.js"></script>
+            <script>
+                loadjs([
+                    'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js',
+                    'globals.js',
+                    'modes.js',
+                    'ui/menu.js',
+                    'ui/ui_helpers.js',
+                    'session/introspector.js',
+                    'session/geometry.js',
+                    'session/feature_actions.js',
+                    'session/feature_components.js',
+                    'session/feature_buttons.js',
+                    'session/features.js',
+                    'session/plant.js',
+                    'session/session.js',
+                    'session/features/connector.js',
+                    'session/features/merge.js',
+                    'session/features/metric.js',
+                    'session/features/parentlink.js',
+                    'session/features/process.js',
+                    'session/features/sink.js',
+                    'session/features/source.js',
+                    'session/features/split.js',
+                    'session/features/zone.js',
+                    'src.js'
+                ]);
+            </script>
         </main>
     </body>
 </html>

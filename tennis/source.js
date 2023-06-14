@@ -47,7 +47,7 @@ class Shape {
 }
 
 function preload() {
-  globalPlayers = loadStrings('t12Players.json');
+  globalPlayers = loadStrings('t12Players.txt');
 }
 
 

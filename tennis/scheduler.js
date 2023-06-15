@@ -35,7 +35,7 @@ function drawTennisCourt(buffer, x, y, width, height) {
 const CONSTANTS = {
     PLAYERS_PER_MATCH: 4,
     MINIMUM_REQUIRED_MATCHES: 4,
-    ALLOWED_REPEATED_ATTEMPTS: 150,
+    ALLOWED_REPEATED_ATTEMPTS: 15,
     MINIMUM_REQUIRED_CAPTAIN: 1,
 };
 
@@ -92,6 +92,7 @@ class Scheduler {
             let res = this.generateReportCard();
 
             for (let i = 0; i < CONSTANTS.ALLOWED_REPEATED_ATTEMPTS; i++) {
+                console.log(i);
                 if (this.ruleCheck(res)) {
                     break;
                 } else {

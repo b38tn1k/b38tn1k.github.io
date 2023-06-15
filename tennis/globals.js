@@ -32,78 +32,216 @@ let cnv;
 globalPlayers = `
 [
   {
-      "firstName": "Roger",
-      "lastName": "Federer",
-      "contact": "roger.federer@example.com",
-      "availability": [true, true, false, false, true, true]
+    "firstName": "Dan",
+    "lastName": "S",
+    "contact": "",
+    "availability": [
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true
+    ]
   },
   {
-      "firstName": "Rafael",
-      "lastName": "Nadal",
-      "contact": "rafael.nadal@example.com",
-      "availability": [true, true, true, true, true, true]
+    "firstName": "Dan",
+    "lastName": "M",
+    "contact": "",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
   },
   {
-      "firstName": "Novak",
-      "lastName": "Djokovic",
-      "contact": "novak.djokovic@example.com",
-      "availability": [true, true, true, true, true, true]
+    "firstName": "Zultan",
+    "lastName": "P",
+    "contact": "",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
   },
   {
-      "firstName": "Serena",
-      "lastName": "Williams",
-      "contact": "serena.williams@example.com",
-      "availability": [true, true, true, true, false, false]
+    "firstName": "Casey",
+    "lastName": "R",
+    "contact": "",
+    "availability": [
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true
+    ]
   },
   {
-      "firstName": "Naomi",
-      "lastName": "Osaka",
-      "contact": "naomi.osaka@example.com",
-      "availability": [true, true, true, true, true, true]
+    "firstName": "Steve",
+    "lastName": "C",
+    "contact": "",
+    "availability": [
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false
+    ]
   },
   {
-      "firstName": "Stefanos",
-      "lastName": "Tsitsipas",
-      "contact": "stefanos.tsitsipas@example.com",
-      "availability": [false, true, true, true, true, true]
+    "firstName": "Antony",
+    "lastName": "A",
+    "contact": "",
+    "availability": [
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
   },
   {
-      "firstName": "Ashleigh",
-      "lastName": "Barty",
-      "contact": "ashleigh.barty@example.com",
-      "availability": [true, true, true, true, true, true]
+    "firstName": "Phil",
+    "lastName": "N",
+    "contact": "",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
   },
   {
-      "firstName": "Daniil",
-      "lastName": "Medvedev",
-      "contact": "daniil.medvedev@example.com",
-      "availability": [true, true, true, true, true, true]
+    "firstName": "Kieran",
+    "lastName": "O",
+    "contact": "",
+    "availability": [
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false
+    ]
   },
   {
-      "firstName": "Simona",
-      "lastName": "Halep",
-      "contact": "simona.halep@example.com",
-      "availability": [true, true, false, false, true, true]
+    "firstName": "David",
+    "lastName": "D",
+    "contact": "",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
   },
   {
-      "firstName": "Dominic",
-      "lastName": "Thiem",
-      "contact": "dominic.thiem@example.com",
-      "availability": [true, true, true, true, true, true]
+    "firstName": "Kevin R",
+    "lastName": "",
+    "contact": "",
+    "availability": [
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
   },
   {
-      "firstName": "Aryna",
-      "lastName": "Sabalenka",
-      "contact": "aryna.sabalenka@example.com",
-      "availability": [true, true, true, true, true, true]
-  },
-  {
-      "firstName": "Alexander",
-      "lastName": "Zverev",
-      "contact": "alexander.zverev@example.com",
-      "availability": [true, true, true, true, true, true]
+    "firstName": "Larry",
+    "lastName": "E",
+    "contact": "",
+    "availability": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
   }
 ]
+
 
 
 `

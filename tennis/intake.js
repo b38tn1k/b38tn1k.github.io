@@ -26,7 +26,7 @@ class Availability {
         this.players = [];
         this.title = "Player Availabilities";
         this.matchesPerWeek = 2;
-        this.weeksInSession = 6;
+        this.weeksInSession = 12;
         this.jsonInputVisible = false;
         this.jsonInputField = null;
         this.matchesPerWeekSlider = null;
@@ -180,7 +180,7 @@ class Availability {
         );
         this.leagueDuration = createP(`League Duration: ${this.weeksInSession} weeks`);
         this.leagueDuration.parent(section);
-        this.weeksInSessionSlider = createSlider(4, 12, this.weeksInSession);
+        this.weeksInSessionSlider = createSlider(4, 24, this.weeksInSession);
         this.weeksInSessionSlider.parent(section);
         this.weeksInSessionSlider.id("weeksInSessionSlider");
         this.weeksInSessionSlider.input(() => {

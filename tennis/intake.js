@@ -25,7 +25,7 @@ class Availability {
     constructor() {
         this.players = [];
         this.title = "Player Availabilities";
-        this.matchesPerWeek = 4;
+        this.matchesPerWeek = 2;
         this.weeksInSession = 6;
         this.jsonInputVisible = false;
         this.jsonInputField = null;

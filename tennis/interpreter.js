@@ -109,8 +109,7 @@ class Interpreter {
             let ty = team == 0 ? tyTop : tyBottom;
             for (let player = 0; player < 2; player++) {
                 if (
-                    this.gameSchedule[i][j + k].captains[0].firstName ==
-                    this.gameSchedule[i][j + k].teams[team][player].firstName
+                    (this.gameSchedule[i][j + k].captains[0].firstName == this.gameSchedule[i][j + k].teams[team][player].firstName) && (this.gameSchedule[i][j + k].captains[0].lastName == this.gameSchedule[i][j + k].teams[team][player].lastName)
                 ) {
                     this.img.fill(255, 255, 0);
                 } else {

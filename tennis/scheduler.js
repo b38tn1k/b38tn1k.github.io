@@ -35,7 +35,7 @@ function drawTennisCourt(buffer, x, y, width, height) {
 const CONSTANTS = {
     PLAYERS_PER_MATCH: 4,
     MINIMUM_REQUIRED_MATCHES: 4,
-    ALLOWED_REPEATED_ATTEMPTS: 15,
+    ALLOWED_REPEATED_ATTEMPTS: 150,
     MINIMUM_REQUIRED_CAPTAIN: 1,
 };
 
@@ -223,6 +223,9 @@ class Scheduler {
                 }
             }
             selectedPlayers.splice(maxIndex, 1);
+        }
+        while (selectedPlayers.length > numPlayersNeeded) {
+            notSelectedPlayers.push(selectedPlayers.pop());
         }
 
         notSelectedPlayers = notSelectedPlayers.concat(availablePlayers);
@@ -429,6 +432,9 @@ class Scheduler {
             if (r.gamesCaptained < CONSTANTS.MINIMUM_REQUIRED_CAPTAIN) {
                 passed = false;
             }
+
+            // include a total avoidance method
+
         }
         return passed;
     }

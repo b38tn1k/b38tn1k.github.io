@@ -8,9 +8,6 @@
 // 12 players in a flight (the league) best, next best, jrs.. they move around after every session
 // https://docs.google.com/spreadsheets/d/16RnoOF49E4NChldnqGQ5x5LmiNK9znnHlVaPn1Bdw98/edit#gid=1944998598
 
-// WEDNESDAY ARVO: next step is to work on updatePlayers to allow availability for timeslots per week.
-// maybe a drop down of unavailables would be smarter? think
-
 const ELEMENT_CLASSES = {
     toolsDiv: "toolsDiv",
     textareaInput: "textarea-input",
@@ -52,6 +49,25 @@ class Availability {
         // the top of the sidebar and will serve to identify the application.
         createHeading(uiContainer, "League Ninja");
 
+         // Create a 'test' button for troubleshooting. This button populates the JSON input field with either a global string or array.
+         const testButton = createButtonIn(uiContainer, "Test", () => {
+            this.courtsInput.value("Monday: Court 3, Court 4");
+            this.timeSlotsInput.value("Monday: 6:30, 8:30");
+            this.buildGameSchedule();
+
+            if (typeof globalPlayers === "string") {
+                // loading demo troubleshooting
+                this.jsonInputField.value(globalPlayers);
+            } else if (Array.isArray(globalPlayers)) {
+                this.jsonInputField.value(join(globalPlayers, "\n"));
+            } else {
+                console.log("globalPlayers is neither a string nor an array");
+            }
+            
+            this.parseJsonInput();
+            this.generateAction();
+        });
+
         // Creating a section for the league tools within the UI container.
         // These tools are specific to managing the league aspects of the application.
         this.createLeagueToolsSection(uiContainer);
@@ -64,43 +80,13 @@ class Availability {
         // These tools are specific to managing the schedule aspects of the application.
         this.createScheduleToolsSection(uiContainer);
 
-        // Create a 'test' button for troubleshooting. This button populates the JSON input field with either a global string or array.
-        const testButton = createButtonIn(uiContainer, "Test", () => {
-            if (typeof globalPlayers === "string") {
-                // loading demo troubleshooting
-                this.jsonInputField.value(globalPlayers);
-            } else if (Array.isArray(globalPlayers)) {
-                this.jsonInputField.value(join(globalPlayers, "\n"));
-            } else {
-                console.log("globalPlayers is neither a string nor an array");
-            }
-            this.courtsInput.value("Monday: Court 3, Court 4");
-            this.timeSlotsInput.value("Monday: 6:30, 8:30");
-            this.parseJsonInput();
-        });
-
         // Creating dedicated divs for player data & player availability.
         // This allows for better organization and easier manipulation of these sections.
         this.createPlayerInfoDivs();
     }
 
     draw() {
-        // This function is continuously called to update the UI based on the state of the program
-
-        // Check if the length of the players array has changed since the last draw call
-        if (this.oldPlayerLength !== this.players.length) {
-            // If there are players, enable the 'generate' button
-            if (this.players.length > 0) {
-                this.generateButton.removeClass(BUTTON_CLASSES.disabled);
-            }
-            // If there are no players, disable the 'generate' button
-            else {
-                this.generateButton.addClass(BUTTON_CLASSES.disabled);
-            }
-
-            // Update the oldPlayerLength to keep track of the changes in the players array
-            this.oldPlayerLength = this.players.length;
-        }
+        // Placeholder
     }
 
     /****************************************************
@@ -312,12 +298,13 @@ class Availability {
                 fullName: `${firstNameInput.value()} ${lastNameInput.value()}`,
                 unsecureID: getUnsecureHash(),
                 contact: contactInput.value(),
-                availability: Array(this.weeksInSession).fill(false),
+                availability: [],
             };
 
             this.players.push(newPlayer);
             this.updatePlayerDataDiv();
             inputs.forEach((input) => input.value(""));
+            this.buildGameSchedule();
             this.checkButtons();
         });
     }
@@ -426,6 +413,10 @@ class Availability {
         for (let i = 0; i < this.players.length; i++) {
             if (this.players[i].checkboxes) {
                 this.players[i].availability = this.players[i].checkboxes.map((checkbox) => checkbox.checked());
+            } else {
+                for (let j = 0; j < this.gameAvailabilitySchedule.length * this.gameAvailabilitySchedule[0].length; j++) {
+                    this.players[i].availability.push(true);
+                }
             }
         }
 
@@ -457,10 +448,10 @@ class Availability {
         // Grab the JSON data from the input field
         const inputText = this.jsonInputField.value();
 
-        // Build the league schedule and check if it exists
+        // Build the league schedule and check if it exists, TEMPORARY!
         this.buildGameSchedule();
         if (this.gameAvailabilitySchedule.length === 0) {
-            this.showLoadStatus("Please set a League Schedule!", "red");
+            this.showLoadStatus("Please set a League Schedule!", "orange");
         }
 
         // Try parsing the JSON data
@@ -583,7 +574,6 @@ class Availability {
      **********************************************/
 
     updatePlayerAvailability() {
-        console.log("make game schedule", this.gameAvailabilitySchedule);
         this.updatePlayerAvailDiv();
     }
 

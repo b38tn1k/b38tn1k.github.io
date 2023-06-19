@@ -35,7 +35,7 @@ function drawTennisCourt(buffer, x, y, width, height) {
 const CONSTANTS = {
     PLAYERS_PER_MATCH: 4,
     MINIMUM_REQUIRED_MATCHES: 4,
-    ALLOWED_REPEATED_ATTEMPTS: 15,
+    ALLOWED_REPEATED_ATTEMPTS: 0, //15,
     MINIMUM_REQUIRED_CAPTAIN: 1,
 };
 
@@ -118,12 +118,12 @@ class Scheduler {
                 if (this.ruleCheck(res)) {
                     break;
                 } else {
-                    this.resetGameSchedule()
+                    this.resetGameSchedule();
                     this.generateSchedule();
                     res = this.generateReportCard();
                 }
             }
-            console.table(res);
+            // console.table(res);
             const inter = new Interpreter(this.players, this.gameSchedule, this.img);
             // this.logSchedule();
             inter.drawPoster();
@@ -153,10 +153,41 @@ class Scheduler {
 
     generateSchedule() {
         this.initializePlayerStats();
+        // Group the data by week, day, and timeslot
+        let weeks = groupBy(this.gameAvailability, "week");
+
+        // Iterate over each week
+        for (let week in weeks) {
+            console.log(`Week: ${week}`);
+
+            let days = groupBy(weeks[week], "day");
+
+            // Iterate over each day in the week
+            for (let day in days) {
+                console.log(` Day: ${day}`);
+
+                let timeslots = groupBy(days[day], "timeslot");
+
+                // Iterate over each timeslot in the day
+                for (let timeslot in timeslots) {
+                    console.log(`  Timeslot: ${timeslot}`);
+
+                    // Iterate over each court in the timeslot
+                    for (let game of timeslots[timeslot]) {
+                        console.log(`   Court: ${game.court}`);
+                    }
+                }
+            }
+        }
+
+        for (let week = 0; week < this.weeksInSession; week++) {
+            let matchSchedule = this.gameAvailability.filter((game) => game.week == week + 1);
+            let matchInWeekIndex = week * this.matchesPerWeek;
+        }
+
         // Create game schedule
         for (let week = 0; week < this.weeksInSession; week++) {
             const matches = [];
-
             const selectedPlayers = this.getAvailablePlayers(week, this.players);
             const playerGroups = this.createPlayerGroups(selectedPlayers);
             const captains = this.selectCaptains(playerGroups);
@@ -456,7 +487,6 @@ class Scheduler {
             }
 
             // include a total avoidance method
-
         }
         return passed;
     }

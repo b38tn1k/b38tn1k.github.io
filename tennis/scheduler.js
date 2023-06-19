@@ -44,8 +44,9 @@ class Scheduler {
     constructor() {
         this.players = [];
         this.gameSchedule = [];
-        this.numWeeks;
-        this.numMatchesPerWeek;
+        this.gameAvailability = [];
+        this.weeksInSession;
+        this.matchesPerWeek;
         this.modeHandOff = -1;
         this.generated = false;
         // this.img = createGraphics(612, 792);
@@ -54,8 +55,8 @@ class Scheduler {
         // drawTennisCourt(this.img, this.img.width/2, this.img.height/2, 80, 120);
     }
 
-    draw(availability) {
-        this.generateUIResponse(availability);
+    draw() {
+        this.generateUIResponse();
         imageMode(CENTER);
 
         const maxWidth = 0.9 * (windowWidth - 340 * 2); // Remaining width after accounting for the border
@@ -83,20 +84,41 @@ class Scheduler {
         image(this.img, x, y, newWidth, newHeight);
     }
 
+    resetGameSchedule() {
+        this.gameSchedule = [];
+        // for (let i = 0; i < this.gameAvailability.length; i++) {
+        //     let copiedGame = Object.assign(this.gameAvailability[i]);
+        //     this.gameSchedule.push(copiedGame);
+        // }
+    }
+
+    reset(gameAvailability, players) {
+        this.gameAvailability = [];
+        for (let i = 0; i < gameAvailability.length; i++) {
+            for (let game of gameAvailability[i]) {
+                let copiedGame = Object.assign(game);
+                this.gameAvailability.push(copiedGame);
+            }
+        }
+        this.resetGameSchedule();
+        this.generated = false;
+        this.players = players;
+        this.weeksInSession = gameAvailability.length;
+        this.matchesPerWeek = gameAvailability[0].length;
+    }
+
     // to tell the user that something is happening
-    generateUIResponse(availability) {
+    generateUIResponse() {
         if (!this.generated) {
-            this.players = availability.players;
             this.generated = true;
             this.generateSchedule();
             let res = this.generateReportCard();
 
             for (let i = 0; i < CONSTANTS.ALLOWED_REPEATED_ATTEMPTS; i++) {
-                console.log(i);
                 if (this.ruleCheck(res)) {
                     break;
                 } else {
-                    this.gameSchedule = [];
+                    this.resetGameSchedule()
                     this.generateSchedule();
                     res = this.generateReportCard();
                 }
@@ -117,7 +139,6 @@ class Scheduler {
             this.players[i].weeksMissed = [];
             this.players[i].teammates = [];
             this.players[i].opponents = [];
-            this.players[i].availability = this.players[i].checkboxes.map((checkbox) => checkbox.checked());
 
             // calculate unavailableScore
             this.players[i].unavailableScore = 0; // start with 0
@@ -133,7 +154,7 @@ class Scheduler {
     generateSchedule() {
         this.initializePlayerStats();
         // Create game schedule
-        for (let week = 0; week < this.numWeeks; week++) {
+        for (let week = 0; week < this.weeksInSession; week++) {
             const matches = [];
 
             const selectedPlayers = this.getAvailablePlayers(week, this.players);
@@ -180,7 +201,7 @@ class Scheduler {
         availablePlayers = shuffle(availablePlayers);
 
         let notSelectedPlayers = players.filter((player) => !player.availability[week]);
-        let numPlayersNeeded = this.numMatchesPerWeek * CONSTANTS.PLAYERS_PER_MATCH;
+        let numPlayersNeeded = this.matchesPerWeek * CONSTANTS.PLAYERS_PER_MATCH;
 
         const selectedPlayers = [];
         const remainingAvailablePlayers = [];
@@ -189,7 +210,7 @@ class Scheduler {
             if (
                 player.weeksMissed.includes(week - 1) ||
                 player.availability[week + 1] === false ||
-                (this.numMatchesPerWeek * week > CONSTANTS.MINIMUM_REQUIRED_MATCHES &&
+                (this.matchesPerWeek * week > CONSTANTS.MINIMUM_REQUIRED_MATCHES &&
                     player.gamesPlayed < CONSTANTS.MINIMUM_REQUIRED_MATCHES)
             ) {
                 selectedPlayers.push(player);

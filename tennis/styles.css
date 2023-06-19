@@ -18,20 +18,10 @@
     width: 100%;
 }
 
-#JSONLoadInput {
+.playerInfoDiv {
     position: fixed;
     background-color: rgba(240, 240, 240, 0.75);
-    top: 20px;
-    top: 20px;
-    bottom: 20px;
-    left: 20px;
-    left: 380px; /* Adjust the left value based on the sidebar width */
-    width: calc(100% - 420px); /* Adjust the width based on the sidebar width and padding */ 
-}
-
-#playerDataDiv {
-    position: fixed;
-    background-color: rgba(240, 240, 240, 0.75);
+    border: 5px solid  rgba(240, 240, 240, 0.75);
     top: 20px;
     top: 20px;
     bottom: 20px;
@@ -48,6 +38,7 @@
     flex-direction: column;
     justify-content: center;
     background-color: rgba(240, 240, 240, 0.75);
+    border: 5px solid  rgba(240, 240, 240, 0.75);
     padding: 10px;
 }
 
@@ -66,6 +57,26 @@
     resize: vertical;
 }
 
+.name-header {
+    min-width: 200px; /* Adjust the width value as needed */
+    
+}
+
+.table-header {
+    text-align: center;
+    padding: 8px;            /* Padding for content inside cell */
+      
+}
+
+.checkbox-cell {
+    align-items: center;
+}
+
+td input[type=checkbox] {
+    display: block;
+    margin: 0 auto;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -77,11 +88,11 @@ th, td {
 }
   
 th {
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;  /* Light grey border */
 }
   
 td {
-    border-right: 1px solid #ddd;
+    border: 1px solid #ddd;  /* Light grey border */
 }
   
 tr:nth-child(even) {
@@ -89,11 +100,11 @@ tr:nth-child(even) {
 }
   
 tr:last-child td {
-    border-bottom: none;
+    border: 1px solid #ddd;  /* Light grey border */
 }
   
 td:last-child {
-    border-right: none;
+    border: 1px solid #ddd;  /* Light grey border */
 }
 
 .disabled {

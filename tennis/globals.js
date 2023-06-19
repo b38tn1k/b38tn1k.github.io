@@ -29,11 +29,21 @@ let scheduler;
 // Canvas reference
 let cnv;
 
+// ID tool
+function getUnsecureHash() {
+  let myStr =
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15);
+  myStr += myStr + myStr;
+  return myStr.substring(0, 8);
+}
+
 globalPlayers = `
 [
   {
     "firstName": "Dan",
     "lastName": "S",
+    "fullName": "Dan S",
     "contact": "",
     "availability": [
       false,
@@ -48,11 +58,13 @@ globalPlayers = `
       true,
       false,
       true
-    ]
+    ],
+    "unsecureID": "67xerlr8"
   },
   {
     "firstName": "Dan",
     "lastName": "M",
+    "fullName": "Dan M",
     "contact": "",
     "availability": [
       true,
@@ -67,11 +79,13 @@ globalPlayers = `
       true,
       true,
       true
-    ]
+    ],
+    "unsecureID": "6aa6p33v"
   },
   {
     "firstName": "Zultan",
     "lastName": "P",
+    "fullName": "Zultan P",
     "contact": "",
     "availability": [
       true,
@@ -86,11 +100,13 @@ globalPlayers = `
       true,
       true,
       true
-    ]
+    ],
+    "unsecureID": "i0c74mpp"
   },
   {
     "firstName": "Casey",
     "lastName": "R",
+    "fullName": "Casey R",
     "contact": "",
     "availability": [
       false,
@@ -105,11 +121,13 @@ globalPlayers = `
       true,
       false,
       true
-    ]
+    ],
+    "unsecureID": "9mafjdn3"
   },
   {
     "firstName": "Steve",
     "lastName": "C",
+    "fullName": "Steve C",
     "contact": "",
     "availability": [
       true,
@@ -124,11 +142,13 @@ globalPlayers = `
       false,
       false,
       false
-    ]
+    ],
+    "unsecureID": "il4gs0qu"
   },
   {
     "firstName": "Antony",
     "lastName": "A",
+    "fullName": "Antony A",
     "contact": "",
     "availability": [
       false,
@@ -143,11 +163,13 @@ globalPlayers = `
       true,
       true,
       true
-    ]
+    ],
+    "unsecureID": "iar6vill"
   },
   {
     "firstName": "Phil",
     "lastName": "N",
+    "fullName": "Phil N",
     "contact": "",
     "availability": [
       true,
@@ -162,11 +184,13 @@ globalPlayers = `
       true,
       true,
       true
-    ]
+    ],
+    "unsecureID": "d727yblr"
   },
   {
     "firstName": "Kieran",
     "lastName": "O",
+    "fullName": "Kieran O",
     "contact": "",
     "availability": [
       true,
@@ -181,11 +205,13 @@ globalPlayers = `
       false,
       true,
       false
-    ]
+    ],
+    "unsecureID": "tn59layc"
   },
   {
     "firstName": "David",
     "lastName": "D",
+    "fullName": "David D",
     "contact": "",
     "availability": [
       true,
@@ -200,11 +226,13 @@ globalPlayers = `
       true,
       true,
       true
-    ]
+    ],
+    "unsecureID": "rxkih3sa"
   },
   {
-    "firstName": "Kevin R",
-    "lastName": "",
+    "firstName": "Kevin",
+    "lastName": "R",
+    "fullName": "Kevin R ",
     "contact": "",
     "availability": [
       true,
@@ -219,11 +247,13 @@ globalPlayers = `
       false,
       false,
       false
-    ]
+    ],
+    "unsecureID": "mlqk4d8c"
   },
   {
     "firstName": "Larry",
     "lastName": "E",
+    "fullName": "Larry E",
     "contact": "",
     "availability": [
       true,
@@ -238,10 +268,9 @@ globalPlayers = `
       true,
       true,
       true
-    ]
+    ],
+    "unsecureID": "dr3phfwr"
   }
 ]
-
-
 
 `

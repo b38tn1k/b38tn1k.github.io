@@ -49,8 +49,8 @@ class Availability {
         // the top of the sidebar and will serve to identify the application.
         createHeading(uiContainer, "League Ninja");
 
-         // Create a 'test' button for troubleshooting. This button populates the JSON input field with either a global string or array.
-         const testButton = createButtonIn(uiContainer, "Test", () => {
+        // Create a 'test' button for troubleshooting. This button populates the JSON input field with either a global string or array.
+        const testButton = createButtonIn(uiContainer, "Test", () => {
             this.courtsInput.value("Monday: Court 3, Court 4");
             this.timeSlotsInput.value("Monday: 6:30, 8:30");
             this.buildGameSchedule();
@@ -63,7 +63,7 @@ class Availability {
             } else {
                 console.log("globalPlayers is neither a string nor an array");
             }
-            
+
             this.parseJsonInput();
             this.generateAction();
         });
@@ -414,8 +414,14 @@ class Availability {
             if (this.players[i].checkboxes) {
                 this.players[i].availability = this.players[i].checkboxes.map((checkbox) => checkbox.checked());
             } else {
-                for (let j = 0; j < this.gameAvailabilitySchedule.length * this.gameAvailabilitySchedule[0].length; j++) {
-                    this.players[i].availability.push(true);
+                if (this.players[i].availability.length == 0) {
+                    for (
+                        let j = 0;
+                        j < this.gameAvailabilitySchedule.length * this.gameAvailabilitySchedule[0].length;
+                        j++
+                    ) {
+                        this.players[i].availability.push(true);
+                    }
                 }
             }
         }

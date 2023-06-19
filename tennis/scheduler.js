@@ -156,6 +156,8 @@ class Scheduler {
         // Group the data by week, day, and timeslot
         let weeks = groupBy(this.gameAvailability, "week");
 
+        let timeslotIndex = 0;
+
         // Iterate over each week
         for (let week in weeks) {
             console.log(`Week: ${week}`);
@@ -170,15 +172,18 @@ class Scheduler {
 
                 // Iterate over each timeslot in the day
                 for (let timeslot in timeslots) {
-                    console.log(`  Timeslot: ${timeslot}`);
+                    console.log(`  Timeslot: ${timeslot} - Player Availability Index ${timeslotIndex}`);
+                    console.log(`  ${timeslots[timeslot].length} Courts:`);
 
                     // Iterate over each court in the timeslot
                     for (let game of timeslots[timeslot]) {
-                        console.log(`   Court: ${game.court}`);
+                        console.log(`   Court: ${game.court}`); // can use this to figure out availability probably
                     }
+                    timeslotIndex += 1;
                 }
             }
         }
+        console.log(this.players[0].availability);
 
         for (let week = 0; week < this.weeksInSession; week++) {
             let matchSchedule = this.gameAvailability.filter((game) => game.week == week + 1);

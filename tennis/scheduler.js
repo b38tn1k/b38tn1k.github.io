@@ -157,6 +157,7 @@ class Scheduler {
             this.players[i].teammates = [];
             this.players[i].opponents = [];
             this.players[i].unavailability = [];
+            this.players[i].freeGamesMissed = 0;
 
             // calculate unavailableScore
             this.players[i].unavailableScore = 0; // start with 0
@@ -173,7 +174,7 @@ class Scheduler {
                         gameIndex < this.gameAvailability.length &&
                         this.gameAvailability[gameIndex].timeslot === currentTimeslot
                     ) {
-                        this.players[i].unavailability.push(this.gameAvailability[gameIndex]);
+                        // this.players[i].unavailability.push(this.gameAvailability[gameIndex]);
                         gameIndex++;
                     }
                 } else {
@@ -209,9 +210,9 @@ class Scheduler {
                 let timeslots = groupBy(days[day], "timeslot");
                 // Iterate over each timeslot in the day
                 for (let timeslot in timeslots) {
-                    console.log(`Week: ${week} Index: ${weekIndex}`);
-                    console.log(` Day: ${day}`);
-                    console.log(`  Timeslot: ${timeslot} - Player Availability Index ${timeslotIndex}`);
+                    // console.log(`Week: ${week} Index: ${weekIndex}`);
+                    // console.log(` Day: ${day}`);
+                    // console.log(`  Timeslot: ${timeslot} - Player Availability Index ${timeslotIndex}`);
                     const players = this.getAvailablePlayers(
                         timeslotIndex,
                         weekIndex,
@@ -228,18 +229,34 @@ class Scheduler {
                     unselectedPlayers = unselectedPlayers.filter(
                         (a1) => !players.selected.some((a2) => JSON.stringify(a1) === JSON.stringify(a2))
                     );
-                    let mystring = '  '
-                    players.selected.forEach((player) => {
-                        mystring += player.fullName + ", ";
+                    const playerGroups = this.createPlayerGroups(players.selected);
+                    const captains = this.selectCaptains(playerGroups);
+                    let matches = [];
+                    playerGroups.forEach((group, i) => {
+                        // let mystring = "\n   ";
+                        const teams = this.createTeams(group);
+                        matches.push({captain: captains[i], teams: teams});
+                        // teams.forEach((team) => {
+                        //     team.forEach((player) => {
+                        //         mystring += player.fullName + ", ";
+                        //     });
+                        //     mystring += "\n   ";
+                        // });
+                        // console.log("   Captain: ", captains[i].fullName, mystring);
+                        this.rememberTeams(teams); // moved to use unsecureID
                     });
-                    console.log(mystring);
-
-                    // next step is to dive into matches, teams, captain stuff, etc.. 
                     // console.log(`  ${timeslots[timeslot].length} Courts:`);
                     // Iterate over each court in the timeslot
-                    for (let game of timeslots[timeslot]) {
+                    for (let i = 0; i < timeslots[timeslot].length; i++) {
                         // console.log(`   Court: ${game.court}`); // can use this to figure out availability probably
-                        // this.gameSchedule[gameIndex];
+                        if (matches[i]) {
+                            this.gameSchedule[gameIndex].captain = matches[i].captain;
+                            this.gameSchedule[gameIndex].teams = matches[i].teams;
+                            this.gameSchedule[gameIndex].hasGame = true;
+                        } else {
+                            this.gameSchedule[gameIndex].hasGame = false;
+                        }
+                        console.log(this.gameSchedule[gameIndex]);
                         gameIndex++; // increment game index
                     }
                     timeslotIndex++; // increment timeslot index
@@ -250,51 +267,19 @@ class Scheduler {
                 player.weeksMissed.push(week);
                 player.gamesMissed++;
                 if (player.tempAvailable) {
-                    player.freeGamesMissed ++;
+                    player.freeGamesMissed++;
                 }
             }
             weekIndex++; // increment week index
-        }
-        return;
-
-        // Create game schedule
-        for (let week = 0; week < this.weeksInSession; week++) {
-            const matches = [];
-            const selectedPlayers = this.getAvailablePlayers(week, this.players);
-            const playerGroups = this.createPlayerGroups(selectedPlayers);
-            const captains = this.selectCaptains(playerGroups);
-
-            for (let i = 0; i < playerGroups.length; i++) {
-                const playersInMatch = playerGroups[i];
-                const captain = captains[i];
-                const teams = this.createTeams(playersInMatch);
-                this.rememberTeams(teams);
-
-                // Update player statistics
-                playersInMatch.forEach((player) => {
-                    player.gamesPlayed++;
-                });
-
-                // Add match to the schedule
-                matches.push({
-                    week: week + 1,
-                    matchNumber: i + 1,
-                    players: playersInMatch,
-                    captains: [captain],
-                    teams: teams,
-                });
-            }
-            // Add matches to the game schedule
-            this.gameSchedule.push(matches);
         }
     }
 
     rememberTeams(teams) {
         for (let i = 0; i < teams.length; i++) {
             for (let j = 0; j < teams.length; j++) {
-                teams[i][j].teammates.push(teams[i][int(!j)]);
-                teams[i][j].opponents.push(teams[int(!i)][j]);
-                teams[i][j].opponents.push(teams[int(!i)][int(!j)]);
+                teams[i][j].teammates.push(teams[i][int(!j)].unsecureID);
+                teams[i][j].opponents.push(teams[int(!i)][j].unsecureID);
+                teams[i][j].opponents.push(teams[int(!i)][int(!j)].unsecureID);
             }
         }
     }
@@ -362,7 +347,7 @@ class Scheduler {
     }
 
     hasHistory(player1, player2) {
-        const res = player1.teammates.includes(player2) || player1.opponents.includes(player2);
+        const res = player1.teammates.includes(player2.unsecureID) || player1.opponents.includes(player2.unsecureID);
         return res;
     }
 
@@ -449,23 +434,20 @@ class Scheduler {
         let team1 = [players[0], players[1]];
         let team2 = [players[2], players[3]];
 
-        // Set the maximum number of iterations to avoid infinite loops
-        let maxIterations = 5;
+        // Use the maximum number of iterations to avoid infinite loops
         let iteration = 0;
 
         // Iterate until a good arrangement is found or the limit is reached
-        while (iteration < maxIterations) {
+        while (iteration < CONSTANTS.ALLOWED_REPEATED_ATTEMPTS) {
             iteration++;
-
             // Count the number of problematic pairings
             let badTeammates = this.countBadPairs(team1, "teammates") + this.countBadPairs(team2, "teammates");
-            let badOpponents = this.countBadPairs(team1.concat(team2), "opponents");
-
+            // let badOpponents = this.countBadPairs(team1.concat(team2), "opponents");
             // If there are no problems, return the teams
-            if (badTeammates === 0 && badOpponents === 0) {
+            // if (badTeammates === 0 && badOpponents === 0) {
+            if (badTeammates === 0) {
                 return [team1, team2];
             }
-
             // Swap a random pair of players between the teams
             let swapIndex1 = Math.floor(Math.random() * team1.length);
             let swapIndex2 = Math.floor(Math.random() * team2.length);
@@ -481,7 +463,7 @@ class Scheduler {
         let count = 0;
         for (let i = 0; i < list.length - 1; i++) {
             for (let j = i + 1; j < list.length; j++) {
-                if (list[i][history].includes(list[j])) {
+                if (list[i][history].includes(list[j].unsecureID)) {
                     count++;
                 }
             }

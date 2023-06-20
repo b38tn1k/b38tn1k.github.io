@@ -138,3 +138,27 @@ function drawTennisCourt(buffer, x, y, width, height) {
     // Reset the rendering target
     buffer.pop();
 }
+
+function createTimeAndReportTables(div, scheduleData, playerData, percentage) {
+    div.html("");
+    createHeading(div, "Schedule");
+    createTableFromData(div, scheduleData, ['Game Time', 'Captain', 'Team A', 'Team 1'], ['timeslot', 'captain', 'team1', 'team2']);
+    const p = createParagraph(div, "block");
+    p.html('<b><b>');
+    createHeading(div, "Player Stats");
+    createTableFromData(div, playerData, ['Player', 'Games Played', 'Total Games Missed', 'Free Games Missed', 'Games Captained', 'Max Same Teammate Count', 'Max Same Opponent Count'], ['fullName', 'totalGamesPlayed', 'totalGamesMissed', 'freeGamesMissedAcc', 'gamesCaptainedAcc', 'maxSameTeammate', 'maxSameOpponent']);
+    const p2 = createParagraph(div, "block");
+    p2.html(`<br>Court utilization is ${percentage}%`);
+}
+
+function createTableFromData(parent, data, headers, columns) {
+    const table = createTable(parent);
+    createTableHeader(table, headers);
+    data.forEach(rowData => {
+        const row = createElement("tr");
+        row.parent(table);
+        columns.forEach(column => {
+            createTableCell(row, String(rowData[column]) || ''); // use an empty string as default value
+        });
+    });
+}

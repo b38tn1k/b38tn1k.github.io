@@ -14,6 +14,8 @@ const ELEMENT_CLASSES = {
     playerDataDivId: "playerDataDiv",
     playerAvailDivId: "playerAvailDiv",
     playerInfoDiv: "playerInfoDiv",
+    reportingDivId: "reportingDiv",
+    major_checkbox: "major_checkbox"
     // etc.
 };
 
@@ -30,8 +32,10 @@ class Availability {
         this.weeksInSessionSlider = null;
         this.playerDataDiv = null;
         this.playerAvailDiv = null;
+        this.reportingDiv = null;
         this.gameAvailabilitySchedule = [];
         this.oldPlayerLength = this.players.length;
+        this.multipleGamesOneNightClicker;
         this.setup();
     }
 
@@ -102,6 +106,7 @@ class Availability {
         const mutuallyExclusiveElements = [
             select("#" + ELEMENT_CLASSES.playerDataDivId),
             select("#" + ELEMENT_CLASSES.playerAvailDivId),
+            select("#" + ELEMENT_CLASSES.reportingDivId)
         ];
 
         // Loop through each of the mutually exclusive elements
@@ -162,6 +167,7 @@ class Availability {
         // Create a button to load player data from a JSON format, and parse the input JSON.
         this.loadJsonButton = createButtonIn(section, "Load JSON", () => {
             this.parseJsonInput();
+            this.toggleElements(true, ELEMENT_CLASSES.playerDataDivId);
         });
 
         // Create a paragraph element to display the JSON loading status.
@@ -213,6 +219,9 @@ class Availability {
             this.buildGameSchedule();
             this.leagueDuration.html(`League Duration: ${this.weeksInSession} weeks`);
         });
+        this.multipleGamesOneNightClicker= createCheckbox("Same-Day Double Play", false);
+        this.multipleGamesOneNightClicker.parent(section);
+        this.multipleGamesOneNightClicker.addClass(ELEMENT_CLASSES.major_checkbox);
     }
 
     createScheduleToolsSection(parent) {
@@ -257,6 +266,11 @@ class Availability {
         this.playerAvailDiv = createDiv().style("display", "none");
         this.playerAvailDiv.id(ELEMENT_CLASSES.playerAvailDivId);
         this.playerAvailDiv.addClass(ELEMENT_CLASSES.playerInfoDiv);
+
+        // Create the div for sharing the schedule and report card.
+        this.reportingDiv = createDiv().style("display", "none");
+        this.reportingDiv.id(ELEMENT_CLASSES.reportingDivId);
+        this.reportingDiv.addClass(ELEMENT_CLASSES.playerInfoDiv);
     }
 
     createAddPlayerRow(parent) {
@@ -430,7 +444,9 @@ class Availability {
         }
 
         // Reset the 'generated' flag and 'gameSchedule' in the scheduler, share players, and set 'numWeeks' and 'numMatchesPerWeek'
-        scheduler.reset(this.gameAvailabilitySchedule, this.players);
+        scheduler.reset(this.gameAvailabilitySchedule, this.players, this.reportingDiv, () => {
+            this.toggleElements(true, ELEMENT_CLASSES.reportingDivId)
+        }, this.multipleGamesOneNightClicker.checked());
 
         // Switch to SCHEDULER mode, this mode signifies that the application is in schedule generation process.
         mode = SCHEDULER;
@@ -597,7 +613,7 @@ class Availability {
         const table = createTable(this.playerAvailDiv);
 
         // check the days and courts line up
-        console.log(this.gameAvailabilitySchedule);
+        // console.log(this.gameAvailabilitySchedule);
         let valid = true;
         for (let day of this.gameAvailabilitySchedule) {
             for (let game of day) {

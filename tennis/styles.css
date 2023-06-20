@@ -68,6 +68,10 @@
       
 }
 
+.major_checkbox {
+    padding: 8px;
+}
+
 .checkbox-cell {
     align-items: center;
 }

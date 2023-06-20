@@ -52,6 +52,7 @@ class Shape {
 
 
 function setupScreen() {
+  randomSeed(Date.now());
   cnv = createCanvas(windowWidth, windowHeight);
   cnv.style('user-select', 'none');
   cnv.style('-webkit-user-select', 'none');

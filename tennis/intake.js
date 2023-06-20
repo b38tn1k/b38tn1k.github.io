@@ -52,9 +52,6 @@ class Availability {
         // Creating a heading for the application. This will be displayed at
         // the top of the sidebar and will serve to identify the application.
         createHeading(uiContainer, "League Ninja");
-        let thing = createP("Currently reworking stuff, use console cause poster gen is broken")
-        thing.style('color', 'red');
-        thing.parent(uiContainer);
 
         // Create a 'test' button for troubleshooting. This button populates the JSON input field with either a global string or array.
         const testButton = createButtonIn(uiContainer, "Test", () => {

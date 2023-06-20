@@ -48,6 +48,9 @@ class Availability {
         // Creating a heading for the application. This will be displayed at
         // the top of the sidebar and will serve to identify the application.
         createHeading(uiContainer, "League Ninja");
+        let thing = createP("Currently reworking stuff, use console cause poster gen is broken")
+        thing.style('color', 'red');
+        thing.parent(uiContainer);
 
         // Create a 'test' button for troubleshooting. This button populates the JSON input field with either a global string or array.
         const testButton = createButtonIn(uiContainer, "Test", () => {
@@ -513,6 +516,7 @@ class Availability {
      ********************************************/
 
     updatePlayerDataDiv() {
+        // the player data div allows addition and removel of playuers from the roster.
         // Clear the previous content in the player data division
         this.playerDataDiv.html("");
 
@@ -584,31 +588,48 @@ class Availability {
     }
 
     updatePlayerAvailDiv() {
+        // the this.playerAvailDiv allows user to set the availability for the player, 
+        // based on the schedule defined in the League Setup
         // Clear the previous content in the player data division
         this.playerAvailDiv.html("");
 
         // Create a new table within the player data division
         const table = createTable(this.playerAvailDiv);
 
-        // Set the table header with the desired columns
-        // createTableHeader(table, ["Name", "Availability"]);
+        // check the days and courts line up
+        console.log(this.gameAvailabilitySchedule);
+        let valid = true;
+        for (let day of this.gameAvailabilitySchedule) {
+            for (let game of day) {
+                if (!game.day || !game.timeslot || !game.court || !game.week) {
+                    valid = false;
+                }
+            }
+        }
+        if (valid){
+            // Populate the table with existing player data (this.players[i].fullname, null for now)
+            this.populatePlayerAvailRows(table);
+        } else {
+            this.showLoadStatus("Please fix the League Schedule!<br>Every day needs a court.", "orange");
+        }
+    }
 
-        // Populate the table with existing player data (this.players[i].fullname, null for now)
-        this.populatePlayerAvailRows(table);
+    reduceGameAvailabilityScheduleNoCourts() {
+         // Get a unique list of all days from the game schedule
+         let times = new Set();
+         for (let i = 0; i < this.gameAvailabilitySchedule.length; i++) {
+             for (let day of this.gameAvailabilitySchedule[i]) {
+                 let scheduleDay = { day: day.day, timeslot: day.timeslot, week: i };
+                 times.add(JSON.stringify(scheduleDay));
+             }
+         }
+ 
+         times = Array.from(times).map((item) => JSON.parse(item));
+         return times;
     }
 
     populatePlayerAvailRows(parent) {
-        // Get a unique list of all days from the game schedule
-        let times = new Set();
-        for (let i = 0; i < this.gameAvailabilitySchedule.length; i++) {
-            for (let day of this.gameAvailabilitySchedule[i]) {
-                let scheduleDay = { day: day.day, timeslot: day.timeslot, week: i };
-                times.add(JSON.stringify(scheduleDay));
-            }
-        }
-
-        times = Array.from(times).map((item) => JSON.parse(item));
-
+       const times = this.reduceGameAvailabilityScheduleNoCourts();
         // Create the table structure
         let table = createElement("table");
         let thead = createElement("thead");
@@ -616,7 +637,6 @@ class Availability {
         let headerRow1 = createElement("tr");
         let headerRow2 = createElement("tr");
         let headerRow3 = createElement("tr");
-        let headerRow4 = createElement("tr");
 
         // Header row 1
         let nameHeader = createElement("th", "Name");
@@ -641,13 +661,13 @@ class Availability {
         }
         thead.child(headerRow2);
 
-        // Header row 4
+        // Header row 3
         Array.from(times).forEach((time) => {
             let timeslotHeader = createElement("th", `${time.day.substring(0, 3)}<br>${time.timeslot}`);
             timeslotHeader.addClass("table-header");
-            headerRow4.child(timeslotHeader);
+            headerRow3.child(timeslotHeader);
         });
-        thead.child(headerRow4);
+        thead.child(headerRow3);
 
         // Append thead and tbody to the table
         table.child(thead);

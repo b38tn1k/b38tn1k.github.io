@@ -47,6 +47,7 @@ class Scheduler {
         this.gameAvailability = [];
         this.weeksInSession;
         this.matchesPerWeek;
+        this.courtsPerTimeSlot;
         this.modeHandOff = -1;
         this.generated = false;
         // this.img = createGraphics(612, 792);
@@ -86,10 +87,26 @@ class Scheduler {
 
     resetGameSchedule() {
         this.gameSchedule = [];
-        // for (let i = 0; i < this.gameAvailability.length; i++) {
-        //     let copiedGame = Object.assign(this.gameAvailability[i]);
-        //     this.gameSchedule.push(copiedGame);
-        // }
+        for (let i = 0; i < this.gameAvailability.length; i++) {
+            let copiedGame = Object.assign(this.gameAvailability[i]);
+            this.gameSchedule.push(copiedGame);
+        }
+        let old = { day: "notaday", timeslot: -1, week: -1 };
+        let timeslotIndexMap = [];
+        let tsIMi = -1;
+        for (let game of this.gameSchedule) {
+            if (game.day != old.day || game.timeslot != old.timeslot || game.week != old.week) {
+                tsIMi++;
+                timeslotIndexMap.push(0);
+                old = { day: game.day, timeslot: game.timeslot, week: game.week };
+            }
+            timeslotIndexMap[tsIMi]++;
+        }
+        timeslotIndexMap = timeslotIndexMap.flatMap((num) => Array(num).fill(num));
+
+        for (let i = 0; i < timeslotIndexMap.length; i++) {
+            this.gameSchedule[i].concurrentGamesInTimeSlot = timeslotIndexMap[i];
+        }
     }
 
     reset(gameAvailability, players) {
@@ -139,56 +156,106 @@ class Scheduler {
             this.players[i].weeksMissed = [];
             this.players[i].teammates = [];
             this.players[i].opponents = [];
+            this.players[i].unavailability = [];
 
             // calculate unavailableScore
             this.players[i].unavailableScore = 0; // start with 0
-            this.players[i].availability.forEach((available) => {
-                if (!available) {
+            let gameIndex = 0;
+            for (let k = 0; k < this.players[i].availability.length; k++) {
+                if (!this.players[i].availability[k]) {
                     // if player is not available for a day
                     this.players[i].unavailableScore++; // increase unavailableScore by 1
+
+                    // also add all games in the current timeslot to the player's unavailability
+                    // there may be multiple games per court
+                    let currentTimeslot = this.gameAvailability[gameIndex].timeslot;
+                    while (
+                        gameIndex < this.gameAvailability.length &&
+                        this.gameAvailability[gameIndex].timeslot === currentTimeslot
+                    ) {
+                        this.players[i].unavailability.push(this.gameAvailability[gameIndex]);
+                        gameIndex++;
+                    }
+                } else {
+                    // increment the gameIndex to the next unique timeslot
+                    let currentTimeslot = this.gameAvailability[gameIndex].timeslot;
+                    while (
+                        gameIndex < this.gameAvailability.length &&
+                        this.gameAvailability[gameIndex].timeslot === currentTimeslot
+                    ) {
+                        gameIndex++;
+                    }
                 }
-            });
+            }
         }
     }
 
     generateSchedule() {
         this.initializePlayerStats();
+        let timeslotIndex = 0;
+        let gameIndex = 0;
+        let weekIndex = 0;
+        let dayIndex = 0;
+
         // Group the data by week, day, and timeslot
         let weeks = groupBy(this.gameAvailability, "week");
 
-        let timeslotIndex = 0;
-
         // Iterate over each week
         for (let week in weeks) {
-            console.log(`Week: ${week}`);
-
             let days = groupBy(weeks[week], "day");
-
+            let unselectedPlayers = [];
             // Iterate over each day in the week
             for (let day in days) {
-                console.log(` Day: ${day}`);
-
                 let timeslots = groupBy(days[day], "timeslot");
-
                 // Iterate over each timeslot in the day
                 for (let timeslot in timeslots) {
+                    console.log(`Week: ${week} Index: ${weekIndex}`);
+                    console.log(` Day: ${day}`);
                     console.log(`  Timeslot: ${timeslot} - Player Availability Index ${timeslotIndex}`);
-                    console.log(`  ${timeslots[timeslot].length} Courts:`);
+                    const players = this.getAvailablePlayers(
+                        timeslotIndex,
+                        weekIndex,
+                        timeslots[timeslot],
+                        gameIndex,
+                        this.players
+                    );
+                    players.notSelected.forEach((player) => {
+                        if (!unselectedPlayers.find((p) => p.unsecureID === player.unsecureID)) {
+                            // If player is not already in unselectedPlayers, add them
+                            unselectedPlayers.push(player);
+                        }
+                    });
+                    unselectedPlayers = unselectedPlayers.filter(
+                        (a1) => !players.selected.some((a2) => JSON.stringify(a1) === JSON.stringify(a2))
+                    );
+                    let mystring = '  '
+                    players.selected.forEach((player) => {
+                        mystring += player.fullName + ", ";
+                    });
+                    console.log(mystring);
 
+                    // next step is to dive into matches, teams, captain stuff, etc.. 
+                    // console.log(`  ${timeslots[timeslot].length} Courts:`);
                     // Iterate over each court in the timeslot
                     for (let game of timeslots[timeslot]) {
-                        console.log(`   Court: ${game.court}`); // can use this to figure out availability probably
+                        // console.log(`   Court: ${game.court}`); // can use this to figure out availability probably
+                        // this.gameSchedule[gameIndex];
+                        gameIndex++; // increment game index
                     }
-                    timeslotIndex += 1;
+                    timeslotIndex++; // increment timeslot index
+                }
+                dayIndex++; //increment day index
+            }
+            for (let player of unselectedPlayers) {
+                player.weeksMissed.push(week);
+                player.gamesMissed++;
+                if (player.tempAvailable) {
+                    player.freeGamesMissed ++;
                 }
             }
+            weekIndex++; // increment week index
         }
-        console.log(this.players[0].availability);
-
-        for (let week = 0; week < this.weeksInSession; week++) {
-            let matchSchedule = this.gameAvailability.filter((game) => game.week == week + 1);
-            let matchInWeekIndex = week * this.matchesPerWeek;
-        }
+        return;
 
         // Create game schedule
         for (let week = 0; week < this.weeksInSession; week++) {
@@ -232,21 +299,27 @@ class Scheduler {
         }
     }
 
-    getAvailablePlayers(week, players) {
-        let availablePlayers = players.filter((player) => player.availability[week]);
+    getAvailablePlayers(timeslotIndex, weekIndex, courts, gameIndex, players) {
+        let availablePlayers = players.filter((player) => player.availability[timeslotIndex]);
         availablePlayers = shuffle(availablePlayers);
 
-        let notSelectedPlayers = players.filter((player) => !player.availability[week]);
-        let numPlayersNeeded = this.matchesPerWeek * CONSTANTS.PLAYERS_PER_MATCH;
+        let notSelectedPlayers = players.filter((player) => !player.availability[timeslotIndex]);
+        let numPlayersNeeded = courts.length * CONSTANTS.PLAYERS_PER_MATCH;
 
         const selectedPlayers = [];
         const remainingAvailablePlayers = [];
 
+        notSelectedPlayers.forEach((player) => {
+            player.tempAvailable = false;
+        });
+
         availablePlayers.forEach((player) => {
+            player.tempAvailable = true;
             if (
-                player.weeksMissed.includes(week - 1) ||
-                player.availability[week + 1] === false ||
-                (this.matchesPerWeek * week > CONSTANTS.MINIMUM_REQUIRED_MATCHES &&
+                player.weeksMissed.includes(weekIndex - 1) ||
+                player.availability[timeslotIndex + 1] === false ||
+                player.availability[timeslotIndex + 2] === false ||
+                (gameIndex > CONSTANTS.MINIMUM_REQUIRED_MATCHES &&
                     player.gamesPlayed < CONSTANTS.MINIMUM_REQUIRED_MATCHES)
             ) {
                 selectedPlayers.push(player);
@@ -265,12 +338,9 @@ class Scheduler {
         if (numAvailablePlayers >= numPlayersNeeded) {
             while (selectedPlayers.length < numPlayersNeeded) {
                 selectedPlayers.push(availablePlayers.pop());
-                // const randomIndex = Math.floor(Math.random() * availablePlayers.length);
-                // const randomPlayer = availablePlayers.splice(randomIndex, 1)[0];
-                // selectedPlayers.push(randomPlayer);
             }
         } else {
-            console.warn(`Not enough players available for week ${week}`);
+            console.warn(`Not enough players available for week ${weekIndex}`);
         }
 
         while (selectedPlayers.length % 4 != 0) {
@@ -288,12 +358,7 @@ class Scheduler {
 
         notSelectedPlayers = notSelectedPlayers.concat(availablePlayers);
 
-        notSelectedPlayers.forEach((player) => {
-            player.weeksMissed.push(week);
-            player.gamesMissed++;
-        });
-
-        return selectedPlayers;
+        return { selected: selectedPlayers, notSelected: notSelectedPlayers };
     }
 
     hasHistory(player1, player2) {

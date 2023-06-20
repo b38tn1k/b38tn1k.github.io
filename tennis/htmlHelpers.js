@@ -139,26 +139,31 @@ function drawTennisCourt(buffer, x, y, width, height) {
     buffer.pop();
 }
 
-function createTimeAndReportTables(div, scheduleData, playerData, percentage) {
+function createTimeAndReportTables(div, scheduleData, playerData, percentage, failures) {
     div.html("");
     createHeading(div, "Schedule");
     createTableFromData(div, scheduleData, ['Game Time', 'Captain', 'Team A', 'Team 1'], ['timeslot', 'captain', 'team1', 'team2']);
     const p = createParagraph(div, "block");
     p.html('<b><b>');
     createHeading(div, "Player Stats");
-    createTableFromData(div, playerData, ['Player', 'Games Played', 'Total Games Missed', 'Free Games Missed', 'Games Captained', 'Max Same Teammate Count', 'Max Same Opponent Count'], ['fullName', 'totalGamesPlayed', 'totalGamesMissed', 'freeGamesMissedAcc', 'gamesCaptainedAcc', 'maxSameTeammate', 'maxSameOpponent']);
+    createTableFromData(div, playerData, ['Player', 'Games Played', 'Total Games Missed', 'Free Games Missed', 'Games Captained', 'Max Same Teammate Count', 'Max Same Opponent Count'], ['fullName', 'totalGamesPlayed', 'totalGamesMissed', 'freeGamesMissedAcc', 'gamesCaptainedAcc', 'maxSameTeammate', 'maxSameOpponent'], failures);
     const p2 = createParagraph(div, "block");
     p2.html(`<br>Court utilization is ${percentage}%`);
+    console.log(failures);
 }
 
-function createTableFromData(parent, data, headers, columns) {
+function createTableFromData(parent, data, headers, columns, failures = []) {
     const table = createTable(parent);
     createTableHeader(table, headers);
-    data.forEach(rowData => {
+    data.forEach((rowData, rowIndex) => {
         const row = createElement("tr");
         row.parent(table);
+        if (failures.includes(rowData[columns[0]])) {
+            row.style("background-color", "lightcoral"); // Replace "lightcoral" with your preferred shade of light red
+        }
         columns.forEach(column => {
             createTableCell(row, String(rowData[column]) || ''); // use an empty string as default value
         });
     });
 }
+

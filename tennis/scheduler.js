@@ -113,7 +113,7 @@ class Scheduler {
             let attempts = 0;
 
             while (attempts < CONSTANTS.ALLOWED_REPEATED_ATTEMPTS) {
-                if (this.ruleCheck(res)) {
+                if (this.ruleCheck(res).passed) {
                     break;
                 } else {
                     this.resetGameSchedule();
@@ -125,7 +125,7 @@ class Scheduler {
             
             // const inter = new Interpreter(this.players, this.gameSchedule, this.img);
             this.logSchedule(res, attempts);
-            createTimeAndReportTables(this.reportDiv, this.simplifyGameSchedule(), res, this.computeCourtUtilization());
+            createTimeAndReportTables(this.reportDiv, this.simplifyGameSchedule(), res, this.computeCourtUtilization(), this.ruleCheck(res).failures);
             this.showReportDiv();
             // inter.drawPoster();
         }
@@ -677,16 +677,19 @@ class Scheduler {
 
     ruleCheck(reportCard) {
         let passed = true;
+        let failures = [];
         for (let r of reportCard) {
             if (r.totalGamesPlayed < CONSTANTS.MINIMUM_REQUIRED_MATCHES) {
                 passed = false;
+                failures.push(r.fullName);
             }
             if (r.gamesCaptainedAcc < CONSTANTS.MINIMUM_REQUIRED_CAPTAIN) {
                 passed = false;
+                failures.push(r.fullName);
             }
 
             // include a total avoidance method
         }
-        return passed;
+        return {passed: passed, failures: failures};
     }
 }

@@ -6,32 +6,6 @@
 
 //TODO: players occasionally getting duplicated to mukltiple matches.
 
-function drawTennisCourt(buffer, x, y, width, height) {
-    const courtColor = color("#006400"); // Green color for the tennis court
-    const serviceBoxColor = color("#0000FF"); // Blue color for the service boxes
-    const lineColor = color("#FFFFFF"); // White color for the lines
-
-    // Set the buffer as the rendering target
-    buffer.push();
-    // buffer.translate(x - width / 2, y - height / 2); // Translate to center of the court
-    buffer.translate(x, y); // Translate to corner of the court
-
-    // Draw the outer court
-    buffer.stroke(lineColor);
-    buffer.strokeWeight(1);
-    buffer.fill(courtColor);
-    buffer.rect(0, 0, width, height);
-    buffer.line(width / 2, height * 0.3, width / 2, height * 0.7);
-    buffer.line(0, height / 2, width, height / 2);
-    buffer.line(width * 0.1, 0, width * 0.1, height);
-    buffer.line(width * 0.9, 0, width * 0.9, height);
-    buffer.line(width * 0.1, height * 0.3, width * 0.9, height * 0.3);
-    buffer.line(width * 0.1, height * 0.7, width * 0.9, height * 0.7);
-
-    // Reset the rendering target
-    buffer.pop();
-}
-
 const CONSTANTS = {
     PLAYERS_PER_MATCH: 4,
     MINIMUM_REQUIRED_MATCHES: 4,
@@ -130,17 +104,37 @@ class Scheduler {
             this.generated = true;
             this.generateSchedule();
             let res = this.generateReportCard();
+            let attempts = 0;
 
-            for (let i = 0; i < CONSTANTS.ALLOWED_REPEATED_ATTEMPTS; i++) {
+            while (attempts < CONSTANTS.ALLOWED_REPEATED_ATTEMPTS) {
                 if (this.ruleCheck(res)) {
                     break;
                 } else {
                     this.resetGameSchedule();
                     this.generateSchedule();
                     res = this.generateReportCard();
+                    attempts++;
                 }
             }
-            // console.table(res);
+
+            let roster = [];
+            for (let game of this.gameSchedule) {
+                if (game.hasGame) {
+                    roster.push({
+                        timeslot: `Week ${game.week} ${game.day} ${game.timeslot} ${game.court}`,
+                        captain: game.captain.fullName,
+                        team1: game.teams[0].map(team => team.fullName).join(", "),
+                        team2: game.teams[1].map(team => team.fullName).join(", "),
+                    });
+                }
+            }
+            console.table(roster);
+            console.table(res);
+            console.log(`Schedule generated in ${attempts} attempts`);
+            let totalGames = this.gameSchedule.length;
+            let totalGamesWithHasGameTrue = this.gameSchedule.filter((game) => game.hasGame === true).length;
+            let percentage = (totalGamesWithHasGameTrue / totalGames) * 100;
+            console.log(`Court utilization is ${percentage}%`);
             const inter = new Interpreter(this.players, this.gameSchedule, this.img);
             // this.logSchedule();
             inter.drawPoster();
@@ -169,14 +163,14 @@ class Scheduler {
 
                     // also add all games in the current timeslot to the player's unavailability
                     // there may be multiple games per court
-                    let currentTimeslot = this.gameAvailability[gameIndex].timeslot;
-                    while (
-                        gameIndex < this.gameAvailability.length &&
-                        this.gameAvailability[gameIndex].timeslot === currentTimeslot
-                    ) {
-                        // this.players[i].unavailability.push(this.gameAvailability[gameIndex]);
-                        gameIndex++;
-                    }
+                    // let currentTimeslot = this.gameAvailability[gameIndex].timeslot;
+                    // while (
+                    //     gameIndex < this.gameAvailability.length &&
+                    //     this.gameAvailability[gameIndex].timeslot === currentTimeslot
+                    // ) {
+                    //     this.players[i].unavailability.push(this.gameAvailability[gameIndex]);
+                    //     gameIndex++;
+                    // }
                 } else {
                     // increment the gameIndex to the next unique timeslot
                     let currentTimeslot = this.gameAvailability[gameIndex].timeslot;
@@ -210,9 +204,6 @@ class Scheduler {
                 let timeslots = groupBy(days[day], "timeslot");
                 // Iterate over each timeslot in the day
                 for (let timeslot in timeslots) {
-                    // console.log(`Week: ${week} Index: ${weekIndex}`);
-                    // console.log(` Day: ${day}`);
-                    // console.log(`  Timeslot: ${timeslot} - Player Availability Index ${timeslotIndex}`);
                     const players = this.getAvailablePlayers(
                         timeslotIndex,
                         weekIndex,
@@ -233,22 +224,19 @@ class Scheduler {
                     const captains = this.selectCaptains(playerGroups);
                     let matches = [];
                     playerGroups.forEach((group, i) => {
-                        // let mystring = "\n   ";
                         const teams = this.createTeams(group);
-                        matches.push({captain: captains[i], teams: teams});
-                        // teams.forEach((team) => {
-                        //     team.forEach((player) => {
-                        //         mystring += player.fullName + ", ";
-                        //     });
-                        //     mystring += "\n   ";
-                        // });
-                        // console.log("   Captain: ", captains[i].fullName, mystring);
+                        matches.push({ captain: captains[i], teams: teams });
+                        teams.forEach((team) => {
+                            team.forEach((player) => {
+                                player.gamesPlayed++;
+                            });
+                        });
                         this.rememberTeams(teams); // moved to use unsecureID
                     });
-                    // console.log(`  ${timeslots[timeslot].length} Courts:`);
+                    // timeslots[timeslot]
                     // Iterate over each court in the timeslot
                     for (let i = 0; i < timeslots[timeslot].length; i++) {
-                        // console.log(`   Court: ${game.court}`); // can use this to figure out availability probably
+                        // game.court
                         if (matches[i]) {
                             this.gameSchedule[gameIndex].captain = matches[i].captain;
                             this.gameSchedule[gameIndex].teams = matches[i].teams;
@@ -256,7 +244,6 @@ class Scheduler {
                         } else {
                             this.gameSchedule[gameIndex].hasGame = false;
                         }
-                        console.log(this.gameSchedule[gameIndex]);
                         gameIndex++; // increment game index
                     }
                     timeslotIndex++; // increment timeslot index

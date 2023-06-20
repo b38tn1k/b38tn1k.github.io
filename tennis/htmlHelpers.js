@@ -112,3 +112,29 @@ function groupBy(array, prop) {
         return groups;
     }, {});
 }
+
+function drawTennisCourt(buffer, x, y, width, height) {
+    const courtColor = color("#006400"); // Green color for the tennis court
+    const serviceBoxColor = color("#0000FF"); // Blue color for the service boxes
+    const lineColor = color("#FFFFFF"); // White color for the lines
+
+    // Set the buffer as the rendering target
+    buffer.push();
+    // buffer.translate(x - width / 2, y - height / 2); // Translate to center of the court
+    buffer.translate(x, y); // Translate to corner of the court
+
+    // Draw the outer court
+    buffer.stroke(lineColor);
+    buffer.strokeWeight(1);
+    buffer.fill(courtColor);
+    buffer.rect(0, 0, width, height);
+    buffer.line(width / 2, height * 0.3, width / 2, height * 0.7);
+    buffer.line(0, height / 2, width, height / 2);
+    buffer.line(width * 0.1, 0, width * 0.1, height);
+    buffer.line(width * 0.9, 0, width * 0.9, height);
+    buffer.line(width * 0.1, height * 0.3, width * 0.9, height * 0.3);
+    buffer.line(width * 0.1, height * 0.7, width * 0.9, height * 0.7);
+
+    // Reset the rendering target
+    buffer.pop();
+}

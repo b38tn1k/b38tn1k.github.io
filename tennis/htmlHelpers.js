@@ -55,11 +55,14 @@ function createTable(parent) {
     return table;
 }
 
-function createTableHeader(table, headerCells) {
+function createTableHeader(table, headerCells, cspan = []) {
     const headerRow = createElement("tr");
     headerRow.parent(table);
-    headerCells.forEach((cellText) => {
+    headerCells.forEach((cellText, i) => {
         const cell = createElement("th", cellText);
+        if (cspan.length != 0) {
+            cell.attribute("colspan", cspan[i]);
+        }
         cell.parent(headerRow);
     });
 }
@@ -142,19 +145,18 @@ function drawTennisCourt(buffer, x, y, width, height) {
 function createTimeAndReportTables(div, scheduleData, playerData, percentage, failures) {
     div.html("");
     createHeading(div, "Schedule");
-    createTableFromData(div, scheduleData, ['Game Time', 'Captain', 'Team A', 'Team 1'], ['timeslot', 'captain', 'team1', 'team2']);
+    createTableFromData(div, scheduleData, ['Game Time', 'Captain', 'Team A', 'Team 1'], ['timeslot', 'captain', 'team1', 'team12', 'team2', 'team22'], [1, 1, 2, 2]);
     const p = createParagraph(div, "block");
     p.html('<b><b>');
     createHeading(div, "Player Stats");
-    createTableFromData(div, playerData, ['Player', 'Games Played', 'Total Games Missed', 'Free Games Missed', 'Games Captained', 'Max Same Teammate Count', 'Max Same Opponent Count'], ['fullName', 'totalGamesPlayed', 'totalGamesMissed', 'freeGamesMissedAcc', 'gamesCaptainedAcc', 'maxSameTeammate', 'maxSameOpponent'], failures);
+    createTableFromData(div, playerData, ['Player', 'Games Played', 'Total Games Missed', 'Free Games Missed', 'Games Captained', 'Max Same Teammate Count', 'Max Same Opponent Count'], ['fullName', 'totalGamesPlayed', 'totalGamesMissed', 'freeGamesMissedAcc', 'gamesCaptainedAcc', 'maxSameTeammate', 'maxSameOpponent'], [], failures);
     const p2 = createParagraph(div, "block");
     p2.html(`<br>Court utilization is ${percentage}%`);
-    console.log(failures);
 }
 
-function createTableFromData(parent, data, headers, columns, failures = []) {
+function createTableFromData(parent, data, headers, columns, cspan=[], failures = []) {
     const table = createTable(parent);
-    createTableHeader(table, headers);
+    createTableHeader(table, headers, cspan);
     data.forEach((rowData, rowIndex) => {
         const row = createElement("tr");
         row.parent(table);

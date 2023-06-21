@@ -24,9 +24,14 @@ class Scheduler {
         this.courtsPerTimeSlot;
         this.modeHandOff = -1;
         this.generated = false;
-        this.two_games_allowable = false;
+        this.twoGamesAllowable = false;
+        this.fairSpread = true;
         this.reportDiv;
         this.showReportDiv;
+        this.timeslotGI = [];
+        this.dayGI = [];
+        this.weekGI = [];
+        this.meanUnavailabilityScore = 0;
         // this.img = createGraphics(612, 792);
         // this.img = createGraphics(1275, 1650);
         // this.img.background(color("#CC6633"));
@@ -86,8 +91,9 @@ class Scheduler {
         }
     }
 
-    reset(gameAvailability, players, reportDiv, showDiv, two_games_allowable=false) {
-        this.two_games_allowable = two_games_allowable;
+    reset(gameAvailability, players, reportDiv, showDiv, twoGamesAllowable = false, fairSpread = false) {
+        this.twoGamesAllowable = twoGamesAllowable;
+        this.fairSpread = fairSpread;
         this.gameAvailability = [];
         for (let i = 0; i < gameAvailability.length; i++) {
             for (let game of gameAvailability[i]) {
@@ -102,6 +108,9 @@ class Scheduler {
         this.matchesPerWeek = gameAvailability[0].length;
         this.reportDiv = reportDiv;
         this.showReportDiv = showDiv;
+        this.timeslotGI = [];
+        this.dayGI = [];
+        this.weekGI = [];
     }
 
     // to tell the user that something is happening
@@ -122,10 +131,16 @@ class Scheduler {
                     attempts++;
                 }
             }
-            
+
             // const inter = new Interpreter(this.players, this.gameSchedule, this.img);
             this.logSchedule(res, attempts);
-            createTimeAndReportTables(this.reportDiv, this.simplifyGameSchedule(), res, this.computeCourtUtilization(), this.ruleCheck(res).failures);
+            createTimeAndReportTables(
+                this.reportDiv,
+                this.simplifyGameSchedule(),
+                res,
+                this.computeCourtUtilization(),
+                this.ruleCheck(res).failures
+            );
             this.showReportDiv();
             // inter.drawPoster();
         }
@@ -138,8 +153,10 @@ class Scheduler {
                 roster.push({
                     timeslot: `Week ${game.week} ${game.day} ${game.timeslot} ${game.court}`,
                     captain: game.captain.fullName,
-                    team1: game.teams[0].map((team) => team.fullName).join(", "),
-                    team2: game.teams[1].map((team) => team.fullName).join(", "),
+                    team1: game.teams[0][0].fullName, //game.teams[0].map((team) => team.fullName).join(", "),
+                    team12: game.teams[0][1].fullName, //game.teams[0].map((team) => team.fullName).join(", "),
+                    team2: game.teams[1][0].fullName, //game.teams[1].map((team) => team.fullName).join(", "),
+                    team22: game.teams[1][1].fullName, //game.teams[1].map((team) => team.fullName).join(", "),
                 });
             }
         }
@@ -189,7 +206,7 @@ class Scheduler {
                 if (!this.players[i].availability[k]) {
                     // if player is not available for a day
                     // increase unavailableScore by 1
-                    this.players[i].unavailableScore++; 
+                    this.players[i].unavailableScore++;
                 } else {
                     // increment the gameIndex to the next unique timeslot
                     let currentTimeslot = this.gameAvailability[gameIndex].timeslot;
@@ -201,110 +218,47 @@ class Scheduler {
                     }
                 }
             }
+            // First, extract the gamesPlayed array from each player
+            let gamesPlayedArray = this.players.map((player) => player.unavailableScore);
+
+            // Calculate the mean
+            let sum = gamesPlayedArray.reduce((accumulator, value) => accumulator + value, 0);
+            this.meanUnavailabilityScore = sum / gamesPlayedArray.length;
         }
     }
 
-    // generateSchedule() {
-    //     this.initializePlayerStats();
-    //     let timeslotIndex = 0;
-    //     let gameIndex = 0;
-    //     let weekIndex = 0;
-    //     let dayIndex = 0;
+    countGamesAndTimeslotsPerUniqueDay(gameSchedule) {
+        let statsPerDay = {};
 
-    //     // Group the data by week, day, and timeslot
-    //     let weeks = groupBy(this.gameAvailability, "week");
-    //     // Iterate over each week
-    //     for (let week in weeks) {
-    //         let days = groupBy(weeks[week], "day");
-    //         let unselectedPlayers = [];
-    //         let weekGI = [];
-    //         // Iterate over each day in the week
-    //         for (let day in days) { // Seperate this out as a function with args
-    //             let dayGI = [];
-    //             let timeslots = groupBy(days[day], "timeslot");
-    //             // Iterate over each timeslot in the day
-    //             for (let timeslot in timeslots) { // Seperate this out as a function with args
-    //                 let timeslotGI = [];
-    //                 // GET AVAILABLE PLAYERS
-    //                 const players = this.getAvailablePlayers(
-    //                     timeslotIndex,
-    //                     weekIndex,
-    //                     timeslots[timeslot],
-    //                     gameIndex,
-    //                     dayIndex,
-    //                     this.players
-    //                 );
-    //                 // ADD UNSELECTED PLAYERS TO WEEK GROWING LIST
-    //                 players.notSelected.forEach((player) => {
-    //                     if (!unselectedPlayers.find((p) => p.unsecureID === player.unsecureID)) {
-    //                         // If player is not already in unselectedPlayers, add them
-    //                         unselectedPlayers.push(player);
-    //                     }
-    //                 });
-    //                 // FILTER WEEK GROWING LIST BY SELECTED PLAYERS (MAYBE THEY MISSED SESS #1)
-    //                 unselectedPlayers = unselectedPlayers.filter(
-    //                     (a1) => !players.selected.some((a2) => a1.unsecureID === a2.unsecureID)
-    //                 );
-    //                 for (let p of unselectedPlayers) {
-    //                     p.missedGames.push(gameIndex);
-    //                 }
-    //                 // BUILD GROUPS OF DIVERSITY
-    //                 const playerGroups = this.createPlayerGroups(players.selected);
-    //                 // CHOOSE A CAPTAIN
-    //                 const captains = this.selectCaptains(playerGroups);
-    //                 // BUILD MATCHES
-    //                 let matches = [];
-    //                 playerGroups.forEach((group, i) => {
-    //                     const teams = this.createTeams(group);
-    //                     matches.push({ captain: captains[i], teams: teams });
-    //                     teams.forEach((team) => {
-    //                         team.forEach((player) => {
-    //                             player.gamesPlayedAcc++;
-    //                             player.playedDays.push(dayIndex);
-    //                         });
-    //                     });
-    //                     this.rememberTeams(teams); // moved to use unsecureID
-    //                 });
-    //                 // ASSIGN THE MATCH TO A COURT
-    //                 for (let i = 0; i < timeslots[timeslot].length; i++) { // Seperate this out as a function with args
-    //                     // game.court
-    //                     if (matches[i]) {
-    //                         this.gameSchedule[gameIndex].captain = matches[i].captain;
-    //                         this.gameSchedule[gameIndex].teams = matches[i].teams;
-    //                         this.gameSchedule[gameIndex].hasGame = true;
-    //                     } else {
-    //                         this.gameSchedule[gameIndex].hasGame = false;
-    //                     }
-    //                     // REMEMBER WHEN A PLAYER WASNT SELECTED
-    //                     for (let player of unselectedPlayers) {
-    //                         player.missedGames.push(gameIndex);
-    //                         player.gamesMissedAcc++;
-    //                         if (player.tempAvailable) {
-    //                             player.freeGamesMissedAcc++;
-    //                         }
-    //                     }
-    //                     dayGI.push(gameIndex);
-    //                     weekGI.push(gameIndex);
-    //                     timeslotGI.push(gameIndex);
-    //                     gameIndex++; // increment game index
-    //                 }
-    //                 timeslotIndex++; // increment timeslot index
-    //                 console.log('Timeslots:\t', timeslotGI);
-    //             }
-    //             dayIndex++; //increment day index
-    //             console.log('Days:\t', dayGI);
-    //         }
-    //         console.log('Weeks:\t', weekGI);
-    //         for (let player of unselectedPlayers) {
-    //             player.missedWeeks.push(week);
-    //         }
-    //         weekIndex++; // increment week index
-    //     }
-    // }
+        gameSchedule.forEach((game) => {
+            const uniqueDay = game.day + game.week;
+
+            // Initialize the object for this day if it doesn't exist yet
+            if (!statsPerDay[uniqueDay]) {
+                statsPerDay[uniqueDay] = {
+                    games: 0,
+                    timeslots: new Set(),
+                };
+            }
+
+            // Increase the number of games
+            statsPerDay[uniqueDay].games += 1;
+
+            // Add the timeslot to the set of unique timeslots
+            statsPerDay[uniqueDay].timeslots.add(game.timeslot);
+        });
+
+        // Convert the unique timeslots from a set to a count
+        for (let day in statsPerDay) {
+            statsPerDay[day].timeslots = statsPerDay[day].timeslots.size;
+        }
+
+        return Object.values(statsPerDay);
+    }
 
     processTimeslot(timeslot, timeslotIndex, weekIndex, gameIndex, dayIndex, unselectedPlayers) {
-        let timeslotGI = [];
-        const players = this.getAvailablePlayers(timeslotIndex, weekIndex, timeslot, gameIndex, dayIndex, this.players);
+        this.timeslotGI = [];
+        const players = this.getTimeSlotGroup(timeslotIndex, weekIndex, timeslot, gameIndex, dayIndex, this.players);
         // ADD UNSELECTED PLAYERS TO WEEK GROWING LIST
         players.notSelected.forEach((player) => {
             if (!unselectedPlayers.find((p) => p.unsecureID === player.unsecureID)) {
@@ -316,9 +270,6 @@ class Scheduler {
         unselectedPlayers = unselectedPlayers.filter(
             (a1) => !players.selected.some((a2) => a1.unsecureID === a2.unsecureID)
         );
-        for (let p of unselectedPlayers) {
-            p.missedGames.push(gameIndex);
-        }
         // BUILD GROUPS OF DIVERSITY
         const playerGroups = this.createPlayerGroups(players.selected);
         // CHOOSE A CAPTAIN
@@ -326,9 +277,9 @@ class Scheduler {
         // BUILD MATCHES
         const matches = this.buildMatches(playerGroups, captains, dayIndex);
         // ASSIGN THE MATCH TO A COURT
-        gameIndex = this.assignMatchesToCourt(matches, timeslot.length, gameIndex, unselectedPlayers, timeslotGI);
+        gameIndex = this.assignMatchesToCourt(matches, timeslot.length, gameIndex, unselectedPlayers);
         timeslotIndex++;
-        console.log("Timeslots:\t", timeslotGI);
+        // console.log("Timeslot:\t", this.timeslotGI);
         return { timeslotIndex, gameIndex, unselectedPlayers };
     }
 
@@ -348,7 +299,7 @@ class Scheduler {
         return matches;
     }
 
-    assignMatchesToCourt(matches, timeslotLength, gameIndex, unselectedPlayers, timeslotGI) {
+    assignMatchesToCourt(matches, timeslotLength, gameIndex, unselectedPlayers) {
         for (let i = 0; i < timeslotLength; i++) {
             if (matches[i]) {
                 this.gameSchedule[gameIndex].captain = matches[i].captain;
@@ -357,15 +308,16 @@ class Scheduler {
             } else {
                 this.gameSchedule[gameIndex].hasGame = false;
             }
-            // REMEMBER WHEN A PLAYER WASN'T SELECTED
-            for (let player of unselectedPlayers) {
-                player.missedGames.push(gameIndex);
-                player.gamesMissedAcc++;
-                if (player.tempAvailable) {
-                    player.freeGamesMissedAcc++;
+            this.timeslotGI.push(gameIndex);
+            this.dayGI.push(gameIndex);
+            this.weekGI.push(gameIndex);
+            for (let p of unselectedPlayers) {
+                p.missedGames.push(gameIndex);
+                p.gamesMissedAcc++;
+                if (p.tempAvailable) {
+                    p.freeGamesMissedAcc++;
                 }
             }
-            timeslotGI.push(gameIndex);
             gameIndex++;
         }
         return gameIndex;
@@ -373,20 +325,25 @@ class Scheduler {
 
     processDay(day, timeslotIndex, weekIndex, gameIndex, dayIndex) {
         let unselectedPlayers = [];
-        let dayGI = [];
         let timeslots = groupBy(day, "timeslot");
         for (let timeslot in timeslots) {
-            let result = this.processTimeslot(timeslots[timeslot], timeslotIndex, weekIndex, gameIndex, dayIndex, unselectedPlayers);
+            let result = this.processTimeslot(
+                timeslots[timeslot],
+                timeslotIndex,
+                weekIndex,
+                gameIndex,
+                dayIndex,
+                unselectedPlayers
+            );
             timeslotIndex = result.timeslotIndex;
             gameIndex = result.gameIndex;
             unselectedPlayers = result.unselectedPlayers;
-            dayGI.push(gameIndex);
         }
+        // console.log("Days:\t", this.dayGI);
+        this.addMissed(this.dayGI, "missedDays", dayIndex);
         dayIndex++;
-        console.log('Days:\t', dayGI);
-        return {dayIndex, timeslotIndex, gameIndex, unselectedPlayers};
+        return { dayIndex, timeslotIndex, gameIndex, unselectedPlayers };
     }
-
 
     generateSchedule() {
         this.initializePlayerStats();
@@ -397,21 +354,27 @@ class Scheduler {
         let weeks = groupBy(this.gameAvailability, "week");
         for (let week in weeks) {
             let days = groupBy(weeks[week], "day");
-            let weekGI = [];
-            let unselectedPlayers = [];  // Initialize unselectedPlayers here
+            let unselectedPlayers = []; // Initialize unselectedPlayers here
+            this.weekGI = [];
             for (let day in days) {
+                this.dayGI = [];
                 let result = this.processDay(days[day], timeslotIndex, weekIndex, gameIndex, dayIndex);
                 dayIndex = result.dayIndex;
                 timeslotIndex = result.timeslotIndex;
                 gameIndex = result.gameIndex;
                 unselectedPlayers = result.unselectedPlayers; // Assign returned unselectedPlayers here
-                weekGI.push(gameIndex);
             }
-            console.log('Weeks:\t', weekGI);
-            for (let player of unselectedPlayers) {
-                player.missedWeeks.push(week);
-            }
+            // console.log("Weeks:\t", this.weekGI);
+            this.addMissed(this.weekGI, "missedWeeks", weekIndex);
             weekIndex++;
+        }
+    }
+
+    addMissed(span, property, index) {
+        for (let p of this.players) {
+            if (span.every((val) => p.missedGames.includes(val))) {
+                p[property].push(index);
+            }
         }
     }
 
@@ -425,20 +388,88 @@ class Scheduler {
         }
     }
 
-    getAvailablePlayers(timeslotIndex, weekIndex, courts, gameIndex, day, players) {
+    getTimeSlotGroup(timeslotIndex, weekIndex, courts, gameIndex, dayIndex, players) {
         let availablePlayers = players.filter((player) => player.availability[timeslotIndex]);
         availablePlayers = shuffle(availablePlayers);
 
+        // First, extract the gamesPlayed array from each player
+        let gamesPlayedArray = players.map((player) => player.gamesPlayedAcc);
+
+        // Calculate the mean
+        let sum = gamesPlayedArray.reduce((accumulator, value) => accumulator + value, 0);
+        let mean = sum / gamesPlayedArray.length;
+
+        // Calculate the variance
+        let variance =
+            gamesPlayedArray.reduce((accumulator, value) => accumulator + Math.pow(value - mean, 2), 0) /
+            gamesPlayedArray.length;
+
+        let standardDeviation = Math.sqrt(variance);
         let notSelectedPlayers = players.filter((player) => !player.availability[timeslotIndex]);
-        let danN = availablePlayers.filter((player) => player.fullName === "Dan S");
-        if (danN) {
-            console.log(danN);
+        let removedPlayers = [];
+
+        if (this.fairSpread) {
+            // remove abnormally popular players, reduces court utilization but increases fair game distribution
+            availablePlayers = availablePlayers.reduce((acc, player) => {
+                if (
+                    player.unavailabilityScore > this.meanUnavailabilityScore ||
+                    player.gamesPlayedAcc > standardDeviation + mean
+                ) {
+                    removedPlayers.push(player);
+                } else {
+                    acc.push(player);
+                }
+                return acc;
+            }, []);
+            notSelectedPlayers = notSelectedPlayers.concat(removedPlayers);
         }
 
-        if (!this.two_games_allowable) {
-            let alreadyPlayed = availablePlayers.filter((player) => player.playedDays.includes(day));
+        // let danN = availablePlayers.filter((player) => player.fullName === "Dan S");
+        // if (danN) {
+        //     console.log(danN);
+        // }
+
+        if (!this.twoGamesAllowable) {
+            // get rid of people who have already played
+            let alreadyPlayed = availablePlayers.filter((player) => player.playedDays.includes(dayIndex));
             notSelectedPlayers = notSelectedPlayers.concat(alreadyPlayed);
-            availablePlayers = availablePlayers.filter((player) => !player.playedDays.includes(day));
+            availablePlayers = availablePlayers.filter((player) => !player.playedDays.includes(dayIndex));
+            // figure out remaining time slots
+            let counter = gameIndex;
+            while (true) {
+                if (counter == this.gameSchedule.length) {
+                    break;
+                }
+                if (
+                    this.gameSchedule[gameIndex].week != this.gameSchedule[counter].week ||
+                    this.gameSchedule[gameIndex].day != this.gameSchedule[counter].day
+                ) {
+                    break;
+                } else {
+                    counter++;
+                }
+            }
+            let remainingTimeSlotsToday = (counter - gameIndex) / courts.length;
+
+            if (remainingTimeSlotsToday > 1) {
+                // find any players that have availability in time from the future of this day
+                let futureAvailable = [];
+                for (let p of availablePlayers) {
+                    for (let f = 0; f < remainingTimeSlotsToday; f++) {
+                        if (p.availability[gameIndex + f]) {
+                            futureAvailable.push(p);
+                        }
+                    }
+                }
+                futureAvailable = shuffle(futureAvailable);
+                // split future available between the two time slots, there is likely an optimization here
+                let cutHere = Math.floor(futureAvailable.length / remainingTimeSlotsToday);
+                futureAvailable = futureAvailable.splice(0, cutHere);
+                availablePlayers = availablePlayers.filter((player) => {
+                    return !futureAvailable.some((futurePlayer) => futurePlayer.unsecureID === player.unsecureID);
+                });
+                notSelectedPlayers = notSelectedPlayers.concat(futureAvailable);
+            }
         }
 
         let numPlayersNeeded = courts.length * CONSTANTS.PLAYERS_PER_MATCH;
@@ -452,13 +483,20 @@ class Scheduler {
 
         availablePlayers.forEach((player) => {
             player.tempAvailable = true;
+            let isUnavailableInFuture = false;
+            for (let i = 1; i <= 3; i++) {
+                if (player.availability[timeslotIndex + i]) {
+                    if (player.availability[timeslotIndex + i] === false) {
+                        isUnavailableInFuture = true;
+                        break;
+                    }
+                }
+            }
             if (
                 player.missedWeeks.includes(weekIndex - 1) ||
-                player.missedDays.includes(day - 1) ||
+                player.missedDays.includes(dayIndex - 1) ||
                 player.missedGames.includes(gameIndex - 1) ||
-                player.availability[timeslotIndex + 1] === false ||
-                // player.availability[timeslotIndex + 2] === false ||
-                // player.availability[timeslotIndex + 2] === false ||
+                isUnavailableInFuture ||
                 (gameIndex > CONSTANTS.MINIMUM_REQUIRED_MATCHES &&
                     player.gamesPlayedAcc < CONSTANTS.MINIMUM_REQUIRED_MATCHES)
             ) {
@@ -690,6 +728,6 @@ class Scheduler {
 
             // include a total avoidance method
         }
-        return {passed: passed, failures: failures};
+        return { passed: passed, failures: failures };
     }
 }

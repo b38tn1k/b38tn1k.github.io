@@ -36,6 +36,7 @@ class Availability {
         this.gameAvailabilitySchedule = [];
         this.oldPlayerLength = this.players.length;
         this.multipleGamesOneNightClicker;
+        this.reduceGamesToIncreaseFairness;
         this.setup();
     }
 
@@ -216,9 +217,12 @@ class Availability {
             this.buildGameSchedule();
             this.leagueDuration.html(`League Duration: ${this.weeksInSession} weeks`);
         });
-        this.multipleGamesOneNightClicker= createCheckbox("Same-Day Double Play", false);
+        this.multipleGamesOneNightClicker = createCheckbox("Same-Day Double Play", false);
         this.multipleGamesOneNightClicker.parent(section);
         this.multipleGamesOneNightClicker.addClass(ELEMENT_CLASSES.major_checkbox);
+        this.reduceGamesToIncreaseFairness = createCheckbox("Lower Fairer Game Count", true);
+        this.reduceGamesToIncreaseFairness.parent(section);
+        this.reduceGamesToIncreaseFairness.addClass(ELEMENT_CLASSES.major_checkbox);
     }
 
     createScheduleToolsSection(parent) {
@@ -443,7 +447,7 @@ class Availability {
         // Reset the 'generated' flag and 'gameSchedule' in the scheduler, share players, and set 'numWeeks' and 'numMatchesPerWeek'
         scheduler.reset(this.gameAvailabilitySchedule, this.players, this.reportingDiv, () => {
             this.toggleElements(true, ELEMENT_CLASSES.reportingDivId)
-        }, this.multipleGamesOneNightClicker.checked());
+        }, this.multipleGamesOneNightClicker.checked(), this.reduceGamesToIncreaseFairness.checked());
 
         // Switch to SCHEDULER mode, this mode signifies that the application is in schedule generation process.
         mode = SCHEDULER;

@@ -37,6 +37,7 @@ class Availability {
         this.oldPlayerLength = this.players.length;
         this.multipleGamesOneNightClicker;
         this.reduceGamesToIncreaseFairness;
+        this.allowDoublesIfNeeded;
         this.setup();
     }
 
@@ -217,12 +218,26 @@ class Availability {
             this.buildGameSchedule();
             this.leagueDuration.html(`League Duration: ${this.weeksInSession} weeks`);
         });
-        this.multipleGamesOneNightClicker = createCheckbox("Same-Day Double Play", false);
+        this.multipleGamesOneNightClicker = createCheckbox("Same Day Double Play", false);
         this.multipleGamesOneNightClicker.parent(section);
         this.multipleGamesOneNightClicker.addClass(ELEMENT_CLASSES.major_checkbox);
+        this.allowDoublesIfNeeded = createCheckbox("Double Play Sometimes OK", true);
+        this.allowDoublesIfNeeded.parent(section);
+        this.allowDoublesIfNeeded.addClass(ELEMENT_CLASSES.major_checkbox);
         this.reduceGamesToIncreaseFairness = createCheckbox("Less Games More Fair", true);
         this.reduceGamesToIncreaseFairness.parent(section);
         this.reduceGamesToIncreaseFairness.addClass(ELEMENT_CLASSES.major_checkbox);
+        this.multipleGamesOneNightClicker.changed(() => {
+            if (this.multipleGamesOneNightClicker.checked()) {
+                this.allowDoublesIfNeeded.checked(false);
+            }
+        });
+        
+        this.allowDoublesIfNeeded.changed(() => {
+            if (this.allowDoublesIfNeeded.checked()) {
+                this.multipleGamesOneNightClicker.checked(false);
+            }
+        });
     }
 
     createScheduleToolsSection(parent) {
@@ -245,14 +260,14 @@ class Availability {
         );
 
         // Create a button to save the schedule as an image. The function bound to this button saves the scheduler's image as 'schedule.jpg'.
-        this.imageSaveButton = createButtonIn(
-            section,
-            "Save Schedule",
-            () => {
-                save(scheduler.img, "schedule.jpg");
-            },
-            "disabled"
-        );
+        // this.imageSaveButton = createButtonIn(
+        //     section,
+        //     "Save Schedule",
+        //     () => {
+        //         save(scheduler.img, "schedule.jpg");
+        //     },
+        //     "disabled"
+        // );
     }
 
     createPlayerInfoDivs() {
@@ -330,7 +345,7 @@ class Availability {
     disableButtons() {
         this.saveDataButton.addClass(BUTTON_CLASSES.disabled);
         this.generateButton.addClass(BUTTON_CLASSES.disabled);
-        this.imageSaveButton.addClass(BUTTON_CLASSES.disabled);
+        // this.imageSaveButton.addClass(BUTTON_CLASSES.disabled);
     }
 
     enableButtonsFirst() {
@@ -447,13 +462,13 @@ class Availability {
         // Reset the 'generated' flag and 'gameSchedule' in the scheduler, share players, and set 'numWeeks' and 'numMatchesPerWeek'
         scheduler.reset(this.gameAvailabilitySchedule, this.players, this.reportingDiv, () => {
             this.toggleElements(true, ELEMENT_CLASSES.reportingDivId)
-        }, this.multipleGamesOneNightClicker.checked(), this.reduceGamesToIncreaseFairness.checked());
+        }, this.multipleGamesOneNightClicker.checked(), this.reduceGamesToIncreaseFairness.checked(), this.allowDoublesIfNeeded.checked());
 
         // Switch to SCHEDULER mode, this mode signifies that the application is in schedule generation process.
         mode = SCHEDULER;
 
         // Enable the 'Save Schedule' button by removing the 'disabled' class.
-        this.imageSaveButton.removeClass(BUTTON_CLASSES.disabled);
+        // this.imageSaveButton.removeClass(BUTTON_CLASSES.disabled);
 
         // Hide all UI elements related to player data input, availability, etc.
         this.toggleElements(false);
@@ -522,7 +537,7 @@ class Availability {
 
     showLoadStatus(message, color) {
         // Show the load status message with the specified color
-        console.log(message);
+        // console.log(message);
         this.jsonLoadStatus.html(message);
         this.jsonLoadStatus.style("color", color);
         this.jsonLoadStatus.style("display", "block");

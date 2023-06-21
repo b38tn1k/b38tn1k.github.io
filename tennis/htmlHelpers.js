@@ -149,7 +149,16 @@ function createTimeAndReportTables(div, scheduleData, playerData, percentage, fa
     const p = createParagraph(div, "block");
     p.html('<b><b>');
     createHeading(div, "Player Stats");
-    createTableFromData(div, playerData, ['Player', 'Games Played', 'Total Games Missed', 'Free Games Missed', 'Games Captained', 'Max Same Teammate Count', 'Max Same Opponent Count'], ['fullName', 'totalGamesPlayed', 'totalGamesMissed', 'freeGamesMissedAcc', 'gamesCaptainedAcc', 'maxSameTeammate', 'maxSameOpponent'], [], failures);
+    if (failures.length <= 0) {
+        let passLabel = createElement('h3', 'Passing');
+        passLabel.parent(div);
+        passLabel.style('color', 'green');
+    } else {
+        let failLabel = createElement('h3', 'Failing');
+        failLabel.parent(div);
+        failLabel.style('color', 'red');
+    }
+    createTableFromData(div, playerData, ['Player', 'Games Played', 'Total Games Missed', 'Free Games Missed', 'Games Captained', 'Max Same Teammate Count', 'Max Same Opponent Count', 'Double Up Days'], ['fullName', 'totalGamesPlayed', 'totalGamesMissed', 'freeGamesMissedAcc', 'gamesCaptainedAcc', 'maxSameTeammate', 'maxSameOpponent', 'daysExceeded'], [], failures);
     const p2 = createParagraph(div, "block");
     p2.html(`<br>Court utilization is ${percentage}%`);
 }

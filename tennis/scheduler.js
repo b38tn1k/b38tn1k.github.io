@@ -9,7 +9,7 @@
 const CONSTANTS = {
     PLAYERS_PER_MATCH: 4,
     MINIMUM_REQUIRED_MATCHES: 4,
-    ALLOWED_REPEATED_ATTEMPTS: 15,
+    ALLOWED_REPEATED_ATTEMPTS: 250,
     MINIMUM_REQUIRED_CAPTAIN: 1,
 };
 
@@ -120,9 +120,23 @@ class Scheduler {
             this.generateSchedule();
             let res = this.generateReportCard();
             let attempts = 0;
+            let minFailures = this.players.length;
+            let best = {};
+            let bestSchedule;
+            let bestRes;
+            let bestFailures;
+            let bestCourtUtil;
 
             while (attempts < CONSTANTS.ALLOWED_REPEATED_ATTEMPTS) {
-                if (this.ruleCheck(res).passed) {
+                const tests = this.ruleCheck(res);
+                if (minFailures > tests.failures.length) {
+                    best.schedule = this.simplifyGameSchedule(); 
+                    best.report = res;
+                    best.failures = tests.failures;
+                    best.courts = this.computeCourtUtilization();
+                    minFailures = tests.failures.length;
+                }
+                if (tests.passed) {
                     break;
                 } else {
                     this.resetGameSchedule();
@@ -133,13 +147,13 @@ class Scheduler {
             }
 
             // const inter = new Interpreter(this.players, this.gameSchedule, this.img);
-            this.logSchedule(res, attempts);
+            // this.logSchedule(res, attempts);
             createTimeAndReportTables(
                 this.reportDiv,
-                this.simplifyGameSchedule(),
-                res,
-                this.computeCourtUtilization(),
-                this.ruleCheck(res).failures
+                best.schedule,
+                best.report,
+                best.courts,
+                best.failures
             );
             this.showReportDiv();
             // inter.drawPoster();
@@ -728,6 +742,6 @@ class Scheduler {
 
             // include a total avoidance method
         }
-        return { passed: passed, failures: failures };
+        return { passed: passed, failures: failures};
     }
 }

@@ -57,10 +57,6 @@ class Availability {
 
         // Create a 'test' button for troubleshooting. This button populates the JSON input field with either a global string or array.
         const testButton = createButtonIn(uiContainer, "Test", () => {
-            this.courtsInput.value("Monday: Court 3, Court 4");
-            this.timeSlotsInput.value("Monday: 6:30, 8:30");
-            this.buildGameSchedule();
-
             if (typeof globalPlayers === "string") {
                 // loading demo troubleshooting
                 this.jsonInputField.value(globalPlayers);
@@ -73,6 +69,7 @@ class Availability {
             this.parseJsonInput();
             this.generateAction();
         });
+        testButton.elt.title = 'Loads a JSON and hits Generate.';
 
         // Creating a section for the league tools within the UI container.
         // These tools are specific to managing the league aspects of the application.
@@ -155,28 +152,34 @@ class Availability {
             this.toggleElements(true, ELEMENT_CLASSES.playerDataDivId);
             this.updatePlayerDataDiv();
         });
+        this.editPlayerButton.elt.title = 'Add / Delete Players';
 
         // Create a button to allow editing of player availabilities, which toggles the relevant UI elements.
-        this.editPlayerButton = createButtonIn(section, "Edit Availabilities", () => {
+        this.editAvailButton = createButtonIn(section, "Edit Availabilities", () => {
             mode = AVAILABILITY;
             this.toggleElements(true, ELEMENT_CLASSES.playerAvailDivId);
             this.updatePlayerAvailability();
         });
+        this.editAvailButton.elt.title = 'Enter the players availability. Defaults to all available.';
 
         // Create a button to load player data from a JSON format, and parse the input JSON.
         this.loadJsonButton = createButtonIn(section, "Load JSON", () => {
             this.parseJsonInput();
             this.toggleElements(true, ELEMENT_CLASSES.playerDataDivId);
         });
+        this.loadJsonButton.elt.title = 'Temporary, will probably move to Heroku and will be out of sight.';
 
         // Create a paragraph element to display the JSON loading status.
         this.jsonLoadStatus = createParagraph(section);
 
         // Create a textarea to input JSON data.
         this.jsonInputField = createTextarea(section, () => {}, "Paste text from a .json file here.");
+        this.jsonInputField.elt.title = 'Temporary, will probably move to Heroku and will be out of sight.';
 
         // Create a 'Save' button to save player data, with initial state as disabled.
-        this.saveDataButton = createButtonIn(section, "Save", this.savePlayerData.bind(this), "disabled");
+        this.saveDataButton = createButtonIn(section, "Save", this.saveData.bind(this), "disabled");
+        this.saveDataButton.elt.title = 'Temporary, will probably move to Heroku and will be out of sight / move to a version history continous save';
+        
 
         // Create a paragraph element to display the save status.
         this.playerDataSaveStatus = createParagraph(section);
@@ -259,6 +262,8 @@ class Availability {
             "disabled"
         );
 
+        this.generateButton.elt.title = 'Triggers the schedule matching algo if everything else is ok.';
+
         // Create a button to save the schedule as an image. The function bound to this button saves the scheduler's image as 'schedule.jpg'.
         // this.imageSaveButton = createButtonIn(
         //     section,
@@ -325,13 +330,14 @@ class Availability {
 
         // Define the functionality of the 'Add Player' button. On pressing, a new player is added to the players list and the player data is updated.
         addPlayerButton.mousePressed(() => {
+            const times = this.reduceGameAvailabilityScheduleNoCourts();
             const newPlayer = {
                 firstName: firstNameInput.value(),
                 lastName: lastNameInput.value(),
                 fullName: `${firstNameInput.value()} ${lastNameInput.value()}`,
                 unsecureID: getUnsecureHash(),
                 contact: contactInput.value(),
-                availability: [],
+                availability: new Array(times.length).fill(true),
             };
 
             this.players.push(newPlayer);
@@ -489,20 +495,15 @@ class Availability {
         // Grab the JSON data from the input field
         const inputText = this.jsonInputField.value();
 
-        // Build the league schedule and check if it exists, TEMPORARY!
-        this.buildGameSchedule();
-        if (this.gameAvailabilitySchedule.length === 0) {
-            this.showLoadStatus("Please set a League Schedule!", "orange");
-        }
-
         // Try parsing the JSON data
         try {
             const parsedData = JSON.parse(inputText);
 
+
             // Check if the parsed data is an array
-            if (Array.isArray(parsedData)) {
+            if (Array.isArray(parsedData.players)) {
                 // Check if each player object in the array has all the necessary properties
-                const isValid = parsedData.every((player) => {
+                const isValid = parsedData.players.every((player) => {
                     const hasFirstName = typeof player.firstName === "string";
                     const hasLastName = typeof player.lastName === "string";
                     const hasContact = typeof player.contact === "string";
@@ -514,7 +515,12 @@ class Availability {
                 // If the parsed data is valid, update the players array, show success message,
                 // update player data display and enable the buttons.
                 if (isValid) {
-                    this.players = parsedData;
+                    // this.players = parsedData.players;
+                    this.players = parsedData.players;
+                    this.weeksInSession = parsedData.league.weeks;
+                    this.weeksInSessionSlider.value(this.weeksInSession);
+                    this.courtsInput.value(parsedData.league.courts);
+                    this.timeSlotsInput.value(parsedData.league.times);
                     this.showLoadStatus("Load succeeded!", "green");
                     this.updatePlayerDataDiv();
                     this.playerDataDiv.style("display", "block");
@@ -533,6 +539,12 @@ class Availability {
 
         // check the state of loaded data to determine if User can progress
         this.checkButtons();
+
+        // Build the league schedule and check if it exists, TEMPORARY!
+        this.buildGameSchedule();
+        if (this.gameAvailabilitySchedule.length === 0) {
+            this.showLoadStatus("Please set a League Schedule!", "orange");
+        }
     }
 
     showLoadStatus(message, color) {
@@ -737,7 +749,7 @@ class Availability {
      * SAVE OPERATIONS *
      *********************************/
 
-    savePlayerData() {
+    saveData() {
         // Map over the players array to create a new array of updated player data
         const updatedPlayers = this.players.map((player) => {
             const availability = player.checkboxes ? player.checkboxes.map((checkbox) => checkbox.checked()) : "unk";
@@ -746,19 +758,21 @@ class Availability {
             return {
                 firstName: player.firstName,
                 lastName: player.lastName,
-                fullName: player.fulName,
+                fullName: player.fullName,
                 contact: player.contact,
-                availability: availability,
+                availability: player.availability,
                 unsecureID: player.unsecureID,
             };
         });
 
         // Stringify the updated player data and print it to the console
-        const jsonData = JSON.stringify(updatedPlayers, null, 2);
-        console.log(jsonData);
-
+        // const jsonData = JSON.stringify(updatedPlayers, null, 2);
+        // console.log(jsonData);
+        let league = {weeks: this.weeksInSession, courts: this.courtsInput.value(), times: this.timeSlotsInput.value()}
+        console.log(this.weeksInSession, this.courtsInput.value(), this.timeSlotsInput.value());
+        let saveFile = {league: league, players: updatedPlayers};
         // Save the updated player data as a JSON file
-        saveJSON(updatedPlayers, "playerData.json");
+        saveJSON(saveFile, "LeagueNinja.json");
 
         // Display a success message
         this.showSaveStatus("Player data saved!", "green");

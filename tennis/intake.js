@@ -228,10 +228,10 @@ class Availability {
         this.multipleGamesOneNightClicker = createCheckbox("Same Day Double Play", false);
         this.multipleGamesOneNightClicker.parent(section);
         this.multipleGamesOneNightClicker.addClass(ELEMENT_CLASSES.major_checkbox);
-        this.allowDoublesIfNeeded = createCheckbox("Double Play Sometimes OK", true);
+        this.allowDoublesIfNeeded = createCheckbox("Double Play Sometimes OK", false);
         this.allowDoublesIfNeeded.parent(section);
         this.allowDoublesIfNeeded.addClass(ELEMENT_CLASSES.major_checkbox);
-        this.reduceGamesToIncreaseFairness = createCheckbox("Less Games More Fair", true);
+        this.reduceGamesToIncreaseFairness = createCheckbox("Less Games More Fair", false);
         this.reduceGamesToIncreaseFairness.parent(section);
         this.reduceGamesToIncreaseFairness.addClass(ELEMENT_CLASSES.major_checkbox);
         this.multipleGamesOneNightClicker.changed(() => {

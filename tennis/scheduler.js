@@ -4,7 +4,7 @@
 const CONSTANTS = {
     PLAYERS_PER_MATCH: 4,
     MINIMUM_REQUIRED_MATCHES: 4,
-    ALLOWED_REPEATED_ATTEMPTS: 100,
+    ALLOWED_REPEATED_ATTEMPTS: 1000,
     MINIMUM_REQUIRED_CAPTAIN: 1,
 };
 
@@ -27,7 +27,7 @@ class Scheduler {
         this.timeslotGI = [];
         this.dayGI = [];
         this.weekGI = [];
-        this.meanUnavailabilityScore = 0;
+        this.meanUnavailableScore = 0;
         this.ruleBreakCoolDown = 0;
         // this.img = createGraphics(612, 792);
         // this.img = createGraphics(1275, 1650);
@@ -363,7 +363,7 @@ class Scheduler {
      *    particular game, increase their unavailable score.
      * 4. Extract the unavailable scores of all the players into an array.
      * 5. Calculate the mean of the unavailable scores and store it
-     *    in 'this.meanUnavailabilityScore'.
+     *    in 'this.meanUnavailableScore'.
      */
     initializePlayerStats() {
         for (let i = 0; i < this.players.length; i++) {
@@ -388,6 +388,14 @@ class Scheduler {
 
             this.players[i].unavailableScore = 0;
             let gameIndex = 0;
+            // a top down attempt to reduce availability to a smaller solution space
+            // let postprocess = adjustPlayerAvails(this.players);
+            // for (let i = 0; i < this.players.length; i++) {
+            //     for (let j = 0; j < this.players[i].availability.length; j++) {
+            //         this.players[i].availability[j] = postprocess[i][j];
+            //     }
+            // }
+
             for (let k = 0; k < this.players[i].availability.length; k++) {
                 if (!this.players[i].availability[k]) {
                     this.players[i].unavailableScore++;
@@ -404,7 +412,7 @@ class Scheduler {
 
             let gamesPlayedArray = this.players.map((player) => player.unavailableScore);
             let sum = gamesPlayedArray.reduce((accumulator, value) => accumulator + value, 0);
-            this.meanUnavailabilityScore = sum / gamesPlayedArray.length;
+            this.meanUnavailableScore = sum / gamesPlayedArray.length;
         }
     }
 
@@ -815,9 +823,8 @@ class Scheduler {
         // remove abnormally popular players, reduces court utilization but increases fair game distribution
         availablePlayers = availablePlayers.reduce((acc, player) => {
             if (
-                player.gamesPlayedAcc >
-                standardDeviation + mean
-                // (player.unavailableScore < this.meanUnavailabilityScore && player.gamesPlayedAcc > mean)
+                player.gamesPlayedAcc > mean + standardDeviation 
+                // (player.unavailableScore < this.meanUnavailableScore && player.gamesPlayedAcc > mean)
             ) {
                 removedPlayers.push(player);
             } else {
@@ -896,7 +903,7 @@ class Scheduler {
             player.tempAvailable = player.availability[timeslotIndex] ?? false;
             let isUnavailableInFuture = false;
             for (let i = 1; i <= 3; i++) {
-                if (player.availability[timeslotIndex + i]) {
+                if (player.availability[timeslotIndex + i]) { // dumb but was failiing
                     if (player.availability[timeslotIndex + i] === false) {
                         isUnavailableInFuture = true;
                         break;
@@ -904,11 +911,13 @@ class Scheduler {
                 }
             }
             if (
-                player.missedWeeks.includes(weekIndex - 1) ||
-                player.missedDays.includes(dayIndex - 1) ||
-                player.missedGames.includes(gameIndex - 1) ||
+                player.unavailableScore < this.meanUnavailableScore ||
+                (player.missedWeeks.includes(weekIndex - 1)  &&
+                player.gamesPlayedAcc < CONSTANTS.MINIMUM_REQUIRED_MATCHES)||
+                // player.missedDays.includes(dayIndex - 1) ||
+                // player.missedGames.includes(gameIndex - 1) ||
                 isUnavailableInFuture ||
-                (gameIndex > CONSTANTS.MINIMUM_REQUIRED_MATCHES &&
+                (gameIndex*4 > CONSTANTS.MINIMUM_REQUIRED_MATCHES &&
                     player.gamesPlayedAcc < CONSTANTS.MINIMUM_REQUIRED_MATCHES)
             ) {
                 selectedPlayers.push(player);
@@ -956,7 +965,7 @@ class Scheduler {
         while (selectedPlayers.length % 4 != 0) {
             let maxIndex = 0;
             for (let i = 1; i < selectedPlayers.length; i++) {
-                if (selectedPlayers[i].gamesPlayedAcc > selectedPlayers[maxIndex].gamesPlayedAcc) {
+                if (selectedPlayers[i].gamesPlayedAcc > CONSTANTS.MINIMUM_REQUIRED_MATCHES || (selectedPlayers[i].gamesPlayedAcc > selectedPlayers[maxIndex].gamesPlayedAcc && selectedPlayers[i].unavailableScore < this.meanUnavailableScore)) {
                     maxIndex = i;
                 }
             }
@@ -1012,7 +1021,7 @@ class Scheduler {
         let fullCut = true;
         if (this.breakRulesIfNeccessary) {
             let riskyPlayersBehind = availablePlayers
-                .filter((player) => player.unavailableScore > this.meanUnavailabilityScore)
+                .filter((player) => player.unavailableScore > this.meanUnavailableScore)
                 .map((player) => player.gamesPlayedAcc).some((sc) => sc < weekIndex);
             if (riskyPlayersBehind) {
                 twoGamesAllowable = true;

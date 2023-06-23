@@ -145,25 +145,56 @@ function drawTennisCourt(buffer, x, y, width, height) {
 function createTimeAndReportTables(div, scheduleData, playerData, percentage, failures) {
     div.html("");
     createHeading(div, "Schedule");
-    createTableFromData(div, scheduleData, ['Game Time', 'Captain', 'Team A', 'Team 1'], ['timeslot', 'captain', 'team1', 'team12', 'team2', 'team22'], [1, 1, 2, 2]);
+    createTableFromData(
+        div,
+        scheduleData,
+        ["Game Time", "Captain", "Team A", "Team 1"],
+        ["timeslot", "captain", "team1", "team12", "team2", "team22"],
+        [1, 1, 2, 2]
+    );
     const p = createParagraph(div, "block");
-    p.html('<b><b>');
+    p.html("<b><b>");
     createHeading(div, "Player Stats");
     if (failures.length <= 0) {
-        let passLabel = createElement('h3', 'Passing');
+        let passLabel = createElement("h3", "Passing");
         passLabel.parent(div);
-        passLabel.style('color', 'green');
+        passLabel.style("color", "green");
     } else {
-        let failLabel = createElement('h3', 'Failing');
+        let failLabel = createElement("h3", "Failing");
         failLabel.parent(div);
-        failLabel.style('color', 'red');
+        failLabel.style("color", "red");
     }
-    createTableFromData(div, playerData, ['Player', 'Games Played', 'Total Games Missed', 'Free Games Missed', 'Games Captained', 'Max Same Teammate Count', 'Max Same Opponent Count', 'Double Up Days'], ['fullName', 'totalGamesPlayed', 'totalGamesMissed', 'freeGamesMissedAcc', 'gamesCaptainedAcc', 'maxSameTeammate', 'maxSameOpponent', 'daysExceeded'], [], failures);
+    createTableFromData(
+        div,
+        playerData,
+        [
+            "Player",
+            "Games Played",
+            "Total Games Missed",
+            "Free Games Missed",
+            "Games Captained",
+            "Max Same Teammate Count",
+            "Max Same Opponent Count",
+            "Double Up Days",
+        ],
+        [
+            "fullName",
+            "totalGamesPlayed",
+            "totalGamesMissed",
+            "freeGamesMissedAcc",
+            "gamesCaptainedAcc",
+            "maxSameTeammate",
+            "maxSameOpponent",
+            "daysExceeded",
+        ],
+        [],
+        failures
+    );
     const p2 = createParagraph(div, "block");
     p2.html(`<br>Court utilization is ${percentage}%`);
 }
 
-function createTableFromData(parent, data, headers, columns, cspan=[], failures = []) {
+function createTableFromData(parent, data, headers, columns, cspan = [], failures = []) {
     const table = createTable(parent);
     createTableHeader(table, headers, cspan);
     data.forEach((rowData, rowIndex) => {
@@ -172,9 +203,98 @@ function createTableFromData(parent, data, headers, columns, cspan=[], failures 
         if (failures.includes(rowData[columns[0]])) {
             row.style("background-color", "lightcoral"); // Replace "lightcoral" with your preferred shade of light red
         }
-        columns.forEach(column => {
-            createTableCell(row, String(rowData[column]) || ''); // use an empty string as default value
+        columns.forEach((column) => {
+            createTableCell(row, String(rowData[column]) || ""); // use an empty string as default value
         });
     });
 }
 
+// testing something
+function adjustPlayerAvails(players) {
+    let mymat = [];
+    let fullyAvailableLength = players[0].availability.length;
+    let sumOfColsTrue = new Array(fullyAvailableLength).fill(0);
+
+    // First, compute the sums for each column
+    players.forEach((p, i) => {
+        p.availability.forEach((a, j) => {
+            if (a === true) {
+                sumOfColsTrue[j]++;
+            }
+        });
+    });
+
+    // Then, construct the matrix
+    players.forEach((p, i) => {
+        let row = [];
+        let sumOfRowsTrue = p.availability.reduce((total, a) => total + (a === true ? 1 : 0), 0);
+        p.availability.forEach((a, j) => {
+            let t = { val: a, row: sumOfRowsTrue, col: sumOfColsTrue[j] };
+            row.push(t);
+        });
+        mymat.push(row);
+    });
+    // Create and sort rowIndexes
+    let rowIndexes = mymat.map((row, index) => ({
+        index,
+        sum: row.reduce((total, t) => total + (t.val === true ? 1 : 0), 0),
+    }));
+    rowIndexes.sort((a, b) => b.sum - a.sum);
+
+    // Create and sort colIndexes
+    let colIndexes = sumOfColsTrue.map((sum, index) => ({ index, sum }));
+    colIndexes.sort((a, b) => b.sum - a.sum);
+    let preprocess = extractValues(mymat);
+
+    for (let col of colIndexes) {
+        let numPlayersToRemove = col.sum % 4;
+        rowIndexes.sort((a, b) => b.sum - a.sum);
+        while (numPlayersToRemove > 0) {
+            for (let row of rowIndexes) {
+                if (row.sum > 4 && mymat[row.index][col.index].val == true) {
+                    mymat[row.index][col.index].val = false;
+                    mymat[row.index][col.index].sumOfRowsTrue--;
+                    mymat[row.index][col.index].sumOfColsTrue--;
+                    row.sum--;
+                    col.sum--;
+                    numPlayersToRemove--;
+                    if (numPlayersToRemove == 0) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    let postprocess = extractValues(mymat);
+    return postprocess;
+}
+
+function extractValues(mymat) {
+    // Map over each row in mymat
+    return mymat.map((row) => {
+        // Map over each object in the row
+        return row.map((obj) => {
+            // Return only the val property of the object
+            return obj.val;
+        });
+    });
+}
+
+function compareArrays(array1, array2) {
+    // Initialize an empty array to store the comparison results
+    let comparisonArray = [];
+
+    // Loop over each row in array1
+    for (let i = 0; i < array1.length; i++) {
+        // Initialize an empty array for this row in the comparison array
+        comparisonArray[i] = [];
+        // Loop over each item in this row
+        for (let j = 0; j < array1[i].length; j++) {
+            // If the item in array1 is different from the item in array2, add true to the comparison array
+            // Otherwise, add false
+            comparisonArray[i][j] = array1[i][j] !== array2[i][j];
+        }
+    }
+
+    return comparisonArray;
+}

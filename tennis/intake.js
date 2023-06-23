@@ -8,6 +8,10 @@
 // 12 players in a flight (the league) best, next best, jrs.. they move around after every session
 // https://docs.google.com/spreadsheets/d/16RnoOF49E4NChldnqGQ5x5LmiNK9znnHlVaPn1Bdw98/edit#gid=1944998598
 
+// Add a 'go back back to schedule' button
+// back propagation (player swapping on best configuration)
+// explore flight vs courts multileague scenario!
+
 const ELEMENT_CLASSES = {
     toolsDiv: "toolsDiv",
     textareaInput: "textarea-input",

@@ -307,7 +307,6 @@ class Plant {
         for (let i = 0; i < this.features.length; i++) {
             const feature = this.features[i];
             this.changed = this.features[i].changed || this.changed;
-
             if (feature.mode !== 'idle') {
                 if (feature.mode !== 'auto') {
                     this.setActiveMode(feature);
@@ -320,6 +319,9 @@ class Plant {
             }
 
             if (feature.mode === 'delete') {
+                if (Object.keys(feature.command).length > 0) {
+                    this.command.push(feature.command);
+                }
                 this.deleteFeature(i);
                 this.changed = true;
                 continue;

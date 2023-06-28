@@ -98,23 +98,18 @@ class Feature extends Introspector {
         let pWidth = mob.x - this.g.bCart.x;
         let pHeight = mob.y - this.g.bCart.y;
         this.resize(pWidth, pHeight);
-        
     }
 
-    resize(w, h, record=true) {
+    resize(w, h, record = true) {
         const oldw = this.g.bDims.w;
         const oldh = this.g.bDims.h;
         if (w > 50 && h > 50) {
             this.g.bDims.w = w;
             this.g.bDims.h = h;
-            this.packCommand(
-                record,
-                'resize',
-                [w, h],
-                [oldw, oldh]
-            );
+            this.packCommand(record, 'resize', [w, h], [oldw, oldh]);
         }
-        
+        this.g.aDims.w = this.g.bDims.w;
+        this.g.aDims.h = this.g.bDims.h;
     }
 
     updateButtonsAndLabels(zoom) {
@@ -186,20 +181,22 @@ class Feature extends Introspector {
         }
     }
 
-    existResize() {
+    exitResize() {
         if (mouseIsPressed == false) {
             this.setMode('idle');
             this.changed = true;
+            this.g.aDims.w = this.g.bDims.w;
+            this.g.aDims.h = this.g.bDims.h;
         }
     }
 
     checkModeAndAct() {
         switch (this.mode) {
             case 'move':
-                this.exitMove()
+                this.exitMove();
                 break;
             case 'resize':
-                this.exitResize()
+                this.exitResize();
                 break;
             case 'idle':
                 // this.command = {};
@@ -208,9 +205,13 @@ class Feature extends Introspector {
     }
 
     startDelete() {
-        this.setMode('deleting');
-        this.doAnimations = true;
-        this.isAnimating = true;
+        if (this.mode !== 'deleting') {
+            const ds = this.selfDescribe();
+            this.packCommand(true, 'delete', this.type, ds);
+            this.setMode('deleting');
+            this.doAnimations = true;
+            this.isAnimating = true;
+        }
     }
 
     display(zoom, cnv) {
@@ -234,6 +235,8 @@ class Feature extends Introspector {
                 this.g.bDims.w = this.g.aDims.w;
             }
             if (this.animationValue <= 0.0 && this.mode == 'deleting') {
+                this.g.bDims.h = this.g.aDims.h;
+                this.g.bDims.w = this.g.aDims.w;
                 this.mode = 'delete';
             }
         }
@@ -268,5 +271,3 @@ class Feature extends Introspector {
         }
     }
 }
-
-

@@ -162,10 +162,10 @@ class Session {
                 this.endTransition(zoom);
                 break;
         }
-
         if (this.plant.changed === true) {
             this.plant.setChangedFalse();
             this.clearRedoStack();
+            this.preserveStack = false;
         }
 
         if (this.plant.command.length > 0 && !this.plant.isActive) {
@@ -223,13 +223,21 @@ class Session {
         const plant = commandObject.plant;
         for (let ftcmds of commands) {
             let target = this.plants[plant].findID(ftcmds.id);
-            if (target) {
+            
+            if (target || ftcmds.commands[0].type == 'delete') {
                 for (let i = 0; i < ftcmds.commands.length; i++) {
                     let child;
                     switch (ftcmds.commands[i].type) {
                         case 'newFeature':
-                            target.setMode('delete');
                             target.delete();
+                            target.setMode('delete');
+                            this.preserveStack = true;
+                            break;
+                        case 'delete':
+                            this.reConstruct(
+                                ftcmds.commands[i].forwards,
+                                ftcmds.commands[i].reverse
+                            );
                             this.preserveStack = true;
                             break;
                         case 'move':
@@ -321,7 +329,12 @@ class Session {
         newFeature.def = info;
         newFeature.isAnimating = false;
         newFeature.animationValue = 1;
+        newFeature.commands = {};
         newFeature.selfConstruct();
+        if (newFeature.g.bDims.w <=0) {
+            newFeature.g.bDims.w = newFeature.g.aDims.w;
+            newFeature.g.bDims.h = newFeature.g.aDims.h;
+        }
     }
 
     redoCommands(commandObject) {
@@ -329,7 +342,6 @@ class Session {
         const plant = commandObject.plant;
         for (let ftcmds of commands) {
             let target = this.plants[plant].findID(ftcmds.id);
-
             for (let i = 0; i < ftcmds.commands.length; i++) {
                 let child;
                 switch (ftcmds.commands[i].type) {
@@ -338,6 +350,11 @@ class Session {
                             ftcmds.commands[i].forwards,
                             ftcmds.commands[i].reverse
                         );
+                        this.preserveStack = true;
+                        break;
+                    case 'delete':
+                        target.setMode('delete');
+                        target.delete();
                         this.preserveStack = true;
                         break;
                     case 'move':
@@ -372,8 +389,8 @@ class Session {
                     case 'resize':
                         if (target) {
                             target.resize(
-                                ftcmds.commands[i].reverse[0],
-                                ftcmds.commands[i].reverse[1],
+                                ftcmds.commands[i].forwards[0],
+                                ftcmds.commands[i].forwards[1],
                                 false
                             );
                         }
@@ -386,10 +403,9 @@ class Session {
     }
 
     clearRedoStack() {
-        if (!this.preserveStack) {
+        if (this.preserveStack == false) {
             console.log('CLEAR REDO STACK');
             this.redoStack[this.plantsPointer] = [];
-            this.preserveStack = false;
         }
     }
 

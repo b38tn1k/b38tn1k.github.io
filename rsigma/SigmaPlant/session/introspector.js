@@ -213,6 +213,8 @@ class Introspector {
     }
 
     selfDescribe() {
+        // const stack = new Error().stack;
+        // console.log(stack);
         let info = {
             constructor: this.constructor.name
         };
@@ -224,6 +226,7 @@ class Introspector {
                 }
             }
         });
-        return info;
+        const jsonString = JSON.stringify(info);
+        return JSON.parse(jsonString);
     }
 }

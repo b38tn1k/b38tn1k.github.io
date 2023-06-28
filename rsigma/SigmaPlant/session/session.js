@@ -67,7 +67,8 @@ function logCommand(commandObject, label = 'UPDATE') {
     let mystring = label + '\tPLANT: ';
     mystring += String(commandObject.plant);
     mystring += '\n\t\t';
-    for (let cmd of commandObject.commands) {
+    const commands = JSON.parse(commandObject.commands);
+    for (let cmd of commands) {
         mystring += 'ID: ' + cmd.id;
         mystring += ' CMD: ';
         for (let c of cmd.commands) {
@@ -172,8 +173,9 @@ class Session {
             // Add the commands to the undo stack
             const commandObject = {
                 plant: this.plantsPointer,
-                commands: this.plant.command
+                commands: JSON.stringify(this.plant.command)
             };
+            console.log(commandObject);
             this.undoStack[this.plantsPointer].push(commandObject);
 
             console.log(logCommand(commandObject));
@@ -188,7 +190,7 @@ class Session {
         }
     }
 
-    doUndo() {
+    doUndo(zoom) {
         if (this.undoCursor[this.plantsPointer] > 0) {
             // Decrement the undo cursor
             this.undoCursor[this.plantsPointer]--;
@@ -196,19 +198,19 @@ class Session {
             // Get the commands from the undo stack and undo them
             const commandObject = this.undoStack[this.plantsPointer].pop();
             console.log(logCommand(commandObject, 'UNDO'));
-            this.undoCommands(commandObject);
+            this.undoCommands(commandObject, zoom);
 
             // Move the commands to the redo stack
             this.redoStack[this.plantsPointer].push(commandObject);
         }
     }
 
-    doRedo() {
+    doRedo(zoom) {
         if (this.redoStack[this.plantsPointer].length > 0) {
             // Get the commands from the redo stack and redo them
             const commandObject = this.redoStack[this.plantsPointer].pop();
             console.log(logCommand(commandObject, 'REDO'));
-            this.redoCommands(commandObject);
+            this.redoCommands(commandObject, zoom);
 
             // Move the commands to the undo stack
             this.undoStack[this.plantsPointer].push(commandObject);
@@ -218,8 +220,8 @@ class Session {
         }
     }
 
-    undoCommands(commandObject) {
-        const commands = commandObject.commands;
+    undoCommands(commandObject, zoom) {
+        const commands = JSON.parse(commandObject.commands);
         const plant = commandObject.plant;
         for (let ftcmds of commands) {
             let target = this.plants[plant].findID(ftcmds.id);
@@ -236,7 +238,8 @@ class Session {
                         case 'delete':
                             this.reConstruct(
                                 ftcmds.commands[i].forwards,
-                                ftcmds.commands[i].reverse
+                                ftcmds.commands[i].reverse,
+                                zoom
                             );
                             this.preserveStack = true;
                             break;
@@ -296,7 +299,7 @@ class Session {
         }
     }
     //TODODOODOD
-    reConstruct(type, info) {
+    reConstruct(type, info, zoom) {
         const x = 0;
         const y = 0;
         let newFeature;
@@ -335,10 +338,11 @@ class Session {
             newFeature.g.bDims.w = newFeature.g.aDims.w;
             newFeature.g.bDims.h = newFeature.g.aDims.h;
         }
+        newFeature.update(zoom);
     }
 
-    redoCommands(commandObject) {
-        const commands = commandObject.commands;
+    redoCommands(commandObject, zoom) {
+        const commands = JSON.parse(commandObject.commands);
         const plant = commandObject.plant;
         for (let ftcmds of commands) {
             let target = this.plants[plant].findID(ftcmds.id);
@@ -348,7 +352,8 @@ class Session {
                     case 'newFeature':
                         this.reConstruct(
                             ftcmds.commands[i].forwards,
-                            ftcmds.commands[i].reverse
+                            ftcmds.commands[i].reverse,
+                            zoom
                         );
                         this.preserveStack = true;
                         break;

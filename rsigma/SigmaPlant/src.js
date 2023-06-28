@@ -26,10 +26,10 @@ function keyPressed() {
               sess.loadFromObject(JSONloader);
           }
           if (key === 'z') {
-            sess.doUndo();
+            sess.doUndo(globalZoom);
           }
           if (key === 'r') {
-            sess.doRedo();
+            sess.doRedo(globalZoom);
           }
     }
   }

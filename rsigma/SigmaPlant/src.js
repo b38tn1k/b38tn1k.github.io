@@ -31,6 +31,9 @@ function keyPressed() {
           if (key === 'r') {
             sess.doRedo(globalZoom);
           }
+          if (key === 'p') {
+            sess.plant.logPlant();
+          }
     }
   }
 

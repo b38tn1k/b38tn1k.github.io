@@ -151,24 +151,15 @@ class Connector extends Feature {
             this.g.manualOnScreen =
                 this.input.g.isOnScreen || this.output.g.isOnScreen;
             if (
-                this.input.mode == 'delete' ||
-                this.output.mode == 'delete' ||
                 this.input.mode == 'deleting' ||
-                this.output.mode == 'deleting' ||
-                this.anchors['Input'].mode == 'delete' ||
-                this.anchors['Output'].mode == 'delete'
+                this.output.mode == 'deleting'
             ) {
-                this.mode = 'delete';
-                this.anchors['Input'].connected = false;
-                this.anchors['Output'].connected = false;
+                this.startToDelete(true);
             }
             this.computePath(zoom);
         } else {
             this.untethered = true;
             this.connectorIsOnScreen = true;
-            if (this.source.mode == 'delete') {
-                this.markToDelete();
-            }
         }
     }
 
@@ -184,9 +175,13 @@ class Connector extends Feature {
         }
     }
 
-    markToDelete() {
+    startToDelete(append = false) {
         let ds = this.selfDescribe();
-        this.packCommand(true, 'delete', this.type, ds);
+        let cmdType = 'delete';
+        if (append == true) {
+            cmdType = 'delete-append';
+        }
+        this.packCommand(true, cmdType, this.type, ds);
         this.mode = 'delete';
         this.clearAnchors();
         this.changed = true;

@@ -149,7 +149,7 @@ class FeatureUIOutputButton extends FeatureUIButton {
     mouseClickActionHandler(zoom) {
         if (this.connected) {
             if (this.g.checkMouseOver(mouseX, mouseY)) {
-                this.associatedConnector.markToDelete();
+                this.associatedConnector.startToDelete();
             }
         } else {
             return super.mouseClickActionHandler(zoom);

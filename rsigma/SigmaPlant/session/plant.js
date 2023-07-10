@@ -408,6 +408,12 @@ class Plant {
         this.activeFeature = null;
     }
 
+    logPlant() {
+        for (let i = 0; i < this.features.length; i++) {
+            console.log(this.features[i].type);
+        }
+    }
+
     processActiveFeature() {
         switch (this.mode) {
             case 'delete':

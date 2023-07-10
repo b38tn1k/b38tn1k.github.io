@@ -66,7 +66,7 @@ function decompressString(compressed, keyMap) {
 function logCommand(commandObject, label = 'UPDATE') {
     let mystring = label + '\tPLANT: ';
     mystring += String(commandObject.plant);
-    mystring += '\n\t\t';
+    mystring += '\n\t';
     const commands = JSON.parse(commandObject.commands);
     for (let cmd of commands) {
         mystring += 'ID: ' + cmd.id;
@@ -220,12 +220,24 @@ class Session {
     }
 
     undoCommands(commandObject, zoom) {
-        const commands = JSON.parse(commandObject.commands);
+        const allCommands = JSON.parse(commandObject.commands);
+        allCommands.forEach(cmd => {
+            cmd.commands.sort((a, b) => {
+                if (a.type === 'delete-append') return 1;
+                if (b.type === 'delete-append') return -1;
+                return 0;
+            });
+        });
+
+        allCommands.sort((a, b) => {
+            if (a.commands.some(c => c.type === 'delete-append')) return 1;
+            if (b.commands.some(c => c.type === 'delete-append')) return -1;
+            return 0;
+        });   
         const plant = commandObject.plant;
-        for (let ftcmds of commands) {
+        for (let ftcmds of allCommands) {
             let target = this.plants[plant].findID(ftcmds.id);
-            
-            if (target || ftcmds.commands[0].type == 'delete') {
+            if (target || ftcmds.commands[0].type == 'delete' || ftcmds.commands[0].type == 'delete-append') {
                 for (let i = 0; i < ftcmds.commands.length; i++) {
                     let child;
                     switch (ftcmds.commands[i].type) {
@@ -234,6 +246,7 @@ class Session {
                             target.setMode('delete');
                             this.preserveStack = true;
                             break;
+                        case 'delete-append':
                         case 'delete':
                             this.reConstruct(
                                 ftcmds.commands[i].forwards,
@@ -297,55 +310,11 @@ class Session {
             }
         }
     }
-    //TODODOODOD
-    reConstruct(type, info, zoom) {
-        const x = 0;
-        const y = 0;
-        let newFeature;
-        switch (type) {
-            case 'process':
-                newFeature = this.addProcess(x, y, false); // amm i adding extra plants?
-                break;
-            case 'sink':
-                newFeature = this.addSink(x, y, false);
-                break;
-            case 'source':
-                newFeature = this.addSource(x, y, false);
-                break;
-            case 'zone':
-                newFeature = this.addZone(x, y, false);
-                break;
-            case 'metric':
-                newFeature = this.addMetric(x, y, false);
-                break;
-            case 'split':
-                newFeature = this.addSplit(x, y, false);
-                break;
-            case 'merge':
-                newFeature = this.addMerge(x, y, false);
-                break;
-            case 'connector':
-                let input = this.plant.findID(info.input)
-                let output = this.plant.findID(info.output)
-                newFeature = this.addConnector(x, y, input, output, false);
-                break;
-        }
-        newFeature.def = info;
-        newFeature.isAnimating = false;
-        newFeature.animationValue = 1;
-        newFeature.commands = {};
-        newFeature.selfConstruct();
-        if (newFeature.g.bDims.w <=0) {
-            newFeature.g.bDims.w = newFeature.g.aDims.w;
-            newFeature.g.bDims.h = newFeature.g.aDims.h;
-        }
-        newFeature.update(zoom);
-    }
 
     redoCommands(commandObject, zoom) {
-        const commands = JSON.parse(commandObject.commands);
+        const allCommands = JSON.parse(commandObject.commands);
         const plant = commandObject.plant;
-        for (let ftcmds of commands) {
+        for (let ftcmds of allCommands) {
             let target = this.plants[plant].findID(ftcmds.id);
             for (let i = 0; i < ftcmds.commands.length; i++) {
                 let child;
@@ -358,6 +327,7 @@ class Session {
                         );
                         this.preserveStack = true;
                         break;
+                    case 'delete-append':
                     case 'delete':
                         target.setMode('delete');
                         target.delete();
@@ -406,6 +376,51 @@ class Session {
                 }
             }
         }
+    }
+
+     //TODODOODOD
+     reConstruct(type, info, zoom) {
+        const x = 0;
+        const y = 0;
+        let newFeature;
+        switch (type) {
+            case 'process':
+                newFeature = this.addProcess(x, y, false); // amm i adding extra plants?
+                break;
+            case 'sink':
+                newFeature = this.addSink(x, y, false);
+                break;
+            case 'source':
+                newFeature = this.addSource(x, y, false);
+                break;
+            case 'zone':
+                newFeature = this.addZone(x, y, false);
+                break;
+            case 'metric':
+                newFeature = this.addMetric(x, y, false);
+                break;
+            case 'split':
+                newFeature = this.addSplit(x, y, false);
+                break;
+            case 'merge':
+                newFeature = this.addMerge(x, y, false);
+                break;
+            case 'connector':
+                let input = this.plant.findID(info.input)
+                let output = this.plant.findID(info.output)
+                newFeature = this.addConnector(x, y, input, output, false);
+                break;
+        }
+        newFeature.def = info;
+        newFeature.isAnimating = false;
+        newFeature.animationValue = 1;
+        newFeature.commands = {};
+        newFeature.selfConstruct();
+        if (newFeature.g.bDims.w <=0) {
+            newFeature.g.bDims.w = newFeature.g.aDims.w;
+            newFeature.g.bDims.h = newFeature.g.aDims.h;
+        }
+        newFeature.update(zoom);
     }
 
     clearRedoStack() {

@@ -175,7 +175,6 @@ class Session {
                 plant: this.plantsPointer,
                 commands: JSON.stringify(this.plant.command)
             };
-            console.log(commandObject);
             this.undoStack[this.plantsPointer].push(commandObject);
 
             console.log(logCommand(commandObject));
@@ -326,7 +325,9 @@ class Session {
                 newFeature = this.addMerge(x, y, false);
                 break;
             case 'connector':
-                // this.addConnector(x, y, input, output, false);
+                let input = this.plant.findID(info.input)
+                let output = this.plant.findID(info.output)
+                newFeature = this.addConnector(x, y, input, output, false);
                 break;
         }
         newFeature.def = info;

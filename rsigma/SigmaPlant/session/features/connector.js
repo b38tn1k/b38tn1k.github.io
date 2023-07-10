@@ -142,6 +142,7 @@ class Connector extends Feature {
         this.anchors[key] = dest.caller; // dest.buttons.find(button => button.data['id'] === key);
         this.setupAnchors();
         this.changed = true;
+        this.packCommand(true, 'newFeature', this.type, this.selfDescribe());
     }
 
     update(zoom) {
@@ -171,12 +172,23 @@ class Connector extends Feature {
         }
     }
 
-    markToDelete() {
-        this.mode = 'delete';
+    delete() {
+        super.delete();
+        this.clearAnchors();
+    }
+
+    clearAnchors() {
         for (let anchor in this.anchors) {
             this.anchors[anchor].connected = false;
             this.anchors[anchor].associatedConnector = null;
         }
+    }
+
+    markToDelete() {
+        let ds = this.selfDescribe();
+        this.packCommand(true, 'delete', this.type, ds);
+        this.mode = 'delete';
+        this.clearAnchors();
         this.changed = true;
     }
 

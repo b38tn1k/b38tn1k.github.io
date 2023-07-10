@@ -8,27 +8,27 @@ class Plant {
         this.command = [];
     }
 
-    getLastAdded () {
-        return (this.features[this.features.length-1]);
+    getLastAdded() {
+        return this.features[this.features.length - 1];
     }
 
-    addProcess(x, y, plant, plantID, record=true) {
+    addProcess(x, y, plant, plantID, record = true) {
         this.changed = true;
-        const feat = new Process(x, y, 400, 280, plant, plantID)
+        const feat = new Process(x, y, 400, 280, plant, plantID);
         this.features.push(feat);
         feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
         return feat;
     }
 
-    addSink(x, y, record=true) {
+    addSink(x, y, record = true) {
         this.changed = true;
-        const feat = new Sink(x, y)
+        const feat = new Sink(x, y);
         this.features.push(feat);
         feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
         return feat;
     }
 
-    addSource(x, y, record=true) {
+    addSource(x, y, record = true) {
         this.changed = true;
         const feat = new Source(x, y);
         this.features.push(feat);
@@ -36,7 +36,7 @@ class Plant {
         return feat;
     }
 
-    addZone(x, y, record=true) {
+    addZone(x, y, record = true) {
         this.changed = true;
         this.features.push(new Zone(x, y));
         const feat = this.getLastAdded();
@@ -44,15 +44,15 @@ class Plant {
         return feat;
     }
 
-    addMetric(x, y, record=true) {
+    addMetric(x, y, record = true) {
         this.changed = true;
-        const feat = new Metric(x, y)
+        const feat = new Metric(x, y);
         this.features.push(feat);
         feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
         return feat;
     }
 
-    addSplit(x, y, record=true) {
+    addSplit(x, y, record = true) {
         this.changed = true;
         const feat = new Split(x, y);
         this.features.push(feat);
@@ -60,7 +60,7 @@ class Plant {
         return feat;
     }
 
-    addMerge(x, y, record=true) {
+    addMerge(x, y, record = true) {
         this.changed = true;
         const feat = new Merge(x, y);
         this.features.push(feat);
@@ -68,11 +68,10 @@ class Plant {
         return feat;
     }
 
-    addConnector(x, y, input, output, record=true) {
+    addConnector(x, y, input, output, record = true) {
         this.changed = true;
-        const feat = new Connector(x, y, input, output)
+        const feat = new Connector(x, y, input, output);
         this.features.push(feat);
-        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
         return feat;
     }
 
@@ -177,36 +176,69 @@ class Plant {
                     let newPlant = new Plant();
                     sess.plants.push(newPlant);
                     newPlant.selfConstruct(f[i].plant);
-                    let newProcess = this.addProcess(f[i].g.bCart[0],f[i].g.bCart[1],newPlant,f[i].targetPlant, false);
+                    let newProcess = this.addProcess(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1],
+                        newPlant,
+                        f[i].targetPlant,
+                        false
+                    );
                     newProcess.def = f[i];
                     newProcess.setupFromSubProcess();
                     break;
                 case 'ParentLink': // add an addParentLink
-                let newParentLink = this.addParentLink(f[i].g.bCart[0], f[i].g.bCart[1]);
+                    let newParentLink = this.addParentLink(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1]
+                    );
                     newParentLink.def = f[i];
                     break;
                 case 'Source': //addSrouce + getLastAdded...
-                    let newSource = this.addSource(f[i].g.bCart[0],f[i].g.bCart[1], false);
+                    let newSource = this.addSource(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1],
+                        false
+                    );
                     newSource.def = f[i];
                     break;
                 case 'Sink':
-                    let newSink = this.addSink(f[i].g.bCart[0], f[i].g.bCart[1], false);
+                    let newSink = this.addSink(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1],
+                        false
+                    );
                     newSink.def = f[i];
                     break;
                 case 'Zone':
-                    let newZone = this.addZone(f[i].g.bCart[0], f[i].g.bCart[1], false);
+                    let newZone = this.addZone(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1],
+                        false
+                    );
                     newZone.def = f[i];
                     break;
                 case 'Metric':
-                    let newMetric = this.addMetric(f[i].g.bCart[0],f[i].g.bCart[1], false);
+                    let newMetric = this.addMetric(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1],
+                        false
+                    );
                     newMetric.def = f[i];
                     break;
                 case 'Split':
-                    let newSplit = this.addSplit(f[i].g.bCart[0], f[i].g.bCart[1], false);
+                    let newSplit = this.addSplit(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1],
+                        false
+                    );
                     newSplit.def = f[i];
                     break;
                 case 'Merge':
-                    let newMerge = this.addMerge(f[i].g.bCart[0], f[i].g.bCart[1], false);
+                    let newMerge = this.addMerge(
+                        f[i].g.bCart[0],
+                        f[i].g.bCart[1],
+                        false
+                    );
                     newMerge.def = f[i];
                     break;
                 case 'Connector':
@@ -264,7 +296,12 @@ class Plant {
                                     break;
                                 }
                             }
-                            this.features[i].packCommand(false, 'newFeature', this.features[i].type, this.features[i].selfDescribe());
+                            this.features[i].packCommand(
+                                false,
+                                'newFeature',
+                                this.features[i].type,
+                                this.features[i].selfDescribe()
+                            );
                         } catch (error) {
                             console.log('No Connector Created', error);
                         }

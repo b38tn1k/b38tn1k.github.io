@@ -6,6 +6,7 @@ class Plant {
         this.targetPlant = null;
         this.changed = false;
         this.command = [];
+        this.parent = null;
     }
 
     getLastAdded() {

@@ -154,7 +154,7 @@ class Connector extends Feature {
                 this.input.mode == 'deleting' ||
                 this.output.mode == 'deleting'
             ) {
-                this.startToDelete(true);
+                this.startDelete(true);
             }
             this.computePath(zoom);
         } else {
@@ -175,7 +175,7 @@ class Connector extends Feature {
         }
     }
 
-    startToDelete(append = false) {
+    startDelete(append = false) {
         let ds = this.selfDescribe();
         let cmdType = 'delete';
         if (append == true) {

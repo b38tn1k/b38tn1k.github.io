@@ -33,6 +33,15 @@ function keyPressed() {
           }
           if (key === 'p') {
             sess.plant.logPlant();
+            console.log("Number of plants:", sess.plants.length);
+            for (let plant of sess.plants) {
+                if (plant) {
+                    console.log(plant.mode);
+                } else {
+                    console.log(plant);
+                }
+                
+            }
           }
     }
   }

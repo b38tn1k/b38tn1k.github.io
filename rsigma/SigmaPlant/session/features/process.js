@@ -2,6 +2,8 @@ class Process extends Feature {
     constructor(x, y, width, height, plant, targetPlant) {
         super(x, y, width, height, 'process'); // Call the parent constructor
         this.plant = plant;
+        this.plant.mode = 'idle';
+        this.plant.parent = this;
         this.targetPlant = targetPlant;
         this.buses = {};
         this.buses = {
@@ -14,7 +16,7 @@ class Process extends Feature {
 
     delete() {
         super.delete();
-        this.plant = null;
+        
     }
 
     collectBuses() {
@@ -28,6 +30,14 @@ class Process extends Feature {
             .map((feature, index) => (feature.type == 'sink' ? index : null))
             .filter((index) => index !== null);
         this.buses['sink'] = new Set(outputIndices);
+    }
+
+    startDelete() {
+        let firstTime = (this.mode !== 'deleting');
+        super.startDelete();
+        if (firstTime) {
+            this.plant.mode = 'delete';
+        }
     }
 
     setupIOButtons(buttonSize = BUTTON_SIZE) {

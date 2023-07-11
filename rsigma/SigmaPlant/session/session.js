@@ -1,66 +1,12 @@
+// TODO: line 359 - rebuild plants after deleting! currently the entry and exity indicies are incorrect. 
+// maybe fix them the correct way rather than the gehtto way
+// TODO: line 148 - rebuild the plant stack to shift the target plants etc using plant and plant.parent
+
+
+
 function slerp(start, end, t) {
     t = 0.5 * (1 - Math.cos(Math.PI * t)); // Sinusoidal easing
     return start * (1 - t) + end * t;
-}
-
-function calculateStringSimilarity(str1, str2) {
-    const m = str1.length;
-    const n = str2.length;
-
-    // Create a 2D array to store the distances
-    const dp = Array(m + 1)
-        .fill(null)
-        .map(() => Array(n + 1).fill(0));
-
-    // Initialize the first row and column of the array
-    for (let i = 0; i <= m; i++) {
-        dp[i][0] = i;
-    }
-    for (let j = 0; j <= n; j++) {
-        dp[0][j] = j;
-    }
-
-    // Calculate the Levenshtein distance
-    for (let i = 1; i <= m; i++) {
-        for (let j = 1; j <= n; j++) {
-            if (str1[i - 1] === str2[j - 1]) {
-                dp[i][j] = dp[i - 1][j - 1];
-            } else {
-                dp[i][j] = Math.min(
-                    dp[i - 1][j] + 1, // Deletion
-                    dp[i][j - 1] + 1, // Insertion
-                    dp[i - 1][j - 1] + 1 // Substitution
-                );
-            }
-        }
-    }
-
-    // Return the similarity score (1 - normalized Levenshtein distance)
-    const maxLen = Math.max(m, n);
-    const similarity = 1 - dp[m][n] / maxLen;
-    return similarity;
-}
-
-function compressString(input, keyMap) {
-    let compressed = input;
-    for (let key in keyMap) {
-        if (keyMap.hasOwnProperty(key)) {
-            const regex = new RegExp(key, 'g');
-            compressed = compressed.replace(regex, keyMap[key]);
-        }
-    }
-    return compressed;
-}
-
-function decompressString(compressed, keyMap) {
-    let decompressed = compressed;
-    for (let key in keyMap) {
-        if (keyMap.hasOwnProperty(key)) {
-            const regex = new RegExp(keyMap[key], 'g');
-            decompressed = decompressed.replace(regex, key);
-        }
-    }
-    return decompressed;
 }
 
 function logCommand(commandObject, label = 'UPDATE') {
@@ -80,9 +26,24 @@ function logCommand(commandObject, label = 'UPDATE') {
     return mystring;
 }
 
+function commandContainsType(type, commandObject) {
+    let res = [];
+    const commands = JSON.parse(commandObject.commands);
+    for (let cmd of commands) {
+        for (let c of cmd.commands) {
+            if (c.type == type) {
+                res.push(cmd);
+                break;
+            }
+        }
+    }
+    return res;
+}
+
 class Session {
     constructor() {
         this.plants = [new Plant()];
+        this.plants[0].parent = this;
         this.plantsPointer = 0;
         this.mode = 'idle';
         this.transitionTimer = 0;
@@ -176,7 +137,6 @@ class Session {
                 commands: JSON.stringify(this.plant.command)
             };
             this.undoStack[this.plantsPointer].push(commandObject);
-
             console.log(logCommand(commandObject));
 
             // Clear the redo stack
@@ -186,6 +146,17 @@ class Session {
             this.undoCursor[this.plantsPointer] =
                 this.undoStack[this.plantsPointer].length;
             this.plant.command = [];
+
+            // ghetto plant memory maintenance
+            // TODO: rebuild the plant stack to shift the target plants etc using plant and plant.parent
+            for (let i = 0; i < this.plants.length; i++) {
+                if (this.plants[i] != null) {
+                    if (this.plants[i].parent.mode == 'delete') {
+                        this.plants[i].parent = null;
+                        this.plants[i] = null;
+                    }
+                }
+            }
         }
     }
 
@@ -221,7 +192,7 @@ class Session {
 
     undoCommands(commandObject, zoom) {
         const allCommands = JSON.parse(commandObject.commands);
-        allCommands.forEach(cmd => {
+        allCommands.forEach((cmd) => {
             cmd.commands.sort((a, b) => {
                 if (a.type === 'delete-append') return 1;
                 if (b.type === 'delete-append') return -1;
@@ -230,14 +201,18 @@ class Session {
         });
 
         allCommands.sort((a, b) => {
-            if (a.commands.some(c => c.type === 'delete-append')) return 1;
-            if (b.commands.some(c => c.type === 'delete-append')) return -1;
+            if (a.commands.some((c) => c.type === 'delete-append')) return 1;
+            if (b.commands.some((c) => c.type === 'delete-append')) return -1;
             return 0;
-        });   
+        });
         const plant = commandObject.plant;
         for (let ftcmds of allCommands) {
             let target = this.plants[plant].findID(ftcmds.id);
-            if (target || ftcmds.commands[0].type == 'delete' || ftcmds.commands[0].type == 'delete-append') {
+            if (
+                target ||
+                ftcmds.commands[0].type == 'delete' ||
+                ftcmds.commands[0].type == 'delete-append'
+            ) {
                 for (let i = 0; i < ftcmds.commands.length; i++) {
                     let child;
                     switch (ftcmds.commands[i].type) {
@@ -378,14 +353,18 @@ class Session {
         }
     }
 
-     //TODODOODOD
-     reConstruct(type, info, zoom) {
+    //TODODOODOD
+    reConstruct(type, info, zoom) {
         const x = 0;
         const y = 0;
         let newFeature;
         switch (type) {
             case 'process':
-                newFeature = this.addProcess(x, y, false); // amm i adding extra plants?
+                // let newPlant = new Plant();
+                // newPlant.selfConstruct(info.plant);
+                // TODO rebuild plants after deleting!
+                // let newPlant = null;
+                newFeature = this.addProcess(x, y, false)//, newPlant); // amm i adding extra plants?
                 break;
             case 'sink':
                 newFeature = this.addSink(x, y, false);
@@ -406,8 +385,8 @@ class Session {
                 newFeature = this.addMerge(x, y, false);
                 break;
             case 'connector':
-                let input = this.plant.findID(info.input)
-                let output = this.plant.findID(info.output)
+                let input = this.plant.findID(info.input);
+                let output = this.plant.findID(info.output);
                 newFeature = this.addConnector(x, y, input, output, false);
                 break;
         }
@@ -416,7 +395,10 @@ class Session {
         newFeature.animationValue = 1;
         newFeature.commands = {};
         newFeature.selfConstruct();
-        if (newFeature.g.bDims.w <=0) {
+        if (newFeature.type == 'process') {
+            newFeature.setupFromSubProcess();
+        }
+        if (newFeature.g.bDims.w <= 0) {
             newFeature.g.bDims.w = newFeature.g.aDims.w;
             newFeature.g.bDims.h = newFeature.g.aDims.h;
         }
@@ -446,34 +428,42 @@ class Session {
         this.plant.draw(zoom, cnv);
     }
 
-    addProcess(x, y, record = true) {
-        let newPlant = new Plant();
-        newPlant.addSource(0, -246, false);
-        newPlant.addMetric(0, 0, false);
-        newPlant.addSink(0, 246, false);
-        newPlant.addConnector(
-            0,
-            0,
-            newPlant.features[1],
-            newPlant.features[0],
-            false
-        );
-        newPlant.addConnector(
-            0,
-            0,
-            newPlant.features[2],
-            newPlant.features[1],
-            false
-        );
-        newPlant.addParentLink(-196, 0, this.plantsPointer);
-        for (let i = 0; i < newPlant.features.length; i++) {
-            newPlant.features[i].turnOffAnimations();
+    addProcess(x, y, record = true, newPlant = null) {
+        if (newPlant == null) {
+            newPlant = new Plant();
+            newPlant.addSource(0, -246, false);
+            newPlant.addMetric(0, 0, false);
+            newPlant.addSink(0, 246, false);
+            newPlant.addConnector(
+                0,
+                0,
+                newPlant.features[1],
+                newPlant.features[0],
+                false
+            );
+            newPlant.addConnector(
+                0,
+                0,
+                newPlant.features[2],
+                newPlant.features[1],
+                false
+            );
+            newPlant.addParentLink(-196, 0, this.plantsPointer);
+            for (let i = 0; i < newPlant.features.length; i++) {
+                newPlant.features[i].turnOffAnimations();
+            }
         }
         this.plants.push(newPlant);
         this.undoStack.push([]);
         this.redoStack.push([]);
         this.undoCursor.push(0);
-        const feat = this.plant.addProcess(x, y, newPlant, this.plants.length - 1, record);
+        const feat = this.plant.addProcess(
+            x,
+            y,
+            newPlant,
+            this.plants.length - 1,
+            record
+        );
         // this.preserveStack = true;
         return feat;
     }

@@ -74,7 +74,7 @@ class Zone extends Feature {
         // this.g.bCart.x = x;
         // this.g.bCart.y = y;
         super.move(x, y, record);
-        if (record) {
+        // if (record) {
             //otherwise would be double moving children on undo/redo things
             const delta = createVector(
                 this.g.bCart.x - this.g.bCartOld.x,
@@ -84,16 +84,20 @@ class Zone extends Feature {
             for (let i = 0; i < this.children.length; i++) {
                 this.children[i].move(
                     this.children[i].g.bCart.x + delta.x,
-                    this.children[i].g.bCart.y + delta.y
+                    this.children[i].g.bCart.y + delta.y,
+                    false
                 );
             }
-        }
+        // }
     }
 
     exitMove() {
         super.exitMove();
         if (this.mode == 'idle') {
-            this.setChildMode('idle');
+            // for (let i = 0; i < this.children.length; i++) {
+            //     this.children[i].exitMove();
+            // }
+            this.setChildMode('move');
         }
     }
 

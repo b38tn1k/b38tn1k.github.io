@@ -1,11 +1,3 @@
-function getUnsecureHash() {
-    let myStr =
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15);
-    myStr += myStr + myStr;
-    return myStr.substring(0, 8);
-}
-
 class FeatureComponent extends Introspector {
     constructor(x, y, size) {
         super();

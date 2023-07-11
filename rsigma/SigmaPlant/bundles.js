@@ -36,13 +36,13 @@ loadjs.ready('bundle3', {
 });
 loadjs.ready('bundle4', {
     success: function () {
-        loadjs(['session/feature_buttons.js'], 'bundle5');
+        loadjs(['session/feature_buttons.js', 'session/plant_setup.js', 'session/undo_stack.js', 'session/session_setup_mixin.js', 'session/process_active_feature.js'], 'bundle5');
     }
 });
 loadjs.ready('bundle5', {
     success: function () {
         loadjs(
-            ['session/features.js', 'session/plant.js', 'session/session.js'],
+            ['session/features.js', 'session/plant.js', 'session/self_construct_helper.js', 'session/session.js'],
             'bundle6'
         );
     }

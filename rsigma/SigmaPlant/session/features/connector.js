@@ -15,14 +15,8 @@ class Connector extends Feature {
         this.untethered = true;
         if (this.input && this.output) {
             this.untethered = false;
-            let inputAnchor = input.buttons.find(
-                (button) => button.data['data'] === 'Input'
-            );
-            this.anchors['Input'] = inputAnchor;
-            let outputAnchor = output.buttons.find(
-                (button) => button.data['data'] === 'Output'
-            );
-            this.anchors['Output'] = outputAnchor;
+            this.findAnchors();
+            
             this.setupAnchors();
         } else {
             this.source = this.input != null ? this.input : this.output;
@@ -34,6 +28,25 @@ class Connector extends Feature {
         this.adoptable = false;
         this.path = [];
     }
+
+    findAnchors() {
+        let inputAnchors = this.input.buttons.filter(
+            (button) => button.data['data'] === 'Input'
+        );
+        let outputAnchors = this.output.buttons.filter(
+            (button) => button.data['data'] === 'Output'
+        );
+        
+        let inputAnchor = inputAnchors.find(
+            (button) => button.associatedConnector === null
+        );
+        let outputAnchor = outputAnchors.find(
+            (button) => button.associatedConnector === null
+        );
+        this.anchors['Output'] = outputAnchor ? outputAnchor : outputAnchors[0];
+        this.anchors['Input'] = inputAnchor ? inputAnchor : inputAnchors[0];
+    }
+    
 
     selfDescribe() {
         let res;
@@ -133,6 +146,19 @@ class Connector extends Feature {
             this.anchors[anchor].connected = true;
             this.anchors[anchor].associatedConnector = this;
         }
+    }
+
+    selfConstruct() {
+        super.selfConstruct();
+        let inputAnchor = this.input.buttons.find(
+            (button) => button.data.id === this.def.anchors.Input
+        );
+        let outputAnchor = this.output.buttons.find(
+            (button) => button.data.id === this.def.anchors.Output
+        );
+        this.anchors['Output'] = outputAnchor;
+        this.anchors['Input'] = inputAnchor;
+        this.setupAnchors();
     }
 
     attach(dest) {

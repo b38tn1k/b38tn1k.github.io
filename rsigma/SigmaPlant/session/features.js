@@ -195,6 +195,9 @@ class Feature extends Introspector {
             case 'move':
                 this.exitMove();
                 break;
+            case 'auto':
+                this.exitMove();
+                break;
             case 'resize':
                 this.exitResize();
                 break;

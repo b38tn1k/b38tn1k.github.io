@@ -7,23 +7,6 @@ function slerp(start, end, t) {
     return start * (1 - t) + end * t;
 }
 
-function logCommand(commandObject, label = 'UPDATE') {
-    let mystring = label + '\tPLANT: ';
-    mystring += String(commandObject.plant);
-    mystring += '\n\t';
-    const commands = JSON.parse(commandObject.commands);
-    for (let cmd of commands) {
-        mystring += 'ID: ' + cmd.id;
-        mystring += ' CMD: ';
-        for (let c of cmd.commands) {
-            mystring += c.type;
-            mystring += ' ';
-        }
-        mystring += '\n\t';
-    }
-    return mystring;
-}
-
 class Session extends UndoStack {
     constructor() {
         super();

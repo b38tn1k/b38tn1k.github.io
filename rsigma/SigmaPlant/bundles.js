@@ -29,7 +29,7 @@ loadjs.ready('bundle2', {
 loadjs.ready('bundle3', {
     success: function () {
         loadjs(
-            ['session/feature_actions.js', 'session/feature_components.js'],
+            ['session/feature_actions.js', 'session/feature_components.js', 'session/redo_actions.js', 'session/undo_actions.js'],
             'bundle4'
         );
     }

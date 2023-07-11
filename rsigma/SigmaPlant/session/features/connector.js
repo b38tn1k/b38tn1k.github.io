@@ -205,7 +205,7 @@ class Connector extends Feature {
         let ds = this.selfDescribe();
         let cmdType = 'delete';
         if (append == true) {
-            cmdType = 'delete-append';
+            cmdType = 'delete_append';
         }
         this.packCommand(true, cmdType, this.type, ds);
         this.mode = 'delete';

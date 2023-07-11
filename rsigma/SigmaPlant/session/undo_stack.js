@@ -1,3 +1,20 @@
+function logCommand(commandObject, label = 'UPDATE') {
+    let mystring = label + '\tPLANT: ';
+    mystring += String(commandObject.plant);
+    mystring += '\n\t';
+    const commands = JSON.parse(commandObject.commands);
+    for (let cmd of commands) {
+        mystring += 'ID: ' + cmd.id;
+        mystring += ' CMD: ';
+        for (let c of cmd.commands) {
+            mystring += c.type;
+            mystring += ' ';
+        }
+        mystring += '\n\t';
+    }
+    return mystring;
+}
+
 class UndoStack {
     constructor() {
         this.history = [];
@@ -40,15 +57,15 @@ class UndoStack {
         const allCommands = JSON.parse(commandObject.commands);
         allCommands.forEach((cmd) => {
             cmd.commands.sort((a, b) => {
-                if (a.type === 'delete-append') return 1;
-                if (b.type === 'delete-append') return -1;
+                if (a.type === 'delete_append') return 1;
+                if (b.type === 'delete_append') return -1;
                 return 0;
             });
         });
 
         allCommands.sort((a, b) => {
-            if (a.commands.some((c) => c.type === 'delete-append')) return 1;
-            if (b.commands.some((c) => c.type === 'delete-append')) return -1;
+            if (a.commands.some((c) => c.type === 'delete_append')) return 1;
+            if (b.commands.some((c) => c.type === 'delete_append')) return -1;
             return 0;
         });
         const plant = commandObject.plant;
@@ -57,7 +74,7 @@ class UndoStack {
             if (
                 target ||
                 ftcmds.commands[0].type == 'delete' ||
-                ftcmds.commands[0].type == 'delete-append'
+                ftcmds.commands[0].type == 'delete_append'
             ) {
                 for (let i = 0; i < ftcmds.commands.length; i++) {
                     let child;
@@ -67,7 +84,7 @@ class UndoStack {
                             target.setMode('delete');
                             this.preserveStack = true;
                             break;
-                        case 'delete-append':
+                        case 'delete_append':
                         case 'delete':
                             this.reConstruct(
                                 ftcmds.commands[i].forwards,
@@ -151,7 +168,7 @@ class UndoStack {
                         );
                         this.preserveStack = true;
                         break;
-                    case 'delete-append':
+                    case 'delete_append':
                     case 'delete':
                         target.setMode('delete');
                         target.delete();

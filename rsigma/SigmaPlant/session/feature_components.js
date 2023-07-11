@@ -88,6 +88,18 @@ class FeatureDataTextLabel extends FeatureLabel {
     }
 }
 
+class FixedFeatureDataTextLabel extends FeatureDataTextLabel {
+    constructor(x, y, data, size, action, pg) {
+        super(0, 0, data, size, action);
+        this.g.bOffset.x = x * pg.aDims.w;
+        this.g.bOffset.y = y * pg.aDims.h;
+    }
+
+    update(zoom, gp) {
+        super.update(zoom, gp);
+    }
+}
+
 class FeatureDataTextLabelTrigger extends FeatureDataTextLabel {
     mouseClickActionHandler(zoom) {
         if (this.checkClicked(zoom)) {

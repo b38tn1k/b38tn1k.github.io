@@ -24,12 +24,13 @@ class Zone extends Feature {
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new FeatureDataTextLabel(
+        this.dataLabels['title'] = new FixedFeatureDataTextLabel(
             0,
-            0.15,
+            0.1,
             'ZONE',
             buttonSize,
-            openDialog
+            openDialog,
+            this.g
         );
         this.dataLabels['id'] = new FeatureDataIDLabel(
             0,

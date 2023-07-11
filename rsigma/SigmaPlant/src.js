@@ -32,8 +32,9 @@ function keyPressed() {
             sess.doRedo(globalZoom);
           }
           if (key === 'p') {
+            console.log("FEATURES IN ACTIVE PLANT:");
             sess.plant.logPlant();
-            console.log("Number of plants:", sess.plants.length);
+            console.log("NUMBER OF PLANTS:", sess.plants.length);
             for (let plant of sess.plants) {
                 if (plant) {
                     console.log(plant.mode);

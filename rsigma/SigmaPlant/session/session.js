@@ -364,7 +364,7 @@ class Session {
                 // newPlant.selfConstruct(info.plant);
                 // TODO rebuild plants after deleting!
                 // let newPlant = null;
-                newFeature = this.addProcess(x, y, false)//, newPlant); // amm i adding extra plants?
+                newFeature = this.addProcess(x, y, false, info); // amm i adding extra plants?
                 break;
             case 'sink':
                 newFeature = this.addSink(x, y, false);
@@ -428,35 +428,43 @@ class Session {
         this.plant.draw(zoom, cnv);
     }
 
-    addProcess(x, y, record = true, newPlant = null) {
-        if (newPlant == null) {
-            newPlant = new Plant();
-            newPlant.addSource(0, -246, false);
-            newPlant.addMetric(0, 0, false);
-            newPlant.addSink(0, 246, false);
-            newPlant.addConnector(
-                0,
-                0,
-                newPlant.features[1],
-                newPlant.features[0],
-                false
-            );
-            newPlant.addConnector(
-                0,
-                0,
-                newPlant.features[2],
-                newPlant.features[1],
-                false
-            );
-            newPlant.addParentLink(-196, 0, this.plantsPointer);
-            for (let i = 0; i < newPlant.features.length; i++) {
-                newPlant.features[i].turnOffAnimations();
-            }
+    setupNewPlant(newPlant) {
+        newPlant.addSource(0, -246, false);
+        newPlant.addMetric(0, 0, false);
+        newPlant.addSink(0, 246, false);
+        newPlant.addConnector(
+            0,
+            0,
+            newPlant.features[1],
+            newPlant.features[0],
+            false
+        );
+        newPlant.addConnector(
+            0,
+            0,
+            newPlant.features[2],
+            newPlant.features[1],
+            false
+        );
+        newPlant.addParentLink(-196, 0, this.plantsPointer);
+        for (let i = 0; i < newPlant.features.length; i++) {
+            newPlant.features[i].turnOffAnimations();
         }
-        this.plants.push(newPlant);
-        this.undoStack.push([]);
-        this.redoStack.push([]);
-        this.undoCursor.push(0);
+    }
+
+    addProcess(x, y, record = true, info = null) {
+        let newPlant = new Plant();
+        if (info == null) {
+            this.setupNewPlant(newPlant);
+            this.plants.push(newPlant);
+            this.undoStack.push([]);
+            this.redoStack.push([]);
+            this.undoCursor.push(0);
+        } else {
+            newPlant.selfConstruct(info.plant, this);
+            this.plants[info.targetPlant] = newPlant;
+        }
+       
         const feat = this.plant.addProcess(
             x,
             y,
@@ -464,6 +472,7 @@ class Session {
             this.plants.length - 1,
             record
         );
+        newPlant.parent = feat;
         // this.preserveStack = true;
         return feat;
     }

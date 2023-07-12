@@ -3,22 +3,22 @@ class RedoActions {
         this.parent = parent;
     }
 
-    newFeature(target, commands) {
+    newFeature(target, commands, zoom) {
         this.parent.reConstruct(commands.forwards, commands.reverse, zoom);
         this.parent.preserveStack = true;
     }
 
-    delete_append(target) {
-        this.delete(target);
+    delete_append(target, commands, zoom) {
+        this.delete(target, commands, zoom);
     }
 
-    delete(target) {
+    delete(target, commands, zoom) {
         target.setMode('delete');
-        target.delete(target, commands);
+        target.delete();
         this.parent.preserveStack = true;
     }
 
-    move(target, commands) {
+    move(target, commands, zoom) {
         if (target) {
             target.move(commands.forwards[0], commands.forwards[1], false);
             if (target.type == 'zone') {
@@ -27,25 +27,25 @@ class RedoActions {
         }
     }
 
-    addChild(target, commands) {
+    addChild(target, commands, zoom) {
         if (target) {
-            child = this.parent.plants[plant].findID(commands.reverse.id);
+            let child = this.parent.plant.findID(commands.reverse.id);
             if (child) {
                 target.addChild(child, false);
             }
         }
     }
 
-    removeChild(target, commands) {
+    removeChild(target, commands, zoom) {
         if (target) {
-            child = this.parent.plants[plant].findID(commands.reverse.id);
+            let child = this.parent.plant.findID(commands.reverse.id);
             if (child) {
                 target.removeChild(child, false);
             }
         }
     }
 
-    resize(target, commands) {
+    resize(target, commands, zoom) {
         if (target) {
             target.resize(commands.forwards[0], commands.forwards[1], false);
         }

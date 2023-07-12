@@ -22,6 +22,8 @@ class UndoStack {
         this.redoStack = [[]];
         this.undoCursor = [0];
         this.preserveStack = false;
+        this.undoActions = new UndoActions(this);
+        this.redoActions = new RedoActions(this);
     }
     doUndo(zoom) {
         if (this.undoCursor[this.plantsPointer] > 0) {
@@ -77,75 +79,8 @@ class UndoStack {
                 ftcmds.commands[0].type == 'delete_append'
             ) {
                 for (let i = 0; i < ftcmds.commands.length; i++) {
-                    let child;
-                    switch (ftcmds.commands[i].type) {
-                        case 'newFeature':
-                            target.delete();
-                            target.setMode('delete');
-                            this.preserveStack = true;
-                            break;
-                        case 'delete_append':
-                        case 'delete':
-                            this.reConstruct(
-                                ftcmds.commands[i].forwards,
-                                ftcmds.commands[i].reverse,
-                                zoom
-                            );
-                            this.preserveStack = true;
-                            break;
-                        case 'move':
-                            if (target) {
-                                target.move(
-                                    ftcmds.commands[i].reverse[0],
-                                    ftcmds.commands[i].reverse[1],
-                                    false
-                                );
-                                if (target.type == 'zone') {
-                                    this.preserveStack = true;
-                                }
-                            }
-                            break;
-                        case 'addChild':
-                            if (target) {
-                                child = this.plants[plant].findID(
-                                    ftcmds.commands[i].reverse.id
-                                );
-                                if (child) {
-                                    target.removeChild(child, false);
-                                    child.move(
-                                        ftcmds.commands[i].reverse.x,
-                                        ftcmds.commands[i].reverse.y,
-                                        false
-                                    );
-                                }
-                            }
-                            break;
-                        case 'removeChild':
-                            if (target) {
-                                child = this.plants[plant].findID(
-                                    ftcmds.commands[i].reverse.id
-                                );
-                                if (child) {
-                                    target.addChild(child, false);
-                                    child.move(
-                                        ftcmds.commands[i].reverse.x,
-                                        ftcmds.commands[i].reverse.y,
-                                        false
-                                    );
-                                }
-                            }
-                            break;
-                        case 'resize':
-                            if (target) {
-                                target.resize(
-                                    ftcmds.commands[i].reverse[0],
-                                    ftcmds.commands[i].reverse[1],
-                                    false
-                                );
-                            }
-                            break;
-                        default:
-                            break;
+                    if (this.undoActions[ftcmds.commands[i].type]) {
+                        this.undoActions[ftcmds.commands[i].type](target, ftcmds.commands[i], zoom);
                     }
                 }
             }
@@ -158,65 +93,8 @@ class UndoStack {
         for (let ftcmds of allCommands) {
             let target = this.plants[plant].findID(ftcmds.id);
             for (let i = 0; i < ftcmds.commands.length; i++) {
-                let child;
-                switch (ftcmds.commands[i].type) {
-                    case 'newFeature':
-                        this.reConstruct(
-                            ftcmds.commands[i].forwards,
-                            ftcmds.commands[i].reverse,
-                            zoom
-                        );
-                        this.preserveStack = true;
-                        break;
-                    case 'delete_append':
-                    case 'delete':
-                        target.setMode('delete');
-                        target.delete();
-                        this.preserveStack = true;
-                        break;
-                    case 'move':
-                        if (target) {
-                            target.move(
-                                ftcmds.commands[i].forwards[0],
-                                ftcmds.commands[i].forwards[1],
-                                false
-                            );
-                            if (target.type == 'zone') {
-                                this.preserveStack = true;
-                            }
-                        }
-                        break;
-                    case 'addChild':
-                        if (target) {
-                            child = this.plants[plant].findID(
-                                ftcmds.commands[i].reverse.id
-                            );
-                            if (child) {
-                                target.addChild(child, false);
-                            }
-                        }
-                        break;
-                    case 'removeChild':
-                        if (target) {
-                            child = this.plants[plant].findID(
-                                ftcmds.commands[i].reverse.id
-                            );
-                            if (child) {
-                                target.removeChild(child, false);
-                            }
-                        }
-                        break;
-                    case 'resize':
-                        if (target) {
-                            target.resize(
-                                ftcmds.commands[i].forwards[0],
-                                ftcmds.commands[i].forwards[1],
-                                false
-                            );
-                        }
-                        break;
-                    default:
-                        break;
+                if (this.redoActions[ftcmds.commands[i].type]) {
+                    this.redoActions[ftcmds.commands[i].type](target, ftcmds.commands[i], zoom);
                 }
             }
         }

@@ -3,31 +3,33 @@ class UndoActions {
         this.parent = parent;
     }
 
-    newFeature(target, commands) {
+    newFeature(target, commands, zoom) {
         target.delete();
         target.setMode('delete');
-        this.preserveStack = true;
+        this.parent.preserveStack = true;
     }
 
-    delete_append(target, commands) {}
-
-    delete(target, commands) {
-        this.reConstruct(commands.forwards, commands.reverse, zoom);
-        this.preserveStack = true;
+    delete_append(target, commands, zoom) {
+        this.delete(target, commands, zoom);
     }
 
-    move(target, commands) {
+    delete(target, commands, zoom) {
+        this.parent.reConstruct(commands.forwards, commands.reverse, zoom);
+        this.parent.preserveStack = true;
+    }
+
+    move(target, commands, zoom) {
         if (target) {
             target.move(commands.reverse[0], commands.reverse[1], false);
             if (target.type == 'zone') {
-                this.preserveStack = true;
+                this.parent.preserveStack = true;
             }
         }
     }
 
-    addChild(target, commands) {
+    addChild(target, commands, zoom) {
         if (target) {
-            child = this.plants[plant].findID(commands.reverse.id);
+            let child = this.parent.plant.findID(commands.reverse.id);
             if (child) {
                 target.removeChild(child, false);
                 child.move(commands.reverse.x, commands.reverse.y, false);
@@ -35,9 +37,9 @@ class UndoActions {
         }
     }
 
-    removeChild(target, commands) {
+    removeChild(target, commands, zoom) {
         if (target) {
-            child = this.plants[plant].findID(commands.reverse.id);
+            let child = this.parent.plant.findID(commands.reverse.id);
             if (child) {
                 target.addChild(child, false);
                 child.move(commands.reverse.x, commands.reverse.y, false);
@@ -45,7 +47,7 @@ class UndoActions {
         }
     }
 
-    resize(target, commands) {
+    resize(target, commands, zoom) {
         if (target) {
             target.resize(commands.reverse[0], commands.reverse[1], false);
         }

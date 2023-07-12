@@ -1,6 +1,7 @@
 class WidgetFrame {
-    constructor(parent) {
+    constructor(parent, fill) {
         this.parent = parent;
+        this.fill = fill;
         this.frame = {};
         [
             this.frame.x_min_old,
@@ -19,7 +20,7 @@ class WidgetFrame {
         return this.parent.g;
     }
 
-    update(zoom) {
+    full (zoom) {
         this.frame.x_min_old = this.frame.x_min;
         this.frame.x_max_old = this.frame.x_max;
         this.frame.y_min_old = this.frame.y_min;
@@ -30,6 +31,11 @@ class WidgetFrame {
         this.frame.y_min = this.g.sCart.y + BUTTON_SIZE * zoom;
         this.frame.y_max = this.g.sCart.y + this.g.sDims.h - BUTTON_SIZE * zoom;
         this.frame.y_delta = this.frame.y_max - this.frame.y_min;
+        this.frame.b_volume = this.g.bDims.w * this.g.bDims.h;
+    }
+
+    update(zoom) {
+        this[this.fill](zoom);
         this.doUpdate = this.checkIfValuesChanged();
     }
 

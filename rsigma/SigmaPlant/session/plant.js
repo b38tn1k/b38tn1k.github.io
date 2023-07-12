@@ -101,9 +101,21 @@ class Plant extends PlantSetup {
         this.changed = false;
     }
 
-    transitionWidgets() {
+    transitionWidgetsIn() {
         for (let i = 0; i < this.features.length; i++) {
-            this.features[i].transitionWidgets();
+            this.features[i].transitionWidgetsIn();
+        }
+    }
+
+    transitionWidgetsOut() {
+        for (let i = 0; i < this.features.length; i++) {
+            this.features[i].transitionWidgetsOut();
+        }
+    }
+
+    setupWidgets() {
+        for (let i = 0; i < this.features.length; i++) {
+            this.features[i].setupWidgets();
         }
     }
 

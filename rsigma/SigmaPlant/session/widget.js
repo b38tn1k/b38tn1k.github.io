@@ -1,6 +1,6 @@
 class Widget extends WidgetFrame{
-    constructor(parent, key) {
-        super(parent);
+    constructor(parent, key, fill='full') {
+        super(parent, fill);
         this.active = false;
         this.key = key;
         if (!this.parent.data[this.key]) {
@@ -29,7 +29,9 @@ class Widget extends WidgetFrame{
         super.update(zoom);
     }
 
-    transition() {}
+    transitionIn() {}
+
+    transitionOut() {}
 
     setup() {}
 

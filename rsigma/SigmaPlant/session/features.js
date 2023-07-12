@@ -184,9 +184,21 @@ class Feature extends Introspector {
         }
     }
 
-    transitionWidgets() {
+    transitionWidgetsIn() {
         for (let widget of this.widgets){
-            widget.transition();
+            widget.transitionIn();
+        }
+    }
+
+    transitionWidgetsOut() {
+        for (let widget of this.widgets){
+            widget.transitionOut();
+        }
+    }
+
+    setupWidgets() {
+        for (let widget of this.widgets){
+            widget.setup();
         }
     }
 

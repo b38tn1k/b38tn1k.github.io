@@ -4,6 +4,13 @@ class NoteWidget extends Widget {
         if (!this.data) {
             this.data = '';
         }
+        this.input;
+        this.placeholder = 'an empty note';
+        this.setupInput();
+        this.setup();
+    }
+
+    setupInput() {
         this.input = createElement('textarea', this.data['note']);
         // this should be done with css
         this.input.input(this.inputEventHandler.bind(this));
@@ -16,12 +23,21 @@ class NoteWidget extends Widget {
         this.input.style('caret-color', getColor('accent'));
         this.input.style('outline', 'none');
         this.input.style('font-family', 'Arial');
-        this.placeholder = 'an empty note';
     }
 
     delete() {
         this.input.remove();
         super.delete();
+    }
+    transition() {
+        if (this.input) {
+            this.input.remove();
+            this.input = null;
+        } else {
+            this.setupInput();
+            this.setup();
+        }
+        
     }
 
     inputEventHandler() {
@@ -71,7 +87,7 @@ class NoteWidget extends Widget {
 
     update(zoom) {
         super.update(zoom);
-        if (this.doUpdate) {
+        if (this.doUpdate && this.input) {
             this.input.position(this.frame.x_min, this.frame.y_min);
             this.input.size(this.frame.x_delta, this.frame.y_delta);
             this.input.style('font-size', String(myTextSize * zoom) + 'px');

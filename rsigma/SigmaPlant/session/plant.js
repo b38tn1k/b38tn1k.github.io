@@ -101,6 +101,12 @@ class Plant extends PlantSetup {
         this.changed = false;
     }
 
+    transitionWidgets() {
+        for (let i = 0; i < this.features.length; i++) {
+            this.features[i].transitionWidgets();
+        }
+    }
+
     selfConstruct(info, sess) {
         this.features = []; // clear out any naughty features
         // first, instantiate all the objects in features, in order, recursively for plants

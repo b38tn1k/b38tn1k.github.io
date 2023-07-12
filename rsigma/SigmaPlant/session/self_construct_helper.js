@@ -22,6 +22,11 @@ class SelfConstructionHelper {
         newSource.def = f;
     }
 
+    Note(f) {
+        let newNote = this.parent.addNote(f.g.bCart[0], f.g.bCart[1], false);
+        newNote.def = f;
+    }
+
     Sink(f) {
         let newSink = this.parent.addSink(f.g.bCart[0], f.g.bCart[1], false);
         newSink.def = f;

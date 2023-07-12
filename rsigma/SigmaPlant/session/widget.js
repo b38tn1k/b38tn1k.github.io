@@ -29,6 +29,8 @@ class Widget extends WidgetFrame{
         super.update(zoom);
     }
 
+    transition() {}
+
     setup() {}
 
     handleMousePress() {}

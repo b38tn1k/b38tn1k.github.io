@@ -180,8 +180,13 @@ class Feature extends Introspector {
             this.checkModeAndAct();
             for (let widget of this.widgets){
                 widget.update(zoom);
-                
             }
+        }
+    }
+
+    transitionWidgets() {
+        for (let widget of this.widgets){
+            widget.transition();
         }
     }
 

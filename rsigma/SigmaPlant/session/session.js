@@ -35,9 +35,11 @@ class Session extends UndoStack {
 
     doTransition(zoom) {
         let targetPlant = this.plant.targetPlant;
+        this.plant.transitionWidgets(); //transition out
         this.plant.targetPlant = null;
         this.plantsPointer = targetPlant;
         this.plant.enter();
+        this.plant.transitionWidgets(); //transition in
         scrollX = 0;
         scrollY = 0;
         this.plant.update(zoom);

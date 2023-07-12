@@ -42,7 +42,6 @@ let SessionSetupMixin = {
             newPlant.selfConstruct(info.plant, this);
             this.plants[info.targetPlant] = newPlant;
         }
-       
         const feat = this.plant.addProcess(
             x,
             y,
@@ -51,49 +50,46 @@ let SessionSetupMixin = {
             record
         );
         newPlant.parent = feat;
-        // this.preserveStack = true;
         return feat;
     },
 
     addSink(x, y, record = true) {
         const feat = this.plant.addSink(x, y, record);
-        // this.preserveStack = true;
+        return feat;
+    },
+
+    addNote(x, y, record = true) {
+        const feat = this.plant.addNote(x, y, record);
         return feat;
     },
 
     addSource(x, y, record = true) {
         const feat = this.plant.addSource(x, y, record);
-        // this.preserveStack = true;
         return feat;
     },
 
     addZone(x, y, record = true) {
         const feat = this.plant.addZone(x, y, record);
-        // this.preserveStack = true;
         return feat;
     },
 
     addMetric(x, y, record = true) {
         const feat = this.plant.addMetric(x, y, record);
-        // this.preserveStack = true;
         return feat;
     },
 
     addSplit(x, y, record = true) {
         const feat = this.plant.addSplit(x, y, record);
-        // this.preserveStack = true;
         return feat;
     },
 
     addMerge(x, y, record = true) {
         const feat = this.plant.addMerge(x, y, record);
-        // this.preserveStack = true;
         return feat;
     },
 
     addConnector(x, y, input, output, record = true) {
         const feat = this.plant.addConnector(x, y, input, output, record);
-        // this.preserveStack = true;
         return feat;
-    },
+    }
 };

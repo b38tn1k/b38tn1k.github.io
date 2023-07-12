@@ -4,7 +4,7 @@ class MenuButton {
         this.x = x;
         this.y = y;
         this.action = action;
-        this.buttonRadius = 50;
+        this.buttonRadius = 45;
         this.level = level;
         this.numEdges = 5;
         this.isAnimating = true;

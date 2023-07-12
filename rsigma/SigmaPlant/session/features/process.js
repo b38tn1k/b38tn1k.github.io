@@ -131,7 +131,7 @@ class Process extends Feature {
     initDataLabels(buttonSize) {
         this.dataLabels['title'] = new FixedFeatureDataTextLabel(
             0,
-            0.1,
+            1.5,
             'PROCESS',
             buttonSize,
             openDialog,

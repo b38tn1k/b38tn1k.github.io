@@ -4,9 +4,9 @@ class Merge extends Feature {
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new FeatureDataTextLabel(
+        this.dataLabels['title'] = new FixedFeatureDataTextLabel(
             0,
-            0.15,
+            1.5,
             'MERGE',
             buttonSize,
             openDialog

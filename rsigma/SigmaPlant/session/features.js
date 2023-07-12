@@ -132,7 +132,10 @@ class Feature extends Introspector {
                 this.dataLabels[label].changed = false;
             }
         }
-        this.data['title'] = this.dataLabels['title'].data['data'];
+        if (this.dataLabels['title']){
+            this.data['title'] = this.dataLabels['title'].data['data'];
+        }
+        
     }
 
     drawButtonsAndLabels(

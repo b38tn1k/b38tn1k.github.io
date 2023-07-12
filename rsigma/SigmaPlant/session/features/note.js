@@ -1,16 +1,12 @@
-class Source extends Feature {
+class Note extends Feature {
     constructor(x, y, width, height) {
-        super(x, y, 196, 196, 'source'); // Call the parent constructor
+        super(x, y, 196, 196, 'note');
+        let [v1, v2, v3, v4] = [0.01, 0.15, 0.85, 0.99]
+        this.shape = [random(v1, v2), random(v1, v2), random(v3, v4), random(v3, v4), 
+            random(v1, v2), random(v3, v4), random(v3, v4), random(v1, v2)];
     }
 
     initDataLabels(buttonSize) {
-        this.dataLabels['title'] = new FixedFeatureDataTextLabel(
-            0,
-            1.5,
-            'SOURCE',
-            buttonSize,
-            openDialog
-        );
         this.dataLabels['id'] = new FeatureDataIDLabel(
             0,
             1,
@@ -32,23 +28,26 @@ class Source extends Feature {
             )
         );
         this.buttons.push(
-            new FeatureUIOutputButton('Output', 0.5, 1, buttonSize, () =>
-                this.setMode('o_connect')
+            new FeatureUIButtonResize('Resize', 1, 1, buttonSize, () =>
+                this.setMode('resize')
             )
         );
+
     }
 
     draw(zoom, cnv) {
-        fill(getColor('secondary'));
+        fill(getColor('primary'));
         stroke(getColor('outline'));
         rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
-
-        fill(getColor('primary'));
+        fill(getColor('secondary'));
         noStroke();
-        // Calculate the center of the rectangle
-        const centerX = this.g.sCart.x + this.g.sDims.w / 2;
-        const centerY = this.g.sCart.y + this.g.sDims.h / 2;
-        // Draw the ellipse
-        ellipse(centerX, centerY, this.g.sDims.w, this.g.sDims.h);
+        beginShape();
+        for (let i = 0; i < 4; i++) {
+            let x = this.g.sCart.x + this.shape[i] * this.g.sDims.w;
+            let y = this.g.sCart.y + this.shape[i+4] * this.g.sDims.h;
+            vertex(x, y);
+        }
+        endShape(CLOSE);
+
     }
 }

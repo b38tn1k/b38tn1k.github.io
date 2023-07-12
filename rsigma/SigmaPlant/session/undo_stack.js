@@ -15,6 +15,24 @@ function logCommand(commandObject, label = 'UPDATE') {
     return mystring;
 }
 
+function loadInOrder(commands) {
+    const allCommands = JSON.parse(commands);
+    allCommands.forEach((cmd) => {
+        cmd.commands.sort((a, b) => {
+            if (a.type === 'delete_append') return 1;
+            if (b.type === 'delete_append') return -1;
+            return 0;
+        });
+    });
+
+    allCommands.sort((a, b) => {
+        if (a.commands.some((c) => c.type === 'delete_append')) return 1;
+        if (b.commands.some((c) => c.type === 'delete_append')) return -1;
+        return 0;
+    });
+    return allCommands;
+}
+
 class UndoStack {
     constructor() {
         this.history = [];
@@ -56,20 +74,7 @@ class UndoStack {
     }
 
     undoCommands(commandObject, zoom) {
-        const allCommands = JSON.parse(commandObject.commands);
-        allCommands.forEach((cmd) => {
-            cmd.commands.sort((a, b) => {
-                if (a.type === 'delete_append') return 1;
-                if (b.type === 'delete_append') return -1;
-                return 0;
-            });
-        });
-
-        allCommands.sort((a, b) => {
-            if (a.commands.some((c) => c.type === 'delete_append')) return 1;
-            if (b.commands.some((c) => c.type === 'delete_append')) return -1;
-            return 0;
-        });
+        const allCommands = loadInOrder(commandObject.commands);
         const plant = commandObject.plant;
         for (let ftcmds of allCommands) {
             let target = this.plants[plant].findID(ftcmds.id);
@@ -80,7 +85,11 @@ class UndoStack {
             ) {
                 for (let i = 0; i < ftcmds.commands.length; i++) {
                     if (this.undoActions[ftcmds.commands[i].type]) {
-                        this.undoActions[ftcmds.commands[i].type](target, ftcmds.commands[i], zoom);
+                        this.undoActions[ftcmds.commands[i].type](
+                            target,
+                            ftcmds.commands[i],
+                            zoom
+                        );
                     }
                 }
             }
@@ -94,7 +103,11 @@ class UndoStack {
             let target = this.plants[plant].findID(ftcmds.id);
             for (let i = 0; i < ftcmds.commands.length; i++) {
                 if (this.redoActions[ftcmds.commands[i].type]) {
-                    this.redoActions[ftcmds.commands[i].type](target, ftcmds.commands[i], zoom);
+                    this.redoActions[ftcmds.commands[i].type](
+                        target,
+                        ftcmds.commands[i],
+                        zoom
+                    );
                 }
             }
         }
@@ -105,7 +118,7 @@ class UndoStack {
         const x = 0;
         const y = 0;
         let newFeature;
-        switch (type) {
+        switch (type) { // I should really improve the placeholder part of introspector here
             case 'process':
                 // let newPlant = new Plant();
                 // newPlant.selfConstruct(info.plant);
@@ -130,6 +143,9 @@ class UndoStack {
                 break;
             case 'merge':
                 newFeature = this.addMerge(x, y, false);
+                break;
+            case 'note':
+                newFeature = this.addNote(x, y, false);
                 break;
             case 'connector':
                 let input = this.plant.findID(info.input);

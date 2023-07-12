@@ -28,6 +28,14 @@ class PlantSetup {
         return feat;
     }
 
+    addNote(x, y, record = true) {
+        this.changed = true;
+        const feat = new Note(x, y);
+        this.features.push(feat);
+        feat.packCommand(record, 'newFeature', feat.type, feat.selfDescribe());
+        return feat;
+    }
+
     addZone(x, y, record = true) {
         this.changed = true;
         this.features.push(new Zone(x, y));

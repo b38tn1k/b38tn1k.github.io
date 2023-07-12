@@ -59,7 +59,8 @@ loadjs.ready('bundle6', {
                 'session/features/sink.js',
                 'session/features/source.js',
                 'session/features/split.js',
-                'session/features/zone.js'
+                'session/features/zone.js',
+                'session/features/note.js'
             ],
             'bundle7'
         );

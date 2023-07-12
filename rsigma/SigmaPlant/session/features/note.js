@@ -1,9 +1,18 @@
 class Note extends Feature {
     constructor(x, y, width, height) {
         super(x, y, 196, 196, 'note');
-        let [v1, v2, v3, v4] = [0.01, 0.15, 0.85, 0.99]
-        this.shape = [random(v1, v2), random(v1, v2), random(v3, v4), random(v3, v4), 
-            random(v1, v2), random(v3, v4), random(v3, v4), random(v1, v2)];
+        let [v1, v2, v3, v4] = [0.01, 0.15, 0.85, 0.99];
+        this.shape = [
+            random(v1, v2),
+            random(v1, v2),
+            random(v3, v4),
+            random(v3, v4),
+            random(v1, v2),
+            random(v3, v4),
+            random(v3, v4),
+            random(v1, v2)
+        ];
+        this.widgets.push(new NoteWidget(this));
     }
 
     initDataLabels(buttonSize) {
@@ -32,7 +41,6 @@ class Note extends Feature {
                 this.setMode('resize')
             )
         );
-
     }
 
     draw(zoom, cnv) {
@@ -44,10 +52,9 @@ class Note extends Feature {
         beginShape();
         for (let i = 0; i < 4; i++) {
             let x = this.g.sCart.x + this.shape[i] * this.g.sDims.w;
-            let y = this.g.sCart.y + this.shape[i+4] * this.g.sDims.h;
+            let y = this.g.sCart.y + this.shape[i + 4] * this.g.sDims.h;
             vertex(x, y);
         }
         endShape(CLOSE);
-
     }
 }

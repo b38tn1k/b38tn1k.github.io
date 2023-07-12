@@ -22,6 +22,7 @@ class Feature extends Introspector {
         this.initDataLabels(BUTTON_SIZE);
         this.changed = true;
         this.command = {};
+        this.widgets = [];
     }
 
     initDataLabels(buttonSize) {}
@@ -31,6 +32,9 @@ class Feature extends Introspector {
     delete() {
         this.buttons = [];
         this.dataLabels = {};
+        for (let widget of this.widgets){
+            widget.delete();
+        }
     }
 
     setMode(mode) {
@@ -174,6 +178,9 @@ class Feature extends Introspector {
         if (this.g.isOnScreen) {
             this.updateButtonsAndLabels(zoom);
             this.checkModeAndAct();
+            for (let widget of this.widgets){
+                widget.update();
+            }
         }
     }
 
@@ -251,6 +258,9 @@ class Feature extends Introspector {
             this.notYetDrawnLabelAndButtons = true;
             this.draw(zoom, cnv);
             this.drawButtonsAndLabels(zoom, cnv);
+            for (let widget of this.widgets){
+                widget.display();
+            }
         }
     }
 
@@ -273,6 +283,9 @@ class Feature extends Introspector {
             }
             for (let label in this.dataLabels) {
                 this.dataLabels[label].mouseClickActionHandler(zoom);
+            }
+            for (let widget of this.widgets){
+                widget.handleMousePress();
             }
         }
     }

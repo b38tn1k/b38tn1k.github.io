@@ -27,7 +27,8 @@ const excludedKeys = new Set([
     'def',
     'command',
     'bCartOld',
-    'parent'
+    'parent',
+    'widgets',
 ]);
 const reqIdKeys = new Set([
     'input',

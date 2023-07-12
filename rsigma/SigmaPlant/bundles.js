@@ -42,7 +42,7 @@ loadjs.ready('bundle4', {
 loadjs.ready('bundle5', {
     success: function () {
         loadjs(
-            ['session/features.js', 'session/plant.js', 'session/self_construct_helper.js', 'session/session.js'],
+            ['session/features.js', 'session/plant.js', 'session/self_construct_helper.js', 'session/session.js', 'session/widget.js'],
             'bundle6'
         );
     }
@@ -51,6 +51,7 @@ loadjs.ready('bundle6', {
     success: function () {
         loadjs(
             [
+                'session/widgets/note_widget.js',
                 'session/features/connector.js',
                 'session/features/merge.js',
                 'session/features/metric.js',

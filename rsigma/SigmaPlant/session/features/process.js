@@ -16,7 +16,6 @@ class Process extends Feature {
 
     delete() {
         super.delete();
-        
     }
 
     collectBuses() {
@@ -33,7 +32,7 @@ class Process extends Feature {
     }
 
     startDelete() {
-        let firstTime = (this.mode !== 'deleting');
+        let firstTime = this.mode !== 'deleting';
         super.startDelete();
         if (firstTime) {
             this.plant.mode = 'delete';
@@ -191,8 +190,26 @@ class Process extends Feature {
     }
 
     draw(zoom, cnv) {
-        fill(getColor('primary'));
+        fill(getColor('secondary'));
         stroke(getColor('outline'));
         rect(this.g.sCart.x, this.g.sCart.y, this.g.sDims.w, this.g.sDims.h);
+        stroke(getColor('primary'));
+        strokeWeight(15 * zoom);
+        for (let button of this.buttons) {
+            if (
+                button.constructor.name == 'FeatureUIOutputButton' ||
+                button.constructor.name == 'FeatureUIInputButton'
+            ) {
+                const sx = button.g.sCart.x + button.g.sMids.w;
+                const sy = button.g.sCart.y + button.g.sMids.h;
+                line(sx, sy, sx, this.g.sMids.h + this.g.sCart.y);
+            }
+        }
+        noStroke();
+        fill(getColor('primary'));
+        const blockBorder = min(this.g.sDims.w * 0.15, this.g.sDims.h * 0.15);
+        const blockBorder2 = blockBorder*2;
+        rect(this.g.sCart.x + blockBorder, this.g.sCart.y + blockBorder, this.g.sDims.w - blockBorder2, this.g.sDims.h - blockBorder2);
+        strokeWeight(1);
     }
 }

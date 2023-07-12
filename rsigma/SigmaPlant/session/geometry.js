@@ -111,6 +111,8 @@ class ParentDefinedGeometry extends Geometry {
     update(zoom, gp) {
         this.sDims.w = this.bDims.w * zoom;
         this.sDims.h = this.bDims.h * zoom;
+        this.sMids.w = this.sDims.w >> 1;
+        this.sMids.h = this.sDims.h >> 1;
         this.sSqrDim = this.sDims.h;
         this.sSqrDimOn2 = this.sSqrDim / 2;
         if (this.static == true) {

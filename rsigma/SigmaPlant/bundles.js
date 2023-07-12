@@ -36,7 +36,7 @@ loadjs.ready('bundle3', {
 });
 loadjs.ready('bundle4', {
     success: function () {
-        loadjs(['session/feature_buttons.js', 'session/plant_setup.js', 'session/undo_stack.js', 'session/session_setup_mixin.js', 'session/process_active_feature.js'], 'bundle5');
+        loadjs(['session/feature_buttons.js', 'session/plant_setup.js', 'session/undo_stack.js', 'session/session_setup_mixin.js', 'session/process_active_feature.js', 'session/widget_frame.js'], 'bundle5');
     }
 });
 loadjs.ready('bundle5', {

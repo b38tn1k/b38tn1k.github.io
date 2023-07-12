@@ -18,6 +18,15 @@ class RedoActions {
         this.parent.preserveStack = true;
     }
 
+    update_data(target, commands, zoom) {
+        const forwards = JSON.parse(commands.forwards);
+        target.data[forwards.key] = forwards.data;
+        let widget = target.widgets.find(w => w.key === forwards.key);
+        if (widget) {
+            widget.setup();
+        }
+    }
+
     move(target, commands, zoom) {
         if (target) {
             target.move(commands.forwards[0], commands.forwards[1], false);

@@ -179,7 +179,8 @@ class Feature extends Introspector {
             this.updateButtonsAndLabels(zoom);
             this.checkModeAndAct();
             for (let widget of this.widgets){
-                widget.update();
+                widget.update(zoom);
+                
             }
         }
     }

@@ -1,34 +1,43 @@
-class Widget {
+class Widget extends WidgetFrame{
     constructor(parent, key) {
-        this.parent = parent;
+        super(parent);
         this.active = false;
         this.key = key;
         if (!this.parent.data[this.key]) {
-            this.parent.data[this.key] = {};
+            this.parent.data[this.key] = ''; // using JSON strings
         }
-        this.parent.data[this.key]['test'] = 'hello';
+        this.placeholder;
     }
     get data() {
         return this.parent.data[this.key];
     }
 
-    get g() {
-        return this.parent.g;
+    set data(value) {
+        this.parent.data[this.key] = value;
     }
 
     delete() {
         this.parent = null;
     }
 
-    update() {
-        
+    packParentCommand() {
+        let oldData = this.oldData ? this.oldData : this.placeholder;
+        this.parent.packCommand(true, 'update_data', JSON.stringify({key: this.key, data: this.data}), oldData);
     }
 
-    handleMousePress() {
-
+    update(zoom) {
+        super.update(zoom);
     }
+
+    setup() {}
+
+    handleMousePress() {}
 
     display() {
         this.draw();
+    }
+
+    draw() {
+
     }
 }

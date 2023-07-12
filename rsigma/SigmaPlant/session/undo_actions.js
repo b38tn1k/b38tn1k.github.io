@@ -13,6 +13,15 @@ class UndoActions {
         this.delete(target, commands, zoom);
     }
 
+    update_data(target, commands, zoom) {
+        const forwards = JSON.parse(commands.forwards);
+        target.data[forwards.key] = commands.reverse;
+        let widget = target.widgets.find(w => w.key === forwards.key);
+        if (widget) {
+            widget.setup();
+        }
+    }
+
     delete(target, commands, zoom) {
         this.parent.reConstruct(commands.forwards, commands.reverse, zoom);
         this.parent.preserveStack = true;

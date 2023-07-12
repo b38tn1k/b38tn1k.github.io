@@ -1,23 +1,22 @@
-function myInputEvent() {
-    console.log('you are typing: ', this.value());
-    keyboardRequiresFocus = true;
-  }
-
 class NoteWidget extends Widget {
     constructor(parent) {
         super(parent, 'note_widget');
-        if (!this.data['note']) {
-            this.data['note'] = '';
+        if (!this.data) {
+            this.data = '';
         }
         this.input = createElement('textarea', this.data['note']);
         // this should be done with css
-        this.input.input(myInputEvent);
+        this.input.input(this.inputEventHandler.bind(this));
         this.input.style('resize', 'none');
         this.input.style('background', 'transparent'); 
+        // this.input.style('background', '#2099FF'); 
         this.input.style('border', 'transparent'); 
         this.input.style('color', getColor('outline')); 
-        this.input.style('caret-color', getColor('outline'));
+        // this.input.style('caret-color', getColor('outline'));
+        this.input.style('caret-color', getColor('accent'));
         this.input.style('outline', 'none');
+        this.input.style('font-family', 'Arial');
+        this.placeholder = 'an empty note';
     }
 
     delete() {
@@ -25,9 +24,17 @@ class NoteWidget extends Widget {
         super.delete();
     }
 
-    // inputEventHandler() {
-    //     console.log(this.input.value());
-    // }
+    inputEventHandler() {
+        this.data = this.input.value();
+    }
+
+    setup() {
+        if (this.data != this.placeholder) {
+            this.input.value(this.data);
+        } else {
+            this.input.value('');
+        }
+    }
 
     handleMousePress() {
         let unhand = false;
@@ -37,34 +44,38 @@ class NoteWidget extends Widget {
         }
         this.active = false;
         if (
-            mouseX > this.g.sCart.x + BUTTON_SIZE &&
-            mouseX < this.g.sCart.x + this.g.sDims.w - BUTTON_SIZE
+            mouseX > this.frame.x_min &&
+            mouseX < this.frame.x_max
         ) {
             if (
-                mouseY > this.g.sCart.y + BUTTON_SIZE &&
-                mouseY < this.g.sCart.y + this.g.sDims.h - BUTTON_SIZE
+                mouseY > this.frame.y_min &&
+                mouseY < this.frame.y_max
             ) {
                 this.active = true;
+                this.input.style('color', getColor('accent')); 
+                // this.input.style('caret-color', getColor('accent'));
                 keyboardRequiresFocus = true;
+                if (unhand == false) {
+                    this.oldData = this.data;
+                }
             }
         }
 
         if (this.active === false && unhand) {
             keyboardRequiresFocus = false;
+            this.packParentCommand();
+            this.input.style('color', getColor('outline')); 
+            // this.input.style('caret-color', getColor('outline'));
         }
     }
 
-    update() {
-        this.input.position(this.g.sCart.x + BUTTON_SIZE, this.g.sCart.y + BUTTON_SIZE);
-        this.input.size(this.g.sDims.w - 2*BUTTON_SIZE, this.g.sDims.h - 2*BUTTON_SIZE);
-        this.data['note'] = this.input.value();
-        
+    update(zoom) {
+        super.update(zoom);
+        if (this.doUpdate) {
+            this.input.position(this.frame.x_min, this.frame.y_min);
+            this.input.size(this.frame.x_delta, this.frame.y_delta);
+            this.input.style('font-size', String(myTextSize * zoom) + 'px');
+        }
     }
 
-
-
-    draw() {
-        // fill(255);
-        // circle(this.g.sCart.x + this.g.sMids.w, this.g.sCart.y + this.g.sMids.h, 20);
-    }
 }

@@ -21,6 +21,7 @@ function openDialog(plantData, xa, ya) {
     dialog.style('color', getColor('text'));
     dialog.style('background-color', getColor('primary'));
 
+
     const doTheThing = () => {
         plantData.data['data'] = dialog.value();
         plantData.mode = 'cleared';

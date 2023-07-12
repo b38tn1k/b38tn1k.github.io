@@ -212,6 +212,11 @@ class Introspector {
                 }
             });
         }
+        if (this.widgets) {
+            for (let widget of this.widgets) {
+                widget.setup();
+            }
+        }
     }
 
     selfDescribe() {

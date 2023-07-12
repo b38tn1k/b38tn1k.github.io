@@ -1,6 +1,6 @@
 class NoteWidget extends Widget {
-    constructor(parent) {
-        super(parent, 'note_widget');
+    constructor(parent, fill='full') {
+        super(parent, 'note_widget', fill);
         if (!this.data) {
             this.data = '';
         }

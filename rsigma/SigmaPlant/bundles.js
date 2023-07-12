@@ -9,10 +9,13 @@ loadjs(
 loadjs.ready('bundle0', {
     success: function () {
         loadjs(
-            ['load_screen.js',
-            'application.js',
-            'ui/menu.js',
-            'ui/ui_helpers.js'], 'bundle1'
+            [
+                'load_screen.js',
+                'application.js',
+                'ui/menu.js',
+                'ui/ui_helpers.js'
+            ],
+            'bundle1'
         );
     }
 });
@@ -29,29 +32,64 @@ loadjs.ready('bundle2', {
 loadjs.ready('bundle3', {
     success: function () {
         loadjs(
-            ['session/feature_actions.js', 'session/feature_components.js', 'session/redo_actions.js', 'session/undo_actions.js'],
+            [
+                'session/feature_actions.js',
+                'session/feature_components.js',
+                'session/redo_actions.js',
+                'session/undo_actions.js'
+            ],
             'bundle4'
         );
     }
 });
 loadjs.ready('bundle4', {
     success: function () {
-        loadjs(['session/feature_buttons.js', 'session/plant_setup.js', 'session/undo_stack.js', 'session/session_setup_mixin.js', 'session/process_active_feature.js', 'session/widget_frame.js'], 'bundle5');
+        loadjs(
+            [
+                'session/feature_buttons.js',
+                'session/plant_setup.js',
+                'session/undo_stack.js',
+                'session/session_setup_mixin.js',
+                'session/process_active_feature.js',
+                'session/widget_frame.js'
+            ],
+            'bundle5'
+        );
     }
 });
 loadjs.ready('bundle5', {
     success: function () {
         loadjs(
-            ['session/features.js', 'session/plant.js', 'session/self_construct_helper.js', 'session/session.js', 'session/widget.js'],
+            [
+                'session/features.js',
+                'session/plant.js',
+                'session/self_construct_helper.js',
+                'session/session.js',
+                'session/widget.js'
+            ],
             'bundle6'
         );
     }
 });
+
 loadjs.ready('bundle6', {
     success: function () {
         loadjs(
             [
                 'session/widgets/note_widget.js',
+                'session/widgets/info_widget.js',
+                'session/widgets/number_widget.js',
+                'session/widgets/tag_widget.js'
+            ],
+            'bundle7'
+        );
+    }
+});
+
+loadjs.ready('bundle7', {
+    success: function () {
+        loadjs(
+            [
                 'session/features/connector.js',
                 'session/features/merge.js',
                 'session/features/metric.js',
@@ -63,12 +101,12 @@ loadjs.ready('bundle6', {
                 'session/features/zone.js',
                 'session/features/note.js'
             ],
-            'bundle7'
+            'bundle8'
         );
     }
 });
 
-loadjs.ready('bundle7', {
+loadjs.ready('bundle8', {
     success: function () {
         loadjs('src.js');
     }

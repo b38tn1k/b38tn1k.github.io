@@ -1,3 +1,5 @@
+const HTML_VERT_OFF = -2;
+
 class Widget extends WidgetFrame {
     constructor(parent, key, fill = 'full') {
         super(parent, fill);
@@ -67,7 +69,7 @@ class Widget extends WidgetFrame {
     }
 
     doHTMLUpdate(zoom) {
-        this.input.position(this.frame.x_min, this.frame.y_min);
+        this.input.position(this.frame.x_min, this.frame.y_min + HTML_VERT_OFF);
         this.input.size(this.frame.x_delta, this.frame.y_delta);
         this.input.style('font-size', String(this.textSize * zoom) + 'px');
     }
@@ -88,7 +90,6 @@ class Widget extends WidgetFrame {
 
     delete() {
         this.input.remove();
-        super.delete();
     }
 
     transitionIn() {
@@ -120,7 +121,7 @@ class Widget extends WidgetFrame {
         }
         this.active = false;
         if (mouseX > this.frame.x_min && mouseX < this.frame.x_max) {
-            if (mouseY > this.frame.y_min && mouseY < this.frame.y_max) {
+            if (mouseY > this.frame.y_min + HTML_VERT_OFF && mouseY < this.frame.y_max) {
                 this.active = true;
                 this.input.style('color', getColor('accent'));
                 keyboardRequiresFocus = true;

@@ -13,6 +13,14 @@ class NumberWidget extends Widget {
         this.setup();
     }
 
+    setup() {
+        if (!this.input) {
+            this.setupInput();
+        }
+        this.input.value(this.data);
+        this.inputUpdate = true;
+    }
+
     calculateTextVolume() {
         return this.frame.b_volume / (String(this.data).length + 5);
     }
@@ -25,6 +33,8 @@ class NumberWidget extends Widget {
         this.input.style('background', 'transparent');
         // this.input.style('background', '#2099FF');
         this.input.style('border', 'transparent');
+        this.input.style('margin', '0px');
+        this.input.style('padding', '0px');
         this.input.style('color', getColor('outline'));
         // this.input.style('caret-color', getColor('outline'));
         this.input.style('caret-color', getColor('accent'));
@@ -47,6 +57,8 @@ class NumberWidget extends Widget {
 
     doHTMLUpdate(zoom) {
         super.doHTMLUpdate(zoom);
+        // this.input.style('height', String(int(this.frame.y_delta)) + 'px');
+        // this.input.style('line-height', String(int(this.frame.y_delta)) + 'px');
         this.input.style('height', String(int(this.frame.y_delta)) + 'px');
         this.input.style('line-height', String(int(this.frame.y_delta)) + 'px');
     }

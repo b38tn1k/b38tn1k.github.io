@@ -19,6 +19,8 @@ class NoteWidget extends Widget {
         // this.input.style('background', '#2099FF');
         this.input.style('border', 'transparent');
         this.input.style('color', getColor('outline'));
+        this.input.style('margin', '0px');
+        this.input.style('padding', '0px');
         // this.input.style('caret-color', getColor('outline'));
         this.input.style('caret-color', getColor('accent'));
         this.input.style('outline', 'none');

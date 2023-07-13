@@ -33,10 +33,10 @@ loadjs.ready('bundle3', {
     success: function () {
         loadjs(
             [
-                'session/feature_actions.js',
-                'session/feature_components.js',
-                'session/redo_actions.js',
-                'session/undo_actions.js'
+                'session/feature_helpers/feature_actions.js',
+                'session/feature_helpers/feature_components.js',
+                'session/session_helpers/redo_actions.js',
+                'session/session_helpers/undo_actions.js'
             ],
             'bundle4'
         );
@@ -46,12 +46,13 @@ loadjs.ready('bundle4', {
     success: function () {
         loadjs(
             [
-                'session/feature_buttons.js',
-                'session/plant_setup.js',
-                'session/undo_stack.js',
-                'session/session_setup_mixin.js',
-                'session/process_active_feature.js',
-                'session/widget_frame.js'
+                'session/feature_helpers/feature_buttons.js',
+                'session/plant_helpers/plant_setup.js',
+                'session/session_helpers/undo_stack.js',
+                'session/session_helpers/session_setup_mixin.js',
+                'session/plant_helpers/process_active_feature.js',
+                'session/plant_helpers/self_construct_helper.js',
+                'session/widget_helpers/widget_frame.js'
             ],
             'bundle5'
         );
@@ -63,7 +64,6 @@ loadjs.ready('bundle5', {
             [
                 'session/features.js',
                 'session/plant.js',
-                'session/self_construct_helper.js',
                 'session/session.js',
                 'session/widget.js'
             ],

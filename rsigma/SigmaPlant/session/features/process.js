@@ -84,6 +84,9 @@ class Process extends Feature {
                 !validIDs.includes(button.targetID)
             ) {
                 button.mode = 'delete';
+                if (button.associatedConnector) {
+                    button.associatedConnector.startDelete(false, false);
+                }
             }
         }
     }

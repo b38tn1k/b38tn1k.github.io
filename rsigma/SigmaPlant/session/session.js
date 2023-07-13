@@ -1,7 +1,6 @@
 // TODO: line 359 - rebuild plants after deleting! currently the entry and exity indicies are incorrect.
 // maybe fix them the correct way rather than the gehtto way
 // TODO: line 148 - rebuild the plant stack to shift the target plants etc using plant and plant.parent
-// TODO: line 105 - if undo stack isnt as big as plant pointer, need to catch up! problem in loading
 
 function slerp(start, end, t) {
     t = 0.5 * (1 - Math.cos(Math.PI * t)); // Sinusoidal easing
@@ -103,6 +102,11 @@ class Session extends UndoStack {
                 plant: this.plantsPointer,
                 commands: JSON.stringify(this.plant.command)
             };
+            // HACK to fix
+            // TODO: line 105 - if undo stack isnt as big as plant pointer, need to catch up! problem in loading
+            while (this.undoStack.length <= this.plantsPointer) {
+                this.undoStack.push([]);
+            }
             this.undoStack[this.plantsPointer].push(commandObject);
             // if undo stack isnt as big as plant pointer, need to catch up!
             console.log(logCommand(commandObject));

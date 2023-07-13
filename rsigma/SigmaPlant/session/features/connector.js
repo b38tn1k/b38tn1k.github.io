@@ -182,6 +182,11 @@ class Connector extends Feature {
             ) {
                 this.startDelete(true);
             }
+            // check anchors too!
+            if(this.anchors['Input'].mode == 'delete' || !this.anchors['Output'].mode == 'delete'){
+                this.startDelete(true);
+            }
+        
             this.computePath(zoom);
         } else {
             this.untethered = true;
@@ -201,13 +206,13 @@ class Connector extends Feature {
         }
     }
 
-    startDelete(append = false) {
+    startDelete(append = false, record = true) {
         let ds = this.selfDescribe();
         let cmdType = 'delete';
         if (append == true) {
             cmdType = 'delete_append';
         }
-        this.packCommand(true, cmdType, this.type, ds);
+        this.packCommand(record, cmdType, this.type, ds);
         this.mode = 'delete';
         this.clearAnchors();
         this.changed = true;

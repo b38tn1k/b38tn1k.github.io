@@ -8,6 +8,7 @@ class FeatureComponent extends Introspector {
         this.data['id'] = getUnsecureHash();
         this.hasMouseOver = false;
         this.mouseOverData = 'none';
+        this.mode = 'idle';
     }
 
     update(zoom, gp) {
@@ -20,7 +21,6 @@ class FeatureLabel extends FeatureComponent {
         super(x, y, size);
         this.data['data'] = data;
         this.action = action;
-        this.mode = 'idle';
     }
 
     display(zoom, cnv, strokeColor, fillColor) {

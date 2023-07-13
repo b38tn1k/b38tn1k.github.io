@@ -5,6 +5,7 @@ class PlantSetup {
         this.changed = false;
     }
     addProcess(x, y, plant, plantID, record = true) {
+        plant.transitionWidgetsOut();
         this.changed = true;
         const feat = new Process(x, y, 400, 280, plant, plantID);
         this.features.push(feat);

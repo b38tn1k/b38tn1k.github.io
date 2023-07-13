@@ -14,9 +14,9 @@ class UndoActions {
     }
 
     update_data(target, commands, zoom) {
-        const forwards = JSON.parse(commands.forwards);
-        target.data[forwards.key] = commands.reverse;
-        let widget = target.widgets.find(w => w.key === forwards.key);
+        const reverse = JSON.parse(commands.reverse);
+        target.data[reverse.key] = reverse.data;
+        let widget = target.widgets.find(w => w.key === reverse.key);
         if (widget) {
             widget.setup();
         }

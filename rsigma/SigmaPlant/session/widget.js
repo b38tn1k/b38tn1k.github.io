@@ -78,9 +78,26 @@ class Widget extends WidgetFrame {
         }
     }
 
-    transitionIn() {}
+    update(zoom) {
+        super.update(zoom);
+        if (this.inputUpdate) {
+            this.dynamicallySizeText();
+        }
+        this.updateHTML(zoom);
+    }
 
-    transitionOut() {}
+    delete() {
+        this.input.remove();
+        super.delete();
+    }
+
+    transitionIn() {
+        this.input.show();
+    }
+
+    transitionOut() {
+        this.input.hide();
+    }
 
     setup() {
         if (!this.input) {

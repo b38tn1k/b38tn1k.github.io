@@ -31,24 +31,5 @@ class NoteWidget extends Widget {
         return this.frame.b_volume / (this.data.length + 5);
     }
 
-    delete() {
-        this.input.remove();
-        super.delete();
-    }
-
-    transitionIn() {
-        this.input.show();
-    }
-
-    transitionOut() {
-        this.input.hide();
-    }
-
-    update(zoom) {
-        super.update(zoom);
-        if (this.inputUpdate) {
-            this.dynamicallySizeText();
-        }
-        this.updateHTML(zoom);
-    }
+    
 }

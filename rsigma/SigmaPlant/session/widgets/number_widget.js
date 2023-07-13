@@ -40,10 +40,10 @@ class NumberWidget extends Widget {
         rect(this.frame.x_min, this.frame.y_min, this.frame.x_delta, this.frame.y_delta);
     }
 
-    update(zoom) {
-        super.update(zoom);
-        this.updateHTML(zoom);   
-    }
+    // update(zoom) {
+    //     super.update(zoom);
+    //     this.updateHTML(zoom);   
+    // }
 
     doHTMLUpdate(zoom) {
         super.doHTMLUpdate(zoom);

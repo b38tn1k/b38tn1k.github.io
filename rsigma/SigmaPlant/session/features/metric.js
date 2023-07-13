@@ -2,6 +2,7 @@ class Metric extends Feature {
     constructor(x, y, width, height) {
         super(x, y, 196, 196, 'metric'); // Call the parent constructor
         this.widgets.push(new NumberWidget(this));
+        this.widgets.push(new TagWidget(this, 'TAG', 'bottom_full', true));
     }
 
     initDataLabels(buttonSize) {

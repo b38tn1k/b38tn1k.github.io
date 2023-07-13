@@ -9,7 +9,7 @@ class Widget extends WidgetFrame {
             this.parent.data[this.key] = ''; // using JSON strings
         }
         this.placeholder;
-        this.textSize = myTextSize;
+        this.textSize = 3*myTextSize;
         this.inputUpdate = false;
         this.dynamicTextSizeThresholds = [1500, 750];
     }
@@ -21,18 +21,16 @@ class Widget extends WidgetFrame {
         this.parent.data[this.key] = value;
     }
 
-    delete() {
-        this.parent = null;
-    }
-
     packParentCommand() {
         let oldData = this.oldData ? this.oldData : this.placeholder;
-        this.parent.packCommand(
-            true,
-            'update_data',
-            JSON.stringify({ key: this.key, data: this.data }),
-            JSON.stringify({ key: this.key, data: oldData })
-        );
+        if (oldData != this.data) {
+            this.parent.packCommand(
+                true,
+                'update_data',
+                JSON.stringify({ key: this.key, data: this.data }),
+                JSON.stringify({ key: this.key, data: oldData })
+            );
+        }
     }
 
     inputEventHandler() {
@@ -54,6 +52,8 @@ class Widget extends WidgetFrame {
 
     dynamicallySizeText() {
         const thresh = this.calculateTextVolume();
+        this.inputUpdate = this.parent.isAnimating;
+        // console.log(thresh)
         let nt;
         if (thresh > this.dynamicTextSizeThresholds[0]) {
             nt = 3 * myTextSize;
@@ -66,6 +66,7 @@ class Widget extends WidgetFrame {
             this.textSize = nt;
             this.doUpdate = true;
         }
+        return thresh;
     }
 
     doHTMLUpdate(zoom) {
@@ -89,21 +90,40 @@ class Widget extends WidgetFrame {
     }
 
     delete() {
-        this.input.remove();
+        this.parent = null;
+        if (this.input) {
+            this.input.remove();
+        }
     }
 
     transitionIn() {
-        this.input.show();
+        if (this.input) {
+            this.input.show();
+        }
     }
 
     transitionOut() {
-        this.input.hide();
+        if (this.input) {
+            this.input.hide();
+        }
+    }
+
+    attachMouseOverToInput() {
+        this.input.isMouseOver = false;
+        this.input.mouseOver(() => {
+            this.input.isMouseOver = true;
+        });
+        
+        this.input.mouseOut(() => {
+            this.input.isMouseOver = false;
+        });
     }
 
     setup() {
         if (!this.input) {
             this.setupInput();
         }
+        this.attachMouseOverToInput();
         if (this.data != this.placeholder) {
             this.input.value(this.data);
         } else {
@@ -114,33 +134,59 @@ class Widget extends WidgetFrame {
 
     setupInput() {}
 
+    restyleActive() {
+        this.input.style('color', getColor('accent'));
+
+    }
+
+    restyleDeActive() {
+        this.input.style('color', getColor('outline'));
+    }
+
+    activeAction() {
+        this.restyleActive();
+        keyboardRequiresFocus = true;
+        this.parent.mode = 'busy';
+    }
+
+    deactiveAction() {
+        this.restyleDeActive();
+        keyboardRequiresFocus = false;
+        this.packParentCommand();
+        this.parent.mode = 'idle';
+    }
+
+    checkMouse() {
+        // let res = (mouseX > this.frame.x_min && mouseX < this.frame.x_max)
+        // if (res) {
+        //     res = (mouseY > this.frame.y_min + HTML_VERT_OFF && mouseY < this.frame.y_max)
+        // }
+        // return res;
+        return this.input.isMouseOver;
+    }
+
     handleMousePress() {
         let unhand = false;
         if (this.active == true) {
             unhand = true;
         }
         this.active = false;
-        if (mouseX > this.frame.x_min && mouseX < this.frame.x_max) {
-            if (mouseY > this.frame.y_min + HTML_VERT_OFF && mouseY < this.frame.y_max) {
+        if (this.checkMouse()) {
                 this.active = true;
-                this.input.style('color', getColor('accent'));
-                keyboardRequiresFocus = true;
+                this.activeAction();
                 if (unhand == false) {
                     this.oldData = this.data;
                 }
-            }
         }
-
         if (this.active === false && unhand) {
-            keyboardRequiresFocus = false;
-            this.packParentCommand();
-            this.input.style('color', getColor('outline'));
+            this.deactiveAction();
         }
     }
 
-    display() {
-        this.draw();
+    display(zoom, cnv) {
+        this.draw(zoom, cnv);
     }
 
     draw() {}
+
 }

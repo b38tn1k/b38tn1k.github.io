@@ -1,4 +1,7 @@
 
+let oldKeyFocus = true;
+let oldPlantState = true;
+
 class Application extends Mode {
     constructor() {
         super();
@@ -139,6 +142,15 @@ class Application extends Mode {
         sess.update(globalZoom);
         sess.draw(globalZoom, cnv);
         menu.display();
+        if (oldKeyFocus != keyboardRequiresFocus) {
+            console.log("KEYBOARD FOCUS:", keyboardRequiresFocus);
+            oldKeyFocus = keyboardRequiresFocus;
+        }
+    
+        if (oldPlantState != sess.plant.isActive) {
+            console.log("PLANT ACTIVE:", sess.plant.isActive);
+            oldPlantState = sess.plant.isActive;
+        }
         // noStroke();
         // fill(255);
         // textSize(12);

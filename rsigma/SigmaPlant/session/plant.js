@@ -84,6 +84,8 @@ class Plant extends PlantSetup {
         const zones = this.filterZones();
         this.updateFeatures(zoom, zones);
 
+        console.log(this.mode);
+
         this.isActive = this.mode !== 'idle';
         if (this.isActive) {
             if (this.activeFeatureProcessor[this.mode]) {

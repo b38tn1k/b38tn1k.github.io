@@ -32,9 +32,7 @@ class Feature extends Introspector {
     delete() {
         this.buttons = [];
         this.dataLabels = {};
-        for (let widget of this.widgets){
-            widget.delete();
-        }
+        this.deleteWidgets();
     }
 
     setMode(mode) {
@@ -136,10 +134,9 @@ class Feature extends Introspector {
                 this.dataLabels[label].changed = false;
             }
         }
-        if (this.dataLabels['title']){
+        if (this.dataLabels['title']) {
             this.data['title'] = this.dataLabels['title'].data['data'];
         }
-        
     }
 
     drawButtonsAndLabels(
@@ -178,27 +175,60 @@ class Feature extends Introspector {
         if (this.g.isOnScreen) {
             this.updateButtonsAndLabels(zoom);
             this.checkModeAndAct();
-            for (let widget of this.widgets){
-                widget.update(zoom);
+            for (let widget of this.widgets) {
+                if (widget) {
+                    widget.update(zoom);
+                }
             }
         }
     }
 
     transitionWidgetsIn() {
-        for (let widget of this.widgets){
-            widget.transitionIn();
+        for (let widget of this.widgets) {
+            if (widget) {
+                widget.transitionIn();
+            }
         }
     }
 
     transitionWidgetsOut() {
-        for (let widget of this.widgets){
-            widget.transitionOut();
+        for (let widget of this.widgets) {
+            if (widget) {
+                widget.transitionOut();
+            }
         }
     }
 
     setupWidgets() {
-        for (let widget of this.widgets){
-            widget.setup();
+        for (let widget of this.widgets) {
+            if (widget) {
+                widget.setup();
+            }
+        }
+    }
+
+    displayWidgets(zoom, cnv) {
+        for (let widget of this.widgets) {
+            if (widget) {
+                widget.display(zoom, cnv);
+            }
+        }
+    }
+
+    widgetMousePressHandler() {
+        for (let widget of this.widgets) {
+            if (widget) {
+                widget.handleMousePress();
+            }
+        }
+    }
+
+    deleteWidgets() {
+        for (let i = 0; i < this.widgets.length; i++) {
+            if (this.widgets[i]) {
+                this.widgets[i].delete();
+                this.widgets[i] = null;
+            }
         }
     }
 
@@ -242,6 +272,7 @@ class Feature extends Introspector {
             this.setMode('deleting');
             this.doAnimations = true;
             this.isAnimating = true;
+            this.deleteWidgets();
         }
     }
 
@@ -276,9 +307,7 @@ class Feature extends Introspector {
             this.notYetDrawnLabelAndButtons = true;
             this.draw(zoom, cnv);
             this.drawButtonsAndLabels(zoom, cnv);
-            for (let widget of this.widgets){
-                widget.display();
-            }
+            this.displayWidgets(zoom, cnv);
         }
     }
 
@@ -302,9 +331,7 @@ class Feature extends Introspector {
             for (let label in this.dataLabels) {
                 this.dataLabels[label].mouseClickActionHandler(zoom);
             }
-            for (let widget of this.widgets){
-                widget.handleMousePress();
-            }
+            this.widgetMousePressHandler();
         }
     }
 }

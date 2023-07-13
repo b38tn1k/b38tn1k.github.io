@@ -1,8 +1,8 @@
-function openDialog(plantData, xa, ya) {
+function openDialog(featureData, xa, ya) {
     // turn off shortcut keys
     keyboardRequiresFocus = true;
     // Create a dialog box for text input
-    const dialog = createInput(plantData.data['data']);
+    const dialog = createInput(featureData.data['data']);
     // Create a container div for the dialog box
     const container = createDiv();
     container.position(xa - 2, ya - 6);
@@ -23,11 +23,11 @@ function openDialog(plantData, xa, ya) {
 
 
     const doTheThing = () => {
-        plantData.data['data'] = dialog.value();
-        plantData.mode = 'cleared';
-        plantData.changed = true;
+        featureData.data['data'] = dialog.value();
+        featureData.mode = 'cleared';
+        featureData.changed = true;
         fpsEvent();
-        plantData.g.setBDimsWidth(
+        featureData.g.setBDimsWidth(
             myTextSize,
             TEXT_WIDTH_MULTIPLIER,
             dialog.value()
@@ -55,7 +55,7 @@ function openDialog(plantData, xa, ya) {
 
     // Add an event listener to remove the dialog and the container if mouse is pressed outside the dialog box or the container
     const removeDialog = () => {
-        // if (plantData.mode === 'busy') {
+        // if (featureData.mode === 'busy') {
         doTheThing();
         document.removeEventListener('mousedown', removeDialog);
         // turn on shortcut keys
@@ -73,6 +73,6 @@ function openDialog(plantData, xa, ya) {
     });
 }
 
-function NOP(plantData) {
-    plantData.mode = 'cleared';
+function NOP(featureData) {
+    featureData.mode = 'cleared';
 }

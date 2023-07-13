@@ -148,16 +148,16 @@ class Process extends Feature {
         );
         // test
 
-        this.modelData['INFO'] = {};
-        this.modelData['INFO']['NAME'] = 'a process';
-        this.modelData['INFO']['YEAR'] = 2010;
-        this.modelData['INFO']['COST'] = 100000;
-        this.modelData['TAGS'] = [];
-        this.modelData['TAGS'].push('mandated');
-        this.modelData['TAGS'].push('no value add');
-        this.modelData['TAGS'].push('no AI');
-        this.modelData['ACTIONS'] = {};
-        this.modelData['ACTIONS']['TEST ACTION'] = () => console.log('test');
+        // this.modelData['INFO'] = {};
+        // this.modelData['INFO']['NAME'] = 'a process';
+        // this.modelData['INFO']['YEAR'] = 2010;
+        // this.modelData['INFO']['COST'] = 100000;
+        // this.modelData['TAGS'] = [];
+        // this.modelData['TAGS'].push('mandated');
+        // this.modelData['TAGS'].push('no value add');
+        // this.modelData['TAGS'].push('no AI');
+        // this.modelData['ACTIONS'] = {};
+        // this.modelData['ACTIONS']['TEST ACTION'] = () => console.log('test');
         // this.dataLabels['tab'] = new FeatureDataTabGroup(
         //   this.g.bCart.x,
         //   this.g.bCart.y,

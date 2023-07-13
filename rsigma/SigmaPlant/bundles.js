@@ -52,7 +52,8 @@ loadjs.ready('bundle4', {
                 'session/session_helpers/session_setup_mixin.js',
                 'session/plant_helpers/process_active_feature.js',
                 'session/plant_helpers/self_construct_helper.js',
-                'session/widget_helpers/widget_frame.js'
+                'session/widget_helpers/widget_frame.js',
+                'session/widget_helpers/widget_style_helper.js',
             ],
             'bundle5'
         );

@@ -97,6 +97,8 @@ function draw() {
     }
     clear();
 
+    sess.plant.isActive
+
     mode.draw(cnv);
     switch (mode.modeHandOff) {
         case APPLICATION:

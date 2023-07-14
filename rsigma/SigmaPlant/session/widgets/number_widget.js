@@ -1,3 +1,4 @@
+// TODO: modes: absolute, gaussian, range
 class NumberWidget extends Widget {
     // interactive widget that allows setting a number
     // e.g. used for metric blocks to set an amount

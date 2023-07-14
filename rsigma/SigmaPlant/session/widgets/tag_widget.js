@@ -20,7 +20,9 @@ class TagWidget extends Widget {
             'ENERGY',
             'INFORMATION',
             'MATERIAL',
-            'MECHANICAL'
+            'MECHANICAL',
+            'ANALOG',
+            'DIGITAL'
         ];
         this.data = this.tagList[0];
         this.newTagInput;
@@ -61,7 +63,10 @@ class TagWidget extends Widget {
         this.input.style('line-height', String(this.frame.y_delta) + 'px');
         this.input.html(this.data);
         // this.newTagInput.style('max-width', String(this.g.sDims.w - 10 * zoom) + 'px');
-        this.newTagInput.style('width', String(this.g.sDims.w - 20 * zoom) + 'px');
+        this.newTagInput.style(
+            'width',
+            String(this.g.sDims.w - 20 * zoom) + 'px'
+        );
         this.newTagInput.style('margin', String(5 * zoom) + 'px');
         this.newTagInput.style('padding', String(5 * zoom) + 'px');
     }
@@ -74,24 +79,44 @@ class TagWidget extends Widget {
         this.packParentCommand();
     }
 
+    addTag(tag) {
+        const myDiv = createDiv(tag);
+        styleDivTag(myDiv);
+        myDiv.mouseClicked(() => this.inputEventHandler(tag));
+        myDiv.parent(this.selector);
+        myDiv.mouseOver(() => {
+            this.selector.isMouseOver = true;
+        });
+
+        myDiv.mouseOut(() => {
+            this.selector.isMouseOver = false;
+        });
+    }
+
     setupInput() {
         this.input = createDiv(this.data);
         styleDivInput(this.input);
         this.inputUpdate = true;
         this.selector = createDiv();
         this.selector.isMouseOver = false;
+        this.newTagInput = createInput();
+        this.newTagInput.parent(this.selector);
+        styleTextInputInput(this.newTagInput);
+        styleTextInputTag(this.newTagInput);
+        this.newTagInput.elt.addEventListener('keydown', (e) => {
+            if (
+                document.activeElement === this.newTagInput.elt &&
+                e.keyCode === 13
+            ) {
+                // console.log(this.newTagInput.value());
+                this.addTag(this.newTagInput.value());
+                this.tagList.push(this.newTagInput.value());
+                this.inputUpdate = true;
+                e.preventDefault(); // Prevent the default action of the Enter key if needed.
+            }
+        });
         for (let tag of this.tagList) {
-            const myDiv = createDiv(tag);
-            styleDivTag(myDiv);
-            myDiv.mouseClicked(() => this.inputEventHandler(tag));
-            myDiv.parent(this.selector);
-            myDiv.mouseOver(() => {
-                this.selector.isMouseOver = true;
-            });
-
-            myDiv.mouseOut(() => {
-                this.selector.isMouseOver = false;
-            });
+            this.addTag(tag);
         }
         styleDivSelector(this.selector);
         this.selector.hide(); // shown later
@@ -101,11 +126,6 @@ class TagWidget extends Widget {
         this.selector.mouseOut(() => {
             this.selector.isMouseOver = false;
         });
-
-        this.newTagInput = createInput();
-        this.newTagInput.parent(this.selector);
-        styleTextInputInput(this.newTagInput);
-        styleTextInputTag(this.newTagInput);
     }
 
     checkMouse() {

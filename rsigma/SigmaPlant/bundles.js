@@ -13,7 +13,11 @@ loadjs.ready('bundle0', {
                 'load_screen.js',
                 'application.js',
                 'ui/menu.js',
-                'ui/ui_helpers.js'
+                'ui/menu_setup.js',
+                'ui/fps_event.js',
+                'ui/color_helpers.js',
+                'ui/board_helpers.js',
+                'ui/board_drawing_helpers.js',
             ],
             'bundle1'
         );

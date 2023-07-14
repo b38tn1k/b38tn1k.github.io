@@ -9,7 +9,7 @@ class Widget extends WidgetFrame {
             this.parent.data[this.key] = ''; // using JSON strings
         }
         this.placeholder;
-        this.textSize = 3*myTextSize;
+        this.textSize = 3 * myTextSize;
         this.inputUpdate = false;
         this.dynamicTextSizeThresholds = [1500, 750];
     }
@@ -113,7 +113,7 @@ class Widget extends WidgetFrame {
         this.input.mouseOver(() => {
             this.input.isMouseOver = true;
         });
-        
+
         this.input.mouseOut(() => {
             this.input.isMouseOver = false;
         });
@@ -136,7 +136,6 @@ class Widget extends WidgetFrame {
 
     restyleActive() {
         this.input.style('color', getColor('accent'));
-
     }
 
     restyleDeActive() {
@@ -172,11 +171,11 @@ class Widget extends WidgetFrame {
         }
         this.active = false;
         if (this.checkMouse()) {
-                this.active = true;
-                this.activeAction();
-                if (unhand == false) {
-                    this.oldData = this.data;
-                }
+            this.active = true;
+            this.activeAction();
+            if (unhand == false) {
+                this.oldData = this.data;
+            }
         }
         if (this.active === false && unhand) {
             this.deactiveAction();
@@ -184,9 +183,10 @@ class Widget extends WidgetFrame {
     }
 
     display(zoom, cnv) {
-        this.draw(zoom, cnv);
+        if (this.parent.mode !== 'deleting') {
+            this.draw(zoom, cnv);
+        }
     }
 
     draw() {}
-
 }

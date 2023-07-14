@@ -1,5 +1,7 @@
 const BUTTON_SIZE = 20;
 
+// todo: widgets need to transition out when off screen, back in when onscreen
+
 class Feature extends Introspector {
     constructor(x, y, w = 400, h = 280, type) {
         super();
@@ -30,8 +32,8 @@ class Feature extends Introspector {
     draw(zoom, cnv) {}
 
     delete() {
-        this.buttons = [];
-        this.dataLabels = {};
+        this.buttons = null;
+        this.dataLabels = null;
         this.deleteWidgets();
     }
 
@@ -273,6 +275,8 @@ class Feature extends Introspector {
             this.doAnimations = true;
             this.isAnimating = true;
             this.deleteWidgets();
+            this.buttons = [];
+            this.dataLabels = {};
         }
     }
 

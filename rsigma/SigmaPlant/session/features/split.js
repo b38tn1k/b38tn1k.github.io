@@ -1,6 +1,8 @@
 class Split extends Feature {
     constructor(x, y, width, height) {
         super(x, y, 196, 196, 'split'); // Call the parent constructor
+        this.widgets.push(new NumberWidget(this, 'nominator', 'left', true));
+        this.widgets.push(new NumberWidget(this, 'denominator', 'right', true));
     }
 
     initDataLabels(buttonSize) {
@@ -37,12 +39,12 @@ class Split extends Feature {
             )
         );
         this.buttons.push(
-            new FeatureUIOutputButton('Output', 0.5, 1, buttonSize, () =>
+            new FeatureUIOutputButton('Output', 0.3, 1, buttonSize, () =>
                 this.setMode('o_connect')
             )
         );
         this.buttons.push(
-            new FeatureUIOutputButton('Output', 1, 1, buttonSize, () =>
+            new FeatureUIOutputButton('Output', 0.6, 1, buttonSize, () =>
                 this.setMode('o_connect')
             )
         );

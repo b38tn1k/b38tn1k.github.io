@@ -1,4 +1,3 @@
-
 let oldKeyFocus = true;
 let oldPlantState = true;
 
@@ -109,21 +108,19 @@ class Application extends Mode {
             this.ready
         ) {
             let boardBeforeZoom = screenToBoard(mouseX, mouseY);
-            
+
             let oldZoom = globalZoom;
             globalZoom -= event.deltaY * 0.001;
             globalZoom = constrain(globalZoom, 0.2, 2);
-            
+
             let boardAfterZoom = screenToBoard(mouseX, mouseY);
-            
+
             scrollX += boardBeforeZoom.x - boardAfterZoom.x;
             scrollY += boardBeforeZoom.y - boardAfterZoom.y;
-    
+
             fpsEvent();
         }
     }
-    
-    
 
     touchMoved() {
         // Only perform pinch zoom when there are exactly two touch points
@@ -166,12 +163,12 @@ class Application extends Mode {
         sess.draw(globalZoom, cnv);
         menu.display();
         if (oldKeyFocus != keyboardRequiresFocus) {
-            console.log("KEYBOARD FOCUS:", keyboardRequiresFocus);
+            console.log('KEYBOARD FOCUS:', keyboardRequiresFocus);
             oldKeyFocus = keyboardRequiresFocus;
         }
-    
+
         if (oldPlantState != sess.plant.isActive) {
-            console.log("PLANT ACTIVE:", sess.plant.isActive);
+            console.log('PLANT ACTIVE:', sess.plant.isActive);
             oldPlantState = sess.plant.isActive;
         }
         // noStroke();

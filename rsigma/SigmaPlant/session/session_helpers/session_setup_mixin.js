@@ -28,6 +28,7 @@ let SessionSetupMixin = {
         for (let i = 0; i < newPlant.features.length; i++) {
             newPlant.features[i].turnOffAnimations();
         }
+        newPlant.updateTags(this.tags);
     },
 
     addProcess(x, y, record = true, info = null) {
@@ -50,46 +51,55 @@ let SessionSetupMixin = {
             record
         );
         newPlant.parent = feat;
+        this.plant.updateTags(this.tags);
         return feat;
     },
 
     addSink(x, y, record = true) {
         const feat = this.plant.addSink(x, y, record);
+        this.plant.updateTags(this.tags);
         return feat;
     },
 
     addNote(x, y, record = true) {
         const feat = this.plant.addNote(x, y, record);
+        this.plant.updateTags(this.tags);
         return feat;
     },
 
     addSource(x, y, record = true) {
         const feat = this.plant.addSource(x, y, record);
+        this.plant.updateTags(this.tags);
         return feat;
     },
 
     addZone(x, y, record = true) {
         const feat = this.plant.addZone(x, y, record);
+        this.plant.updateTags(this.tags);
         return feat;
     },
 
     addMetric(x, y, record = true) {
         const feat = this.plant.addMetric(x, y, record);
+        this.plant.updateTags(this.tags);
         return feat;
     },
 
     addSplit(x, y, record = true) {
         const feat = this.plant.addSplit(x, y, record);
+        this.plant.updateTags(this.tags);
         return feat;
     },
 
     addMerge(x, y, record = true) {
         const feat = this.plant.addMerge(x, y, record);
+        this.plant.updateTags(this.tags);
         return feat;
     },
 
     addConnector(x, y, input, output, record = true) {
         const feat = this.plant.addConnector(x, y, input, output, record);
+        this.plant.updateTags(this.tags);
         return feat;
     }
 };

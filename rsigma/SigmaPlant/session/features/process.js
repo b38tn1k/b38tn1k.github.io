@@ -12,6 +12,9 @@ class Process extends Feature {
         };
         this.modelData = {};
         this.setupFromSubProcess();
+        // this.widgets.push(new InfoWidget(this, 'info_widget', 'left_tall', true));
+        this.widgets.push(new TagWidget(this, 'tag_widget', 'left_tall'));
+        this.widgets.push(new TagWidget(this, 'tag_widget2', 'right_tall'));
     }
 
     delete() {
@@ -212,7 +215,7 @@ class Process extends Feature {
         fill(getColor('primary'));
         const blockBorder = min(this.g.sDims.w * 0.15, this.g.sDims.h * 0.15);
         const blockBorder2 = blockBorder*2;
-        rect(this.g.sCart.x + blockBorder, this.g.sCart.y + blockBorder, this.g.sDims.w - blockBorder2, this.g.sDims.h - blockBorder2);
+        rect(this.g.sCart.x + 2*BUTTON_SIZE*zoom, this.g.sCart.y + 3*BUTTON_SIZE*zoom, this.g.sDims.w - 4*BUTTON_SIZE*zoom, this.g.sDims.h - 5*BUTTON_SIZE*zoom);
         strokeWeight(1);
     }
 }

@@ -16,6 +16,18 @@ function styleTextInputTag(input) {
     input.style('text-align', 'left');
 }
 
+function crossSVGImg(size, myColor) {
+    let crossSVG = createImg(
+        'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">' +
+        '<rect x="0" y="0" width="40" height="40" fill="none" stroke="' + myColor + '" stroke-width="2"/>' +
+        '<line x1="5" y1="5" x2="35" y2="35" stroke="' + myColor + '" stroke-width="2"/>' +
+        '<line x1="35" y1="5" x2="5" y2="35" stroke="' + myColor + '" stroke-width="2"/>' +
+        '</svg>'
+    );
+    crossSVG.size(size, size);
+    return crossSVG;
+}
+
 function styleTextAreaInput(input) {
     input.style('resize', 'none');
     input.style('background', 'transparent');

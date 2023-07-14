@@ -6,6 +6,8 @@ class Plant extends PlantSetup {
         this.targetPlant = null;
         this.command = [];
         this.parent = null;
+        this.tags = new Set();
+        this.newtag = false;
         this.activeFeatureProcessor = new ProcessActiveFeature(this);
     }
 
@@ -80,12 +82,8 @@ class Plant extends PlantSetup {
 
     update(zoom) {
         this.mode = 'idle';
-
         const zones = this.filterZones();
         this.updateFeatures(zoom, zones);
-
-        // console.log(this.mode);
-
         this.isActive = this.mode !== 'idle';
         if (this.isActive) {
             if (this.activeFeatureProcessor[this.mode]) {
@@ -119,6 +117,29 @@ class Plant extends PlantSetup {
         for (let i = 0; i < this.features.length; i++) {
             this.features[i].setupWidgets();
         }
+    }
+
+    checkWidgetTags(f) {
+        if (f.data['newtag'].length != 0) {
+            for (let tag of f.data.newtag) {
+                if (!this.tags.has(tag)) {
+                    this.tags.add(tag);
+                    this.newtag = true;
+                }
+            }
+            f.data['newtag'] = []
+        }
+    }
+
+    updateTags(tags) {
+        if (tags) {
+            this.tags = new Set([...this.tags, ...tags]);
+        }
+        for (let i = 0; i < this.features.length; i++) {
+            this.features[i].addTags(this.tags);
+        }
+
+            
     }
 
     selfConstruct(info, sess) {
@@ -195,6 +216,7 @@ class Plant extends PlantSetup {
     updateFeatures(zoom, zones) {
         for (let i = 0; i < this.features.length; i++) {
             const feature = this.features[i];
+            this.checkWidgetTags(feature)
             this.changed = this.features[i].changed || this.changed;
             if (feature.mode !== 'idle') {
                 if (feature.mode !== 'auto') {

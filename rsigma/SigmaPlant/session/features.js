@@ -13,6 +13,7 @@ class Feature extends Introspector {
         this.dataLabels = {};
         this.data = {};
         this.data['id'] = getUnsecureHash();
+        this.data['newtag'] = [];
         this.isAnimating = true;
         this.doAnimations = true;
         this.animationValue = 0.0;
@@ -46,6 +47,16 @@ class Feature extends Introspector {
         this.animationValue = 1;
         this.g.bDims.h = this.g.aDims.h;
         this.g.bDims.w = this.g.aDims.w;
+    }
+
+    addTags(tags) {
+        for (let widget of this.widgets) {
+            if (widget.tags) {
+                for (let tag of tags) {
+                    widget.addTag(tag);
+                }
+            }
+        }
     }
 
     moveToMouse() {

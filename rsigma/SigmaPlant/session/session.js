@@ -17,6 +17,8 @@ class Session extends UndoStack {
         this.transitionTimer = 0;
         this.transitionDuration = 15;
         Object.assign(this, SessionSetupMixin);
+        this.newtag = false;
+        this.tags = new Set();
     }
 
     get plant() {
@@ -129,6 +131,35 @@ class Session extends UndoStack {
                     }
                 }
             }
+        }
+        this.checkTags();
+        this.updateTags();
+    }
+
+    checkTags() {
+        for (let i = 0; i < this.plants.length; i++) {
+            if (this.plants[i] != null) {
+                if (this.plants[i].newtag) {
+                    this.plants[i].newtag = false;
+                    for (let tag of this.plants[i].tags) {
+                        if (!this.tags.has(tag)) {
+                            this.tags.add(tag);
+                            this.newtag = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    updateTags() {
+        if (this.newtag) {
+            for (let i = 0; i < this.plants.length; i++) {
+                if (this.plants[i] != null) {
+                    this.plants[i].updateTags(this.tags);
+                }
+            }
+            this.newtag = false;
         }
     }
 

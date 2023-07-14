@@ -4,13 +4,14 @@ class NumberWidget extends Widget {
     // e.g. used for metric blocks to set an amount
     // used on split blocks for percentages etc
     // maybe used on source blocks, tbd
-    constructor(parent, key, fill='top_full') {
+    constructor(parent, key='number_widget', fill='top_full', pos_only = false) {
         super(parent, key, fill);
         if (this.parent.data[this.key] == '') {
             this.parent.data[this.key] = 1;
         }
         this.placeholder = 1;
         this.dynamicTextSizeThresholds = [100000, 500];
+        this.pos_only = pos_only;
         this.setup();
     }
 
@@ -29,8 +30,21 @@ class NumberWidget extends Widget {
 
     setupInput() {
         this.input = createInput(this.data['note'], 'number'); // create a number input field
-        this.input.input(this.inputEventHandler.bind(this));
+        if (this.pos_only) {
+            this.input.input(this.posOnlyInputEventHandler.bind(this));
+        } else {
+            this.input.input(this.inputEventHandler.bind(this));
+        }
         styleTextInputInput(this.input);
+    }
+
+    posOnlyInputEventHandler() {
+        let data = this.input.value();
+        if (data < 0) {
+            this.data = -1;
+            this.input.value('');
+        }
+        this.inputUpdate = true;
     }
 
     draw() {

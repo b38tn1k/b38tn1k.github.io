@@ -21,9 +21,13 @@ class Widget extends WidgetFrame {
         this.parent.data[this.key] = value;
     }
 
+    hasDelta(oldData) {
+        return oldData != this.data;
+    }
+
     packParentCommand() {
         let oldData = this.oldData ? this.oldData : this.placeholder;
-        if (oldData != this.data) {
+        if (this.hasDelta(oldData)) {
             this.parent.packCommand(
                 true,
                 'update_data',
@@ -146,6 +150,7 @@ class Widget extends WidgetFrame {
         this.restyleActive();
         keyboardRequiresFocus = true;
         this.parent.mode = 'busy';
+        this.inputUpdate = true;
     }
 
     deactiveAction() {
@@ -153,6 +158,7 @@ class Widget extends WidgetFrame {
         keyboardRequiresFocus = false;
         this.packParentCommand();
         this.parent.mode = 'idle';
+        this.inputUpdate = true;
     }
 
     checkMouse() {

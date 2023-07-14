@@ -42,6 +42,7 @@ class TagWidget extends Widget {
         this.newTagInput;
         this.activeTags = {};
         this.setup();
+        this.placeholder = 'undefined';
     }
 
     setup() {
@@ -51,7 +52,12 @@ class TagWidget extends Widget {
         }
         this.inputUpdate = true;
         if (this.categoryMode) {
-            this.input.html(this.data);
+            if (this.data == this.placeholder) {
+                this.input.html('');
+
+            } else {
+                this.input.html(this.data);
+            }
         } else {
             this.drawMultiTags();
         }
@@ -247,16 +253,18 @@ class TagWidget extends Widget {
 
     dynamicallySizeText() {
         if (this.categoryMode == true) {
-            let nt;
-            if (this.data.length == 0) {
-                nt = myTextSize;
-                this.textSize = myTextSize;
-            } else {
-                const thresh = super.dynamicallySizeText();
-                if (thresh > this.dynamicTextSizeThresholds[0]) {
-                    nt = 2 * myTextSize;
-                } else {
+            let nt = myTextSize;
+            if (this.data) {
+                if (this.data.length == 0) {
                     nt = myTextSize;
+                    this.textSize = myTextSize;
+                } else {
+                    const thresh = super.dynamicallySizeText();
+                    if (thresh > this.dynamicTextSizeThresholds[0]) {
+                        nt = 2 * myTextSize;
+                    } else {
+                        nt = myTextSize;
+                    }
                 }
             }
             if (this.tagTextSize != nt) {

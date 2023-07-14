@@ -13,8 +13,7 @@ class Process extends Feature {
         this.modelData = {};
         this.setupFromSubProcess();
         // this.widgets.push(new InfoWidget(this, 'info_widget', 'left_tall', true));
-        this.widgets.push(new TagWidget(this, 'tag_widget', 'left_tall'));
-        this.widgets.push(new TagWidget(this, 'tag_widget2', 'right_tall'));
+        this.widgets.push(new TagWidget(this, 'tag_widget', 'right_tall'));
     }
 
     delete() {

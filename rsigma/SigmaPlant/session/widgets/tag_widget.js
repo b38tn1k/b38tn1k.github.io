@@ -45,6 +45,18 @@ class TagWidget extends Widget {
         this.placeholder = 'undefined';
     }
 
+    updateCategoryMode() {
+        if (this.data) {
+            if (this.data == this.placeholder) {
+                this.input.html('');
+            } else {
+                this.input.html(this.data);
+            }
+        } else {
+            this.input.html('');
+        }
+    }
+
     setup() {
         if (!this.input) {
             this.setupInput();
@@ -52,12 +64,7 @@ class TagWidget extends Widget {
         }
         this.inputUpdate = true;
         if (this.categoryMode) {
-            if (this.data == this.placeholder) {
-                this.input.html('');
-
-            } else {
-                this.input.html(this.data);
-            }
+            this.updateCategoryMode();
         } else {
             this.drawMultiTags();
         }
@@ -108,7 +115,7 @@ class TagWidget extends Widget {
         });
         if (this.categoryMode) {
             this.input.style('line-height', String(this.frame.y_delta) + 'px');
-            this.input.html(this.data);
+            this.updateCategoryMode();
         } else {
             // this.drawMultiTags();
             this.input.style('font-size', String(ts) + 'px');
@@ -131,7 +138,7 @@ class TagWidget extends Widget {
         this.oldData = JSON.parse(JSON.stringify(this.data));
         if (this.categoryMode) {
             this.data = res;
-            this.input.html(this.data);
+            this.updateCategoryMode();
         } else {
             if (!this.data.includes(res)) {
                 this.data.push(res);
@@ -150,15 +157,13 @@ class TagWidget extends Widget {
     deActivateTag(tag) {
         this.oldData = JSON.parse(JSON.stringify(this.data));
         if (this.categoryMode) {
-            // this.data = res;
-            // this.input.html(this.data);
         } else {
             this.activeTags[tag].hide();
+            this.data = this.data.filter((item) => item !== tag);
+            this.inputUpdate = true;
+            this.removingTag = true;
+            this.packParentCommand();
         }
-        this.data = this.data.filter((item) => item !== tag);
-        this.inputUpdate = true;
-        this.removingTag = true;
-        this.packParentCommand();
     }
 
     addTag(tag, skipCheck = false) {

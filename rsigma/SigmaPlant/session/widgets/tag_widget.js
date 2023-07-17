@@ -1,3 +1,5 @@
+//todo redo catergoryMode so that there is only one if category mode to remove previous tag from this.data
+
 class TagWidget extends Widget {
     // methods to add tags to other blocks
     // on metrics, this provides the category of metric (value, time, voltage, whatever)
@@ -10,20 +12,10 @@ class TagWidget extends Widget {
         super(parent, key, fill);
         this.categoryMode = categoryMode;
         if (!this.data) {
-            if (this.categoryMode) {
-                this.data = '';
-            } else {
-                this.data = [];
-            }
+            this.data = [];
         }
-        this.categoryMode = categoryMode;
-        // this.titleTextSize = 0.5 * myTextSize;
-        this.tagTextSize = 2 * myTextSize;
-        if (!this.categoryMode) {
-            this.textSize = myTextSize;
-            this.tagTextSize = myTextSize;
-        }
-        this.dynamicTextSizeThresholds = [750, 450];
+
+        this.textSize = myTextSize;
         this.selector;
         this.tags = new Set([
             'TIME',
@@ -63,19 +55,10 @@ class TagWidget extends Widget {
             this.attachMouseOverToInput();
         }
         this.inputUpdate = true;
-        if (this.categoryMode) {
-            this.updateCategoryMode();
-        } else {
-            this.drawMultiTags();
-        }
+        this.drawMultiTags();
     }
 
     drawMultiTags() {
-        // for (let data of this.data) {
-        //     this.activeTags[data].show();
-        //     this.activeTags[data].style('display', 'inline-block');
-        //     this.inputUpdate = true;
-        // }
         this.inputUpdate = true;
         for (let tag of this.tags) {
             if (this.data.includes(tag)) {
@@ -100,32 +83,31 @@ class TagWidget extends Widget {
 
     doHTMLUpdate(zoom) {
         super.doHTMLUpdate(zoom);
+        const ts = this.textSize * zoom;
+        const ts5 = 1.1 * ts;
+
         this.selector.position(
             this.g.sCart.x + this.g.sDims.w + this.gap,
             this.frame.y_min + HTML_VERT_OFF
         );
         this.selector.style('width', String(this.g.sDims.w) + 'px');
-        const ts = this.tagTextSize * zoom;
-        const ts5 = 1.1 * ts;
         this.selector.style('font-size', String(ts) + 'px');
         this.selector.style('line-height', String(ts5) + 'px');
         Array.from(this.selector.elt.children).forEach((child) => {
             child.style.margin = `${3 * zoom}px`;
             child.style.padding = `${3 * zoom}px`;
         });
-        if (this.categoryMode) {
-            this.input.style('line-height', String(this.frame.y_delta) + 'px');
-            this.updateCategoryMode();
-        } else {
-            // this.drawMultiTags();
-            this.input.style('font-size', String(ts) + 'px');
-            this.input.style('line-height', String(ts5) + 'px');
-            Array.from(this.input.elt.children).forEach((child) => {
-                child.style.margin = `${3 * zoom}px`;
-                child.style.padding = `${3 * zoom}px`;
-            });
+        this.input.style('font-size', String(ts) + 'px');
+        this.input.style('line-height', String(ts5) + 'px');
+        Array.from(this.input.elt.children).forEach((child) => {
+            child.style.margin = `${3 * zoom}px`;
+            child.style.padding = `${3 * zoom}px`;
+        });
+        if (this.categoryMode == true) {
+            this.input.style('display', 'flex');
+            this.input.style('justify-content', 'center');
+            this.input.style('align-items', 'center');
         }
-        // this.newTagInput.style('max-width', String(this.g.sDims.w - 10 * zoom) + 'px');
         this.newTagInput.style(
             'width',
             String(this.g.sDims.w - 20 * zoom) + 'px'
@@ -137,14 +119,15 @@ class TagWidget extends Widget {
     activateTag(res) {
         this.oldData = JSON.parse(JSON.stringify(this.data));
         if (this.categoryMode) {
-            this.data = res;
-            this.updateCategoryMode();
-        } else {
-            if (!this.data.includes(res)) {
-                this.data.push(res);
-                this.activeTags[res].show();
-                this.activeTags[res].style('display', 'inline-block');
+            this.data = [];
+            for (let tag of this.tags) {
+                this.activeTags[tag].hide();
             }
+        }
+        if (!this.data.includes(res)) {
+            this.data.push(res);
+            this.activeTags[res].show();
+            this.activeTags[res].style('display', 'inline-block');
         }
         this.inputUpdate = true;
         this.packParentCommand();
@@ -156,14 +139,11 @@ class TagWidget extends Widget {
 
     deActivateTag(tag) {
         this.oldData = JSON.parse(JSON.stringify(this.data));
-        if (this.categoryMode) {
-        } else {
-            this.activeTags[tag].hide();
-            this.data = this.data.filter((item) => item !== tag);
-            this.inputUpdate = true;
-            this.removingTag = true;
-            this.packParentCommand();
-        }
+        this.activeTags[tag].hide();
+        this.data = this.data.filter((item) => item !== tag);
+        this.inputUpdate = true;
+        this.removingTag = true;
+        this.packParentCommand();
     }
 
     addTag(tag, skipCheck = false) {
@@ -186,11 +166,6 @@ class TagWidget extends Widget {
         this.inputUpdate = true;
 
         this.activeTags[tag] = createDiv(tag);
-        // let cross = crossSVGImg(this.textSize, getColor('outline'))
-        // cross.mouseOver(() => {
-        //     this.selector.isMouseOver = false;
-        // });
-        // cross.parent(this.activeTags[tag]);
         styleDivTag(this.activeTags[tag]);
         this.activeTags[tag].mouseClicked(() => this.deActivateTag(tag));
         this.activeTags[tag].hide();
@@ -199,13 +174,8 @@ class TagWidget extends Widget {
 
     setupInput() {
         this.input = createDiv(this.data);
-        if (!this.categoryMode) {
-            styleDivSelector(this.input);
-            this.input.style('overflow', 'hidden');
-        } else {
-            styleDivInput(this.input);
-        }
-
+        styleDivSelector(this.input);
+        this.input.style('overflow', 'hidden');
         this.inputUpdate = true;
         this.selector = createDiv();
         this.selector.isMouseOver = false;
@@ -233,7 +203,6 @@ class TagWidget extends Widget {
                 document.activeElement === this.newTagInput.elt &&
                 e.keyCode === 13
             ) {
-                // console.log(this.newTagInput.value());
                 this.addTag(this.newTagInput.value());
                 this.inputUpdate = true;
                 e.preventDefault(); // Prevent the default action of the Enter key if needed.
@@ -256,31 +225,9 @@ class TagWidget extends Widget {
         }
     }
 
-    dynamicallySizeText() {
-        if (this.categoryMode == true) {
-            let nt = myTextSize;
-            if (this.data) {
-                if (this.data.length == 0) {
-                    nt = myTextSize;
-                    this.textSize = myTextSize;
-                } else {
-                    const thresh = super.dynamicallySizeText();
-                    if (thresh > this.dynamicTextSizeThresholds[0]) {
-                        nt = 2 * myTextSize;
-                    } else {
-                        nt = myTextSize;
-                    }
-                }
-            }
-            if (this.tagTextSize != nt) {
-                this.tagTextSize = nt;
-                this.doUpdate = true;
-            }
-        }
-    }
+    dynamicallySizeText() {}
 
     draw(zoom, cnv) {
-        // fill(getColor('primary'));
         noFill();
         stroke(getColor('outline'));
         rect(
@@ -289,10 +236,5 @@ class TagWidget extends Widget {
             this.frame.x_delta,
             this.frame.y_delta
         );
-        // noStroke();
-        // fill(getColor('outline'));
-        // textSize(this.titleTextSize * zoom);
-        // text(this.key, this.frame.x_min + 2, this.frame.y_min + 2);
-        // textSize(myTextSize * zoom);
     }
 }

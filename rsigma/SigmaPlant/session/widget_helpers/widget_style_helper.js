@@ -11,6 +11,19 @@ function styleTextInputInput(input) {
     input.style('text-align', 'center');
 }
 
+function styleNumberInputInput(input) {
+    input.style('resize', 'none');
+    input.style('background', 'transparent');
+    input.style('border', 'transparent');
+    input.style('margin', '0px');
+    input.style('padding', '0px');
+    input.style('color', getColor('outline'));
+    input.style('caret-color', getColor('accent'));
+    input.style('outline', 'none');
+    input.style('font-family', 'Arial');
+    input.style('text-align', 'center');
+}
+
 function styleTextInputTag(input) {
     input.style('background', getColor('secondary'));
     input.style('text-align', 'left');

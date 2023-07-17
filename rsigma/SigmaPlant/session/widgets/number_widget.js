@@ -12,6 +12,7 @@ class NumberWidget extends Widget {
         this.placeholder = 1;
         this.dynamicTextSizeThresholds = [100000, 500];
         this.pos_only = pos_only;
+        this.textSize = myTextSize;
         this.setup();
     }
 
@@ -35,7 +36,7 @@ class NumberWidget extends Widget {
         } else {
             this.input.input(this.inputEventHandler.bind(this));
         }
-        styleTextInputInput(this.input);
+        styleNumberInputInput(this.input);
     }
 
     posOnlyInputEventHandler() {

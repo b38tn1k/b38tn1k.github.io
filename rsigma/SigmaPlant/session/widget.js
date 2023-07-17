@@ -12,7 +12,6 @@ class Widget extends WidgetFrame {
         }
         this.placeholder;
         this.textSize = 3 * myTextSize;
-        this.inputUpdate = false;
         this.dynamicTextSizeThresholds = [1500, 750];
     }
     get data() {
@@ -25,6 +24,16 @@ class Widget extends WidgetFrame {
 
     hasDelta(oldData) {
         return oldData != this.data;
+    }
+
+    toggleShow() {
+        this.input.show();
+        this.inputUpdate = true;
+    }
+
+    toggleHide() {
+        this.input.hide();
+        this.inputUpdate = true;
     }
 
     packParentCommand() {
@@ -175,7 +184,7 @@ class Widget extends WidgetFrame {
     }
 
     display(zoom, cnv) {
-        if (this.parent.mode !== 'deleting') {
+        if (!(this.parent.mode == 'deleting') && this.isOnScreen) {
             this.draw(zoom, cnv);
         }
     }

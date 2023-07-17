@@ -120,15 +120,23 @@ class Plant extends PlantSetup {
     }
 
     checkWidgetTags(f) {
-        if (f.data['newtag'].length != 0) {
-            for (let tag of f.data.newtag) {
-                if (!this.tags.has(tag)) {
-                    this.tags.add(tag);
-                    this.newtag = true;
+        if (f.data['newtag']) {
+            if (f.data['newtag'].length != 0) {
+                for (let tag of f.data.newtag) {
+                    if (!this.tags.has(tag)) {
+                        this.tags.add(tag);
+                        this.newtag = true;
+                    }
                 }
+                f.data['newtag'] = [];
             }
-            f.data['newtag'] = []
         }
+    }
+
+    updateWidgets(f) {
+        this.checkWidgetTags(f);
+        f.widgetScreenLogic();
+
     }
 
     updateTags(tags) {
@@ -138,8 +146,6 @@ class Plant extends PlantSetup {
         for (let i = 0; i < this.features.length; i++) {
             this.features[i].addTags(this.tags);
         }
-
-            
     }
 
     selfConstruct(info, sess) {
@@ -161,6 +167,7 @@ class Plant extends PlantSetup {
         for (let i = 0; i < this.features.length; i++) {
             this.features[i].changed = true;
         }
+        this.setupWidgets();
     }
 
     setupLinkingFeatures() {
@@ -216,7 +223,7 @@ class Plant extends PlantSetup {
     updateFeatures(zoom, zones) {
         for (let i = 0; i < this.features.length; i++) {
             const feature = this.features[i];
-            this.checkWidgetTags(feature)
+            this.updateWidgets(feature);
             this.changed = this.features[i].changed || this.changed;
             if (feature.mode !== 'idle') {
                 if (feature.mode !== 'auto') {

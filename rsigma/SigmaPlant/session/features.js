@@ -326,13 +326,10 @@ class Feature extends Introspector {
         }
     }
 
-    checkIsOnScreen() {
-        return (
-            this.g.sCart.x < windowWidth &&
-            this.g.sCart.x + this.g.sDims.w > 0 &&
-            this.g.sCart.y < windowHeight &&
-            this.g.sCart.y + this.g.sDims.h > 0
-        );
+    widgetScreenLogic() {
+        for (let w of this.widgets){
+            w.doScreenLogic();
+        }
     }
 
     handleMousePress(zoom) {

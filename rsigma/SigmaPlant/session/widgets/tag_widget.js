@@ -11,10 +11,6 @@ class TagWidget extends Widget {
     ) {
         super(parent, key, fill);
         this.categoryMode = categoryMode;
-        if (!this.data) {
-            this.data = [];
-        }
-
         this.textSize = myTextSize;
         this.selector;
         this.tags = new Set([
@@ -50,6 +46,9 @@ class TagWidget extends Widget {
     }
 
     setup() {
+        if (!this.data) {
+            this.data = [];
+        }
         if (!this.input) {
             this.setupInput();
             this.attachMouseOverToInput();
@@ -62,8 +61,10 @@ class TagWidget extends Widget {
         this.inputUpdate = true;
         for (let tag of this.tags) {
             if (this.data.includes(tag)) {
-                this.activeTags[tag].show();
-                this.activeTags[tag].style('display', 'inline-block');
+                if (this.isOnScreen) {
+                    this.activeTags[tag].show();
+                    this.activeTags[tag].style('display', 'inline-block');
+                }
             } else {
                 this.activeTags[tag].hide();
             }
@@ -81,39 +82,52 @@ class TagWidget extends Widget {
         this.inputUpdate = true;
     }
 
+    toggleShow() {
+        this.input.show();
+        this.inputUpdate = true;
+    }
+
+    toggleHide() {
+        this.input.hide();
+        this.selector.hide();
+        this.inputUpdate = true;
+    }
+
     doHTMLUpdate(zoom) {
         super.doHTMLUpdate(zoom);
-        const ts = this.textSize * zoom;
-        const ts5 = 1.1 * ts;
+        if (this.isOnScreen) {
+            const ts = this.textSize * zoom;
+            const ts5 = 1.1 * ts;
 
-        this.selector.position(
-            this.g.sCart.x + this.g.sDims.w + this.gap,
-            this.frame.y_min + HTML_VERT_OFF
-        );
-        this.selector.style('width', String(this.g.sDims.w) + 'px');
-        this.selector.style('font-size', String(ts) + 'px');
-        this.selector.style('line-height', String(ts5) + 'px');
-        Array.from(this.selector.elt.children).forEach((child) => {
-            child.style.margin = `${3 * zoom}px`;
-            child.style.padding = `${3 * zoom}px`;
-        });
-        this.input.style('font-size', String(ts) + 'px');
-        this.input.style('line-height', String(ts5) + 'px');
-        Array.from(this.input.elt.children).forEach((child) => {
-            child.style.margin = `${3 * zoom}px`;
-            child.style.padding = `${3 * zoom}px`;
-        });
-        if (this.categoryMode == true) {
-            this.input.style('display', 'flex');
-            this.input.style('justify-content', 'center');
-            this.input.style('align-items', 'center');
+            this.selector.position(
+                this.g.sCart.x + this.g.sDims.w + this.gap,
+                this.frame.y_min + HTML_VERT_OFF
+            );
+            this.selector.style('width', String(this.g.sDims.w) + 'px');
+            this.selector.style('font-size', String(ts) + 'px');
+            this.selector.style('line-height', String(ts5) + 'px');
+            Array.from(this.selector.elt.children).forEach((child) => {
+                child.style.margin = `${3 * zoom}px`;
+                child.style.padding = `${3 * zoom}px`;
+            });
+            this.input.style('font-size', String(ts) + 'px');
+            this.input.style('line-height', String(ts5) + 'px');
+            Array.from(this.input.elt.children).forEach((child) => {
+                child.style.margin = `${3 * zoom}px`;
+                child.style.padding = `${3 * zoom}px`;
+            });
+            if (this.categoryMode == true) {
+                this.input.style('display', 'flex');
+                this.input.style('justify-content', 'center');
+                this.input.style('align-items', 'center');
+            }
+            this.newTagInput.style(
+                'width',
+                String(this.g.sDims.w - 20 * zoom) + 'px'
+            );
+            this.newTagInput.style('margin', String(5 * zoom) + 'px');
+            this.newTagInput.style('padding', String(5 * zoom) + 'px');
         }
-        this.newTagInput.style(
-            'width',
-            String(this.g.sDims.w - 20 * zoom) + 'px'
-        );
-        this.newTagInput.style('margin', String(5 * zoom) + 'px');
-        this.newTagInput.style('padding', String(5 * zoom) + 'px');
     }
 
     activateTag(res) {
@@ -228,13 +242,13 @@ class TagWidget extends Widget {
     dynamicallySizeText() {}
 
     draw(zoom, cnv) {
-        noFill();
-        stroke(getColor('outline'));
-        rect(
-            this.frame.x_min,
-            this.frame.y_min,
-            this.frame.x_delta,
-            this.frame.y_delta
-        );
+        // noFill();
+        // stroke(getColor('outline'));
+        // rect(
+        //     this.frame.x_min,
+        //     this.frame.y_min,
+        //     this.frame.x_delta,
+        //     this.frame.y_delta
+        // );
     }
 }

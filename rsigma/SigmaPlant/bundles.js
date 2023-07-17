@@ -40,7 +40,8 @@ loadjs.ready('bundle3', {
                 'session/feature_helpers/feature_actions.js',
                 'session/feature_helpers/feature_components.js',
                 'session/session_helpers/redo_actions.js',
-                'session/session_helpers/undo_actions.js'
+                'session/session_helpers/undo_actions.js',
+                'session/plant_helpers/process_active_feature.js',
             ],
             'bundle4'
         );
@@ -54,7 +55,6 @@ loadjs.ready('bundle4', {
                 'session/plant_helpers/plant_setup.js',
                 'session/session_helpers/undo_stack.js',
                 'session/session_helpers/session_setup_mixin.js',
-                'session/plant_helpers/process_active_feature.js',
                 'session/plant_helpers/self_construct_helper.js',
                 'session/widget_helpers/widget_frame.js',
                 'session/widget_helpers/widget_style_helper.js',

@@ -328,7 +328,9 @@ class Feature extends Introspector {
 
     widgetScreenLogic() {
         for (let w of this.widgets){
-            w.doScreenLogic();
+            if (w) {
+                w.doScreenLogic();
+            }
         }
     }
 

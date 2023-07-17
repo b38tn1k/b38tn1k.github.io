@@ -57,7 +57,8 @@ function mousePressed() {
 function preload() {
     loadJSON('assets/colors.json', loadColors);
     themes = loadJSON('assets/themes4.json');
-    JSONloader = loadJSON('sandwich.json');
+    // JSONloader = loadJSON('sandwich.json');
+    JSONloader = loadJSON('test.json');
 }
 
 function setupScreen() {

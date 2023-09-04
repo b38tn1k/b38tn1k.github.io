@@ -108,3 +108,4 @@ class InputHandler {
     return [i, j];
   }
 };
+

@@ -191,3 +191,4 @@ class Widget extends WidgetFrame {
 
     draw() {}
 }
+

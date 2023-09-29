@@ -1,9 +1,11 @@
 // TODO: hasHistory w.r.t time (favor older team mate / opponents if required to be teammate)
 // TODO: break rules when necessary: if a day has people with high unavailability scores and not enough games, break the rules for that day
-
+// RULE: NO MORE OR LESS THAN N (4 in this case)
+// RULE CANT SKIP MORE THAN 2 weeks consecutivly
 const CONSTANTS = {
     PLAYERS_PER_MATCH: 4,
     MINIMUM_REQUIRED_MATCHES: 4,
+    MAXIMUM_ALLOWED_MATCHES: 4,
     ALLOWED_REPEATED_ATTEMPTS: 1000,
     MINIMUM_REQUIRED_CAPTAIN: 1,
 };
@@ -1493,7 +1495,7 @@ class Scheduler {
         let passed = true;
         let failures = [];
         for (let r of reportCard) {
-            if (r.totalGamesPlayed < CONSTANTS.MINIMUM_REQUIRED_MATCHES) {
+            if (r.totalGamesPlayed < CONSTANTS.MINIMUM_REQUIRED_MATCHES || r.totalGamesPlayed > CONSTANTS.MAXIMUM_ALLOWED_MATCHES) {
                 passed = false;
                 failures.push(r.fullName);
             }

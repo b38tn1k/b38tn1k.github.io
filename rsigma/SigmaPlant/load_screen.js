@@ -246,3 +246,4 @@ class Loading extends Mode {
         }
     }
 }
+

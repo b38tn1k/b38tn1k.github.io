@@ -349,3 +349,4 @@ class Feature extends Introspector {
         }
     }
 }
+

@@ -95,3 +95,4 @@ function newMetric() {
     sess.addMetric(pos.x, pos.y);
     menu.dismiss();
 }
+

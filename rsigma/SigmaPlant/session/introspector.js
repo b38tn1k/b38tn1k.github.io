@@ -237,3 +237,4 @@ class Introspector {
         return JSON.parse(jsonString);
     }
 }
+

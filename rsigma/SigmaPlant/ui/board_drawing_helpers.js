@@ -1,9 +1,28 @@
 
+/**
+* @description The function drawCross(x, y, size) draws a cross.
+* 
+* @param x - The `x` input parameter specifies the position of the center of the cross.
+* 
+* @param y - THE `y` INPUT PARAMETER SETS THE Y-COORDINATE OF THE CENTER OF THE CROSS.
+* 
+* @param { number } size - SIZE PARAMETER CONTROLS THE THICKNESS OF THE LINE.
+*/
 function drawCross(x, y, size) {
     line(x - size / 2, y, x + size / 2, y); // Horizontal line
     line(x, y - size / 2, x, y + size / 2); // Vertical line
 }
 
+/**
+* @description The function drawGrid(color, zoom) draws a grid on the screen with 
+* specified color and zoom level.
+* 
+* @param { string } color - The `color` input parameter in the `drawGrid()` function 
+* determines the color of the grid lines and intersections.
+* 
+* @param zoom - The `zoom` input parameter in the `drawGrid()` function adjusts the 
+* resolution of the grid based on the zoom level.
+*/
 function drawGrid(color, zoom) {
     stroke(color);
     strokeWeight(1);

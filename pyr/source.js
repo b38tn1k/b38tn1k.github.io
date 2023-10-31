@@ -1,5 +1,5 @@
-let pyramidWidth = 400;
-let pyramidHeight = 500;
+let sWidth = 400;
+let sHeight = 500;
 let sections = 5;
 let gapPercentage = 0.1;
 
@@ -13,31 +13,15 @@ let lightPosX = -50;
 let lightPosY = 0;
 let lightPosZ = 350;
 let ambientLevel = 100;
+let mode = 0;
 
 function preload() {
     passThroughShader = loadShader("vertex.glsl", "fragment.glsl");
 }
 
-function setup() {
-    createCanvas(1000, 1000, WEBGL);
-    renderTexture = createGraphics(width, height, WEBGL);
-    topTexture = createGraphics(width, height, WEBGL);
-}
-
-function draw() {
-    drawTruncatedPyramid(renderTexture, 400, 400);
-    drawTruncatedPyramid(topTexture, 400, 400, 0, false, false);
-
-    shader(passThroughShader);
-    passThroughShader.setUniform("uMixFactor", 0.1); // 0.5 will mix stipple and random equally
-
-    passThroughShader.setUniform("uTex", renderTexture);
-    passThroughShader.setUniform("uTopTex", topTexture);
-
-    rect(-width / 2, -height / 2, width, height);
-    gapPercentage = 0.07 + sin(frameCount * 0.1) * 0.05
-    rotationY += 0.05;
-    rotationX += sin(frameCount * 0.1) * 0.005;
+function saveImage() {
+    var timestamp = year() + nf(month(), 2) + nf(day(), 2) + "-" + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2);
+    save(timestamp + ".png");
 }
 
 function keyPressed() {
@@ -49,6 +33,9 @@ function keyPressed() {
             break;
         case "s":
             lightPosY -= stepSize;
+            break;
+        case "S":
+            saveImage();
             break;
         case "a":
             lightPosX -= stepSize;
@@ -68,43 +55,108 @@ function keyPressed() {
         case "f":
             ambientLevel -= stepSize;
             break;
+        case " ":
+            mode += 1;
+            break;
     }
 
     // Print the updated light position to the console
     console.log(`Light Position: X=${lightPosX}, Y=${lightPosY}, Z=${lightPosZ}, Ambient=${ambientLevel}`);
 }
 
-function drawTruncatedPyramid(texture, pyramidWidth, pyramidHeight, strokeC = 255, lights = true, fills = true) {
+function setup() {
+    createCanvas(1000, 1000, WEBGL);
+    renderTexture = createGraphics(width, height, WEBGL);
+    topTexture = createGraphics(width, height, WEBGL);
+}
+
+function draw() {
+    let styles = 2;
+
+    switch (mode % styles) {
+        case 0:
+            drawStyle(renderTexture, topTexture, 400, 400, "pyr", -3.1415 / 16, 3.1415 / 4);
+            break;
+        case 1:
+            drawStyle(renderTexture, topTexture, 150, 100, "hex", -3.1415 / 4, 0);
+            break;
+    }
+}
+
+function drawStyle(renderTexture, topTexture, w, h, type, xa, ya) {
+    rotationX = xa;
+    rotationY = ya;
+
+    if (type == "pyr") {
+        lightPosX = -50;
+        lightPosY = 0;
+        lightPosZ = 350;
+        ambientLevel = 120;
+        drawTruncatedPyramid(renderTexture, w, h);
+        drawTruncatedPyramid(topTexture, w, h, 0, false, false);
+    }
+
+    if (type == "hex") {
+        lightPosX = -50;
+        lightPosY = 0;
+        lightPosZ = 500;
+        ambientLevel = 100;
+        drawHexagon(renderTexture, w, h);
+        drawHexagon(topTexture, w, h, 0, false, false);
+    }
+
+    shader(passThroughShader);
+    passThroughShader.setUniform("uMixFactor", 0.5); // 0.5 will mix stipple and random equally
+
+    passThroughShader.setUniform("uTex", renderTexture);
+    passThroughShader.setUniform("uTopTex", topTexture);
+
+    rect(-width / 2, -height / 2, width, height);
+}
+
+function drawTruncatedPyramid(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true) {
+    texture.push();
+    setupTextureEnvironment(texture, strokeC, lights);
+    drawTruncatedPyramidSections(texture, sWidth, sHeight, fills);
+    texture.pop();
+}
+
+function setupTextureEnvironment(texture, strokeC = 255, lights = true) {
     texture.clear();
     texture.noLights();
     texture.background(255);
 
-    
     if (lights) {
-        texture.ambientLight(ambientLevel); // Soft general light to see all faces of the pyramid
-        // texture.pointLight(255, 255, 255, 200, -200, 200);
-        // texture.pointLight(255, 255, 255, -200, -200, 200); // Light source from the top left
-        // texture.pointLight(255, 255, 255, 50, 100, 200);
+        texture.ambientLight(ambientLevel);
         texture.pointLight(255, 255, 255, lightPosX, lightPosY, lightPosZ);
         texture.pointLight(255, 255, 255, -lightPosX, -lightPosY, -lightPosZ);
     }
-    texture.push();
-    texture.stroke(strokeC); // Black edges
-    texture.strokeWeight(1); // Black edges
-    texture.fill(255); // White faces
+
+    texture.stroke(strokeC);
+    texture.strokeWeight(3);
+    texture.fill(255);
+
     texture.rotateX(rotationX);
     texture.rotateY(rotationY);
-    let totalGapHeight = pyramidHeight * gapPercentage;
-    texture.translate(0, (-(pyramidHeight + totalGapHeight) / sections - totalGapHeight), 0);
-    let heightPerSection = (pyramidHeight - totalGapHeight) / sections;
+}
+
+function drawTruncatedPyramidSections(texture, sWidth, sHeight, fills = true) {
+    let totalGapHeight = sHeight * gapPercentage;
+    texture.translate(0, -(sHeight + totalGapHeight) / sections - totalGapHeight, 0);
+    let heightPerSection = (sHeight - totalGapHeight) / sections;
 
     for (let i = 0; i < sections; i++) {
-        let topWidth = map(i + 1, 0, sections, 0, pyramidWidth);
-        let bottomWidth = map(i, 0, sections, 0, pyramidWidth);
+        let topWidth = map(i + 1, 0, sections, 0, sWidth);
+        let bottomWidth = map(i, 0, sections, 0, sWidth);
 
-        let bottomY = i * (heightPerSection + totalGapHeight) - pyramidHeight / 2;
+        let bottomY = i * (heightPerSection + totalGapHeight) - sHeight / 2;
         let topY = bottomY + heightPerSection;
-        texture.fill(255);
+        if (fills) {
+            texture.fill(200);
+        } else {
+            texture.fill(255);
+        }
+
         texture.beginShape();
         texture.vertex(-bottomWidth / 2, bottomY, -bottomWidth / 2);
         texture.vertex(bottomWidth / 2, bottomY, -bottomWidth / 2);
@@ -118,9 +170,6 @@ function drawTruncatedPyramid(texture, pyramidWidth, pyramidHeight, strokeC = 25
         texture.vertex(topWidth / 2, topY, topWidth / 2);
         texture.vertex(topWidth / 2, topY, -topWidth / 2);
         texture.endShape();
-        // if (fills) {
-        //     texture.fill(100);
-        // }
 
         texture.beginShape();
         texture.vertex(bottomWidth / 2, bottomY, bottomWidth / 2);
@@ -138,7 +187,9 @@ function drawTruncatedPyramid(texture, pyramidWidth, pyramidHeight, strokeC = 25
         texture.vertex(-topWidth / 2, topY, topWidth / 2);
         texture.endShape();
 
-        texture.fill(0);
+        if (!fills) {
+            texture.fill(0);
+        }
 
         texture.beginShape();
         texture.vertex(-bottomWidth / 2, bottomY, bottomWidth / 2);
@@ -154,5 +205,65 @@ function drawTruncatedPyramid(texture, pyramidWidth, pyramidHeight, strokeC = 25
         texture.vertex(topWidth / 2, topY, topWidth / 2);
         texture.endShape();
     }
+}
+
+function drawHexagon(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true) {
+    texture.push();
+    setupTextureEnvironment(texture, strokeC, lights);
+    let factor = 1.5;
+    let coordinates = [
+        [0, 0],
+        [sWidth * factor, sWidth * factor],
+        [-sWidth * factor, sWidth * factor],
+    ];
+
+    // Adjust coordinates based on factor and shift
+    let aCoord = coordinates.map((coord) => {
+        return [coord[0], coord[1] - sWidth];
+    });
+    for (let i = 0; i < aCoord.length; i++) {
+        drawHexagonalBox(texture, sWidth, sHeight, fills, aCoord[i][0], aCoord[i][1]);
+    }
+
     texture.pop();
+}
+
+function drawHexagonalBox(texture, sWidth, sHeight, fills, sX, sY) {
+    // Calculate hexagon parameters
+    let hexRadius = sWidth;
+
+    texture.fill(255);
+    // Coordinates for the hexagon vertices
+    let vertices = [];
+    for (let i = 0; i < 6; i++) {
+        let angle = (TWO_PI / 6) * i;
+        let x = sX + hexRadius * cos(angle);
+        let y = sY + hexRadius * sin(angle);
+        vertices.push([x, y]);
+    }
+
+    // Drawing the hexagons (top and bottom)
+    for (let h of [0, sHeight]) {
+        texture.beginShape();
+        for (let v of vertices) {
+            texture.vertex(v[0], h, v[1]);
+        }
+        texture.endShape(CLOSE);
+    }
+    if (fills) {
+        texture.fill(180);
+    } else {
+        texture.fill(255);
+    }
+
+    // Drawing the side faces
+    for (let i = 0; i < 6; i++) {
+        let nextIndex = (i + 1) % 6;
+        texture.beginShape();
+        texture.vertex(vertices[i][0], 0, vertices[i][1]);
+        texture.vertex(vertices[nextIndex][0], 0, vertices[nextIndex][1]);
+        texture.vertex(vertices[nextIndex][0], sHeight, vertices[nextIndex][1]);
+        texture.vertex(vertices[i][0], sHeight, vertices[i][1]);
+        texture.endShape(CLOSE);
+    }
 }

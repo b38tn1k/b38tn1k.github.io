@@ -1,5 +1,5 @@
-let pyramidWidth = 500;
-let pyramidHeight = 400;
+let pyramidWidth = 400;
+let pyramidHeight = 500;
 let sections = 5;
 let gapPercentage = 0.1;
 
@@ -25,8 +25,9 @@ function setup() {
 }
 
 function draw() {
-    drawTruncatedPyramid(renderTexture);
-    drawTruncatedPyramid(topTexture, 0, false, false);
+    drawTruncatedPyramid(renderTexture, 400, 400);
+    drawTruncatedPyramid(topTexture, 400, 400, 0, false, false);
+
     shader(passThroughShader);
     passThroughShader.setUniform("uMixFactor", 0.1); // 0.5 will mix stipple and random equally
 
@@ -34,6 +35,7 @@ function draw() {
     passThroughShader.setUniform("uTopTex", topTexture);
 
     rect(-width / 2, -height / 2, width, height);
+    gapPercentage = 0.07 + sin(frameCount * 0.1) * 0.05
     rotationY += 0.05;
     rotationX += sin(frameCount * 0.1) * 0.005;
 }
@@ -72,12 +74,12 @@ function keyPressed() {
     console.log(`Light Position: X=${lightPosX}, Y=${lightPosY}, Z=${lightPosZ}, Ambient=${ambientLevel}`);
 }
 
-function drawTruncatedPyramid(texture, strokeC = 255, lights = true, fills = true) {
+function drawTruncatedPyramid(texture, pyramidWidth, pyramidHeight, strokeC = 255, lights = true, fills = true) {
     texture.clear();
     texture.noLights();
     texture.background(255);
 
-    // texture.specularMaterial(10);
+    
     if (lights) {
         texture.ambientLight(ambientLevel); // Soft general light to see all faces of the pyramid
         // texture.pointLight(255, 255, 255, 200, -200, 200);
@@ -93,7 +95,7 @@ function drawTruncatedPyramid(texture, strokeC = 255, lights = true, fills = tru
     texture.rotateX(rotationX);
     texture.rotateY(rotationY);
     let totalGapHeight = pyramidHeight * gapPercentage;
-    texture.translate(0, -(pyramidHeight * (1 + gapPercentage)) / sections, 0);
+    texture.translate(0, (-(pyramidHeight + totalGapHeight) / sections - totalGapHeight), 0);
     let heightPerSection = (pyramidHeight - totalGapHeight) / sections;
 
     for (let i = 0; i < sections; i++) {
@@ -152,75 +154,5 @@ function drawTruncatedPyramid(texture, strokeC = 255, lights = true, fills = tru
         texture.vertex(topWidth / 2, topY, topWidth / 2);
         texture.endShape();
     }
-    texture.pop();
-}
-
-function drawCylinderPie(
-    texture,
-    cylinderHeight,
-    cylinderRadius,
-    sections,
-    strokeC = 255,
-    lights = true,
-    fills = true
-) {
-    texture.clear();
-    texture.noLights();
-    texture.background(255);
-
-    if (lights) {
-        texture.ambientLight(ambientLevel); // Soft general light
-        texture.pointLight(255, 255, 255, lightPosX, lightPosY, lightPosZ);
-    }
-
-    texture.push();
-    texture.stroke(strokeC);
-    texture.strokeWeight(1);
-    texture.fill(255);
-    texture.rotateX(rotationX);
-
-    let anglePerSection = TWO_PI / sections;
-
-    for (let i = 0; i < sections; i++) {
-        let startAngle = i * anglePerSection;
-        let endAngle = startAngle + anglePerSection;
-
-        let x1 = cylinderRadius * cos(startAngle);
-        let y1 = cylinderRadius * sin(startAngle);
-        let x2 = cylinderRadius * cos(endAngle);
-        let y2 = cylinderRadius * sin(endAngle);
-
-        // Draw each pie segment of the cylinder
-        texture.beginShape();
-
-        // Bottom vertices
-        texture.vertex(x1, y1, -cylinderHeight / 2);
-        texture.vertex(x2, y2, -cylinderHeight / 2);
-
-        // Top vertices
-        texture.vertex(x2, y2, cylinderHeight / 2);
-        texture.vertex(x1, y1, cylinderHeight / 2);
-
-        texture.endShape(CLOSE);
-
-        // Draw the top face of each segment
-        if (fills) {
-            texture.beginShape();
-            texture.vertex(0, 0, cylinderHeight / 2);
-            texture.vertex(x1, y1, cylinderHeight / 2);
-            texture.vertex(x2, y2, cylinderHeight / 2);
-            texture.endShape(CLOSE);
-        }
-
-        // Draw the bottom face of each segment
-        if (fills) {
-            texture.beginShape();
-            texture.vertex(0, 0, -cylinderHeight / 2);
-            texture.vertex(x1, y1, -cylinderHeight / 2);
-            texture.vertex(x2, y2, -cylinderHeight / 2);
-            texture.endShape(CLOSE);
-        }
-    }
-
     texture.pop();
 }

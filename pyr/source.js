@@ -17,15 +17,41 @@ let lightPosZ = 350;
 let ambientLevel = 100;
 let mode = 0;
 
+/**
+* @description This function preloads a shader program by loading two GLSL files: 
+* "vertex.glsl" and "fragment.glsl".
+* 
+* @returns { object } - The output returned by the `preload()` function is `passThroughShader`.
+*/
 function preload() {
     passThroughShader = loadShader("vertex.glsl", "fragment.glsl");
 }
 
+/**
+* @description The function `saveImage` takes no arguments and creates a file name 
+* using the current timestamp (year++, month++, day++, hour++, minute++, and second++) 
+* and saves the file as an PNG image with that name.
+* 
+* @returns { string } - The output returned by this function is a timestamp value 
+* made up of the current year(), month(), day(), hour(), minute(), and second(), all 
+* padded with leading zeroes to the specified number of digits (2).
+*/
 function saveImage() {
     var timestamp = year() + nf(month(), 2) + nf(day(), 2) + "-" + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2);
     save(timestamp + ".png");
 }
 
+/**
+* @description This function controls the movement and manipulation of a light source 
+* within a 3D space based on key presses. It updates the light's position along the 
+* x-, y-, z-axes and its ambient level using step sizes that can be adjusted by the 
+* user.
+* 
+* @returns { array } - The output returned by the function is the updated light 
+* position and ambient level values.
+* 
+* `Light Position: X=<x>, Y=<y>, Z=<z>, Ambient=<ambient>`
+*/
 function keyPressed() {
     let stepSize = 20; // Change this value to adjust movement speed
 
@@ -66,6 +92,15 @@ function keyPressed() {
     console.log(`Light Position: X=${lightPosX}, Y=${lightPosY}, Z=${lightPosZ}, Ambient=${ambientLevel}`);
 }
 
+/**
+* @description This function sets up the graphics environment for a WebGL painting 
+* app. It creates canvases and textures for the main rendering scene (renderTexture), 
+* top-most layer (topTexture), and mask (maskTexture).
+* 
+* @returns { any } - The output returned by the function `setup` is `outGraphics`, 
+* which is a `Graphics` object created with dimensions `width` and `height` and using 
+* the `WEBGL` context.
+*/
 function setup() {
     createCanvas(min(windowWidth, windowHeight), min(windowWidth, windowHeight), WEBGL);
     renderTexture = createGraphics(width, height, WEBGL);
@@ -74,6 +109,12 @@ function setup() {
     outGraphics = createGraphics(width, height, WEBGL);
 }
 
+/**
+* @description The function `draw` switches on the value of `mode % styles`, which 
+* ranges over two possible values (`styles`).
+* 
+* @returns {  } - The output returned by this function is undefined.
+*/
 function draw() {
     let styles = 2;
 
@@ -87,6 +128,64 @@ function draw() {
     }
 }
 
+/**
+* @description This function takes six parameters: `renderTexture`, `topTexture`, 
+* `maskTexture`, `w`, `h`, `type`, and `xa`, `ya`. It sets up and draws a stippled 
+* image on the screen using a custom shader.
+* 
+* The function does the following:
+* 
+* 1/ Sets up the graphics context and clears the background.
+* 2/ Rotates the image based on the frame count and a sinusoidal offset.
+* 3/ Sets the Ambient level for the light source.
+* 4/ Draws the stippled image using the `drawTruncatedPyramid` and `drawHexagon` functions.
+* 5/ Sets the uniforms for the shader based on the input textures and current frame 
+* count.
+* 6/ Fills the rectangle with a colored background.
+* 7/ Draws the image on the screen using the `image` function.
+* 
+* The `maskTexture` is not used directly but it affects the transparency of the 
+* stippled image based on its values.
+* 
+* @param {  } renderTexture - The `renderTexture` input parameter is the main texturing 
+* texture that will be drawn on the screen.
+* 
+* @param { object } topTexture - The `topTexture` input parameter is passed as an 
+* optional parameter to the `drawTruncatedPyramid()` and `drawHexagon()` functions. 
+* It specifies the topmost texture to use for the current geometry pass.
+* 
+* @param {  } maskTexture - The `maskTexture` input parameter is used to specify a 
+* texture that will be used as a mask for the stippling effect.
+* 
+* @param {  } w - The `w` parameter is a function argument representing the width 
+* of the canvas. It determines how wide the graphic drawn on the render texture 
+* should be. This can be used as the size of textures and their scaling relative to 
+* other components affecting rendering directly influences them when compositing 
+* graphics onto video content using OpenGl graphics library features; adjusting its 
+* value modifies dimensions for an appealing display within bounds without altering 
+* aspects' proportion so everything blends naturally with minimum stutter/artefacting 
+* even as it rotates/scrolls across multiple textures depending on the function call 
+* mode parameter; when mode=0 - there'll often exist small black strips above top 
+* left corner diagonals towards right down along diagonals.
+* 
+* @param { number } h - In the given function `drawStyle`, the input parameter `h` 
+* represents the height of the textures being drawn.
+* 
+* @param { string } type - Based on the code provided:
+* 
+* The `type` input parameter specifies which type of geometric shape to draw: "pyr" 
+* for a truncated pyramid or "hex" for a hexagon.
+* 
+* @param {  } xa - Based on the code provided:
+* 
+* `xa` is the horizontal angle of rotation for the drawing object.
+* 
+* @param {  } ya - The `ya` input parameter is a float value that represents the 
+* rotationY angle of the shape being drawn.
+* 
+* @returns {  } - The output returned by this function is a PaperJS scene object 
+* representing the stylized 2D graphics drawing based on the given parameters and textures.
+*/
 function drawStyle(renderTexture, topTexture, maskTexture, w, h, type, xa, ya) {
     
     outGraphics.noStroke();
@@ -137,6 +236,34 @@ function drawStyle(renderTexture, topTexture, maskTexture, w, h, type, xa, ya) {
 
 }
 
+/**
+* @description This function draws a truncated pyramid using a given texture and 
+* sets various properties such as stroke color and lights.
+* 
+* @param { object } texture - The `texture` input parameter is a graphics texture 
+* that is used as the source of the image for the truncated pyramid.
+* 
+* @param { number } sWidth - The `sWidth` input parameter specifies the width of 
+* each section of the truncated pyramid.
+* 
+* @param { number } sHeight - The `sHeight` parameter represents the height of the 
+* truncated pyramid sections that will be drawn.
+* 
+* @param { number } strokeC - The `strokeC` input parameter specifies the color of 
+* the stroke (border) around the truncated pyramid.
+* 
+* @param { boolean } lights - The `lights` input parameter controls whether or not 
+* to include lighting effects when drawing the truncated pyramid.
+* 
+* @param { boolean } fills - The `fills` input parameter determines whether or not 
+* to fill the interior of the truncated pyramid with color.
+* 
+* @param { number } mask - The `mask` input parameter indicates whether to draw a 
+* mask over the pyramid.
+* 
+* @returns { any } - The output returned by the `drawTruncatedPyramid` function is 
+* a modified version of the input `texture` object.
+*/
 function drawTruncatedPyramid(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true, mask = false) {
     texture.push();
     setupTextureEnvironment(texture, strokeC, lights);
@@ -144,6 +271,23 @@ function drawTruncatedPyramid(texture, sWidth, sHeight, strokeC = 255, lights = 
     texture.pop();
 }
 
+/**
+* @description This function sets up the environment for a Texture object by clearing 
+* it and setting various properties such as background color and lighting.
+* 
+* @param { object } texture - The `texture` input parameter is passed a WebGL texture 
+* object that will have its environment modified by the function.
+* 
+* @param { integer } strokeC - The `strokeC` input parameter sets the color of the 
+* stroke for the textured quad.
+* 
+* @param { boolean } lights - The `lights` input parameter controls whether or not 
+* lights are enabled for the texture. When `lights` is set to `true`, ambient and 
+* point lights are applied to the texture.
+* 
+* @returns { any } - The output returned by this function is a `Texture` object with 
+* the specified properties and values.
+*/
 function setupTextureEnvironment(texture, strokeC = 255, lights = true) {
     texture.clear();
     texture.noLights();
@@ -163,6 +307,32 @@ function setupTextureEnvironment(texture, strokeC = 255, lights = true) {
     texture.rotateY(rotationY);
 }
 
+/**
+* @description This function draws a truncated pyramid made up of several sections 
+* with rounded edges. It takes a texture object as input and renders each section 
+* with a different height based on a specified percentage gap between sections.
+* 
+* @param { object } texture - The `texture` input parameter is the 2D canvas that 
+* will be used to draw the truncated pyramid sections.
+* 
+* @param { number } sWidth - The `sWidth` input parameter specifies the width of 
+* each section of the truncated pyramid.
+* 
+* @param { number } sHeight - The `sHeight` input parameter defines the total height 
+* of each section of the truncated pyramid.
+* 
+* @param { boolean } fills - The `fills` input parameter determines whether or not 
+* the upper triangles of the truncated pyramid sections should be filled with color.
+* 
+* @param { number } mask - The `mask` input parameter is a Boolean value that 
+* determines whether to fill the upper and lower triangular areas of each section 
+* with a background color (i.e., a "mask") or not.
+* 
+* @returns { object } - The output returned by the `drawTruncatedPyramidSections` 
+* function is a series of shapes (rectangles and triangles) that make up the truncated 
+* pyramid shape. Each section of the pyramid is drawn with a specific width and 
+* height determined by the parameters passed to the function.
+*/
 function drawTruncatedPyramidSections(texture, sWidth, sHeight, fills = true, mask = false) {
     let totalGapHeight = sHeight * gapPercentage;
     texture.translate(0, -(sHeight + totalGapHeight) / sections - totalGapHeight, 0);
@@ -239,6 +409,34 @@ function drawTruncatedPyramidSections(texture, sWidth, sHeight, fills = true, ma
     }
 }
 
+/**
+* @description The provided code defines a function `drawHexagon` that draws a hexagon 
+* with optional fills and stroke based on given arguments.
+* 
+* @param { array } texture - The `texture` input parameter is a canvas texture that 
+* is used as the source for drawing the hexagon shape.
+* 
+* @param { number } sWidth - The `sWidth` input parameter defines the size of the 
+* hexagon's sides.
+* 
+* @param { number } sHeight - The `sHeight` input parameter determines the height 
+* of the hexagon.
+* 
+* @param { number } strokeC - The `strokeC` input parameter sets the color of the 
+* stroke (border) around each hexagon.
+* 
+* @param { boolean } lights - The `lights` input parameter determines whether or not 
+* to add lighting effects to the hexagon drawn using this function.
+* 
+* @param { boolean } fills - The `fills` input parameter controls whether or not the 
+* inner area of the hexagon is filled with color.
+* 
+* @param { boolean } mask - The `mask` input parameter is optional and determines 
+* whether to draw a shape masked by a provided bitmap.
+* 
+* @returns { array } - The output returned by the `drawHexagon` function is none or 
+* void because there is no return statement within the function.
+*/
 function drawHexagon(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true, mask=false) {
     texture.push();
     setupTextureEnvironment(texture, strokeC, lights);
@@ -260,6 +458,48 @@ function drawHexagon(texture, sWidth, sHeight, strokeC = 255, lights = true, fil
     texture.pop();
 }
 
+/**
+* @description This function draws a hexagonal box on a texture object using HTML5 
+* canvas context.
+* 
+* 	- `texture`: the canvas object to draw on
+* 	- `sWidth`, `sHeight`: the size of the hexagon
+* 	- `fills`: whether to fill the hexagon with a color (if true) or leave it unfilled 
+* (if false)
+* 	- `sX`, `sY`: the position of the top-left corner of the hexagon
+* 	- `mask`: if true then the outer boundary will be drawn as a black line
+* 
+* The function first calculates the coordinates of the vertices of the hexagon and 
+* then uses these vertices to draw the hexagon (top and bottom) and the side faces 
+* using HTML5 canvas context methods such as beginShape(), endShape() and vertext().
+* 
+* @param { object } texture - The `texture` input parameter is a 2D graphics texture 
+* that is modified by the function to draw a hexagonal box with filling and borders.
+* 
+* @param { number } sWidth - The `sWidth` input parameter determines the radius of 
+* the hexagons.
+* 
+* @param { number } sHeight - The `sHeight` input parameter determines whether to 
+* draw only the top or bottom hexagon or both. When `sHeight` is set to a value other 
+* than 0 or the default undefined value (in which case the function does not draw 
+* any hexagons), the function will draw all the hexagons of the given size along the 
+* vertical axis of the canvas.
+* 
+* @param { boolean } fills - The `fills` input parameter determines whether to fill 
+* the interior of the hexagonal box with a solid color.
+* 
+* @param { number } sX - The `sX` input parameter specifies the initial x-coordinate 
+* for the hexagon's center.
+* 
+* @param { number } sY - The `sY` input parameter is the starting position for the 
+* vertical line of hexagons.
+* 
+* @param { boolean } mask - The `mask` input parameter specifies whether to draw a 
+* masked version of the hexagon or not.
+* 
+* @returns { object } - The output returned by the `drawHexagonalBox` function is a 
+* WebGL renderer that draws a hexagonal box with specified dimensions and fill color.
+*/
 function drawHexagonalBox(texture, sWidth, sHeight, fills, sX, sY, mask=false) {
     // Calculate hexagon parameters
     let hexRadius = sWidth;

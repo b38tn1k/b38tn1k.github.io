@@ -1,6 +1,7 @@
 precision mediump float;
 uniform sampler2D uTex;
 uniform sampler2D uTopTex;
+uniform sampler2D uMask;
 uniform float uTime;
 uniform float uStippleMixFactor; // Mixing factor: 0.0 for just stipple, 1.0 for just random
 uniform float uShadeMixFactor;
@@ -24,12 +25,14 @@ float pattern(float luminance) {
 }
 
 float noiseEffect(vec2 st) {
-    return random(st * 20.0) * 0.05;
+    return random(st * 20.0) * 0.2;
 }
 
 void main() {
     float epsilon = 0.1;
     vec4 col = texture2D(uTex, vTexCoord);
+    vec4 topColor = texture2D(uTopTex, vTexCoord);
+    vec4 alphaChannel = texture2D(uMask, vTexCoord);
     // Increase contrast on col
     col.rgb = (col.rgb - 0.5) * 2.0 + 0.5;
     col.rgb = clamp(col.rgb, 0.0, 1.0);
@@ -42,10 +45,9 @@ void main() {
         gl_FragColor = vec4(vec3(stipple), 1.0);
     }
     gl_FragColor = mix(gl_FragColor, col, uShadeMixFactor);
-    // gl_FragColor = mix(gl_FragColor, col, 1.0);
-    // Multiply blending with topTexture
-    vec4 topColor = texture2D(uTopTex, vTexCoord);
+    
     gl_FragColor.rgb += noiseEffect(vTexCoord);
 
     gl_FragColor.rgb *= topColor.rgb;
+    // gl_FragColor.a = 1.0 - alphaChannel.r;
 }

@@ -7,6 +7,8 @@ let rotationX = -3.1415 / 16;
 let rotationY = 3.1415 / 4;
 
 let renderTexture;
+let maskTexture;
+let topTexture;
 let passThroughShader;
 
 let lightPosX = -50;
@@ -68,6 +70,7 @@ function setup() {
     createCanvas(min(windowWidth, windowHeight), min(windowWidth, windowHeight), WEBGL);
     renderTexture = createGraphics(width, height, WEBGL);
     topTexture = createGraphics(width, height, WEBGL);
+    maskTexture = createGraphics(width, height, WEBGL);
 }
 
 function draw() {
@@ -75,15 +78,18 @@ function draw() {
 
     switch (mode % styles) {
         case 0:
-            drawStyle(renderTexture, topTexture, 400, 400, "pyr", -3.1415 / 16, 3.1415 / 4);
+            drawStyle(renderTexture, topTexture, maskTexture, 400, 400, "pyr", -3.1415 / 16, 3.1415 / 4);
             break;
         case 1:
-            drawStyle(renderTexture, topTexture, 150, 100, "hex", -3.1415 / 4, 0);
+            drawStyle(renderTexture, topTexture, maskTexture, 150, 100, "hex", -3.1415 / 4, 0);
             break;
     }
 }
 
-function drawStyle(renderTexture, topTexture, w, h, type, xa, ya) {
+function drawStyle(renderTexture, topTexture, maskTexture, w, h, type, xa, ya) {
+    
+    noStroke();
+    background(0,0);
     if (mode == 0) {
         gapPercentage = 0.07 + sin(frameCount * 0.1) * 0.05;
         rotationY += 0.005;
@@ -100,6 +106,7 @@ function drawStyle(renderTexture, topTexture, w, h, type, xa, ya) {
         ambientLevel = 120;
         drawTruncatedPyramid(renderTexture, w, h);
         drawTruncatedPyramid(topTexture, w, h, 0, false, false);
+        drawTruncatedPyramid(maskTexture, w, h, 0, false, true, true);
     }
 
     if (type == "hex") {
@@ -109,23 +116,28 @@ function drawStyle(renderTexture, topTexture, w, h, type, xa, ya) {
         ambientLevel = 100;
         drawHexagon(renderTexture, w, h);
         drawHexagon(topTexture, w, h, 0, false, false);
+        drawHexagon(maskTexture, w, h, 0, false, false, true);
     }
 
     shader(passThroughShader);
     passThroughShader.setUniform("uStippleMixFactor", 0.5);
     passThroughShader.setUniform("uShadeMixFactor", 0.5);
-    
 
     passThroughShader.setUniform("uTex", renderTexture);
     passThroughShader.setUniform("uTopTex", topTexture);
-
+    passThroughShader.setUniform("uMask", maskTexture);
+    fill(255,0,255,0);
+    // how can I used maskTexture on this rect?
     rect(-width / 2, -height / 2, width, height);
+
+    // imageMode(CENTER);
+    // image(maskTexture, 0, 0);
 }
 
-function drawTruncatedPyramid(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true) {
+function drawTruncatedPyramid(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true, mask = false) {
     texture.push();
     setupTextureEnvironment(texture, strokeC, lights);
-    drawTruncatedPyramidSections(texture, sWidth, sHeight, fills);
+    drawTruncatedPyramidSections(texture, sWidth, sHeight, fills, mask);
     texture.pop();
 }
 
@@ -148,7 +160,7 @@ function setupTextureEnvironment(texture, strokeC = 255, lights = true) {
     texture.rotateY(rotationY);
 }
 
-function drawTruncatedPyramidSections(texture, sWidth, sHeight, fills = true) {
+function drawTruncatedPyramidSections(texture, sWidth, sHeight, fills = true, mask = false) {
     let totalGapHeight = sHeight * gapPercentage;
     texture.translate(0, -(sHeight + totalGapHeight) / sections - totalGapHeight, 0);
     let heightPerSection = (sHeight - totalGapHeight) / sections;
@@ -161,9 +173,14 @@ function drawTruncatedPyramidSections(texture, sWidth, sHeight, fills = true) {
         let topY = bottomY + heightPerSection;
         if (fills) {
             texture.fill(200);
+            if (mask) {
+                texture.fill(0);
+            }
         } else {
             texture.fill(255);
         }
+
+        
 
         texture.beginShape();
         texture.vertex(-bottomWidth / 2, bottomY, -bottomWidth / 2);
@@ -215,7 +232,7 @@ function drawTruncatedPyramidSections(texture, sWidth, sHeight, fills = true) {
     }
 }
 
-function drawHexagon(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true) {
+function drawHexagon(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true, mask=false) {
     texture.push();
     setupTextureEnvironment(texture, strokeC, lights);
     let factor = 1.5;
@@ -230,17 +247,21 @@ function drawHexagon(texture, sWidth, sHeight, strokeC = 255, lights = true, fil
         return [coord[0], coord[1] - sWidth];
     });
     for (let i = 0; i < aCoord.length; i++) {
-        drawHexagonalBox(texture, sWidth, sHeight, fills, aCoord[i][0], aCoord[i][1]);
+        drawHexagonalBox(texture, sWidth, sHeight, fills, aCoord[i][0], aCoord[i][1], mask);
     }
 
     texture.pop();
 }
 
-function drawHexagonalBox(texture, sWidth, sHeight, fills, sX, sY) {
+function drawHexagonalBox(texture, sWidth, sHeight, fills, sX, sY, mask=false) {
     // Calculate hexagon parameters
     let hexRadius = sWidth;
-
-    texture.fill(255);
+    if (mask) {
+        texture.fill(0);
+    } else {
+        texture.fill(255);
+    }
+    
     // Coordinates for the hexagon vertices
     let vertices = [];
     for (let i = 0; i < 6; i++) {
@@ -262,6 +283,9 @@ function drawHexagonalBox(texture, sWidth, sHeight, fills, sX, sY) {
         texture.fill(180);
     } else {
         texture.fill(255);
+    }
+    if (mask) {
+        texture.fill(0);
     }
 
     // Drawing the side faces

@@ -3,7 +3,7 @@ let sHeight = 500;
 let sections = 5;
 let gapPercentage = 0.1;
 
-let rotationX = 3.1415 / 16;
+let rotationX = -3.1415 / 16;
 let rotationY = 3.1415 / 4;
 
 let renderTexture;
@@ -65,7 +65,7 @@ function keyPressed() {
 }
 
 function setup() {
-    createCanvas(1000, 1000, WEBGL);
+    createCanvas(min(windowWidth, windowHeight), min(windowWidth, windowHeight), WEBGL);
     renderTexture = createGraphics(width, height, WEBGL);
     topTexture = createGraphics(width, height, WEBGL);
 }
@@ -84,8 +84,14 @@ function draw() {
 }
 
 function drawStyle(renderTexture, topTexture, w, h, type, xa, ya) {
-    rotationX = xa;
-    rotationY = ya;
+    if (mode == 0) {
+        gapPercentage = 0.07 + sin(frameCount * 0.1) * 0.05;
+        rotationY += 0.05;
+        rotationX += sin(frameCount * 0.1) * 0.005;
+    } else {
+        rotationX = xa;
+        rotationY = ya;
+    }
 
     if (type == "pyr") {
         lightPosX = -50;

@@ -86,7 +86,7 @@ function draw() {
 function drawStyle(renderTexture, topTexture, w, h, type, xa, ya) {
     if (mode == 0) {
         gapPercentage = 0.07 + sin(frameCount * 0.1) * 0.05;
-        rotationY += 0.05;
+        rotationY += 0.005;
         rotationX += sin(frameCount * 0.1) * 0.005;
     } else {
         rotationX = xa;
@@ -112,7 +112,9 @@ function drawStyle(renderTexture, topTexture, w, h, type, xa, ya) {
     }
 
     shader(passThroughShader);
-    passThroughShader.setUniform("uMixFactor", 0.5); // 0.5 will mix stipple and random equally
+    passThroughShader.setUniform("uStippleMixFactor", 0.5);
+    passThroughShader.setUniform("uShadeMixFactor", 0.5);
+    
 
     passThroughShader.setUniform("uTex", renderTexture);
     passThroughShader.setUniform("uTopTex", topTexture);

@@ -71,6 +71,7 @@ function setup() {
     renderTexture = createGraphics(width, height, WEBGL);
     topTexture = createGraphics(width, height, WEBGL);
     maskTexture = createGraphics(width, height, WEBGL);
+    outGraphics = createGraphics(width, height, WEBGL);
 }
 
 function draw() {
@@ -88,8 +89,8 @@ function draw() {
 
 function drawStyle(renderTexture, topTexture, maskTexture, w, h, type, xa, ya) {
     
-    noStroke();
-    background(0,0);
+    outGraphics.noStroke();
+    outGraphics.background(0,0);
     if (mode == 0) {
         gapPercentage = 0.07 + sin(frameCount * 0.1) * 0.05;
         rotationY += 0.005;
@@ -119,19 +120,21 @@ function drawStyle(renderTexture, topTexture, maskTexture, w, h, type, xa, ya) {
         drawHexagon(maskTexture, w, h, 0, false, false, true);
     }
 
-    shader(passThroughShader);
+    outGraphics.shader(passThroughShader);
     passThroughShader.setUniform("uStippleMixFactor", 0.5);
     passThroughShader.setUniform("uShadeMixFactor", 0.5);
-
     passThroughShader.setUniform("uTex", renderTexture);
     passThroughShader.setUniform("uTopTex", topTexture);
     passThroughShader.setUniform("uMask", maskTexture);
-    fill(255,0,255,0);
-    // how can I used maskTexture on this rect?
-    rect(-width / 2, -height / 2, width, height);
 
-    // imageMode(CENTER);
+    outGraphics.fill(255,0,255,0);
+    // how can I used maskTexture on this rect?
+    outGraphics.rect(-width / 2, -height / 2, width, height);
+
+    imageMode(CENTER);
+    image(outGraphics, 0, 0);
     // image(maskTexture, 0, 0);
+
 }
 
 function drawTruncatedPyramid(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true, mask = false) {
@@ -164,6 +167,10 @@ function drawTruncatedPyramidSections(texture, sWidth, sHeight, fills = true, ma
     let totalGapHeight = sHeight * gapPercentage;
     texture.translate(0, -(sHeight + totalGapHeight) / sections - totalGapHeight, 0);
     let heightPerSection = (sHeight - totalGapHeight) / sections;
+    if (mask) {
+        texture.background(0);
+        texture.stroke(255);
+    }
 
     for (let i = 0; i < sections; i++) {
         let topWidth = map(i + 1, 0, sections, 0, sWidth);
@@ -174,7 +181,7 @@ function drawTruncatedPyramidSections(texture, sWidth, sHeight, fills = true, ma
         if (fills) {
             texture.fill(200);
             if (mask) {
-                texture.fill(0);
+                texture.fill(255);
             }
         } else {
             texture.fill(255);

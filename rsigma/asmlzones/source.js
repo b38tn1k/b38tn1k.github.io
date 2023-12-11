@@ -1,8 +1,18 @@
+/**
+* @description The function `setup()` initializes the canvas and sets up the drawing
+* context for WebGL rendering using the following steps:
+* 
+* 1/ Creates a canvas of windowWidth x windowHeight size.
+* 2/ Sets the drawing mode to DEGREES.
+*/
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
   angleMode(DEGREES);
 }
 
+/**
+* @description This function draws a grid of lines on the canvas using the `line` method.
+*/
 function drawGrid() {
   push();
   let gridSpacing = width * 0.05; // 5% of window width
@@ -15,6 +25,10 @@ function drawGrid() {
   pop();
 }
 
+/**
+* @description This function draws three cylinders of different sizes at different
+* positions within the drawing area using the `cylinder` method.
+*/
 function drawCylinders() {
   push();
   // Bottom Cylinder
@@ -33,6 +47,12 @@ function drawCylinders() {
   pop();
 }
 
+/**
+* @description The `draw()` function clears the canvas to black (fill(0)), sets the
+* stroke color to green (stroke(0%, 255%, 0%) and then rotates the canvas by 60
+* degrees before drawing grid lines (using drawGrid()) and cylindrical shapes using
+* the drawCylinder() function.
+*/
 function draw() {
   fill(0);
   stroke(0, 255, 0)

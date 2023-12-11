@@ -122,6 +122,15 @@ function setup() {
 */
 
 let test_alpha = 0;
+/**
+* @description The function "draw" takes a variable "mode" as input and performs
+* different drawing operations based on the value of "mode". It uses three textures
+* ("renderTexture", "topTexture", and "maskTexture") to create a visual effect.
+* 
+* @returns { any } The `draw()` function returns nothing (it is void). It modifies
+* the graphics state by drawing a texture using different styles based on the value
+* of `mode` (a variable between 0 and 2).
+*/
 function draw() {
     let styles = 3;
 
@@ -571,6 +580,38 @@ function drawHexagonalBox(texture, sWidth, sHeight, fills, sX, sY, mask=false) {
     }
 }
 let cylinderLayers = 3;
+/**
+* @description The provided function 'drawCylinder' draws a cylinder using a texture
+* atlas with options for stroke color (default 255), fills (default true), lights
+* (default true), and masking (default false).
+* 
+* @param {  } texture - The `texture` input parameter is a reference to a WebGLRenderbuffer
+* object that will be used as the surface for the drawn cylinder.
+* 
+* @param { number } sWidth - The `sWidth` input parameter sets the width of the
+* cylinder that is being drawn.
+* 
+* @param { number } sHeight - The `sHeight` input parameter sets the height of the
+* cylinder to be drawn.
+* 
+* @param { number } strokeC - The `strokeC` input parameter specifies the color of
+* the stroke (i.e., the outline) of the cylinder.
+* 
+* @param { boolean } lights - The `lights` input parameter determines whether to
+* draw the cylinder with lights (ambientOcclusion).
+* 
+* @param { boolean } fills - The `fills` input parameter determines whether to fill
+* the cylinder with a solid color or leave it transparent. When set to true (the
+* default), the cylinder will be filled with the current stroke color.
+* 
+* @param { boolean } mask - The `mask` input parameter determines whether to use a
+* stencil mask when drawing the cylinder.
+* 
+* @returns { any } The output returned by the `drawCylinder` function is not explicitly
+* defined. The function takes multiple parameters and performs various actions on a
+* texture object. No explicit return statement is provided. Instead the function
+* manipulates the texture object directly and does not return any output value.
+*/
 function drawCylinder(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true, mask=false) {
     // drawCylinder(renderTexture, w, h);
     // drawCylinder(topTexture, w, h, 0, false, false);
@@ -586,6 +627,59 @@ function drawCylinder(texture, sWidth, sHeight, strokeC = 255, lights = true, fi
 }
 
 
+/**
+* @description This function draws a cylinder with layers on a Texture object using
+* the P5.js library. It takes various parameters such as texture object itself(texture),
+* screen width and height(sWidth and sHeight), number of layers(cylinderLayers) etc.,
+* The function performs several operations on the texture such as pushing and popping
+* matrices , changing the stroke weight and colors etc to achieve the desired
+* cylindrical mesh effect.
+* 
+* @param { object } texture - The `texture` input parameter is a 2D texture array
+* that serves as the canvas for drawing the cylinder box.
+* 
+* @param { number } sWidth - The `sWidth` input parameter specifies the width of the
+* cylinder shape to be drawn.
+* 
+* @param { array } sHeight - The `sHeight` input parameter specifies the height of
+* the cylinder box being drawn.
+* 
+* @param { number } fills - The `fills` input parameter controls the color of the
+* cylinder's body. When `fills` is true (or not specified), the cylinder will be
+* filled with a middle gray color (180).
+* 
+* @param { number } sX - The `sX` input parameter specifies the starting x-coordinate
+* of the grid for rendering the cylinder shape.
+* 
+* @param { number } sY - Based on the code provided:
+* 
+* The `sY` input parameter determines the position of the horizontal axis (the
+* `x`-axis) for the ellipses drawn within the cylinder.
+* 
+* @param { number } strokeC - The `strokeC` input parameter controls the color of
+* the stroke when drawing a cylinder.
+* 
+* @param { boolean } noStrokeSurf - The `noStrokeSurf` input parameter controls
+* whether or not to draw a border around the cylinder.
+* 
+* @param { boolean } mask - The `mask` input parameter of the `drawCylinderbox`
+* function is a boolean value that controls whether to draw the mask for the cylinder
+* or not.
+* 
+* @returns { object } The `drawCylinderbox` function takes several parameters and
+* returns none. It draws a cylinder shape on a canvas texture object with the specified
+* dimensions and properties. The function performs the following actions:
+* 
+* 1/ Sets up the drawing context for the canvas texture object.
+* 2/ Determines the size of the cylinder based on the specified `sWidth` and `sHeight`.
+* 3/ If a mask is provided as a parameter (a binary image indicating which areas to
+* fill), it sets the fill color of the texture to black or white based on the value
+* of each pixel.
+* 4/ If fills are provided as a parameter (a boolean indicating whether to fill the
+* interior of the cylinder with a color), it sets the fill color of the texture based
+* on that value.
+* 5/ Draws the cylinder shape using `cylinder()` and `line()` methods.
+*/
 function drawCylinderbox(texture, sWidth, sHeight, fills, sX, sY, strokeC, noStrokeSurf, mask=false) {
     let sh = sHeight;
     let cw = sWidth;

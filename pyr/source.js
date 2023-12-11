@@ -11,11 +11,16 @@ let maskTexture;
 let topTexture;
 let passThroughShader;
 
-let lightPosX = -50;
-let lightPosY = 0;
-let lightPosZ = 350;
-let ambientLevel = 100;
-let mode = 0;
+// let lightPosX = -50;
+// let lightPosY = 0;
+// let lightPosZ = 350;
+// let ambientLevel = 100;
+
+let lightPosX = -1240;
+let lightPosY = -500;
+let lightPosZ = 1000;
+let ambientLevel = 140;
+let mode = 2;
 
 /**
 * @description This function preloads a shader program by loading two GLSL files: 
@@ -115,8 +120,10 @@ function setup() {
 * 
 * @returns {  } - The output returned by this function is undefined.
 */
+
+let test_alpha = 0;
 function draw() {
-    let styles = 2;
+    let styles = 3;
 
     switch (mode % styles) {
         case 0:
@@ -124,6 +131,11 @@ function draw() {
             break;
         case 1:
             drawStyle(renderTexture, topTexture, maskTexture, 150, 100, "hex", -3.1415 / 4, 0);
+            break;
+        case 2:
+            drawStyle(renderTexture, topTexture, maskTexture, 300, 100, "cyl", test_alpha, 0);
+            // test_alpha += 0.1;
+            // test_alpha = -HALF_PI
             break;
     }
 }
@@ -219,6 +231,16 @@ function drawStyle(renderTexture, topTexture, maskTexture, w, h, type, xa, ya) {
         drawHexagon(maskTexture, w, h, 0, false, false, true);
     }
 
+    if (type == "cyl") {
+        // lightPosX = -50;
+        // lightPosY = 0;
+        // lightPosZ = 500;
+        // ambientLevel = 100;
+        drawCylinder(renderTexture, w, h);
+        drawCylinder(topTexture, w, h, 0, false, false);
+        drawCylinder(maskTexture, w, h, 0, false, false, true);
+    }
+
     outGraphics.shader(passThroughShader);
     passThroughShader.setUniform("uStippleMixFactor", 0.5);
     passThroughShader.setUniform("uShadeMixFactor", 0.5);
@@ -233,7 +255,45 @@ function drawStyle(renderTexture, topTexture, maskTexture, w, h, type, xa, ya) {
     imageMode(CENTER);
     image(outGraphics, 0, 0);
     // image(maskTexture, 0, 0);
+    // image(renderTexture, 0, 0);
+    // image(topTexture, 0, 0);
 
+}
+
+
+/**
+* @description This function sets up the environment for a Texture object by clearing 
+* it and setting various properties such as background color and lighting.
+* 
+* @param { object } texture - The `texture` input parameter is passed a WebGL texture 
+* object that will have its environment modified by the function.
+* 
+* @param { integer } strokeC - The `strokeC` input parameter sets the color of the 
+* stroke for the textured quad.
+* 
+* @param { boolean } lights - The `lights` input parameter controls whether or not 
+* lights are enabled for the texture. When `lights` is set to `true`, ambient and 
+* point lights are applied to the texture.
+* 
+* @returns { any } - The output returned by this function is a `Texture` object with 
+* the specified properties and values.
+*/
+function setupTextureEnvironment(texture, strokeC = 255, lights = true) {
+    texture.clear();
+    texture.noLights();
+    texture.background(255);
+
+    if (lights) {
+        texture.ambientLight(ambientLevel);
+        texture.pointLight(255, 255, 255, lightPosX, lightPosY, lightPosZ);
+        texture.pointLight(255, 255, 255, -lightPosX, -lightPosY, -lightPosZ);
+    }
+
+    texture.stroke(strokeC);
+    texture.strokeWeight(3);
+    texture.fill(255);
+    texture.rotateX(rotationX);
+    texture.rotateY(rotationY);
 }
 
 /**
@@ -269,42 +329,6 @@ function drawTruncatedPyramid(texture, sWidth, sHeight, strokeC = 255, lights = 
     setupTextureEnvironment(texture, strokeC, lights);
     drawTruncatedPyramidSections(texture, sWidth, sHeight, fills, mask);
     texture.pop();
-}
-
-/**
-* @description This function sets up the environment for a Texture object by clearing 
-* it and setting various properties such as background color and lighting.
-* 
-* @param { object } texture - The `texture` input parameter is passed a WebGL texture 
-* object that will have its environment modified by the function.
-* 
-* @param { integer } strokeC - The `strokeC` input parameter sets the color of the 
-* stroke for the textured quad.
-* 
-* @param { boolean } lights - The `lights` input parameter controls whether or not 
-* lights are enabled for the texture. When `lights` is set to `true`, ambient and 
-* point lights are applied to the texture.
-* 
-* @returns { any } - The output returned by this function is a `Texture` object with 
-* the specified properties and values.
-*/
-function setupTextureEnvironment(texture, strokeC = 255, lights = true) {
-    texture.clear();
-    texture.noLights();
-    texture.background(255);
-
-    if (lights) {
-        texture.ambientLight(ambientLevel);
-        texture.pointLight(255, 255, 255, lightPosX, lightPosY, lightPosZ);
-        texture.pointLight(255, 255, 255, -lightPosX, -lightPosY, -lightPosZ);
-    }
-
-    texture.stroke(strokeC);
-    texture.strokeWeight(3);
-    texture.fill(255);
-
-    texture.rotateX(rotationX);
-    texture.rotateY(rotationY);
 }
 
 /**
@@ -544,5 +568,118 @@ function drawHexagonalBox(texture, sWidth, sHeight, fills, sX, sY, mask=false) {
         texture.vertex(vertices[nextIndex][0], sHeight, vertices[nextIndex][1]);
         texture.vertex(vertices[i][0], sHeight, vertices[i][1]);
         texture.endShape(CLOSE);
+    }
+}
+let cylinderLayers = 3;
+function drawCylinder(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true, mask=false) {
+    // drawCylinder(renderTexture, w, h);
+    // drawCylinder(topTexture, w, h, 0, false, false);
+    // drawCylinder(maskTexture, w, h, 0, false, false, true);
+    // let noStrokeSurf = lights == true && fills == true && mask == false && strokeC == 255;
+    let noStrokeSurf = (strokeC == 255);
+    texture.push();
+    texture.rotateX(QUARTER_PI/2);
+    // texture.translate(0, sHeight, 0);
+    setupTextureEnvironment(texture, strokeC, lights);
+    drawCylinderbox(texture, sWidth, sHeight, fills, 0, 0, strokeC, noStrokeSurf, mask);
+    texture.pop();
+}
+
+
+function drawCylinderbox(texture, sWidth, sHeight, fills, sX, sY, strokeC, noStrokeSurf, mask=false) {
+    let sh = sHeight;
+    let cw = sWidth;
+    if (mask) {
+        texture.fill(0);
+    } else {
+        texture.fill(255);
+    }
+    if (fills) {
+        texture.fill(180);
+    } else {
+        texture.fill(255);
+    }
+    if (mask) {
+        texture.fill(0);
+    }
+    if (noStrokeSurf) {
+        texture.noStroke();
+    }
+    texture.push();
+    texture.strokeWeight(1);
+    texture.rotateX(QUARTER_PI);
+    // texture.translate(0, sHeight, -100);
+    let gridSpacing = width * 0.05; // 5% of window width
+    for (let x = -width; x < width; x += gridSpacing) {
+      for (let y = -height; y < height; y += gridSpacing) {
+        if (mask == false) {
+            texture.line(x, -height, x, height);
+            texture.line(-width, y, width, y);
+        }
+      }
+    }
+    texture.strokeWeight(3);
+    texture.pop();
+    texture.translate(0, -sh, 0);
+    texture.rotateX(-QUARTER_PI);
+
+    texture.push();
+    texture.rotateX(HALF_PI)
+    texture.translate(0, 5, -sh * 0.56);
+    // if (mask == false) {
+    //     texture.noFill();
+    // }
+    texture.ellipse(0, cw/2, cw, cw*3);
+    texture.pop();
+    if (mask) {
+        texture.fill(0);
+    } else {
+        texture.fill(255);
+    }
+    if (fills) {
+        texture.fill(180);
+    } else {
+        texture.fill(255);
+    }
+    if (mask) {
+        texture.fill(0);
+    }
+    if (noStrokeSurf) {
+        texture.noStroke();
+    }
+
+    
+    for (let i = 0; i < cylinderLayers; i++) {
+        texture.cylinder(cw, sh);
+
+        texture.push();
+        texture.rotateX(HALF_PI)
+        texture.translate(0, 5, -sh * 0.44);
+        texture.circle(0, 0, 2*cw+2)
+        texture.pop();
+
+        noStroke();
+        texture.cylinder(cw + 2, sh, 80, 80, true, false);
+        if (noStrokeSurf) {
+            texture.noStroke();
+        } else {
+            texture.stroke(strokeC);
+            texture.strokeWeight(3);
+        }
+        // cylinder([radius], [height], [detailX], [detailY], [bottomCap], [topCap])
+        // texture.line(cw, -sh, cw, 0);
+        texture.translate(0, -sh, 0);
+        // texture.push();
+        // // texture.translate(0, 0, sh * sin((millis() / 1000.0) * TWO_PI));
+        // texture.translate(-10, 0, sh*0.8);
+        // texture.line(cw, sh*0.5 - 2, cw, sh*1.5-5);
+        // texture.pop();
+        texture.push();
+        texture.rotateX(HALF_PI)
+        texture.translate(0, 0, -sh * 0.48);
+        texture.circle(0, 5, 2*cw+2)
+        texture.pop();
+        
+        cw *= 0.5;
     }
 }

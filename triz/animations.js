@@ -12,6 +12,14 @@ var rCol = [];
 var mStroke;
 
 
+/**
+* @description The given function is a simplification of the animation of a clock
+* hand. It creates an arrowhead shape at the desired location and angle using the
+* `arc()` function.
+* 
+* @returns { any } The `segmentation()` function draws five arcs on the screen with
+* alternating colors (a gap between each arc).
+*/
 function segmentation() {
   ani.clear();
   ani.noStroke();
@@ -30,6 +38,17 @@ function segmentation() {
   start += inc;
 }
 
+/**
+* @description The given function "takeout" animates a three-part circle arc motion
+* using JavaScript's HTML5 canvas. It clears the previous drawings and sets up the
+* colors for animation. Then it calculates new x- and y-coordinates for each circular
+* segment using sine functions and absolute values of input variables to control
+* positioning and scale (using `millis()`).
+* 
+* @returns { any } The `takeout()` function returns none or no value as it does not
+* have a return statement. It only modifies the `ani` object by setting its attributes
+* and filling the arc with different colors.
+*/
 function takeout() {
   ani.clear();
   ani.noStroke();
@@ -43,6 +62,18 @@ function takeout() {
   ani.arc(aniWidthOn2 - updateValX, aniHeightOn2 + updateValY, cr, cr, HALF_PI, PI);
 }
 
+/**
+* @description The `localquality()` function creates and updates an animation for a
+* drawing tool that allows the user to draw with a pencil.
+* 
+* @returns { any } The `localquality` function takes no arguments and returns no
+* value. It is a draw() function that modifies the Animation object `ani` by drawing
+* shapes and images on it using the `aniLayers` object.
+* 
+* The function first clears the `ani` object and sets the stroke weight and color.
+* Then it calculates the current time (in seconds) based on the system clock and
+* uses this value to determine which of several conditional statements to execute.
+*/
 function localquality() {
   ani.clear();
   ani.strokeWeight(mStroke);
@@ -102,6 +133,15 @@ function localquality() {
   }
 }
 
+/**
+* @description The `asymmetry()` function draws a series of circles and rectangles
+* on the canvas using different colors and scales based on a time-dependent wobble
+* effect.
+* 
+* @returns { any } The `asymmetry()` function returns nothing (i.e., `undefined`)
+* as it does not have a return statement. It modifies the canvas context (`ani`) and
+* performs animation using various methods such as `arc`, `rect`, and `circle`.
+*/
 function asymmetry(){
   ani.clear();
   ani.noStroke();
@@ -127,6 +167,24 @@ function asymmetry(){
   ani.circle(aniWidthOn2 + wobble, aniHeightOn2, icr);
 }
 
+/**
+* @description This function renders a visual representation of a sound wave using
+* animations.
+* 
+* @returns {  } The output returned by the `merging` function is a series of lines
+* and curves drawn on the canvas using the provided `ani` object. Specifically:
+* 
+* 	- The function clears the canvas and sets the stroke color to the first element
+* of the `rCol` array.
+* 	- It then defines several variables and arrays used for drawing the lines and curves.
+* 	- The main loop of the function iterates over four times to create four series
+* of lines and curves. For each iteration:
+* 	+ It sets the stroke color to the second element of the `rCol` array.
+* 	+ It draws a line from `gap` to `gap2` with an inclination based on the current
+* position within the animation.
+* 	+ It draws several lines connecting the current point to other points along the
+* animation path.
+*/
 function merging(){
   ani.clear();
   ani.stroke(rCol[0]);
@@ -167,6 +225,34 @@ function merging(){
   }
 }
 
+/**
+* @description This function creates an array of vertices for a scalene equilateral
+* triangle with sides of length 'l'. It takes two parameters 'x' and 'y' as the
+* center coordinates of the triangle and a third parameter 'normal' which specifies
+* if the vertices should be normalized or not. If 'normal' is true(default), then
+* the function creates 6 vertices forming an equilateral triangle with side length
+* 'l' centered at (x*, y*).
+* 
+* @param { number } x - The `x` input parameter is used to calculate the position
+* of the equilateral triangle's vertices.
+* 
+* @param { number } y - The `y` input parameter sets the height of the equilateral
+* triangle.
+* 
+* @param { number } l - The `l` input parameter is used to set the length of the
+* sides of the equilateral triangle.
+* 
+* @param { boolean } normal - The `normal` input parameter is used to specify whether
+* the triangle should be formed with its vertices at normal distance from the origin
+* (default: `false`), or with its vertices on the circumcircle of a circle passing
+* through the origin and two given points (alternative: `true`).
+* 
+* @returns { array } This function takes a point `x` and a length `l`, and returns
+* an array of six vertices that form an equilateral triangle with sides of length
+* `l`. If the `normal` parameter is set to `true`, then the vertices are arranged
+* so that the normal (i.e., perpendicular) to the triangle's plane passes through
+* the center of the triangle.
+*/
 function equiTriangle(x, y, l, normal=false){
   vertices = [];
   l = l * sin(60);
@@ -194,6 +280,14 @@ function equiTriangle(x, y, l, normal=false){
   return vertices;
 }
 
+/**
+* @description This function renders an animation of a rotating wheel with a
+* wedge-shaped gap.
+* 
+* @returns { any } The output of the `universality` function is a animated graphical
+* representation of a wedge shape made up of two triangles and a circle. The function
+* takes no arguments and returns none.
+*/
 function universality(){
   ani.clear();
   ani.noStroke();
@@ -249,6 +343,16 @@ function universality(){
   ani.circle(ballx, t2y, gapOn2);
 }
 
+/**
+* @description The function "matryoshka" draws a rotating series of nested circles
+* using recursion. It takes no input parameters and has no return value. It uses the
+* Anime library to draw arcs and fill them with different colors.
+* 
+* @returns { any } The output returned by the `matryoshka` function is a sequence
+* of nested arcs that spiral outwards from the center of the canvas. Each arc has a
+* different color and size based on the value of `timer`, which is calculated using
+* the current time value (`millis()`) and the base value of 700.
+*/
 function matryoshka() { // yes I should use recursion here
   ani.clear();
   ani.noStroke();
@@ -270,6 +374,16 @@ function matryoshka() { // yes I should use recursion here
   ani.arc(aniWidthOn2, aniHeightOn2 + (timer * mdOn2) + mdOn2, majorDim, majorDim, TWO_PI, PI);
 }
 
+/**
+* @description This function is drawing a simple animation of two ellipses colliding
+* and merging into one. It uses the current timestamp (in milliseconds) to adjust
+* the position and angle of the ellipse elements using sine and cosine waves.
+* 
+* @returns {  } The `antiweight` function returns nothing and draws two triangles
+* and one rectangle on the canvas using the given dimensions and colors. The drawing
+* involves filling the background with a color and then drawing lines and shapes
+* using different stroke weights and colors to create a visual effect.
+*/
 function antiweight() {
   ani.clear();
   let axs, ays, axe, aye;
@@ -305,6 +419,13 @@ function antiweight() {
   ani.triangle(axe, aye + mStroke, axe-gap, aye+gap2, axe+gap, aye+gap2);
 }
 
+/**
+* @description The `pantiactions` function is used to draw a variety of animations
+* and graphics on top of an existing canvas context (ani).
+* 
+* @returns { any } The `pantiactions` function is a complex animation that generates
+* a series of curved lines and circles on a canvas using the Arduino `ani` library.
+*/
 function pantiactions(){
   ani.clear();
   let cx = ani.width-(gap + gapOn2); //cy = gap
@@ -376,6 +497,37 @@ function pantiactions(){
   ani.arc(osc-gapOn4/2, ani.height-gapOn2, gapOn4, gapOn4, 0, PI);
 }
 
+/**
+* @description This function calculates which element of the array `pArr` should be
+* returned based on the values of `sin` and `cos` of the current time `now` divided
+* by the period `period` shifted by `shift`. It uses two sinusoidal comparators to
+* generate a binary array.
+* 
+* @param { number } period - The `period` input parameter specifies the period of
+* the waveform that the function is generating.
+* 
+* @param { number } shift - The `shift` input parameter adds a constant value to the
+* `now/period` calculation when computing the sine and cosine values.
+* 
+* @param { number } now - The `now` input parameter represents the current time
+* measured as milliseconds since the epoch (January 1st 1970 at midnight UTC), and
+* is used to determine the value of the trigonometric functions `sin` and `cos`
+* within the function.
+* 
+* @param { boolean } invert - The `invert` input parameter changes the order of the
+* returned array based on the value of `sin()` and `cos()`.
+* 
+* @returns { integer } The output returned by the `countTo3` function is one of the
+* four values: 0 (first argument), 1 (second argument), 2 (third argument), or 3
+* (fourth argument).
+* 
+* The function takes three arguments: `period`, `shift`, and `now`. It calculates
+* the value of two trigonometric functions (`sin` and `cos`) at a point `now` that
+* is divided by the period `period`, and uses those values to select one of four
+* possible outputs from an array of values (`pArr`). The output is determined by the
+* current values of `t1` (a function of `now/period + shift`) and `t2` (a function
+* of `now/period + shift`).
+*/
 function countTo3(period, shift=0, now=millis(), invert=false){
   let t1 = sin(now/period + shift) > 0;
   let t2 = cos(now/period + shift) > 0;
@@ -386,12 +538,37 @@ function countTo3(period, shift=0, now=millis(), invert=false){
   return pArr[t1 + 2*t2];
 }
 
+/**
+* @description This function counts from 1 to 15 using two nested recurrence relations:
+* `countTo3()` and `countTo4()`.
+* 
+* @param { number } period - The `period` input parameter specifies the number of
+* milliseconds to count up to before returning the result.
+* 
+* @param { number } now - The `now` input parameter passed to `countTo3` and `countTo15`
+* is a timestamp (in milliseconds) that determines the current count position within
+* the cycle.
+* 
+* @param { boolean } invert - The `invert` input parameter specifies the direction
+* of the counting. When set to `false`, the function counts forward from 0 to the
+* given value (major component).
+* 
+* @returns { integer } The output returned by this function is a value between 0 and
+* 15 that is the sum of two values: a "major" component and a "minor" component.
+*/
 function countTo15(period, now=millis(), invert=false) {
   let major = 4 * countTo3(period*4, PI/4, now, invert);
   let minor = countTo3(period, 0, now, invert);
   return major + minor;
 }
 
+/**
+* @description The `aniRulers` function draws two horizontal lines and two vertical
+* lines on the canvas using the `stroke()` and `line()` methods of the `ani` object.
+* 
+* @returns {  } The output of the `aniRulers` function is two vertical lines drawn
+* on the canvas representing the gutter (or margin) around the animated visualization.
+*/
 function aniRulers(){
   ani.stroke(0);
   ani.strokeWeight(1);
@@ -401,6 +578,15 @@ function aniRulers(){
   // ani.line(0, aniHeightOn2 + gap, ani.width, aniHeightOn2 + gap);
 }
 
+/**
+* @description The function "preactions" prepares the canvas for an animation of a
+* transportation system by clearing the previous state and setting up the current
+* state with houses (dark blue squares), warehouses (pink square), sats (red squares),
+* and gap (white space) on the screen.
+* 
+* @returns { array } The `preactions` function draws a simple transportation system
+* animation on the canvas. It takes no arguments and returns undefined.
+*/
 function preactions(){
   ani.clear();
   ani.rectMode(CENTER);
@@ -466,6 +652,31 @@ function preactions(){
   ani.rect(0, 0, warehouse[0] - (gap * 1.05), ani.height);
 }
 
+/**
+* @description This function takes a source position `s`, a destination position
+* `d`, a movement period `period`, and an optional phase parameter `phase`. It returns
+* the new position of the movement after a certain amount of time has passed.
+* 
+* @param { array } s - The `s` input parameter represents the starting point of the
+* trajectory.
+* 
+* @param { array } d - The `d` input parameter specifies the distance between the
+* starting point and the ending point of the delivery path.
+* 
+* @param { number } period - The `period` input parameter determines the frequency
+* of the oscillation.
+* 
+* @param { number } phase - The `phase` input parameter determines the index of the
+* function to use from the `myFunc` array for calculating the X and Y coordinates.
+* 
+* @returns { array } The function `deliver` takes a source `s`, a destination `d`,
+* a period `millis()` / period) and an optional phase value. It uses the values from
+* the sources array `myFunc` (which contains sinusoidal functions of different
+* frequencies) to move the point `s` towards the point `d`.
+* 
+* The output returned by the function is an array of two values representing the new
+* coordinates `x` and `y`.
+*/
 function deliver(s, d, period, phase=0){
   let myFunc = [sin, cos, sin, cos];
   let x = s[0] + abs(myFunc[phase](millis()/period)) * (d[0] - s[0]);
@@ -473,6 +684,17 @@ function deliver(s, d, period, phase=0){
   return [x, y];
 }
 
+/**
+* @description The `beforehandcushioning` function prepares the animation canvas by
+* clearing it and setting the stroke weight. It then draws several geometric shapes
+* to create a "cushioning" effect around the center of the canvas.
+* 
+* @returns { any } The `beforehandcushioning` function does not return any value.
+* Instead of return undefined statement as it ends without any return statements or
+* assigning the values to any variables.
+* It fills different areas of the animation with different colors ranging from rCol[0]
+* - rCol[2] then creates a line and rectangle and circle for drawing.
+*/
 function beforehandcushioning(){
   ani.clear();
   ani.rectMode(CENTER);
@@ -504,6 +726,23 @@ function beforehandcushioning(){
   ani.rectMode(CORNER);
 }
 
+/**
+* @description This function smooths out a square wave using a sine and cosine curve
+* to create a smooth transition between the high and low states of the square wave.
+* 
+* @param { number } period - The `period` input parameter controls the frequency of
+* the oscillation generated by the smoothSquare function.
+* 
+* @param { number } now - The `now` input parameter controls the phase of the
+* smoothSquare function.
+* 
+* @param { integer } shift - The `shift` input parameter advances the phase of the
+* sinusoid by the given value.
+* 
+* @returns { number } This function takes three arguments: `period`, `now`, and
+* `shift`. It calculates the sinusoidal position of the input `now` relative to the
+* period `period`, with an offset `shift`.
+*/
 function smoothSquare(period, now=millis(), shift=0){
   let st = sin(now/period + shift);
   let ct = cos(now/period + shift);
@@ -518,6 +757,17 @@ function smoothSquare(period, now=millis(), shift=0){
   return result
 }
 
+/**
+* @description The `equipotentiality()` function animates the movement of a boat on
+* the screen using the Arduino `analyzer` library. It draws the boat's hull and mast
+* on a 2D graphical canvas with varying width and gap settings based on the input
+* signal 't', which smoothly moves the boat between three possible positions.
+* 
+* @returns { any } The output returned by the `equipotentiality` function is a
+* animated sketch of a boat sailing on a waves with a mast rising and falling. The
+* function takes no arguments and uses the `millis()` function to control the animation
+* speed.
+*/
 function equipotentiality(){
   ani.clear();
   ani.rectMode(CORNER);
@@ -572,6 +822,13 @@ function equipotentiality(){
   ani.line(2*aniWidthOn3, l2, 2*aniWidthOn3, (aniHeightOn3 * 2) + gap);
 }
 
+/**
+* @description This function draws an animation of a shape that is rectangular with
+* rounded corners and has a wiggling nail at the top.
+* 
+* @returns {  } The output returned by the `dothingsbackwards()` function is a drawn
+* animation of a wave-like shape made up of three rectangles and a triangle.
+*/
 function dothingsbackwards() {
   ani.clear();
   ani.noStroke();
@@ -598,6 +855,14 @@ function dothingsbackwards() {
   ani.triangle(nailx, vy1, nailx, vy2, nailx + gap, vy3);
 }
 
+/**
+* @description The function `curvature` draws a quarter-circle and two rectangle on
+* an animation canvas using three different colors.
+* 
+* @returns { object } The `curvature()` function creates and animates a curve using
+* three rounded rectangles and two circles. It takes no input parameters and returns
+* none.
+*/
 function curvature(){
   ani.clear();
   let per = 500;
@@ -625,6 +890,17 @@ function curvature(){
   ani.line(mcx, mcy, 2 * aniWidthOn3 + tx1 * cr + gapOn4/2, tb + cr * 1.5);
 }
 
+/**
+* @description This function creates and animates a dynamically sized sinusoidal
+* wave using JavaScript's `AnimoJS` library. It sets up layers for the wave animation
+* and positions them on the screen based on the position of the mouse cursor.
+* 
+* @returns {  } The `dynamics()` function creates and animates a dynamic sine wave
+* using JavaScript and the HTML5 canvas element. The output of the function is an
+* animated visual representation of a sine wave with adjustable amplitude and
+* frequency. The animation cycles through three different colors and displays two
+* rectangles at the top and bottom of the canvas.
+*/
 function dynamics() {
   if (!('dynSin' in aniLayers)){
     aniLayers['dynSin'] = createGraphics(int(aniWidthOn2), gap2);
@@ -674,6 +950,22 @@ function dynamics() {
   ani.image(aniLayers['dynSin'], aniWidthOn2, aniHeightOn2);
 }
 
+/**
+* @description The `partialorexcessive` function draws a dynamic starry background
+* on an animation canvas using the Anaframework library. It takes into account the
+* current time since the last frame and updates the drawing based on that.
+* 
+* @returns {  } The output returned by the `partialorexcessive` function is a drawn
+* animation that consists of two main components:
+* 
+* 1/ A background fill (using the color `rCol[prevInd]` or `rCol[ind]`) with a
+* gradually changing rectangular shape.
+* 2/ A series of stars (drawn using the `star` function) with increasing brightness
+* and size that move horizontally across the screen.
+* 
+* The animation is based on the current time (`now`) and the interval between each
+* frame (`per`).
+*/
 function partialorexcessive() {
   let now = millis();
   let per = 500;
@@ -722,6 +1014,28 @@ function partialorexcessive() {
   // ani.square( sp, aniHeightOn2 - gapOn2, gap);
 }
 
+/**
+* @description This function draws a star shape with a given number of points using
+* the provided radius and centered at the origin.
+* 
+* @param { number } x - The `x` input parameter is used as the center of the star shape.
+* 
+* @param { string } y - The `y` input parameter determines the starting position of
+* the stars along the y-axis.
+* 
+* @param { number } radius1 - The `radius1` parameter sets the radius of the smaller
+* stars.
+* 
+* @param { number } radius2 - The `radius2` input parameter specifies the radius of
+* the larger stars to be drawn.
+* 
+* @param { number } npoints - The `npoints` input parameter specifies the number of
+* points to be generated by the star() function.
+* 
+* @returns { any } This function takes six arguments: `x`, `y`, `radius1`, `radius2`,
+* `npoints`, and returns `null`. The function draws a star using a recursive algorithm
+* with `npoints` points. Each point is a vertex of the shape.
+*/
 function star(x, y, radius1, radius2, npoints) {
   let angle = TWO_PI / npoints;
   let off = HALF_PI - angle;
@@ -738,6 +1052,13 @@ function star(x, y, radius1, radius2, npoints) {
   ani.endShape(CLOSE);
 }
 
+/**
+* @description This function draws an animation of a truck on an HTML5 canvas using
+* the createGraphics() method.
+* 
+* @returns {  } The output returned by the `drawTruck` function is a modified version
+* of the original `aniLayers` object with new properties and attributes added to it.
+*/
 function drawTruck() {
   if (!('truck' in aniLayers)){
     aniLayers['truck'] = createGraphics(ani.width, ani.height);
@@ -763,6 +1084,21 @@ function drawTruck() {
   }
 }
 
+/**
+* @description This function "anime" (a variable of the function another dimension)
+* draws a rotating circle using the provided dimensions and colors and has various
+* other components such as:
+* 
+* 	- Animated line moving based on elapsed time between max and min lengths.
+* 	- Oscillation effect created by multiplying sine and cosine functions with time
+* passed as parameters.
+* 
+* In essence it animates a spinning semi-truck made up of rectangles that light up
+* accordingly.
+* 
+* @returns { any } The function `annedimension` draws a truck and road background
+* with an animated wave-like movement on the screen using CSS3 animations.
+*/
 function anotherdimension(){
   drawTruck()
   ani.clear();
@@ -801,6 +1137,12 @@ function anotherdimension(){
   ani.stroke(0);
 }
 
+/**
+* @description This function draws a vibrating rectangle using the HTML5 canvas API.
+* 
+* @returns { any } The `vibrations()` function generates a waving animation of two
+* rectangles on top of each other with alternating colors.
+*/
 function vibrations() {
   ani.clear();
   ani.noStroke();
@@ -827,6 +1169,15 @@ function vibrations() {
   ani.rectMode(CORNER);
 }
 
+/**
+* @description This function animates a rectangle with a circular fill pattern using
+* CSS graphics on a canvas element.
+* 
+* @returns { any } The output returned by the `periodicaction()` function is a series
+* of geometric shapes and colors that repeat periodically on the screen. The shapes
+* include circles and squares with different sizes and positions on the screen. The
+* colors used are based on an array `rCol` containing two values.
+*/
 function periodicaction(){
   ani.clear();
   ani.rectMode(CENTER);
@@ -876,6 +1227,33 @@ function periodicaction(){
   ani.rectMode(CORNER);
 }
 
+/**
+* @description The `continuityofusefulaction()` function animates a water-like motion
+* on a rectangular canvas using CSS animations. It progressively paints a curve of
+* circles with different radii and colors based on the angle of rotation. The circles
+* are arranged to give the appearance of ripples spreading out from the center of
+* the canvas.
+* 
+* @returns {  } The `continuityofusefulaction` function is a non-standard arrow
+* function that takes no arguments and returns a value computed using the animation
+* parameters `per`, `gap`, `mStroke`, `aniWidthOn2`, `aniHeightOn3`, `gapOn2`,
+* `gapOn4`, and `lh`. The output returned by this function is the result of animating
+* the graphical elements on the screen based on the current time `millis()/per`
+* passed as an argument.
+* 
+* Here's a concise description of the function's output:
+* 
+* 1/ It starts by clearing and resetting the canvas.
+* 2/ Based on the current time `millis()/per`, it animates different geometric shapes
+* using the provided animation parameters. These shapes include circles., ellipses
+* ,triangles  and rectangles with varying fills and strokes.
+* 3/ Depending on the time value 0 or greater/less than a predefined threshold
+* (sin(millis()/per)) to alternate between filling some elements (with different
+* colors) while keeping others (stroked and non-filled) animated simultaneously.
+* This gives it an animated  effect with continuous transitions over the full cycle.
+* 4/ At certain times during the animation process., some elements might not be drawn
+* ( based on conditionals `timer > 0` / `< 0` check inside if-else statement).
+*/
 function continuityofusefulaction() {
   ani.clear();
   ani.noStroke();
@@ -932,6 +1310,15 @@ function continuityofusefulaction() {
   ani.rect(ani.width - (aniWidthOn3), aniHeightOn3/2, gap2, 2*aniHeightOn3);
 }
 
+/**
+* @description The `skipping()` function creates an animation that gradually fills
+* a circle with colors based on the level of the receiver. It uses the `ani` object
+* to perform drawing operations and create the animation.
+* 
+* @returns { any } The `skipping` function returns nothing (void) and displays a
+* circle that animates from color 141 (white) to color 255 (full color) over 3 cycles.
+* The animation slows down towards the end based on the timer value between 0-0.8.
+*/
 function skipping() {
   ani.clear();
   // let c = [color([141, 85, 36]),color([198, 134, 66]),color([224, 172, 105]),color([241, 194, 125]),color([255, 219, 172])];
@@ -974,6 +1361,18 @@ function skipping() {
   ani.pop();
 }
 
+/**
+* @description The `drawCar` function draws a car on the screen using the Animatiq
+* framework. It creates or updates the graphics for the car and its windows if they
+* don't already exist and then calls the `beginShape`, `curveVertex`, and `endShape`
+* methods to draw the car and windows as a series of curves.
+* 
+* @returns { any } The `drawCar` function returns nothing (i.e., `undefined`) as it
+* does not have a return statement. The function modifies the `aniLayers` object by
+* adding several graphics elements to it. These elements include a car body and two
+* windows. The function also fills certain areas of the car with colors and draws
+* circles to represent headlights and wheels. However.
+*/
 function drawCar(){
   if (!('car' in aniLayers)){
     aniLayers['car'] = createGraphics(ani.width, ani.height);
@@ -1029,6 +1428,16 @@ function drawCar(){
   }
 }
 
+/**
+* @description The `harmtobenefit` function is a JavaScript animation function that:
+* 
+* 	- Draws a car with different shades of blue using the `ani` object.
+* 	- Animates the car's position and size using the `smoothSquare` function.
+* 	- Tints the car's window with a pale yellow color using the `lerpColor` function.
+* 
+* @returns { any } The `harmtobenefit()` function animates a car and returns nothing
+* (i.e., undefined) as it does not have a return statement.
+*/
 function harmtobenefit() {
   drawCar();
   ani.clear();
@@ -1053,6 +1462,48 @@ function harmtobenefit() {
   ani.rectMode(CORNER);
 }
 
+/**
+* @description This function draws the flink bench lamp (FB) oscilloscope-like
+* waveform visualization on top of an animation canvas using Paper.js.
+* 
+* @returns { any } The `drawFBLoop` function is a procedural drawing function that
+* creates and modifies layer elements on top of an input image (referred to as 'ani')
+* using graphics-related operations such as stroke weight management using the
+* 'mStroke' variable as its primary manipulating parameter; various shapes are created
+* through rectangles using appropriate arguments (i.e., center align); lines are
+* created horizontally connecting three non-coplanar points – (A1), point A(the one
+* not explicitly stated but implied to be the furthest right vertical anchor of three
+* connecting rectangular layers of the graphic shape forming the triangle) - then
+* there’s another instance of it done below an arrow shape (creates arrow down from
+* left) pointing towards point C – using various coordinate pairs:aniHeightOn4/3 and
+* targetX coordinate to determine where one rectangle's bottom edge intersects
+* target's horizontal segment just like point C but on an arc line(with a specified
+* length) above that same intersection point creating yet another triangle by
+* repositioning two previously used endpoints as vertices for said new smaller
+* inscribed shape created upon subtractive intersection math within specific parameters
+* determined before drawing operations commenced involving circles centers near
+* midpoint distance calculation taking each vertical distance delta value divided
+* by respective line endpoint differential between endpoints subtractively compared
+* before creating multiple concentric circles or an overlapping 'ringed effect.'
+* This procedure yields several geometric forms:  rectangles used to represent signals
+* on three layers - one solid color green (mStroke parameter not equal zero) - two
+* additional triangulated shape combinations forming rightward arrows which help
+* illustrate input signals propagation routes from start and endpoint connections
+* when overlaid alongside one another via clipping- masked superimposition effect
+* (the overlay technique referenced inside draw FB loop function near its end);
+* circles are added upon this composition enhancing visualization by creating
+* concentric rings surrounding certain key features of interest on each graphics
+* layer or frame to represent potential movement dynamics based around internal
+* components working under computational parameters controlled by external stimuli
+* acting upstream which could involve user interaction manipulations and/or algorithmic
+* determinants - such processes help manage complexity inherent into system function
+* calls which determine its operation cycles' outcome
+* 
+* When everything has been prepared within each frame – a composite set consisting
+* from all previous frames rebuilt into composite video using ani Layers[] object’s
+* array operations(animations could also refer to video still capture states here)
+* The return value remains unknown so no specific format is claimed
+*/
 function drawFBLoop() {
   if (!('fbl' in aniLayers)){
     aniLayers['fbl'] = createGraphics(ani.width, ani.height);
@@ -1124,6 +1575,17 @@ function drawFBLoop() {
   }
 }
 
+/**
+* @description The `feedback` function creates a simulation of a servo motor control
+* system using animations. It displays various signals and target values as rectangles
+* on the screen. It takes into account feedback loops with delays and calculates an
+* error between the input signal and the target value to adjust the output signal accordingly.
+* 
+* @returns { any } The `feedback()` function returns no value. It is a drawing
+* function that updates and displays the graphics for a simplified closed-loop control
+* system using Animations (ani) library. The function draws signals and errors on
+* the canvas using various colors and rectangles based on the input and output values.
+*/
 function feedback(){
   ani.clear();
   drawFBLoop();
@@ -1178,6 +1640,16 @@ function feedback(){
   ani.pop();
 }
 
+/**
+* @description The function `drawCarpentry()` creates and animates a simple nail
+* being driven into wood using CSS graphics.
+* 
+* @returns { any } The `drawCarpentry` function returns nothing (i.e., it does not
+* return any value) and only modifies the `aniLayers` object by adding a new layer
+* called "nail" and modifying the existing "nail" layer. The function draws a rectangle
+* and a triangle on the "nail" layer using the `rectMode()`, `rect()`, and `triangle()`
+* methods.
+*/
 function drawCarpentry() {
   if (!('nail' in aniLayers)) {
     aniLayers['nail'] = createGraphics(gap, gap2);
@@ -1195,6 +1667,26 @@ function drawCarpentry() {
   }
 }
 
+/**
+* @description This function animates a carpentry themed graphics using the canvas
+* element. It sets up a simple sine wave animation to drive the movement of different
+* elements on the screen.
+* 
+* @returns { any } The output returned by the `intermediary` function is a single
+* `ani` object representing the animated sequence of rectangles and circles. The
+* function does not return anything explicitly but rather modifies the `ani` object's
+* attributes and properties to set up the animation.
+* 
+* Here's a concise description of what the output looks like:
+* 
+* 	- Aniobject with several rectangular elements of various dimensions and colors
+* superimposed over one another on the same canvas. Some elements have round corners
+* (animated by `sin()` values).
+* 
+* The animation runs for approximately 500 milliseconds (set by `per`). It shows a
+* sequence of changing colors and shapes using two differently sized circles and
+* several rectangles of varying heights. Gaps separate some of the elements.
+*/
 function intermediary() {
   drawCarpentry();
   ani.clear();
@@ -1223,6 +1715,35 @@ function intermediary() {
   ani.image(aniLayers['nail small'], 2 * aniWidthOn3, nh);
 }
 
+/**
+* @description This function generates an polygon outline of a circle with the given
+* radius and number of points using the arc() function to create smooth curves.
+* 
+* @param { number } x - The `x` input parameter sets the starting position of the
+* vertices along the x-axis.
+* 
+* @param { number } y - In the `polygon()` function above:
+* 
+* The `y` input parameter specifies the starting y-coordinate of the polygon.
+* 
+* @param { number } radius - The `radius` input parameter determines the length of
+* the line segments that are drawn to form the polygon.
+* 
+* @param { number } npoints - The `npoints` input parameter specifies the number of
+* points that the polygonal shape should have.
+* 
+* @returns {  } The `polygon` function returns a closed shape consisting of multiple
+* lines and corners that form a polygon. It takes five parameters:
+* 
+* 	- `x` and `y`: the starting coordinates of the polygon (in the canvas coordinate
+* system)
+* 	- `radius`: the radius of the polygon vertices
+* 	- `npoints`: the number of sides of the polygon
+* 
+* The function calculates the angle for each side of the polygon based on the `npoints`
+* parameter and then draws a line from the starting point to the ending point of
+* each side.
+*/
 function polygon(x, y, radius, npoints) {
   let angle = TWO_PI / npoints;
   let off = angle - HALF_PI;
@@ -1235,6 +1756,16 @@ function polygon(x, y, radius, npoints) {
   ani.endShape(CLOSE);
 }
 
+/**
+* @description This function draws a procedurally generated animation of a triangle-shaped
+* object with circular and square components using the HTML5 canvas context's drawing
+* methods.
+* 
+* @returns { any } The output returned by the `selfservice` function is not defined
+* or specified. The function only modifies the values of the variables `ani`, `per`,
+* `size`, `t`, `ramp`, `iramp`, `px`, `py`, `rx`, and `ry`, but it does not return
+* any value.
+*/
 function selfservice() {
   ani.clear();
   ani.rectMode(CENTER);
@@ -1289,6 +1820,15 @@ function selfservice() {
   ani.rectMode(CORNER);
 }
 
+/**
+* @description The `drawTrophy()` function creates and draws a trophy symbol using
+* the `aniLayers` array. It sets the fill color and no stroke for the symbol.
+* 
+* @returns { any } The `drawTrophy()` function creates a new Graphics object named
+* "trophy" and modifies its properties to draw a trophy outline using rectangular
+* and circular shapes. The output returned by the function is not defined since it
+* does not return any value.
+*/
 function drawTrophy(){
   if (!('trophy' in aniLayers)){
     aniLayers['trophy'] = createGraphics(gap, gap2);
@@ -1303,6 +1843,18 @@ function drawTrophy(){
   }
 }
 
+/**
+* @description The function `copying()` draws a rotating trophy using the Animate
+* library. It sets up the drawing canvas and fills the background with a gradient
+* color. Then it defines variables for the ellipse shape and its position and size
+* calculations. It uses sin and cosine functions to determine how much of the ellipse
+* to show or hide based on the angle of the animation.
+* 
+* @returns { any } The function `copying()` draws a trophy image on an animation
+* canvas using AS3. The output returned by this function is the updated graphics
+* rendering on the animation canvas after the specified changes have been made to
+* the animation's position and scale.
+*/
 function copying(){
   drawTrophy();
   ani.clear();
@@ -1364,6 +1916,15 @@ function copying(){
   ani.imageMode(CORNER);
 }
 
+/**
+* @description The `cheapshort` function animates a simple breakout game using Paper.js.
+* 
+* @returns {  } The output returned by the `cheapshort` function is a animated image
+* object with three parts: the ball (a circle), the wall (a rectangle), and the
+* paddle (a horizontal rectangle). The ball moves horizontally on the screen and can
+* be painted with one of two different colors depending on its position. The wall
+* is static and colored white.
+*/
 function cheapshort() {
   ani.clear();
   ani.noStroke();
@@ -1420,6 +1981,14 @@ function cheapshort() {
   ani.rect(gapOn4, px, gapOn2, gap);
 }
 
+/**
+* @description This function defines an animation loop that draws a series of circles
+* and arcs on the canvas using different colors and shades.
+* 
+* @returns { any } The function "mechanicalsubstitution" produces a 3D animation of
+* two blue circles and one red circle that revolve around a center point with different
+* phases and speeds.
+*/
 function mechanicalsubstitution(){
   ani.clear();
   ani.noStroke();

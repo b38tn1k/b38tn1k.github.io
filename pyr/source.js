@@ -795,6 +795,73 @@ function drawCylinderbox(texture, sWidth, sHeight, fills, sX, sY, strokeC, noStr
 }
 
 
+/**
+* @description This function DrawSTL takes six parameters - texture; swidth; and
+* height of a render Texture as well as the fill and strok color as false; the stroke
+* Color and the values set to zero signifying that mask value =0 and strokes to be
+* true , if there will be any fills=2 or 3 i.e (stroke/line weight.) , which implies
+* no surface for drawings and then performs an action. The exact details of that
+* specific drawing are not apparent within the small code provided ,but generally
+* this is the effect of the given function.
+* 
+* This effect can vary depending on various settings , as each parameter contributes
+* a special characteristic that modifies the image as shown below :
+* 
+* 1/ noStrokeSurface- The absence of any strokes implies mask =false . and a
+* linewidth(strobe Colour ) set to one implies everything is drawn from stokes rather
+* than fills
+* 2/ fill color - True enables it; otherwise false (empty surface), meaning it won't
+* display if the parameter's true values will render them  as colors i.e(fil).
+* 3/ Mask =false and nothing appears(white surface) when everything disappears. Only
+* where light shines. In mask surfaces this surface color can change depending on
+* whether filled and lineweight  parameters are utilised to change fill colors ,as
+* a non-filled image cannot undergo color modifications i.e transparent colors appear
+* differently as per settings of lights =true if light changes a solid surface does
+* too when  all above settings  match. But with both fills set 2 all non-lit stokes
+*   undergo line weight colour
+* 
+* With 6 different functions provided each performing something else.
+* 
+* @param { object } texture - The `texture` input parameter is the HTMLCanvasElement
+* that will be used to render the STL model.
+* 
+* @param { number } sWidth - The `sWidth` input parameter specifies the width of the
+* surface being drawn.
+* 
+* @param { number } sHeight - The `sHeight` input parameter sets the height of the
+* STL mesh that will be drawn.
+* 
+* @param { number } strokeC - The `strokeC` input parameter specifies the color of
+* the stroke (outline) around the 3D surface being rendered.
+* 
+* @param { boolean } lights - The `lights` input parameter determines whether to
+* include lighting effects when drawing the STL.
+* 
+* @param { boolean } fills - The `fills` input parameter determines whether or not
+* to fill the stl mesh with a specific color when drawing it using the provided `texture`.
+* 
+* @param { number } mask - The `mask` input parameter of the `drawSTL` function is
+* a boolean value that determines whether to use a texture mask for the draw operation.
+* 
+* @returns { object } Based on the given code snippet of the `drawSTL()` function:
+* 
+* The output returned by the `drawSTL()` function is void.
+* 
+* Explanation:
+* 
+* 1/ The function starts with a `texture.push()`, which sets up a new stack of texture
+* transformations.
+* 2/ It then rotates the texture by QUARTER_PI/3 around the X-axis and optionally Y-axis.
+* 3/ Next is a possible translation by 0 pixels along the Y-axis and 0 pixels along
+* the X-axis.
+* 4/ The `setupTextureEnvironment()` function sets up the texture environment using
+* the given values of `strokeC` and `lights`.
+* 5/ The actual rendering of the STL surface is done with the `drawActualSTL()`
+* function. This takes the texture parameters such as `sWidth`, `sHeight`, `fills`,
+* `x`, `y`, `strokeC`, `noStrokeSurf`, and `mask` as input.
+* 6/ After all of these transformations have been applied to the texture environment
+* (or after an error has been thrown), the function concludes with `texture.pop()`.
+*/
 function drawSTL(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true, mask=false) {
     // drawCylinder(renderTexture, w, h);
     // drawCylinder(topTexture, w, h, 0, false, false);
@@ -810,6 +877,46 @@ function drawSTL(texture, sWidth, sHeight, strokeC = 255, lights = true, fills =
     texture.pop();
 }
 
+/**
+* @description This function draws an actual STL object on a canvas using a given
+* texture and provides options for stroke color and no-stroke surface.
+* 
+* @param {  } texture - The `texture` input parameter is a Pixi.js Texture object
+* that represents the surface to be drawn.
+* 
+* @param { number } sWidth - The `sWidth` input parameter specifies the scale factor
+* for the width of the surface being drawn.
+* 
+* @param { number } sHeight - The `sHeight` input parameter sets the height of the
+* drawn shape.
+* 
+* @param { boolean } fills - The `fills` input parameter determines whether to fill
+* the stl surface with a color (value of 180) or leave it transparent (value of 255).
+* 
+* @param { number } sX - The `sX` input parameter specifies the starting x-coordinate
+* for drawing the STL surface.
+* 
+* @param { number } sY - The `sY` input parameter controls the vertical position of
+* the surface within the texture atlas.
+* 
+* @param { number } strokeC - The `strokeC` input parameter sets whether or not to
+* draw a stroke around the shape (with color `strokeC`) when calling the `drawActualSTL`
+* function.
+* 
+* @param { boolean } noStrokeSurf - The `noStrokeSurf` input parameter determines
+* whether to turn off the stroke color of the filled surface.
+* 
+* @param { boolean } mask - The `mask` input parameter determines whether the object
+* is drawn with a filled color (if `mask` is `false`) or transparently (if `mask`
+* is `true`).
+* 
+* @returns { object } Based on the code provided: The function "drawActualSTL" accepts
+* various input parameters like "texture", "sWidth", "sHeight", "fills", "sX", "sY",
+* "strokeC", "noStrokeSurf", and "mask" as arguments. It modifies the provided texture
+* object's properties by filling it with colors or modifying its scaling and rotation
+* based on input conditions. However drawActualSTL does not explicitly return anything
+* since none of the statements within its code contain any returned value.
+*/
 function drawActualSTL(texture, sWidth, sHeight, fills, sX, sY, strokeC, noStrokeSurf, mask=false) {
     if (mask) {
         texture.fill(0);

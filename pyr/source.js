@@ -20,8 +20,9 @@ let lightPosX = -1240;
 let lightPosY = -500;
 let lightPosZ = 1000;
 let ambientLevel = 140;
-let mode = 2;
+let mode = 0;
 
+let model;
 /**
 * @description This function preloads a shader program by loading two GLSL files: 
 * "vertex.glsl" and "fragment.glsl".
@@ -30,6 +31,9 @@ let mode = 2;
 */
 function preload() {
     passThroughShader = loadShader("vertex.glsl", "fragment.glsl");
+    model = loadModel('airspace_V1.stl', true);
+    model = loadModel('coarse.stl', true);
+    
 }
 
 /**
@@ -132,7 +136,7 @@ let test_alpha = 0;
 * of `mode` (a variable between 0 and 2).
 */
 function draw() {
-    let styles = 3;
+    let styles = 4;
 
     switch (mode % styles) {
         case 0:
@@ -142,7 +146,12 @@ function draw() {
             drawStyle(renderTexture, topTexture, maskTexture, 150, 100, "hex", -3.1415 / 4, 0);
             break;
         case 2:
-            drawStyle(renderTexture, topTexture, maskTexture, 300, 100, "cyl", test_alpha, 0);
+            drawStyle(renderTexture, topTexture, maskTexture, 300, 80, "cyl", test_alpha, 0);
+            // test_alpha += 0.1;
+            // test_alpha = -HALF_PI
+            break;
+        case 3:
+            // drawStyle(renderTexture, topTexture, maskTexture, 300, 100, "stl", test_alpha, 0);
             // test_alpha += 0.1;
             // test_alpha = -HALF_PI
             break;
@@ -248,6 +257,12 @@ function drawStyle(renderTexture, topTexture, maskTexture, w, h, type, xa, ya) {
         drawCylinder(renderTexture, w, h);
         drawCylinder(topTexture, w, h, 0, false, false);
         drawCylinder(maskTexture, w, h, 0, false, false, true);
+    }
+
+    if (type == "stl") {
+        drawSTL(renderTexture, w, h);
+        drawSTL(topTexture, w, h, 0, false, false);
+        drawSTL(maskTexture, w, h, 0, false, false, true);
     }
 
     outGraphics.shader(passThroughShader);
@@ -579,7 +594,7 @@ function drawHexagonalBox(texture, sWidth, sHeight, fills, sX, sY, mask=false) {
         texture.endShape(CLOSE);
     }
 }
-let cylinderLayers = 3;
+let cylinderLayers = 4;
 /**
 * @description The provided function 'drawCylinder' draws a cylinder using a texture
 * atlas with options for stroke color (default 255), fills (default true), lights
@@ -619,7 +634,8 @@ function drawCylinder(texture, sWidth, sHeight, strokeC = 255, lights = true, fi
     // let noStrokeSurf = lights == true && fills == true && mask == false && strokeC == 255;
     let noStrokeSurf = (strokeC == 255);
     texture.push();
-    texture.rotateX(QUARTER_PI/2);
+    texture.rotateX(QUARTER_PI/3);
+    // texture.rotateY(QUARTER_PI/2);
     // texture.translate(0, sHeight, 0);
     setupTextureEnvironment(texture, strokeC, lights);
     drawCylinderbox(texture, sWidth, sHeight, fills, 0, 0, strokeC, noStrokeSurf, mask);
@@ -719,11 +735,11 @@ function drawCylinderbox(texture, sWidth, sHeight, fills, sX, sY, strokeC, noStr
 
     texture.push();
     texture.rotateX(HALF_PI)
-    texture.translate(0, 5, -sh * 0.56);
+    texture.translate(0, -cw * 0.7, -sh * 0.56);
     // if (mask == false) {
     //     texture.noFill();
     // }
-    texture.ellipse(0, cw/2, cw, cw*3);
+    texture.ellipse(0, cw/2, 1.8*cw, cw*4.5);
     texture.pop();
     if (mask) {
         texture.fill(0);
@@ -744,11 +760,18 @@ function drawCylinderbox(texture, sWidth, sHeight, fills, sX, sY, strokeC, noStr
 
     
     for (let i = 0; i < cylinderLayers; i++) {
-        texture.cylinder(cw, sh);
-
+        if (i == cylinderLayers-1) {
+            sh *= 0.5;
+            texture.translate(0, 0.6*sh, 0);
+        }
         texture.push();
         texture.rotateX(HALF_PI)
-        texture.translate(0, 5, -sh * 0.44);
+        
+        if (i == cylinderLayers-1) {
+            texture.translate(0, 5, -sh * 0.3);
+        } else {
+            texture.translate(0, 5, -sh * 0.44);
+        }
         texture.circle(0, 0, 2*cw+2)
         texture.pop();
 
@@ -760,14 +783,7 @@ function drawCylinderbox(texture, sWidth, sHeight, fills, sX, sY, strokeC, noStr
             texture.stroke(strokeC);
             texture.strokeWeight(3);
         }
-        // cylinder([radius], [height], [detailX], [detailY], [bottomCap], [topCap])
-        // texture.line(cw, -sh, cw, 0);
         texture.translate(0, -sh, 0);
-        // texture.push();
-        // // texture.translate(0, 0, sh * sin((millis() / 1000.0) * TWO_PI));
-        // texture.translate(-10, 0, sh*0.8);
-        // texture.line(cw, sh*0.5 - 2, cw, sh*1.5-5);
-        // texture.pop();
         texture.push();
         texture.rotateX(HALF_PI)
         texture.translate(0, 0, -sh * 0.48);
@@ -776,4 +792,45 @@ function drawCylinderbox(texture, sWidth, sHeight, fills, sX, sY, strokeC, noStr
         
         cw *= 0.5;
     }
+}
+
+
+function drawSTL(texture, sWidth, sHeight, strokeC = 255, lights = true, fills = true, mask=false) {
+    // drawCylinder(renderTexture, w, h);
+    // drawCylinder(topTexture, w, h, 0, false, false);
+    // drawCylinder(maskTexture, w, h, 0, false, false, true);
+    // let noStrokeSurf = lights == true && fills == true && mask == false && strokeC == 255;
+    let noStrokeSurf = (strokeC == 255);
+    texture.push();
+    texture.rotateX(QUARTER_PI/3);
+    // texture.rotateY(QUARTER_PI/2);
+    // texture.translate(0, sHeight, 0);
+    setupTextureEnvironment(texture, strokeC, lights);
+    drawActualSTL(texture, sWidth, sHeight, fills, 0, 0, strokeC, noStrokeSurf, mask);
+    texture.pop();
+}
+
+function drawActualSTL(texture, sWidth, sHeight, fills, sX, sY, strokeC, noStrokeSurf, mask=false) {
+    if (mask) {
+        texture.fill(0);
+    } else {
+        texture.fill(255);
+    }
+    if (fills) {
+        texture.fill(180);
+    } else {
+        texture.fill(255);
+    }
+    if (mask) {
+        texture.fill(0);
+    }
+    if (noStrokeSurf) {
+        texture.noStroke();
+    }
+    texture.push()
+    texture.rotateX(QUARTER_PI)
+    texture.rotateZ(PI)
+    texture.scale(3); // Adjust the scale as needed
+    texture.model(model);
+    texture.pop()
 }

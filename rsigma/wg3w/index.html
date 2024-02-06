@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Number to Animal Converter</title>
+    </head>
+    <body>
+        <h1>Number to Animal Converter</h1>
+        <p>Enter a number (1-20) or a sequence of animal names (e.g., bear cat sheep dog):</p>
+        <input type="text" id="inputField" />
+        <button onclick="convert()">Convert</button>
+        <p id="output"></p>
+
+        <script>
+            const animalMap = {
+                1: "Bear",
+                2: "Cat",
+                3: "Sheep",
+                4: "Dog",
+                5: "Elephant",
+                6: "Lion",
+                7: "Tiger",
+                8: "Horse",
+                9: "Monkey",
+                10: "Giraffe",
+                11: "Kangaroo",
+                12: "Penguin",
+                13: "Dolphin",
+                14: "Panda",
+                15: "Owl",
+                16: "Koala",
+                17: "Rhino",
+                18: "Octopus",
+                19: "Zebra",
+                20: "Fox",
+            };
+
+            const reverseAnimalMap = Object.fromEntries(Object.entries(animalMap).map(([key, value]) => [value.toLowerCase(), key]));
+
+            function convert() {
+                const inputField = document.getElementById("inputField");
+                const output = document.getElementById("output");
+                const inputValue = inputField.value.trim().toLowerCase();
+
+                if (/^\d+(\s\d+)*$/.test(inputValue)) {
+                    // Convert from numbers to animal names
+                    const numbers = inputValue.split(/\s+/).map(Number);
+                    console.log(numbers)
+                    const animalNames = numbers.map((number) => animalMap[number] || "unknown");
+                    output.textContent = animalNames.join(" ");
+                } else {
+                    // Convert from animal names to numbers
+                    const animalNames = inputValue.split(/\s+/);
+                    const numbers = animalNames.map((animalName) => reverseAnimalMap[animalName] || "unknown");
+                    output.textContent = numbers.join(" ");
+                }
+            }
+        </script>
+    </body>
+</html>

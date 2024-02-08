@@ -8,6 +8,8 @@ var DEBUG = true;
 * 
 * @returns { any } The function `keyPressed()` does not return any output or value.
 */
+var cnv;
+var mainCanvas;
 function keyPressed() {
   // chooseIndex();
 }
@@ -112,37 +114,6 @@ function shuffleColrs() {
 * defined or specified. However based on the code it seems that the function sets
 * up various functions or procedures that will be used to process an image.
 * 
-* Here is a list of the functions that are pushed into the `functionList` array:
-* 
-* 1/ `segmentation`
-* 2/ `takeout`
-* 3/ `localquality`
-* 4/ `asymmetry`
-* 5/ `merging`
-* 6/ `universality`
-* 7/ `matryoshka`
-* 8/ `antiweight`
-* 9/ `pantiactions`
-* 10/ `preactions`
-* 11/ `beforehandcushioning`
-* 12/ `equipotentiality`
-* 13/ `dothingsbackwards`
-* 14/ `curvature`
-* 15/ `dynamics`
-* 16/ `partialorexcessive`
-* 17/ `anotherdimension`
-* 18/ `vibrations`
-* 19/ `periodicaction`
-* 20/ `continuityofusefulaction`
-* 21/ `skipping`
-* 22/ `harmtobenefit`
-* 23/ `feedback`
-* 24/ `intermediary`
-* 25/ `selfservice`
-* 26/ `copying`
-* 27/ `cheapshort`
-* 28/ `mechanicalsubstitution`
-* 
 * In essence this function sets up a list of functions to be executed at some point.
 */
 function setupScreen() {
@@ -151,39 +122,18 @@ function setupScreen() {
   } else {
     chooseIndex();
   }
-  createCanvas(windowWidth, windowHeight);
+  mainCanvas = createCanvas(windowWidth, windowHeight);
+  // mainCanvas.style('background-color', 'transparent');
+  // mainCanvas.GL.clearColor(0, 0, 0, 0);
+  // console.log(mainCanvas.GL)
+  // let gl = mainCanvas._renderer.GL;
+  // gl.clearColor(0, 0, 0, 0);
+  
+  cnv = createGraphics(windowWidth, windowHeight);
+
   widthOnTwo = windowWidth / 2;
   heightOnTwo = windowHeight / 2;
   drawCard();
-  functionList = [];
-  functionList.push(segmentation);
-  functionList.push(takeout);
-  functionList.push(localquality);
-  functionList.push(asymmetry);
-  functionList.push(merging);
-  functionList.push(universality);
-  functionList.push(matryoshka);
-  functionList.push(antiweight);
-  functionList.push(pantiactions);
-  functionList.push(preactions);
-  functionList.push(beforehandcushioning);
-  functionList.push(equipotentiality);
-  functionList.push(dothingsbackwards);
-  functionList.push(curvature);
-  functionList.push(dynamics);
-  functionList.push(partialorexcessive);
-  functionList.push(anotherdimension);
-  functionList.push(vibrations);
-  functionList.push(periodicaction);
-  functionList.push(continuityofusefulaction);
-  functionList.push(skipping);
-  functionList.push(harmtobenefit);
-  functionList.push(feedback);
-  functionList.push(intermediary);
-  functionList.push(selfservice);
-  functionList.push(copying);
-  functionList.push(cheapshort);
-  functionList.push(mechanicalsubstitution);
 }
 
 /**
@@ -207,7 +157,6 @@ function setup() {
   if (!DEBUG) {
     shuffle(order, true);
   }
-
   setupScreen();
   textAlign(LEFT, TOP);
   document.body.style.backgroundImage = "url('bg" + str(int(random(0, 5)))+".gif')";
@@ -226,43 +175,50 @@ function setup() {
 * cards when the card game application starts up.
 */
 function draw() {
-  let curr = order[index];
-  textAlign(LEFT, TOP);
   clear();
-  image(cardDeck, 0, 0);
-  image(card, 0, 0);
-  fill(0);
-  textSize(titleTextSize);
-  textStyle(BOLD);
-  text(cards[curr]['title'], textX, textY, textW);
+  drawCnv();
+  image(cnv, 0, 0);
+
+}
+
+function drawCnv() {
+  let curr = order[index];
+  cnv.textAlign(LEFT, TOP);
+  cnv.clear();
+  cnv.image(cardDeck, 0, 0);
+  cnv.image(card, 0, 0);
+  cnv.fill(0);
+  cnv.textSize(titleTextSize);
+  cnv.textStyle(BOLD);
+  cnv.text(cards[curr]['title'], textX, textY, textW);
   let tTextY = textY + titleTextSize;
-  let tL = textWidth(cards[curr]['title']);
+  let tL = cnv.textWidth(cards[curr]['title']);
   while (tL > textW) {
     tTextY += titleTextSize;
     tL -= textW;
   }
   tTextY += titleTextSize * 0.5;
-  textStyle(NORMAL);
-  textSize(tTextSize);
-  text(cards[curr]['text'], textX, tTextY, textW);
+  cnv.textStyle(NORMAL);
+  cnv.textSize(tTextSize);
+  cnv.text(cards[curr]['text'], textX, tTextY, textW);
   functionList[curr]();
-  fill(220);
-  textStyle(BOLD);
-  textSize(titleTextSize);
-  textAlign(RIGHT, BOTTOM);
+  cnv.fill(220);
+  cnv.textStyle(BOLD);
+  cnv.textSize(titleTextSize);
+  cnv.textAlign(RIGHT, BOTTOM);
   // console.log(index);
   if (curr < 9){
-    text("0" + str(curr+1), logoX, logoY);
+    cnv.text("0" + str(curr+1), logoX, logoY);
   } else {
-    text(curr + 1, logoX, logoY);
+    cnv.text(curr + 1, logoX, logoY);
   }
-  image(ani, aniX, aniY);
+  cnv.image(ani, aniX, aniY);
   if (DEBUG){
-    fill(0);
-    stroke(255);
-    strokeWeight(1);
-    textAlign(LEFT, TOP);
-    text("TESTING", 10, 10);
+    cnv.fill(0);
+    cnv.stroke(255);
+    cnv.strokeWeight(1);
+    cnv.textAlign(LEFT, TOP);
+    cnv.text("TESTING", 10, 10);
   }
 }
 

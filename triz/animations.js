@@ -2268,6 +2268,14 @@ function shellsAndFilms() {
 
 }
 
+/**
+ * @description The given function 'eggPan' animates the position and size of an
+ * egg-shaped figure using various methods from Processing's animation library 'ani'.
+ * The animation is defined by two variables 'per' (animation period) and 'currentAngle',
+ * which determine the position and direction of movement. It creates three rectangles
+ * to simulate the desired shape by adjusting positions and sizes during the animation
+ * cycle of 2000 milliseconds.
+ */
 function eggPan() {
     ani.clear();
     let per = 2000;

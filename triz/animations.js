@@ -62,7 +62,6 @@ functionList.push(mechanicalsubstitution);
 functionList.push(pneumaticsAndHydraulics);
 functionList.push(shellsAndFilms);
 
-
 /**
  * @description The given function is a simplification of the animation of a clock
  * hand. It creates an arrowhead shape at the desired location and angle using the
@@ -2194,7 +2193,7 @@ function pneumaticsAndHydraulics() {
     ani.fill(0, 0, 255);
     ani.rect(aniWidthOn2, aniHeightOn4, aniWidthOn2, 3 * aniHeightOn4);
     ani.rect(0, 3 * aniHeightOn4, aniWidthOn2, aniHeightOn4);
-    
+
     ani.fill(100, 100, 100);
     ani.beginShape();
     ani.vertex(aniWidthOn2 - gap, ani.height);
@@ -2207,12 +2206,12 @@ function pneumaticsAndHydraulics() {
     ani.rect(aniWidthOn2 - gap, aniHeightOn2 + gapOn6, gapOn3, aniHeightOn2, gapOn6);
     for (let i = 0; i < 50; i++) {
         ani.fill(0, 200, 200);
-      offy = random(gapOn2)
-      offyPercent = offy / gapOn2 + 0.2
-      offx = (random(gap) - gapOn2) * offyPercent
-      rad = random(gapOn4) * offyPercent
+        offy = random(gapOn2);
+        offyPercent = offy / gapOn2 + 0.2;
+        offx = (random(gap) - gapOn2) * offyPercent;
+        rad = random(gapOn4) * offyPercent;
 
-      ani.circle(aniWidthOn2 - 5*gapOn6 + offx, aniHeightOn2 + 3*gapOn4 + offy, rad )
+        ani.circle(aniWidthOn2 - 5 * gapOn6 + offx, aniHeightOn2 + 3 * gapOn4 + offy, rad);
     }
     ani.fill(255, 0, 0);
     ani.push();
@@ -2229,7 +2228,55 @@ function pneumaticsAndHydraulics() {
 }
 
 function shellsAndFilms() {
-  ani.clear();
-  ani.noStroke();
-  let time = millis();
+    ani.clear();
+    ani.background(204, 171, 139)
+    drawCar();
+    let per = 20000;
+    let currentAngle = ((TWO_PI * millis()) / per) % TWO_PI;
+    let coscurrentAngle = cos(currentAngle);
+    let sincurrentAngle = sin(currentAngle);
+    cw = aniLayers["car"].width / 2;
+    ch = aniLayers["car"].height / 2;
+    ani.noStroke();
+    ani.fill(100, 100, 100);
+    ani.rect(0, aniHeightOn4 + ch - gapOn6/2, ani.width, gap2);
+    ani.fill(101, 67, 33);
+    ani.rect(0, 0, ani.width, gap);
+    ani.fill(50, 50, 50);
+    ani.circle(gap, gap, gap);
+    ani.rect(gapOn2, gap, gapOn6, (ani.height - gap2 - gapOn6/2) * abs(sincurrentAngle));
+    ani.fill(200, 200, 200);
+    ani.circle(gap, gap, gapOn2);
+    ani.image(aniLayers["car"], aniWidthOn2 - gap2, aniHeightOn4, cw, ch);
+    ani.image(aniLayers["car window"], aniWidthOn2 - gap2, aniHeightOn4, cw, ch);
+    ani.fill(101, 67, 33);
+    ani.rect(aniWidthOn2 + gap2, aniHeightOn2-gap, gap, gap2);
+    ani.fill(255, 215, 0);
+    ani.circle(aniWidthOn2 + gap2 + gapOn6, aniHeightOn2, gapOn6)
+
+}
+
+function eggPan() {
+    ani.clear();
+    let per = 2000;
+    let currentAngle = ((TWO_PI * millis()) / per) % TWO_PI;
+    let coscurrentAngle = cos(currentAngle);
+    let sincurrentAngle = sin(currentAngle);
+    ani.push();
+    ani.stroke(200, 200, 200);
+    ani.strokeWeight(gapOn6);
+    ani.fill(100, 100, 100);
+    ani.translate(aniWidthOn3 + sincurrentAngle * gapOn4, 0);
+    ani.circle(0, aniHeightOn2, aniWidthOn3);
+    ani.noStroke();
+    ani.fill(200, 200, 200);
+    ani.rect(aniWidthOn3 * 0.5, aniHeightOn2 - gapOn4 * 0.4, gap, gapOn4);
+    ani.fill(100, 100, 100);
+    ani.rect(aniWidthOn3 * 0.5 + gap, aniHeightOn2 - gapOn4, gap, gapOn2);
+    ani.pop();
+    ani.noStroke();
+    ani.fill(255);
+    ani.circle(aniWidthOn3, aniHeightOn2, gap);
+    ani.fill(255, 200, 0);
+    ani.circle(aniWidthOn3, aniHeightOn2, gapOn2);
 }

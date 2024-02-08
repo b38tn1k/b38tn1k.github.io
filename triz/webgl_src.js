@@ -10,6 +10,10 @@ var DEBUG = true;
 var cnv;
 var mainCanvas;
 var myShader;
+/**
+ * @description This function is called "keyPressed" and has a blank body. It means
+ * that the function doesn't do anything when it is called.
+ */
 function keyPressed() {
     // chooseIndex();
 }
@@ -218,6 +222,13 @@ function draw() {
     
 }
 
+/**
+ * @description This is a canvas drawing function that takes an array of card objects
+ * as input and displays them on the screen. The cards are displayed with their titles
+ * at the top and their texts below. The card animation image is also drawn at the
+ * bottom right corner of the canvas.
+ * This function sets up the text layout using CSS box alignment properties.
+ */
 function drawCnv() {
     let curr = order[index];
     cnv.textAlign(LEFT, TOP);

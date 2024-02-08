@@ -2187,6 +2187,13 @@ function mechanicalsubstitution() {
     ani.rectMode(CORNER);
 }
 
+/**
+ * @description This is a JavaScript animation function that creates the appearance
+ * of a spinning circular object on a rectangular background. It uses variables such
+ * as gapOn2 and offy to generate different arcs for the shape on each frame based
+ * on percentages rather than exact dimensions and has different fills colors and
+ * shapes to differentiate them
+ */
 function pneumaticsAndHydraulics() {
     ani.clear();
     ani.noStroke();
@@ -2228,6 +2235,11 @@ function pneumaticsAndHydraulics() {
     ani.pop();
 }
 
+/**
+ * @description This function clears the canvas and sets up the draw mode without
+ * stroking. Additionally sets the starting point for time tracking to "millis" and
+ * captures the current time as "time".
+ */
 function shellsAndFilms() {
   ani.clear();
   ani.noStroke();

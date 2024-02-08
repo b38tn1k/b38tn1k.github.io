@@ -10,6 +10,11 @@ var DEBUG = true;
 */
 var cnv;
 var mainCanvas;
+/**
+ * @description The function "keyPressed" is an event handler that runs when a key
+ * on the keyboard is pressed. It does not contain any specific code and is commented
+ * out (Indicated by `//`), therefore it does not perform any action when run.
+ */
 function keyPressed() {
   // chooseIndex();
 }
@@ -181,6 +186,20 @@ function draw() {
 
 }
 
+/**
+ * @description This drawCnv() function is responsible for rendering the UI and
+ * animation of a card deck-based game. It takes the current drawn card and some
+ * configuration data as input and updates the canvas context with appropriate graphics
+ * and text according to the following steps:
+ * 
+ * - Clearing the canvas
+ * - Drawing the entire deck's image
+ * - Placing and styling the drawn card's image
+ * - Displaying the title and text of the current card at an appropriately measured
+ * position
+ * - Calls a function specific to the currently drawn card
+ * - Updates an animation progress indicator using another canvas image
+ */
 function drawCnv() {
   let curr = order[index];
   cnv.textAlign(LEFT, TOP);

@@ -34,6 +34,18 @@ function drawCnv(cnv) {
     }
 }
 
+/**
+ * @description This function draws the front side of a card. It loads the title and
+ * text for the current card from an array 'cards', draws both using text functions
+ * provided by the Canvas object.  It then passes the title to another function (which
+ * is not shown), draws the back of the same card at logoY coordinate using an image
+ * object from the array 'ani' at logoX location.,
+ * 
+ * @param { object } cnv - The input parameter 'cnv' represents the canvas that the
+ * functions draw on. The other parameters can be found within the context of this
+ * answer at:  https://stackoverflow.com/questions/67382139/what-does-the-cnv-input-parameter-do-in-this-function-answer-concisely
+ * .
+ */
 function drawBrowseDeck(cnv) {
     let curr = order[index];
     cnv.textAlign(LEFT, TOP);
@@ -164,6 +176,37 @@ function setupCardsForBrowsing() {
     aniHeightOn4 = ani.height / 4;
 }
 
+/**
+ * @description This function creates a temporary 2D graphics object called "cardDeck"
+ * with the dimensions of the game window's width and height (w and h) and a corner
+ * radius (rad). The cardBGColors are a list of background colors for each card. The
+ * function clears the graphics object and sets its rect mode to center and no stroke.
+ * It then loops through each color on the cardBackgroundColors list and creates a
+ * rectangle with that color and size (w and h) minus two times the marginStroke
+ * around each card with x-position progressing from the window's left border to the
+ * right and y-position progressing top down. The function returns an array of [cardDeck
+ * object], x-coord of the first card border(px), y-coord of the first card border(py).
+ * 
+ * @param { number } w - In the "createCardDeck" function `w` is a parameter used to
+ * represent width of each card rectangles drawn inside the graphics temp canvas using
+ * "rect" function which will set its position. This way every card would have similar
+ * proportions while being drawn regardless the size screen being used
+ * 
+ * @param {  } h - Here's what I found:
+ * 
+ * In this context of the createCardDeck function call h represents half (or half a
+ * dimension), because within this code snippet for...of loop h becomes a pixel
+ * distance subtracted on the y-axis (vertically down) after calculating py by halfing
+ * heightOnTwo.
+ * 
+ * @param {  } rad - Rad is used to set rounded corners on each card when it is created
+ * 
+ * @returns { object } This function returns three items: 1) a graphics object created
+ * with the canvas context of the current web page using the specified window width
+ * and height; 2) the x-position of the last card on the bottom of the deck (calculated
+ * based on the number of cards and their size); and 3) the y-position of the last
+ * card on the bottom of the deck.
+ */
 function createCardDeck(w, h, rad) {
     tempCardDeck = createGraphics(windowWidth, windowHeight);
     tempCardDeck.clear();
@@ -180,6 +223,40 @@ function createCardDeck(w, h, rad) {
     return [tempCardDeck, px, py]
 }
 
+/**
+ * @description The provided JavaScript function creates a new graphics canvas element
+ * with rounded corners using specified color parameters 'c1' and optionally 'c2'.
+ * If the parameter 'c2' is included as true within its parameter list (the second
+ * argument), it will create bordering lines that are also round. Specifically designed
+ * to function within the code that utilizes p5 library functions.
+ * 
+ * @param {  } w - Based on the code provided the input parameter "w" represents the
+ * width of the rectangle to be created within the draw function of the created
+ * graphics object. In simpler words: "w" is representing the width of the card.
+ * 
+ * @param { integer } h - The `h` parameter is the height of the card being drawn.
+ * 
+ * @param { number } rad - Based on the given code snippet the `rad` input parameter
+ * is a value used to define the corner radius of the card when drawn with rect mode
+ * center.
+ * 
+ * @param { object } c1 - In this `createMoveableCard()` function:
+ * 
+ * ... `c1` represents a color or shade fill (i.e. "centre-filled").
+ * 
+ * @param { integer } c2 - The `c2` parameter sets a second fill color for a smaller
+ * inner rect on the moveable card.
+ * 
+ * @param { false } pattern - The `pattern` parameter allows you to pass a pattern
+ * or color to fill the card with instead of a single color. This means you can make
+ * cards that are striped or checkered.
+ * 
+ * @returns {  } The function creates a new graphics object called `tempCardDeck`
+ * that has the same size as the screen. It fills the background of the card with the
+ * first color (`c1`), and then draws a rounded rectangle with the second color (`c2`)
+ * inside it with a stroke weight of `mStroke`. The output returned by the function
+ * is the created `tempCardDeck` graphics object.
+ */
 function createMoveableCard(w, h, rad, c1, c2, pattern=false) {
     tempCardDeck = createGraphics(windowWidth, windowHeight);
     tempCardDeck.clear();
@@ -196,6 +273,10 @@ function createMoveableCard(w, h, rad, c1, c2, pattern=false) {
     return tempCardDeck
 }
 
+/**
+ * @description This function prepares the display for the TRIZ 40 game by defining
+ * various variables related to the card deck's dimensions and color palettes.
+ */
 function setupCardsForProblemDefinition() {
     aniLayers = {};
     rCol = shuffleColrs();
@@ -244,6 +325,22 @@ function setupCardsForProblemDefinition() {
     cardDeck.image(moveableCard, -wi*0.25, -hi * 0.25);
 }
 
+/**
+ * @description This function draws a problem definition deck on a canvas (cnv) by:
+ * 1/ Imaging the cardDeck at position (0，0) of the canvas
+ * 2/ Filling the entire canvas with the background color (i.e., clearing it out first).
+ * 3/ Aligning text to center both horizontally and vertically using two variables.
+ * 4/ Specifying font size using another variable titleTextSize.
+ * 5/ Setting text style bold and drawing text from the contradictions[2] array at
+ * textX / textY / textW points respectively
+ * 
+ * @param {  } cnv - In the `drawProblemDefinitionDeck()` function shown here:
+ * 
+ * <https://stackoverflow.com/questions/63894108/what-does-the-cnv-input-parameter-do-in-this-function-answer-concisely>
+ * 
+ * The input parameter `cnv` is the canvas object being used to draw the problem
+ * definition deck.
+ */
 function drawProblemDefinitionDeck(cnv) {
     cnv.image(cardDeck, 0, 0);
     cnv.fill(0);

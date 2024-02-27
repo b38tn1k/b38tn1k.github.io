@@ -123,6 +123,25 @@ function mousePressed() {
     chooseIndex();
 }
 
+/**
+ * @description Based on the code snippet provided the "modeMouse" function has been
+ * set to switch between two functions or modes of a program. The MODE parameter
+ * refers to the program's current operational mode. It can have one of two values:
+ * 
+ * BROWSE_DECK  and PROBLEM_DEFINITION
+ * 
+ * Upon encountering this code portion the program will first compare its operational
+ * mode ( MODE) to its valid available values; and then execute accordingly using
+ * cases statements or a SWITCH-CASE instruction the function performs an action
+ * related to what is specified by BROWSE_DECK. If neither condition applies does
+ * nothing by falling through all the default branch and potentially doing nothing
+ * based on how  this default handling block ends]
+ * 
+ * In essence: it decides what part of the code to run based on current program mode
+ * setting; specifically  switching between two modes for handling browsing decks
+ * versus defining or viewing problem configurations within an application programming
+ * interface  or software application.
+ */
 function modeMouse() {
     switch (MODE) {
         case BROWSE_DECK:
@@ -221,6 +240,11 @@ function setupScreen() {
     modeSetup();
 }
 
+/**
+ * @description This function displays a message to the console based on the value
+ * of the "MODE" variable and then calls two functions ( setupCardsForBrowsing and
+ * setupCardsForProblemDefinition) depending on that value.
+ */
 function modeSetup() {
     console.log("MODE: ");
     switch (MODE) {

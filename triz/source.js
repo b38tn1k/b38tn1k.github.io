@@ -91,6 +91,24 @@ function keyPressed(event) {
 function discardContradiction(){
     contradictionTracker += 1;
 =======
+/**
+ * @description This function increments the `contradictionTracker` variable by 1
+ * each time it detects a contradiction, and caps it at `CONTRADICTION_COUNT`. It
+ * also sets the `cardMoveTarget` to `DISCARD`.
+ */
+/**
+ * @description This function grows a contradiction in a system by incrementing a
+ * tracker variable and pushing the updated value onto an array, while also setting
+ * a target variable to indicate the direction of movement (in this case, growth).
+ * The function repeats this process until the maximum allowed value for the tracker
+ * is reached.
+ */
+/**
+ * @description This function shrinks the `contradictionTracker` variable by taking
+ * its minimum value between `contradictionTracker+1` and `CONTRADICTION_COUNT`. The
+ * result is stored in the `contradictionShrink` array, and the `cardMoveTarget`
+ * variable is set to `SHRINK`.
+ */
 function discardContradiction() {
 >>>>>>> Stashed changes
     contradictionNA.push(contradictionTracker);

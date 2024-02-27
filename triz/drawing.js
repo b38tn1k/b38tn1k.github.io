@@ -19,7 +19,7 @@ function drawCnv(cnv) {
             drawBrowseDeck(cnv);
             break;
         case PROBLEM_DEFINITION:
-            drawProblemDefinitionDeck(cnv)
+            drawProblemDefinitionDeck(cnv);
             break;
         default:
             break;
@@ -99,7 +99,7 @@ function drawBrowseDeck(cnv) {
 function setupCardsForBrowsing() {
     aniLayers = {};
     rCol = shuffleColrs();
-    
+
     let y_ratio = 8.8;
     let x_ratio = 6.3;
     let margin = 0.85;
@@ -109,6 +109,8 @@ function setupCardsForBrowsing() {
         w = windowWidth * margin;
         h = (w / x_ratio) * y_ratio;
     }
+    titleTextSize = int(h / 17);
+    tTextSize = int(titleTextSize / 2);
     let rad = 0.05 * w;
     mStroke = rad * 0.25;
     if (cardDeck) {
@@ -123,8 +125,7 @@ function setupCardsForBrowsing() {
     card.stroke(0);
     card.strokeWeight(mStroke);
     card.rect(int(px), int(py), w - rad, h - rad, rad * 0.6);
-    titleTextSize = int(h / 17);
-    tTextSize = int(titleTextSize / 2);
+
     let l1 = px - w * 0.45;
     let l2 = px + w * 0.45;
     card.line(l1, py, l2, py);
@@ -177,10 +178,10 @@ function createCardDeck(w, h, rad) {
         py -= mStroke;
         tempCardDeck.rect(int(px), int(py), w, h, rad);
     }
-    return [tempCardDeck, px, py]
+    return [tempCardDeck, px, py];
 }
 
-function createMoveableCard(w, h, rad, c1, c2, pattern=false) {
+function createMoveableCard(w, h, rad, c1, c2, pattern = false) {
     tempCardDeck = createGraphics(windowWidth, windowHeight);
     tempCardDeck.clear();
     tempCardDeck.rectMode(CENTER);
@@ -193,15 +194,15 @@ function createMoveableCard(w, h, rad, c1, c2, pattern=false) {
         tempCardDeck.rect(int(px), int(py), w - rad, h - rad, rad * 0.6);
     }
     tempCardDeck.rectMode(CENTER);
-    return tempCardDeck
+    return tempCardDeck;
 }
 
 function setupCardsForProblemDefinition() {
     aniLayers = {};
     rCol = shuffleColrs();
-    
-    let y_ratio = 2.8;//6.3;
-    let x_ratio = 4;//8.8;
+
+    let y_ratio = 2.8; //6.3;
+    let x_ratio = 4; //8.8;
     let margin = 0.3;
     let h = windowHeight * margin;
     let w = (h / y_ratio) * x_ratio;
@@ -209,30 +210,31 @@ function setupCardsForProblemDefinition() {
         w = windowWidth * margin;
         h = (w / x_ratio) * y_ratio;
     }
+    titleTextSize = int(h / 8);
+    tTextSize = int(titleTextSize / 2);
     let rad = 0.05 * w;
     mStroke = rad * 0.25;
     [d1, px, py] = createCardDeck(w, h, rad, mStroke);
     d2 = createMoveableCard(w, h, rad, color(255, 255, 255, 127));
-    d3 = createMoveableCard(w, h, rad, color(255, 255, 255), color(0));
-    moveableCard = d3;
+    moveableCard = createMoveableCard(w, h, rad, color(255, 255, 255), color(0));
+
+    titleCard = createMoveableCard(w, h / 3, rad, color(255, 255, 255));
+
     cardDeck = createGraphics(windowWidth, windowHeight);
 
     const wi = 0.9 * windowWidth;
     const hi = 0.9 * windowHeight;
     quadTargets = [];
-    quadTargets.push([-wi*0.25, -hi * 0.25]);
-    quadTargets.push([wi*0.25, -hi * 0.25]);
-    quadTargets.push([-wi*0.25, hi * 0.25]);
-    quadTargets.push([wi*0.25, hi * 0.25]);
+    quadTargets.push([wi * 0.25, -hi * 0.25]);
+    quadTargets.push([-wi * 0.25, -hi * 0.25]);
+    quadTargets.push([-wi * 0.25, hi * 0.2]);
+    quadTargets.push([wi * 0.25, hi * 0.2]);
+    quadTargets.push([quadTargets[2][0], quadTargets[2][1] + h * 0.75]);
+    quadTargets.push([quadTargets[3][0], quadTargets[3][1] + h * 0.75]);
 
-    cardDeck.image(d1, quadTargets[0][0], quadTargets[0][1]);
-    cardDeck.image(d3, quadTargets[1][0], quadTargets[1][1]);
-    cardDeck.image(d2, quadTargets[2][0], quadTargets[2][1]);
-    cardDeck.image(d2, quadTargets[3][0], quadTargets[3][1]);
-    
     textW = 0.9 * w;
-    textX = quadTargets[0][0] + windowWidth/2 - textW/2;
-    textY = quadTargets[0][1] + windowHeight/2;
+    textX = quadTargets[0][0] + windowWidth / 2 - textW / 2;
+    textY = quadTargets[0][1] + windowHeight / 2;
     moveableCard.noStroke();
     moveableCard.fill(230);
     moveableCard.textStyle(BOLD);
@@ -241,7 +243,39 @@ function setupCardsForProblemDefinition() {
     logoY = heightOnTwo + h / 2 - rad;
     moveableCard.textSize(tTextSize);
     moveableCard.text("TRIZ40", logoX, logoY);
-    cardDeck.image(moveableCard, -wi*0.25, -hi * 0.25);
+    cardDeck.image(d1, quadTargets[0][0], quadTargets[0][1]);
+    cardDeck.image(moveableCard, quadTargets[0][0], quadTargets[0][1]);
+    cardDeck.image(moveableCard, quadTargets[1][0], quadTargets[1][1]);
+
+    cardDeck.image(d2, quadTargets[2][0], quadTargets[2][1]);
+    cardDeck.image(titleCard, quadTargets[4][0], quadTargets[4][1]);
+
+    cardDeck.image(d2, quadTargets[3][0], quadTargets[3][1]);
+    cardDeck.image(titleCard, quadTargets[5][0], quadTargets[5][1]);
+
+    cardDeck.noStroke();
+    cardDeck.fill(0);
+    cardDeck.textSize(titleTextSize);
+    console.log(titleTextSize);
+    cardDeck.textAlign(CENTER, CENTER);
+
+    let tX = width / 2 + quadTargets[4][0];
+    let tY = height / 2 + quadTargets[4][1] - titleTextSize / 2;
+    cardDeck.textSize(titleTextSize);
+    cardDeck.textStyle(BOLD);
+    cardDeck.text("Grow", tX, tY);
+    cardDeck.textSize(tTextSize);
+    cardDeck.textStyle(ITALIC);
+    cardDeck.text("(Up)", tX, tY + titleTextSize);
+
+    tX = width / 2 + quadTargets[5][0];
+    tY = height / 2 + quadTargets[5][1] - titleTextSize / 2;
+    cardDeck.textSize(titleTextSize);
+    cardDeck.textStyle(BOLD);
+    cardDeck.text("Shrink", tX, tY);
+    cardDeck.textSize(tTextSize);
+    cardDeck.textStyle(ITALIC);
+    cardDeck.text("(Down)", tX, tY + titleTextSize);
 }
 
 function drawProblemDefinitionDeck(cnv) {
@@ -250,5 +284,83 @@ function drawProblemDefinitionDeck(cnv) {
     cnv.textAlign(CENTER, CENTER);
     cnv.textSize(titleTextSize);
     cnv.textStyle(BOLD);
-    cnv.text(contradictions[2], int(textX), int(textY), int(textW));
+    let tempTracker = contradictionTracker;
+    if (cardMoveAnimation == 0) {
+        contradictionCurrentX = textX;
+        contradictionCurrentY = textY;
+        cardMoveTarget = NO_ANIMATION;
+    } else {
+        cardMoveAnimation -= 1;
+        cnv.text(contradictions[tempTracker], textX, textY, int(textW));
+        tempTracker -= 1;
+    }
+    let lastGrowItem = contradictionGrow[contradictionGrow.length - 1];
+    let lastShrinkItem = contradictionShrink[contradictionShrink.length - 1];
+    let discardX = width / 2 + quadTargets[1][0] - textW / 2;
+    let discardY = height / 2 + quadTargets[1][1];
+    let growX = width / 2 + quadTargets[2][0] - textW / 2;
+    let growY = height / 2 + quadTargets[2][1];
+    let shrinkX = width / 2 + quadTargets[3][0] - textW / 2;
+    let shrinkY = height / 2 + quadTargets[3][1];
+    let interpolationFactor;
+
+    switch (cardMoveTarget) {
+        case GROW:
+            interpolationFactor = (cardMoveAnimationDuration - cardMoveAnimation) / cardMoveAnimationDuration;
+            contradictionCurrentX = textX + (growX - textX) * interpolationFactor;
+            contradictionCurrentY = textY + (growY - textY) * interpolationFactor;
+            if (contradictionGrow.length > 1) {
+                lastGrowItem = contradictionGrow[contradictionGrow.length - 2];
+            }
+            if (contradictionGrow.length == 1) {
+                lastGrowItem = -1;
+            }
+
+            break;
+        case SHRINK:
+            interpolationFactor = (cardMoveAnimationDuration - cardMoveAnimation) / cardMoveAnimationDuration;
+            contradictionCurrentX = textX + (shrinkX - textX) * interpolationFactor;
+            contradictionCurrentY = textY + (shrinkY - textY) * interpolationFactor;
+            if (contradictionShrink.length > 1) {
+                lastShrinkItem = contradictionShrink[contradictionShrink.length - 2];
+            }
+            if (contradictionShrink.length == 1) {
+                lastShrinkItem = -1;
+            }
+            break;
+        case DISCARD:
+            interpolationFactor = (cardMoveAnimationDuration - cardMoveAnimation) / cardMoveAnimationDuration;
+            contradictionCurrentX = textX + (discardX - textX) * interpolationFactor;
+            contradictionCurrentY = textY + (discardY - textY) * interpolationFactor;
+            break;
+
+        default:
+            break;
+    }
+
+    if (contradictionGrow.length > 0) {
+        if (lastGrowItem != -1) {
+            cnv.image(moveableCard, quadTargets[2][0], quadTargets[2][1]);
+            cnv.text(contradictions[lastGrowItem], growX, growY, int(textW));
+        }
+    }
+
+    if (contradictionShrink.length > 0) {
+        if (lastShrinkItem != -1) {
+            cnv.image(moveableCard, quadTargets[3][0], quadTargets[3][1]);
+            cnv.text(contradictions[lastShrinkItem], shrinkX, shrinkY, int(textW));
+        }
+    }
+    cnv.image(moveableCard, contradictionCurrentX - width / 2 + textW / 2, contradictionCurrentY - height / 2);
+    cnv.text(contradictions[tempTracker], contradictionCurrentX, contradictionCurrentY, int(textW));
+
+    cnv.image(moveableCard, quadTargets[1][0], quadTargets[1][1]);
+    let tX = width / 2 + quadTargets[1][0];
+    let tY = textY;
+    cnv.textSize(titleTextSize);
+    cnv.textStyle(BOLD);
+    cnv.text("Not Applicable", tX, tY);
+    cnv.textSize(tTextSize);
+    cnv.textStyle(ITALIC);
+    cnv.text("(Left)", tX, tY + titleTextSize);
 }

@@ -5,6 +5,11 @@ var DEBUG = true;
 const BROWSE_DECK = 0;
 const PROBLEM_DEFINITION = 1;
 
+const GROW = 0;
+const SHRINK = 1;
+const DISCARD = 2;
+const NO_ANIMATION = -1;
+
 var MODE = BROWSE_DECK;
 
 /**
@@ -15,8 +20,15 @@ var MODE = BROWSE_DECK;
 var cnv;
 var mainCanvas;
 var contradictions;
-var moveableCard;
+var cardMoveAnimation = 0;
+var cardMoveAnimationDuration = 5.0;
+var cardMoveTarget = -1;
+var moveableCard, contradictionCurrentX, contradictionCurrentY;
 var quadTargets = [];
+var contradictionTracker = 0;
+var contradictionGrow = [];
+var contradictionShrink = [];
+var contradictionNA = [];
 
 let cardBGColors = [
     [0, 0, 255],
@@ -25,7 +37,7 @@ let cardBGColors = [
     [255, 255, 0],
     [255, 0, 0],
     [255, 255, 255],
-  ];
+];
 /**
  * @description The function "keyPressed" is an event handler that runs when a key
  * on the keyboard is pressed. It does not contain any specific code and is commented
@@ -40,6 +52,18 @@ function keyPressed(event) {
         case "Digit2":
             MODE = PROBLEM_DEFINITION;
             break;
+        case "ArrowLeft":
+            discardContradiction();
+            cardMoveAnimation = cardMoveAnimationDuration;
+            break;
+        case "ArrowUp":
+            growContradiction();
+            cardMoveAnimation = cardMoveAnimationDuration;
+            break;
+        case "ArrowDown":
+            shrinkContradiction();
+            cardMoveAnimation = cardMoveAnimationDuration;
+            break;
         default:
             doSomething = false;
             break;
@@ -47,6 +71,24 @@ function keyPressed(event) {
     if (doSomething) {
         modeSetup();
     }
+}
+
+function discardContradiction(){
+    contradictionTracker += 1;
+    contradictionNA.push(contradictionTracker);
+    cardMoveTarget = DISCARD;
+}
+
+function growContradiction(){
+    contradictionGrow.push(contradictionTracker);
+    contradictionTracker += 1;
+    cardMoveTarget = GROW;
+}
+
+function shrinkContradiction(){
+    contradictionShrink.push(contradictionTracker);
+    contradictionTracker += 1;
+    cardMoveTarget = SHRINK;
 }
 
 /**

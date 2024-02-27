@@ -80,6 +80,11 @@ function keyPressed(event) {
     }
 }
 
+/**
+ * @description This function discards a contradiction card from the game, increments
+ * a counter for the number of contradictions, and updates the target card to be moved
+ * next to discard.
+ */
 function discardContradiction() {
     contradictionNA.push(contradictionTracker);
     contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
@@ -97,6 +102,12 @@ function growContradiction() {
     cardMoveTarget = GROW;
 }
 
+/**
+ * @description This function shrinks the value of a variable called "contradictionTracker"
+ * by 1, and if it is less than or equal to the maximum value of "CONTRADICTION_COUNT",
+ * it sets the new value as the "cardMoveTarget". The function also pushes the old
+ * value of contradictionTracker into an array called "contradictionShrink".
+ */
 function shrinkContradiction() {
     contradictionShrink.push(contradictionTracker);
     contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);

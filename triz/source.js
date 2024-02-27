@@ -73,18 +73,36 @@ function keyPressed(event) {
     }
 }
 
+/**
+ * @description This function increments a counter (`contradictionTracker`) for the
+ * number of contradictions found in the game, and then pushes that value onto an
+ * array (`contradictionNA`) along with the current card move target (`cardMoveTarget`,
+ * which is set to `DISCARD`). In other words, it keeps track of the number of
+ * contradictions found and what move was most recently made.
+ */
 function discardContradiction(){
     contradictionTracker += 1;
     contradictionNA.push(contradictionTracker);
     cardMoveTarget = DISCARD;
 }
 
+/**
+ * @description This function grows the `contradictionTracker` by `1` and updates the
+ * `cardMoveTarget` to `GROW`. It also pushes the current value of `contraditionTracker`
+ * into an array called `contradictionGrow`.
+ */
 function growContradiction(){
     contradictionGrow.push(contradictionTracker);
     contradictionTracker += 1;
     cardMoveTarget = GROW;
 }
 
+/**
+ * @description This function takes in a variable `contradictionTracker` and adds it
+ * to an array called `contradictionShrink`. It then increments the value of
+ * `contradictionTracker` by 1, and sets the `cardMoveTarget` variable to `SHRINK`.
+ * In summary, this function is shrinking a contradiction.
+ */
 function shrinkContradiction(){
     contradictionShrink.push(contradictionTracker);
     contradictionTracker += 1;

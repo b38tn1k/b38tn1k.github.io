@@ -80,68 +80,24 @@ function keyPressed(event) {
     }
 }
 
-<<<<<<< Updated upstream
-/**
- * @description This function increments a counter (`contradictionTracker`) for the
- * number of contradictions found in the game, and then pushes that value onto an
- * array (`contradictionNA`) along with the current card move target (`cardMoveTarget`,
- * which is set to `DISCARD`). In other words, it keeps track of the number of
- * contradictions found and what move was most recently made.
- */
-function discardContradiction(){
-    contradictionTracker += 1;
-=======
-/**
- * @description This function increments the `contradictionTracker` variable by 1
- * each time it detects a contradiction, and caps it at `CONTRADICTION_COUNT`. It
- * also sets the `cardMoveTarget` to `DISCARD`.
- */
-/**
- * @description This function grows a contradiction in a system by incrementing a
- * tracker variable and pushing the updated value onto an array, while also setting
- * a target variable to indicate the direction of movement (in this case, growth).
- * The function repeats this process until the maximum allowed value for the tracker
- * is reached.
- */
-/**
- * @description This function shrinks the `contradictionTracker` variable by taking
- * its minimum value between `contradictionTracker+1` and `CONTRADICTION_COUNT`. The
- * result is stored in the `contradictionShrink` array, and the `cardMoveTarget`
- * variable is set to `SHRINK`.
- */
 function discardContradiction() {
->>>>>>> Stashed changes
     contradictionNA.push(contradictionTracker);
     contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
     cardMoveTarget = DISCARD;
 }
 
-<<<<<<< Updated upstream
 /**
  * @description This function grows the `contradictionTracker` by `1` and updates the
  * `cardMoveTarget` to `GROW`. It also pushes the current value of `contraditionTracker`
  * into an array called `contradictionGrow`.
  */
-function growContradiction(){
-=======
 function growContradiction() {
->>>>>>> Stashed changes
     contradictionGrow.push(contradictionTracker);
     contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
     cardMoveTarget = GROW;
 }
 
-<<<<<<< Updated upstream
-/**
- * @description This function takes in a variable `contradictionTracker` and adds it
- * to an array called `contradictionShrink`. It then increments the value of
- * `contradictionTracker` by 1, and sets the `cardMoveTarget` variable to `SHRINK`.
- * In summary, this function is shrinking a contradiction.
- */
-function shrinkContradiction(){
-=======
 function shrinkContradiction() {
->>>>>>> Stashed changes
     contradictionShrink.push(contradictionTracker);
     contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
     cardMoveTarget = SHRINK;

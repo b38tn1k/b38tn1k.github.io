@@ -9,6 +9,7 @@ const GROW = 0;
 const SHRINK = 1;
 const DISCARD = 2;
 const NO_ANIMATION = -1;
+const CONTRADICTION_COUNT = 39;
 
 var MODE = BROWSE_DECK;
 
@@ -53,16 +54,22 @@ function keyPressed(event) {
             MODE = PROBLEM_DEFINITION;
             break;
         case "ArrowLeft":
-            discardContradiction();
-            cardMoveAnimation = cardMoveAnimationDuration;
+            if (MODE == PROBLEM_DEFINITION) {
+                discardContradiction();
+                cardMoveAnimation = cardMoveAnimationDuration;
+            }
             break;
         case "ArrowUp":
-            growContradiction();
-            cardMoveAnimation = cardMoveAnimationDuration;
+            if (MODE == PROBLEM_DEFINITION) {
+                growContradiction();
+                cardMoveAnimation = cardMoveAnimationDuration;
+            }
             break;
         case "ArrowDown":
-            shrinkContradiction();
-            cardMoveAnimation = cardMoveAnimationDuration;
+            if (MODE == PROBLEM_DEFINITION) {
+                shrinkContradiction();
+                cardMoveAnimation = cardMoveAnimationDuration;
+            }
             break;
         default:
             doSomething = false;
@@ -73,6 +80,7 @@ function keyPressed(event) {
     }
 }
 
+<<<<<<< Updated upstream
 /**
  * @description This function increments a counter (`contradictionTracker`) for the
  * number of contradictions found in the game, and then pushes that value onto an
@@ -82,21 +90,30 @@ function keyPressed(event) {
  */
 function discardContradiction(){
     contradictionTracker += 1;
+=======
+function discardContradiction() {
+>>>>>>> Stashed changes
     contradictionNA.push(contradictionTracker);
+    contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
     cardMoveTarget = DISCARD;
 }
 
+<<<<<<< Updated upstream
 /**
  * @description This function grows the `contradictionTracker` by `1` and updates the
  * `cardMoveTarget` to `GROW`. It also pushes the current value of `contraditionTracker`
  * into an array called `contradictionGrow`.
  */
 function growContradiction(){
+=======
+function growContradiction() {
+>>>>>>> Stashed changes
     contradictionGrow.push(contradictionTracker);
-    contradictionTracker += 1;
+    contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
     cardMoveTarget = GROW;
 }
 
+<<<<<<< Updated upstream
 /**
  * @description This function takes in a variable `contradictionTracker` and adds it
  * to an array called `contradictionShrink`. It then increments the value of
@@ -104,8 +121,11 @@ function growContradiction(){
  * In summary, this function is shrinking a contradiction.
  */
 function shrinkContradiction(){
+=======
+function shrinkContradiction() {
+>>>>>>> Stashed changes
     contradictionShrink.push(contradictionTracker);
-    contradictionTracker += 1;
+    contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
     cardMoveTarget = SHRINK;
 }
 
@@ -145,16 +165,16 @@ function mousePressed() {
  * @description Based on the code snippet provided the "modeMouse" function has been
  * set to switch between two functions or modes of a program. The MODE parameter
  * refers to the program's current operational mode. It can have one of two values:
- * 
+ *
  * BROWSE_DECK  and PROBLEM_DEFINITION
- * 
+ *
  * Upon encountering this code portion the program will first compare its operational
  * mode ( MODE) to its valid available values; and then execute accordingly using
  * cases statements or a SWITCH-CASE instruction the function performs an action
  * related to what is specified by BROWSE_DECK. If neither condition applies does
  * nothing by falling through all the default branch and potentially doing nothing
  * based on how  this default handling block ends]
- * 
+ *
  * In essence: it decides what part of the code to run based on current program mode
  * setting; specifically  switching between two modes for handling browsing decks
  * versus defining or viewing problem configurations within an application programming

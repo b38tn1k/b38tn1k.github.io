@@ -9,9 +9,12 @@ const GROW = 0;
 const SHRINK = 1;
 const DISCARD = 2;
 const NO_ANIMATION = -1;
+const SETUP = -2;
 const CONTRADICTION_COUNT = 39;
+const doClear = true;
 
 var MODE = BROWSE_DECK;
+// var MODE = PROBLEM_DEFINITION;
 
 /**
  * @description The `keyPressed()` function is not defined or implemented.
@@ -19,8 +22,9 @@ var MODE = BROWSE_DECK;
  * @returns { any } The function `keyPressed()` does not return any output or value.
  */
 var cnv;
+var aniScaleFactor = 3;
 var mainCanvas;
-var contradictions;
+var contradictions, contradictionsLoader;
 var cardMoveAnimation = 0;
 var cardMoveAnimationDuration = 5.0;
 var cardMoveTarget = -1;
@@ -30,6 +34,7 @@ var contradictionTracker = 0;
 var contradictionGrow = [];
 var contradictionShrink = [];
 var contradictionNA = [];
+var buttons = [];
 
 let cardBGColors = [
     [0, 0, 255],
@@ -49,69 +54,31 @@ function keyPressed(event) {
     switch (event.code) {
         case "Digit1":
             MODE = BROWSE_DECK;
+            modeSetup();
             break;
         case "Digit2":
             MODE = PROBLEM_DEFINITION;
+            modeSetup();
             break;
         case "ArrowLeft":
             if (MODE == PROBLEM_DEFINITION) {
                 discardContradiction();
-                cardMoveAnimation = cardMoveAnimationDuration;
             }
             break;
         case "ArrowUp":
             if (MODE == PROBLEM_DEFINITION) {
                 growContradiction();
-                cardMoveAnimation = cardMoveAnimationDuration;
             }
             break;
         case "ArrowDown":
             if (MODE == PROBLEM_DEFINITION) {
                 shrinkContradiction();
-                cardMoveAnimation = cardMoveAnimationDuration;
             }
             break;
         default:
             doSomething = false;
             break;
     }
-    if (doSomething) {
-        modeSetup();
-    }
-}
-
-/**
- * @description This function discards a contradiction card from the game, increments
- * a counter for the number of contradictions, and updates the target card to be moved
- * next to discard.
- */
-function discardContradiction() {
-    contradictionNA.push(contradictionTracker);
-    contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
-    cardMoveTarget = DISCARD;
-}
-
-/**
- * @description This function grows the `contradictionTracker` by `1` and updates the
- * `cardMoveTarget` to `GROW`. It also pushes the current value of `contraditionTracker`
- * into an array called `contradictionGrow`.
- */
-function growContradiction() {
-    contradictionGrow.push(contradictionTracker);
-    contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
-    cardMoveTarget = GROW;
-}
-
-/**
- * @description This function shrinks the value of a variable called "contradictionTracker"
- * by 1, and if it is less than or equal to the maximum value of "CONTRADICTION_COUNT",
- * it sets the new value as the "cardMoveTarget". The function also pushes the old
- * value of contradictionTracker into an array called "contradictionShrink".
- */
-function shrinkContradiction() {
-    contradictionShrink.push(contradictionTracker);
-    contradictionTracker = min(contradictionTracker+1, CONTRADICTION_COUNT);
-    cardMoveTarget = SHRINK;
 }
 
 /**
@@ -143,7 +110,7 @@ function windowResized() {
  * because it does not contain a return statement.
  */
 function mousePressed() {
-    chooseIndex();
+    modeMouse();
 }
 
 /**
@@ -171,6 +138,9 @@ function modeMouse() {
             chooseIndex();
             break;
         case PROBLEM_DEFINITION:
+            for (let button of buttons) {
+                button.handleClick(mouseX, mouseY);
+            }
             break;
         default:
             break;
@@ -188,7 +158,7 @@ function modeMouse() {
  */
 function preload() {
     cards = loadJSON("cards.json");
-    contradictions = loadJSON("contradiction_sources.json");
+    contradictionsLoader = loadJSON("contradiction_sources.json");
 }
 
 /**
@@ -260,6 +230,8 @@ function setupScreen() {
 
     widthOnTwo = windowWidth / 2;
     heightOnTwo = windowHeight / 2;
+    // pixelDensity(1);
+    frameRate(24);
     modeSetup();
 }
 
@@ -269,20 +241,21 @@ function setupScreen() {
  * setupCardsForProblemDefinition) depending on that value.
  */
 function modeSetup() {
-    console.log("MODE: ");
     switch (MODE) {
         case BROWSE_DECK:
-            console.log("BROWSE_DECK");
             setupCardsForBrowsing();
             break;
         case PROBLEM_DEFINITION:
-            console.log("PROBLEM_DEFINITION");
             setupCardsForProblemDefinition();
             break;
         default:
             break;
     }
 }
+
+function shuffleArray(array) {
+    return array.sort(() => Math.random() - 0.5);
+  }
 
 /**
  * @description This function prepares the stage for a card game by:
@@ -302,9 +275,15 @@ function setup() {
     for (let i = 0; i < cardslength; i++) {
         order.push(i);
     }
+    contradictions = [];
+    for (let c in contradictionsLoader) {
+        contradictions.push(contradictionsLoader[c]);
+    }
+    shuffleArray(contradictions);
     if (!DEBUG) {
         shuffle(order, true);
     }
+    createCanvas(windowWidth, windowHeight);
     setupScreen();
     textAlign(LEFT, TOP);
     document.body.style.backgroundImage = "url('bg" + str(int(random(0, 5))) + ".gif')";

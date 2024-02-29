@@ -29,42 +29,44 @@ function drawCnv(cnv) {
         cnv.fill(0);
         cnv.stroke(255);
         cnv.strokeWeight(1);
+        cnv.textSize(titleTextSize);
         cnv.textAlign(LEFT, TOP);
         cnv.text("TESTING", 10, 10);
+        cnv.text(int(frameRate()), 10, titleTextSize + 10);
     }
 }
 
 function drawBrowseDeck(cnv) {
     let curr = order[index];
-    cnv.textAlign(LEFT, TOP);
-    cnv.image(cardDeck, 0, 0);
-    cnv.image(card, 0, 0);
-    cnv.fill(0);
-    cnv.textSize(titleTextSize);
-    cnv.textStyle(BOLD);
-    cnv.text(cards[curr]["title"], textX, textY, textW);
+    textAlign(LEFT, TOP);
+    image(cardDeck, 0, 0);
+    image(card, 0, 0);
+    fill(0);
+    textSize(titleTextSize);
+    textStyle(BOLD);
+    text(cards[curr]["title"], textX, textY, textW);
     let tTextY = textY + titleTextSize;
-    let tL = cnv.textWidth(cards[curr]["title"]);
+    let tL = textWidth(cards[curr]["title"]);
     while (tL > textW) {
         tTextY += titleTextSize;
         tL -= textW;
     }
     tTextY += titleTextSize * 0.5;
-    cnv.textStyle(NORMAL);
-    cnv.textSize(tTextSize);
-    cnv.text(cards[curr]["text"], textX, tTextY, textW);
-    functionList[curr]();
-    cnv.fill(220);
-    cnv.textStyle(BOLD);
-    cnv.textSize(titleTextSize);
-    cnv.textAlign(RIGHT, BOTTOM);
-    // console.log(index);
+    textStyle(NORMAL);
+    textSize(tTextSize);
+    text(cards[curr]["text"], textX, tTextY, textW);
+    functionList[curr](); // where ani is drawn
+    fill(220);
+    textStyle(BOLD);
+    textSize(titleTextSize);
+    textAlign(RIGHT, BOTTOM);
     if (curr < 9) {
-        cnv.text("0" + str(curr + 1), logoX, logoY);
+        text("0" + str(curr + 1), logoX, logoY);
     } else {
-        cnv.text(curr + 1, logoX, logoY);
+        text(curr + 1, logoX, logoY);
     }
-    cnv.image(ani, aniX, aniY);
+    // noSmooth();
+    image(ani, aniX, aniY, ani.width * aniScaleFactor, ani.height * aniScaleFactor);
 }
 
 /**
@@ -142,7 +144,8 @@ function setupCardsForBrowsing() {
     textX = l1;
     textY = py + mStroke;
     textW = 0.9 * w;
-    ani = createGraphics(int(w * 0.9), int(h * 0.45));
+    ani = createGraphics(int((w * 0.9) / aniScaleFactor), int((h * 0.45) / aniScaleFactor));
+    mStroke = int(mStroke / aniScaleFactor);
     aniX = l1;
     aniY = heightOnTwo - int(0.47 * h);
     cr = ani.height * 0.8;
@@ -197,10 +200,15 @@ function createMoveableCard(w, h, rad, c1, c2, pattern = false) {
     return tempCardDeck;
 }
 
-function setupCardsForProblemDefinition() {
-    aniLayers = {};
-    rCol = shuffleColrs();
+let discardX;
+let discardY;
+let growX;
+let growY;
+let shrinkX;
+let shrinkY;
 
+function setupCardsForProblemDefinition() {
+    buttons = [];
     let y_ratio = 2.8; //6.3;
     let x_ratio = 4; //8.8;
     let margin = 0.3;
@@ -218,23 +226,48 @@ function setupCardsForProblemDefinition() {
     d2 = createMoveableCard(w, h, rad, color(255, 255, 255, 127));
     moveableCard = createMoveableCard(w, h, rad, color(255, 255, 255), color(0));
 
-    titleCard = createMoveableCard(w, h / 3, rad, color(255, 255, 255));
+    titleCard = createMoveableCard(w * 0.35, h, rad, color(255, 255, 255), color(0));
+
+    let buttonCardRed = createMoveableCard(w * 0.35, h * 0.35, rad, color(255, 255, 255), color(255, 0, 0));
+    let buttonCardGreen = createMoveableCard(w * 0.35, h * 0.35, rad, color(255, 255, 255), color(0, 255, 0));
 
     cardDeck = createGraphics(windowWidth, windowHeight);
 
     const wi = 0.9 * windowWidth;
     const hi = 0.9 * windowHeight;
     quadTargets = [];
-    quadTargets.push([wi * 0.25, -hi * 0.25]);
-    quadTargets.push([-wi * 0.25, -hi * 0.25]);
-    quadTargets.push([-wi * 0.25, hi * 0.2]);
-    quadTargets.push([wi * 0.25, hi * 0.2]);
-    quadTargets.push([quadTargets[2][0], quadTargets[2][1] + h * 0.75]);
-    quadTargets.push([quadTargets[3][0], quadTargets[3][1] + h * 0.75]);
+    quadTargets.push([-w, -hi * 0.25, w, h]); // contradiction source
+    quadTargets.push([quadTargets[0][0], hi * 0.2, w, h]); // not applicable
+    quadTargets.push([w * 0.5, quadTargets[0][1], w, h]); //grow
+    quadTargets.push([quadTargets[2][0], quadTargets[1][1], w, h]); //shrink
+    quadTargets.push([quadTargets[2][0] + w * 0.75, quadTargets[2][1], w * .35, h]);
+    quadTargets.push([quadTargets[4][0], quadTargets[3][1], w * .35, h]);
+    quadTargets.push([quadTargets[0][0] - (quadTargets[0][2] - w*.35)/2, quadTargets[1][1] + quadTargets[1][3] * .75, w * .35, h* .35]);
+    quadTargets.push([quadTargets[0][0] + (quadTargets[0][2] - w*.35)/2, quadTargets[1][1] + quadTargets[1][3] * .75, w * .35, h* .35]);
+
+    for (let t of quadTargets) {
+        buttons.push(new Button(t[0] + width / 2 - t[3] * 0.725, t[1] + height / 2 - t[3] / 2, t[2], t[3]));
+    }
+    buttons[4].x += buttons[4].w;
+    buttons[5].x += buttons[5].w;
+    buttons[0].action = undo;
+    buttons[1].action = discardContradiction;
+    buttons[2].action = growContradiction;
+    buttons[3].action = shrinkContradiction;
+    buttons[4].action = growContradiction;
+    buttons[5].action = shrinkContradiction;
+    buttons[6].action = undo;
+    buttons[7].action = contradictionsDone;
 
     textW = 0.9 * w;
     textX = quadTargets[0][0] + windowWidth / 2 - textW / 2;
     textY = quadTargets[0][1] + windowHeight / 2;
+    discardX = width / 2 + quadTargets[1][0] - textW / 2;
+    discardY = height / 2 + quadTargets[1][1];
+    growX = width / 2 + quadTargets[2][0] - textW / 2;
+    growY = height / 2 + quadTargets[2][1];
+    shrinkX = width / 2 + quadTargets[3][0] - textW / 2;
+    shrinkY = height / 2 + quadTargets[3][1];
     moveableCard.noStroke();
     moveableCard.fill(230);
     moveableCard.textStyle(BOLD);
@@ -252,15 +285,25 @@ function setupCardsForProblemDefinition() {
 
     cardDeck.image(d2, quadTargets[3][0], quadTargets[3][1]);
     cardDeck.image(titleCard, quadTargets[5][0], quadTargets[5][1]);
+    cardDeck.image(buttonCardRed, quadTargets[6][0], quadTargets[6][1]);
+    cardDeck.image(buttonCardGreen, quadTargets[7][0], quadTargets[7][1]);
 
     cardDeck.noStroke();
     cardDeck.fill(0);
     cardDeck.textSize(titleTextSize);
-    console.log(titleTextSize);
+    cardDeck.textStyle(BOLD);
     cardDeck.textAlign(CENTER, CENTER);
 
-    let tX = width / 2 + quadTargets[4][0];
-    let tY = height / 2 + quadTargets[4][1] - titleTextSize / 2;
+    let tX = widthOnTwo + quadTargets[6][0]
+    let tY = heightOnTwo + quadTargets[6][1]
+    cardDeck.text("UNDO", tX, tY);
+
+    tX = widthOnTwo + quadTargets[7][0]
+    tY = heightOnTwo + quadTargets[7][1]
+    cardDeck.text("DONE", tX, tY);
+
+    tX = width / 2 + quadTargets[4][0];
+    tY = height / 2 + quadTargets[4][1] - titleTextSize / 2;
     cardDeck.textSize(titleTextSize);
     cardDeck.textStyle(BOLD);
     cardDeck.text("Grow", tX, tY);
@@ -276,14 +319,15 @@ function setupCardsForProblemDefinition() {
     cardDeck.textSize(tTextSize);
     cardDeck.textStyle(ITALIC);
     cardDeck.text("(Down)", tX, tY + titleTextSize);
+    cardMoveTarget = SETUP;
 }
 
 function drawProblemDefinitionDeck(cnv) {
-    cnv.image(cardDeck, 0, 0);
-    cnv.fill(0);
-    cnv.textAlign(CENTER, CENTER);
-    cnv.textSize(titleTextSize);
-    cnv.textStyle(BOLD);
+    image(cardDeck, 0, 0);
+    fill(0);
+    textAlign(CENTER, CENTER);
+    textSize(titleTextSize);
+    textStyle(BOLD);
     let tempTracker = contradictionTracker;
     if (cardMoveAnimation == 0) {
         contradictionCurrentX = textX;
@@ -291,18 +335,12 @@ function drawProblemDefinitionDeck(cnv) {
         cardMoveTarget = NO_ANIMATION;
     } else {
         cardMoveAnimation -= 1;
-        cnv.text(contradictions[tempTracker], textX, textY, int(textW));
+        text(contradictions[tempTracker], textX, textY, int(textW));
         tempTracker -= 1;
     }
     let lastGrowItem = contradictionGrow[contradictionGrow.length - 1];
     let lastShrinkItem = contradictionShrink[contradictionShrink.length - 1];
-    let discardX = width / 2 + quadTargets[1][0] - textW / 2;
-    let discardY = height / 2 + quadTargets[1][1];
-    let growX = width / 2 + quadTargets[2][0] - textW / 2;
-    let growY = height / 2 + quadTargets[2][1];
-    let shrinkX = width / 2 + quadTargets[3][0] - textW / 2;
-    let shrinkY = height / 2 + quadTargets[3][1];
-    let interpolationFactor;
+    let interpolationFactor = 1;
 
     switch (cardMoveTarget) {
         case GROW:
@@ -340,27 +378,78 @@ function drawProblemDefinitionDeck(cnv) {
 
     if (contradictionGrow.length > 0) {
         if (lastGrowItem != -1) {
-            cnv.image(moveableCard, quadTargets[2][0], quadTargets[2][1]);
-            cnv.text(contradictions[lastGrowItem], growX, growY, int(textW));
+            image(moveableCard, quadTargets[2][0], quadTargets[2][1]);
+            text(contradictions[lastGrowItem], growX, growY, int(textW));
         }
     }
 
     if (contradictionShrink.length > 0) {
         if (lastShrinkItem != -1) {
-            cnv.image(moveableCard, quadTargets[3][0], quadTargets[3][1]);
-            cnv.text(contradictions[lastShrinkItem], shrinkX, shrinkY, int(textW));
+            image(moveableCard, quadTargets[3][0], quadTargets[3][1]);
+            text(contradictions[lastShrinkItem], shrinkX, shrinkY, int(textW));
         }
     }
-    cnv.image(moveableCard, contradictionCurrentX - width / 2 + textW / 2, contradictionCurrentY - height / 2);
-    cnv.text(contradictions[tempTracker], contradictionCurrentX, contradictionCurrentY, int(textW));
+    image(moveableCard, contradictionCurrentX - width / 2 + textW / 2, contradictionCurrentY - height / 2);
+    text(contradictions[tempTracker], contradictionCurrentX, contradictionCurrentY, int(textW));
 
-    cnv.image(moveableCard, quadTargets[1][0], quadTargets[1][1]);
+    image(moveableCard, quadTargets[1][0], quadTargets[1][1]);
     let tX = width / 2 + quadTargets[1][0];
-    let tY = textY;
-    cnv.textSize(titleTextSize);
-    cnv.textStyle(BOLD);
-    cnv.text("Not Applicable", tX, tY);
-    cnv.textSize(tTextSize);
-    cnv.textStyle(ITALIC);
-    cnv.text("(Left)", tX, tY + titleTextSize);
+    let tY = height / 2 + quadTargets[1][1];
+    textSize(titleTextSize);
+    textStyle(BOLD);
+    text("Not Applicable", tX, tY);
+    textSize(tTextSize);
+    textStyle(ITALIC);
+    text("(Left)", tX, tY + titleTextSize);
+    // for (let button of buttons) {
+    //     button.update();
+    // }
+}
+
+/**
+ * @description This function discards a contradiction card from the game, increments
+ * a counter for the number of contradictions, and updates the target card to be moved
+ * next to discard.
+ */
+function discardContradiction() {
+    contradictionNA.push(contradictionTracker);
+    contradictionTracker = min(contradictionTracker + 1, CONTRADICTION_COUNT);
+    cardMoveTarget = DISCARD;
+    cardMoveAnimation = cardMoveAnimationDuration;
+}
+
+function undo() {
+    console.log("UNDO");
+}
+
+function contradictionsDone() {
+    console.log("DONE");
+    console.log(contradictionGrow, contradictionShrink);
+    MODE = BROWSE_DECK;
+    modeSetup();
+}
+
+/**
+ * @description This function grows the `contradictionTracker` by `1` and updates the
+ * `cardMoveTarget` to `GROW`. It also pushes the current value of `contraditionTracker`
+ * into an array called `contradictionGrow`.
+ */
+function growContradiction() {
+    contradictionGrow.push(contradictionTracker);
+    contradictionTracker = min(contradictionTracker + 1, CONTRADICTION_COUNT);
+    cardMoveTarget = GROW;
+    cardMoveAnimation = cardMoveAnimationDuration;
+}
+
+/**
+ * @description This function shrinks the value of a variable called "contradictionTracker"
+ * by 1, and if it is less than or equal to the maximum value of "CONTRADICTION_COUNT",
+ * it sets the new value as the "cardMoveTarget". The function also pushes the old
+ * value of contradictionTracker into an array called "contradictionShrink".
+ */
+function shrinkContradiction() {
+    contradictionShrink.push(contradictionTracker);
+    contradictionTracker = min(contradictionTracker + 1, CONTRADICTION_COUNT);
+    cardMoveTarget = SHRINK;
+    cardMoveAnimation = cardMoveAnimationDuration;
 }

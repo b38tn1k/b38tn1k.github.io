@@ -253,6 +253,26 @@ function modeSetup() {
     }
 }
 
+/**
+ * @description This function shuffles an array by randomly sorting it using the
+ * `sort()` method and the `Math.random()` function to create a new random order for
+ * the array.
+ * 
+ * @param { array } array - The `array` input parameter in the given function
+ * `shuffleArray()` is used to specify the array that will be shuffled. In other
+ * words, it is the input array that will be sorted randomly using the `sort()` method
+ * with a generator that returns a random number between -0.5 and 0.5.
+ * 
+ * @returns { array } The `shuffleArray` function takes an array as input and returns
+ * a new array with the elements randomly rearranged. The `sort()` method is used to
+ * randomize the order of the elements, and the `Math.random()` function is used to
+ * generate a random number between -0.5 and 0.5 for each element.
+ * 
+ * The output returned by this function will be a new array with a randomized sequence
+ * of elements, where no two adjacent elements are the same. For example, if the
+ * original array is `[1, 2, 3, 4, 5]`, the output of `shuffleArray()` might be `[3,
+ * 2, 5, 4, 1]`.
+ */
 function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
   }

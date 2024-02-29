@@ -36,6 +36,21 @@ function drawCnv(cnv) {
     }
 }
 
+/**
+ * @description This function creates and animates a deck of cards. It does the following:
+ * 
+ * 1/ Draws an image of a card at the top of the screen.
+ * 2/ Displays the card's title and text.
+ * 3/ Calls a function (`functionList[curr]()`) that draws an animation of a particular
+ * card (determined by the value of `curr`).
+ * 4/ Draws an image of a logo at the bottom of the screen.
+ * 5/ Updates the position of the logo based on the current card number.
+ * 
+ * @param { array } cnv - The `cnv` input parameter is likely the canvas context for
+ * the current deck being displayed. It is used to draw elements on the canvas, such
+ * as images and text. The `drawBrowseDeck()` function manipulates the canvas context
+ * to render the brows deck, including drawing images, text, and animations.
+ */
 function drawBrowseDeck(cnv) {
     let curr = order[index];
     textAlign(LEFT, TOP);
@@ -168,6 +183,46 @@ function setupCardsForBrowsing() {
     aniHeightOn4 = ani.height / 4;
 }
 
+/**
+ * @description This function creates a new graphics object (tempCardDeck) and clears
+ * its contents, sets the drawing mode to center, and sets the stroke weight to 0.
+ * Then, it iterates over an array of background colors for cards (cardBGColors) and
+ * draws a card-sized rectangle with each color using the fill() method. Finally, it
+ * returns the tempCardDeck object and two additional variables (px and py) that
+ * represent the starting positions of the drawn rectangles.
+ * 
+ * @param { number } w - In the `createCardDeck` function, the `w` input parameter
+ * represents the width of the card deck. It is used to determine the size of the
+ * rectangle that will be drawn on the graphics canvas to create each card in the
+ * deck. The value of `w` is passed as an argument to the `rect()` method when creating
+ * each card, and it determines the width of the rectangular shape that will be filled
+ * with a color representing the background of each card.
+ * 
+ * @param { number } h - The `h` input parameter in the `createCardDeck()` function
+ * controls the height of each card background rectangle that is drawn in the deck.
+ * A larger value of `h` will result in taller cards, while a smaller value will
+ * result in shorter cards.
+ * 
+ * @param { number } rad - The `rad` input parameter is used to set the radius of the
+ * rounded corners of each card in the deck. It takes a value between 0 and 1,
+ * inclusive, which is then applied to the radius of the `rect()` method call. This
+ * allows for the creation of cards with rounded corners.
+ * 
+ * @returns { object } The `createCardDeck` function returns a 2D graphics object
+ * (temporary deck) and two coordinates (px and py) that represent the top-left corner
+ * of the deck and its size, respectively. The returned value can be described as follows:
+ * 
+ * 	- `tempCardDeck`: A 2D graphics object created in memory with a width and height
+ * equal to the window width and height, respectively. The object is cleared and no
+ * stroke is drawn.
+ * 	- `px`: An integer representing the distance from the top-left corner of the deck
+ * to the start of the first card.
+ * 	- `py`: An integer representing the distance from the top-left corner of the deck
+ * to the start of the first card.
+ * 
+ * In summary, the function creates a virtual deck of cards in memory and returns the
+ * deck's position and size relative to the window boundaries.
+ */
 function createCardDeck(w, h, rad) {
     tempCardDeck = createGraphics(windowWidth, windowHeight);
     tempCardDeck.clear();
@@ -184,6 +239,48 @@ function createCardDeck(w, h, rad) {
     return [tempCardDeck, px, py];
 }
 
+/**
+ * @description This function creates a moveable card with the given dimensions,
+ * radius, and colors for the background and any text or images. It also has an
+ * optional pattern parameter that allows you to specify a separate fill color for
+ * the inner circle. The return value is the tempCardDeck object, which can be used
+ * to draw the card on the screen.
+ * 
+ * @param { integer } w - In the `createMoveableCard()` function, the `w` input
+ * parameter represents the width of the card. It is used to set the width of the
+ * rectangle that will be drawn on the temporary graphics object `tempCardDeck`.
+ * 
+ * @param {  } h - The `h` input parameter in the `createMoveableCard()` function
+ * determines the height of the card rectangle that is drawn on the temporary graphics
+ * object.
+ * 
+ * @param {  } rad - The `rad` input parameter in the `createMoveableCard` function
+ * controls the size of the card's corner radius. It sets the radius of the rounded
+ * corners of the card.
+ * 
+ * @param {  } c1 - The `c1` input parameter sets the color of the card's background.
+ * 
+ * @param { string } c2 - In the provided code, `c2` is an optional input parameter
+ * that represents a different fill color for the card's inner shape, if it is
+ * specified. When `c2` is provided, it will be used to draw a smaller inner rectangle
+ * within the main rectangular shape, with a stroke of the same width as the main
+ * shape. The `mStroke` variable controls the thickness of the stroke.
+ * 
+ * @param { false } pattern - The `pattern` input parameter in the `createMoveableCard()`
+ * function allows the user to specify whether or not a pattern should be drawn on
+ * the card. If `pattern` is `true`, then a small pattern will be drawn inside the
+ * card's border, otherwise no pattern will be drawn.
+ * 
+ * @returns { object } The `createMoveableCard` function returns a `Graphics` object,
+ * which is an object that represents a graphics canvas in Processing. The object has
+ * several methods and properties that can be used to draw and manipulate objects on
+ * the canvas.
+ * 
+ * The output of this function is a `Graphics` object that can be used to draw a
+ * moveable card with the specified width, height, radius, color, and pattern (if
+ * provided). The object returned by the function can be used to draw the card, as
+ * well as to move it around on the canvas using the `set()` method.
+ */
 function createMoveableCard(w, h, rad, c1, c2, pattern = false) {
     tempCardDeck = createGraphics(windowWidth, windowHeight);
     tempCardDeck.clear();
@@ -207,6 +304,20 @@ let growY;
 let shrinkX;
 let shrinkY;
 
+/**
+ * @description This function creates the visual elements and behaviors of a TriZ40
+ * game deck. Specifically:
+ * 
+ * 1/ It defines various constants such as window width, height, title text size, etc.
+ * 2/ It creates a button card red and green, which are displayed at specific positions
+ * on the screen when the corresponding buttons are pressed.
+ * 3/ It sets up the logo, text, and images for the game, including the main title,
+ * grow/shrink text, undo/done buttons, and various other cards.
+ * 4/ It defines the cardDeck class, which takes in quadTargets as an argument and
+ * sets up the image display of each card at its specified position.
+ * 5/ Finally, it sets the cardMoveTarget to SETUP, indicating that the game has begun
+ * and the player can interact with the cards by pressing buttons or dragging them.
+ */
 function setupCardsForProblemDefinition() {
     buttons = [];
     let y_ratio = 2.8; //6.3;
@@ -322,6 +433,42 @@ function setupCardsForProblemDefinition() {
     cardMoveTarget = SETUP;
 }
 
+/**
+ * @description This function draws a problem definition deck on the screen. It
+ * performs the following actions:
+ * 
+ * 1/ Image(cardDeck, 0, 0): Draws the card deck image on the screen.
+ * 2/ Fill(0): Sets the background color to black.
+ * 3/ TextAlign(CENTER, CENTER): Centers the text horizontally and vertically.
+ * 4/ TextSize(titleTextSize): Sets the font size of the deck's title.
+ * 5/ TextStyle(BOLD): Sets the font style of the deck's title to bold.
+ * 6/ Let tempTracker = contradictionTracker; if (cardMoveAnimation == 0) {...}:
+ * Tracks the current card position and updates its position based on the animation.
+ * 7/ Let lastGrowItem = contradictionGrow[contradictionGrow.length - 1]; let
+ * lastShrinkItem = contradictionShrink[contradictionShrink.length - 1]: Updates the
+ * positions of the growing and shrinking cards.
+ * 8/ Let interpolationFactor = (cardMoveAnimationDuration - cardMoveAnimation) /
+ * cardMoveAnimationDuration: Calculates the interpolation factor for the current
+ * card position update.
+ * 9/ image(moveableCard, quadTargets[2][0], quadTargets[2][1]): Draws the moveable
+ * card at the current position of the contradictionary.
+ * 10/ Text(contradictions[tempTracker], contradictionCurrentX, contradictionCurrentY,
+ * int(textW)): Displays the text for the current card.
+ * 11/ image(moveableCard, quadTargets[3][0], quadTargets[3][1]): Draws the moveable
+ * card at the current position of the contradictions.
+ * 12/ Let tX = width / 2 + quadTargets[1][0]: Calculates the x-coordinate for the
+ * "Not Applicable" text.
+ * 13/ Text("Not Applicable", tX, tY): Displays the "Not Applicable" text.
+ * 14/ Let tTextSize = titleTextSize + 2: Sets the font size of the "Not Applicable"
+ * text to the same as the title font size plus 2 points.
+ * 15/ Text("(Left)", tX, tY + titleTextSize): Displays the "()" text for the left alignment.
+ * 
+ * @param {  } cnv - The `cnv` input parameter in the `drawProblemDefinitionDeck`
+ * function appears to be a reference to the Canvas element that the function is being
+ * called on. It allows the function to access and modify the content of the Canvas
+ * element. Specifically, it provides the address of the canvas context, which the
+ * function uses to draw images, text, and other graphical elements on the canvas.
+ */
 function drawProblemDefinitionDeck(cnv) {
     image(cardDeck, 0, 0);
     fill(0);
@@ -418,10 +565,27 @@ function discardContradiction() {
     cardMoveAnimation = cardMoveAnimationDuration;
 }
 
+/**
+ * @description This function will log the message "UNDO" to the console every time
+ * it is called. It does not perform any actual undo functionality.
+ */
 function undo() {
     console.log("UNDO");
 }
 
+/**
+ * @description This function "contradictionsDone" seems to be a utility function
+ * that performs the following tasks:
+ * 
+ * 1/ Logs the message "DONE" to the console.
+ * 2/ Logs the values of two variables called "contradictionGrow" and "contradictionShrink".
+ * 3/ Changes the value of the `MODE` variable to `"BROWSE_DECK"`.
+ * 4/ Calls the function `modeSetup()` passing the new value of `MODE`.
+ * 
+ * In summary, this function seems to be a utility function that is called when a
+ * specific task is completed and it logs some information and updates some variables
+ * before setting a new mode.
+ */
 function contradictionsDone() {
     console.log("DONE");
     console.log(contradictionGrow, contradictionShrink);

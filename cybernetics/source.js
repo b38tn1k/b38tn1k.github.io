@@ -31,6 +31,7 @@ function toggleInfo(elem) {
     document.getElementById("backup-text").innerHTML = contentStrings[elem.id]["backup-text"];
     mode = elem.id;
     animations[mode].mode = IN;
+    console.log(mode);
 }
 
 /**
@@ -66,7 +67,7 @@ function setup() {
     animations[mode].mode = IN;
     animations["wwdeliver"] = new CircleGrid(myColors, canvasSize);
     animations["wwdeliver"].mode = 0;
-    animations["hwdi"] = new NetworkGraph(myColors, canvasSize);
+    animations["hwdi"] = new CircleGrid(myColors, canvasSize);
     animations["hwdi"].mode = 0;
     animations["tc"] = new CircleGrid(myColors, canvasSize);
     animations["tc"].mode = 0;

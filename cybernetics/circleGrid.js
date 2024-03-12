@@ -74,6 +74,7 @@ class CircleGrid {
      * radii of outer and inner circles, and draws the circles using modifier color.
      */
     static() {
+        rectMode(CENTER);
         for (let i = 0; i < this.numCells; i++) {
             for (let j = 0; j < this.numCells; j++) {
                 // Calculate center of current cell
@@ -97,11 +98,11 @@ class CircleGrid {
 
                 // Draw outer circle
                 fill(this.myColors["brickRed"]);
-                ellipse(x, y, this.modifier * outerRadius * 2, this.modifier * outerRadius * 2);
+                square(x, y, this.modifier * outerRadius * 1.75, 5);
 
                 // Draw inner circle
                 fill(this.myColors["teal"]);
-                ellipse(x, y, this.modifier * innerRadius * 2, this.modifier * innerRadius * 2);
+                square(x, y, this.modifier * innerRadius * 1.75, 5);
             }
         }
     }

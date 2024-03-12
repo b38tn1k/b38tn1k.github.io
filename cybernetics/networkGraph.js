@@ -1,4 +1,13 @@
 class NetworkGraph {
+    /**
+     * @description sets properties and initializes members of a class, including `myColors`,
+     * `canvasSize`, `numCells`, `cellSize`, `mode`, `modifier`, `nodes`, and `links`.
+     * 
+     * @param { array } myColors - 14 colors used to display the grid.
+     * 
+     * @param { number } canvasSize - 2D coordinate space where the maze will be drawn,
+     * and is used to calculate the size of each cell in the maze.
+     */
     constructor(myColors, canvasSize) {
         this.myColors = myColors;
         this.numCells = 14;
@@ -11,6 +20,14 @@ class NetworkGraph {
         this.generateNodes(3);
     }
 
+    /**
+     * @description recursively creates a tree structure by generating central and child
+     * nodes. It pushes central and linked node arrays to the `nodes` and `links` arrays,
+     * respectively, at each level of recursion.
+     * 
+     * @param { number } numLevels - number of levels deep into the tree that the function
+     * should generate nodes and links at.
+     */
     generateNodes(numLevels) {
         // Calculate the center of the canvas
         const centerX = this.canvasSize / 2;
@@ -25,6 +42,23 @@ class NetworkGraph {
         this.generateChildNodes(centralNode, numLevels, 5, 3);
     }
     
+    /**
+     * @description recursively creates radial child nodes for a given parent node based
+     * on specified levels and radius, calculating the angle between each child node and
+     * the parent node.
+     * 
+     * @param { object } parentNode - 3D node that serves as the root or parent of the
+     * tree, to which the child nodes are generated and linked.
+     * 
+     * @param { integer } levels - level of depth at which the radial child nodes should
+     * be generated, with a value of 0 indicating no generation takes place.
+     * 
+     * @param { integer } radialNodes - number of child nodes to generate radially around
+     * the parent node at each level of recursion in the function.
+     * 
+     * @returns { any } a list of nodes and links between them, recursively generated for
+     * each radial child node.
+     */
     generateChildNodes(parentNode, levels, radialNodes) {
         if (levels <= 0) return;
     
@@ -45,6 +79,10 @@ class NetworkGraph {
     }
     
 
+    /**
+     * @description is a generic draw function that takes no arguments and performs
+     * different actions based on its mode variable, which can take values from 0 to 3.
+     */
     draw() {
         noStroke();
         switch (this.mode) {
@@ -64,6 +102,10 @@ class NetworkGraph {
         }
     }
 
+    /**
+     * @description modifies the `static` and `modifier` properties, and sets `mode` to
+     * 1 when `modifier` is greater than or equal to 1.
+     */
     in() {
         this.static();
         this.modifier += 0.1;
@@ -73,6 +115,10 @@ class NetworkGraph {
         }
     }
 
+    /**
+     * @description decreases the modifier value by 0.1 and sets the mode to 0 when the
+     * modifier is below or equal to 0.
+     */
     out() {
         this.static();
         this.modifier -= 0.1;
@@ -81,6 +127,11 @@ class NetworkGraph {
         }
     }
 
+    /**
+     * @description generates high-quality documentation for code by drawing a network
+     * graph with nodes and connections, using brush strokes and fill colors to represent
+     * various elements.
+     */
     static() {
         stroke(myColors["brickRed"]);
         strokeWeight(this.modifier * 4);

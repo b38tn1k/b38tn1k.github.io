@@ -1,4 +1,15 @@
 class CircleGrid {
+    /**
+     * @description sets instance variables and initializes objects, including myColors,
+     * canvasSize, numCells, cellSize, mode, and modifier.
+     * 
+     * @param { array } myColors - 1D array of colors that define the appearance of each
+     * cell in the game, with each element in the array specifying the color of a particular
+     * cell.
+     * 
+     * @param { integer } canvasSize - size of the canvas that the code will operate on,
+     * which is used to calculate the size of each cell in the grid.
+     */
     constructor(myColors, canvasSize) {
         this.myColors = myColors;
         this.numCells = 10;
@@ -8,6 +19,10 @@ class CircleGrid {
         this.modifier = 0.0;
     }
 
+    /**
+     * @description is a utility function that adapts to the current state, performing
+     * appropriate actions based on the mode parameter.
+     */
     draw() {
         noStroke();
         switch (this.mode) {
@@ -27,6 +42,10 @@ class CircleGrid {
         }
     }
 
+    /**
+     * @description updates a modifier variable and changes its value depending on a
+     * condition, then calls `static()` method.
+     */
     in() {
         this.modifier += 0.1;
         if (this.modifier >= 1.0) {
@@ -36,6 +55,11 @@ class CircleGrid {
         this.static();
     }
 
+    /**
+     * @description modifies the value of an object's `modifier` property by subtracting
+     * a fraction (0.1) and sets its `mode` property to 0 if the modified value is below
+     * 0.
+     */
     out() {
         this.modifier -= 0.1;
         if (this.modifier <= 0.0) {
@@ -44,6 +68,11 @@ class CircleGrid {
         this.static();
     }
 
+    /**
+     * @description draws circles at coordinates based on cell size and canvas size. It
+     * calculates distances from the center of the canvas, uses those distances to calculate
+     * radii of outer and inner circles, and draws the circles using modifier color.
+     */
     static() {
         for (let i = 0; i < this.numCells; i++) {
             for (let j = 0; j < this.numCells; j++) {

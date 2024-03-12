@@ -8,6 +8,18 @@ let IN = 2;
 let OUT = 3;
 let STATIC = 1;
 
+/**
+ * @description updates an element's class and innerHTML based on its ID, changes the
+ * mode variable, and runs the appropriate animation sequence.
+ * 
+ * @param { element reference ( HTMLElement ) } elem - element for which the function
+ * toggles information, including its class and content, to display the correct text
+ * and emphasis based on the mode variable.
+ * 
+ * 		- `id`: A string attribute that represents the unique identifier for the element.
+ * This is used to identify the correct mode from the `contentStrings` array and set
+ * the emphasis and backup text for the element.
+ */
 function toggleInfo(elem) {
     // frameRate(30);
     animations[mode].mode = OUT;
@@ -21,6 +33,10 @@ function toggleInfo(elem) {
     animations[mode].mode = IN;
 }
 
+/**
+ * @description defines and maps 11 colors to their corresponding hex codes, storing
+ * them in a designated array named "myColors".
+ */
 function setupColors() {
     myColors["rustOrange"] = color("#C25B56");
     myColors["teal"] = color("#008B8B");
@@ -34,6 +50,10 @@ function setupColors() {
     myColors["brickRed"] = color("#CB4154");
 }
 
+/**
+ * @description sets up the necessary components for the visualization: a canvas,
+ * color palette, and multiple animation grids with different shapes and modes.
+ */
 function setup() {
     // canvasSize = int(min(windowHeight * 0.75, windowWidth  * 0.75));
     let rightColumn = document.getElementById("right-column"); // Get the right column by its ID
@@ -52,6 +72,10 @@ function setup() {
     animations["tc"].mode = 0;
 }
 
+/**
+ * @description clears the canvas and calls the draw method of each animation object
+ * stored in the `animations` key-value pair.
+ */
 function draw() {
     clear();
     for (key in animations) {

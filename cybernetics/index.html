@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="" xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+    <head>
+        <meta
+            name="viewport"
+            content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width"
+        />
+        <meta charset="utf-8" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://b38tn1k.com/inv.png" />
+        <meta property="og:url" content="https://b38tn1k.com/cybernetics/" />
+        <meta property="og:title" content="cybernetics" />
+        <meta property="og:description" content="cybernetics" />
+        <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+        <title>cybernetics</title>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <meta name="description" content="cybernetics" />
+        <style>
+            html,
+            body {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            body {
+                margin: 0;
+                background-color: #005411;
+                font-family: "Poppins", sans-serif;
+                color: white;
+                user-select: none;
+                overflow: hidden;
+            }
+
+            header {
+                width: 100%;
+                height: 10%;
+                background-color: #005411;
+                padding: 20px 0px; /* Add padding to top and bottom */
+                box-sizing: border-box;
+            }
+
+            .header-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                max-width: 90%; /* Limit the width to avoid clipping */
+                margin: 0 auto; /* Center the header content */
+                margin-left: 2%;
+            }
+
+            .logo img {
+                max-height: 30px;
+            }
+
+            .logo {
+                margin-right: 20px; /* Adjust margin-right */
+            }
+
+            nav {
+                display: flex;
+            }
+
+            nav a {
+                margin-left: 20px; /* Add spacing between links */
+            }
+
+            main {
+                margin-top: 2%;
+                margin-left: 2%;
+                flex: 1; /* This will make the main section take up the remaining vertical space */
+                align-items: flex-start;
+            }
+
+            a:link,
+            a:visited,
+            a:hover,
+            a:active {
+                color: white;
+                background-color: transparent;
+                text-decoration: none;
+            }
+
+            h1 {
+                color: #fff;
+                font-family: "Helvetica Neue", sans-serif;
+                font-size: 100px;
+                font-weight: bold;
+                letter-spacing: -1px;
+                line-height: 0.9;
+                text-align: left;
+                margin-block-start: 0px;
+            }
+
+            h1.right {
+                text-align: right;
+            }
+
+            h2 {
+                color: rgba(255, 255, 255, 0.7);
+                font-family: "Helvetica Neue", sans-serif;
+                font-size: 50px;
+                font-weight: bold;
+                letter-spacing: -1px;
+                line-height: 0.9;
+                text-align: center;
+                margin-block-start: 0px;
+            }
+
+            h3 {
+                color: rgba(255, 255, 255, 0.7);
+                font-family: "Open Sans", sans-serif;
+                font-weight: bold;
+                font-size: 16px;
+                text-align: left;
+                cursor: pointer;
+            }
+
+            h3:hover {
+                color: #fff;
+            }
+
+            h4 {
+                color: #fff;
+                font-family: "Open Sans", sans-serif;
+                font-weight: bold;
+                font-size: 16px;
+                text-align: left;
+            }
+
+            h4 {
+                color: #fff;
+                font-family: "Open Sans", sans-serif;
+                font-weight: bold;
+                font-size: 16px;
+                text-align: left;
+                margin-top: 50px;
+                margin-bottom: 5px;
+            }
+
+            li {
+                color: #fff;
+                font-family: "Helvetica Neue", sans-serif;
+                font-size: 14px;
+                line-height: 24px;
+                /* margin: 0 0 24px; */
+                text-align: justify;
+                text-justify: inter-word;
+            }
+
+            main {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                /* height: 80%; */
+                margin-left: 2%;
+                margin-top: 0px;
+            }
+
+            /* .left-column {
+                flex: 1;
+                width: calc(25% - 10px);
+                margin-right: 10px;
+                align-items: flex-start;
+            } */
+
+            .left-column {
+                flex: 1;
+                width: calc(25% - 10px);
+                height: 100%;
+                margin-right: 10px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .bottomline {
+                margin-top: auto; /* Pushes the bottomline div to the bottom */
+            }
+
+            .right-column {
+                flex: 2;
+                width: calc(75% - 10px);
+                margin-left: 50px;
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+            }
+
+            .headline {
+                /* padding: 20px; */
+                background-color: #005411;
+                color: white;
+            }
+
+            footer {
+                color: white;
+                padding: 20px;
+                height: 10%;
+                width: 100%;
+                position: fixed;
+                bottom: 0;
+            }
+
+            .topic-content {
+                display: flex;
+                justify-content: left;
+            }
+
+            .topic-link {
+                width: 25%; /* Adjust the width as needed */
+                padding-left: 20px; /* Add some spacing between links */
+                margin-bottom: 20px; /* Add some spacing between links */
+                cursor: pointer;
+            }
+
+            .active h3 {
+                color: #fff;
+            }
+
+            .topic-link h3 {
+                margin-top: 0;
+                /* width: 90%; */
+            }
+
+            .topic-link p {
+                margin-bottom: 10px;
+            }
+
+            .topic-link:not(:last-child) {
+                border-right: 1px solid rgba(255, 255, 255, 0.7);
+                padding-right: 20px; /* Add some spacing between links */
+            }
+        </style>
+    </head>
+
+    <body scroll="no">
+        <header>
+            <div class="header-content">
+                <div class="logo">
+                    <img src="R_Sigma_horizontal_white.png" alt="R Sigma Logo" />
+                </div>
+                <nav>
+                    <a><h3>About</h3></a>
+                    <a><h3>Contact</h3></a>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <div class="left-column">
+                <div class="headline">
+                    <div id="emphasis-text">
+                        <h1>You're looking to automate.</h1>
+                        <h2>It's hard to get started.<br />It's easy to get stuck.</h2>
+                        <h1 class="right">We can help.</h1>
+                    </div>
+                    <div id="backup-text">
+                        <p>
+                            R Sigma is an automation and engineering services firm that specializes in the deployment
+                            and optimization of robotics, digital transformation, and other automation technologies.
+                            During new installations, custom integrations, and system redesigns, we provide expertise
+                            and tools to manage every phase of the process, delivering solutions that augment your
+                            current team and maximize your internal resources.
+                        </p>
+                    </div>
+                </div>
+                <div class="bottomline">
+                    <div class="topic-content">
+                        <div id="wwdo" onclick="toggleInfo(this);" class="topic-link active">
+                            <h3>What We Do</h3>
+                        </div>
+                        <div id="wwdeliver" onclick="toggleInfo(this);" class="topic-link">
+                            <h3>What We Deliver</h3>
+                        </div>
+                        <div id="hwdi" onclick="toggleInfo(this);" class="topic-link">
+                            <h3>How We Do It</h3>
+                        </div>
+                        <div id="tc" onclick="toggleInfo(this);" class="topic-link">
+                            <h3>Technical Capabilities</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right-column" id="right-column">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
+                <script src="strings.js"></script>
+                <script src="circleGrid.js"></script>
+                <script src="networkGraph.js"></script>
+                <script src="triangleGrid.js"></script>
+                <script src="source.js"></script>
+            </div>
+        </main>
+    </body>
+</html>

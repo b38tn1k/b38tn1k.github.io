@@ -6,7 +6,7 @@ contentStrings['wwdo']['backup-text'] = "<p>R Sigma is an automation and enginee
 
 contentStrings['wwdeliver'] = {}
 contentStrings['wwdeliver']['emphasis-text'] = '<h1>What We Deliver</h1>'
-contentStrings['wwdeliver']['backup-text'] = '<h4>Time Savings & Expanded Capacity</h4><p>Your team communicates project requirements once. <br>Our team manages each phase of the project, scaling resources and support as necessary.</p><h4>Decision Clarity & Confidence</h4><p>Automation solutions are cost-optimized and technically justified, ensuring your resources are well allocated.</p><h4>Technical Expertise & Relationships</h4><p>We navigate the complex world of technologies and integrator partners to deliver customized automation solutions that meet your business needs.</p>'
+contentStrings['wwdeliver']['backup-text'] = '<h4 onmouseover="zoomGridSetting(1);">Time Savings & Expanded Capacity</h4><p>Your team communicates project requirements once. <br>Our team manages each phase of the project, scaling resources and support as necessary.</p><h4 onmouseover="zoomGridSetting(2);">Decision Clarity & Confidence</h4><p>Automation solutions are cost-optimized and technically justified, ensuring your resources are well allocated.</p><h4 onmouseover="zoomGridSetting(3);">Technical Expertise & Relationships</h4><p>We navigate the complex world of technologies and integrator partners to deliver customized automation solutions that meet your business needs.</p>'
 
 
 

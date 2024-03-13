@@ -1,3 +1,23 @@
+function indexOfSmallest(arr) {
+    if (arr.length === 0) {
+        return -1; // Return -1 if the array is empty
+    }
+
+    let minIndex = 0; // Assume the first element is the smallest
+    let minValue = arr[0]; // Initialize the minimum value
+
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] < minValue) {
+            // If the current element is smaller than the minimum value,
+            // update the minimum value and its index
+            minIndex = i;
+            minValue = arr[i];
+        }
+    }
+
+    return minIndex; // Return the index of the smallest element
+}
+
 class TriangleGrid {
     /**
      * @description initializes member variables and generates a grid of triangles for visualization.
@@ -14,10 +34,10 @@ class TriangleGrid {
      * @description sets properties and initializes objects for a Canvas class, including
      * `myColors`, `canvasSize`, `numCells`, `cellSize`, `mode`, and `triangles`. It also
      * calls the `generateTriangles()` function.
-     * 
+     *
      * @param { array } myColors - 16 colors of a Mona Lisa image to be generated and
      * displayed on a canvas using this constructor.
-     * 
+     *
      * @param { integer } canvasSize - size of the canvas where the grid will be drawn.
      */
     constructor(myColors, canvasSize) {
@@ -66,9 +86,10 @@ class TriangleGrid {
                 let y = j * this.cellSize + this.cellSize / 2;
                 // let hypot = dist(i, j, this.numCells, 0);
                 // let ratio = hypot/maxHypot;
-                let rotation  = 0.3*this.calculateHint(i, j) + 0.7*this.calculateRotation(x, y);
+                let rotation = 0.3 * this.calculateHint(i, j) + 0.7 * this.calculateRotation(x, y);
                 let c = color(this.myColors["brickRed"]);
-                this.triangles.push({ x, y, rotation, c });
+                let onPath = false;
+                this.triangles.push({ x, y, rotation, c, onPath });
             }
         }
         this.rotateTriangles();
@@ -78,20 +99,20 @@ class TriangleGrid {
     /**
      * @description calculates the angle from a cell to the top right corner using the
      * differences between the x- and y-coordinates of the cell and the top right corner.
-     * 
+     *
      * @param { integer } x - 1D coordinate of a cell in a grid.
-     * 
+     *
      * @param { integer } y - 2nd coordinate of the point to calculate the distance from,
      * in the top right corner.
-     * 
+     *
      * @returns { angle measurement in radians. } an angle in radians measured from the
      * top-right corner of the grid.
-     * 
+     *
      * 	The output of the function is an angle in radians.
      */
     calculateHint(x, y) {
         // Calculate the distance from cell (x, y) to the top right corner
-        let dx = (this.numCells - 1) - x; // x-coordinate difference to top right corner
+        let dx = this.numCells - 1 - x; // x-coordinate difference to top right corner
         let dy = 0 - y; // y-coordinate difference to top right corner
         // Calculate the angle from the cell to the top right corner using arctangent (atan2)
         let angle = Math.atan2(dy, dx);
@@ -138,17 +159,25 @@ class TriangleGrid {
             this.triangles[i].c = this.myColors["goldenYellow"];
         }
 
+        for (let t of this.triangles) {
+            t.onPath = false;
+        }
+
         // for (let i = 0; i < 10; i++) {
         for (let i = 0; i < 100; i++) {
-            if (position >= 0 && position < this.triangles.length-1) {
+            if (position >= 0 && position < this.triangles.length - 1) {
                 this.triangles[position].c = this.myColors["teal"];
+                this.triangles[position].onPath = true;
                 if (position == this.numCells * (this.numCells - 1)) {
                     i = 100;
-                } else if (position % (this.numCells) == 0) {
+                } else if (position % this.numCells == 0) {
                     i = 100;
-                } else if (position % (this.numCells) == this.numCells-1 && position > this.numCells/2 * this.numCells) {
+                } else if (
+                    position % this.numCells == this.numCells - 1 &&
+                    position > (this.numCells / 2) * this.numCells
+                ) {
                     i = 100;
-                } else if (position > (this.numCells-1) * this.numCells) {
+                } else if (position > (this.numCells - 1) * this.numCells) {
                     i = 100;
                 } else if (position < this.numCells / 2) {
                     i = 100;
@@ -156,16 +185,25 @@ class TriangleGrid {
                     // Get the current triangle's rotation in degrees
                     let rotation = Math.floor(degrees(this.triangles[position].rotation));
                     if (rotation < 0) {
-                        rotation += 360
+                        rotation += 360;
                     }
-                    let directions = [-1 ,this.numCells - 1, this.numCells, this.numCells + 1, 1, -(this.numCells -1), -this.numCells, -(this.numCells + 1)];
+                    let directions = [
+                        -1,
+                        this.numCells - 1,
+                        this.numCells,
+                        this.numCells + 1,
+                        1,
+                        -(this.numCells - 1),
+                        -this.numCells,
+                        -(this.numCells + 1),
+                    ];
                     let rotations = [0, 45, 90, 135, 180, 225, 270, 315];
                     if (rotation < rotations[0] + 22.5 || rotation >= rotations[0] + 360 - 22.5) {
-                        position += directions[0]
+                        position += directions[0];
                     }
                     for (let i = 1; i < rotations.length; i++) {
                         if (rotation < rotations[i] + 22.5 && rotation >= rotations[i] - 22.5) {
-                            position += directions[i]
+                            position += directions[i];
                         }
                     }
                     // if (rotation == -45) {
@@ -267,12 +305,70 @@ class TriangleGrid {
         }
     }
 
+    mouseAbovePath() {
+        let my = Math.floor((mouseX / this.canvasSize) * this.numCells);
+        let mx = Math.floor((mouseY / this.canvasSize) * this.numCells);
+        let index = my * this.numCells + mx;
+        this.triangles[index].c = color(0);
+        let xPath = null;
+        let yPath = null;
+        for (let i = 0; i < this.numCells; i++) {
+            const pos = mx + this.numCells * i;
+            if (this.triangles[pos].onPath == true) {
+                this.triangles[pos].c = color(0);
+                xPath = this.triangles[pos];
+            }
+        }
+        for (let i = (my - 1) * this.numCells; i < my * this.numCells; i++) {
+            const pos = i + this.numCells;
+            if (this.triangles[pos].onPath == true) {
+                this.triangles[pos].c = color(0);
+                yPath = this.triangles[pos];
+            }
+        }
+        let res = [-1, -1];
+        if (xPath != null) {
+            res[0] = xPath.x - mouseX > 0;
+            res[1] = res[0];
+        }
+        if (yPath != null) {
+            res[1] = yPath.y - mouseY > 0;
+            if (res[0] == -1) {
+                res[0] = res[1];
+            }
+        }
+
+        if (res[0] == -1) {
+            return false;
+        } else {
+            return res[0] && res[1];
+        }
+    }
+
     /**
      * @description generates high-quality documentation for given code by rotating and
      * scaling triangles based on modifier and cell size values, and filling them with
      * color based on their center points.
      */
     static() {
+        if (mouseX > 0 && mouseX < this.canvasSize && mouseY > 0 && mouseY < this.canvasSize) {
+            let root = 10 * this.canvasSize;
+            console.log(this.canvasSize);
+            let above = this.mouseAbovePath();
+            for (let t of this.triangles) {
+                let d = dist(t.x, t.y, mouseX, mouseY) / root;
+                if (above == true) {
+                    t.rotation -= d * d;
+                } else {
+                    t.rotation += d * d;
+                }
+
+                t.c = this.myColors["brickRed"];
+            }
+
+            this.rotateTriangles();
+            this.colorTriangles();
+        }
         let scale = 0.25;
         let point = 0.35;
         let cSize = this.modifier * this.cellSize;

@@ -1,3 +1,34 @@
+// link to the 3 paragraphs
+
+function zoomGridSetting(n) {
+    switch (n) {
+        case 1:
+            animations["wwdeliver"].easeX = 0;
+            animations["wwdeliver"].easeY = animations["wwdeliver"].canvasSize;
+            animations["wwdeliver"].easeORS = 0.5;
+            animations["wwdeliver"].easeORE = 0.375;
+            animations["wwdeliver"].easeIRS = 0.25;
+            animations["wwdeliver"].easeIRE = 0.5;
+            break;
+        case 2:
+            animations["wwdeliver"].easeX = animations["wwdeliver"].canvasSize / 2;
+            animations["wwdeliver"].easeY = animations["wwdeliver"].canvasSize / 2;
+            animations["wwdeliver"].easeORS = 0.5;
+            animations["wwdeliver"].easeORE = 0.2;
+            animations["wwdeliver"].easeIRS = 0.8;
+            animations["wwdeliver"].easeIRE = 0.25;
+            break;
+        case 3:
+            animations["wwdeliver"].easeX = animations["wwdeliver"].canvasSize;
+            animations["wwdeliver"].easeY = 0;
+            animations["wwdeliver"].easeORS = 0.5;
+            animations["wwdeliver"].easeORE = 0.375;
+            animations["wwdeliver"].easeIRS = 0.25;
+            animations["wwdeliver"].easeIRE = 0.5;
+            break;
+    }
+}
+
 class ZoomGrid {
     /**
      * @description sets instance variables and initializes objects, including myColors,
@@ -17,6 +48,18 @@ class ZoomGrid {
         this.cellSize = this.canvasSize / this.numCells;
         this.mode = 0;
         this.modifier = 0.0;
+        this.targetX = this.canvasSize;
+        this.targetY = 0;
+        this.easeX = this.targetX;
+        this.easeY = this.targetY;
+        this.outerRatioStart = 0.5;
+        this.outerRatioEnd = 0.375;
+        this.innerRadiusStart = 0.25;
+        this.innerRadiusEnd = 0.5;
+        this.easeORS = 0.5;
+        this.easeORE = 0.375;
+        this.easeIRS = 0.25;
+        this.easeIRE = 0.5;
     }
 
     /**
@@ -77,27 +120,64 @@ class ZoomGrid {
      */
     static() {
         rectMode(CENTER);
+        // if (this.targetX < this.easeX) {
+        //     this.targetX += 5;
+        // }
+        // if (this.targetX > this.easeX) {
+        //     this.targetX -= 5;
+        // }
+        // if (this.targetY < this.easeY) {
+        //     this.targetY += 5;
+        // }
+        // if (this.targetY > this.easeY) {
+        //     this.targetY -= 5;
+        // }
+        this.targetX += (this.easeX - this.targetX) * 0.05;
+        this.targetY += (this.easeY - this.targetY) * 0.05;
+        this.outerRatioStart += (this.easeORS - this.outerRatioStart) * 0.05;
+        this.outerRatioEnd += (this.easeORE - this.outerRatioEnd) * 0.05;
+        this.innerRadiusStart += (this.easeIRS - this.innerRadiusStart) * 0.05;
+        this.innerRadiusEnd += (this.easeIRE - this.innerRadiusEnd) * 0.05;
+
         for (let i = 0; i < this.numCells; i++) {
             for (let j = 0; j < this.numCells; j++) {
                 // Calculate center of current cell
                 let x = i * this.cellSize + this.cellSize / 2;
                 let y = j * this.cellSize + this.cellSize / 2;
+                if (mouseX > 0 && mouseX < this.canvasSize && mouseY > 0 && mouseY < this.canvasSize) {
+                    this.easeX = mouseX;
+                    this.easeY = mouseY;
+                    this.easeORS = 0.5;
+                    this.easeORE = 0.2;
+                    this.easeIRS = 0.8;
+                    this.easeIRE = 0.25;
+                }
 
                 // Calculate distance from center of canvas
                 // let d = dist(x, y, this.canvasSize / 2, this.canvasSize / 2);
-                let d = dist(x, y, this.canvasSize, 0);
-
-                // Calculate radius of outer circle
+                // let timeNow = (sin(millis() / 1000) + 1) / 2.0;
+                // let d = dist(x, y, this.targetX * timeNow, this.targetY * (1 - timeNow));
+                let d = dist(x, y, this.targetX, this.targetY);
                 let outerRadius = map(
                     d,
                     0,
                     this.canvasSize / 2,
-                    (this.cellSize) / 2,
-                    (this.cellSize * 0.75) / 2
+                    this.cellSize * this.outerRatioStart,
+                    this.cellSize * this.outerRatioEnd
                 );
 
                 // Calculate radius of inner circle (starts at 33% of outer circle)
-                let innerRadius = map(d, 0, this.canvasSize / 2, outerRadius * 0.25, outerRadius * 0.5);
+                let innerRadius = map(
+                    d,
+                    0,
+                    this.canvasSize / 2,
+                    outerRadius * this.innerRadiusStart,
+                    outerRadius * this.innerRadiusEnd
+                );
+                // d = dist(mouseX, mouseY, x, y);
+
+                // Calculate radius of inner circle (starts at 33% of outer circle)
+
                 push();
                 translate(x, y);
                 // Draw outer circle

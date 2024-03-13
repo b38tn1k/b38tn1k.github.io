@@ -1,12 +1,12 @@
-class CircleGrid {
+class ZoomGrid {
     /**
      * @description sets instance variables and initializes objects, including myColors,
      * canvasSize, numCells, cellSize, mode, and modifier.
-     * 
+     *
      * @param { array } myColors - 1D array of colors that define the appearance of each
      * cell in the game, with each element in the array specifying the color of a particular
      * cell.
-     * 
+     *
      * @param { integer } canvasSize - size of the canvas that the code will operate on,
      * which is used to calculate the size of each cell in the grid.
      */
@@ -49,6 +49,7 @@ class CircleGrid {
     in() {
         this.modifier += 0.1;
         if (this.modifier >= 1.0) {
+            this.modifier = 1.0;
             this.mode = 1;
             // setTimeout(() => {frameRate(1);}, 1000);
         }
@@ -64,6 +65,7 @@ class CircleGrid {
         this.modifier -= 0.1;
         if (this.modifier <= 0.0) {
             this.mode = 0;
+            this.modifier = 0.0;
         }
         this.static();
     }
@@ -82,27 +84,31 @@ class CircleGrid {
                 let y = j * this.cellSize + this.cellSize / 2;
 
                 // Calculate distance from center of canvas
-                let d = dist(x, y, this.canvasSize / 2, this.canvasSize / 2);
+                // let d = dist(x, y, this.canvasSize / 2, this.canvasSize / 2);
+                let d = dist(x, y, this.canvasSize, 0);
 
                 // Calculate radius of outer circle
                 let outerRadius = map(
                     d,
                     0,
                     this.canvasSize / 2,
-                    (this.cellSize * 0.25) / 2,
+                    (this.cellSize) / 2,
                     (this.cellSize * 0.75) / 2
                 );
 
                 // Calculate radius of inner circle (starts at 33% of outer circle)
-                let innerRadius = map(d, 0, this.canvasSize / 2, outerRadius * 0.9, outerRadius * 0.33);
-
+                let innerRadius = map(d, 0, this.canvasSize / 2, outerRadius * 0.25, outerRadius * 0.5);
+                push();
+                translate(x, y);
                 // Draw outer circle
                 fill(this.myColors["brickRed"]);
-                square(x, y, this.modifier * outerRadius * 1.75, 5);
+                rotate(this.modifier * HALF_PI);
+                square(0, 0, this.modifier * outerRadius * 1.75, 5);
 
                 // Draw inner circle
                 fill(this.myColors["teal"]);
-                square(x, y, this.modifier * innerRadius * 1.75, 5);
+                square(0, 0, this.modifier * innerRadius * 1.75, 5);
+                pop();
             }
         }
     }

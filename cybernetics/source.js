@@ -49,6 +49,34 @@ function setupColors() {
     myColors["sageGreen"] = color("#9DC183");
     myColors["powderBlue"] = color("#B0E0E6");
     myColors["brickRed"] = color("#CB4154");
+    myColors["forestGreen"] = color("#005411");
+    myColors["navyBlue"] = color("#001F3F");
+    myColors["skyBlue"] = color("#87CEEB");
+}
+
+function deviceTurned() {
+  setupScreen();
+}
+
+function windowResized() {
+  setupScreen();
+}
+
+function setupScreen() {
+  let rightColumn = document.getElementById("right-column"); // Get the right column by its ID
+  let maxWidth = rightColumn.offsetWidth; // Get the width of the right column
+  canvasSize = min(windowHeight * 0.85, maxWidth * 0.75); // Calculate the largest square size, adjust the factor as necessary
+  resizeCanvas(canvasSize, canvasSize);
+  
+  animations[mode] = new TriangleGrid(myColors, canvasSize);
+  animations[mode].mode = IN;
+  animations["wwdeliver"] = new ZoomGrid(myColors, canvasSize);
+  animations["wwdeliver"].mode = 0;
+  animations["hwdi"] = new Maze(myColors, canvasSize);
+  animations["hwdi"].mode = 0;
+  animations["tc"] = new InvaderGrid(myColors, canvasSize);
+  animations["tc"].mode = 0;
+
 }
 
 /**
@@ -57,20 +85,13 @@ function setupColors() {
  */
 function setup() {
     // canvasSize = int(min(windowHeight * 0.75, windowWidth  * 0.75));
+    setupColors();
     let rightColumn = document.getElementById("right-column"); // Get the right column by its ID
     let maxWidth = rightColumn.offsetWidth; // Get the width of the right column
     canvasSize = min(windowHeight * 0.85, maxWidth * 0.75); // Calculate the largest square size, adjust the factor as necessary
     canvas = createCanvas(canvasSize, canvasSize);
     canvas.parent("right-column");
-    setupColors();
-    animations[mode] = new TriangleGrid(myColors, canvasSize);
-    animations[mode].mode = IN;
-    animations["wwdeliver"] = new CircleGrid(myColors, canvasSize);
-    animations["wwdeliver"].mode = 0;
-    animations["hwdi"] = new CircleGrid(myColors, canvasSize);
-    animations["hwdi"].mode = 0;
-    animations["tc"] = new CircleGrid(myColors, canvasSize);
-    animations["tc"].mode = 0;
+    setupScreen();
 }
 
 /**

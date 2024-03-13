@@ -1,17 +1,18 @@
 class TriangleGrid {
     /**
      * @description initializes member variables and generates a grid of triangles for visualization.
-     * 
+     *
      * @param { array } myColors - 10 colors that will be used to generate triangles in
      * the function.
-     * 
+     *
      * @param { integer } canvasSize - 2D size of the canvas on which the triangulated
      * shape will be rendered, and is used to calculate the size of each cell in the
      * triangular mesh.
      */
+    // constructor(myColors, canvasSize, loader) {
     constructor(myColors, canvasSize) {
         this.myColors = myColors;
-        this.numCells = 10;
+        this.numCells = 15;
         this.canvasSize = canvasSize;
         this.cellSize = this.canvasSize / this.numCells;
         this.mode = 0;
@@ -48,17 +49,29 @@ class TriangleGrid {
      * of each cell, and adds them to an array of triangles for rendering.
      */
     generateTriangles() {
+        // let maxHypot = dist(0, 0, this.numCells, this.numCells);
         for (let i = 0; i < this.numCells; i++) {
             for (let j = 0; j < this.numCells; j++) {
                 let x = i * this.cellSize + this.cellSize / 2;
                 let y = j * this.cellSize + this.cellSize / 2;
-                let rotation = this.calculateRotation(x, y);
+                // let hypot = dist(i, j, this.numCells, 0);
+                // let ratio = hypot/maxHypot;
+                let rotation  = 0.3*this.calculateHint(i, j) + 0.7*this.calculateRotation(x, y);
                 let c = color(this.myColors["brickRed"]);
                 this.triangles.push({ x, y, rotation, c });
             }
         }
         this.rotateTriangles();
         this.colorTriangles();
+    }
+
+    calculateHint(x, y) {
+        // Calculate the distance from cell (x, y) to the top right corner
+        let dx = (this.numCells - 1) - x; // x-coordinate difference to top right corner
+        let dy = 0 - y; // y-coordinate difference to top right corner
+        // Calculate the angle from the cell to the top right corner using arctangent (atan2)
+        let angle = Math.atan2(dy, dx);
+        return angle;
     }
 
     /**
@@ -80,6 +93,15 @@ class TriangleGrid {
         for (let triangle of this.triangles) {
             triangle.rotation += rotationDifference;
         }
+        let myTris = [];
+        for (let triangle of this.triangles) {
+            myTris.push(triangle.rotation);
+        }
+        // Create a JSON object
+        // let jsonData = {
+        //     triangles: myTris,
+        // };
+        // saveJSON(jsonData, "triangles.json");
     }
 
     /**
@@ -88,42 +110,72 @@ class TriangleGrid {
      */
     colorTriangles() {
         let position = this.numCells - 1;
-        for (let i = this.numCells - 1; i <= this.numCells * (this.numCells - 1); i+= this.numCells-1) {
+        for (let i = this.numCells - 1; i <= this.numCells * (this.numCells - 1); i += this.numCells - 1) {
             this.triangles[i].c = this.myColors["goldenYellow"];
         }
 
+        // for (let i = 0; i < 10; i++) {
         for (let i = 0; i < 100; i++) {
-            if (position >= 0 && position < this.triangles.length) {
+            if (position >= 0 && position < this.triangles.length-1) {
                 this.triangles[position].c = this.myColors["teal"];
                 if (position == this.numCells * (this.numCells - 1)) {
+                    i = 100;
+                } else if (position % (this.numCells) == 0) {
+                    i = 100;
+                } else if (position % (this.numCells) == this.numCells-1 && position > this.numCells/2 * this.numCells) {
+                    i = 100;
+                } else if (position > (this.numCells-1) * this.numCells) {
+                    i = 100;
+                } else if (position < this.numCells / 2) {
                     i = 100;
                 } else {
                     // Get the current triangle's rotation in degrees
                     let rotation = Math.floor(degrees(this.triangles[position].rotation));
-                    if (rotation == -45) {
-                        position -= this.numCells + 1;
+                    if (rotation < 0) {
+                        rotation += 360
                     }
-                    if (rotation == 0) {
-                        position -= 1;
+                    let directions = [-1 ,this.numCells - 1, this.numCells, this.numCells + 1, 1, -(this.numCells -1), -this.numCells, -(this.numCells + 1)];
+                    let rotations = [0, 45, 90, 135, 180, 225, 270, 315];
+                    if (rotation < rotations[0] + 22.5 || rotation >= rotations[0] + 360 - 22.5) {
+                        position += directions[0]
                     }
-                    if (rotation == 45) {
-                        position += this.numCells - 1;
+                    for (let i = 1; i < rotations.length; i++) {
+                        if (rotation < rotations[i] + 22.5 && rotation >= rotations[i] - 22.5) {
+                            position += directions[i]
+                        }
                     }
-                    if (rotation == 90) {
-                        position += this.numCells;
-                    }
-                    if (rotation == 135) {
-                        position += this.numCells + 1;
-                    }
-                    if (rotation == 180) {
-                        position += 1;
-                    }
-                    if (rotation == -90) {
-                        position -= this.numCells;
-                    }
-                    if (rotation == 225) {
-                        position -= this.numCells - 1;
-                    }
+                    // if (rotation == -45) {
+                    //     // position -= this.numCells + 1;
+                    //     position += directions[0]
+                    // }
+                    // if (rotation == 0) {
+                    //     // position -= 1;
+                    //     position += directions[1]
+                    // }
+                    // if (rotation == 45) {
+                    //     // position += this.numCells - 1;
+                    //     position += directions[2]
+                    // }
+                    // if (rotation == 90) {
+                    //     // position += this.numCells;
+                    //     position += directions[3]
+                    // }
+                    // if (rotation == 135) {
+                    //     // position += this.numCells + 1;
+                    //     position += directions[4]
+                    // }
+                    // if (rotation == 180) {
+                    //     // position += 1;
+                    //     position += directions[5]
+                    // }
+                    // if (rotation == -90) {
+                    //     // position -= this.numCells;
+                    //     position += directions[6]
+                    // }
+                    // if (rotation == 225) {
+                    //     // position -= this.numCells - 1;
+                    //     position += directions[7]
+                    // }
                 }
             }
 
@@ -137,16 +189,16 @@ class TriangleGrid {
      * using a noise scaling factor `noiseScale` and a noise function `noise()`. The
      * generated angle is then floored and multiplied by 45 to produce a range of 0-360
      * degrees.
-     * 
+     *
      * @param { number } x - 2D position of an object in a noise function used for
      * simulating the rotation of an object.
-     * 
+     *
      * @param { integer } y - 2D coordinate of a point in the noise space, which is used
      * to compute the rotation angle for that point based on the `noiseValue`.
-     * 
+     *
      * @returns { `Angles` value. } an angular value in the range of 0 to 360 degrees,
      * rounded to the nearest 45 degrees.
-     * 
+     *
      * 		- The function returns a value in radians, representing the angle of rotation
      * in the XY plane.
      * 		- The `noiseValue` variable is generated using a noise function, which takes two
@@ -162,9 +214,9 @@ class TriangleGrid {
     calculateRotation(x, y) {
         let noiseScale = 0.005;
         let noiseValue = 0.7 * noise(x * noiseScale, y * noiseScale) + 0.3 * 0.25;
-        let angle = map(noiseValue, 0, 1, 0, 360);
-        angle = Math.floor(angle / 45) * 45;
-        return radians(angle);
+        let angle = map(noiseValue, 0, 1, 0, TWO_PI);
+        // angle = Math.floor(degrees(angle) / 45) * 45;
+        return angle;
     }
 
     /**
@@ -199,20 +251,13 @@ class TriangleGrid {
     static() {
         let scale = 0.25;
         let point = 0.35;
-        let cSize = this.modifier * this.cellSize
+        let cSize = this.modifier * this.cellSize;
         for (let t of this.triangles) {
             push();
             translate(t.x, t.y);
             rotate(this.modifier * t.rotation + PI);
             fill(t.c);
-            triangle(
-                -cSize * scale,
-                -cSize * scale,
-                cSize * scale,
-                -cSize * scale,
-                0,
-                cSize * point
-            );
+            triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
             pop();
         }
     }

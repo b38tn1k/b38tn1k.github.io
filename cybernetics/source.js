@@ -31,7 +31,6 @@ function toggleInfo(elem) {
     document.getElementById("backup-text").innerHTML = contentStrings[elem.id]["backup-text"];
     mode = elem.id;
     animations[mode].mode = IN;
-    console.log(mode);
 }
 
 /**

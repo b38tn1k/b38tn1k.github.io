@@ -54,14 +54,26 @@ function setupColors() {
     myColors["skyBlue"] = color("#87CEEB");
 }
 
+/**
+ * @description sets up the screen when a device has turned on or resumed from hibernation.
+ */
 function deviceTurned() {
   setupScreen();
 }
 
+/**
+ * @description sets up the screen upon resizing the window.
+ */
 function windowResized() {
   setupScreen();
 }
 
+/**
+ * @description sets up the necessary objects for an animated graphics experience on
+ * a HTML page. It gets the width and height of the right column, calculates the
+ * maximum size of the canvas, creates various animation grids with different shapes,
+ * modes and colors, and sets their initial states.
+ */
 function setupScreen() {
   let rightColumn = document.getElementById("right-column"); // Get the right column by its ID
   let maxWidth = rightColumn.offsetWidth; // Get the width of the right column

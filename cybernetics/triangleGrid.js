@@ -1,3 +1,10 @@
+/**
+ * @description searches through an array and returns the index of the smallest element.
+ * 
+ * @param { array } arr - array whose smallest element is to be found.
+ * 
+ * @returns { integer } the index of the smallest element in the given array.
+ */
 function indexOfSmallest(arr) {
     if (arr.length === 0) {
         return -1; // Return -1 if the array is empty
@@ -305,6 +312,13 @@ class TriangleGrid {
         }
     }
 
+    /**
+     * @description determines whether a mouse pointer is above a specified path in a
+     * grid, and returns a boolean value indicating the result.
+     * 
+     * @returns { boolean } a boolean value indicating whether the mouse position is above
+     * any part of the path.
+     */
     mouseAbovePath() {
         let my = Math.floor((mouseX / this.canvasSize) * this.numCells);
         let mx = Math.floor((mouseY / this.canvasSize) * this.numCells);

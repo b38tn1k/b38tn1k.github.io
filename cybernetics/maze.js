@@ -72,6 +72,10 @@ class Maze {
         this.static();
     }
 
+    /**
+     * @description draws a maze by filling cells with red or yellow color based on the
+     * values in the `maze` and `path` arrays, respectively.
+     */
     static() {
         rectMode(CENTER);
         for (let x = 0; x < this.numCells; x++) {
@@ -97,6 +101,13 @@ class Maze {
         }
     }
 
+    /**
+     * @description creates a randomly generated maze, carves out paths within it and
+     * marks entry and exit points.
+     * 
+     * @returns { array } a two-dimensional array representing a navigable maze with entry
+     * and exit points marked.
+     */
     generateMaze() {
         const maze = Array.from({ length: this.numCells }, () => Array(this.numCells).fill(1));
         for (let x = 0; x < this.numCells; x++) {
@@ -113,6 +124,24 @@ class Maze {
         return maze;
     }
 
+    /**
+     * @description carves a path through a given maze by iteratively marking cells as
+     * part of the path and then recursively calling itself until the entire maze is traversed.
+     * 
+     * @param { integer } maze - 2D grid of a maze, which is used to track the current
+     * cell and generate random directions for exploration.
+     * 
+     * @param { `int`. } x - 2D coordinate of the cell where the algorithm will start
+     * carving paths.
+     * 
+     * 		- `x`: This is the coordinate of the current cell in the maze. It is an integer
+     * between 0 and 3, representing the row number in the array.
+     * 		- `y`: This is the coordinate of the current cell in the maze. It is an integer
+     * between 0 and 3, representing the column number in the array.
+     * 
+     * 
+     * @param { integer } y - 2D coordinate of the cell to start generating paths from.
+     */
     carvePaths(maze, x, y) {
         maze[x][y] = 0; // Mark current cell as path
 
@@ -130,6 +159,11 @@ class Maze {
         }
     }
 
+    /**
+     * @description shuffles a list of direction vectors randomly.
+     * 
+     * @returns { array } a randomized array of 4 directional vectors.
+     */
     shuffleDirections() {
         const directions = [
             [0, -1], // Up
@@ -147,10 +181,34 @@ class Maze {
         return directions;
     }
 
+    /**
+     * @description returns a boolean value indicating whether a given position within a
+     * 2D grid is within the bounds of the grid and contains the wall cell value.
+     * 
+     * @param { integer } x - 2D coordinate of a cell within the maze.
+     * 
+     * @param { integer } y - 2D coordinate of the cell being tested for validity, along
+     * with `x` and `maze`.
+     * 
+     * @param { array } maze - 2D array that contains the maze layout, and it is used to
+     * determine whether the given position (x, y) is within the maze or not based on the
+     * value stored at that location in the maze array.
+     * 
+     * @returns { boolean } a boolean value indicating whether the given cell position
+     * is within the valid range and has the correct maze value.
+     */
     isValidCell(x, y, maze) {
         return x >= 1 && x < this.numCells - 1 && y >= 1 && y < this.numCells - 1 && maze[x][y] === 1;
     }
 
+    /**
+     * @description calculates and returns a shortest path through a maze based on an
+     * initial entry point, using a depth-first search algorithm.
+     * 
+     * @returns { array } an array of integers representing the shortest path through a
+     * maze, where each integer corresponds to a cell in the maze and has a value of
+     * either 0 or 1.
+     */
     findShortestPath() {
         const distances = Array.from({ length: this.numCells }, () => Array(this.numCells).fill(Infinity));
         const visited = Array.from({ length: this.numCells }, () => Array(this.numCells).fill(false));
@@ -199,6 +257,26 @@ class Maze {
         return pathInMazeFormat;
     }
 
+    /**
+     * @description computes and returns an array of neighboring cells for a given cell
+     * in a maze, based on its x and y coordinates.
+     * 
+     * @param { 2D coordinates point value. } cell - 2D cell within the maze that is being
+     * evaluated for its neighbors.
+     * 
+     * 		- `x`: The position of the cell in the horizontal dimension (row).
+     * 		- `y`: The position of the cell in the vertical dimension (column).
+     * 
+     * 	The function then accesses and pushes the neighbors of the given cell to an array
+     * based on their coordinates. The properties of these neighbors are not explicitly
+     * mentioned as they are not used further in the function.
+     * 
+     * 
+     * @param { array } maze - 2D array of the labyrinth, which is used to determine the
+     * positions of the cell's neighbors based on their coordinates within the maze.
+     * 
+     * @returns { object } an array of neighboring cell positions in the given maze.
+     */
     getNeighbors(cell, maze) {
         const { x, y } = cell;
         const neighbors = [];

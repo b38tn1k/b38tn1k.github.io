@@ -10,6 +10,16 @@ class TriangleGrid {
      * triangular mesh.
      */
     // constructor(myColors, canvasSize, loader) {
+    /**
+     * @description sets properties and initializes objects for a Canvas class, including
+     * `myColors`, `canvasSize`, `numCells`, `cellSize`, `mode`, and `triangles`. It also
+     * calls the `generateTriangles()` function.
+     * 
+     * @param { array } myColors - 16 colors of a Mona Lisa image to be generated and
+     * displayed on a canvas using this constructor.
+     * 
+     * @param { integer } canvasSize - size of the canvas where the grid will be drawn.
+     */
     constructor(myColors, canvasSize) {
         this.myColors = myColors;
         this.numCells = 15;
@@ -65,6 +75,20 @@ class TriangleGrid {
         this.colorTriangles();
     }
 
+    /**
+     * @description calculates the angle from a cell to the top right corner using the
+     * differences between the x- and y-coordinates of the cell and the top right corner.
+     * 
+     * @param { integer } x - 1D coordinate of a cell in a grid.
+     * 
+     * @param { integer } y - 2nd coordinate of the point to calculate the distance from,
+     * in the top right corner.
+     * 
+     * @returns { angle measurement in radians. } an angle in radians measured from the
+     * top-right corner of the grid.
+     * 
+     * 	The output of the function is an angle in radians.
+     */
     calculateHint(x, y) {
         // Calculate the distance from cell (x, y) to the top right corner
         let dx = (this.numCells - 1) - x; // x-coordinate difference to top right corner

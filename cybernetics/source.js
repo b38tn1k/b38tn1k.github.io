@@ -2,7 +2,7 @@ let myColors = {};
 let animations = {};
 let canvasSize, numCells, cellSize;
 let canvas;
-let mode = "wwdo";
+let mode = "wwdeliver";
 
 let IN = 2;
 let OUT = 3;
@@ -83,18 +83,19 @@ function setupScreen() {
   resizeCanvas(canvasSize, canvasSize);
   
   // animations[mode] = new CircleLock(myColors, canvasSize);
-  animations[mode] = new TriangleGrid(myColors, canvasSize);
+  animations["wwdo"] = new TriangleGrid(myColors, canvasSize);
   // animations[mode] = new GOL(myColors, canvasSize);
   // animations[mode] = new Terrain(myColors, canvasSize);
-  animations[mode].mode = IN;
+  animations["wwdo"].mode = 0;
   animations["wwdeliver"] = new ZoomGrid(myColors, canvasSize);
   animations["wwdeliver"].mode = 0;
   animations["hwdi"] = new Maze(myColors, canvasSize);
   animations["hwdi"].mode = 0;
   // animations["tc"] = new InvaderGrid(myColors, canvasSize);
   animations["tc"] = new Terrain(myColors, canvasSize);
-  Terrain
   animations["tc"].mode = 0;
+
+  animations[mode].mode = IN;
 
 }
 

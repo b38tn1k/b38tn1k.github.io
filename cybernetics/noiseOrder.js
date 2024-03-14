@@ -38,12 +38,14 @@ function sortNodesByClosest(nodes) {
 }
 
 class Node {
-    constructor(x, y, borders, field) {
+    constructor(x, y, borders, field, c1, c2) {
         this.x = x;
         this.y = y;
         this.borders = borders;
         this.heading = random(-TWO_PI, TWO_PI);
         this.targetHeading = random(-TWO_PI, TWO_PI);
+        this.c1 = c1;
+        this.c2 = c2;
         // this.heading = - HALF_PI;
         // this.targetHeading = - HALF_PI;
         this.dampening = 0.05;
@@ -136,7 +138,22 @@ class Node {
         push();
         translate(this.x, this.y);
         rotate(mod * PI);
-        square(0, 0, this.scale * dim * mod, this.radius);
+        let size = this.scale * dim * mod;
+        if (this.mode == FREE || this.mode == EXPLODE) {
+            fill(this.c1);
+            square(0, 0, size, this.radius);
+            fill(this.c2);
+            square(0, 0, (1 - this.scale) * size, this.radius);
+        } else if (this.mode == SORTED) {
+            fill(this.c2);
+            square(0, 0, size, this.radius);
+        } else {
+            fill(this.c1);
+            square(0, 0, size, this.radius);
+            fill(this.c2);
+            square(0, 0, this.scale * size, this.radius);
+        }
+
         pop();
     }
 }
@@ -163,13 +180,15 @@ class Collector extends Grid {
             r2: Math.sqrt(this.canvasSizeOn2 * this.canvasSizeOn2 * 2),
         };
         for (let i = 0; i < this.numCells * this.numCells; i++) {
-        // for (let i = 0; i < 10; i++) {
+            // for (let i = 0; i < 10; i++) {
             this.nodes.push(
                 new Node(
                     random(this.cellSize, this.canvasSize - this.cellSize),
                     random(this.cellSize, this.canvasSize - this.cellSize),
                     borders,
-                    field
+                    field,
+                    this.myColors["brickRed"],
+                    this.myColors["teal"]
                 )
             );
         }
@@ -206,8 +225,6 @@ class Collector extends Grid {
             this.prevC = c;
             stroke(0);
             strokeWeight(this.strokeWeight);
-
-            // line(c[0].x, c[0].y, c[limit].x, c[limit].y);
             line(this.canvasSizeOn2, this.canvasSizeOn2, c[0].x, c[0].y);
             for (let i = limit - 1; i >= 0; i--) {
                 stroke(0);
@@ -227,11 +244,6 @@ class Collector extends Grid {
         rectMode(CENTER);
         for (let n of this.nodes) {
             n.update(1);
-            if (n.mode == CAPTURED || n.mode == SORTED || n.mode == ONLINE) {
-                fill(this.myColors["teal"]);
-            } else {
-                fill(this.myColors["brickRed"]);
-            }
             n.draw(this.cellSize, this.modifier);
         }
     }

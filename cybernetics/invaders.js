@@ -1,4 +1,4 @@
-class InvaderGrid {
+class InvaderGrid extends Grid{
     /**
      * @description sets instance variables and initializes objects, including myColors,
      * canvasSize, numCells, cellSize, mode, and modifier.
@@ -11,11 +11,7 @@ class InvaderGrid {
      * which is used to calculate the size of each cell in the grid.
      */
     constructor(myColors, canvasSize) {
-        this.myColors = myColors;
-        this.canvasSize = canvasSize;
-        this.cellSize = this.canvasSize / 200;
-        this.mode = 0;
-        this.modifier = 0.0;
+        super(myColors, canvasSize, 200);
         this.sqrtNumInv = 10;
         this.numInvaders = this.sqrtNumInv * this.sqrtNumInv;
         this.geoIncrement = this.canvasSize / (this.sqrtNumInv + 1);
@@ -23,57 +19,6 @@ class InvaderGrid {
         for (let i = 0; i < this.numInvaders; i++) {
             this.invaders.push(this.invader());
         }
-    }
-
-    /**
-     * @description is a utility function that adapts to the current state, performing
-     * appropriate actions based on the mode parameter.
-     */
-    draw() {
-        noStroke();
-        switch (this.mode) {
-            case 0:
-                break;
-            case 1:
-                this.static();
-                break;
-            case 2:
-                this.in();
-                break;
-            case 3:
-                this.out();
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * @description updates a modifier variable and changes its value depending on a
-     * condition, then calls `static()` method.
-     */
-    in() {
-        this.modifier += 0.1;
-        if (this.modifier >= 1.0) {
-            this.modifier = 1.0;
-            this.mode = 1;
-            // setTimeout(() => {frameRate(1);}, 1000);
-        }
-        this.static();
-    }
-
-    /**
-     * @description modifies the value of an object's `modifier` property by subtracting
-     * a fraction (0.1) and sets its `mode` property to 0 if the modified value is below
-     * 0.
-     */
-    out() {
-        this.modifier -= 0.1;
-        if (this.modifier <= 0.0) {
-            this.mode = 0;
-            this.modifier = 0.0;
-        }
-        this.static();
     }
 
     /**

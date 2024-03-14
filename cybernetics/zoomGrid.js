@@ -29,7 +29,7 @@ function zoomGridSetting(n) {
     }
 }
 
-class ZoomGrid {
+class ZoomGrid extends Grid {
     /**
      * @description sets instance variables and initializes objects, including myColors,
      * canvasSize, numCells, cellSize, mode, and modifier.
@@ -42,12 +42,7 @@ class ZoomGrid {
      * which is used to calculate the size of each cell in the grid.
      */
     constructor(myColors, canvasSize) {
-        this.myColors = myColors;
-        this.numCells = 10;
-        this.canvasSize = canvasSize;
-        this.cellSize = this.canvasSize / this.numCells;
-        this.mode = 0;
-        this.modifier = 0.0;
+        super(myColors, canvasSize, 10);
         this.targetX = this.canvasSize;
         this.targetY = 0;
         this.easeX = this.targetX;
@@ -63,81 +58,21 @@ class ZoomGrid {
     }
 
     /**
-     * @description is a utility function that adapts to the current state, performing
-     * appropriate actions based on the mode parameter.
-     */
-    draw() {
-        noStroke();
-        switch (this.mode) {
-            case 0:
-                break;
-            case 1:
-                this.static();
-                break;
-            case 2:
-                this.in();
-                break;
-            case 3:
-                this.out();
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * @description updates a modifier variable and changes its value depending on a
-     * condition, then calls `static()` method.
-     */
-    in() {
-        this.modifier += 0.1;
-        if (this.modifier >= 1.0) {
-            this.modifier = 1.0;
-            this.mode = 1;
-            // setTimeout(() => {frameRate(1);}, 1000);
-        }
-        this.static();
-    }
-
-    /**
-     * @description modifies the value of an object's `modifier` property by subtracting
-     * a fraction (0.1) and sets its `mode` property to 0 if the modified value is below
-     * 0.
-     */
-    out() {
-        this.modifier -= 0.1;
-        if (this.modifier <= 0.0) {
-            this.mode = 0;
-            this.modifier = 0.0;
-        }
-        this.static();
-    }
-
-    /**
      * @description draws circles at coordinates based on cell size and canvas size. It
      * calculates distances from the center of the canvas, uses those distances to calculate
      * radii of outer and inner circles, and draws the circles using modifier color.
      */
     static() {
         rectMode(CENTER);
-        // if (this.targetX < this.easeX) {
-        //     this.targetX += 5;
-        // }
-        // if (this.targetX > this.easeX) {
-        //     this.targetX -= 5;
-        // }
-        // if (this.targetY < this.easeY) {
-        //     this.targetY += 5;
-        // }
-        // if (this.targetY > this.easeY) {
-        //     this.targetY -= 5;
-        // }
         this.targetX += (this.easeX - this.targetX) * 0.05;
         this.targetY += (this.easeY - this.targetY) * 0.05;
         this.outerRatioStart += (this.easeORS - this.outerRatioStart) * 0.05;
         this.outerRatioEnd += (this.easeORE - this.outerRatioEnd) * 0.05;
         this.innerRadiusStart += (this.easeIRS - this.innerRadiusStart) * 0.05;
         this.innerRadiusEnd += (this.easeIRE - this.innerRadiusEnd) * 0.05;
+        let timeNow = (sin(millis() / 1000)) / 2.0;
+        let tx =  this.targetX +  this.cellSize * timeNow;
+        let ty = this.targetY +  this.cellSize * timeNow;
 
         for (let i = 0; i < this.numCells; i++) {
             for (let j = 0; j < this.numCells; j++) {
@@ -153,11 +88,7 @@ class ZoomGrid {
                     this.easeIRE = 0.25;
                 }
 
-                // Calculate distance from center of canvas
-                // let d = dist(x, y, this.canvasSize / 2, this.canvasSize / 2);
-                // let timeNow = (sin(millis() / 1000) + 1) / 2.0;
-                // let d = dist(x, y, this.targetX * timeNow, this.targetY * (1 - timeNow));
-                let d = dist(x, y, this.targetX, this.targetY);
+                let d = dist(x, y, tx, ty);
                 let outerRadius = map(
                     d,
                     0,

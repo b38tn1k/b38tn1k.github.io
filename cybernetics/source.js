@@ -51,6 +51,9 @@ function setupColors() {
     myColors["forestGreen"] = color("#005411");
     myColors["navyBlue"] = color("#001F3F");
     myColors["skyBlue"] = color("#87CEEB");
+    myColors["peachCoral"] = color("#FFB8A1");
+    myColors["lightOrange"] = color("#FFCBA4");
+    myColors["darkGoldenOrange"] = color("#FFB366");
 }
 
 /**
@@ -79,13 +82,18 @@ function setupScreen() {
   canvasSize = min(windowHeight * 0.85, maxWidth * 0.75); // Calculate the largest square size, adjust the factor as necessary
   resizeCanvas(canvasSize, canvasSize);
   
-  animations[mode] = new TriangleGrid(myColors, canvasSize);
+  // animations[mode] = new CircleLock(myColors, canvasSize);
+  // animations[mode] = new TriangleGrid(myColors, canvasSize);
+  // animations[mode] = new GOL(myColors, canvasSize);
+  animations[mode] = new Terrain(myColors, canvasSize);
   animations[mode].mode = IN;
   animations["wwdeliver"] = new ZoomGrid(myColors, canvasSize);
   animations["wwdeliver"].mode = 0;
   animations["hwdi"] = new Maze(myColors, canvasSize);
   animations["hwdi"].mode = 0;
-  animations["tc"] = new InvaderGrid(myColors, canvasSize);
+  // animations["tc"] = new InvaderGrid(myColors, canvasSize);
+  animations["tc"] = new Terrain(myColors, canvasSize);
+  Terrain
   animations["tc"].mode = 0;
 
 }

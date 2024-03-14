@@ -18,7 +18,14 @@ function indexOfSmallest(arr) {
     return minIndex; // Return the index of the smallest element
 }
 
-class TriangleGrid {
+function lerpTriColor(level, maxLevel, colorLow, colorHigh) {
+    // Normalize the level value to a range between 0 and 1
+    let normalizedLevel = level / maxLevel;
+    // Interpolate color based on normalized level
+    return lerpColor(colorLow, colorHigh, normalizedLevel);
+}
+
+class TriangleGrid extends Grid {
     /**
      * @description initializes member variables and generates a grid of triangles for visualization.
      *
@@ -41,37 +48,9 @@ class TriangleGrid {
      * @param { integer } canvasSize - size of the canvas where the grid will be drawn.
      */
     constructor(myColors, canvasSize) {
-        this.myColors = myColors;
-        this.numCells = 15;
-        this.canvasSize = canvasSize;
-        this.cellSize = this.canvasSize / this.numCells;
-        this.mode = 0;
-        this.modifier = 0.0;
+        super(myColors, canvasSize, 20);
         this.triangles = [];
         this.generateTriangles();
-    }
-
-    /**
-     * @description determines which action to perform based on the current mode and
-     * performs it.
-     */
-    draw() {
-        noStroke();
-        switch (this.mode) {
-            case 0:
-                break;
-            case 1:
-                this.static();
-                break;
-            case 2:
-                this.in();
-                break;
-            case 3:
-                this.out();
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -86,7 +65,7 @@ class TriangleGrid {
                 let y = j * this.cellSize + this.cellSize / 2;
                 // let hypot = dist(i, j, this.numCells, 0);
                 // let ratio = hypot/maxHypot;
-                let rotation = 0.3 * this.calculateHint(i, j) + 0.7 * this.calculateRotation(x, y);
+                let rotation = 0.2 * this.calculateHint(i, j) + 0.8 * this.calculateRotation(x, y);
                 let c = color(this.myColors["brickRed"]);
                 let onPath = false;
                 this.triangles.push({ x, y, rotation, c, onPath });
@@ -155,13 +134,44 @@ class TriangleGrid {
      */
     colorTriangles() {
         let position = this.numCells - 1;
+        let rotations = [0, 45, 90, 135, 180, 225, 270, 315, 360];
+        let colors = ["brickRed", "darkGoldenOrange","rustOrange","burntSienna", "plumPurple", "peachCoral", "lightOrange", "darkGoldenOrange", "brickRed", "darkGoldenOrange"];
+
+        for (let t of this.triangles) {
+            t.onPath = false;
+            let rotation = Math.floor(degrees(t.rotation));
+            if (rotation < 0) {
+                rotation += 360;
+            }
+            if (rotation > 360) {
+                rotation -= 360;
+            }
+
+            for (let i = 0; i < rotations.length; i++) {
+                if (rotation < rotations[i] + 22.5 && rotation >= rotations[i] - 22.5) {
+                    let rot = rotation;
+                    while (rot > 45) {
+                        rot -= 45;
+                    }
+                    t.c = lerpTriColor(rot, 45, this.myColors[colors[i]], this.myColors[colors[i+1]]);
+                }
+            }
+        }
+
         for (let i = this.numCells - 1; i <= this.numCells * (this.numCells - 1); i += this.numCells - 1) {
             this.triangles[i].c = this.myColors["goldenYellow"];
         }
 
-        for (let t of this.triangles) {
-            t.onPath = false;
-        }
+        let directions = [
+            -1,
+            this.numCells - 1,
+            this.numCells,
+            this.numCells + 1,
+            1,
+            -(this.numCells - 1),
+            -this.numCells,
+            -(this.numCells + 1),
+        ];
 
         // for (let i = 0; i < 10; i++) {
         for (let i = 0; i < 100; i++) {
@@ -187,57 +197,16 @@ class TriangleGrid {
                     if (rotation < 0) {
                         rotation += 360;
                     }
-                    let directions = [
-                        -1,
-                        this.numCells - 1,
-                        this.numCells,
-                        this.numCells + 1,
-                        1,
-                        -(this.numCells - 1),
-                        -this.numCells,
-                        -(this.numCells + 1),
-                    ];
-                    let rotations = [0, 45, 90, 135, 180, 225, 270, 315];
+                    
                     if (rotation < rotations[0] + 22.5 || rotation >= rotations[0] + 360 - 22.5) {
                         position += directions[0];
                     }
                     for (let i = 1; i < rotations.length; i++) {
                         if (rotation < rotations[i] + 22.5 && rotation >= rotations[i] - 22.5) {
                             position += directions[i];
+
                         }
                     }
-                    // if (rotation == -45) {
-                    //     // position -= this.numCells + 1;
-                    //     position += directions[0]
-                    // }
-                    // if (rotation == 0) {
-                    //     // position -= 1;
-                    //     position += directions[1]
-                    // }
-                    // if (rotation == 45) {
-                    //     // position += this.numCells - 1;
-                    //     position += directions[2]
-                    // }
-                    // if (rotation == 90) {
-                    //     // position += this.numCells;
-                    //     position += directions[3]
-                    // }
-                    // if (rotation == 135) {
-                    //     // position += this.numCells + 1;
-                    //     position += directions[4]
-                    // }
-                    // if (rotation == 180) {
-                    //     // position += 1;
-                    //     position += directions[5]
-                    // }
-                    // if (rotation == -90) {
-                    //     // position -= this.numCells;
-                    //     position += directions[6]
-                    // }
-                    // if (rotation == 225) {
-                    //     // position -= this.numCells - 1;
-                    //     position += directions[7]
-                    // }
                 }
             }
 
@@ -281,48 +250,24 @@ class TriangleGrid {
         return angle;
     }
 
-    /**
-     * @description updates a parameter `static`, then increments and checks if the
-     * `modifier` value exceeds 1, switching to mode 1 when that occurs.
-     */
-    in() {
-        this.static();
-        this.modifier += 0.1;
-        if (this.modifier >= 1.0) {
-            this.mode = 1;
-        }
-    }
-
-    /**
-     * @description reduces the modifier by 0.1 and sets mode to 0 when the modifier
-     * reaches or is less than 0.
-     */
-    out() {
-        this.static();
-        this.modifier -= 0.1;
-        if (this.modifier <= 0.0) {
-            this.mode = 0;
-        }
-    }
-
     mouseAbovePath() {
         let my = Math.floor((mouseX / this.canvasSize) * this.numCells);
         let mx = Math.floor((mouseY / this.canvasSize) * this.numCells);
         let index = my * this.numCells + mx;
-        this.triangles[index].c = color(0);
+        // this.triangles[index].c = color(0);
         let xPath = null;
         let yPath = null;
         for (let i = 0; i < this.numCells; i++) {
             const pos = mx + this.numCells * i;
             if (this.triangles[pos].onPath == true) {
-                this.triangles[pos].c = color(0);
+                // this.triangles[pos].c = color(0);
                 xPath = this.triangles[pos];
             }
         }
         for (let i = (my - 1) * this.numCells; i < my * this.numCells; i++) {
             const pos = i + this.numCells;
             if (this.triangles[pos].onPath == true) {
-                this.triangles[pos].c = color(0);
+                // this.triangles[pos].c = color(0);
                 yPath = this.triangles[pos];
             }
         }
@@ -351,9 +296,9 @@ class TriangleGrid {
      * color based on their center points.
      */
     static() {
+        rectMode(CENTER);
         if (mouseX > 0 && mouseX < this.canvasSize && mouseY > 0 && mouseY < this.canvasSize) {
             let root = 10 * this.canvasSize;
-            console.log(this.canvasSize);
             let above = this.mouseAbovePath();
             for (let t of this.triangles) {
                 let d = dist(t.x, t.y, mouseX, mouseY) / root;
@@ -362,22 +307,47 @@ class TriangleGrid {
                 } else {
                     t.rotation += d * d;
                 }
-
-                t.c = this.myColors["brickRed"];
+                // t.c = this.myColors["brickRed"];
             }
-
             this.rotateTriangles();
             this.colorTriangles();
         }
+        // let osc = (sin(millis() / 1000));
+        let osc = 0.002 * sin(millis() / 1000);
+        for (let t of this.triangles) {
+            t.rotation += osc;
+        }
+        // this.rotateTriangles();
+        this.colorTriangles();
+
         let scale = 0.25;
         let point = 0.35;
         let cSize = this.modifier * this.cellSize;
         for (let t of this.triangles) {
+            if (t.rotation < 0) {
+                t.rotation += TWO_PI;
+            }
+            if (t.rotation > TWO_PI) {
+                t.rotation -= TWO_PI;
+            }
             push();
             translate(t.x, t.y);
             rotate(this.modifier * t.rotation + PI);
-            fill(t.c);
-            triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
+            if (t.c == this.myColors["teal"] || t.c == this.myColors["goldenYellow"]) {
+                fill(t.c);
+                scale = 0.25;
+                point = 0.35;
+                strokeWeight(this.cellSize * 0.1);
+                stroke(t.c);
+                triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
+            } else {
+                fill(t.c)
+                scale = 0.2;
+                point = 0.5;
+                triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
+            }
+
+            noStroke();
             pop();
         }
     }

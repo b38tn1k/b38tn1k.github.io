@@ -25,6 +25,37 @@ function indexOfSmallest(arr) {
     return minIndex; // Return the index of the smallest element
 }
 
+/**
+ * @description takes in `level`, `maxLevel`, `colorLow`, and `colorHigh` parameters
+ * and interpolates a color between two provided colors based on the normalized level
+ * value between 0 and 1.
+ * 
+ * @param { number } level - 0-1 value that is used to interpolate the color output.
+ * 
+ * @param { number } maxLevel - maximum value of the normalized level that can be
+ * interpolated between `colorLow` and `colorHigh`.
+ * 
+ * @param { object } colorLow - low-valued color used for interpolation in the
+ * `lerpColor()` function.
+ * 
+ * @param { "Color" } colorHigh - higher-quality color that the function will interpolate
+ * between based on the normalized level value.
+ * 
+ * 		- `colorHigh`: An instance of the `Vec3` class, representing a color in a
+ * three-dimensional space. It is used for interpolation purposes and can have any
+ * valid value within the range of a 3D color representation.
+ * 
+ * 
+ * @returns { `RGBA` value. } a tri-colored gradient resulting from interpolating
+ * between two given colors based on a normalized level value.
+ * 
+ * 		- The `normalizedLevel` value ranges between 0 and 1, representing the level of
+ * interpolation applied to the color values.
+ * 		- The `colorLow` and `colorHigh` arguments provide the starting and ending colors,
+ * respectively, for the interpolation.
+ * 		- The function uses the `lerpColor` function internally to perform the interpolation,
+ * which takes two color values and returns a new color value based on their proportions.
+ */
 function lerpTriColor(level, maxLevel, colorLow, colorHigh) {
     // Normalize the level value to a range between 0 and 1
     let normalizedLevel = level / maxLevel;
@@ -257,6 +288,14 @@ class TriangleGrid extends Grid {
         return angle;
     }
 
+    /**
+     * @description detects whether a mouse cursor is above a specific path on a 2D grid
+     * by comparing the cursor position to the positions of the elements in the path. It
+     * returns a boolean value indicating whether the cursor is above the path.
+     * 
+     * @returns { boolean } a boolean value indicating whether the mouse is above a
+     * specific path in a grid.
+     */
     mouseAbovePath() {
         let my = Math.floor((mouseX / this.canvasSize) * this.numCells);
         let mx = Math.floor((mouseY / this.canvasSize) * this.numCells);

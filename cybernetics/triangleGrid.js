@@ -91,6 +91,8 @@ class TriangleGrid extends Grid {
         this.myColors["hero"] = this.myColors["goldenYellow"];
         this.myColors["ideal"] = this.myColors["powderBlue"];
         this.generateTriangles();
+        this.mapLow = 0;
+        this.mapHigh = TWO_PI;
     }
 
     /**
@@ -384,6 +386,8 @@ class TriangleGrid extends Grid {
         let cSize = this.modifier * this.cellSize;
         let counter = 0;
         let dim = this.cellSize * 0.75;
+        let min = 10000;
+        let max = -1000;
         for (let t of this.triangles) {
             if (t.rotation < 0) {
                 t.rotation += TWO_PI;
@@ -411,8 +415,19 @@ class TriangleGrid extends Grid {
                 triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
             } else {
                 if (counter % 3 == 0) {
-                    fill(t.c);
-                    square(0, 0, this.cellSize * 0.75, 5);
+                    rotate(this.modifier * PI);
+                    // fill(t.c);
+                    fill(this.myColors["brickRed"]);
+                    square(0, 0, this.modifier * this.cellSize * 0.75, 5);
+                    fill(this.myColors["teal"]);
+                    let d = map(t.rotation, this.mapLow, this.mapHigh, 0.25, 0.6);
+                    square(0, 0, this.modifier * this.cellSize * d, 5);
+                    if (t.rotation > max) {
+                        max = t.rotation
+                    }
+                    if (t.rotation < min) {
+                        min = t.rotation
+                    } 
                 } else {
                     rotate(this.modifier * t.rotation + PI);
                     // fill(this.myColors["hero"]);
@@ -428,8 +443,8 @@ class TriangleGrid extends Grid {
                     }
                     noFill();
                     // fill(t.c)
-                    scale = 0.15;
-                    point = 0.5;
+                    scale = 0.15 * this.modifier;
+                    point = 0.45 * this.modifier;
                     triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
                 }
                 // strokeWeight(this.cellSize * 0.05);
@@ -445,5 +460,7 @@ class TriangleGrid extends Grid {
             pop();
             counter += 1;
         }
+        this.mapLow = min;
+        this.mapHigh = max;
     }
 }

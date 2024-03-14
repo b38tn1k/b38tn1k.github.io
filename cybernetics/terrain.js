@@ -6,6 +6,16 @@ function lerpGridColor(level, maxLevel, colorLow, colorHigh) {
     return lerpColor(colorLow, colorHigh, normalizedLevel);
 }
 
+function wrapAngle(a) {
+    if (a < 0) {
+        a += TWO_PI;
+    }
+
+    if (a > TWO_PI) {
+        a -= TWO_PI;
+    }
+}
+
 function exploreGridUncovered(planeX, planeY, coverToggle, gridUncovered) {
     let targetX = planeX;
     let targetY = planeY;
@@ -75,15 +85,20 @@ class Terrain extends Grid {
         this.plane = {
             targetX: this.canvasSize / 2,
             targetY: this.canvasSize / 2,
+            targetI: int(this.numCells / 2),
+            targetJ: int(this.numCells / 2),
             x: this.canvasSize / 2,
             y: this.canvasSize / 2,
             rotation: 0,
+            targetRotation: 0,
+            speed: 3,
         };
         this.canvasSizeOn2 = this.canvasSize * 0.5;
         this.canvasSizeOn4 = this.canvasSize * 0.25;
         this.canvasSizeOn3 = this.canvasSize * 0.33;
         this.points = [];
         let increment = (this.canvasSize / 5) * this.cellSize;
+        this.gridUncovered[this.plane.targetI][this.plane.targetJ] = this.coverToggle;
     }
 
     static() {
@@ -102,26 +117,44 @@ class Terrain extends Grid {
         // this.plane.targetY = this.canvasSizeOn2 + this.canvasSizeOn3 * sin(millis() / 7000);
 
         if (mouseX > 0 && mouseX < this.canvasSize && mouseY > 0 && mouseY < this.canvasSize) {
-            this.plane.targetX = mouseX;
-            this.plane.targetY = mouseY;
+            let hypot = dist(this.plane.x, this.plane.y, mouseX, mouseY);
+            if (hypot > 10 * this.cellSize) {
+                this.plane.targetX = mouseX;
+                this.plane.targetY = mouseY;
+            } else {
+                this.plane.targetX = this.plane.x;
+                this.plane.targetY = this.plane.y;
+                // this.plane.targetX = mouseX + sin(millis() / 1000) * 9 * this.cellSize;
+                // this.plane.targetY = mouseY + cos(millis() / 2000) * 9 * this.cellSize;
+                // this.plane.targetX = constrain(this.plane.targetX, 0, this.canvasSize);
+                // this.plane.targetY = constrain(this.plane.targetY, 0, this.canvasSize);
+            }
         } else {
-            let res = exploreGridUncovered(
-                Math.floor(this.plane.x / this.cellSize),
-                Math.floor(this.plane.y / this.cellSize),
-                this.coverToggle,
-                this.gridUncovered
-            );
-            this.plane.targetX = res.targetX * this.cellSize;
-            this.plane.targetY = res.targetY * this.cellSize;
+            if (this.gridUncovered[this.plane.targetI][this.plane.targetJ] == this.coverToggle) {
+                let res = exploreGridUncovered(
+                    Math.floor(this.plane.x / this.cellSize),
+                    Math.floor(this.plane.y / this.cellSize),
+                    this.coverToggle,
+                    this.gridUncovered
+                );
+                this.plane.targetI = res.targetX;
+                this.plane.targetJ = res.targetY;
+                this.plane.targetX = res.targetX * this.cellSize;
+                this.plane.targetY = res.targetY * this.cellSize;
+            }
         }
 
         let hypot = dist(this.plane.x, this.plane.y, this.plane.targetX, this.plane.targetY);
         let dx = this.plane.targetX - this.plane.x;
         let dy = this.plane.targetY - this.plane.y;
-
-        this.plane.x += (dx / hypot) * 3;
-        this.plane.y += (dy / hypot) * 3;
-        this.plane.rotation = Math.atan2(dy, dx);
+        if (!(dx == 0 && dy == 0)) {
+            this.plane.targetRotation = Math.atan2(dy, dx);
+            this.plane.rotation += (this.plane.targetRotation - this.plane.rotation) * 0.8;
+            this.plane.x += (dx / hypot) * this.plane.speed;
+            this.plane.y += (dy / hypot) * this.plane.speed;
+            this.plane.x = constrain(this.plane.x, 0, this.canvasSize);
+            this.plane.y = constrain(this.plane.y, 0, this.canvasSize);
+        }
 
         let xP = Math.floor(this.plane.x / this.cellSize);
         let yP = Math.floor(this.plane.y / this.cellSize);
@@ -250,8 +283,10 @@ class Terrain extends Grid {
                         let cellColor2 = lerpGridColor(
                             this.grid[i][j] + 1,
                             this.maxLevel,
-                            this.myColors["goldenYellow"],
-                            this.myColors["teal"]
+                            // this.myColors["goldenYellow"],
+                            // this.myColors["teal"]
+                            this.myColors["sageGreen"],
+                            this.myColors["navyBlue"]
                         );
                         push();
                         translate(i * this.cellSize + off, j * this.cellSize + off);
@@ -266,11 +301,14 @@ class Terrain extends Grid {
                         }
                         if (this.gridOutline[i][j] != -1) {
                             fill(this.myColors["brickRed"]);
+                            square(0, 0, dim, radius);
                         } else {
-                            fill(cellColor);
+                            if (this.gridUncovered[i][j]) {
+                                fill(cellColor);
+                                square(0, 0, dim, radius);
+                            }
                         }
 
-                        square(0, 0, dim, radius);
                         pop();
                     }
                 }

@@ -82,19 +82,24 @@ function setupScreen() {
   canvasSize = min(windowHeight * 0.85, maxWidth * 0.75); // Calculate the largest square size, adjust the factor as necessary
   resizeCanvas(canvasSize, canvasSize);
   
-  // animations[mode] = new CircleLock(myColors, canvasSize);
+  
   animations["wwdo"] = new TriangleGrid(myColors, canvasSize);
-  // animations[mode] = new GOL(myColors, canvasSize);
-  // animations[mode] = new Terrain(myColors, canvasSize);
+  
   animations["wwdo"].mode = 0;
   animations["wwdeliver"] = new ZoomGrid(myColors, canvasSize);
   animations["wwdeliver"].mode = 0;
-  animations["hwdi"] = new Maze(myColors, canvasSize);
+  // animations["hwdi"] = new Maze(myColors, canvasSize);
+  animations["hwdi"] = new Collector(myColors, canvasSize);
+  
   animations["hwdi"].mode = 0;
   // animations["tc"] = new InvaderGrid(myColors, canvasSize);
   animations["tc"] = new Terrain(myColors, canvasSize);
   animations["tc"].mode = 0;
 
+  // animations[mode] = new CircleLock(myColors, canvasSize);
+  // animations[mode] = new GOL(myColors, canvasSize);
+  // animations[mode] = new Terrain(myColors, canvasSize);
+  // animations[mode] = new Collector(myColors, canvasSize);
   animations[mode].mode = IN;
 
 }
@@ -120,6 +125,7 @@ function setup() {
  */
 function draw() {
     clear();
+    // background(0);
     for (key in animations) {
         animations[key].draw();
     }

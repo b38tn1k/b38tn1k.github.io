@@ -11,10 +11,12 @@
 function zoomGridSetting(n) {
     switch (n) {
         case 1:
-            animations["wwdeliver"].easeX = 0;
-            animations["wwdeliver"].easeY = animations["wwdeliver"].canvasSize;
+            // animations["wwdeliver"].easeX = 0;
+            // animations["wwdeliver"].easeY = animations["wwdeliver"].canvasSize;
+            animations["wwdeliver"].easeX = animations["wwdeliver"].canvasSize/2;
+            animations["wwdeliver"].easeY = 0;
             animations["wwdeliver"].easeORS = 0.5;
-            animations["wwdeliver"].easeORE = 0.375;
+            animations["wwdeliver"].easeORE = 0.3;
             animations["wwdeliver"].easeIRS = 0.25;
             animations["wwdeliver"].easeIRE = 0.5;
             break;
@@ -50,7 +52,7 @@ class ZoomGrid extends Grid {
      * which is used to calculate the size of each cell in the grid.
      */
     constructor(myColors, canvasSize) {
-        super(myColors, canvasSize, 20);
+        super(myColors, canvasSize, 10);
         this.targetX = this.canvasSize;
         this.targetY = 0;
         this.easeX = this.targetX;

@@ -28,7 +28,7 @@
             body {
                 margin: 0;
                 background-color: #005411;
-                background: linear-gradient(to top, #00400F, #005411);
+                /* background: linear-gradient(to top, #00400F, #005411); */
                 font-family: "Poppins", sans-serif;
                 color: white;
                 user-select: none;
@@ -279,7 +279,7 @@
                         <div id="wwdo" onclick="toggleInfo(this);" class="topic-link active">
                             <h3>What We Do</h3>
                         </div>
-                        <div id="wwdeliver" onclick="toggleInfo(this);" class="topic-link">
+                        <div id="wwdeliver" onclick="toggleInfo(this); zoomGridSetting(3);" class="topic-link">
                             <h3>What We Deliver</h3>
                         </div>
                         <div id="hwdi" onclick="toggleInfo(this);" class="topic-link">
@@ -302,6 +302,7 @@
                 <script src="gameOfLife.js"></script>
                 <script src="terrain.js"></script>
                 <script src="circleLock.js"></script>
+                <script src="noiseOrder.js"></script>
                 <script src="source.js"></script>
             </div>
         </main>

@@ -53,6 +53,7 @@ class Node {
         this.scale = 1.0;
         this.field = field;
         this.radius = 5;
+        this.dim = 10;
         this.hypot = dist(this.x, this.y, this.field.cx, this.field.cy);
         if (this.hypot > this.field.r) {
             this.x = this.field.cx + 2;
@@ -94,14 +95,22 @@ class Node {
         this.x += speed * cos(this.heading);
         this.y += speed * sin(this.heading);
 
-        if (this.hypot < 5) {
+        if (this.hypot < this.dim) {
             this.mode = this.x = this.field.cx;
             this.y = this.field.cy;
             this.mode = SORTED;
         }
 
         this.heading += (this.targetHeading - this.heading) * this.dampening;
-        this.scale = 1 - this.hypot / this.field.r2;
+        this.updateScale();
+    }
+
+    updateScale() {
+        this.scale = 1.0 - abs(this.hypot / this.field.r2);
+        if (isNaN(this.scale)) {
+            this.scale = 0;
+        }
+        this.scale = constrain(this.scale, 0.0, 1.0);
     }
 
     updateFree(speed) {
@@ -131,27 +140,27 @@ class Node {
         }
 
         this.heading += (this.targetHeading - this.heading) * this.dampening;
-        this.scale = 1 - this.hypot / this.field.r2;
+        this.updateScale();
     }
 
     draw(dim, mod) {
         push();
         translate(this.x, this.y);
         rotate(mod * PI);
-        let size = this.scale * dim * mod;
+        this.dim = this.scale * dim * mod;
         if (this.mode == FREE || this.mode == EXPLODE) {
             fill(this.c1);
-            square(0, 0, size, this.radius);
+            square(0, 0, this.dim, this.radius);
             fill(this.c2);
-            square(0, 0, (1 - this.scale) * size, this.radius);
+            square(0, 0, (1 - this.scale) * this.dim, this.radius);
         } else if (this.mode == SORTED) {
             fill(this.c2);
-            square(0, 0, size, this.radius);
+            square(0, 0, this.dim, this.radius);
         } else {
             fill(this.c1);
-            square(0, 0, size, this.radius);
+            square(0, 0, this.dim, this.radius);
             fill(this.c2);
-            square(0, 0, this.scale * size, this.radius);
+            square(0, 0, this.scale * this.dim, this.radius);
         }
 
         pop();
@@ -242,9 +251,18 @@ class Collector extends Grid {
 
         noStroke();
         rectMode(CENTER);
+        let mini = 1000000000;
+        let maxi = -100000000;
         for (let n of this.nodes) {
             n.update(1);
             n.draw(this.cellSize, this.modifier);
+            if (n.scale > maxi) {
+                maxi = n.scale;
+            }
+            if (n.scale < mini) {
+                mini = n.scale;
+            }
         }
+        console.log(mini, maxi);
     }
 }

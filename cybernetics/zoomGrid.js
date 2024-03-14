@@ -1,5 +1,13 @@
 // link to the 3 paragraphs
 
+/**
+ * @description sets various animation parameters based on a given integer value,
+ * ranging from 1 to 3, which correspond to different visual effects for the "wwdeliver"
+ * animations canvas.
+ * 
+ * @param { number } n - 1 of 3 predefined animations to be applied to the `wwdeliver`
+ * animations array, with each value correspondent to a specific animation configuration.
+ */
 function zoomGridSetting(n) {
     switch (n) {
         case 1:

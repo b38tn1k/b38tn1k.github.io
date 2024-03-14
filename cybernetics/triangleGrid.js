@@ -1,3 +1,10 @@
+/**
+ * @description searches through an array and returns the index of the smallest element.
+ * 
+ * @param { array } arr - array whose smallest element is to be found.
+ * 
+ * @returns { integer } the index of the smallest element in the given array.
+ */
 function indexOfSmallest(arr) {
     if (arr.length === 0) {
         return -1; // Return -1 if the array is empty

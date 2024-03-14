@@ -83,9 +83,9 @@ function setupScreen() {
   resizeCanvas(canvasSize, canvasSize);
   
   // animations[mode] = new CircleLock(myColors, canvasSize);
-  // animations[mode] = new TriangleGrid(myColors, canvasSize);
+  animations[mode] = new TriangleGrid(myColors, canvasSize);
   // animations[mode] = new GOL(myColors, canvasSize);
-  animations[mode] = new Terrain(myColors, canvasSize);
+  // animations[mode] = new Terrain(myColors, canvasSize);
   animations[mode].mode = IN;
   animations["wwdeliver"] = new ZoomGrid(myColors, canvasSize);
   animations["wwdeliver"].mode = 0;

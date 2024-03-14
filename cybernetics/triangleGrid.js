@@ -173,7 +173,7 @@ class TriangleGrid extends Grid {
     colorTriangles() {
         let position = this.numCells - 1;
         let rotations = [0, 45, 90, 135, 180, 225, 270, 315, 360];
-        let colors = ["brickRed", "darkGoldenOrange","rustOrange","burntSienna", "plumPurple", "peachCoral", "lightOrange", "darkGoldenOrange", "brickRed", "darkGoldenOrange"];
+        let colors = ["peachCoral", "plumPurple","brickRed","burntSienna", "plumPurple", "peachCoral", "lightOrange", "darkGoldenOrange", "brickRed", "darkGoldenOrange"];
 
         for (let t of this.triangles) {
             t.onPath = false;
@@ -199,6 +199,7 @@ class TriangleGrid extends Grid {
         for (let i = this.numCells - 1; i <= this.numCells * (this.numCells - 1); i += this.numCells - 1) {
             this.triangles[i].c = this.myColors["goldenYellow"];
         }
+        rotations = [0, 45, 90, 135, 180, 225, 270, 315];
 
         let directions = [
             -1,
@@ -387,8 +388,11 @@ class TriangleGrid extends Grid {
                 stroke(t.c);
                 triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
             } else {
-                fill(t.c)
-                scale = 0.2;
+                strokeWeight(this.cellSize * 0.05);
+                stroke(t.c);
+                noFill();
+                // fill(t.c)
+                scale = 0.15;
                 point = 0.5;
                 triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
             }

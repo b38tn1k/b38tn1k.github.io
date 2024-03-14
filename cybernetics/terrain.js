@@ -125,7 +125,7 @@ class Terrain extends Grid {
 
         let xP = Math.floor(this.plane.x / this.cellSize);
         let yP = Math.floor(this.plane.y / this.cellSize);
-        this.discoverCell(xP, yP, 10);
+        this.discoverCell(xP, yP, 15);
     }
 
     discoverCell(x, y, radius) {

@@ -96,7 +96,7 @@ class Node {
         this.y += speed * sin(this.heading);
 
         if (this.hypot < this.dim) {
-            this.mode = this.x = this.field.cx;
+            this.x = this.field.cx;
             this.y = this.field.cy;
             this.mode = SORTED;
         }
@@ -204,8 +204,8 @@ class Collector extends Grid {
     }
 
     static() {
-        // fill(this.myColors["teal"]);
-        // circle(this.canvasSizeOn2, this.canvasSizeOn2, this.modifier * this.canvasSizeOn4);
+        fill(this.myColors["teal"]);
+        circle(this.canvasSizeOn2, this.canvasSizeOn2, this.modifier * this.cellSize);
 
         let c = [];
 
@@ -251,18 +251,9 @@ class Collector extends Grid {
 
         noStroke();
         rectMode(CENTER);
-        let mini = 1000000000;
-        let maxi = -100000000;
         for (let n of this.nodes) {
             n.update(1);
             n.draw(this.cellSize, this.modifier);
-            if (n.scale > maxi) {
-                maxi = n.scale;
-            }
-            if (n.scale < mini) {
-                mini = n.scale;
-            }
         }
-        console.log(mini, maxi);
     }
 }

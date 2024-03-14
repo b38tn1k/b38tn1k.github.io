@@ -45,7 +45,7 @@ class Grid {
      * condition, then calls `static()` method.
      */
     in() {
-        this.modifier += 0.1;
+        this.modifier += 0.05;
         if (this.modifier >= 1.0) {
             this.modifier = 1.0;
             this.mode = 1;

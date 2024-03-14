@@ -93,6 +93,7 @@ class TriangleGrid extends Grid {
         this.generateTriangles();
         this.mapLow = 0;
         this.mapHigh = TWO_PI;
+        this.osc = 0;
     }
 
     /**
@@ -107,10 +108,12 @@ class TriangleGrid extends Grid {
                 let y = j * this.cellSize + this.cellSize / 2;
                 // let hypot = dist(i, j, this.numCells, 0);
                 // let ratio = hypot/maxHypot;
-                let rotation = 0.2 * this.calculateHint(i, j) + 0.8 * this.calculateRotation(x, y);
+                let hint = this.calculateHint(i, j);
+                let targetRotation = this.calculateRotation(x, y);
+                let rotation = targetRotation;
                 let c = color(this.myColors["brickRed"]);
                 let onPath = false;
-                this.triangles.push({ x, y, rotation, c, onPath });
+                this.triangles.push({ x, y, rotation, c, onPath, hint, targetRotation });
             }
         }
         this.rotateTriangles();
@@ -174,7 +177,7 @@ class TriangleGrid extends Grid {
      * @description modifies the color of each triangle in an array of triangles based
      * on a rotation angle, constraining the position to within the bounds of the array.
      */
-    colorTriangles() {
+    colorTriangles(steps=100) {
         let position = this.numCells - 1;
         let rotations = [0, 45, 90, 135, 180, 225, 270, 315, 360];
         let colors = [
@@ -227,8 +230,9 @@ class TriangleGrid extends Grid {
             -(this.numCells + 1),
         ];
 
+        let breakFlag = false
         // for (let i = 0; i < 10; i++) {
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < steps; i++) {
             if (position >= 0 && position < this.triangles.length - 1) {
                 this.triangles[position].c = this.myColors["hero"];
                 this.triangles[position].onPath = true;
@@ -265,6 +269,9 @@ class TriangleGrid extends Grid {
 
             // Ensure the position stays within bounds
             position = constrain(position, 0, this.triangles.length - 1);
+            if (breakFlag) {
+                i = 101;
+            }
         }
     }
 
@@ -296,7 +303,8 @@ class TriangleGrid extends Grid {
      * in subsequent calculations or transformations.
      */
     calculateRotation(x, y) {
-        let noiseScale = 0.005;
+        // let noiseScale = 0.005;
+        let noiseScale = 0.1;
         let noiseValue = 0.7 * noise(x * noiseScale, y * noiseScale) + 0.3 * 0.25;
         let angle = map(noiseValue, 0, 1, 0, TWO_PI);
         // angle = Math.floor(degrees(angle) / 45) * 45;
@@ -351,12 +359,20 @@ class TriangleGrid extends Grid {
         }
     }
 
+    oscillateTriangles() {
+        for (let t of this.triangles) {
+            t.rotation = this.osc * t.targetRotation + (1 - this.osc) * t.hint;
+            // t.rotation = t.targetRotation;
+        }
+    }
+
     /**
      * @description generates high-quality documentation for given code by rotating and
      * scaling triangles based on modifier and cell size values, and filling them with
      * color based on their center points.
      */
     static() {
+        this.osc = (sin(millis() / 2000));
         rectMode(CENTER);
         if (mouseX > 0 && mouseX < this.canvasSize && mouseY > 0 && mouseY < this.canvasSize) {
             let root = 10 * this.canvasSize;
@@ -365,21 +381,24 @@ class TriangleGrid extends Grid {
                 let d = dist(t.x, t.y, mouseX, mouseY) / root;
                 if (above == true) {
                     t.rotation -= d * d;
+                    t.targetRotation -= d * d;
                 } else {
                     t.rotation += d * d;
+                    t.targetRotation += d * d;
                 }
                 // t.c = this.myColors["brickRed"];
             }
-            this.rotateTriangles();
-            this.colorTriangles();
+        } else {
+            this.oscillateTriangles();
         }
         // let osc = (sin(millis() / 1000));
-        let osc = 0.002 * sin(millis() / 1000);
-        for (let t of this.triangles) {
-            t.rotation += osc;
-        }
+        // let osc = 0.002 * sin(millis() / 1000);
+        // for (let t of this.triangles) {
+        //     t.rotation += osc;
+        // }
         // this.rotateTriangles();
-        this.colorTriangles();
+        this.rotateTriangles();
+        this.colorTriangles(100);
 
         let scale = 0.25;
         let point = 0.35;
@@ -418,16 +437,19 @@ class TriangleGrid extends Grid {
                     rotate(this.modifier * PI);
                     // fill(t.c);
                     fill(this.myColors["brickRed"]);
+                    rotate(this.modifier * t.rotation + PI);
                     square(0, 0, this.modifier * this.cellSize * 0.75, 5);
                     fill(this.myColors["teal"]);
-                    let d = map(t.rotation, this.mapLow, this.mapHigh, 0.25, 0.6);
+                    // let d = map(sin(2*t.rotation), this.mapLow, this.mapHigh, 0.25, 0.6);
+                    let d = map(sin(2 * t.rotation), 0, 1, 0.25, 0.6);
+                    rotate(this.modifier * t.rotation - PI);
                     square(0, 0, this.modifier * this.cellSize * d, 5);
                     if (t.rotation > max) {
-                        max = t.rotation
+                        max = t.rotation;
                     }
                     if (t.rotation < min) {
-                        min = t.rotation
-                    } 
+                        min = t.rotation;
+                    }
                 } else {
                     rotate(this.modifier * t.rotation + PI);
                     // fill(this.myColors["hero"]);

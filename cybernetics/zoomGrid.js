@@ -50,7 +50,7 @@ class ZoomGrid extends Grid {
      * which is used to calculate the size of each cell in the grid.
      */
     constructor(myColors, canvasSize) {
-        super(myColors, canvasSize, 10);
+        super(myColors, canvasSize, 20);
         this.targetX = this.canvasSize;
         this.targetY = 0;
         this.easeX = this.targetX;

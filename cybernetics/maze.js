@@ -34,7 +34,7 @@ class Maze extends Grid {
                     for (let j = y - 5; j < y + 5; j++) {
                         if (j < this.revealed[i].length && j > 0) {
                             if (this.revealed[i][j] == false) {
-                                this.revealedCount += 1
+                                this.revealedCount += 1;
                             }
                             this.revealed[i][j] = true;
                         }
@@ -42,26 +42,26 @@ class Maze extends Grid {
                 }
             }
         }
-        
 
-        if (this.revealedCount < (this.numCells * this.numCells) + 1) {
+        if (this.revealedCount < this.numCells * this.numCells + 1) {
             let number = Math.floor(this.revealedCount / 20) + 1;
             for (let i = 0; i < number; i++) {
                 let rX = int(random(this.numCells));
                 let rY = int(random(this.numCells));
                 if (this.revealed[rX][rY] == false) {
-                    this.revealedCount += 1
+                    this.revealedCount += 1;
                 }
-                
+
                 this.revealed[rX][rY] = true;
-                
             }
         }
 
+        let revPathCount = 0;
         for (let x = 0; x < this.numCells; x++) {
             // if (mouseX > 0 && mouseX < this.canvasSize && mouseY > 0 && mouseY < this.canvasSize) {
             for (let y = 0; y < this.numCells; y++) {
-                if (this.maze[x][y] == 1) {
+                let pN = this.isPathNeighbour(x, y);
+                if (this.maze[x][y] == 1 && (this.revealed[x][y] == false || pN)) {
                     fill(this.myColors["brickRed"]);
                     push();
                     translate((x + 0.5) * this.cellSize, (y + 0.5) * this.cellSize);
@@ -69,14 +69,27 @@ class Maze extends Grid {
                     square(0, 0, (this.cellSize + 1) * this.modifier);
                     pop();
                 }
-                if (this.path[x][y] == 0 && this.revealed[x][y] == true) {
-                    fill(this.myColors["brickRed"]);
-                    push();
-                    translate((x + 0.5) * this.cellSize, (y + 0.5) * this.cellSize);
-                    rotate(this.modifier * PI);
-                    square(0, 0, (this.cellSize + 1) * this.modifier);
-                    pop();
+
+                if (this.path[x][y] == 1) {
+                    revPathCount += 1;
+                    if (revPathCount <= this.revealedCount * 0.25) {
+                        fill(this.myColors["goldenYellow"]);
+                        push();
+                        translate((x + 0.5) * this.cellSize, (y + 0.5) * this.cellSize);
+                        rotate(this.modifier * PI);
+                        square(0, 0, this.cellSize * 0.25 * this.modifier, 5);
+                        pop();
+                    }
                 }
+
+                // if (this.path[x][y] == 0 && this.revealed[x][y] == true) {
+                //     fill(this.myColors["brickRed"]);
+                //     push();
+                //     translate((x + 0.5) * this.cellSize, (y + 0.5) * this.cellSize);
+                //     rotate(this.modifier * PI);
+                //     square(0, 0, (this.cellSize + 1) * this.modifier);
+                //     pop();
+                // }
 
                 // maze reveal
                 // if (mouseX > 0 && mouseX < this.canvasSize && mouseY > 0 && mouseY < this.canvasSize) {
@@ -134,6 +147,20 @@ class Maze extends Grid {
                 // }
             }
         }
+    }
+
+    isPathNeighbour(x, y) {
+        for (let i = max(x - 1, 0); i < min(x + 2, this.path.length); i++) {
+            for (let j = max(y - 1, 0); j < min(y + 2, this.path.length); j++) {
+                if (this.path[i][j] == 1) {
+                    if (this.path[x][y] != 1) {
+                        this.maze[x][y] = 1;
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

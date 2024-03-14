@@ -1,8 +1,8 @@
 /**
  * @description searches through an array and returns the index of the smallest element.
- * 
+ *
  * @param { array } arr - array whose smallest element is to be found.
- * 
+ *
  * @returns { integer } the index of the smallest element in the given array.
  */
 function indexOfSmallest(arr) {
@@ -29,26 +29,26 @@ function indexOfSmallest(arr) {
  * @description takes in `level`, `maxLevel`, `colorLow`, and `colorHigh` parameters
  * and interpolates a color between two provided colors based on the normalized level
  * value between 0 and 1.
- * 
+ *
  * @param { number } level - 0-1 value that is used to interpolate the color output.
- * 
+ *
  * @param { number } maxLevel - maximum value of the normalized level that can be
  * interpolated between `colorLow` and `colorHigh`.
- * 
+ *
  * @param { object } colorLow - low-valued color used for interpolation in the
  * `lerpColor()` function.
- * 
+ *
  * @param { "Color" } colorHigh - higher-quality color that the function will interpolate
  * between based on the normalized level value.
- * 
+ *
  * 		- `colorHigh`: An instance of the `Vec3` class, representing a color in a
  * three-dimensional space. It is used for interpolation purposes and can have any
  * valid value within the range of a 3D color representation.
- * 
- * 
+ *
+ *
  * @returns { `RGBA` value. } a tri-colored gradient resulting from interpolating
  * between two given colors based on a normalized level value.
- * 
+ *
  * 		- The `normalizedLevel` value ranges between 0 and 1, representing the level of
  * interpolation applied to the color values.
  * 		- The `colorLow` and `colorHigh` arguments provide the starting and ending colors,
@@ -88,6 +88,8 @@ class TriangleGrid extends Grid {
     constructor(myColors, canvasSize) {
         super(myColors, canvasSize, 20);
         this.triangles = [];
+        this.myColors["hero"] = this.myColors["goldenYellow"];
+        this.myColors["ideal"] = this.myColors["powderBlue"];
         this.generateTriangles();
     }
 
@@ -173,7 +175,18 @@ class TriangleGrid extends Grid {
     colorTriangles() {
         let position = this.numCells - 1;
         let rotations = [0, 45, 90, 135, 180, 225, 270, 315, 360];
-        let colors = ["peachCoral", "plumPurple","brickRed","burntSienna", "plumPurple", "peachCoral", "lightOrange", "darkGoldenOrange", "brickRed", "darkGoldenOrange"];
+        let colors = [
+            "peachCoral",
+            "plumPurple",
+            "brickRed",
+            "burntSienna",
+            "plumPurple",
+            "peachCoral",
+            "lightOrange",
+            "darkGoldenOrange",
+            "brickRed",
+            "darkGoldenOrange",
+        ];
 
         for (let t of this.triangles) {
             t.onPath = false;
@@ -191,13 +204,13 @@ class TriangleGrid extends Grid {
                     while (rot > 45) {
                         rot -= 45;
                     }
-                    t.c = lerpTriColor(rot, 45, this.myColors[colors[i]], this.myColors[colors[i+1]]);
+                    t.c = lerpTriColor(rot, 45, this.myColors[colors[i]], this.myColors[colors[i + 1]]);
                 }
             }
         }
 
         for (let i = this.numCells - 1; i <= this.numCells * (this.numCells - 1); i += this.numCells - 1) {
-            this.triangles[i].c = this.myColors["goldenYellow"];
+            this.triangles[i].c = this.myColors["ideal"];
         }
         rotations = [0, 45, 90, 135, 180, 225, 270, 315];
 
@@ -215,7 +228,7 @@ class TriangleGrid extends Grid {
         // for (let i = 0; i < 10; i++) {
         for (let i = 0; i < 100; i++) {
             if (position >= 0 && position < this.triangles.length - 1) {
-                this.triangles[position].c = this.myColors["teal"];
+                this.triangles[position].c = this.myColors["hero"];
                 this.triangles[position].onPath = true;
                 if (position == this.numCells * (this.numCells - 1)) {
                     i = 100;
@@ -236,14 +249,13 @@ class TriangleGrid extends Grid {
                     if (rotation < 0) {
                         rotation += 360;
                     }
-                    
+
                     if (rotation < rotations[0] + 22.5 || rotation >= rotations[0] + 360 - 22.5) {
                         position += directions[0];
                     }
                     for (let i = 1; i < rotations.length; i++) {
                         if (rotation < rotations[i] + 22.5 && rotation >= rotations[i] - 22.5) {
                             position += directions[i];
-
                         }
                     }
                 }
@@ -293,7 +305,7 @@ class TriangleGrid extends Grid {
      * @description detects whether a mouse cursor is above a specific path on a 2D grid
      * by comparing the cursor position to the positions of the elements in the path. It
      * returns a boolean value indicating whether the cursor is above the path.
-     * 
+     *
      * @returns { boolean } a boolean value indicating whether the mouse is above a
      * specific path in a grid.
      */
@@ -370,6 +382,8 @@ class TriangleGrid extends Grid {
         let scale = 0.25;
         let point = 0.35;
         let cSize = this.modifier * this.cellSize;
+        let counter = 0;
+        let dim = this.cellSize * 0.75;
         for (let t of this.triangles) {
             if (t.rotation < 0) {
                 t.rotation += TWO_PI;
@@ -379,8 +393,16 @@ class TriangleGrid extends Grid {
             }
             push();
             translate(t.x, t.y);
-            rotate(this.modifier * t.rotation + PI);
-            if (t.c == this.myColors["teal"] || t.c == this.myColors["goldenYellow"]) {
+            if (t.c == this.myColors["hero"]) {
+                rotate(this.modifier * t.rotation + PI);
+                fill(t.c);
+                scale = 0.25;
+                point = 0.35;
+                strokeWeight(this.cellSize * 0.1);
+                stroke(t.c);
+                triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
+            } else if (t.c == this.myColors["ideal"]) {
+                rotate(this.modifier * QUARTER_PI + PI);
                 fill(t.c);
                 scale = 0.25;
                 point = 0.35;
@@ -388,17 +410,40 @@ class TriangleGrid extends Grid {
                 stroke(t.c);
                 triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
             } else {
-                strokeWeight(this.cellSize * 0.05);
-                stroke(t.c);
-                noFill();
-                // fill(t.c)
-                scale = 0.15;
-                point = 0.5;
-                triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
+                if (counter % 3 == 0) {
+                    fill(t.c);
+                    square(0, 0, this.cellSize * 0.75, 5);
+                } else {
+                    rotate(this.modifier * t.rotation + PI);
+                    // fill(this.myColors["hero"]);
+                    // circle(0, dim / 5, dim / 2);
+                    // fill(this.myColors["brickRed"]);
+                    // circle(0, -dim / 5, dim / 2);
+                    strokeWeight(this.cellSize * 0.05);
+                    if (counter % 3 == 1) {
+                        stroke(this.myColors["teal"]);
+                    }
+                    if (counter % 3 == 2) {
+                        stroke(this.myColors["brickRed"]);
+                    }
+                    noFill();
+                    // fill(t.c)
+                    scale = 0.15;
+                    point = 0.5;
+                    triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
+                }
+                // strokeWeight(this.cellSize * 0.05);
+                // stroke(t.c);
+                // noFill();
+                // // fill(t.c)
+                // scale = 0.15;
+                // point = 0.5;
+                // triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
             }
 
             noStroke();
             pop();
+            counter += 1;
         }
     }
 }

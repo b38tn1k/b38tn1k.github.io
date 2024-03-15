@@ -70,16 +70,17 @@ class RoamingPixel {
 
     draw() {
         let scale;
-        if (this.hypot > this.p.canvasSizeOn2) {
-            scale = 0;
-        } else {
-            scale = 1.5 * (1 - this.hypot / this.p.canvasSizeOn2);
-        }
+        // if (this.hypot > this.p.canvasSizeOn2) {
+        //     scale = 0;
+        // } else {
+        //     scale = 1.5 * (1 - this.hypot / this.p.canvasSizeOn2);
+        // }
+        scale = (1 - this.hypot / (this.p.canvasSize * 0.65));
         scale *= this.p.modifier;
         push();
         translate(this.x, this.y);
         rotate(this.h + this.p.modifier * TWO_PI);
-        square(0, 0, this.dim * scale, this.r * this.p.modifier);
+        square(0, 0, max(1, this.dim * scale), this.r * this.p.modifier);
         pop();
     }
 
@@ -127,7 +128,7 @@ class Logo extends Grid {
         let maxHypot = this.canvasSize;
         if (mouseX > 0 && mouseX < this.canvasSize && mouseY > 0 && mouseY < this.canvasSize) {
             number = int(map(mouseX, 0, this.canvasSize, 1, 50));
-            modder  = int(map(mouseX, 0, this.canvasSize, 5, 25));
+            modder  = int(map(mouseX, 0, this.canvasSize, 20, 5));
             maxHypot = map(mouseY, this.canvasSize, 0, this.cellSize * 3, this.canvasSize);
         }
 

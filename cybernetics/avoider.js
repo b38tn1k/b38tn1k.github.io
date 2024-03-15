@@ -52,6 +52,7 @@ class Avoider extends Grid {
         this.score = 0;
         this.enemyStarterCount = 1;
         this.maxEnemies = 4;
+        this.boom = 0;
         let b = 10;
         this.plane = {
             x: this.canvasSizeOn2,
@@ -80,6 +81,12 @@ class Avoider extends Grid {
             this.updatePlane();
         } else {
             this.countDownToExit -= 1;
+            if (this.countDownToExit < 10) {
+                this.modifier -= 0.1;
+            }
+            this.boom += this.cellSize/4;
+            fill("#FF0000");
+            circle(this.plane.x, this.plane.y, this.boom * this.modifier);
             if (this.countDownToExit == 0) {
                 this.returnToPreviousMode = true;
             }

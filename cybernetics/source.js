@@ -115,6 +115,7 @@ function setupScreen() {
     resizeCanvas(canvasSize, canvasSize);
 
     animations["wwdo"] = new TriangleGrid(myColors, canvasSize);
+    // animations["wwdo"] = new FlowField(myColors, canvasSize);
 
     animations["wwdo"].mode = 0;
     animations["wwdeliver"] = new ZoomGrid(myColors, canvasSize);
@@ -133,7 +134,7 @@ function setupScreen() {
     // animations[mode] = new Collector(myColors, canvasSize);
     // animations[mode] = new FlowField(myColors, canvasSize);
 
-    animations[mode] = new ZoomGrid(myColors, canvasSize);
+    // animations[mode] = new Lumps(myColors, canvasSize);
     // animations[mode] = new Avoider(myColors, canvasSize);
     // animations[mode].previousMode = ZoomGrid;
     animations[mode].mode = IN;
@@ -161,7 +162,6 @@ function setup() {
  */
 function draw() {
     clear();
-    // background(0);
     for (key in animations) {
         animations[key].draw();
         if (animations[key].returnToPreviousMode == true){

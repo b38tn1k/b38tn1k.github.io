@@ -62,7 +62,7 @@ class Droplet {
     }
 }
 
-class FlowField extends Grid {
+class FlowFieldAttempt1 extends Grid {
     constructor(myColors, canvasSize) {
         super(myColors, canvasSize, 100);
         this.grids = [];

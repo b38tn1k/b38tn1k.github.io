@@ -3,6 +3,7 @@ let animations = {};
 let canvasSize, numCells, cellSize;
 let canvas;
 let mode = "wwdeliver";
+let logo;
 
 let IN = 2;
 let OUT = 3;
@@ -20,6 +21,10 @@ const konamiCode = [
     "a",
 ];
 let konamiIndex = 0;
+
+function preload() {
+  logo = loadImage('R_Sigma_mini-logo-white.png');
+}
 
 function keyPressed() {
     if (key == "s") {
@@ -114,7 +119,7 @@ function setupScreen() {
     canvasSize = min(windowHeight * 0.85, maxWidth * 0.75); // Calculate the largest square size, adjust the factor as necessary
     resizeCanvas(canvasSize, canvasSize);
 
-    animations["wwdo"] = new TriangleGrid(myColors, canvasSize);
+    animations["wwdo"] = new Logo(myColors, canvasSize);
     // animations["wwdo"] = new FlowField(myColors, canvasSize);
 
     animations["wwdo"].mode = 0;
@@ -133,10 +138,10 @@ function setupScreen() {
     // animations[mode] = new Terrain(myColors, canvasSize);
     // animations[mode] = new Collector(myColors, canvasSize);
     // animations[mode] = new FlowField(myColors, canvasSize);
-
-    // animations[mode] = new Lumps(myColors, canvasSize);
     // animations[mode] = new Avoider(myColors, canvasSize);
     // animations[mode].previousMode = ZoomGrid;
+    // animations[mode] = new Lumps(myColors, canvasSize);
+    // animations[mode] = new Logo(myColors, canvasSize);
     animations[mode].mode = IN;
 }
 

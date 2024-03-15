@@ -16,6 +16,9 @@ class FlowField extends Grid {
         this.radius = this.cellSize;
         this.noiseScale = 400;
         this.noiseStrength = 1.4;
+        this.image = logo;
+        this.scaleX = this.image.width / this.canvasSize;
+        this.scaleY = this.image.height / this.canvasSize;
         for (let i = 0; i < this.num; i++) {
             let loc_a = createVector(random(this.canvasSize * 1.2), random(this.canvasSize), 2);
             let angle_a = random(TWO_PI);
@@ -32,6 +35,16 @@ class FlowField extends Grid {
         }
     }
 
+    mapToImageAlpha(x, y) {
+        let imageX = x * this.scaleX;
+        let imageY = y * this.scaleY;
+        imageX = constrain(imageX, 0, this.image.width - 1);
+        imageY = constrain(imageY, 0, this.image.height - 1);
+        let pixelColor = this.image.get(imageX, imageY);
+        let alphaValue = alpha(pixelColor);
+        return alphaValue;
+    }
+
     static() {
         let c;
         noStroke();
@@ -39,9 +52,20 @@ class FlowField extends Grid {
             c = this.myColors['brickRed'];
             c.setAlpha(this.fade);
             fill(c);
+            let a = this.mapToImageAlpha(this.particles_a[i].dir.x, this.particles_a[i].dir.y);
+            if (a != 0){
+                this.particles_a[i].speed *= 0.8;
+                
+            }
             this.particles_a[i].move();
             this.particles_a[i].update(this.radius);
             this.particles_a[i].checkEdges();
+
+            a = this.mapToImageAlpha(this.particles_b[i].dir.x, this.particles_b[i].dir.y);
+            if (a != 0){
+                this.particles_b[i].speed *= 0.8;
+                
+            }
 
             c = this.myColors['teal'];
             c.setAlpha(this.fade);
@@ -49,6 +73,13 @@ class FlowField extends Grid {
             this.particles_b[i].move();
             this.particles_b[i].update(this.radius);
             this.particles_b[i].checkEdges();
+            
+
+            a = this.mapToImageAlpha(this.particles_c[i].dir.x, this.particles_c[i].dir.y);
+            if (a != 0){
+                this.particles_c[i].speed *= 0.8;
+                
+            }
 
             c = this.myColors['goldenYellow'];
             c.setAlpha(this.fade);

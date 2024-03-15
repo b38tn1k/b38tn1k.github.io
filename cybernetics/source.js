@@ -7,15 +7,45 @@ let mode = "wwdeliver";
 let IN = 2;
 let OUT = 3;
 let STATIC = 1;
+const konamiCode = [
+    "ArrowUp",
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+    "ArrowLeft",
+    "ArrowRight",
+    "b",
+    "a",
+];
+let konamiIndex = 0;
+
+function keyPressed() {
+    if (key == "s") {
+        saveImage();
+    }
+    if (key === konamiCode[konamiIndex]) {
+        konamiIndex++;
+        if (konamiIndex === konamiCode.length) {
+            konamiIndex = 0;
+            console.log("hacker");
+            animations[mode] = new Avoider(myColors, canvasSize);
+            animations[mode].mode = IN;
+        }
+    } else {
+        konamiIndex = 0;
+    }
+}
 
 /**
  * @description updates an element's class and innerHTML based on its ID, changes the
  * mode variable, and runs the appropriate animation sequence.
- * 
+ *
  * @param { element reference ( HTMLElement ) } elem - element for which the function
  * toggles information, including its class and content, to display the correct text
  * and emphasis based on the mode variable.
- * 
+ *
  * 		- `id`: A string attribute that represents the unique identifier for the element.
  * This is used to identify the correct mode from the `contentStrings` array and set
  * the emphasis and backup text for the element.
@@ -60,14 +90,14 @@ function setupColors() {
  * @description sets up the screen when a device has turned on or resumed from hibernation.
  */
 function deviceTurned() {
-  setupScreen();
+    setupScreen();
 }
 
 /**
  * @description sets up the screen upon resizing the window.
  */
 function windowResized() {
-  setupScreen();
+    setupScreen();
 }
 
 /**
@@ -77,31 +107,32 @@ function windowResized() {
  * modes and colors, and sets their initial states.
  */
 function setupScreen() {
-  let rightColumn = document.getElementById("right-column"); // Get the right column by its ID
-  let maxWidth = rightColumn.offsetWidth; // Get the width of the right column
-  canvasSize = min(windowHeight * 0.85, maxWidth * 0.75); // Calculate the largest square size, adjust the factor as necessary
-  resizeCanvas(canvasSize, canvasSize);
-  
-  
-  animations["wwdo"] = new TriangleGrid(myColors, canvasSize);
-  
-  animations["wwdo"].mode = 0;
-  animations["wwdeliver"] = new ZoomGrid(myColors, canvasSize);
-  animations["wwdeliver"].mode = 0;
-  // animations["hwdi"] = new Maze(myColors, canvasSize);
-  animations["hwdi"] = new Collector(myColors, canvasSize);
-  
-  animations["hwdi"].mode = 0;
-  // animations["tc"] = new InvaderGrid(myColors, canvasSize);
-  animations["tc"] = new Terrain(myColors, canvasSize);
-  animations["tc"].mode = 0;
+    let rightColumn = document.getElementById("right-column"); // Get the right column by its ID
+    let maxWidth = rightColumn.offsetWidth; // Get the width of the right column
+    canvasSize = min(windowHeight * 0.85, maxWidth * 0.75); // Calculate the largest square size, adjust the factor as necessary
+    resizeCanvas(canvasSize, canvasSize);
 
-  // animations[mode] = new CircleLock(myColors, canvasSize);
-  // animations[mode] = new GOL(myColors, canvasSize);
-  // animations[mode] = new Terrain(myColors, canvasSize);
-  // animations[mode] = new Collector(myColors, canvasSize);
-  animations[mode].mode = IN;
+    animations["wwdo"] = new TriangleGrid(myColors, canvasSize);
 
+    animations["wwdo"].mode = 0;
+    animations["wwdeliver"] = new ZoomGrid(myColors, canvasSize);
+    animations["wwdeliver"].mode = 0;
+    // animations["hwdi"] = new Maze(myColors, canvasSize);
+    animations["hwdi"] = new Collector(myColors, canvasSize);
+
+    animations["hwdi"].mode = 0;
+    // animations["tc"] = new InvaderGrid(myColors, canvasSize);
+    animations["tc"] = new Terrain(myColors, canvasSize);
+    animations["tc"].mode = 0;
+
+    // animations[mode] = new CircleLock(myColors, canvasSize);
+    // animations[mode] = new GOL(myColors, canvasSize);
+    // animations[mode] = new Terrain(myColors, canvasSize);
+    // animations[mode] = new Collector(myColors, canvasSize);
+    // animations[mode] = new FlowField(myColors, canvasSize);
+
+    animations[mode] = new ZoomGrid(myColors, canvasSize);
+    animations[mode].mode = IN;
 }
 
 /**
@@ -117,6 +148,7 @@ function setup() {
     canvas = createCanvas(canvasSize, canvasSize);
     canvas.parent("right-column");
     setupScreen();
+    // background(0);
 }
 
 /**

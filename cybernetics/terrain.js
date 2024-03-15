@@ -96,8 +96,6 @@ class Terrain extends Grid {
         this.canvasSizeOn2 = this.canvasSize * 0.5;
         this.canvasSizeOn4 = this.canvasSize * 0.25;
         this.canvasSizeOn3 = this.canvasSize * 0.33;
-        this.points = [];
-        let increment = (this.canvasSize / 5) * this.cellSize;
         this.gridUncovered[this.plane.targetI][this.plane.targetJ] = this.coverToggle;
     }
 

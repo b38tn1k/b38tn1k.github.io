@@ -1,3 +1,5 @@
+// mouse should repel data
+
 const FREE = 0;
 const CAPTURED = 1;
 const SORTED = 2;
@@ -72,6 +74,10 @@ class Node {
         return Math.sqrt((this.x - otherNode.x) ** 2 + (this.y - otherNode.y) ** 2);
     }
 
+    target(otherNode) {
+        this.targetHeading = Math.atan2(otherNode.y - this.y, otherNode.x - this.x);
+    }
+
     update(speed) {
         switch (this.mode) {
             case FREE:
@@ -113,6 +119,14 @@ class Node {
         this.scale = constrain(this.scale, 0.0, 1.0);
     }
 
+    targetHome() {
+        this.targetHeading = Math.atan2(this.field.cy - this.y, this.field.cx - this.x);
+    }
+
+    targetAway() {
+        this.targetHeading = Math.atan2(this.y - this.field.cy, this.x - this.field.cx);
+    }
+
     updateFree(speed) {
         if (int(degrees(this.targetHeading)) == int(degrees(this.heading))) {
             this.targetHeading = random(-TWO_PI, TWO_PI);
@@ -122,11 +136,11 @@ class Node {
         this.y += speed * sin(this.heading);
 
         if (this.hypot > this.field.r2) {
-            this.targetHeading = Math.atan2(this.field.cy - this.y, this.field.cx - this.x);
+            this.targetHome();
         }
 
         if (this.hypot < this.field.r * 0.45) {
-            this.targetHeading = Math.atan2(this.y - this.field.cy, this.x - this.field.cx);
+            this.targetAway();
         }
 
         if (this.hypot > this.field.r * 0.45) {
@@ -204,8 +218,25 @@ class Collector extends Grid {
     }
 
     static() {
+        let closest = null;
+        if (mouseX > 0 && mouseX < this.canvasSize && mouseY > 0 && mouseY < this.canvasSize) {
+            let minHypot = 10000000;
+            for (let n of this.nodes) {
+                if (n.mode == FREE || n.mode == CAPTURED || n.mode == ONLINE) {
+                    let nd = dist(mouseX, mouseY, n.x, n.y);
+                    if (nd < this.cellSize * 5) {
+                        n.targetHome();
+                    }
+                    if (nd < minHypot) {
+                        closest = n;
+                        minHypot = nd;
+                    }
+                }
+            }
+        }
+
         fill(this.myColors["teal"]);
-        circle(this.canvasSizeOn2, this.canvasSizeOn2, this.modifier * this.cellSize);
+        circle(this.canvasSizeOn2, this.canvasSizeOn2, this.modifier * this.cellSize * 0.9);
 
         let c = [];
 
@@ -219,7 +250,13 @@ class Collector extends Grid {
 
         let limit = int(this.modifier * min(5, c.length - 1));
         if (limit > 1) {
-            c = c.slice(0, limit + 1);
+            if (closest != null) {
+                c = c.slice(0, limit);
+                c.push(closest);
+            } else {
+                c = c.slice(0, limit + 1);
+            }
+
             c.sort((node1, node2) => {
                 // Compare the hypot property of each node
                 return node1.hypot - node2.hypot;
@@ -241,6 +278,7 @@ class Collector extends Grid {
                 line(c[i].x, c[i].y, c[i + 1].x, c[i + 1].y);
                 c[i].mode = ONLINE;
                 c[i + 1].mode = ONLINE;
+                c[i + 1].target(c[i]);
             }
             c[0].mode = CAPTURED;
         } else {

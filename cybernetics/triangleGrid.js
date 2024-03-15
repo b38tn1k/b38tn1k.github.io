@@ -162,10 +162,10 @@ class TriangleGrid extends Grid {
         for (let triangle of this.triangles) {
             triangle.rotation += rotationDifference;
         }
-        let myTris = [];
-        for (let triangle of this.triangles) {
-            myTris.push(triangle.rotation);
-        }
+        // let myTris = [];
+        // for (let triangle of this.triangles) {
+        //     myTris.push(triangle.rotation);
+        // }
         // Create a JSON object
         // let jsonData = {
         //     triangles: myTris,

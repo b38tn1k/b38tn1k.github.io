@@ -15,6 +15,8 @@ class Grid {
         this.modifier = 0.0;
         this.numCells = numCells;
         this.cellSize = this.canvasSize / this.numCells;
+        this.returnToPreviousMode = false;
+        this.previousMode = null;
     }
 
     /**

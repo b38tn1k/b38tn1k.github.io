@@ -30,8 +30,10 @@ function keyPressed() {
         if (konamiIndex === konamiCode.length) {
             konamiIndex = 0;
             console.log("hacker");
+            let pMode = animations[mode].constructor
             animations[mode] = new Avoider(myColors, canvasSize);
             animations[mode].mode = IN;
+            animations[mode].previousMode = pMode;
         }
     } else {
         konamiIndex = 0;
@@ -118,11 +120,11 @@ function setupScreen() {
     animations["wwdeliver"] = new ZoomGrid(myColors, canvasSize);
     animations["wwdeliver"].mode = 0;
     // animations["hwdi"] = new Maze(myColors, canvasSize);
-    animations["hwdi"] = new Collector(myColors, canvasSize);
+    animations["hwdi"] = new Terrain(myColors, canvasSize);
 
     animations["hwdi"].mode = 0;
     // animations["tc"] = new InvaderGrid(myColors, canvasSize);
-    animations["tc"] = new Terrain(myColors, canvasSize);
+    animations["tc"] = new Collector(myColors, canvasSize);
     animations["tc"].mode = 0;
 
     // animations[mode] = new CircleLock(myColors, canvasSize);
@@ -132,6 +134,8 @@ function setupScreen() {
     // animations[mode] = new FlowField(myColors, canvasSize);
 
     animations[mode] = new ZoomGrid(myColors, canvasSize);
+    // animations[mode] = new Avoider(myColors, canvasSize);
+    // animations[mode].previousMode = ZoomGrid;
     animations[mode].mode = IN;
 }
 
@@ -160,5 +164,10 @@ function draw() {
     // background(0);
     for (key in animations) {
         animations[key].draw();
+        if (animations[key].returnToPreviousMode == true){
+          let pMode = animations[key].previousMode;
+          animations[key] = new pMode(myColors, canvasSize);
+          animations[key].mode = IN;
+        }
     }
 }

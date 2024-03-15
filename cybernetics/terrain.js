@@ -268,24 +268,20 @@ class Terrain extends Grid {
         let off = this.cellSize / 2;
         let dim = this.modifier * this.cellSize * 0.8;
         let radius = dim / 4;
+        let cc1 = [];
+        let cc2 = [];
+        for (let i = 0; i <= this.maxLevel; i++) {
+            let c = lerpGridColor(i, this.maxLevel, this.myColors["forestGreen"], this.myColors["goldenYellow"]);
+            cc1.push(c);
+            c = lerpGridColor(i, this.maxLevel, this.myColors["sageGreen"], this.myColors["navyBlue"]);
+            cc2.push(c);
+        }
         for (let i = 0; i < this.numCells; i++) {
             if (i % 2 == 0) {
                 for (let j = 0; j < this.numCells; j++) {
                     if (j % 2 == 0) {
-                        let cellColor = lerpGridColor(
-                            this.grid[i][j] + 1,
-                            this.maxLevel,
-                            this.myColors["forestGreen"],
-                            this.myColors["goldenYellow"]
-                        );
-                        let cellColor2 = lerpGridColor(
-                            this.grid[i][j] + 1,
-                            this.maxLevel,
-                            // this.myColors["goldenYellow"],
-                            // this.myColors["teal"]
-                            this.myColors["sageGreen"],
-                            this.myColors["navyBlue"]
-                        );
+                        let cellColor = cc1[this.grid[i][j]];
+                        let cellColor2 = cc2[this.grid[i][j]];
                         push();
                         translate(i * this.cellSize + off, j * this.cellSize + off);
                         rotate(this.modifier * HALF_PI);

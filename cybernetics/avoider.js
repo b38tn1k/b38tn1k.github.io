@@ -6,6 +6,27 @@ function lerpGridColor(level, maxLevel, colorLow, colorHigh) {
     return lerpColor(colorLow, colorHigh, normalizedLevel);
 }
 
+function decimalToBinaryArray(number) {
+    // Convert the number to its binary representation
+    let binaryString = number.toString(2);
+
+    // Pad the binary string with leading zeros to ensure it's at least 8 bits long
+    binaryString = binaryString.padStart(8, "0");
+
+    // Extract the lowest 8 bits if the binary representation is longer
+    if (binaryString.length > 8) {
+        binaryString = binaryString.slice(-8);
+    }
+
+    // Split the binary string into an array of individual digits
+    let binaryArray = binaryString.split("").map(Number);
+
+    return binaryArray;
+}
+
+const PLAYING = 1;
+const GAMEOVER = 2;
+
 class Avoider extends Grid {
     constructor(myColors, canvasSize) {
         super(myColors, canvasSize, 100);
@@ -15,6 +36,7 @@ class Avoider extends Grid {
         this.gridOutline = Array.from({ length: this.xCells }, () => Array(this.yCells).fill(1));
         this.maxLevel = 7;
         this.createTerrain();
+        this.colorStrings = ["goldenYellow", "plumPurple", "mustardYellow", "peachCoral"];
         // this.normaliseTerrain();
         this.quantiseTerrain();
         this.carveTerrain();
@@ -24,6 +46,12 @@ class Avoider extends Grid {
         this.canvasSizeOn4 = this.canvasSize * 0.25;
         this.canvasSizeOn3 = this.canvasSize * 0.33;
         this.scroller = 0;
+        this.gamemode = PLAYING;
+        this.enemies = [];
+        this.enemyBullets = [];
+        this.score = 0;
+        this.enemyStarterCount = 1;
+        this.maxEnemies = 4;
         let b = 10;
         this.plane = {
             x: this.canvasSizeOn2,
@@ -33,24 +61,185 @@ class Avoider extends Grid {
             rightborder: this.canvasSize - b * this.cellSize,
             topborder: b * this.cellSize,
             bottomborder: this.canvasSize - b * this.cellSize,
+            weaponCooldown: 0,
+            bullets: [],
+            bulletSpeed: 10,
         };
+        this.createEnemy(100, 100);
+        this.countDownToExit = 100;
     }
 
     static() {
-        this.drawMap(this.scroller, this.numCells);
-        this.scroller += 1;
-        if (this.scroller >= this.grid.length) {
-            this.scroller = 0;
+        if (this.gamemode === PLAYING) {
+            this.readInput();
+            this.scroller += 1;
+            if (this.scroller >= this.grid.length) {
+                this.scroller = 0;
+            }
+            this.updateEnemies();
+            this.updatePlane();
+        } else {
+            this.countDownToExit -= 1;
+            if (this.countDownToExit == 0) {
+                this.returnToPreviousMode = true;
+            }
         }
+        this.drawMap(this.scroller, this.numCells);
+        this.drawEnemies();
+        this.drawPlane();
+        this.drawScore();
+        if (this.enemies.length < this.enemyStarterCount) {
+            this.createEnemy(this.canvasSizeOn2, -this.cellSize);
+        }
+    }
+
+    drawScore() {
+        rectMode(CENTER);
+        fill(this.myColors["powderBlue"]);
+        let x = this.cellSize * (this.numCells - 20);
+        let y = this.cellSize * 2;
+        rect(this.cellSize * (this.numCells - 20), this.cellSize * 2, this.cellSize * 16, this.cellSize * 2);
+        let j = 0;
+        let score = decimalToBinaryArray(this.score);
+        for (let i = -7; i < 8; i += 2) {
+            if (score[j] == 0) {
+                fill(this.myColors["navyBlue"]);
+            } else {
+                fill("#FF0000");
+            }
+            j += 1;
+            square(x + i * this.cellSize, y, this.cellSize * 0.75);
+        }
+    }
+
+    updatePlane() {
+        if (this.plane.weaponCooldown > 0) {
+            this.plane.weaponCooldown -= 1;
+        }
+        let keep = [];
+        for (let i = 0; i < this.plane.bullets.length; i++) {
+            let b = this.plane.bullets[i];
+            b.y -= this.plane.bulletSpeed;
+            if (b.y > 0) {
+                keep.push(b);
+            }
+        }
+        this.plane.bullets = keep;
+    }
+
+    createEnemy(x, y, c = null) {
+        let e = {};
+        if (c == null) {
+            e.color = this.colorStrings[Math.floor(Math.random() * this.colorStrings.length)];
+        } else {
+            e.color = c;
+        }
+        e.x = x;
+        e.min = random(10 * this.cellSize, x);
+        e.max = constrain(x + (x - e.min), x, this.canvasSize - 10 * this.cellSize);
+        e.f = random(200, 1000);
+        e.off = random(-TWO_PI, TWO_PI);
+        e.y = y;
+        e.speed = 5; //(random() + 0.5) * this.cellSize;
+        e.alive = true;
+        e.weaponCooldown = random(17, 23);
+        e.coolDown = 0;
+        e.bulletSpeed = random(5, 7);
+        e.speed = e.bulletSpeed * random(0.2, 0.8);
+        this.enemies.push(e);
+    }
+
+    enemyShoot(e) {
+        this.enemyBullets.push({ x: e.x, y: e.y, s: e.bulletSpeed, l: 50 });
+    }
+
+    updateEnemies() {
+        let keep = [];
+        for (let e of this.enemies) {
+            e.y += e.speed;
+            e.x = map(sin(millis() / e.f + e.off), -1, 1, e.min, e.max);
+
+            e.coolDown -= 1;
+            if (e.coolDown <= 0) {
+                this.enemyShoot(e);
+                e.coolDown = e.weaponCooldown;
+            }
+            for (let b of this.plane.bullets) {
+                if (dist(e.x, e.y, b.x, b.y) <= this.cellSize) {
+                    e.alive = false;
+                    this.score += 1;
+                }
+            }
+
+            if (e.y >= this.canvasSize - this.cellSize) {
+                e.alive = false;
+            }
+
+            if (e.alive == true) {
+                keep.push(e);
+            } else {
+                this.enemyStarterCount += 1;
+                this.enemyStarterCount = min(this.enemyStarterCount, this.maxEnemies);
+            }
+        }
+        this.enemies = keep;
+        keep = [];
+        for (let b of this.enemyBullets) {
+            b.y += b.s;
+            b.l -= 1;
+            if (b.y < this.canvasSize - this.cellSize && b.l > 0) {
+                keep.push(b);
+            }
+
+            if (dist(this.plane.x, this.plane.y, b.x, b.y) < this.cellSize) {
+                this.gamemode = GAMEOVER;
+            }
+        }
+        this.enemyBullets = keep;
+    }
+
+    drawEnemies() {
+        let scale = 0.25;
+        let point = 0.35;
+        let cSize = this.modifier * this.cellSize * 5;
+        for (let e of this.enemies) {
+            fill(this.myColors[e.color]);
+            push();
+            translate(e.x, e.y);
+            rotate(this.modifier * TWO_PI);
+            triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
+            pop();
+        }
+        // fill(this.myColors["mustardYellow"]);
+        fill("#FF0000");
+        for (let b of this.enemyBullets) {
+            square(b.x, b.y, this.cellSize);
+        }
+    }
+
+    drawPlane() {
+        // fill(this.myColors["mustardYellow"]);
+        fill("#FF0000");
+        for (let b of this.plane.bullets) {
+            square(b.x, b.y, this.cellSize);
+        }
+        fill(this.myColors["powderBlue"]);
         push();
         translate(this.plane.x, this.plane.y);
         rotate(this.modifier * PI);
         let scale = 0.25;
         let point = 0.35;
         let cSize = this.modifier * this.cellSize * 10;
-        fill(this.myColors["powderBlue"]);
+
         triangle(-cSize * scale, -cSize * scale, cSize * scale, -cSize * scale, 0, cSize * point);
         pop();
+    }
+
+    shootPlane() {
+        this.plane.bullets.push({ x: this.plane.x, y: this.plane.y });
+    }
+
+    readInput() {
         if (keyIsDown(LEFT_ARROW)) {
             this.planeLeft();
         }
@@ -63,6 +252,12 @@ class Avoider extends Grid {
 
         if (keyIsDown(DOWN_ARROW)) {
             this.planeDown();
+        }
+        if (keyIsDown(32)) {
+            if (this.plane.weaponCooldown == 0) {
+                this.plane.weaponCooldown += 5;
+                this.shootPlane();
+            }
         }
     }
 
@@ -201,6 +396,7 @@ class Avoider extends Grid {
         rectMode(CENTER);
         let off = this.cellSize / 2;
         let dim = this.modifier * this.cellSize * 0.8;
+        let twoDim = dim * 2;
         let radius = dim / 4;
         let jIndices = [];
         for (let j = start; j < start + h; j++) {
@@ -211,34 +407,32 @@ class Avoider extends Grid {
             jIndices.push(v);
         }
         jIndices.reverse();
+        let cc1 = [];
+        let cc2 = [];
+        for (let i = 0; i <= this.maxLevel; i++) {
+            let c = lerpGridColor(i, this.maxLevel, this.myColors["forestGreen"], this.myColors["sageGreen"]);
+            cc1.push(c);
+            c = lerpGridColor(i, this.maxLevel, this.myColors["sageGreen"], this.myColors["navyBlue"]);
+            cc2.push(c);
+        }
         for (let i = 10; i < this.xCells - 10; i++) {
             if (i % 2 == 0) {
                 for (let j = 0; j < this.yCells; j++) {
                     let jj = jIndices[j];
                     if (jj % 2 == 0) {
-                        let cellColor = lerpGridColor(
-                            this.grid[i][jj] + 1,
-                            this.maxLevel,
-                            this.myColors["forestGreen"],
-                            this.myColors["goldenYellow"]
-                        );
-                        let cellColor2 = lerpGridColor(
-                            this.grid[i][jj] + 1,
-                            this.maxLevel,
-                            this.myColors["sageGreen"],
-                            this.myColors["navyBlue"]
-                        );
+                        let cellColor = cc1[this.grid[i][jj] + 1];
+                        let cellColor2 = cc2[this.grid[i][jj] + 1];
                         push();
                         translate(i * this.cellSize + off, j * this.cellSize + off);
                         rotate(this.modifier * HALF_PI);
                         if (this.gridOutline[i][jj] != -1) {
-                            fill(this.myColors["darkGoldenOrange"]);
+                            fill(this.myColors["lightOrange"]);
                         } else {
                             fill(cellColor2);
                         }
-                        square(0, 0, dim * 2, radius);
+                        square(0, 0, twoDim, radius);
                         if (this.gridOutline[i][jj] != -1) {
-                            fill(this.myColors["brickRed"]);
+                            fill(this.myColors["navyBlue"]);
                             square(0, 0, dim, radius);
                         } else {
                             fill(cellColor);
@@ -257,7 +451,7 @@ class Avoider extends Grid {
                     push();
                     translate(i * this.cellSize + off, j * this.cellSize + off);
                     rotate(this.modifier * HALF_PI);
-                    fill(this.myColors["brickRed"]);
+                    fill(this.myColors["navyBlue"]);
                     square(0, 0, dim, radius);
                     pop();
                 }

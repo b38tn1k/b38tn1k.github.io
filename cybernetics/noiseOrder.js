@@ -168,15 +168,14 @@ class Node {
             fill(this.c2);
             square(0, 0, (1 - this.scale) * this.dim, this.radius);
         } else if (this.mode == SORTED) {
-            fill(this.c2);
-            square(0, 0, this.dim, this.radius);
+            // fill(this.c2);
+            // square(0, 0, this.dim, this.radius);
         } else {
             fill(this.c1);
             square(0, 0, this.dim, this.radius);
             fill(this.c2);
             square(0, 0, this.scale * this.dim, this.radius);
         }
-
         pop();
     }
 }
@@ -236,7 +235,7 @@ class Collector extends Grid {
         }
 
         fill(this.myColors["teal"]);
-        circle(this.canvasSizeOn2, this.canvasSizeOn2, this.modifier * this.cellSize * 0.9);
+        square(this.canvasSizeOn2, this.canvasSizeOn2, this.modifier * this.cellSize, 5);
 
         let c = [];
 

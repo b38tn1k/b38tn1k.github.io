@@ -1,4 +1,41 @@
 // Function to interpolate color based on grid level
+/**
+ * @description interpolates a color value based on a given level and maximum level,
+ * normalizing the level to a range between 0 and 1 before interpolating the color
+ * from `colorLow` and `colorHigh`.
+ * 
+ * @param { `Float`. } level - level of detail in the grid, with lower values indicating
+ * a coarser grid and higher values indicating a finer grid.
+ * 
+ * 		- `level`: A number representing the current level of detail in the grid color
+ * interpolation. The value ranges from 0 to `maxLevel`.
+ * 		- `maxLevel`: An integer denoting the maximum possible value for the `level` parameter.
+ * 		- `colorLow`: A color value representing the lowest interpolated color at a given
+ * `level`.
+ * 		- `colorHigh`: A color value representing the highest interpolated color at a
+ * given `level`.
+ * 
+ * 
+ * @param { number } maxLevel - maximum value of the levels in the grid, which is
+ * used to normalize the level value provided in the function.
+ * 
+ * @param { `rgb` or 32-bit float color value. } colorLow - lower-end color value of
+ * the interpolation range.
+ * 
+ * 		- `colorLow`: A hexadecimal color code representing a low value for interpolation.
+ * 
+ * 
+ * @param { color value. } colorHigh - higher-quality color value used for interpolation
+ * when the `level` parameter is close to 1, providing a gradual transition between
+ * the two colors.
+ * 
+ * 		- `colorLow`: The low color value used for interpolation (deserialized)
+ * 		- `colorHigh`: The high color value used for interpolation (deserialized)
+ * 
+ * 
+ * @returns { object } a interpolated color between two specified colors based on a
+ * normalized level value ranging from 0 to 1.
+ */
 function lerpGridColor(level, maxLevel, colorLow, colorHigh) {
     // Normalize the level value to a range between 0 and 1
     let normalizedLevel = level / maxLevel;
@@ -6,6 +43,14 @@ function lerpGridColor(level, maxLevel, colorLow, colorHigh) {
     return lerpColor(colorLow, colorHigh, normalizedLevel);
 }
 
+/**
+ * @description converts a decimal number to its binary representation as an array
+ * of digits, ensuring the length of the binary representation is at least 8 bits.
+ * 
+ * @param { integer } number - decimal value to be converted into its binary representation.
+ * 
+ * @returns { array } an array of 8 binary digits representing the input decimal number.
+ */
 function decimalToBinaryArray(number) {
     // Convert the number to its binary representation
     let binaryString = number.toString(2);
@@ -28,6 +73,18 @@ const PLAYING = 1;
 const GAMEOVER = 2;
 
 class Avoider extends Grid {
+    /**
+     * @description sets up a `Sprite` game object with basic functionality such as grid
+     * generation, terrain normalization, quantization, and carving, as well as enemy
+     * spawning and scorekeeping.
+     * 
+     * @param { array } myColors - 4 colors of the grid, which are used to define the
+     * terrain and other elements in the game.
+     * 
+     * @param { integer } canvasSize - 2D canvas size of the game environment, which
+     * determines the size of the grid, the placement of the plane and enemies, and other
+     * aspects of the game's layout.
+     */
     constructor(myColors, canvasSize) {
         super(myColors, canvasSize, 100);
         this.xCells = this.numCells;
@@ -70,6 +127,10 @@ class Avoider extends Grid {
         this.countDownToExit = 100;
     }
 
+    /**
+     * @description updates game elements based on the game mode and state, including
+     * reading input, updating enemies, plane, score, and creating new enemies if necessary.
+     */
     static() {
         if (this.gamemode === PLAYING) {
             this.readInput();
@@ -100,6 +161,10 @@ class Avoider extends Grid {
         }
     }
 
+    /**
+     * @description generates a binary representation of a score and renders it as
+     * rectangles on the canvas, using different colors for zero and non-zero values.
+     */
     drawScore() {
         rectMode(CENTER);
         fill(this.myColors["powderBlue"]);
@@ -119,6 +184,10 @@ class Avoider extends Grid {
         }
     }
 
+    /**
+     * @description updates the weapon cooldown and moves bullets downward based on their
+     * speed, retaining only those that have not exceeded the y-axis.
+     */
     updatePlane() {
         if (this.plane.weaponCooldown > 0) {
             this.plane.weaponCooldown -= 1;
@@ -134,6 +203,20 @@ class Avoider extends Grid {
         this.plane.bullets = keep;
     }
 
+    /**
+     * @description generates a new enemy based on parameters x and y, with optional
+     * customization options c for color and weapon cooldown. It creates an object
+     * representing the enemy with properties like position, size, speed, color, weapon,
+     * and others. The enemy is added to the list of enemies in the code.
+     * 
+     * @param { number } x - 2D position of the enemy to be created within the game canvas.
+     * 
+     * @param { number } y - vertical position of the enemy object in the game world,
+     * where it is generated and added to the `enemies` array.
+     * 
+     * @param { null } c - color of the enemy to be created if it is provided, or a random
+     * color if it is not provided.
+     */
     createEnemy(x, y, c = null) {
         let e = {};
         if (c == null) {
@@ -156,10 +239,22 @@ class Avoider extends Grid {
         this.enemies.push(e);
     }
 
+    /**
+     * @description adds a new bullet to the `enemyBullets` array based on the enemy's
+     * current position, velocity, and acceleration.
+     * 
+     * @param { object } e - 2D coordinate of an enemy object that is being shot, and its
+     * properties are added to the `this.enemyBullets` array.
+     */
     enemyShoot(e) {
         this.enemyBullets.push({ x: e.x, y: e.y, s: e.bulletSpeed, l: 50 });
     }
 
+    /**
+     * @description updates the positions, velocities, and cooldowns of enemies on the
+     * screen. It also checks for collisions with bullets and planes, and removes enemies
+     * that have reached the bottom of the canvas or are dead.
+     */
     updateEnemies() {
         let keep = [];
         for (let e of this.enemies) {
@@ -205,6 +300,10 @@ class Avoider extends Grid {
         this.enemyBullets = keep;
     }
 
+    /**
+     * @description creates shapes representing enemies and bullet objects in a grid-based
+     * game, using scaling and rotation to position them correctly.
+     */
     drawEnemies() {
         let scale = 0.25;
         let point = 0.35;
@@ -224,6 +323,10 @@ class Avoider extends Grid {
         }
     }
 
+    /**
+     * @description draws a plane with a mustard yellow color followed by powder blue,
+     * using quadratic curves to create the shape.
+     */
     drawPlane() {
         // fill(this.myColors["mustardYellow"]);
         fill("#FF0000");
@@ -242,10 +345,19 @@ class Avoider extends Grid {
         pop();
     }
 
+    /**
+     * @description pushes a new bullet object onto the plane's bullets array at its
+     * current position (x, y).
+     */
     shootPlane() {
         this.plane.bullets.push({ x: this.plane.x, y: this.plane.y });
     }
 
+    /**
+     * @description listens to key presses and executes corresponding actions on an
+     * aircraft object, including moving left/right/up/down and shooting a weapon with a
+     * cooldown system.
+     */
     readInput() {
         if (keyIsDown(LEFT_ARROW)) {
             this.planeLeft();
@@ -268,6 +380,10 @@ class Avoider extends Grid {
         }
     }
 
+    /**
+     * @description maps values from a grid between 0 and 1 to a specified level within
+     * a range, based on a given grid size.
+     */
     quantiseTerrain() {
         for (let i = 0; i < this.xCells; i++) {
             for (let j = 0; j < this.yCells; j++) {
@@ -276,6 +392,11 @@ class Avoider extends Grid {
         }
     }
 
+    /**
+     * @description normalises the values in a 2D grid by dividing each cell's value by
+     * the minimum and maximum values in the grid, and then subtracting the minimum value
+     * and scaling the result by a constant factor.
+     */
     normaliseTerrain() {
         let max = 0;
         let min = 1;
@@ -299,6 +420,44 @@ class Avoider extends Grid {
         }
     }
 
+    /**
+     * @description takes two input parameters `x` and `y`, returns a noise value at those
+     * coordinates, smooths the transition at top and bottom edges using nearest-neighbor
+     * interpolation.
+     * 
+     * @param { double/float. } x - 2D spatial position at which to evaluate the noise
+     * value, and it is multiplied by a scaling factor of 0.02 to determine the size of
+     * the noise.
+     * 
+     * 		- `x`: The noise scale factor for the x-axis, set to 0.02.
+     * 		- `y`: The noise scale factor for the y-axis, used in the calculations for the
+     * top and bottom smooth transitions.
+     * 
+     * 
+     * @param { number } y - 2D position in the noisy texture and determines the scaling
+     * factor for the noise generation at each pixel location.
+     * 
+     * @returns { `float`. } a noise value between 0 and 1, calculated based on two random
+     * variables.
+     * 
+     * 		- `noiseScale`: A constant representing the scaling factor for noise generation,
+     * set to 0.02 in the code snippet.
+     * 		- `noiseValue`: The generated noise value, calculated using a noise formula that
+     * takes into account the input variables `x` and `y`.
+     * 		- `overlap`: An optional parameter indicating a range of pixels around the edges
+     * where smoothing occurs. When `overlap` is present, it sets the size of the overlap
+     * area to 100 pixels.
+     * 		- `nf2`: An optional output variable representing the second-order noise value
+     * calculated at each pixel location within the overlap area. Its presence and
+     * calculation depend on whether there is a smooth transition at the top or bottom
+     * edge of the image.
+     * 		- `blendFactor`: A floating-point value ranging from 0 to 1, used for blending
+     * the output values with the noiseValue when smoothing occurs at edges. When `overlap`
+     * is present, the blend factor is calculated as (1 - (y - this.yCells)) / overlap.
+     * Otherwise, it's set to 1.
+     * 		- `y`: The position of the pixel for which the noise value is generated, ranging
+     * from 0 to `this.yCells`.
+     */
     getNoiseValue(x, y) {
         let noiseScale = 0.02;
         let noiseValue = noise(x * noiseScale, y * noiseScale);
@@ -345,6 +504,10 @@ class Avoider extends Grid {
     //     return noiseValue;
     // }
 
+    /**
+     * @description generates noise values for a grid of cells based on a specified pattern
+     * and replaces them in the grid.
+     */
     createTerrain() {
         for (let i = 0; i < this.xCells; i++) {
             for (let j = 0; j < this.yCells; j++) {
@@ -353,6 +516,11 @@ class Avoider extends Grid {
         }
     }
 
+    /**
+     * @description iterates through a grid, checking the values of adjacent cells and
+     * replacing them with the value of the original cell if the neighbors are valid, or
+     * -1 otherwise.
+     */
     carveTerrain() {
         for (let i = 0; i < this.xCells; i++) {
             for (let j = 0; j < this.yCells; j++) {
@@ -365,6 +533,18 @@ class Avoider extends Grid {
         }
     }
 
+    /**
+     * @description checks if a given cell has a neighboring cell with a different value
+     * within the grid's bounds, returning true if such a cell is found and false otherwise.
+     * 
+     * @param { number } i - 2D coordinate of the cell being checked for neighbors.
+     * 
+     * @param { number } j - 2D coordinate of the cell to check for neighbors, which is
+     * used to determine the position of the cell in the grid to check for surrounding cells.
+     * 
+     * @returns { boolean } a boolean value indicating whether there exists a neighboring
+     * cell with a different value.
+     */
     checkNeighbors(i, j) {
         let val = this.grid[i][j];
         for (let dx = -1; dx <= 1; dx++) {
@@ -381,24 +561,52 @@ class Avoider extends Grid {
         return false; // All neighboring cells have the same value
     }
 
+    /**
+     * @description reduces the X-coordinate of an object called "plane" by its speed
+     * value and constrains it within the left and right borders of the plane, based on
+     * its current X position.
+     */
     planeLeft() {
         this.plane.x -= this.plane.speed;
         this.plane.x = constrain(this.plane.x, this.plane.leftborder, this.plane.rightborder);
     }
+    /**
+     * @description moves the plane to its right border based on its speed and constrains
+     * its position within the boundary of the plane canvas.
+     */
     planeRight() {
         this.plane.x += this.plane.speed;
         this.plane.x = constrain(this.plane.x, this.plane.leftborder, this.plane.rightborder);
     }
 
+    /**
+     * @description reduces the `y` component of an object's position by its `speed`
+     * value, then constrains it within the object's top and bottom boundaries.
+     */
     planeUp() {
         this.plane.y -= this.plane.speed;
         this.plane.y = constrain(this.plane.y, this.plane.topborder, this.plane.bottomborder);
     }
+    /**
+     * @description updates the Y-coordinate of a plane by adding its speed and constraining
+     * it to the top and bottom borders.
+     */
     planeDown() {
         this.plane.y += this.plane.speed;
         this.plane.y = constrain(this.plane.y, this.plane.topborder, this.plane.bottomborder);
     }
 
+    /**
+     * @description generates high-quality documentation for given code by drawing a
+     * two-dimensional grid of cells, using different fill colors based on the value of
+     * each cell's `gridOutline` property.
+     * 
+     * @param { integer } start - 2D coordinates of the top-left corner of the map area
+     * to be drawn.
+     * 
+     * @param { integer } h - horizontal distance to be covered by each cell's grid
+     * pattern, starting from the top left corner of the canvas and moving rightward.
+     */
     drawMap(start, h) {
         rectMode(CENTER);
         let off = this.cellSize / 2;

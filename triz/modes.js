@@ -544,7 +544,7 @@ function drawProblemDefinitionDeck(cnv) {
     let tY = height / 2 + quadTargets[1][1];
     textSize(titleTextSize);
     textStyle(BOLD);
-    text("Not Applicable", tX, tY);
+    text("Skip", tX, tY);
     textSize(tTextSize);
     textStyle(ITALIC);
     text("(Left)", tX, tY + titleTextSize);

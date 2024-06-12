@@ -1,10 +1,10 @@
 let baseImage;
 let images = {};
 let boundingBoxes = {};
-let revealedImages = new Set(); // To keep track of already revealed images
-let scaleFactor = 0.25; // Assuming images are scaled to fit the screen
-let canvasWidth = 1005; // 2009 * 0.5
-let canvasHeight = 1247.5; // 2495 * 0.5
+let revealedImages = new Set();
+let scaleFactor = 0.25; // Scaling factor for the images
+let canvasWidth = 2009 * scaleFactor; // Scaled width
+let canvasHeight = 2495 * scaleFactor; // Scaled height
 
 function preload() {
     // Load the base image
@@ -36,15 +36,19 @@ function draw() {
 }
 
 function mouseMoved() {
-    // Check mouse position against each bounding box
+    // Scale the mouse coordinates to match the scaled canvas
+    let scaledMouseX = mouseX / scaleFactor;
+    let scaledMouseY = mouseY / scaleFactor;
+
+    // Check scaled mouse position against each bounding box
     for (let key in boundingBoxes) {
         let bbox = boundingBoxes[key];
-        let x = bbox.x * canvasWidth;
-        let y = bbox.y * canvasHeight;
-        let w = bbox.width * canvasWidth;
-        let h = bbox.height * canvasHeight;
+        let x = bbox.x * canvasWidth / scaleFactor;
+        let y = bbox.y * canvasHeight / scaleFactor;
+        let w = bbox.width * canvasWidth / scaleFactor;
+        let h = bbox.height * canvasHeight / scaleFactor;
 
-        if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
+        if (scaledMouseX > x && scaledMouseX < x + w && scaledMouseY > y && scaledMouseY < y + h) {
             if (!revealedImages.has(key)) {
                 revealedImages.add(key);
             }

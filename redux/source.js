@@ -2,7 +2,7 @@ let baseImage;
 let images = {};
 let boundingBoxes = {};
 let revealedImages = new Set(); // To keep track of already revealed images
-let scaleFactor = 0.5; // Assuming images are scaled to fit the screen
+let scaleFactor = 0.25; // Assuming images are scaled to fit the screen
 let canvasWidth = 1005; // 2009 * 0.5
 let canvasHeight = 1247.5; // 2495 * 0.5
 

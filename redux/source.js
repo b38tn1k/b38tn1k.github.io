@@ -1,14 +1,14 @@
 let baseImage;
 let images = {};
 let boundingBoxes = {};
-let revealedImages = new Set(); // To keep track of already revealed images
-let scaleFactor = 0.25; // Assuming images are scaled to fit the screen
-let canvasWidth = 1005; // 2009 * 0.5
-let canvasHeight = 1247.5; // 2495 * 0.5
+let revealedImages = new Set();
+let scaleFactor = 0.25; // Scaling factor for the images
+let canvasWidth = 2009 * scaleFactor; // Scaled width
+let canvasHeight = 2495 * scaleFactor; // Scaled height
 
 /**
- * @description Loads an image and a JSON file containing bounding boxes, then loads
- * all other images based on the bounding boxes JSON using a for loop.
+ * @description 1) loads an image and 2) fetches and processes a JSON file containing
+ * bounding boxes for subsequent image loading.
  */
 function preload() {
     // Load the base image
@@ -26,8 +26,8 @@ function preload() {
 }
 
 /**
- * @description Sets up an art canvas with the specified width and height and displays
- * an image on it with a scaling factor applied to its original dimensions.
+ * @description Sets up an image display by creating a canvas and displaying an image
+ * on it.
  */
 function setup() {
     createCanvas(canvasWidth, canvasHeight);
@@ -35,8 +35,9 @@ function setup() {
 }
 
 /**
- * @description Iterates through an array of image keys and displays the corresponding
- * images using the `image` function, scaling them to fit within a specified size range.
+ * @description Displays already revealed images by looping through an array of image
+ * keys and calling the `image` function with the corresponding image and scale factor
+ * values.
  */
 function draw() {
     // Display already revealed images
@@ -48,19 +49,24 @@ function draw() {
 }
 
 /**
- * @description Iterates over bounding boxes and checks if the mouse position falls
- * within each box's boundaries. If it does, the corresponding image is marked as revealed.
+ * @description Scales the mouse coordinates to match the scaled canvas, and then
+ * checks the scaled mouse position against each bounding box. If the mouse is within
+ * the bounds of a revealed image, it is added to the list of revealed images.
  */
 function mouseMoved() {
-    // Check mouse position against each bounding box
+    // Scale the mouse coordinates to match the scaled canvas
+    let scaledMouseX = mouseX / scaleFactor;
+    let scaledMouseY = mouseY / scaleFactor;
+
+    // Check scaled mouse position against each bounding box
     for (let key in boundingBoxes) {
         let bbox = boundingBoxes[key];
-        let x = bbox.x * canvasWidth;
-        let y = bbox.y * canvasHeight;
-        let w = bbox.width * canvasWidth;
-        let h = bbox.height * canvasHeight;
+        let x = bbox.x * canvasWidth / scaleFactor;
+        let y = bbox.y * canvasHeight / scaleFactor;
+        let w = bbox.width * canvasWidth / scaleFactor;
+        let h = bbox.height * canvasHeight / scaleFactor;
 
-        if (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h) {
+        if (scaledMouseX > x && scaledMouseX < x + w && scaledMouseY > y && scaledMouseY < y + h) {
             if (!revealedImages.has(key)) {
                 revealedImages.add(key);
             }

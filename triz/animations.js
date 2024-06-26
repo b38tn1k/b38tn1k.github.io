@@ -2,7 +2,7 @@ var widthOnTwo, heightOnTwo;
 var card, cardDeck;
 var cards, index, order;
 var textX, textY, textW, logoX, logoY;
-var cardslength = 30;
+
 var ani,
     aniX,
     aniY,
@@ -61,7 +61,9 @@ functionList.push(cheapshort);
 functionList.push(mechanicalsubstitution);
 functionList.push(pneumaticsAndHydraulics);
 functionList.push(shellsAndFilms);
-
+functionList.push(porous);
+functionList.push(colorChanges);
+var cardslength = functionList.length;
 /**
  * @description The given function is a simplification of the animation of a clock
  * hand. It creates an arrowhead shape at the desired location and angle using the
@@ -2241,7 +2243,7 @@ function pneumaticsAndHydraulics() {
  */
 function shellsAndFilms() {
     ani.clear();
-    ani.background(204, 171, 139)
+    ani.background(204, 171, 139);
     drawCar();
     let per = 20000;
     let currentAngle = ((TWO_PI * millis()) / per) % TWO_PI;
@@ -2251,21 +2253,20 @@ function shellsAndFilms() {
     ch = aniLayers["car"].height / 2;
     ani.noStroke();
     ani.fill(100, 100, 100);
-    ani.rect(0, aniHeightOn4 + ch - gapOn6/2, ani.width, gap2);
+    ani.rect(0, aniHeightOn4 + ch - gapOn6 / 2, ani.width, gap2);
     ani.fill(101, 67, 33);
     ani.rect(0, 0, ani.width, gap);
     ani.fill(50, 50, 50);
     ani.circle(gap, gap, gap);
-    ani.rect(gapOn2, gap, gapOn6, (ani.height - gap2 - gapOn6/2) * abs(sincurrentAngle));
+    ani.rect(gapOn2, gap, gapOn6, (ani.height - gap2 - gapOn6 / 2) * abs(sincurrentAngle));
     ani.fill(200, 200, 200);
     ani.circle(gap, gap, gapOn2);
     ani.image(aniLayers["car"], aniWidthOn2 - gap2, aniHeightOn4, cw, ch);
     ani.image(aniLayers["car window"], aniWidthOn2 - gap2, aniHeightOn4, cw, ch);
     ani.fill(101, 67, 33);
-    ani.rect(aniWidthOn2 + gap2, aniHeightOn2-gap, gap, gap2);
+    ani.rect(aniWidthOn2 + gap2, aniHeightOn2 - gap, gap, gap2);
     ani.fill(255, 215, 0);
-    ani.circle(aniWidthOn2 + gap2 + gapOn6, aniHeightOn2, gapOn6)
-
+    ani.circle(aniWidthOn2 + gap2 + gapOn6, aniHeightOn2, gapOn6);
 }
 
 /**
@@ -2299,4 +2300,86 @@ function eggPan() {
     ani.circle(aniWidthOn3, aniHeightOn2, gap);
     ani.fill(255, 200, 0);
     ani.circle(aniWidthOn3, aniHeightOn2, gapOn2);
+}
+
+function porous() {
+    ani.clear();
+    ani.noStroke();
+
+    // // Constants for animation dynamics
+    // const waterDropSize = cr / 15; // Bigger drops
+    // const impuritySize = waterDropSize / 2;
+    // const numDrops = 20;
+    // const numImpurities = 10;
+    // const porousY = aniHeightOn2 - cr / 4;
+    // const porousHeight = cr;
+    // const dropSpeed = 3; // Faster drop animation
+
+    // // Time control for continuous flow effect
+    // let time = millis() / 100;
+
+    // // Draw porous barrier
+    // ani.fill(rCol[1]); // Typically a neutral or grey color if possible
+    // ani.rect(aniWidthOn2, porousY, 10, porousHeight); // Thin barrier
+
+    // // Animate water droplets and impurities on the left side
+    // for (let i = 0; i < numDrops; i++) {
+    //     let x = ani.random(aniWidthOn2 - cr / 2);
+    //     let y = porousY + (time * dropSpeed + i * waterDropSize) % porousHeight;
+    //     ani.fill(rCol[0]); // Assume this is a suitable water color, not blue
+    //     ani.circle(x, y, waterDropSize);
+
+    //     // Impurities inside the water
+    //     if (i < numImpurities) {
+    //         let impX = x + ani.random(-waterDropSize, waterDropSize);
+    //         let impY = y + ani.random(-waterDropSize / 2, waterDropSize / 2);
+    //         ani.fill(rCol[2]); // Red or distinct color for impurities
+    //         ani.circle(impX, impY, impuritySize);
+    //     }
+    // }
+
+    // // Animate only clean water exiting the right side of the barrier
+    // for (let j = 0; j < numDrops; j++) {
+    //     let x = aniWidthOn2 + 20 + ani.random(cr / 2); // Start just after the barrier
+    //     let y = porousY + (time * dropSpeed + j * waterDropSize) % porousHeight;
+    //     ani.fill(rCol[0]); // Clean water exiting
+    //     ani.circle(x, y, waterDropSize);
+    // }
+}
+
+function colorChanges() {
+    ani.clear();
+    let per = 10000;
+    let currentAngle = ((TWO_PI * millis()) / per) % TWO_PI;
+    let xMove = cos(currentAngle) * gapOn6;
+    let yMove = sin(currentAngle) * gapOn6;
+    ani.noStroke();
+    //TV
+    ani.fill(100);
+    let tvX = aniWidthOn2 - aniWidthOn3;
+    let tvY = aniHeightOn3 / 2 - gapOn2;
+    let tvW = 2 * aniWidthOn3;
+    let tvH = aniHeightOn3 + gap;
+    ani.rect(tvX, tvY, tvW, tvH);
+    ani.fill(255);
+    ani.rect(tvX + gapOn4, tvY + gapOn4, tvW - gapOn2, tvH - gapOn2);
+    ani.fill(rCol[0]);
+    ani.circle(tvX + tvW - gapOn6, tvY + tvH - (2 * gapOn6) / 3, gapOn6);
+    // Animation
+    ani.fill(255, 0, 0);
+    ani.circle(aniWidthOn2 - gapOn4 + xMove, aniHeightOn3 + yMove, aniWidthOn4);
+    ani.fill(0, 0, 255);
+    ani.circle(aniWidthOn2 + gapOn4 + xMove, aniHeightOn3 + yMove, aniWidthOn4);
+    ani.fill(0);
+    ani.circle(aniWidthOn2 + xMove, aniHeightOn3 + yMove, aniWidthOn4);
+    // Glasses
+    ani.stroke(0);
+    ani.line(aniWidthOn3, aniHeightOn4 * 3, aniWidthOn3 * 2, aniHeightOn4 * 3);
+    ani.line(aniWidthOn3, aniHeightOn4 * 3, gap, aniHeightOn3 * 2);
+    ani.line(aniWidthOn3 * 2, aniHeightOn4 * 3, ani.width-gap, aniHeightOn3 * 2);
+    ani.strokeWeight(1);
+    ani.fill(255, 0, 0);
+    ani.ellipse(aniWidthOn3, aniHeightOn4 * 3, aniWidthOn4, gap);
+    ani.fill(0, 0, 255);
+    ani.ellipse(aniWidthOn3 * 2, aniHeightOn4 * 3, aniWidthOn4, gap);
 }

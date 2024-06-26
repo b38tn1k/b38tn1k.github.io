@@ -4,6 +4,9 @@ https://www.etsy.com/listing/741800169/grand-central-station-clock-and-ceiling
 https://www.ladismantler.com/porsche-911-993-carrera-s-gun-metal-gray-rare-instrument-gauges-5-pcs-set-oem/
 HIGHLIGHTING RELATED / CONNECTED Components in proportionality
 */
+/**
+ * @description Sets up a screen.
+ */
 function deviceTurned() {
     setupScreen();
 }
@@ -92,7 +95,7 @@ function preload() {
     loadJSON('assets/colors.json', loadColors);
     themes = loadJSON('assets/themes4.json');
     // JSONloader = loadJSON('sandwich.json');
-    JSONloader = loadJSON('test.json');
+    JSONloader = loadJSON('test2.json');
 }
 
 /**
@@ -189,6 +192,14 @@ function isTouchDevice() {
     return 'ontouchstart' in window || navigator.maxTouchPoints;
 }
 
+/**
+ * @description Prevents the default behavior of the event that triggered it, which
+ * can include actions such as submitting a form or loading a resource.
+ * 
+ * @param { object } event - event object that triggered the function, and by calling
+ * `event.preventDefault();`, the function prevents the default behavior of the event
+ * from occurring.
+ */
 document.addEventListener('contextmenu', function (event) {
     event.preventDefault();
 });

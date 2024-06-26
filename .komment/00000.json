@@ -1,0 +1,32 @@
+[
+  {
+    "name": "compress.py",
+    "path": "redux/compress.py",
+    "content": {
+      "structured": {
+        "description": "Three main components: (1) it opens and converts an image using PIL (Python Imaging Library), (2) it posterizes the image by reducing its color palette to 64 colors using Image.ADAPTIVE, and (3) it compresses the posterized image using optipng.",
+        "items": []
+      }
+    }
+  },
+  {
+    "name": "resize.py",
+    "path": "redux/resize.py",
+    "content": {
+      "structured": {
+        "description": "A list of image files in an \"image_files\" variable, processes each image file by opening it using the Image class from the PIL library, resizing it to half its original size using the resize method, and saving the resized image to a new file in a designated output directory. The code also prints a message after each successfully processed image.",
+        "items": []
+      }
+    }
+  },
+  {
+    "name": "spritesheet.py",
+    "path": "redux/spritesheet.py",
+    "content": {
+      "structured": {
+        "description": "A method that takes a JSON file containing bounding boxes for images and crops each image based on its corresponding bounding box, packs the cropped images into a composite sprite sheet, and saves both the original bounding boxes JSON and the new sprite sheet as separate files. The code uses the `Image` class from the `PIL` (Python Imaging Library) package to handle images, the `json` module to read and write JSON files, and the `os` module to manipulate file paths.",
+        "items": []
+      }
+    }
+  }
+]

@@ -16,18 +16,31 @@ let startX, startY, endX, endY;
 let drawingBox = false;
 let scaleFactor = 0.5; // Scale factor to fit images on the screen
 
+/**
+ * @description Preloads several images by calling the `loadImage()` method and storing
+ * them in an array called `images`.
+ */
 function preload() {
     for (let i = 0; i < imageFiles.length; i++) {
         images[i] = loadImage(imageFiles[i]);
     }
 }
 
+/**
+ * @description Initializes an image canvas and populates a `boundingBoxes` object
+ * with values. It then displays an image at the current `imageIndex` position.
+ */
 function setup() {
     createCanvas(windowWidth, windowHeight);
     boundingBoxes = {};
     showImage(currentImageIndex);
 }
 
+/**
+ * @description Sets the background to white and displays an image at the specified
+ * position using a scale factor, then draws a box around the mouse cursor if
+ * `drawingBox` is true.
+ */
 function draw() {
     background(255);
     if (images[currentImageIndex]) {
@@ -41,12 +54,23 @@ function draw() {
     }
 }
 
+/**
+ * @description Sets initial values for two variables: `startX` and `startY`. These
+ * are the coordinates where the user first clicked inside a designated drawing area.
+ * The function also enables a boolean variable called `drawingBox`, indicating that
+ * the user is in drawing mode.
+ */
 function mousePressed() {
     startX = mouseX;
     startY = mouseY;
     drawingBox = true;
 }
 
+/**
+ * @description Detects and saves the bounding box coordinates of a user-drawn shape
+ * on an image, using the scale factor and image dimensions to constrain the coordinates
+ * within the canvas bounds.
+ */
 function mouseReleased() {
     endX = mouseX;
     endY = mouseY;
@@ -82,6 +106,13 @@ function mouseReleased() {
     }
 }
 
+/**
+ * @description Displays an image from a two-dimensional array `images`. The image
+ * is positioned at the origin and scaled based on a factor passed as input.
+ * 
+ * @param { integer } index - 0-based index of the desired image to be displayed from
+ * the `images` array.
+ */
 function showImage(index) {
     if (images[index]) {
         clear();
@@ -89,12 +120,19 @@ function showImage(index) {
     }
 }
 
+/**
+ * @description Monitors key presses and, when the 's' or 'S' key is pressed, saves
+ * bounding boxes.
+ */
 function keyPressed() {
     if (key === 's' || key === 'S') {
         saveBoundingBoxes();
     }
 }
 
+/**
+ * @description Generates and downloads a JSON file containing the bounding boxes.
+ */
 function saveBoundingBoxes() {
     let jsonContent = JSON.stringify(boundingBoxes, null, 2);
     let blob = new Blob([jsonContent], { type: "application/json" });

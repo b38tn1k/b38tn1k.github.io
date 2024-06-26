@@ -6,6 +6,10 @@ let scaleFactor = 0.25; // Scaling factor for the images
 let canvasWidth = 2009 * scaleFactor; // Scaled width
 let canvasHeight = 2495 * scaleFactor; // Scaled height
 
+/**
+ * @description 1) loads an image and 2) fetches and processes a JSON file containing
+ * bounding boxes for subsequent image loading.
+ */
 function preload() {
     // Load the base image
     baseImage = loadImage('img/image042.png');
@@ -21,11 +25,20 @@ function preload() {
     });
 }
 
+/**
+ * @description Sets up an image display by creating a canvas and displaying an image
+ * on it.
+ */
 function setup() {
     createCanvas(canvasWidth, canvasHeight);
     image(baseImage, 0, 0, baseImage.width * scaleFactor, baseImage.height * scaleFactor);
 }
 
+/**
+ * @description Displays already revealed images by looping through an array of image
+ * keys and calling the `image` function with the corresponding image and scale factor
+ * values.
+ */
 function draw() {
     // Display already revealed images
     revealedImages.forEach(imageKey => {
@@ -35,6 +48,11 @@ function draw() {
     });
 }
 
+/**
+ * @description Scales the mouse coordinates to match the scaled canvas, and then
+ * checks the scaled mouse position against each bounding box. If the mouse is within
+ * the bounds of a revealed image, it is added to the list of revealed images.
+ */
 function mouseMoved() {
     // Scale the mouse coordinates to match the scaled canvas
     let scaledMouseX = mouseX / scaleFactor;

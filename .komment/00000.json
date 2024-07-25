@@ -28,5 +28,247 @@
         "items": []
       }
     }
+  },
+  {
+    "name": "gantt.js",
+    "path": "rsigma/gantt_poc/gantt.js",
+    "content": {
+      "structured": {
+        "description": "A graphical Gantt chart component that displays a calendar with tasks. The chart is initialized by clearing and drawing the calendar and tasks on load. The user can add new tasks by clicking a button, which creates a new task object and updates the chart. The user can also click on an existing task to edit its start and end dates.",
+        "items": [
+          {
+            "id": "02ae5ac6-313e-9b9e-f44c-7906e12396fd",
+            "ancestors": [],
+            "description": "Clears a canvas and then calls two separate functions, `drawCalendar` and `drawTasks`, to render visual representations of calendar data and tasks on the cleared canvas.",
+            "params": [],
+            "usage": {
+              "language": "javascript",
+              "code": "drawChart();\n",
+              "description": ""
+            },
+            "name": "drawChart",
+            "location": {
+              "start": 17,
+              "insert": 17,
+              "offset": " ",
+              "indent": 0,
+              "comment": null
+            },
+            "item_type": "function",
+            "length": 6,
+            "docLength": null
+          },
+          {
+            "id": "5c055cfc-b25e-988e-3d48-c7b5c6af4f2c",
+            "ancestors": [],
+            "description": "Draws a calendar on a canvas starting from a specified start date (`startDate`). It displays the dates, and highlights today's date with a red line. The calendar is divided into cells of equal width and height, represented by `cellWidth` and `cellHeight`.",
+            "params": [],
+            "usage": {
+              "language": "javascript",
+              "code": "let canvas = document.getElementById('calendarCanvas');\nlet ctx = canvas.getContext('2d');\ndrawCalendar(ctx);",
+              "description": ""
+            },
+            "name": "drawCalendar",
+            "location": {
+              "start": 24,
+              "insert": 24,
+              "offset": " ",
+              "indent": 0,
+              "comment": null
+            },
+            "item_type": "function",
+            "length": 19,
+            "docLength": null
+          },
+          {
+            "id": "8e94ff51-12ea-4ba8-484c-de27c4c4874d",
+            "ancestors": [],
+            "description": "Iterates over an array of tasks, calculates their positions on a canvas based on start and end dates, and draws each task as a clickable rectangle with a label displaying its index number.",
+            "params": [],
+            "usage": {
+              "language": "javascript",
+              "code": "const tasks = [\n    { start: 1643723400, end: 1643725000 },\n    { start: 1643725000, end: 1643726000 }\n];\ndrawTasks();\n",
+              "description": ""
+            },
+            "name": "drawTasks",
+            "location": {
+              "start": 44,
+              "insert": 44,
+              "offset": " ",
+              "indent": 0,
+              "comment": null
+            },
+            "item_type": "function",
+            "length": 20,
+            "docLength": null
+          },
+          {
+            "id": "73a295e0-b090-1c87-5047-b8cd5a998a42",
+            "ancestors": [
+              "8e94ff51-12ea-4ba8-484c-de27c4c4874d"
+            ],
+            "description": "Renders tasks as rectangles on a canvas.",
+            "name": null,
+            "location": {
+              "start": 45,
+              "insert": 46,
+              "offset": " ",
+              "indent": 8,
+              "comment": null
+            },
+            "item_type": "higher_order_invocation",
+            "length": 18,
+            "docLength": null
+          },
+          {
+            "id": "ad636cb1-1980-909e-1d4b-07ec4626635e",
+            "ancestors": [],
+            "description": "Creates a new task object with start and end dates set to today's date, increments the end date by 7 days, adds it to an array of tasks, and then updates a chart.",
+            "params": [],
+            "usage": {
+              "language": "javascript",
+              "code": "addTask();",
+              "description": ""
+            },
+            "name": "addTask",
+            "location": {
+              "start": 66,
+              "insert": 66,
+              "offset": " ",
+              "indent": 0,
+              "comment": null
+            },
+            "item_type": "function",
+            "length": 9,
+            "docLength": null
+          },
+          {
+            "id": "1d304752-b091-dc8a-104e-006ec95f240f",
+            "ancestors": [],
+            "description": "Handles canvas click events, selecting tasks and displaying editing details.",
+            "name": null,
+            "location": {
+              "start": 77,
+              "insert": 78,
+              "offset": " ",
+              "indent": 4,
+              "comment": null
+            },
+            "item_type": "higher_order_invocation",
+            "length": 13,
+            "docLength": null
+          },
+          {
+            "id": "53707a7d-a91c-8a8e-194b-99d8d60aaed4",
+            "ancestors": [],
+            "description": "Updates the start and end dates of a selected task based on user input, hides an edit modal, and redraws a chart when the function is called with a valid task selection.",
+            "params": [],
+            "usage": {
+              "language": "javascript",
+              "code": "saveTask();\n",
+              "description": ""
+            },
+            "name": "saveTask",
+            "location": {
+              "start": 92,
+              "insert": 92,
+              "offset": " ",
+              "indent": 0,
+              "comment": null
+            },
+            "item_type": "function",
+            "length": 8,
+            "docLength": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "kanban.js",
+    "path": "rsigma/kanban_poc/kanban.js",
+    "content": {
+      "structured": {
+        "description": "Three key functionalities: initialization of Dragula package, adding a card to a specific column, and removing a card. The code uses JavaScript to interact with HTML elements on page load event. Dragula is initialized with a list of element IDs representing different columns in a Kanban board. The `addCard` function creates a new card with default content and appends it to the specified column.",
+        "items": [
+          {
+            "id": "0f102bbc-7633-5eb7-f94d-0adbf40c93bb",
+            "ancestors": [],
+            "description": "Initializes drag and drop functionality for three DOM elements.",
+            "name": null,
+            "location": {
+              "start": 2,
+              "insert": 3,
+              "offset": " ",
+              "indent": 4,
+              "comment": null
+            },
+            "item_type": "higher_order_invocation",
+            "length": 7,
+            "docLength": null
+          },
+          {
+            "id": "2550119e-16bb-8984-9b4c-11f34913946b",
+            "ancestors": [],
+            "description": "Creates a new card element with a title \"New Task\" and a remove button, assigns it to a specified DOM element with the given ID, and appends it as a child element.",
+            "params": [
+              {
+                "name": "columnId",
+                "default_value": null,
+                "optional": false,
+                "type_name": "string",
+                "description": "Used to identify a column element on the page."
+              }
+            ],
+            "usage": {
+              "language": "javascript",
+              "code": "addCard('column1');\n",
+              "description": "\nThis line of code will create a new card in a column with id 'column1'."
+            },
+            "name": "addCard",
+            "location": {
+              "start": 11,
+              "insert": 11,
+              "offset": " ",
+              "indent": 0,
+              "comment": null
+            },
+            "item_type": "function",
+            "length": 10,
+            "docLength": null
+          },
+          {
+            "id": "db5f0726-8b79-44b1-c746-c926c2698e15",
+            "ancestors": [],
+            "description": "Removes a HTML element that contains a specified button from its parent element. It does so by first locating the parent element of the button and then removing it from the DOM using the `remove()` method.",
+            "params": [
+              {
+                "name": "button",
+                "default_value": null,
+                "optional": false,
+                "type_name": "HTMLButtonElement",
+                "description": "Used to identify a card removal button."
+              }
+            ],
+            "usage": {
+              "language": "javascript",
+              "code": "removeCard(button);\n",
+              "description": ""
+            },
+            "name": "removeCard",
+            "location": {
+              "start": 23,
+              "insert": 23,
+              "offset": " ",
+              "indent": 0,
+              "comment": null
+            },
+            "item_type": "function",
+            "length": 4,
+            "docLength": null
+          }
+        ]
+      }
+    }
   }
 ]

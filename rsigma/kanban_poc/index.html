@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.css">
+    <style>
+        .kanban-board {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+        .kanban-column {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: #f4f4f4;
+            min-height: 200px;
+        }
+        .kanban-card {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #fff;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+        .add-card {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="kanban-board">
+        <div class="kanban-column" id="todo">
+            <h2>To Do</h2>
+            <button class="add-card" onclick="addCard('todo')">Add Card</button>
+        </div>
+        <div class="kanban-column" id="inprogress">
+            <h2>In Progress</h2>
+            <button class="add-card" onclick="addCard('inprogress')">Add Card</button>
+        </div>
+        <div class="kanban-column" id="done">
+            <h2>Done</h2>
+            <button class="add-card" onclick="addCard('done')">Add Card</button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
+    <script src="kanban.js"></script>
+</body>
+</html>

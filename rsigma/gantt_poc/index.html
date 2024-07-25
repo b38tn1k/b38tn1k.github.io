@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gantt Chart</title>
+    <style>
+        #ganttCanvas {
+            border: 1px solid #ccc;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button onclick="addTask()">Add Task</button>
+    </div>
+    <canvas id="ganttCanvas" width="1000" height="600"></canvas>
+
+    <!-- Modal for editing task -->
+    <div id="editModal" style="display: none;">
+        <label>Start Date: <input type="date" id="startDate"></label>
+        <label>End Date: <input type="date" id="endDate"></label>
+        <button onclick="saveTask()">Save</button>
+    </div>
+
+    <script src="gantt.js"></script>
+</body>
+</html>

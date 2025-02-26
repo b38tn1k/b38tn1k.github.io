@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRIZ Art Text</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+        }
+
+        .square-container {
+            width: 80vmin; /* Square based on viewport */
+            height: 80vmin;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 20px;
+            position: relative;
+        }
+
+        .text-wrapper {
+            font-family: 'Roboto Mono', monospace;
+            color: black;
+            line-height: 1.2;
+            text-align: justify;
+            white-space: pre-wrap;
+            overflow: hidden;
+            width: 90%;
+            height: 90%;
+        }
+    </style>
+</head>
+<body>
+    <div class="square-container">
+        <div class="text-wrapper" id="text"></div>
+    </div>
+
+    <script>
+        const textContent = `TRIZ (Teoriya Resheniya Izobreatatelskikh Zadach), or Theory of Inventive Problem Solving, is a methodology for systematic innovation and inventive problem solving. It was developed in the Soviet Union by Genrich Altshuller, a scientist, engineer, and patent examiner, who analyzed thousands of patents to uncover patterns of innovation.TRIZ provides structured principles to overcome contradictions in engineering and creative problem-solving by identifying universal patterns of invention. Over the decades, TRIZ has evolved into an expansive discipline that is widely used in engineering, product design, business strategy, and various other fields.This article explores TRIZ’s historical development, its theoretical foundations, key milestones, and its modern applications.TRIZ originated in 1946 when Genrich Altshuller (1926–1998), a young Soviet engineer working in the Soviet Navy’s patent office, began to study innovation systematically. While analyzing thousands of patents, he noticed that true innovations followed certain principles and patterns, rather than being random strokes of genius.Altshuller’s approach contradicted the prevailing belief that creativity was entirely a result of intuition or inspiration. Instead, he proposed that innovation could be methodically analyzed and taught using a structured methodology.Between 1946 and 1948, Altshuller examined over 200,000 patents across various technical fields, filtering out routine improvements and focusing on the truly inventive ones. He identified recurring problem-solving patterns and contradictions that led to breakthroughs.His key early findings included:1.Patterns of Invention: Technological evolution follows predictable trends.2.Contradictions Drive Innovation: The most inventive solutions resolve conflicts without compromise.3.Standardized Principles: Common problem-solving principles could be extracted and generalized.Altshuller’s work soon drew the attention of Soviet authorities. His 1949 letter to Joseph Stalin criticized the inefficiency of Soviet innovation policy. As a result, in 1950, Altshuller and his collaborator Raphael Shapiro were arrested by the KGB on charges of “anti-Soviet activity” and sentenced to 25 years in a labor camp in the Gulag.Despite brutal conditions, Altshuller continued refining his ideas while imprisoned. He shared his findings with fellow inmates, many of whom were intellectuals, and further tested his theories. After Stalin’s death in 1953, political prisoners, including Altshuller, were released under Nikita Khrushchev’s reforms in 1954.After his release, Altshuller resumed his research, formalizing the first structured TRIZ principles. In 1956, he began teaching and publishing under the pseudonym G. S. Altov, to avoid further political scrutiny.One of Altshuller’s most significant contributions during this period was the 40 Inventive Principles, derived from analyzing thousands of patents. These principles offered a structured way to overcome technical contradictions and develop breakthrough solutions.Some of the notable principles include:Segmentation – Divide an object into independent parts.Asymmetry – Change from symmetrical to asymmetrical.Universality – Design components to perform multiple functions.Prior Action – Perform an action in advance to simplify the problem.Another major TRIZ tool, the Contradiction Matrix, was developed in the 1960s. It was based on the idea that engineering problems are characterized by contradictions—where improving one parameter worsens another. Altshuller identified 39 engineering parameters (e.g., weight, strength, efficiency) and mapped their interactions in a matrix.By cross-referencing these contradictions with the 40 Inventive Principles, engineers could systematically identify the most effective solutions.During this time, Altshuller began writing books and articles to spread TRIZ, including:“How to Learn to Invent” (1961)“Algorithm of Inventing” (1969) – One of the first formalized TRIZ guides.These publications laid the foundation for TRIZ’s growth within the Soviet scientific community.By the 1970s, TRIZ gained recognition among Soviet engineers and inventors. The first TRIZ-based training courses began in major Soviet industrial cities, including Minsk, Leningrad, and Moscow.Altshuller founded TRIZ training schools, which attracted thousands of engineers, researchers, and students. His teaching emphasized algorithmic problem-solving, challenging the belief that creativity was unpredictable.In the 1970s and 1980s, TRIZ expanded beyond problem-solving into predicting technological evolution. Altshuller proposed that all technologies evolve through universal trends, independent of specific industries.He formulated eight laws of technological evolution, which suggested that systems progress through stages such as:1.Increasing dynamization – Systems evolve to become more flexible and adaptable.2.Transition to a micro-level – Miniaturization is a universal trend.3.Increasing ideality – Systems move toward an “ideal final result” where they provide maximum function with minimal cost.These insights allowed companies to anticipate future technological breakthroughs systematically.During this period, TRIZ became highly influential in Soviet industries, especially in aerospace, defense, and manufacturing. The Soviet military applied TRIZ to improve weapons systems and aerospace designs, while state-owned enterprises used it to optimize production processes.Despite its success, TRIZ remained largely unknown outside the USSR due to Cold War secrecy.After the fall of the Soviet Union in 1991, TRIZ spread internationally as former Soviet scientists emigrated and shared the methodology. TRIZ schools were established in Europe, the US, and Japan, and major corporations began incorporating TRIZ into their innovation strategies.By the late 1990s, TRIZ was adopted by leading corporations, including:Samsung – Created an internal TRIZ training academy, leading to thousands of patents.General Electric – Integrated TRIZ into its Six Sigma innovation framework.Intel, Ford, and Siemens – Applied TRIZ for product design and process optimization.TRIZ has continued evolving with advancements such as:ARIZ (Algorithm of Inventive Problem Solving) – A step-by-step problem-solving methodology.TRIZ for Business & Management – Applying TRIZ principles to strategic decision-making.Software-assisted TRIZ – AI-based TRIZ tools for rapid problem analysis.Today, TRIZ is taught in universities, used by global R&D teams, and integrated with AI and machine learning. It remains one of the most systematic methodologies for innovation.TRIZ has transformed from a Soviet-era patent analysis method into a globally recognized discipline. Its structured approach to problem-solving, based on identifying and resolving contradictions, has made it an essential tool for engineers, inventors, and strategists worldwide.From Altshuller’s imprisonment to its modern corporate adoption, TRIZ continues to drive systematic innovation, proving that creativity is not just an art—but a science.`
+
+        const textWrapper = document.getElementById('text');
+        let textArray = textContent.split(" ");
+        let fontSize = 24; // Start large
+        let textHTML = "";
+        let shrinkFactor = 0.995; // Reduce font size per word
+
+        textArray.forEach((word, index) => {
+            fontSize *= shrinkFactor; // Reduce font size
+            textHTML += `<span style="font-size: ${fontSize}px">${word} </span>`;
+        });
+
+        textWrapper.innerHTML = textHTML;
+    </script>
+</body>
+</html>

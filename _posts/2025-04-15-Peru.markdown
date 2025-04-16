@@ -1,0 +1,345 @@
+---
+layout: post
+title: Peru
+date: 2025-04-15
+categories: [fun, travel, photography]
+tags:
+comments: True
+sitemap:
+lastmod: 2025-04-15
+priority: 0.7
+changefreq: "monthly"
+exclude: "yes"
+---
+
+For my birthday this year, Cassie surprised me with a trip to Peru!! Since some of the places we’d be visiting were at
+high altitude and involved serious hiking, we had to do some training in advance—so I knew we were going somewhere
+adventurous. Cassie told me it was Tulsa.
+
+## Sacred Valley
+
+We flew into Cusco (~3400m ASL) and spent our first couple of nights in Ollantaytambo (~2800m ASL) to recover from the
+flight and acclimate to the altitude. While staying there, we visited several Inca archaeological sites including the
+Chincero Ruins, the Ollantaytambo Ruins, the Pisac Ruins, and the Moray Terraces. The Moray Terraces were especially
+fascinating—believed to have served as an agricultural research station. Each terrace was filled with soil from
+different regions, allowing the Incas to test crop performance in varying conditions.
+
+We also explored the Maras Salt Mines, an otherworldly patchwork of hundreds of shallow, open-air salt pools carved into
+the mountainside. Still actively used today, these plots are individually owned and maintained by local families.
+
+<div class="bento-gallery">
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/01_converted.jpeg" alt="Chincero Ruins" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/02_converted.jpeg"
+            alt="The backyard of our accommodation backyard" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/06_converted.jpeg"
+            alt="Ollantaytambo Mountainside Inca Ruins view from yard" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/07_converted.jpeg" alt="Ollantaytambo Ruins" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/08_converted.jpeg" alt="View from Ollantaytambo Ruins" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/09_converted.jpeg" alt="Ollantaytambo Vendors" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/09a_converted.jpeg" alt="Ollantaytambo Backstreet" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/11_converted.jpeg" alt="Maras Salt Mines Selfie" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/12_converted.jpeg" alt="Maras Salt Mines" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/13_converted.jpeg" alt="Maras Salt Mines but closer" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/14_converted.jpeg" alt="Moray Terraces" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/15_converted.jpeg" alt="More Moray Terraces" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/16_converted.jpeg"
+            alt="More Moray Terraces with Donkey" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/16a_converted.jpeg" alt="Just The Donkey" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/17_converted.jpeg" alt="Pisac Ruins" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/17a_converted.jpeg" alt="Pisac Cuties" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/17b_converted.jpeg" alt="Pisac Traffic Jam" /></figure>
+
+</div>
+
+Another highlight was the [Cochahuasi Animal Sanctuary](https://cochahuasi.com), home to many native South American animals rescued from illegal
+trafficking or abusive conditions. Each animal had a name and a story, you could tell the staff really cared for the
+animals, and the animals reciprocated this fondness (with the exception of a few angry geese).
+
+<div class="bento-gallery">
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/18_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Macaw" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/19_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Llama or Alpaca - still unclear" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/20_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Macaw Again" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/21_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Cuties" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/21a_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident biting on mums ear" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/22_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Toucii the Toucan" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/23_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Condor" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/24_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Large Cat" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/25_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Spectacled Bear" /></figure>
+</div>
+
+## Machu Picchu & The Inca Trail
+
+We spent two days hiking the Inca Trail, reaching the Sun Gate by the end of the first day and camping overnight before exploring Machu Picchu on day two. The adventure kicked off with a relaxing train ride, smooth and scenic before things got more real. Stepping off the train, we crossed a rope bridge straight out of Indiana Jones, checked in at the ranger station, explored some ruins right at the trailhead, and then hit the path.
+
+We had six people in the group: our [awesome guide Joyce](https://www.alpacaexpeditions.com), plus three other awesome peeps who quickly became trail friends. Day 1 was extremely sunny (theory: increased proximity to the sun) great for the views but brutal for the heat. Definitely worth it. La vista es increíble!
+
+<div class="bento-gallery">
+    <figure><img src="{{ site.url }}/images/peru/incatrail/01_converted.jpeg"
+            alt="Inca Rail - the trail to the trail head" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/02_converted.jpeg" alt="Chilling on the train" /></figure>
+    <!-- <figure><img src="{{ site.url }}/images/peru/incatrail/03_converted.jpeg" alt=" " /></figure> -->
+    <figure><img src="{{ site.url }}/images/peru/incatrail/04_converted.jpeg" alt="Off the train" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/05_converted.jpeg" alt="Rope Bridge!" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/06_converted.jpeg" alt="The river below the rope bridge" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/07_converted.jpeg" alt="Trailhead ruins" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/08_converted.jpeg" alt="Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/09_converted.jpeg" alt="Trail and river" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/10_converted.jpeg" alt="Ruins at the Lunch Spot" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/11_converted.jpeg" alt="Lunch with the crew!" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/12_converted.jpeg" alt="More Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/13_converted.jpeg" alt="More Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/14_converted.jpeg" alt="The Tourist Killer from below" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/15_converted.jpeg" alt="The Tourist Killer from above" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/16_converted.jpeg" alt="View from the Sun Gate" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/17_converted.jpeg" alt="Me and Cassie, happy and almost dead" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/18_converted.jpeg" alt="Descending to Machu Picchu" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/19_converted.jpeg" alt="Machu Picchu" /></figure>
+</div>
+
+The nature was insane - there are around 80 species of orchids growing along the Inca Trail! Also some cool ferns, moss, animals... 
+
+Textures of the forest...
+
+<div class="bento-gallery">
+
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2078_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2080_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2081_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2090_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2091_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2092_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2094_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2095_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2096_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2097_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2098_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2099_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2100_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2101_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2107_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2108_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2109_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2110_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2111_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2115_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2117_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2118_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2119_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2120_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2122_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2123_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2136_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2141_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2150_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2151_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2153_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2154_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2155_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2156_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2157_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2158_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2174_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2181_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/2191_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/5273_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/5349_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/5369_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/5377_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/5380_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/5395_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/5409_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+    <!-- <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/5431_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure> -->
+    <figure><img src="{{ site.url }}/images/peru/incatrail/fnf/5439_converted.jpeg"
+            alt="Flora and Fauna on the Inca Trail" /></figure>
+</div>
+
+Day 2 of our trek was significantly less sunny. It was actually pretty damp. It rained a bit. Mist and clouds created a entirely different vibe from the day before. And my slow, eurocentric-biased mind was constantly reprocessing the lush tropical setting of the ruins. The stone work is insanley precise - no mortar, just matched concave and convex faces aligned perfectly. I probably couldn't even do that in CAD/AM without a few test prints. We ended the day with a beer, some warm food, and a bit of live music at a bar in the closets town, Aguas Calientes.
+
+<div class="bento-gallery">
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/01_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/02_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/03_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/04_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/05_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/06_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/07_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/08_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/09_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/10_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/11_converted.jpeg"
+            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/12_converted.jpeg"
+            alt=" " /></figure>
+
+</div>
+
+## Cusco
+
+## Puerto Maldonado & The Amazon Basin
+
+<style>
+    .bento-gallery {
+        column-count: 3;
+        column-gap: 10px;
+        margin: 2em 0;
+        /* Add vertical space before and after the gallery */
+    }
+
+    .bento-gallery figure {
+        break-inside: avoid;
+        margin: 0 0 10px 0;
+    }
+
+    .bento-gallery img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+        cursor: pointer;
+        display: block;
+    }
+
+    .lightbox {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .lightbox.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .lightbox>div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-width: 90%;
+        max-height: 90%;
+    }
+
+    #lightbox-text {
+        color: white;
+        margin-top: 10px;
+        font-size: 1rem;
+        max-width: 90vw;
+    }
+
+    .lightbox img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 6px;
+    }
+</style>
+
+<div id="lightbox" class="lightbox" onclick="this.classList.remove('active')">
+    <div>
+        <img style="max-height: 80vh;" id="lightbox-img" src="" alt="">
+        <p id="lightbox-text"></p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const lightbox = document.getElementById("lightbox");
+        const lightboxImg = document.getElementById("lightbox-img");
+        const lightboxP = document.getElementById("lightbox-text");
+
+        document.querySelectorAll(".bento-gallery img").forEach(img => {
+            img.addEventListener("click", function (e) {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxP.innerHTML = img.alt;
+                lightbox.classList.add("active");
+            });
+        });
+
+        lightbox.addEventListener("click", function (e) {
+            if (e.target === lightbox) {
+                lightbox.classList.remove("active");
+                lightboxImg.src = "";
+            }
+        });
+    });
+</script>

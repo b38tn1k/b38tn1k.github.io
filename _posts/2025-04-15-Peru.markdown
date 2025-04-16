@@ -75,6 +75,8 @@ animals, and the animals reciprocated this fondness (with the exception of a few
             alt="Cochahuasi Animal Sanctuary Resident Toucii the Toucan" /></figure>
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/23_converted.jpeg"
             alt="Cochahuasi Animal Sanctuary Resident Condor" /></figure>
+            <figure><img src="{{ site.url }}/images/peru/sacredvalley/23a_converted.jpeg"
+                alt="Cochahuasi Animal Sanctuary Resident Condor again" /></figure>
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/24_converted.jpeg"
             alt="Cochahuasi Animal Sanctuary Resident Large Cat" /></figure>
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/25_converted.jpeg"

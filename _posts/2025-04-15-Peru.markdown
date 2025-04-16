@@ -55,7 +55,8 @@ the mountainside. Still actively used today, these plots are individually owned 
 
 </div>
 
-Another highlight was the [Cochahuasi Animal Sanctuary](https://cochahuasi.com), home to many native South American animals rescued from illegal
+Another highlight was the [Cochahuasi Animal Sanctuary](https://cochahuasi.com), home to many native South American
+animals rescued from illegal
 trafficking or abusive conditions. Each animal had a name and a story, you could tell the staff really cared for the
 animals, and the animals reciprocated this fondness (with the exception of a few angry geese).
 
@@ -82,9 +83,14 @@ animals, and the animals reciprocated this fondness (with the exception of a few
 
 ## Machu Picchu & The Inca Trail
 
-We spent two days hiking the Inca Trail, reaching the Sun Gate by the end of the first day and camping overnight before exploring Machu Picchu on day two. The adventure kicked off with a relaxing train ride, smooth and scenic before things got more real. Stepping off the train, we crossed a rope bridge straight out of Indiana Jones, checked in at the ranger station, explored some ruins right at the trailhead, and then hit the path.
+We spent two days hiking the Inca Trail, reaching the Sun Gate by the end of the first day and camping overnight before
+exploring Machu Picchu on day two. The adventure kicked off with a relaxing train ride, smooth and scenic before things
+got more real. Stepping off the train, we crossed a rope bridge straight out of Indiana Jones, checked in at the ranger
+station, explored some ruins right at the trailhead, and then hit the path.
 
-We had six people in the group: our [awesome guide Joyce](https://www.alpacaexpeditions.com), plus three other awesome peeps who quickly became trail friends. Day 1 was extremely sunny (theory: increased proximity to the sun) great for the views but brutal for the heat. Definitely worth it. La vista es increíble!
+We had six people in the group: our [awesome guide Joyce](https://www.alpacaexpeditions.com), plus three other awesome
+peeps who quickly became trail friends. Day 1 was extremely sunny (theory: increased proximity to the sun) great for the
+views but brutal for the heat. Definitely worth it. La vista es increíble!
 
 <div class="bento-gallery">
     <figure><img src="{{ site.url }}/images/peru/incatrail/01_converted.jpeg"
@@ -102,15 +108,20 @@ We had six people in the group: our [awesome guide Joyce](https://www.alpacaexpe
     <figure><img src="{{ site.url }}/images/peru/incatrail/11_converted.jpeg" alt="Lunch with the crew!" /></figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/12_converted.jpeg" alt="More Trail" /></figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/13_converted.jpeg" alt="More Trail" /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/14_converted.jpeg" alt="The Tourist Killer from below" /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/15_converted.jpeg" alt="The Tourist Killer from above" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/14_converted.jpeg" alt="The Tourist Killer from below" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/15_converted.jpeg" alt="The Tourist Killer from above" />
+    </figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/16_converted.jpeg" alt="View from the Sun Gate" /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/17_converted.jpeg" alt="Me and Cassie, happy and almost dead" /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/18_converted.jpeg" alt="Descending to Machu Picchu" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/17_converted.jpeg"
+            alt="Me and Cassie, happy and almost dead" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/18_converted.jpeg" alt="Descending to Machu Picchu" />
+    </figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/19_converted.jpeg" alt="Machu Picchu" /></figure>
 </div>
 
-The nature was insane - there are around 80 species of orchids growing along the Inca Trail! Also some cool ferns, moss, animals... 
+The nature was insane - there are around 80 species of orchids growing along the Inca Trail! Also some cool ferns, moss,
+animals...
 
 Textures of the forest...
 
@@ -214,33 +225,33 @@ Textures of the forest...
             alt="Flora and Fauna on the Inca Trail" /></figure>
 </div>
 
-Day 2 of our trek was significantly less sunny. It was actually pretty damp. It rained a bit. Mist and clouds created a entirely different vibe from the day before. And my slow, eurocentric-biased mind was constantly reprocessing the lush tropical setting of the ruins. The stone work is insanley precise - no mortar, just matched concave and convex faces aligned perfectly. I probably couldn't even do that in CAD/AM without a few test prints. We ended the day with a beer, some warm food, and a bit of live music at a bar in the closets town, Aguas Calientes.
+Day 2 of our trek was significantly less sunny. It was actually pretty damp. It rained a bit. Mist and clouds created a
+entirely different vibe from the day before. And my slow, eurocentric-biased mind was constantly reprocessing the lush
+tropical setting of the ruins. The stone work is insanley precise - no mortar, just matched concave and convex faces
+aligned perfectly. I probably couldn't even do that in CAD/AM without a few test prints. We ended the day with a beer,
+some warm food, and a bit of live music at a bar in the nearby town, Aguas Calientes.
 
 <div class="bento-gallery">
-    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/01_converted.jpeg"
-            alt=" " /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/02_converted.jpeg"
-            alt=" " /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/03_converted.jpeg"
-            alt=" " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/01_converted.jpeg" alt="Misty Machu Picchu" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/02_converted.jpeg" alt="More mysterious mist" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/03_converted.jpeg" alt="Cassie and me" /></figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/day2/04_converted.jpeg"
-            alt=" " /></figure>
+            alt="The roots of this tree were recently partially excavated, some jewelry was discovered" /></figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/day2/05_converted.jpeg"
-            alt=" " /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/06_converted.jpeg"
-            alt=" " /></figure>
+            alt="Phebe pointing to where we were hiking the day before" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/06_converted.jpeg" alt="Mist & ruins" /></figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/day2/07_converted.jpeg"
-            alt=" " /></figure>
+            alt="The Temple Of Condor (partial)" /></figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/day2/08_converted.jpeg"
-            alt=" " /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/09_converted.jpeg"
-            alt=" " /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/10_converted.jpeg"
-            alt=" " /></figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/11_converted.jpeg"
-            alt=" " /></figure>
+            alt="more ruins in the mist looking mysterious" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/09_converted.jpeg" alt="clouds" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/10_converted.jpeg" alt="Us again, the rain stopped" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/11_converted.jpeg" alt="Mostly Clouds " /></figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/day2/12_converted.jpeg"
-            alt=" " /></figure>
+            alt="El Condor Pasa being perfomed with trad Peruvian instruments. The small stringed instrument is a Charango, it has a beautiful bright and gentle timbre from 5 courses" />
+    </figure>
 
 </div>
 
@@ -250,23 +261,32 @@ Day 2 of our trek was significantly less sunny. It was actually pretty damp. It 
 
 <style>
     .bento-gallery {
-        column-count: 3;
-        column-gap: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
         margin: 2em 0;
-        /* Add vertical space before and after the gallery */
     }
 
-    .bento-gallery figure {
-        break-inside: avoid;
-        margin: 0 0 10px 0;
-    }
-
-    .bento-gallery img {
+    .bento-row {
+        display: flex;
+        gap: 10px;
         width: 100%;
-        height: auto;
-        border-radius: 4px;
-        cursor: pointer;
+    }
+
+    .bento-row figure {
+        flex: 1;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        border-radius: 8px;
+        margin: 0;
+    }
+
+    .bento-row img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         display: block;
+        cursor: pointer;
     }
 
     .lightbox {
@@ -313,32 +333,128 @@ Day 2 of our trek was significantly less sunny. It was actually pretty damp. It 
     }
 </style>
 
+
 <div id="lightbox" class="lightbox" onclick="this.classList.remove('active')">
-    <div>
-        <img style="max-height: 80vh;" id="lightbox-img" src="" alt="">
-        <p id="lightbox-text"></p>
+    <div
+        style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 90%; max-height: 90%;">
+        <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+            <img style="max-height: 80vh;" id="lightbox-img" src="" alt="">
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px; width: 100%;">
+            <div id="lightbox-prev"
+                style="cursor: pointer; color: white; font-size: 2rem; flex: 1; text-align: left;user-select: none;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M15 18l-6-6 6-6" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </div>
+            <p id="lightbox-text"
+                style="color: white; margin: 0; font-size: 1rem; max-width: 60vw; text-align: center; flex: 2;"></p>
+            <div id="lightbox-next"
+                style="cursor: pointer; color: white; font-size: 2rem; flex: 1; text-align: right; user-select: none;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".bento-gallery").forEach(gallery => {
+            const figures = Array.from(gallery.querySelectorAll("figure"));
+            gallery.innerHTML = ""; // Clear out figures
+
+            let index = 0;
+
+            while (index < figures.length) {
+                let remaining = figures.length - index;
+
+                // Choose a group size between 2 and 5
+                let groupSize = Math.floor(Math.random() * 3) + 3;
+
+                // If we’re near the end, merge final rows to complete the layout
+                if (remaining <= 5) {
+                    groupSize = remaining;
+                } else if (remaining - groupSize < 2) {
+                    groupSize = remaining; // avoid a dangling single row
+                }
+
+                const row = document.createElement("div");
+                row.classList.add("bento-row");
+
+                for (let i = 0; i < groupSize; i++) {
+                    row.appendChild(figures[index++]);
+                }
+
+                gallery.appendChild(row);
+            }
+        });
         const lightbox = document.getElementById("lightbox");
         const lightboxImg = document.getElementById("lightbox-img");
         const lightboxP = document.getElementById("lightbox-text");
-
+        const lightboxPrev = document.getElementById("lightbox-prev");
+        const lightboxNext = document.getElementById("lightbox-next");
+        const allImages = [];
+        let currentLightboxIndex = null;
         document.querySelectorAll(".bento-gallery img").forEach(img => {
-            img.addEventListener("click", function (e) {
-                lightboxImg.src = img.src;
-                lightboxImg.alt = img.alt;
-                lightboxP.innerHTML = img.alt;
-                lightbox.classList.add("active");
-            });
+            allImages.push(img);
         });
+
+
+
+        function updateLightboxImage(counter) {
+            currentLightboxIndex = counter;
+            var img = allImages[counter];
+            lightboxImg.src = "";
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+            lightboxP.innerHTML = img.alt;
+            lightbox.classList.add("active");
+        }
+
+
+        let prevImage, nextImage;
+
+        lightboxPrev.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (currentLightboxIndex > 0) {
+                updateLightboxImage(currentLightboxIndex - 1);
+            }
+        });
+        lightboxNext.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (currentLightboxIndex < allImages.length - 1) {
+                updateLightboxImage(currentLightboxIndex + 1);
+            }
+        });
+
+        for (let i = 0; i < allImages.length; i++) {
+            allImages[i].addEventListener("click", function (e) {
+                updateLightboxImage(i);
+            });
+        }
+
 
         lightbox.addEventListener("click", function (e) {
             if (e.target === lightbox) {
                 lightbox.classList.remove("active");
                 lightboxImg.src = "";
+            }
+        });
+        document.addEventListener("keydown", function (e) {
+            if (!lightbox.classList.contains("active")) return;
+
+            if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                if (currentLightboxIndex < allImages.length - 1) {
+                    updateLightboxImage(currentLightboxIndex + 1);
+                }
+            } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                if (currentLightboxIndex > 0) {
+                    updateLightboxImage(currentLightboxIndex - 1);
+                }
             }
         });
     });

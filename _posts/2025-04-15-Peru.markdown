@@ -43,6 +43,7 @@ We also explored the Maras Salt Mines, an otherworldly patchwork of hundreds of 
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/08_converted.jpeg" alt="View from Ollantaytambo Ruins" />
     </figure>
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/09_converted.jpeg" alt="Ollantaytambo Vendors" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/10_converted.jpeg" alt="Ollantaytambo Vendors Again" /></figure>
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/09a_converted.jpeg" alt="Ollantaytambo Backstreet" />
     </figure>
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/11_converted.jpeg" alt="Maras Salt Mines Selfie" />
@@ -317,7 +318,7 @@ We had booked a family-run ecolodge, Sunrise of Tambopata, and were met by Maric
 
 The following day we took a guided hike (and rowboat ride) around Tambopata Reserve and Lago Sandoval, where we saw more caiman and turtles, a bunch of monkeys, macaws, tarantulas (including some with pink toes), tarantula hawks (the biggest wasp I have ever seen), lizards, hummingbirds, leafcutter and bullet ants (the most painful stinging insect in the world), and a bunch of different butterflies. So many butterflies. Flowers too.
 
-We did not spot any sloths, but we did see a number of Hoatzins (aka stinkbirds)—a large, prehistoric-looking bird with a unique digestive system that ferments leaves in its stomach. I was hoping to see some of them in the wild—they are the only birds with a ruminating digestive system, and they have claws on their wings when they are chicks. Very strange animals.
+We did not spot any sloths, but we did see a number of Hoatzins (aka stinkbirds)—a large, prehistoric-looking bird with a unique digestive system that ferments leaves in its stomach. I was hoping to see some of them in the wild — they really look like dinosaurs, and they have claws on their wings when they are chicks. Very strange animals.
 
 We had lunch at a local’s house, and their cat decided Cassie was worthy of a cuddle.
 

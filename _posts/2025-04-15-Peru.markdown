@@ -12,20 +12,26 @@ changefreq: "monthly"
 exclude: "yes"
 ---
 
-For my birthday this year, Cassie surprised me with a trip to Peru!! Since some of the places we’d be visiting were at
-high altitude and involved serious hiking, we had to do some training in advance—so I knew we were going somewhere
-adventurous. Cassie told me it was Tulsa.
+For my birthday this year, Cassie surprised me with a trip to Peru!! Since some of the places we’d be visiting were at high altitude and involved serious hiking, we had to do some training in advance—so I knew we were going somewhere adventurous. Cassie told me it was Tulsa.
+
+I took a heap of photos. These are my favs.
+<div class="bento-gallery">
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/09_converted.jpeg" alt="Ollantaytambo Vendors" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/13_converted.jpeg" alt="Maras Salt Mines" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/17a_converted.jpeg" alt="Pisac Cuties" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/16_converted.jpeg" alt="View from the Sun Gate" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/23a_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Condor again" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/09_converted.jpeg" alt="Caiman" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/15_converted.jpeg" alt="The Hoazin / Stink Bird / Shansho" />
+    </figure>
+</div>
 
 ## Sacred Valley
 
-We flew into Cusco (~3400m ASL) and spent our first couple of nights in Ollantaytambo (~2800m ASL) to recover from the
-flight and acclimate to the altitude. While staying there, we visited several Inca archaeological sites including the
-Chincero Ruins, the Ollantaytambo Ruins, the Pisac Ruins, and the Moray Terraces. The Moray Terraces were especially
-fascinating—believed to have served as an agricultural research station. Each terrace was filled with soil from
-different regions, allowing the Incas to test crop performance in varying conditions.
+We flew into Cusco (~3400m ASL) and spent our first couple of nights in Ollantaytambo (~2800m ASL) to recover from the flight and acclimate to the altitude. While staying there, we visited several Inca archaeological sites including the Chinchero Ruins, the Ollantaytambo Ruins, the Pisac Ruins, and the Moray Terraces. The Moray Terraces were especially fascinating — believed to have served as an agricultural research station. Each terrace was filled with soil from different regions, allowing the Incas to test crop performance in varying conditions.
 
-We also explored the Maras Salt Mines, an otherworldly patchwork of hundreds of shallow, open-air salt pools carved into
-the mountainside. Still actively used today, these plots are individually owned and maintained by local families.
+We also explored the Maras Salt Mines, an otherworldly patchwork of hundreds of shallow, open-air salt pools carved into the mountainside. Still actively used today, these plots are individually owned and maintained by local families.
 
 <div class="bento-gallery">
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/01_converted.jpeg" alt="Chincero Ruins" /></figure>
@@ -57,7 +63,7 @@ the mountainside. Still actively used today, these plots are individually owned 
 
 Another highlight was the [Cochahuasi Animal Sanctuary](https://cochahuasi.com), home to many native South American
 animals rescued from illegal
-trafficking or abusive conditions. Each animal had a name and a story, you could tell the staff really cared for the
+trafficking or abusive conditions. Each animal had a name and a story - you could tell the staff really cared for the
 animals, and the animals reciprocated this fondness (with the exception of a few angry geese).
 
 <div class="bento-gallery">
@@ -75,8 +81,8 @@ animals, and the animals reciprocated this fondness (with the exception of a few
             alt="Cochahuasi Animal Sanctuary Resident Toucii the Toucan" /></figure>
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/23_converted.jpeg"
             alt="Cochahuasi Animal Sanctuary Resident Condor" /></figure>
-            <figure><img src="{{ site.url }}/images/peru/sacredvalley/23a_converted.jpeg"
-                alt="Cochahuasi Animal Sanctuary Resident Condor again" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/sacredvalley/23a_converted.jpeg"
+            alt="Cochahuasi Animal Sanctuary Resident Condor again" /></figure>
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/24_converted.jpeg"
             alt="Cochahuasi Animal Sanctuary Resident Large Cat" /></figure>
     <figure><img src="{{ site.url }}/images/peru/sacredvalley/25_converted.jpeg"
@@ -86,7 +92,7 @@ animals, and the animals reciprocated this fondness (with the exception of a few
 ## Machu Picchu & The Inca Trail
 
 We spent two days hiking the Inca Trail, reaching the Sun Gate by the end of the first day and camping overnight before
-exploring Machu Picchu on day two. The adventure kicked off with a relaxing train ride, smooth and scenic before things
+exploring Machu Picchu on day two. The adventure kicked off with a relaxing train ride - super chill - before things
 got more real. Stepping off the train, we crossed a rope bridge straight out of Indiana Jones, checked in at the ranger
 station, explored some ruins right at the trailhead, and then hit the path.
 
@@ -120,6 +126,7 @@ views but brutal for the heat. Definitely worth it. La vista es increíble!
     <figure><img src="{{ site.url }}/images/peru/incatrail/18_converted.jpeg" alt="Descending to Machu Picchu" />
     </figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/19_converted.jpeg" alt="Machu Picchu" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/20_converted.jpeg" alt="Cassie, in recovery" /></figure>
 </div>
 
 The nature was insane - there are around 80 species of orchids growing along the Inca Trail! Also some cool ferns, moss,
@@ -231,7 +238,8 @@ Day 2 of our trek was significantly less sunny. It was actually pretty damp. It 
 entirely different vibe from the day before. And my slow, eurocentric-biased mind was constantly reprocessing the lush
 tropical setting of the ruins. The stone work is insanley precise - no mortar, just matched concave and convex faces
 aligned perfectly. I probably couldn't even do that in CAD/AM without a few test prints. We ended the day with a beer,
-some warm food, and a bit of live music at a bar in the nearby town, Aguas Calientes.
+some warm food, and a bit of live music at a bar in the nearby town Aguas Calientes before a train and bus journey back
+to Cusco.
 
 <div class="bento-gallery">
     <figure><img src="{{ site.url }}/images/peru/incatrail/day2/01_converted.jpeg" alt="Misty Machu Picchu" /></figure>
@@ -250,7 +258,11 @@ some warm food, and a bit of live music at a bar in the nearby town, Aguas Calie
     <figure><img src="{{ site.url }}/images/peru/incatrail/day2/09_converted.jpeg" alt="clouds" /></figure>
     <figure><img src="{{ site.url }}/images/peru/incatrail/day2/10_converted.jpeg" alt="Us again, the rain stopped" />
     </figure>
-    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/11_converted.jpeg" alt="Mostly Clouds " /></figure>
+    <figure><img src="{{ site.url }}/images/peru/incatrail/day2/13_converted.jpeg" alt="The whole crew!" />
+    </figure>
+
+    <!-- <figure><img src="{{ site.url }}/images/peru/incatrail/day2/11_converted.jpeg" alt="Mostly Clouds " /></figure> -->
+
     <figure><img src="{{ site.url }}/images/peru/incatrail/day2/12_converted.jpeg"
             alt="El Condor Pasa being perfomed with trad Peruvian instruments. The small stringed instrument is a Charango, it has a beautiful bright and gentle timbre from 5 courses" />
     </figure>
@@ -259,7 +271,93 @@ some warm food, and a bit of live music at a bar in the nearby town, Aguas Calie
 
 ## Cusco
 
+Cusco is a ridiculous city. A big jumble of modern, colonial, and Inca architecture sitting high in the sky with more
+steps that you can imagine and not enough oxygen. I loved it. We recovered from the hike with an art class, and I had
+the opportunity to learn some Charango chords from a local luthier. We drank Pisco Sours and caught more live music -
+grungy peruvian folk.
+
+<div class="bento-gallery">
+    <figure><img src="{{ site.url }}/images/peru/cusco/01_converted.jpeg" alt="Our accommodations" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/cusco/02_converted.jpeg" alt="Cusco Backstreets" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/cusco/03_converted.jpeg" alt="Art Class" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/cusco/04_converted.jpeg" alt="Charango!" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/cusco/04a_converted.jpeg" alt="Cusco Cityscape" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/cusco/05_converted.jpeg" alt="Cusco Cityscape at night" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/cusco/05b_converted.jpeg" alt="Pisco Sours and live music" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/cusco/05a_converted.jpeg" alt="Bar with a view" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/cusco/07_converted.jpeg" alt="Cobbled Streets" /></figure>
+</div>
+
+
 ## Puerto Maldonado & The Amazon Basin
+
+Puerto Maldonado has a very different climate to Cusco, and the warmth, humidity, and regular-altitude oxygen levels were very welcome. The aircraft’s final approach afforded us views of the Tambopata or Madre de Dios rivers, surrounded by thick jungle—very exciting!
+
+We had booked a family-run ecolodge, Sunrise of Tambopata, and were met by Maricela at the airport. Emanuel had prepared lunch for us when we arrived—he was an excellent chef, enthusiastic about vegetarian and vegan cuisine (which is less known in Peru). The accommodations were amazing—my favourite of the trip. A wooden bungalow facing the Tambopata River with a dependable shower, shaded veranda, lots of dogs, cats, and chickens, and one parrot to make friends with. That evening we hit the river for a sunset boat ride—we saw a few caiman, some turtles, some capybara, and a bunch of birds.
+
+<div class="bento-gallery">
+    <figure><img src="{{ site.url }}/images/peru/pm/day1/1_converted.jpeg" alt="Sunrise of Tambopata Bungalow" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day1/2_converted.jpeg" alt="Sunrise of Tambopata Bungalow Again" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day1/3_converted.jpeg" alt="View of the river from the bungalow" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day1/4_converted.jpeg" alt="A friendly cat named Travis" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day1/6_converted.jpeg" alt="Sunset Boat Ride" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day1/7_converted.jpeg"
+            alt="Sunset Boat Ride (I really wish I hadnt cropped the boat in this photo)" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day1/9_converted.jpeg" alt="Sunset River" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day1/10_converted.jpeg" alt="Capy!" /></figure>
+
+</div>
+
+
+
+The following day we took a guided hike (and rowboat ride) around Tambopata Reserve and Lago Sandoval, where we saw more caiman and turtles, a bunch of monkeys, macaws, tarantulas (including some with pink toes), tarantula hawks (the biggest wasp I have ever seen), lizards, hummingbirds, leafcutter and bullet ants (the most painful stinging insect in the world), and a bunch of different butterflies. So many butterflies. Flowers too.
+
+We did not spot any sloths, but we did see a number of Hoatzins (aka stinkbirds)—a large, prehistoric-looking bird with a unique digestive system that ferments leaves in its stomach. I was hoping to see some of them in the wild—they are the only birds with a ruminating digestive system, and they have claws on their wings when they are chicks. Very strange animals.
+
+We had lunch at a local’s house, and their cat decided Cassie was worthy of a cuddle.
+
+<div class="bento-gallery">
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/01_converted.jpeg" alt="Fluffy!" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/02_converted.jpeg"
+            alt="Tarantula Hawk - this thing was scary" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/03_converted.jpeg" alt="Lizard" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/04_converted.jpeg" alt="Pink Toes!" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/05_converted.jpeg" alt="Bullet Ant" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/06_converted.jpeg" alt="Monkeys" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/07_converted.jpeg" alt="Our row boat" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/08_converted.jpeg" alt="Butterflies" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/09_converted.jpeg" alt="Caiman" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/10_converted.jpeg" alt="Swamp Boating" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/11_converted.jpeg" alt="Turts. Baby turts." /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/12_converted.jpeg"
+            alt="A much larger Caiman. About 2m. So not like a saltie. but big for a Caiman." /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/13_converted.jpeg"
+            alt="Wild Macaws do not like having their picture taken" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/14_converted.jpeg"
+            alt="Cassie working hard (I helped later)" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/15_converted.jpeg" alt="The Hoazin / Stink Bird / Shansho" />
+    </figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/16_converted.jpeg" alt="Flowers everywhere" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/18_converted.jpeg" alt="Butterfly paradise" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/19_converted.jpeg" alt="Cassie and friend" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/20_converted.jpeg" alt="Cheeky Parrot" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/21_converted.jpeg" alt="Flying Monkey" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/22_converted.jpeg"
+            alt="Getting a good shot of a monkey is difficult. cause of the trees" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/23_converted.jpeg" alt="Mother & Baby" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/24_converted.jpeg" alt="A cool bug Cassie found" /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/25_converted.jpeg"
+            alt="IDK why this flower appears to be glowing. I think the lens was wet." /></figure>
+    <figure><img src="{{ site.url }}/images/peru/pm/day2/26_converted.jpeg"
+            alt="View of the river and jungle, leaving :-(" /></figure>
+</div>
+
+Sadly, our time in Peru had to end. Visiting Peru was an incredible experience - history, culture, nature, everything. I feel so lucky to have had the opportunity. A massive thank you to Cassie for such an awesome birthday present and for being the best travel partner ever.
 
 <style>
     .bento-gallery {

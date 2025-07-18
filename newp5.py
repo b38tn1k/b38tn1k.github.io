@@ -8,8 +8,8 @@ html = '''
     <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width">
     <meta charset="utf-8">
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://b38tn1k.com/inv.png" />
-    <meta property="og:url" content="https://b38tn1k.com/namenamenamename/" />
+    <meta property="og:image" content="https://b38tn1k.github.io/inv.png" />
+    <meta property="og:url" content="https://b38tn1k.github.io/namenamenamename/" />
     <meta property="og:title" content="namenamenamename" />
     <meta property="og:description" content="namenamenamename" />
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->

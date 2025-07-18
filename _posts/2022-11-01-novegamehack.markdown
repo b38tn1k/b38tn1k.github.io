@@ -15,7 +15,7 @@ sitemap:
 
 It's November. Let's make something fun and stop thinking about Untitled Block Thing for a bit.
 
-[where it's at](https://b38tn1k.com/november/)
+[where it's at](https://b38tn1k.github.io/november/)
 
 Dec 3 update: [play on Itch](https://b38tn1k.itch.io/november-man-and-possum)
 

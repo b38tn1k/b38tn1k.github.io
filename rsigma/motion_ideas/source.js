@@ -264,4 +264,4 @@ function draw() {
 
 
 
-{/* <iframe style="width:100%; zoom:1.0; height:1000px; overflow: hidden;"  scrolling="no" src="https://b38tn1k.com/rsigma/motion_ideas/"></iframe> */}
+{/* <iframe style="width:100%; zoom:1.0; height:1000px; overflow: hidden;"  scrolling="no" src="https://b38tn1k.github.io/rsigma/motion_ideas/"></iframe> */}

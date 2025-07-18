@@ -3,8 +3,8 @@ layout: post
 title:  "WIP: TRIZ Card Game"
 date:   2022-08-10
 tags: demo
-image: 'https://b38tn1k.com/images/previews/triz.png'
-link: 'https://b38tn1k.com/triz/'
+image: 'https://b38tn1k.github.io/images/previews/triz.png'
+link: 'https://b38tn1k.github.io/triz/'
 ---
 
 [description]<strong>Work In Progress, results may vary.</strong> TRIZ (Russian: Theory of Inventive Problem Solving) is an engineering problem approach tool created by a USSR engineer and sci-fi writer Genrikh Altshuller. It works by generalizing engineering problems and then using the generalized patterns to map design contradictions to solutions.

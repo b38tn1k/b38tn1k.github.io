@@ -11,7 +11,7 @@ sitemap:
   exclude: 'yes'
 ---
 
-I wasn't that happy with the usefulness of the [PCM MIDI Sample Player](https://b38tn1k.com/arduino/2019/10/31/PCM-sampler/) so I started looking for other projects I could use the circuit and case for.
+I wasn't that happy with the usefulness of the [PCM MIDI Sample Player](https://b38tn1k.github.io/arduino/2019/10/31/PCM-sampler/) so I started looking for other projects I could use the circuit and case for.
 
 Ended up with a bass-y acidic monosynth.
 

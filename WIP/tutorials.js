@@ -8,7 +8,7 @@ function doTutorials(loaded) {
       noIframe = true;
     }
     if (noIframe == true) {
-      let myDiv = createDiv('<a href="https://b38tn1k.com/code/ux/2022/09/08/blocks-explained/"> back to tutorial </a>');
+      let myDiv = createDiv('<a href="https://b38tn1k.github.io/code/ux/2022/09/08/blocks-explained/"> back to tutorial </a>');
       myDiv.style('font-size', '16px');
       textSize(16);
       myDiv.position(windowWidth - textWidth(' back to tutorial '), windowHeight - 40);

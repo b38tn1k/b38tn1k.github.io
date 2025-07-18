@@ -4472,18 +4472,18 @@ function utilitiesMenu(){
     myDivs['utils'].hide();
   }
 
-  // myDivs['menu'].html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
+  // myDivs['menu'].html('<br><a href="http://b38tn1k.github.io/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
   myDivs['menu'].html('<br>', true);
   addButtonToDiv('about', 0, openAbout, myDivs['menu']);
   myDivs['menu'].html('<br>', true);
   addButtonToDiv('version 0.000..01', 13, showDevDiv, myDivs['menu'], 'dev');
-  // let myLink = createA('http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/', 'about', '_blank_');
+  // let myLink = createA('http://b38tn1k.github.io/code/ux/2022/09/08/blocks-explained/', 'about', '_blank_');
   // myLink.parent(myDivs['menu']);
 }
 
 function openAbout(){
   jlog('Main', 'openAbout');
-  window.open('https://b38tn1k.com/code/ux/2022/09/08/blocks-explained/');
+  window.open('https://b38tn1k.github.io/code/ux/2022/09/08/blocks-explained/');
 }
 
 function closeRefactorDiv(){
@@ -4769,7 +4769,7 @@ function doTutorials(loaded) {
       noIframe = true;
     }
     if (noIframe == true) {
-      let myDiv = createDiv('<a href="https://b38tn1k.com/code/ux/2022/09/08/blocks-explained/"> back to tutorial </a>');
+      let myDiv = createDiv('<a href="https://b38tn1k.github.io/code/ux/2022/09/08/blocks-explained/"> back to tutorial </a>');
       myDiv.style('font-size', '16px');
       textSize(16);
       myDiv.position(windowWidth - textWidth(' back to tutorial '), windowHeight - 40);

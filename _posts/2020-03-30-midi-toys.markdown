@@ -3,7 +3,7 @@ layout: post
 title:  "MIDI Toys"
 date:   2020-03-30
 tags: demo
-image: 'https://b38tn1k.com/images/previews/toys.jpg'
+image: 'https://b38tn1k.github.io/images/previews/toys.jpg'
 link: 'https://youtube.com/playlist?list=PLZttbibA79ov0Y0J_pEOQnuLViuv8ho1e'
 ---
 
@@ -12,7 +12,7 @@ link: 'https://youtube.com/playlist?list=PLZttbibA79ov0Y0J_pEOQnuLViuv8ho1e'
 <a href="https://github.com/b38tn1k/chordtoy" target="_blank">Github Link</a>
 
 
-Arduino can act as a synth or a sampler (I <a href="https://b38tn1k.com/#discog/music-for-arduino-algorithmic-suite-for-uno-quartet" target="_blank" >did</a> <a href="https://b38tn1k.com/#discog/music-for-arduino-escape-from-dinosaur-island" target="_blank" >two</a> Arduino-only EPs last year) but it really shines as a MIDI insert and passthrough effect.
+Arduino can act as a synth or a sampler (I <a href="https://b38tn1k.github.io/#discog/music-for-arduino-algorithmic-suite-for-uno-quartet" target="_blank" >did</a> <a href="https://b38tn1k.github.io/#discog/music-for-arduino-escape-from-dinosaur-island" target="_blank" >two</a> Arduino-only EPs last year) but it really shines as a MIDI insert and passthrough effect.
 
-I think I overused 'the one-note-triggered harp-like chords' effect on my last <a href="https://b38tn1k.com/#discog/new-desk" target="_blank" >two</a> <a href="https://b38tn1k.com/#discog/z" target="_blank" >EPs</a>. It's too easy, sounds very pretty.
+I think I overused 'the one-note-triggered harp-like chords' effect on my last <a href="https://b38tn1k.github.io/#discog/new-desk" target="_blank" >two</a> <a href="https://b38tn1k.github.io/#discog/z" target="_blank" >EPs</a>. It's too easy, sounds very pretty.
 [description]

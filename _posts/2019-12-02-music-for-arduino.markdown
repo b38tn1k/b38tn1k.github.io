@@ -24,6 +24,6 @@ With the code from this [Arduino forum post](https://forum.arduino.cc/index.php?
 
 You could go even deeper with [Auduino](https://code.google.com/archive/p/tinkerit/wikis/Auduino.wiki) or [Talkie, the Arduino Speech Library](https://github.com/going-digital/Talkie) or paraphonic synthesis.
 
-I also made a system that synced four Uno boards, each with their own audio out. I previously wrote some tips on [developing for similar systems.](https://b38tn1k.com/arduino/code/music/2019/09/27/EEPROM-IDs/) This system doesn't use MIDI and the scale was mathematically defined based on divisions of the doubled frequency. Sort of beepy, alien, interesting but not the sort of music you would put on for guests :-P 
+I also made a system that synced four Uno boards, each with their own audio out. I previously wrote some tips on [developing for similar systems.](https://b38tn1k.github.io/arduino/code/music/2019/09/27/EEPROM-IDs/) This system doesn't use MIDI and the scale was mathematically defined based on divisions of the doubled frequency. Sort of beepy, alien, interesting but not the sort of music you would put on for guests :-P 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_lk3zxy2fN1Me69lqQLPw8xnXjF7vEqCIk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

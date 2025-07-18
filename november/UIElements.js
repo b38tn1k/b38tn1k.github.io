@@ -87,7 +87,7 @@ class UIElements {
     this.cmp.y = this.inv.y + this.inv.halfunit;
     this.isTouchDevice = G.dims.isTouchDevice;
     this.controlOrigin = [];
-    this.albumdiv = createDiv('<a href="https://b38tn1k.com/#discog/november-man-and-possum-ost"><img src="https://b38tn1k.com/november/albumcoversquared.png" width=100%></a>');
+    this.albumdiv = createDiv('<a href="https://b38tn1k.github.io/#discog/november-man-and-possum-ost"><img src="https://b38tn1k.github.io/november/albumcoversquared.png" width=100%></a>');
     this.albumdiv.hide();
   }
 
@@ -167,9 +167,9 @@ class UIElements {
       let w = G.loaders[name].width * 1.2;
       this.layer.g.rect(x, y, G.loaders[name].width * 1.2, h);
       this.layer.g.fill(G.colors[0]);
-      let textX = x + (w/2) - this.layer.g.textWidth('b38tn1k.com   ');
+      let textX = x + (w/2) - this.layer.g.textWidth('b38tn1k.github.io   ');
       let texty = (y + h/2) - this.textSize/2;
-      this.layer.g.text('b38tn1k.com',textX ,texty );
+      this.layer.g.text('b38tn1k.github.io',textX ,texty );
       this.layer.g.image(G.loaders[name], x, y);//, w, h);
     } else if (G.state == PLAY_GAME) {
       this.layer.g.image(this.cmp.bg.g, this.cmp.x, this.cmp.y);

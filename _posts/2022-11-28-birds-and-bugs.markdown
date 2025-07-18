@@ -19,8 +19,8 @@ I uploaded and entered the game into the Itch & GitHub 'Game Off' game jam. Exci
 I had to create some screenshots for the Itch submission.
 
 Where I started:
-![boring](https://b38tn1k.com/images/scrs1.png)
+![boring](https://b38tn1k.github.io/images/scrs1.png)
 Where I ended:
-![better](https://b38tn1k.com/november/screenshots/attack.png)
-![better](https://b38tn1k.com/november/screenshots/help.png)
-![better](https://b38tn1k.com/november/screenshots/whatsthehurrybuddy.png)
+![better](https://b38tn1k.github.io/november/screenshots/attack.png)
+![better](https://b38tn1k.github.io/november/screenshots/help.png)
+![better](https://b38tn1k.github.io/november/screenshots/whatsthehurrybuddy.png)

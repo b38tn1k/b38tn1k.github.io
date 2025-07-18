@@ -9,8 +9,8 @@ The 'ChasingSprite' class received some improvements for animation handling and 
 
 The player character can now also be controlled via directional and WASD keys when playing on computer.
 
-![snow](https://b38tn1k.com/images/iceLands.png)
+![snow](https://b38tn1k.github.io/images/iceLands.png)
 
-![desert](https://b38tn1k.com/images/deserLands.png)
+![desert](https://b38tn1k.github.io/images/deserLands.png)
 
 Later: I am missing pickable items! oops.

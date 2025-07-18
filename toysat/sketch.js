@@ -838,7 +838,7 @@ function setup() {
   textStyle(NORMAL);
   rectMode(CENTER);
   frameRate(25);
-  link = createA('https://b38tn1k.com/toysat/about/', 'about');
+  link = createA('https://b38tn1k.github.io/toysat/about/', 'about');
   setupScreen();
 }
 

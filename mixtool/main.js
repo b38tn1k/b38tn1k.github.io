@@ -1,5 +1,5 @@
 // Look and Layout
-var versionString = 'version 0.3 - b38tn1k.com';
+var versionString = 'version 0.3 - b38tn1k.github.io';
 var versionLink;
 var colors = []
 var colorfuls = [5, 54];
@@ -73,7 +73,7 @@ function setup() {
   midInput = createInput('');
   highInput = createInput('');
   loadInput = createInput('');
-  versionLink = createA('https://b38tn1k.com/mixtool/help/', versionString);
+  versionLink = createA('https://b38tn1k.github.io/mixtool/help/', versionString);
   colorSetup();
   pageSetup();
   frameRate(24);
@@ -161,7 +161,7 @@ function mousePressed() {
     return false;
   } else if (buttonPressed(helpButton, mx, my)) {
     showHelp = true;
-    window.open("https://b38tn1k.com/mixtool/help");
+    window.open("https://b38tn1k.github.io/mixtool/help");
     // console.log(windowWidth);
     return false;
   } else if (buttonPressed(clickFreqsButton, mx, my)) {
@@ -793,7 +793,7 @@ function saveThing() {
   myTable.addRow();
   myTable.set(4, 0, '<br');
   myTable.addRow();
-  myTable.set(5, 0, '<br><br><a href="https://b38tn1k.com/mixtool">Mix Tool Website</a>');
+  myTable.set(5, 0, '<br><br><a href="https://b38tn1k.github.io/mixtool">Mix Tool Website</a>');
   myTable.addRow();
   save(myTable, timestamp);
 }

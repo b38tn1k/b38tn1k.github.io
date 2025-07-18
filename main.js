@@ -271,8 +271,8 @@ class myDiscogEntry {
     this.title = title.slice('title '.length);
     this.artists = '<em>' + artists.slice('artists '.length) + '</em>';
     this.cover = cover.slice(cover.indexOf('/'));
-    this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
-    // this.albumImage = loadImage('https://b38tn1k.com/' + this.cover);
+    this.coverHTML = '<img src="https://b38tn1k.github.io/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
+    // this.albumImage = loadImage('https://b38tn1k.github.io/' + this.cover);
     this.spotify = spotify.slice(spotify.indexOf('h'));
     this.spotifyHTML = '<a href="' + this.spotify + '">spotify</a>';
     this.applemusic = applemusic.slice(applemusic.indexOf('h'));
@@ -300,7 +300,7 @@ class myDiscogEntry {
 
   updateDiv() {
     let permalinkString = '<a href="' + this.permalink + '" target="_blank"> permalink </a>';
-    this.coverHTML = '<img src="https://b38tn1k.com/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
+    this.coverHTML = '<img src="https://b38tn1k.github.io/' + this.cover + '" alt="' + this.title + '" width="' + squareItemImageWidth + '">';
     let divString = this.coverHTML + '<br><strong>' + this.title + '</strong><br>' + this.artists + '<br>' + this.date + '<br> <br>';
     if (this.bandcampHTML.length > 2) {
       divString += this.bandcampHTML + '<br>';
@@ -1058,7 +1058,7 @@ function setupScreen() {
 function preload() {
   titleStringArr = loadStrings('textAssets/title.txt');
   titleDivStringArr  = loadStrings('textAssets/title.html');
-  contentStringArr = loadStrings('https://b38tn1k.com/map_for_p5/');
+  contentStringArr = loadStrings('https://b38tn1k.github.io/map_for_p5/');
   // contentStringArr = loadStrings('http://127.0.0.1:4000/map_for_p5/');
 }
 

@@ -385,7 +385,7 @@ function createMenuDiv() {
     }
     menu.html('<br><span style="color:LightGray"><small>version 0.alpha<br><a href="javascript:void(0)" onclick="showDevDiv();">dev div</a><br>refresh if zoomed</small></span>', true);
     menu.html('', true);
-    menu.html('<br><a href="http://b38tn1k.com/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
+    menu.html('<br><a href="http://b38tn1k.github.io/code/ux/2022/09/08/blocks-explained/" target="_blank">about</a><br>', true);
   }
   if (mobileHack == false){
     menu.style('font-size', '16px');

@@ -6,7 +6,7 @@ permalink:           pretty
 # Setup
 title:               B38TN1K
 tagline:             aka James
-url:                 https://b38tn1k.com/
+url:                 https://b38tn1k.github.io/
 paginate:            1
 baseurl:             ""
 
@@ -20,7 +20,7 @@ sass:
 # About/contact
 author:
   name:              James Carthew
-  url:               https://b38tn1k.com/
+  url:               https://b38tn1k.github.io/
   # email:             b38tn1k@gmail.com
 
 # Custom vars

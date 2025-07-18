@@ -3,8 +3,8 @@ layout: post
 title:  "Satellite Physics Toy"
 date:   2022-05-26
 tags: demo
-image: 'https://b38tn1k.com/images/previews/sat.png'
-link: 'https://b38tn1k.com/toysat/'
+image: 'https://b38tn1k.github.io/images/previews/sat.png'
+link: 'https://b38tn1k.github.io/toysat/'
 ---
 
 [description]I was chatting about satellites with a friend, comparing them with quadcopters. The motion and the pose of a quad are linked (unless you get fancy and start rotating the props or motors, but that's more like a helicopter). You can't go forwards without tilting the aircraft forwards etc etc

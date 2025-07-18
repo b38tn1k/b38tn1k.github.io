@@ -20,6 +20,6 @@ I also added a Pickup class which drops a random item into Player inventory when
 
 Later: did it. also some cute and creepy sprites. I spent more time on the cute one.
 
-![possum](https://b38tn1k.com/sprites/possum.png)
+![possum](https://b38tn1k.github.io/sprites/possum.png)
 
-![possum](https://b38tn1k.com/sprites/spider.png)
+![possum](https://b38tn1k.github.io/sprites/spider.png)

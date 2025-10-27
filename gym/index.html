@@ -8,22 +8,24 @@
     <link rel="stylesheet" href="https://unpkg.com/dragula@3.7.3/dist/dragula.min.css">
     <script src="https://unpkg.com/dragula@3.7.3/dist/dragula.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <!-- Minimal styles for layout -->
     <style>
         :root {
             --gap: 12px;
             --pad: 12px;
-            --bg: #f9fafb;
-            --ink: #111;
-            --muted: #666;
-            --accent: #0f766e;
+            --bg: #111;
+            --ink: #f9fafb;
+            --muted: #999;
+            --accent: #00bfa5;
         }
 
         body {
             font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             color: var(--ink);
-            background: #fff;
+            background: #000;
+            background-repeat: repeat;
         }
 
         .wrap {
@@ -42,7 +44,7 @@
 
         .card {
             background: var(--bg);
-            border: 1px solid #e5e7eb;
+            border: 1px solid #222;
             border-radius: 12px;
             padding: var(--pad);
         }
@@ -63,8 +65,10 @@
         input[type="number"] {
             width: 100%;
             padding: 8px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #333;
             border-radius: 8px;
+            background: #222;
+            color: var(--ink);
         }
 
         input[type="number"]::-webkit-outer-spin-button,
@@ -73,12 +77,25 @@
             margin: 0;
         }
 
+        .card input,
+        .card select {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: var(--gap);
+        }
+
         button {
             padding: 10px 14px;
-            border: 1px solid #d1d5db;
-            background: #fff;
+            border: 1px solid #333;
+            background: #111;
             border-radius: 10px;
             cursor: pointer;
+            color: var(--ink);
         }
 
         button.primary {
@@ -93,10 +110,29 @@
         }
 
         .exercise {
-            background: #fff;
-            border: 1px solid #e5e7eb;
+            background: #222;
+            border: 1px solid #333;
             border-radius: 10px;
             padding: 10px;
+            cursor: pointer;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            color: #ff5252;
         }
 
         .exercise h4 {
@@ -109,10 +145,10 @@
         }
 
         .exercise .desc {
-            display: none;
+            display: block;
             margin-top: 6px;
             font-size: 14px;
-            color: #333;
+            color: #bbb;
         }
 
         .exercise.open .desc {
@@ -127,8 +163,8 @@
 
         .list {
             min-height: 240px;
-            background: #fff;
-            border: 1px dashed #cbd5e1;
+            background: #181818;
+            border: 1px dashed #333;
             border-radius: 10px;
             padding: 8px;
         }
@@ -156,8 +192,8 @@
             font-size: 18px;
             padding: 8px 10px;
             border-radius: 8px;
-            background: #fff;
-            border: 1px solid #e5e7eb;
+            background: #181818;
+            border: 1px solid #333;
         }
 
         .running {
@@ -182,16 +218,43 @@
             align-items: center;
             flex-wrap: wrap;
         }
+
+        #p5-timer {
+            width: 100%;
+            height: 60vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto !important;
+        }
     </style>
 
 </head>
 
 <body>
     <div class="wrap">
-        <h1>Workout Builder</h1>
-
+        <div class="card stack">
+            <h2>Timer</h2>
+            <div id="p5-timer"></div>
+            <div class="timer">
+                <div id="phase" class="timebox">Idle</div>
+                <div id="clock" class="timebox">00:00</div>
+                <div id="nowDoing" class="timebox">-</div>
+                <button id="start" class="primary">Start</button>
+                <button id="pause">Pause</button>
+                <button id="reset">Reset</button>
+            </div>
+            <div class="meta">Sequence is Set 1 to Set N. Each set runs all items in the Set Template: Work then Short
+                Rest between items, with Set Break after last item.</div>
+        </div>
         <div class="row">
             <div class="card stack">
+                <h1>Workout Builder</h1>
                 <div>
                     <label for="mode">Workout type</label>
                     <select id="mode">
@@ -202,7 +265,7 @@
                 </div>
                 <div>
                     <label for="perSet">Exercises per set</label>
-                    <input id="perSet" type="number" min="1" value="6">
+                    <input id="perSet" type="number" min="1" value="4">
                 </div>
                 <div>
                     <label for="sets">Number of sets</label>
@@ -211,7 +274,7 @@
                 <div class="grid-3">
                     <div>
                         <label for="workSec">Work (seconds)</label>
-                        <input id="workSec" type="number" min="5" value="50">
+                        <input id="workSec" type="number" min="5" value="60">
                     </div>
                     <div>
                         <label for="restSec">Short Rest (seconds)</label>
@@ -230,98 +293,26 @@
                 <div class="meta">No duplicates within a set. You can drag to reorder. Click an exercise name to toggle
                     description.</div>
             </div>
-
-            <div class="card stack">
-                <label>Load data from external JSON (optional, same format as exercises.json)</label>
-                <input id="dataUrl" type="text" placeholder="https://example.com/exercises.json">
-                <div class="inline">
-                    <button id="loadData">Load JSON</button>
-                    <button id="resetData">Reset to embedded data</button>
-                </div>
-                <div class="footer">If loading a local file, you need to serve files over http with a simple static
-                    server. Otherwise the embedded data below is used.</div>
-            </div>
         </div>
-
         <div class="lists">
+            <div class="card">
+                <h2>Today's Workout</h2>
+                <div id="set" class="list"></div>
+            </div>
             <div class="card">
                 <h2>Exercise Pool</h2>
                 <div id="pool" class="list"></div>
-            </div>
-            <div class="card">
-                <h2>Set Template</h2>
-                <div id="set" class="list"></div>
-            </div>
-        </div>
 
-        <div class="card stack">
-            <h2>Timer</h2>
-            <div class="timer">
-                <div id="phase" class="timebox">Idle</div>
-                <div id="clock" class="timebox">00:00</div>
-                <div id="nowDoing" class="timebox">-</div>
-                <button id="start" class="primary">Start</button>
-                <button id="pause">Pause</button>
-                <button id="reset">Reset</button>
             </div>
-            <div class="meta">Sequence is Set 1 to Set N. Each set runs all items in the Set Template: Work then Short
-                Rest between items, with Set Break after last item.</div>
         </div>
     </div>
 
-    <!-- embedded fallback data so the page works without fetch -->
-    <script id="exercise-data" type="application/json">
-  {
-    "version": "1.0",
-    "categories": [
-      { "id": "core", "label": "Core" },
-      { "id": "upper", "label": "Upper Body" },
-      { "id": "lower", "label": "Lower Body" },
-      { "id": "conditioning", "label": "Conditioning" },
-      { "id": "full", "label": "Full Body" }
-    ],
-    "modes": [
-      { "id": "strength", "label": "Strength" },
-      { "id": "core", "label": "Core Focus" },
-      { "id": "hiit", "label": "HIIT" }
-    ],
-    "exercises": [
-      { "id": "leg_flutters","name": "Leg Flutters","category": "core","modes": ["core","hiit"],"equipment": [],"description": "Lie on your back. Keep legs straight and alternate small, fast kicks while bracing your core. Lower back stays pressed into floor." },
-      { "id": "windshield_wipers","name": "Leg Side To Side (Windshield Wipers)","category": "core","modes": ["core"],"equipment": [],"description": "On your back with legs together and lifted. Slowly lower legs side to side under control to hit the obliques." },
-      { "id": "russian_twist","name": "Russian Twist","category": "core","modes": ["core","hiit"],"equipment": ["med ball optional"],"description": "Seated with torso leaned back and feet up or down. Rotate ribcage side to side. Keep shoulders down and core tight." },
-      { "id": "bicycle_crunch","name": "Bicycle Crunch","category": "core","modes": ["core","hiit"],"equipment": [],"description": "Alternate elbow to opposite knee with controlled rotation. Extend the other leg long and low." },
-      { "id": "static_leg_raise","name": "Static Leg Raise (6 to 12 inches)","category": "core","modes": ["core"],"equipment": [],"description": "Hold both legs off the floor at a fixed height while keeping ribs down and lower back braced." },
-      { "id": "stir_the_pot","name": "Stir The Pot","category": "core","modes": ["core","hiit"],"equipment": ["stability ball"],"description": "Forearms on ball in plank. Make small circles without letting hips sag. Keep glutes and core engaged." },
-      { "id": "med_ball_slams","name": "Medicine Ball Slams","category": "conditioning","modes": ["hiit","strength"],"equipment": ["medicine ball"],"description": "Lift ball overhead with tall posture, brace ribs, then slam straight down using hips and lats. Reset quickly." },
-      { "id": "rope_slams","name": "Battle Rope Slams","category": "conditioning","modes": ["hiit"],"equipment": ["battle ropes"],"description": "Powerful double arm slams to the floor. Sit into hips, brace core, and keep shoulders packed." },
-      { "id": "rope_waves","name": "Battle Rope Waves","category": "conditioning","modes": ["hiit"],"equipment": ["battle ropes"],"description": "Alternating or double arm waves. Smooth cycles while maintaining athletic stance and neutral spine." },
-      { "id": "heel_touches","name": "Heel Touches","category": "core","modes": ["core"],"equipment": [],"description": "On back with knees bent. Crunch side to side reaching to touch heels. Short controlled range." },
-      { "id": "mountain_climbers","name": "Mountain Climbers","category": "conditioning","modes": ["hiit","core"],"equipment": [],"description": "High plank. Drive knees toward chest with quick rhythm. Keep hips level and shoulders stacked over wrists." },
-      { "id": "boat_pose","name": "Boat Pose","category": "core","modes": ["core"],"equipment": [],"description": "Balance on sit bones with legs lifted and spine long. Chest open and core braced." },
-      { "id": "rollouts_trx_ball","name": "Rollouts on TRX or Ball","category": "core","modes": ["core","strength"],"equipment": ["TRX or stability ball"],"description": "From kneeling or plank, reach arms forward to extend and then pull back using lats and core without hyperextending." },
-      { "id": "pikes_trx_ball","name": "Pikes with TRX or Ball","category": "core","modes": ["core","hiit"],"equipment": ["TRX or stability ball"],"description": "From plank with feet in straps or on ball, lift hips to form a pike. Control return to plank." },
-      { "id": "squats","name": "Squats","category": "lower","modes": ["strength","hiit"],"equipment": ["bodyweight or load"],"description": "Sit hips back and down with neutral spine, knees tracking over toes. Drive through midfoot to stand." },
-      { "id": "reverse_lunge","name": "Reverse Lunge","category": "lower","modes": ["strength","hiit"],"equipment": ["bodyweight or load"],"description": "Step back into a lunge. Front shin vertical, torso tall, drive through front heel to stand." },
-      { "id": "forward_lunge","name": "Forward Lunge","category": "lower","modes": ["strength","hiit"],"equipment": ["bodyweight or load"],"description": "Step forward and lower under control. Push back to start using the front leg." },
-      { "id": "plank","name": "Plank","category": "core","modes": ["core","hiit"],"equipment": [],"description": "Forearm or high plank. Straight line from head to heels, glutes squeezed, ribs down." },
-      { "id": "walkout_rope_hold","name": "Walk Out Isometric Rope Hold","category": "full","modes": ["strength","hiit"],"equipment": ["cable or rope machine"],"description": "Walk out from the machine holding arms straight at chest height under tension. Brace and hold." },
-      { "id": "wood_chops","name": "Wood Chops","category": "full","modes": ["strength","hiit"],"equipment": ["cable or band or med ball"],"description": "Rotate from high to low or low to high using hips and core. Keep arms long and shoulders packed." },
-      { "id": "trx_row","name": "TRX Row","category": "upper","modes": ["strength"],"equipment": ["TRX"],"description": "Keep body rigid, pull chest to handles. Squeeze shoulder blades without shrugging." },
-      { "id": "side_plank","name": "Side Plank","category": "core","modes": ["core"],"equipment": [],"description": "Elbow under shoulder, hips stacked. Hold a straight line from head to heels." },
-      { "id": "chest_pulls","name": "Chest Pulls","category": "upper","modes": ["strength"],"equipment": ["cable or band"],"description": "Horizontal pull pattern. If you intended reverse fly or cable row, select grip and path accordingly and keep ribs down." },
-      { "id": "face_pulls","name": "Face Pulls","category": "upper","modes": ["strength"],"equipment": ["cable or band"],"description": "Pull rope toward face with elbows high and out. Focus on rear delts and mid traps." },
-      { "id": "power_pulls","name": "Power Pulls","category": "upper","modes": ["strength","hiit"],"equipment": ["cable or band"],"description": "Explosive high pull with rotational finish. Keep core braced and control the eccentric." },
-      { "id": "chest_press_ball","name": "Chest Press on Ball","category": "upper","modes": ["strength"],"equipment": ["dumbbells and stability ball"],"description": "Bridge hips, upper back on ball, press dumbbells from chest to lockout with wrists neutral." },
-      { "id": "chest_fly_ball","name": "Chest Fly on Ball","category": "upper","modes": ["strength"],"equipment": ["dumbbells and stability ball"],"description": "With back on ball, open arms with slight elbow bend then squeeze chest to return bells over chest." },
-      { "id": "snow_angels","name": "Snow Angels (Laying or Standing)","category": "upper","modes": ["strength","hiit"],"equipment": [],"description": "Arms sweep out and up like making a snow angel. Keep ribs down and neck long." },
-      { "id": "shoulder_press","name": "Shoulder Press","category": "upper","modes": ["strength"],"equipment": ["dumbbells or barbell or cables"],"description": "Press overhead with ribs stacked over hips. Finish with biceps by ears and no low back arch." },
-      { "id": "curtsey_lunge_trx","name": "Curtsey Lunge TRX","category": "lower","modes": ["strength","hiit"],"equipment": ["TRX"],"description": "Cross back step with TRX support. Keep front knee tracking and hips square." },
-      { "id": "rev_lunge_to_knee","name": "Reverse Lunge to Explosive Knee","category": "lower","modes": ["hiit","strength"],"equipment": [],"description": "Step back to lunge then drive up through the front leg to an explosive knee lift." }
-    ]
-  }
-  </script>
-
     <script>
+        // Pick a random number from 0 to 4
+        const n = Math.floor(Math.random() * 5);
+
+        // Set the background image using that number
+        document.body.style.backgroundImage = `url('bg${n}.gif')`;
         /* =========================
            Data load and filtering
            ========================= */
@@ -329,16 +320,16 @@
         /**
          * Load exercise data from a URL. Falls back to embedded JSON if fetch fails.
          */
-        async function loadData(url) {
-            if (url) {
-                try {
-                    const res = await fetch(url, { cache: "no-store" });
-                    if (!res.ok) throw new Error("Bad response");
-                    const json = await res.json();
-                    return json;
-                } catch (e) {
-                    console.warn("Failed to fetch external JSON, using embedded data. Error:", e);
-                }
+        async function loadData() {
+            // Always load from the fixed URL, fallback to embedded if fetch fails
+            const url = "https://b38tn1k.github.io/gym/excercises.json";
+            try {
+                const res = await fetch(url, { cache: "no-store" });
+                if (!res.ok) throw new Error("Bad response");
+                const json = await res.json();
+                return json;
+            } catch (e) {
+                console.warn("Failed to fetch external JSON, using embedded data. Error:", e);
             }
             const embedded = document.getElementById("exercise-data").textContent;
             return JSON.parse(embedded);
@@ -393,11 +384,14 @@
             el.className = "exercise";
             el.dataset.id = ex.id;
             el.innerHTML = `
+  <div class="exercise-header">
     <h4>${ex.name}</h4>
-    <small>${ex.category} - ${ex.equipment && ex.equipment.length ? ex.equipment.join(", ") : "no equipment"}</small>
-    <div class="desc">${ex.description}</div>
+    <button class="remove-btn">×</button>
+  </div>
+  <small>${ex.category} - ${ex.equipment && ex.equipment.length ? ex.equipment.join(", ") : "no equipment"}</small>
+  <div class="desc">${ex.description}</div>
   `;
-            el.querySelector("h4").addEventListener("click", () => el.classList.toggle("open"));
+            // el.querySelector("h4").addEventListener("click", () => el.classList.toggle("open"));
             return el;
         }
 
@@ -432,6 +426,16 @@
             const setIds = state.plan.setTemplate;
             const setItems = setIds.map(id => state.data.exercises.find(e => e.id === id)).filter(Boolean);
             renderList(state.ui.setList, setItems);
+            // Wire up remove buttons
+            state.ui.setList.querySelectorAll(".remove-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const el = btn.closest(".exercise");
+                    el.remove();
+                    state.plan.setTemplate = [...state.ui.setList.querySelectorAll(".exercise")]
+                        .map(n => n.dataset.id);
+                });
+            });
         }
 
         /**
@@ -610,9 +614,6 @@
                     phase: document.getElementById("phase"),
                     clock: document.getElementById("clock"),
                     nowDoing: document.getElementById("nowDoing"),
-                    dataUrl: document.getElementById("dataUrl"),
-                    loadData: document.getElementById("loadData"),
-                    resetData: document.getElementById("resetData")
                 }
             };
 
@@ -655,26 +656,131 @@
             state.ui.pauseBtn.addEventListener("click", () => state.timer.pause());
             state.ui.resetBtn.addEventListener("click", () => state.timer.reset());
 
-            // External data
-            state.ui.loadData.addEventListener("click", async () => {
-                const url = state.ui.dataUrl.value.trim();
-                if (!url) return;
-                state.data = await loadData(url);
-                // Rebuild UI based on new data
-                const pool = poolForMode(state.data, state.ui.mode.value);
-                renderList(state.ui.poolList, pool);
-                buildSetTemplate(state);
-                setupDragula(state);
-                state.timer.reset();
-            });
+            // No external data UI or reset UI anymore.
+        })();
 
-            state.ui.resetData.addEventListener("click", async () => {
-                state.data = await loadData(undefined);
-                const pool = poolForMode(state.data, state.ui.mode.value);
-                renderList(state.ui.poolList, pool);
-                buildSetTemplate(state);
-                setupDragula(state);
-                state.timer.reset();
+        // ---- p5.js timer visualization ----
+        (function setupP5Timer() {
+            let timerState = {
+                phase: "Idle",
+                remaining: 0,
+                total: 1,
+            };
+            // Find DOM elements
+            function getTimerDom() {
+                return {
+                    phase: document.getElementById("phase"),
+                    clock: document.getElementById("clock"),
+                };
+            }
+            function updateFromDom() {
+                const dom = getTimerDom();
+                timerState.phase = dom.phase.textContent || "Idle";
+                timerState.remaining = parseClock(dom.clock.textContent || "00:00");
+                timerState.total = timerState.remaining > 0 ? timerState.remaining : 1;
+            }
+            function parseClock(str) {
+                // "MM:SS" -> seconds
+                const m = str.split(":");
+                if (m.length !== 2) return 0;
+                return parseInt(m[0], 10) * 60 + parseInt(m[1], 10);
+            }
+            let prevPhase = null, prevRem = null;
+            // p5.js sketch
+            new window.p5((p) => {
+                let phaseColor = "#00bfa5";
+                let totalSec = 1;
+                let remSec = 0;
+                let curPhase = "Idle";
+                let curLabel = "";
+                let ringThickness = 18;
+                let baseSize = 0;
+                let prevPhase = null, prevRem = null;
+
+                p.setup = function () {
+                    const parent = document.getElementById("p5-timer");
+                    const size = Math.min(parent.offsetWidth, window.innerHeight * 0.6);
+                    const c = p.createCanvas(size, size);
+                    c.parent("p5-timer");
+                    p.angleMode(p.RADIANS);
+                    baseSize = size;
+                };
+
+                p.windowResized = function () {
+                    const parent = document.getElementById("p5-timer");
+                    const size = Math.min(parent.offsetWidth, window.innerHeight * 0.6);
+                    p.resizeCanvas(size, size);
+                    baseSize = size;
+                };
+
+                p.draw = function () {
+                    updateFromDom();
+                    curPhase = timerState.phase;
+                    remSec = timerState.remaining;
+
+                    // Pull current exercise name if in Work phase
+                    const nowDoingEl = document.getElementById("nowDoing");
+                    curLabel = nowDoingEl ? nowDoingEl.textContent : "";
+
+                    // Estimate total for this phase
+                    if (curPhase !== prevPhase || remSec > prevRem) totalSec = remSec;
+                    prevPhase = curPhase;
+                    prevRem = remSec;
+
+                    // Color by phase
+                    if (curPhase === "Work") phaseColor = "#00e676";
+                    else if (curPhase === "Short Rest") phaseColor = "#ffd600";
+                    else if (curPhase === "Set Break") phaseColor = "#2979ff";
+                    else phaseColor = "#333";
+
+                    // Fraction remaining
+                    const frac = totalSec > 0 ? remSec / totalSec : 1;
+
+                    // Background
+                    p.clear();
+                    p.background(0, 0);
+
+                    const size = Math.min(p.width, p.height) * 0.8;
+                    const cx = p.width / 2;
+                    const cy = p.height / 2;
+
+                    // Outer ring
+                    p.strokeWeight(ringThickness);
+                    p.stroke("#222");
+                    p.noFill();
+                    p.arc(cx, cy, size, size, 0, 2 * Math.PI);
+
+                    // Active arc
+                    p.stroke(phaseColor);
+                    const endAng = -Math.PI / 2 + 2 * Math.PI * frac;
+                    p.arc(cx, cy, size, size, -Math.PI / 2, endAng);
+
+                    // Text
+                    p.noStroke();
+                    p.fill("#fff");
+                    p.textAlign(p.CENTER, p.CENTER);
+
+                    const labelFontSize = size / 10;
+                    const timeFontSize = size / 12;
+                    p.textSize(labelFontSize);
+
+                    // What to show inside
+                    let displayText = curPhase;
+                    if (curPhase === "Work" && curLabel && !curLabel.includes("Rest")) {
+                        displayText = curLabel.replace(/^Set \d+:\s*/, ""); // remove "Set X:" prefix
+                    }
+
+                    // Draw main label
+                    p.text(displayText, cx, cy - 10);
+
+                    // Draw time below label
+                    const min = Math.floor(remSec / 60);
+                    const sec = remSec % 60;
+                    const timeText = (min > 0 ? min + ":" : "") + sec.toString().padStart(2, "0");
+                    p.textSize(timeFontSize);
+                    p.fill("#aaa");
+                    p.text(timeText, cx, cy + labelFontSize / 1.2);
+                };
             });
         })();
     </script>

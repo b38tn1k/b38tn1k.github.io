@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Workout Builder</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/dragula@3.7.3/dist/dragula.min.css">
+    <script src="https://unpkg.com/dragula@3.7.3/dist/dragula.min.js"></script>
+
+    <!-- Minimal styles for layout -->
+    <style>
+        :root {
+            --gap: 12px;
+            --pad: 12px;
+            --bg: #f9fafb;
+            --ink: #111;
+            --muted: #666;
+            --accent: #0f766e;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            color: var(--ink);
+            background: #fff;
+        }
+
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 16px;
+            display: grid;
+            gap: var(--gap);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--gap);
+        }
+
+        .card {
+            background: var(--bg);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: var(--pad);
+        }
+
+        h1,
+        h2 {
+            margin: 0 0 6px 0;
+        }
+
+        label {
+            font-size: 14px;
+            color: var(--muted);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        button {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        button.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .stack {
+            display: grid;
+            gap: 8px;
+        }
+
+        .exercise {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .exercise h4 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .exercise small {
+            color: var(--muted);
+        }
+
+        .exercise .desc {
+            display: none;
+            margin-top: 6px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .exercise.open .desc {
+            display: block;
+        }
+
+        .lists {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--gap);
+        }
+
+        .list {
+            min-height: 240px;
+            background: #fff;
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 8px;
+        }
+
+        .list h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+
+        .meta {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .timer {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .timer .timebox {
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
+            font-size: 18px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+        }
+
+        .running {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--gap);
+        }
+
+        .inline {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>Workout Builder</h1>
+
+        <div class="row">
+            <div class="card stack">
+                <div>
+                    <label for="mode">Workout type</label>
+                    <select id="mode">
+                        <option value="strength">Strength</option>
+                        <option value="core">Core</option>
+                        <option value="hiit">HIIT</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="perSet">Exercises per set</label>
+                    <input id="perSet" type="number" min="1" value="6">
+                </div>
+                <div>
+                    <label for="sets">Number of sets</label>
+                    <input id="sets" type="number" min="1" value="3">
+                </div>
+                <div class="grid-3">
+                    <div>
+                        <label for="workSec">Work (seconds)</label>
+                        <input id="workSec" type="number" min="5" value="50">
+                    </div>
+                    <div>
+                        <label for="restSec">Short Rest (seconds)</label>
+                        <input id="restSec" type="number" min="0" value="15">
+                    </div>
+                    <div>
+                        <label for="setBreakSec">Set Break (seconds)</label>
+                        <input id="setBreakSec" type="number" min="0" value="120">
+                    </div>
+                </div>
+                <div class="inline">
+                    <button id="generate" class="primary">Generate Plan</button>
+                    <button id="shuffle">Shuffle</button>
+                    <button id="clear">Clear</button>
+                </div>
+                <div class="meta">No duplicates within a set. You can drag to reorder. Click an exercise name to toggle
+                    description.</div>
+            </div>
+
+            <div class="card stack">
+                <label>Load data from external JSON (optional, same format as exercises.json)</label>
+                <input id="dataUrl" type="text" placeholder="https://example.com/exercises.json">
+                <div class="inline">
+                    <button id="loadData">Load JSON</button>
+                    <button id="resetData">Reset to embedded data</button>
+                </div>
+                <div class="footer">If loading a local file, you need to serve files over http with a simple static
+                    server. Otherwise the embedded data below is used.</div>
+            </div>
+        </div>
+
+        <div class="lists">
+            <div class="card">
+                <h2>Exercise Pool</h2>
+                <div id="pool" class="list"></div>
+            </div>
+            <div class="card">
+                <h2>Set Template</h2>
+                <div id="set" class="list"></div>
+            </div>
+        </div>
+
+        <div class="card stack">
+            <h2>Timer</h2>
+            <div class="timer">
+                <div id="phase" class="timebox">Idle</div>
+                <div id="clock" class="timebox">00:00</div>
+                <div id="nowDoing" class="timebox">-</div>
+                <button id="start" class="primary">Start</button>
+                <button id="pause">Pause</button>
+                <button id="reset">Reset</button>
+            </div>
+            <div class="meta">Sequence is Set 1 to Set N. Each set runs all items in the Set Template: Work then Short
+                Rest between items, with Set Break after last item.</div>
+        </div>
+    </div>
+
+    <!-- embedded fallback data so the page works without fetch -->
+    <script id="exercise-data" type="application/json">
+  {
+    "version": "1.0",
+    "categories": [
+      { "id": "core", "label": "Core" },
+      { "id": "upper", "label": "Upper Body" },
+      { "id": "lower", "label": "Lower Body" },
+      { "id": "conditioning", "label": "Conditioning" },
+      { "id": "full", "label": "Full Body" }
+    ],
+    "modes": [
+      { "id": "strength", "label": "Strength" },
+      { "id": "core", "label": "Core Focus" },
+      { "id": "hiit", "label": "HIIT" }
+    ],
+    "exercises": [
+      { "id": "leg_flutters","name": "Leg Flutters","category": "core","modes": ["core","hiit"],"equipment": [],"description": "Lie on your back. Keep legs straight and alternate small, fast kicks while bracing your core. Lower back stays pressed into floor." },
+      { "id": "windshield_wipers","name": "Leg Side To Side (Windshield Wipers)","category": "core","modes": ["core"],"equipment": [],"description": "On your back with legs together and lifted. Slowly lower legs side to side under control to hit the obliques." },
+      { "id": "russian_twist","name": "Russian Twist","category": "core","modes": ["core","hiit"],"equipment": ["med ball optional"],"description": "Seated with torso leaned back and feet up or down. Rotate ribcage side to side. Keep shoulders down and core tight." },
+      { "id": "bicycle_crunch","name": "Bicycle Crunch","category": "core","modes": ["core","hiit"],"equipment": [],"description": "Alternate elbow to opposite knee with controlled rotation. Extend the other leg long and low." },
+      { "id": "static_leg_raise","name": "Static Leg Raise (6 to 12 inches)","category": "core","modes": ["core"],"equipment": [],"description": "Hold both legs off the floor at a fixed height while keeping ribs down and lower back braced." },
+      { "id": "stir_the_pot","name": "Stir The Pot","category": "core","modes": ["core","hiit"],"equipment": ["stability ball"],"description": "Forearms on ball in plank. Make small circles without letting hips sag. Keep glutes and core engaged." },
+      { "id": "med_ball_slams","name": "Medicine Ball Slams","category": "conditioning","modes": ["hiit","strength"],"equipment": ["medicine ball"],"description": "Lift ball overhead with tall posture, brace ribs, then slam straight down using hips and lats. Reset quickly." },
+      { "id": "rope_slams","name": "Battle Rope Slams","category": "conditioning","modes": ["hiit"],"equipment": ["battle ropes"],"description": "Powerful double arm slams to the floor. Sit into hips, brace core, and keep shoulders packed." },
+      { "id": "rope_waves","name": "Battle Rope Waves","category": "conditioning","modes": ["hiit"],"equipment": ["battle ropes"],"description": "Alternating or double arm waves. Smooth cycles while maintaining athletic stance and neutral spine." },
+      { "id": "heel_touches","name": "Heel Touches","category": "core","modes": ["core"],"equipment": [],"description": "On back with knees bent. Crunch side to side reaching to touch heels. Short controlled range." },
+      { "id": "mountain_climbers","name": "Mountain Climbers","category": "conditioning","modes": ["hiit","core"],"equipment": [],"description": "High plank. Drive knees toward chest with quick rhythm. Keep hips level and shoulders stacked over wrists." },
+      { "id": "boat_pose","name": "Boat Pose","category": "core","modes": ["core"],"equipment": [],"description": "Balance on sit bones with legs lifted and spine long. Chest open and core braced." },
+      { "id": "rollouts_trx_ball","name": "Rollouts on TRX or Ball","category": "core","modes": ["core","strength"],"equipment": ["TRX or stability ball"],"description": "From kneeling or plank, reach arms forward to extend and then pull back using lats and core without hyperextending." },
+      { "id": "pikes_trx_ball","name": "Pikes with TRX or Ball","category": "core","modes": ["core","hiit"],"equipment": ["TRX or stability ball"],"description": "From plank with feet in straps or on ball, lift hips to form a pike. Control return to plank." },
+      { "id": "squats","name": "Squats","category": "lower","modes": ["strength","hiit"],"equipment": ["bodyweight or load"],"description": "Sit hips back and down with neutral spine, knees tracking over toes. Drive through midfoot to stand." },
+      { "id": "reverse_lunge","name": "Reverse Lunge","category": "lower","modes": ["strength","hiit"],"equipment": ["bodyweight or load"],"description": "Step back into a lunge. Front shin vertical, torso tall, drive through front heel to stand." },
+      { "id": "forward_lunge","name": "Forward Lunge","category": "lower","modes": ["strength","hiit"],"equipment": ["bodyweight or load"],"description": "Step forward and lower under control. Push back to start using the front leg." },
+      { "id": "plank","name": "Plank","category": "core","modes": ["core","hiit"],"equipment": [],"description": "Forearm or high plank. Straight line from head to heels, glutes squeezed, ribs down." },
+      { "id": "walkout_rope_hold","name": "Walk Out Isometric Rope Hold","category": "full","modes": ["strength","hiit"],"equipment": ["cable or rope machine"],"description": "Walk out from the machine holding arms straight at chest height under tension. Brace and hold." },
+      { "id": "wood_chops","name": "Wood Chops","category": "full","modes": ["strength","hiit"],"equipment": ["cable or band or med ball"],"description": "Rotate from high to low or low to high using hips and core. Keep arms long and shoulders packed." },
+      { "id": "trx_row","name": "TRX Row","category": "upper","modes": ["strength"],"equipment": ["TRX"],"description": "Keep body rigid, pull chest to handles. Squeeze shoulder blades without shrugging." },
+      { "id": "side_plank","name": "Side Plank","category": "core","modes": ["core"],"equipment": [],"description": "Elbow under shoulder, hips stacked. Hold a straight line from head to heels." },
+      { "id": "chest_pulls","name": "Chest Pulls","category": "upper","modes": ["strength"],"equipment": ["cable or band"],"description": "Horizontal pull pattern. If you intended reverse fly or cable row, select grip and path accordingly and keep ribs down." },
+      { "id": "face_pulls","name": "Face Pulls","category": "upper","modes": ["strength"],"equipment": ["cable or band"],"description": "Pull rope toward face with elbows high and out. Focus on rear delts and mid traps." },
+      { "id": "power_pulls","name": "Power Pulls","category": "upper","modes": ["strength","hiit"],"equipment": ["cable or band"],"description": "Explosive high pull with rotational finish. Keep core braced and control the eccentric." },
+      { "id": "chest_press_ball","name": "Chest Press on Ball","category": "upper","modes": ["strength"],"equipment": ["dumbbells and stability ball"],"description": "Bridge hips, upper back on ball, press dumbbells from chest to lockout with wrists neutral." },
+      { "id": "chest_fly_ball","name": "Chest Fly on Ball","category": "upper","modes": ["strength"],"equipment": ["dumbbells and stability ball"],"description": "With back on ball, open arms with slight elbow bend then squeeze chest to return bells over chest." },
+      { "id": "snow_angels","name": "Snow Angels (Laying or Standing)","category": "upper","modes": ["strength","hiit"],"equipment": [],"description": "Arms sweep out and up like making a snow angel. Keep ribs down and neck long." },
+      { "id": "shoulder_press","name": "Shoulder Press","category": "upper","modes": ["strength"],"equipment": ["dumbbells or barbell or cables"],"description": "Press overhead with ribs stacked over hips. Finish with biceps by ears and no low back arch." },
+      { "id": "curtsey_lunge_trx","name": "Curtsey Lunge TRX","category": "lower","modes": ["strength","hiit"],"equipment": ["TRX"],"description": "Cross back step with TRX support. Keep front knee tracking and hips square." },
+      { "id": "rev_lunge_to_knee","name": "Reverse Lunge to Explosive Knee","category": "lower","modes": ["hiit","strength"],"equipment": [],"description": "Step back to lunge then drive up through the front leg to an explosive knee lift." }
+    ]
+  }
+  </script>
+
+    <script>
+        /* =========================
+           Data load and filtering
+           ========================= */
+
+        /**
+         * Load exercise data from a URL. Falls back to embedded JSON if fetch fails.
+         */
+        async function loadData(url) {
+            if (url) {
+                try {
+                    const res = await fetch(url, { cache: "no-store" });
+                    if (!res.ok) throw new Error("Bad response");
+                    const json = await res.json();
+                    return json;
+                } catch (e) {
+                    console.warn("Failed to fetch external JSON, using embedded data. Error:", e);
+                }
+            }
+            const embedded = document.getElementById("exercise-data").textContent;
+            return JSON.parse(embedded);
+        }
+
+        /**
+         * Filter exercises by mode and return a pool for selection.
+         * Rules:
+         *  - HIIT prefers conditioning and fast core patterns
+         *  - Strength prefers upper, lower, full, plus core strength options
+         *  - Core focuses on core category
+         */
+        function poolForMode(all, mode) {
+            const list = all.exercises.filter(ex => ex.modes.includes(mode));
+            if (mode === "hiit") {
+                // Slight prioritization: conditioning and fast core first
+                const preferred = list.filter(ex => ex.category === "conditioning" || ex.category === "core");
+                const others = list.filter(ex => !preferred.includes(ex));
+                return [...preferred, ...others];
+            }
+            if (mode === "strength") {
+                const preferred = list.filter(ex => ex.category === "upper" || ex.category === "lower" || ex.category === "full");
+                const others = list.filter(ex => !preferred.includes(ex));
+                return [...preferred, ...others];
+            }
+            // core
+            return list.filter(ex => ex.category === "core");
+        }
+
+        /**
+         * Sample N unique exercises from an array without duplicates.
+         */
+        function sampleUnique(arr, n) {
+            const copy = [...arr];
+            // Fisher-Yates shuffle
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy.slice(0, Math.max(0, Math.min(n, copy.length)));
+        }
+
+        /* =========================
+           DOM builders
+           ========================= */
+
+        /**
+         * Create an exercise DOM card with click to show description.
+         */
+        function makeExerciseEl(ex) {
+            const el = document.createElement("div");
+            el.className = "exercise";
+            el.dataset.id = ex.id;
+            el.innerHTML = `
+    <h4>${ex.name}</h4>
+    <small>${ex.category} - ${ex.equipment && ex.equipment.length ? ex.equipment.join(", ") : "no equipment"}</small>
+    <div class="desc">${ex.description}</div>
+  `;
+            el.querySelector("h4").addEventListener("click", () => el.classList.toggle("open"));
+            return el;
+        }
+
+        /**
+         * Render a list of exercises into a container.
+         */
+        function renderList(container, items) {
+            container.innerHTML = "";
+            items.forEach(ex => container.appendChild(makeExerciseEl(ex)));
+        }
+
+        /* =========================
+           Plan generation
+           ========================= */
+
+        /**
+         * Build a new set template based on UI and current data pool.
+         */
+        function buildSetTemplate(state) {
+            const mode = state.ui.mode.value;
+            const perSet = parseInt(state.ui.perSet.value, 10);
+            const pool = poolForMode(state.data, mode);
+            const pick = sampleUnique(pool, perSet);
+            state.plan.setTemplate = pick.map(ex => ex.id);
+            renderSetFromIds(state);
+        }
+
+        /**
+         * Render the set template from stored ids.
+         */
+        function renderSetFromIds(state) {
+            const setIds = state.plan.setTemplate;
+            const setItems = setIds.map(id => state.data.exercises.find(e => e.id === id)).filter(Boolean);
+            renderList(state.ui.setList, setItems);
+        }
+
+        /**
+         * Get current set template as exercise objects.
+         */
+        function currentSetExercises(state) {
+            const ids = [...state.ui.setList.querySelectorAll(".exercise")].map(n => n.dataset.id);
+            return ids.map(id => state.data.exercises.find(e => e.id === id)).filter(Boolean);
+        }
+
+        /* =========================
+           Dragula wiring
+           ========================= */
+
+        function setupDragula(state) {
+            if (state.drake) state.drake.destroy();
+            state.drake = dragula([state.ui.poolList, state.ui.setList], {
+                copy: (el, source) => source === state.ui.poolList,
+                accepts: (el, target) => target === state.ui.setList,
+                moves: (el) => true,
+                revertOnSpill: true
+            });
+
+            // When item is dropped into set, ensure unique by id
+            state.drake.on("drop", (el, target, source, sibling) => {
+                if (target === state.ui.setList) {
+                    const ids = [...state.ui.setList.querySelectorAll(".exercise")].map(n => n.dataset.id);
+                    const seen = new Set();
+                    [...state.ui.setList.children].forEach(node => {
+                        if (seen.has(node.dataset.id)) {
+                            node.remove(); // remove duplicate
+                        } else {
+                            seen.add(node.dataset.id);
+                        }
+                    });
+                    // Persist new setTemplate order
+                    state.plan.setTemplate = [...state.ui.setList.querySelectorAll(".exercise")].map(n => n.dataset.id);
+                }
+            });
+        }
+
+        /* =========================
+           Timer engine
+           ========================= */
+
+        /**
+         * Build the time sequence for all sets:
+         * For each set:
+         *   For each exercise in setTemplate: Work -> Short Rest (skip rest after last exercise)
+         *   After last exercise: Set Break
+         */
+        function buildTimeline(state) {
+            const perSetItems = currentSetExercises(state);
+            const sets = parseInt(state.ui.sets.value, 10);
+            const work = parseInt(state.ui.workSec.value, 10);
+            const rest = parseInt(state.ui.restSec.value, 10);
+            const setBreak = parseInt(state.ui.setBreakSec.value, 10);
+
+            const timeline = [];
+            for (let s = 1; s <= sets; s++) {
+                perSetItems.forEach((ex, idx) => {
+                    timeline.push({ phase: "Work", seconds: work, label: `Set ${s}: ${ex.name}` });
+                    const isLast = idx === perSetItems.length - 1;
+                    if (!isLast && rest > 0) {
+                        timeline.push({ phase: "Short Rest", seconds: rest, label: `Set ${s}: Rest` });
+                    }
+                });
+                if (setBreak > 0 && s !== sets) {
+                    timeline.push({ phase: "Set Break", seconds: setBreak, label: `Between sets ${s} and ${s + 1}` });
+                }
+            }
+            return timeline;
+        }
+
+        /**
+         * Run the timeline with start, pause, reset controls.
+         */
+        function setupTimer(state) {
+            let timeline = [];
+            let idx = 0;
+            let remaining = 0;
+            let handle = null;
+
+            function fmt(sec) {
+                const m = Math.floor(sec / 60);
+                const s = sec % 60;
+                return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+            }
+
+            function updateUI() {
+                const item = timeline[idx];
+                if (!item) {
+                    state.ui.phase.textContent = "Done";
+                    state.ui.clock.textContent = "00:00";
+                    state.ui.nowDoing.textContent = "-";
+                    state.ui.phase.classList.remove("running");
+                    return;
+                }
+                state.ui.phase.textContent = item.phase;
+                state.ui.clock.textContent = fmt(remaining);
+                state.ui.nowDoing.textContent = item.label;
+                state.ui.phase.classList.add("running");
+            }
+
+            function tick() {
+                remaining -= 1;
+                if (remaining <= 0) {
+                    idx += 1;
+                    if (idx >= timeline.length) {
+                        clearInterval(handle);
+                        handle = null;
+                        updateUI();
+                        return;
+                    }
+                    remaining = timeline[idx].seconds;
+                }
+                updateUI();
+            }
+
+            function start() {
+                if (!timeline.length) {
+                    timeline = buildTimeline(state);
+                    idx = 0;
+                    remaining = timeline[0]?.seconds || 0;
+                }
+                if (handle) return;
+                handle = setInterval(tick, 1000);
+                updateUI();
+            }
+
+            function pause() {
+                if (handle) {
+                    clearInterval(handle);
+                    handle = null;
+                    state.ui.phase.classList.remove("running");
+                }
+            }
+
+            function reset() {
+                pause();
+                timeline = [];
+                idx = 0;
+                remaining = 0;
+                state.ui.phase.textContent = "Idle";
+                state.ui.clock.textContent = "00:00";
+                state.ui.nowDoing.textContent = "-";
+            }
+
+            state.timer = { start, pause, reset };
+        }
+
+        /* =========================
+           App init
+           ========================= */
+
+        (async function init() {
+            const state = {
+                data: null,
+                drake: null,
+                plan: { setTemplate: [] },
+                ui: {
+                    mode: document.getElementById("mode"),
+                    perSet: document.getElementById("perSet"),
+                    sets: document.getElementById("sets"),
+                    workSec: document.getElementById("workSec"),
+                    restSec: document.getElementById("restSec"),
+                    setBreakSec: document.getElementById("setBreakSec"),
+                    poolList: document.getElementById("pool"),
+                    setList: document.getElementById("set"),
+                    generate: document.getElementById("generate"),
+                    shuffle: document.getElementById("shuffle"),
+                    clear: document.getElementById("clear"),
+                    startBtn: document.getElementById("start"),
+                    pauseBtn: document.getElementById("pause"),
+                    resetBtn: document.getElementById("reset"),
+                    phase: document.getElementById("phase"),
+                    clock: document.getElementById("clock"),
+                    nowDoing: document.getElementById("nowDoing"),
+                    dataUrl: document.getElementById("dataUrl"),
+                    loadData: document.getElementById("loadData"),
+                    resetData: document.getElementById("resetData")
+                }
+            };
+
+            // Load embedded data first
+            state.data = await loadData();
+
+            // Render initial pool for default mode
+            const initialPool = poolForMode(state.data, state.ui.mode.value);
+            renderList(state.ui.poolList, initialPool);
+
+            // Create a default set
+            buildSetTemplate(state);
+            setupDragula(state);
+            setupTimer(state);
+
+            // Events
+            state.ui.mode.addEventListener("change", () => {
+                const pool = poolForMode(state.data, state.ui.mode.value);
+                renderList(state.ui.poolList, pool);
+            });
+
+            state.ui.generate.addEventListener("click", () => {
+                buildSetTemplate(state);
+            });
+
+            state.ui.shuffle.addEventListener("click", () => {
+                const current = currentSetExercises(state);
+                const shuffled = sampleUnique(current, current.length);
+                state.plan.setTemplate = shuffled.map(e => e.id);
+                renderSetFromIds(state);
+            });
+
+            state.ui.clear.addEventListener("click", () => {
+                state.plan.setTemplate = [];
+                renderSetFromIds(state);
+            });
+
+            // Timer controls
+            state.ui.startBtn.addEventListener("click", () => state.timer.start());
+            state.ui.pauseBtn.addEventListener("click", () => state.timer.pause());
+            state.ui.resetBtn.addEventListener("click", () => state.timer.reset());
+
+            // External data
+            state.ui.loadData.addEventListener("click", async () => {
+                const url = state.ui.dataUrl.value.trim();
+                if (!url) return;
+                state.data = await loadData(url);
+                // Rebuild UI based on new data
+                const pool = poolForMode(state.data, state.ui.mode.value);
+                renderList(state.ui.poolList, pool);
+                buildSetTemplate(state);
+                setupDragula(state);
+                state.timer.reset();
+            });
+
+            state.ui.resetData.addEventListener("click", async () => {
+                state.data = await loadData(undefined);
+                const pool = poolForMode(state.data, state.ui.mode.value);
+                renderList(state.ui.poolList, pool);
+                buildSetTemplate(state);
+                setupDragula(state);
+                state.timer.reset();
+            });
+        })();
+    </script>

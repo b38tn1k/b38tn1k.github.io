@@ -1,0 +1,265 @@
+{
+  "version": "1.0",
+  "categories": [
+    { "id": "core", "label": "Core" },
+    { "id": "upper", "label": "Upper Body" },
+    { "id": "lower", "label": "Lower Body" },
+    { "id": "conditioning", "label": "Conditioning" },
+    { "id": "full", "label": "Full Body" }
+  ],
+  "modes": [
+    { "id": "strength", "label": "Strength" },
+    { "id": "core", "label": "Core Focus" },
+    { "id": "hiit", "label": "HIIT" }
+  ],
+  "exercises": [
+    {
+      "id": "leg_flutters",
+      "name": "Leg Flutters",
+      "category": "core",
+      "modes": ["core","hiit"],
+      "equipment": [],
+      "description": "Lie on your back. Keep legs straight and alternate small, fast kicks while bracing your core. Lower back stays pressed into floor."
+    },
+    {
+      "id": "windshield_wipers",
+      "name": "Leg Side To Side (Windshield Wipers)",
+      "category": "core",
+      "modes": ["core"],
+      "equipment": [],
+      "description": "On your back with legs together and lifted. Slowly lower legs side to side under control to hit the obliques."
+    },
+    {
+      "id": "russian_twist",
+      "name": "Russian Twist",
+      "category": "core",
+      "modes": ["core","hiit"],
+      "equipment": ["med ball optional"],
+      "description": "Seated with torso leaned back and feet up or down. Rotate ribcage side to side. Keep shoulders down and core tight."
+    },
+    {
+      "id": "bicycle_crunch",
+      "name": "Bicycle Crunch",
+      "category": "core",
+      "modes": ["core","hiit"],
+      "equipment": [],
+      "description": "Alternate elbow to opposite knee with controlled rotation. Extend the other leg long and low."
+    },
+    {
+      "id": "static_leg_raise",
+      "name": "Static Leg Raise (6 to 12 inches)",
+      "category": "core",
+      "modes": ["core"],
+      "equipment": [],
+      "description": "Hold both legs off the floor at a fixed height while keeping ribs down and lower back braced."
+    },
+    {
+      "id": "stir_the_pot",
+      "name": "Stir The Pot",
+      "category": "core",
+      "modes": ["core","hiit"],
+      "equipment": ["stability ball"],
+      "description": "Forearms on ball in plank. Make small circles without letting hips sag. Keep glutes and core engaged."
+    },
+    {
+      "id": "med_ball_slams",
+      "name": "Medicine Ball Slams",
+      "category": "conditioning",
+      "modes": ["hiit","strength"],
+      "equipment": ["medicine ball"],
+      "description": "Lift ball overhead with tall posture, brace ribs, then slam straight down using hips and lats. Reset quickly."
+    },
+    {
+      "id": "rope_slams",
+      "name": "Battle Rope Slams",
+      "category": "conditioning",
+      "modes": ["hiit"],
+      "equipment": ["battle ropes"],
+      "description": "Powerful double arm slams to the floor. Sit into hips, brace core, and keep shoulders packed."
+    },
+    {
+      "id": "rope_waves",
+      "name": "Battle Rope Waves",
+      "category": "conditioning",
+      "modes": ["hiit"],
+      "equipment": ["battle ropes"],
+      "description": "Alternating or double arm waves. Smooth cycles while maintaining athletic stance and neutral spine."
+    },
+    {
+      "id": "heel_touches",
+      "name": "Heel Touches",
+      "category": "core",
+      "modes": ["core"],
+      "equipment": [],
+      "description": "On back with knees bent. Crunch side to side reaching to touch heels. Short controlled range."
+    },
+    {
+      "id": "mountain_climbers",
+      "name": "Mountain Climbers",
+      "category": "conditioning",
+      "modes": ["hiit","core"],
+      "equipment": [],
+      "description": "High plank. Drive knees toward chest with quick rhythm. Keep hips level and shoulders stacked over wrists."
+    },
+    {
+      "id": "boat_pose",
+      "name": "Boat Pose",
+      "category": "core",
+      "modes": ["core"],
+      "equipment": [],
+      "description": "Balance on sit bones with legs lifted and spine long. Chest open and core braced."
+    },
+    {
+      "id": "rollouts_trx_ball",
+      "name": "Rollouts on TRX or Ball",
+      "category": "core",
+      "modes": ["core","strength"],
+      "equipment": ["TRX or stability ball"],
+      "description": "From kneeling or plank, reach arms forward to extend and then pull back using lats and core without hyperextending."
+    },
+    {
+      "id": "pikes_trx_ball",
+      "name": "Pikes with TRX or Ball",
+      "category": "core",
+      "modes": ["core","hiit"],
+      "equipment": ["TRX or stability ball"],
+      "description": "From plank with feet in straps or on ball, lift hips to form a pike. Control return to plank."
+    },
+    {
+      "id": "squats",
+      "name": "Squats",
+      "category": "lower",
+      "modes": ["strength","hiit"],
+      "equipment": ["bodyweight or load"],
+      "description": "Sit hips back and down with neutral spine, knees tracking over toes. Drive through midfoot to stand."
+    },
+    {
+      "id": "reverse_lunge",
+      "name": "Reverse Lunge",
+      "category": "lower",
+      "modes": ["strength","hiit"],
+      "equipment": ["bodyweight or load"],
+      "description": "Step back into a lunge. Front shin vertical, torso tall, drive through front heel to stand."
+    },
+    {
+      "id": "forward_lunge",
+      "name": "Forward Lunge",
+      "category": "lower",
+      "modes": ["strength","hiit"],
+      "equipment": ["bodyweight or load"],
+      "description": "Step forward and lower under control. Push back to start using the front leg."
+    },
+    {
+      "id": "plank",
+      "name": "Plank",
+      "category": "core",
+      "modes": ["core","hiit"],
+      "equipment": [],
+      "description": "Forearm or high plank. Straight line from head to heels, glutes squeezed, ribs down."
+    },
+    {
+      "id": "walkout_rope_hold",
+      "name": "Walk Out Isometric Rope Hold",
+      "category": "full",
+      "modes": ["strength","hiit"],
+      "equipment": ["cable or rope machine"],
+      "description": "Walk out from the machine holding arms straight at chest height under tension. Brace and hold."
+    },
+    {
+      "id": "wood_chops",
+      "name": "Wood Chops",
+      "category": "full",
+      "modes": ["strength","hiit"],
+      "equipment": ["cable or band or med ball"],
+      "description": "Rotate from high to low or low to high using hips and core. Keep arms long and shoulders packed."
+    },
+    {
+      "id": "trx_row",
+      "name": "TRX Row",
+      "category": "upper",
+      "modes": ["strength"],
+      "equipment": ["TRX"],
+      "description": "Keep body rigid, pull chest to handles. Squeeze shoulder blades without shrugging."
+    },
+    {
+      "id": "side_plank",
+      "name": "Side Plank",
+      "category": "core",
+      "modes": ["core"],
+      "equipment": [],
+      "description": "Elbow under shoulder, hips stacked. Hold a straight line from head to heels."
+    },
+    {
+      "id": "chest_pulls",
+      "name": "Chest Pulls",
+      "category": "upper",
+      "modes": ["strength"],
+      "equipment": ["cable or band"],
+      "description": "Horizontal pull pattern. If you intended reverse fly or cable row, select grip and path accordingly and keep ribs down."
+    },
+    {
+      "id": "face_pulls",
+      "name": "Face Pulls",
+      "category": "upper",
+      "modes": ["strength"],
+      "equipment": ["cable or band"],
+      "description": "Pull rope toward face with elbows high and out. Focus on rear delts and mid traps."
+    },
+    {
+      "id": "power_pulls",
+      "name": "Power Pulls",
+      "category": "upper",
+      "modes": ["strength","hiit"],
+      "equipment": ["cable or band"],
+      "description": "Explosive high pull with rotational finish. Keep core braced and control the eccentric."
+    },
+    {
+      "id": "chest_press_ball",
+      "name": "Chest Press on Ball",
+      "category": "upper",
+      "modes": ["strength"],
+      "equipment": ["dumbbells and stability ball"],
+      "description": "Bridge hips, upper back on ball, press dumbbells from chest to lockout with wrists neutral."
+    },
+    {
+      "id": "chest_fly_ball",
+      "name": "Chest Fly on Ball",
+      "category": "upper",
+      "modes": ["strength"],
+      "equipment": ["dumbbells and stability ball"],
+      "description": "With back on ball, open arms with slight elbow bend then squeeze chest to return bells over chest."
+    },
+    {
+      "id": "snow_angels",
+      "name": "Snow Angels (Laying or Standing)",
+      "category": "upper",
+      "modes": ["strength","hiit"],
+      "equipment": [],
+      "description": "Arms sweep out and up like making a snow angel. Keep ribs down and neck long."
+    },
+    {
+      "id": "shoulder_press",
+      "name": "Shoulder Press",
+      "category": "upper",
+      "modes": ["strength"],
+      "equipment": ["dumbbells or barbell or cables"],
+      "description": "Press overhead with ribs stacked over hips. Finish with biceps by ears and no low back arch."
+    },
+    {
+      "id": "curtsey_lunge_trx",
+      "name": "Curtsey Lunge TRX",
+      "category": "lower",
+      "modes": ["strength","hiit"],
+      "equipment": ["TRX"],
+      "description": "Cross back step with TRX support. Keep front knee tracking and hips square."
+    },
+    {
+      "id": "rev_lunge_to_knee",
+      "name": "Reverse Lunge to Explosive Knee",
+      "category": "lower",
+      "modes": ["hiit","strength"],
+      "equipment": [],
+      "description": "Step back to lunge then drive up through the front leg to an explosive knee lift."
+    }
+  ]
+}

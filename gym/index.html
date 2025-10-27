@@ -4,28 +4,35 @@
 <head>
     <meta charset="utf-8">
     <title>Workout Builder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="rgba(50, 43, 88, 0.1)">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <link rel="stylesheet" href="https://unpkg.com/dragula@3.7.3/dist/dragula.min.css">
     <script src="https://unpkg.com/dragula@3.7.3/dist/dragula.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <!-- Minimal styles for layout -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --gap: 12px;
             --pad: 12px;
-            --bg: #111;
-            --ink: #f9fafb;
-            --muted: #999;
-            --accent: #00bfa5;
+            --bg: #1e1b2e;
+            --bg-alt: #2a2542;
+            --ink: #e8e7f3;
+            --muted: #aaa3d4;
+            --accent: #9effff;
+            --accent2: #ffb3f3;
+            --card: #25213a;
+            --border: #3c3660;
         }
 
         body {
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             color: var(--ink);
-            background: #000;
-            background-repeat: repeat;
+            background: radial-gradient(circle at 20% 20%, #322b58 0%, #1a1630 100%);
+            background-attachment: fixed;
         }
 
         .wrap {
@@ -43,15 +50,17 @@
         }
 
         .card {
-            background: var(--bg);
-            border: 1px solid #222;
+            background: var(--card);
+            border: 1px solid var(--border);
             border-radius: 12px;
             padding: var(--pad);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
         }
 
         h1,
         h2 {
             margin: 0 0 6px 0;
+            letter-spacing: 0.03em;
         }
 
         label {
@@ -92,24 +101,25 @@
         button {
             border: none;
             border-radius: 14px;
-            background: #333;
-            color: #fff;
+            background: var(--accent2);
+            color: #1e1b2e;
             font-weight: 600;
             padding: 14px 18px;
             font-size: 18px;
             letter-spacing: 0.02em;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            transition: transform 0.1s ease;
+            box-shadow: 0 2px 6px rgba(255, 179, 243, 0.4);
+            transition: transform 0.1s ease, box-shadow 0.3s ease;
         }
 
         button.primary {
             background: var(--accent);
-            color: #000;
+            color: #1e1b2e;
+            box-shadow: 0 2px 6px rgba(158, 255, 255, 0.5);
         }
 
         button:active {
             transform: scale(0.97);
-            background: #555;
+            background: #87f3f3;
         }
 
         .stack {
@@ -118,11 +128,12 @@
         }
 
         .exercise {
-            background: #222;
-            border: 1px solid #333;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
             border-radius: 10px;
             padding: 10px;
             cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         }
 
         .exercise-header {
@@ -131,21 +142,12 @@
             align-items: center;
         }
 
-        .remove-btn {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .remove-btn:hover {
-            color: #ff5252;
-        }
 
         .exercise h4 {
             margin: 0;
             font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
         }
 
         .exercise small {
@@ -200,12 +202,28 @@
             font-size: 18px;
             padding: 8px 10px;
             border-radius: 8px;
-            background: #181818;
-            border: 1px solid #333;
+            color: var(--accent);
+            background: rgba(42, 37, 66, 0.9);
+            border: 1px solid var(--border);
+        }
+
+        .timer {
+            height: 35vh;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .timer .timebox {
+            flex: 1 1 100%;
+        }
+
+        .timer button {
+            flex: 1 1 auto;
         }
 
         .running {
-            color: var(--accent);
+            color: var(--accent2);
             font-weight: 600;
         }
 
@@ -229,7 +247,7 @@
 
         #p5-timer {
             width: 100%;
-            height: 60vh;
+            height: 45vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -241,51 +259,15 @@
             height: auto !important;
         }
 
-        .exercise-controls {
-            display: flex;
-            align-items: center;
+        .exercise-controls .add-btn svg {
+            stroke: #7effa0;
         }
 
+        /* @media (max-width: 800px) { ... } section removed to enforce desktop styles on all viewports */
 
-        @media (max-width: 800px) {
-            body {
-                font-size: 1.4rem;
-            }
-
-            h1,
-            h2 {
-                font-size: 2.4rem;
-            }
-
-            button,
-            input,
-            select {
-                width: 100%;
-                font-size: 1.4rem;
-                padding: 1rem
-            }
-
-            .timer {
-                flex-direction: column;
-                align-items: stretch;
-                position: sticky;
-                bottom: 0;
-                background: #111;
-                padding: 1rem;
-                border-top: 1px solid #333;
-            }
-
-            .grid-3 {
-                grid-template-columns: 1fr;
-            }
-
-            .lists {
-                grid-template-columns: 1fr;
-            }
-
-            .exercise {
-                font-size: 1rem;
-            }
+        #p5-timer canvas {
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(158, 255, 255, 0.2);
         }
 
         /* === Clean, consistent button icon colors (no glow) === */
@@ -311,6 +293,15 @@
             color: #ffffff !important;
             filter: brightness(1.3);
         }
+
+        .exercise-controls .remove-btn svg {
+            stroke: #ff7b7b;
+        }
+
+        .exercise-controls .move-up svg,
+        .exercise-controls .move-down svg {
+            stroke: #25213a;
+        }
     </style>
 
 </head>
@@ -318,21 +309,17 @@
 <body>
     <div class="wrap">
         <div class="card stack">
-            <div style="display:flex;align-items:center;">
-                <h2 style="margin:0;">Timer</h2>
-            </div>
             <div id="p5-timer"></div>
             <div class="timer">
                 <div id="phase" class="timebox">Idle</div>
                 <div id="clock" class="timebox">00:00</div>
                 <div id="nowDoing" class="timebox">-</div>
+                <br>
                 <button id="start" class="primary">Start</button>
                 <button id="pause">Pause</button>
                 <button id="reset">Reset</button>
             </div>
             <div id="nextDoing" class="timebox">Next: -</div>
-            <div class="meta">Sequence is Set 1 to Set N. Each set runs all items in the Set Template: Work then Short
-                Rest between items, with Set Break after last item.</div>
         </div>
         <div class="row">
             <div class="card stack">
@@ -376,15 +363,16 @@
                     description.</div>
             </div>
         </div>
-        <div class="lists">
+        <div class="row">
             <div class="card">
                 <h2>Today's Workout</h2>
                 <div id="set" class="list"></div>
             </div>
+        </div>
+        <div class="row">
             <div class="card">
                 <h2>Exercise Pool</h2>
                 <div id="pool" class="list"></div>
-
             </div>
         </div>
     </div>
@@ -1074,10 +1062,16 @@
                     prevRem = remSec;
 
                     // Color by phase
-                    if (curPhase === "Work") phaseColor = "#00e676";
-                    else if (curPhase === "Short Rest") phaseColor = "#ffd600";
-                    else if (curPhase === "Set Break") phaseColor = "#2979ff";
-                    else phaseColor = "#333";
+                    // if (curPhase === "Work") phaseColor = "#00e676";
+                    // else if (curPhase === "Short Rest") phaseColor = "#ffd600";
+                    // else if (curPhase === "Set Break") phaseColor = "#2979ff";
+                    // else phaseColor = "#333";
+                    if (curPhase === "Work") phaseColor = "#7effa0";      // mint green
+                    else if (curPhase === "Short Rest") phaseColor = "#ffd6a5"; // warm peach
+                    else if (curPhase === "Set Break") phaseColor = "#b8b3ff";  // lavender blue
+                    else phaseColor = "#665c8a";
+                    p.background("#1b1730");
+                    p.stroke("#3c3660");
 
                     // Fraction remaining
                     const frac = totalSec > 0 ? remSec / totalSec : 1;
@@ -1131,11 +1125,11 @@
                     const timeText = (min > 0 ? min + ":" : "") + sec.toString().padStart(2, "0");
                     p.textSize(timeFontSize);
                     p.fill("#aaa");
-                    const textGap = p.height/10;
+                    const textGap = p.height / 10;
                     p.text(timeText, cx, cy + textGap);
-                    p.textSize(timeFontSize/3);
-                    p.text(nextDoingEl.innerText, cx, cy + textGap*2);
-                    
+                    p.textSize(timeFontSize / 3);
+                    p.text(nextDoingEl.innerText, cx, cy + textGap * 2);
+
                 };
             });
         })();

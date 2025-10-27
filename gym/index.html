@@ -760,26 +760,32 @@
                     p.fill("#fff");
                     p.textAlign(p.CENTER, p.CENTER);
 
-                    const labelFontSize = size / 10;
-                    const timeFontSize = size / 12;
-                    p.textSize(labelFontSize);
-
                     // What to show inside
                     let displayText = curPhase;
                     if (curPhase === "Work" && curLabel && !curLabel.includes("Rest")) {
                         displayText = curLabel.replace(/^Set \d+:\s*/, ""); // remove "Set X:" prefix
                     }
 
+                    // Dynamically determine font size so text fits within the circle
+                    let maxWidth = size * 0.7;
+                    let fontSize = size / 10;
+                    p.textSize(fontSize);
+                    while (p.textWidth(displayText) > maxWidth && fontSize > 10) {
+                        fontSize -= 1;
+                        p.textSize(fontSize);
+                    }
+
                     // Draw main label
                     p.text(displayText, cx, cy - 10);
 
                     // Draw time below label
+                    const timeFontSize = size / 12;
                     const min = Math.floor(remSec / 60);
                     const sec = remSec % 60;
                     const timeText = (min > 0 ? min + ":" : "") + sec.toString().padStart(2, "0");
                     p.textSize(timeFontSize);
                     p.fill("#aaa");
-                    p.text(timeText, cx, cy + labelFontSize / 1.2);
+                    p.text(timeText, cx, cy + fontSize / 1.2);
                 };
             });
         })();

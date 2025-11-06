@@ -12,6 +12,8 @@ So, I am going to make something wavey. The last game jam taught me a lot. I've 
 
 I might vibe a little bit. I refuse to use it for any of the artistic components. Video Games Are Art. Making the graphics, music, story, levels - that is the fun stuff. Video games also have a bunch of boring behind the scenes infrastructure stuff that is less art. and that is where I might vibe for a bit. 
 
+My friend / R Sigma co-founder Alex will also be contributing - this is gonna be a team effort!
+
 I have kicked off with a very intentional archtecture layout. 
 
 ```

@@ -26,6 +26,8 @@ title: internal_map
 
     {% elsif post.tags contains 'gameprogress' %}
 
+    {% elsif post.tags contains 'game2progress' %}
+
     {% else %}
 
     startpost

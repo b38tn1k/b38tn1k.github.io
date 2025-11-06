@@ -55,3 +55,8 @@ I have kicked off with a very intentional archtecture layout.
 ```
 
 I have a bit of an idea of what I want to make. will see how we go
+
+
+...Later
+
+forgot to say. I will once again be building with p5 js / javascript, aiming for something generally accessible on any device with a modern web browser. I like showing people what I make without having to install stuff. and I like p5.js 

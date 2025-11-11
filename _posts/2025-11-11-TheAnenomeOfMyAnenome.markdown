@@ -43,3 +43,8 @@ Still in architecture mode - building out a tool to convert ASCII art definition
 it is not even rendered in programmer art yet - it is all boxes, with a basic necesary bitcrusher pixelator shader stuff 
 
 ![a little progress](https://b38tn1k.github.io/images/nov2maze1.png)
+
+## mostly IMPORTANT TODOs
+1. Decide how I want to do maps - thinking N++ style, full map on screen. I think would be nice to see the goal, this game is a maze problem more than anything, and I think I like full screen only mazes
+2. Physics - collision, blocking, grabbing, floating, current zones and how they impart momentum
+3. More Physics - recycle [spider web physics sim](https://b38tn1k.github.io/awickedweb/) concept into anenome fronds that move individually.. and sea weed etc...

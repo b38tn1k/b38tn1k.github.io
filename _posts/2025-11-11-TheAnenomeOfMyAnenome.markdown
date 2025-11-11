@@ -47,4 +47,4 @@ it is not even rendered in programmer art yet - it is all boxes, with a basic ne
 ## mostly IMPORTANT TODOs
 1. Decide how I want to do maps - thinking N++ style, full map on screen. I think would be nice to see the goal, this game is a maze problem more than anything, and I think I like full screen only mazes
 2. Physics - collision, blocking, grabbing, floating, current zones and how they impart momentum
-3. More Physics - recycle [spider web physics sim](https://b38tn1k.github.io/awickedweb/) concept into anenome fronds that move individually.. and sea weed etc...
+3. More Physics - recycle [spider web physics sim](https://b38tn1k.github.io/awickedweb/) concept into anenome fronds that move individually.. and sea weed etc... currents should be able to rotate and flip anenome - thinking about [motion like i did here](https://b38tn1k.github.io/toysat/) too I guess. Anenome should be like two rigid nodes that each have momentum added to get rotation, plus a number of nodes connected via spring constant, that can wobble and react to motion naturally (like fronds). when you want to sink, they pull in (spring constant change) otherwise they float around

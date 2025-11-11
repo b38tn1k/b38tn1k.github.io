@@ -7,7 +7,7 @@ import { createGameState } from './core/state.js';
 import { Debug } from './core/debug.js';
 import { createUI } from './core/ui.js';
 import { Settings } from './config/settings.js';
-import { parseLevel } from '../core/parseLevel.js';
+import { parseLevel } from './core/parseLevel.js';
 
 import { MenuScene } from './scenes/menu.js';
 import { Level1Scene } from './scenes/level1.js';

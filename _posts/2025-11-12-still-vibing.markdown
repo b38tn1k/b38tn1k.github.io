@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Still Vibe Coding"
-date:   2025-11-11
+date:   2025-11-12
 categories: [game, november]
 tags: game2progress
 ---

@@ -29,7 +29,8 @@ Both are information mediums.
 
 When you dance, draw, compose, act, or create in any artistic form, you’re encoding complex, human information — a feeling, a perspective, an experience. You’re capturing something subjective so it can be shared, interpreted, and felt by others. Art is inherently human and inherently subjective.
 
-Coding is different. Filling out a form, tracking data in Excel, centering a div — all of this works inside a mechanically structured paradigm. Code exists to encode information for mechanical processing. It has to be objective. Java runs on multiple devices precisely because it can’t depend on subjective interpretation. Sure, implementation style can be opinionated, but the deeper you go, the less those opinions matter. Code can be elegant, but it’s not art.
+Coding is different. Filling out a form, tracking data in Excel, centering a div — all of this works inside a mechanically structured paradigm. Code exists to encode information for mechanical processing. It has to be objective. Java runs on multiple devices precisely because it can’t depend on subjective interpretation. Sure, implementation style can be opinionated, but the deeper you go, the less those opinions matter. Code can be elegant, but it’s not art. 
+
 
 In games, code serves the art. It enables the subjective experience, but it stays objective. And for me, that’s the line I keep returning to while making this silly, wobbly game that bundles a couple of maze puzzles inside the most overused narrative structure in human history:
 

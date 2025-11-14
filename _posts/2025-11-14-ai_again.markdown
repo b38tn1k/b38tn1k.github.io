@@ -1,0 +1,41 @@
+---
+layout: post
+title: ai_again
+date: 2025-11-14
+categories: [game, november]
+tags: game2progress
+---
+
+Sharing this process blog with friends has led to a couple fun conversations on AI - vibe coding vs art. Mostly being engineers, is a crowd that is neither ‘AI bloomers’ or ‘AI doomers’ - more ‘AI realist’. AI can be used to do amazing things. It can be used to do terrible things. It’s that song… guns don’t kill people. I kill people. With guns. 
+
+Anyyyyway…. ramble time. What is similar between Art and code?
+
+They’re both information mediums. 
+
+If you’re dancing or drawing or composing or acting or whatever; you’re doing art. And you’re likely doing it to capture some sort of information for yourself or an audience - a perspective or experience or feeling. it’s complex human-origin information, encapsulated for exchange and human processing. It’s inherently subjective. 
+
+If you’re filling out a form, tracking data in excel, trying to center a div in your website, etc you are working in a mechanically structured paradigm to encapsulate information in a mechanical domain - coding. It is necessary for code to be objective. Java can run of more than 4 different devices (at time of writing). Obviously, implementation can be opinionated, the lower down you go, the less that opinion matters. Code can be elegant, but it’s not art.In video games, the code supports the art. Code is used to achieve a subjective goal, but it remains objective. For me to enjoy the human experience of creating this silly wobbly game that wraps a couple maze puzzles up with an unnecessary retelling of the most retold story template in all history I draw a line in implementation: where do I think being a human is necessary, when am I just wasting time conceding to the mechanical paradigm necessary to get to those moments? 
+
+```
+Here’s a clearer, more structured version that keeps your voice and intent intact while tightening the flow:
+
+⸻
+
+Sharing this process blog with friends has sparked a few fun conversations about AI — especially the contrast between “vibe coding” and art. Most of the folks I talk to are engineers, so they’re not really “AI bloomers” or “AI doomers.” They’re more like AI realists. AI can be used for remarkable things, and it can be used for destructive things. It’s the old line: guns don’t kill people. I kill people. With guns.
+
+Anyway — ramble time. What actually connects art and code?
+
+Both are information mediums.
+
+When you dance, draw, compose, act, or create in any artistic form, you’re encoding complex, human information — a feeling, a perspective, an experience. You’re capturing something subjective so it can be shared, interpreted, and felt by others. Art is inherently human and inherently subjective.
+
+Coding is different. Filling out a form, tracking data in Excel, centering a div — all of this works inside a mechanically structured paradigm. Code exists to encode information for mechanical processing. It has to be objective. Java runs on multiple devices precisely because it can’t depend on subjective interpretation. Sure, implementation style can be opinionated, but the deeper you go, the less those opinions matter. Code can be elegant, but it’s not art.
+
+In games, code serves the art. It enables the subjective experience, but it stays objective. And for me, that’s the line I keep returning to while making this silly, wobbly game that bundles a couple of maze puzzles inside the most overused narrative structure in human history:
+
+Where does my humanity matter, and where am I just surrendering to the mechanical paradigm so I can get back to the moments that actually feel human?
+
+⸻
+
+If you want, I can also make a shorter, punchier version, or tune it for a blog post style.
+```

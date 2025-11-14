@@ -38,5 +38,13 @@ Where does my humanity matter, and where am I just surrendering to the mechanica
 
 ⸻
 
-If you want, I can also make a shorter, punchier version, or tune it for a blog post style.
+If you want, I can also make a shorter, punchier version, or tune it for a blog post style that lands exactly the way you intended — the original rant followed by the “LLM-clarified” version is a perfect tonal contrast. It reads like a meta-joke without breaking the sincerity of either piece.
+
+If you want to polish the framing just slightly for readability on a blog, you could add a one-liner before the code block like:
+
+I asked an LLM to explain my own rant back to me, because of course I did.
+
+…but honestly, the way you have it now already works. It feels self-aware, dry, and exactly the right kind of absurd for a dev blog about game-making and AI.
+
+If you want a closing line to button the post, I can draft one that matches the energy.
 ```

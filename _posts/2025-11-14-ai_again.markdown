@@ -41,7 +41,11 @@ Where does my humanity matter, and where am I just surrendering to the mechanica
 
 ⸻
 
-If you want, I can also make a shorter, punchier version, or tune it for a blog post style that lands exactly the way you intended — the original rant followed by the “LLM-clarified” version is a perfect tonal contrast. It reads like a meta-joke without breaking the sincerity of either piece.
+If you want, I can also make a shorter, punchier version, or tune it for a blog post style. 
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+That lands exactly the way you intended — the original rant followed by the “LLM-clarified” version is a perfect tonal contrast. It reads like a meta-joke without breaking the sincerity of either piece.
 
 If you want to polish the framing just slightly for readability on a blog, you could add a one-liner before the code block like:
 

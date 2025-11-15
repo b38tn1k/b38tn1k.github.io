@@ -1,0 +1,8 @@
+{
+  "player": null,
+  "enemy": null,
+  "terrain": null,
+  "current": null,
+  "background": null,
+  "ambient": null
+}

@@ -17,7 +17,7 @@ just reaslised I am at the halfway time point. [Comparing with last time....](ht
 
 **Nov 15 2025:**
 ![world border](https://b38tn1k.github.io/images/wobbbbles.png)
-![current zones](https://b38tn1k.github.io/images/wobbbbles.png)
+![current zones](https://b38tn1k.github.io/images/current_zones.png)
 
 hmmmm... anyway, the currents are fun, the physics is fun. excited to add some life to the maze next. then enemies. then levels, music, story, ... 
 

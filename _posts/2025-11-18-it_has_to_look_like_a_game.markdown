@@ -13,6 +13,6 @@ I noticed today that I could spent the rest of the month on this stuff. And I st
 
 I made a dumb dumb dumb logo that I thought was sorta funny in pixelmator. WordArt graphic design is my passion style. but then I made an animated version of it in p5 that wobbles, which is better. I'm REALLLY going to be leaning on pixelation and shaders to make this thing shiny
 
-![Graphic Design Is My Passion](https://b38tn1k.github.io/novemver2/assets/created/logo1.png)
+![Graphic Design Is My Passion](https://b38tn1k.github.io/november2_snapshots/november2_v4/assets/created/logo1.png)
 
 Music: have some ideas for an extended ambient / instagambient modular synth jam that will sound underwater and stuff. I have been building my own reverb module that is waiting for December for me to finish - a little annoyed it is not ready for recording. 

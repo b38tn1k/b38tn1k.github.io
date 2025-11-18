@@ -93,9 +93,77 @@ void main() {
   bool isTerrain = distance(maskColor.rgb, uChromaTerrain.rgb) < eps;
   bool isBackground = distance(maskColor.rgb, uChromaBackground.rgb) < eps;
   bool isCurrents = distance(maskColor.rgb, uChromaCurrents.rgb) < eps;
+  bool isPlayer = distance(maskColor.rgb, uChromaPlayer.rgb) < eps;
+  bool isEnemy = distance(maskColor.rgb, uChromaEnemy.rgb) < eps;
+  bool isAmbient = distance(maskColor.rgb, uChromaAmbient.rgb) < eps;
 
   if (exitEarly) {
     gl_FragColor = maskColor;
+    return;
+  }
+
+  // Player outline detection
+  // Sample surrounding texels; if any are player but this one is not, draw
+  // black outline
+  if (!isPlayer) {
+    float o = 1.0 / 380.0; // slightly larger radius for thicker outline
+
+    vec2 offsets[8];
+    offsets[0] = vec2(-o, 0.0);
+    offsets[1] = vec2(o, 0.0);
+    offsets[2] = vec2(0.0, -o);
+    offsets[3] = vec2(0.0, o);
+
+    // Diagonals for thicker silhouette
+    offsets[4] = vec2(-o, -o);
+    offsets[5] = vec2(o, -o);
+    offsets[6] = vec2(-o, o);
+    offsets[7] = vec2(o, o);
+
+    bool nearPlayer = false;
+    for (int i = 0; i < 8; i++) {
+      vec4 mc = texture2D(tex0, uv + offsets[i]);
+      if (distance(mc.rgb, uChromaPlayer.rgb) < eps) {
+        nearPlayer = true;
+      }
+    }
+
+    if (nearPlayer) {
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+      return;
+    }
+  }
+  if (isPlayer) {
+
+    // -----------------------------------------
+    // Vibrant Starfish Shader (Pink + Speckles)
+    // -----------------------------------------
+
+    vec2 p = uv;
+
+    // Base vibrant starfish color
+    vec3 basePink = vec3(1.00, 0.25, 0.65);
+
+    // Radial starfish-style darkening toward center
+    vec2 center = vec2(0.5, 0.5);
+    float dist = distance(p, center);
+    float radial = smoothstep(0.8, 0.2, dist);
+    vec3 starfishColor = mix(basePink * 1.3, basePink * 0.8, radial);
+
+    // Purple speckles using layered noise
+    float speck1 = noise(p * 40.0 + uTime * 0.4);
+    float speck2 = noise(p * 90.0 - uTime * 0.3);
+    float speckMask = smoothstep(0.75, 0.88, speck1 + speck2 * 0.5);
+
+    vec3 purple = vec3(0.55, 0.20, 0.85);
+    starfishColor = mix(starfishColor, purple, speckMask * 0.7);
+
+    // Tiny bright sparkles
+    float spark = noise(p * 120.0 + uTime * 1.1);
+    spark = smoothstep(0.92, 0.97, spark);
+    starfishColor += vec3(1.0, 0.6, 1.0) * spark * 0.3;
+
+    gl_FragColor = vec4(starfishColor, 1.0);
     return;
   }
 
@@ -119,16 +187,16 @@ void main() {
     float caustics = smoothstep(0.6, 1.1, n1 + 0.5 * n2);
 
     // Base water color
-    vec3 deepColor = vec3(0.02, 0.08, 0.18);
-    vec3 midColor = vec3(0.05, 0.22, 0.42);
-    vec3 shallowColor = vec3(0.10, 0.35, 0.55);
+    vec3 deepColor = vec3(0.02, 0.10, 0.12);
+    vec3 midColor = vec3(0.05, 0.35, 0.45);
+    vec3 shallowColor = vec3(0.15, 0.70, 0.65);
 
     // Depth-based color blend
     vec3 waterColor = mix(deepColor, midColor, depth);
     waterColor = mix(waterColor, shallowColor, depth * 0.5);
 
     // Apply caustic highlights
-    waterColor += caustics * 0.25;
+    waterColor += caustics * 0.35;
 
     // God-ray beams from a point above the screen
     vec2 lightPos = vec2(0.5, 1.3);
@@ -141,10 +209,10 @@ void main() {
     float rayFalloff = exp(-distToLight * 3.0);
 
     float godRays = rayMask * rayFalloff;
-    waterColor += vec3(0.12, 0.20, 0.30) * godRays * 0.3;
+    waterColor += vec3(0.22, 0.45, 0.50) * godRays * 0.35;
     // Fog falloff with depth (distant water gets hazy and brighter)
-    float fogAmount = smoothstep(0.3, 1.0, uv.y);
-    vec3 fogColor = vec3(0.20, 0.40, 0.60);
+    float fogAmount = smoothstep(0.55, 1.1, uv.y);
+    vec3 fogColor = vec3(0.35, 0.75, 0.80);
     waterColor = mix(waterColor, fogColor, fogAmount * 0.5);
 
     gl_FragColor = vec4(waterColor, 1.0);
@@ -163,9 +231,10 @@ void main() {
     float n1 = fbm(p * 2.0);
     float n2 = fbm(p * 5.0 + vec2(3.1, 7.3));
     float n3 = fbm(p * 12.0 - vec2(5.4, 1.7));
+    float pebble = noise(p * 25.0) * 0.4 + noise(p * 60.0) * 0.2;
 
     // Combined rock height map
-    float height = n1 * 0.6 + n2 * 0.3 + n3 * 0.1;
+    float height = n1 * 0.5 + n2 * 0.3 + n3 * 0.1 + pebble * 0.4;
 
     // Derive normals from height field (cheap normal mapping)
     float epsN = 0.001;
@@ -185,25 +254,27 @@ void main() {
     float ao = smoothstep(0.0, 0.5, height);
 
     // Cave palette
-    vec3 darkRock = vec3(0.08, 0.07, 0.08);
-    vec3 midRock = vec3(0.23, 0.22, 0.24);
-    vec3 lightRock = vec3(0.42, 0.40, 0.43);
+    vec3 darkRock = vec3(0.30, 0.28, 0.24);
+    vec3 midRock = vec3(0.55, 0.50, 0.40);
+    vec3 lightRock = vec3(0.82, 0.78, 0.65);
 
     // Base color from height
     vec3 rockColor = mix(darkRock, midRock, height);
-    rockColor = mix(rockColor, lightRock, diffuse * 0.5);
+    rockColor = mix(rockColor, lightRock, diffuse * 1.1);
 
     // Add surface grit
     float grit = noise(p * 40.0);
-    rockColor += grit * 0.05;
+    rockColor += grit * 0.12;
+    float pebbleShade = smoothstep(0.55, 0.85, pebble);
+    rockColor -= vec3(0.12, 0.10, 0.09) * pebbleShade * 0.4;
 
     // Add moisture streaks on vertical surfaces
     float wet = fbm(p * vec2(1.0, 6.0) + vec2(0.0, -uTime * 0.1));
     wet = smoothstep(0.65, 0.95, wet);
-    rockColor += vec3(0.05, 0.07, 0.10) * wet * 0.3;
+    rockColor += vec3(0.10, 0.15, 0.18) * wet * 0.15;
 
     // Apply ambient occlusion
-    rockColor *= (0.6 + ao * 0.4);
+    rockColor *= (0.70 + ao * 0.35);
 
     gl_FragColor = vec4(rockColor, 1.0);
   } else {

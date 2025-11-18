@@ -16,3 +16,5 @@ I made a dumb dumb dumb logo that I thought was sorta funny in pixelmator. WordA
 ![Graphic Design Is My Passion](https://b38tn1k.github.io/november2_snapshots/november2_v4/assets/created/logo1.png)
 
 Music: have some ideas for an extended ambient / instagambient modular synth jam that will sound underwater and stuff. I have been building my own reverb module that is waiting for December for me to finish - a little annoyed it is not ready for recording. 
+
+[Snapshot](https://b38tn1k.github.io/november2_snapshots/november2_v4)

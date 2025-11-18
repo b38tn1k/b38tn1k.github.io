@@ -1,6 +1,6 @@
 import { PhysicsWorld } from './PhysicsWorld.js';
 import { PhysicsSolver } from './PhysicsSolver.js';
-import { GeometryTools } from './GeometryTools.js';
+import { GeometryTools } from './geometryTools.js';
 import { SceneDrawingMixin } from './SceneDrawingMixin.js';
 export class BaseScene {
   constructor(p) {

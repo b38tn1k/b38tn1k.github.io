@@ -1,4 +1,4 @@
-import { GeometryTools } from './GeometryTools.js';
+import { GeometryTools } from './geometryTools.js';
 
 export function drawWorldBoundary(p, layer, mapTransform) {
   if (!layer || !mapTransform) {

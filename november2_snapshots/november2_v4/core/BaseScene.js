@@ -1,6 +1,6 @@
 import { PhysicsWorld } from './PhysicsWorld.js';
 import { PhysicsSolver } from './PhysicsSolver.js';
-import { GeometryTools } from './GeometryTools.js';
+import { GeometryTools } from './geometryTools.js';
 import { SceneDrawingMixin } from './SceneDrawingMixin.js';
 import { generateCurrents } from './generateCurrents.js';
 import { MyButton } from '../components/myButton.js';

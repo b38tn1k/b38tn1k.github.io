@@ -1,6 +1,6 @@
 ---
 layout: post
-title: adding-a-goal
+title: adding a goal
 date: 2025-11-21
 categories: [game, november]
 tags: game2progress

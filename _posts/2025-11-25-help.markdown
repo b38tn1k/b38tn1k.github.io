@@ -1,0 +1,13 @@
+---
+layout: post
+title: help
+date: 2025-11-25
+categories: [game, november]
+tags: game2progress
+---
+
+Cassie drew some art today for the opening sequence - a little orientation story with Pink and Yellow. We're doing paper cutout style animation. It looks fun in the early test (hit space on the snapshot)
+
+![BG](https://b38tn1k.github.io/images/story_bg_2.png)
+![Characters](https://b38tn1k.github.io/images/anemones.jpeg)
+[Snapshot](https://b38tn1k.github.io/november2_snapshots/november2_v6)

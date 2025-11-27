@@ -14,3 +14,11 @@ anyway, all is good.
 ![Menu](https://b38tn1k.github.io/images/menumenumeun.png)
 
 snapshot later tonight...
+
+TODOS
+- make shaders desaturate on level fail / death
+- record audio for last animatic scene
+- make monseter butterfly fish work good 
+
+
+[Snapshot](https://b38tn1k.github.io/november2_snapshots/november2_v7)

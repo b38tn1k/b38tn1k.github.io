@@ -1,6 +1,6 @@
 ---
 layout: post
-title: level_creation
+title: Level Creation - Part 1
 date: 2025-11-28
 categories: [game, november]
 tags: game2progress

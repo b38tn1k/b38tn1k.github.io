@@ -8,6 +8,8 @@ tags: game2progress
 
 Just for fun, I copied the level creation tips into chat gpt and prompted "given this information - design me a fun level!"
 
+It kills you immediatly.
+
 ## Result
 
 Below is a complete, ready-to-paste level JSON that builds a fun, readable, non-cheap, slightly puzzle-like flow-based level using:

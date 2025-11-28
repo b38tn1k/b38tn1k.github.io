@@ -1,22 +1,3 @@
----
-layout: post
-title: Level Creation - Part 1
-date: 2025-11-28
-categories: [game, november]
-tags: game2progress
----
-
-Levels are described using JSON format. Levels are tile-based, with various layers allowing for overlapping components (currents over terrain for example). 
-
-The "layout" layer requires specific characters. '#' indicates terrain, 'S' indicates the spawn location, and 'E' indications the end goal. 
-
-All other layers provide a legend, that allows for creation of various objects and configuration of parameters. You can see examples below.
-
-Testing level design is possble using the [/] button on the [home screen of the game.](https://b38tn1k.github.io/november2_snapshots/november2_v8)
-
-More stuff will be added, but this is a start!
-
-```
 {
     "name": "level7",
     "layers": {
@@ -172,4 +153,3 @@ More stuff will be added, but this is a start!
         }
     }
 }
-```

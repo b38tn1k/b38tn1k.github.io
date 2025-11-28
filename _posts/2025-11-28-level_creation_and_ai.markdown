@@ -41,7 +41,7 @@ Design Notes
 ⸻
 
 JSON (drop-in ready)
-``
+```
 {
   "name": "flow_garden",
   "layers": {
@@ -129,7 +129,7 @@ JSON (drop-in ready)
     "D": { "type": "spike", "direction": "down" }
   }
 }
-``
+```
 
 ⸻
 

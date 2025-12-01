@@ -1,0 +1,30 @@
+{
+    "debounceTime": 15,
+    "keyMap": {
+        "moveUp": [
+            "ArrowUp",
+            "w"
+        ],
+        "moveDown": [
+            "ArrowDown",
+            "s"
+        ],
+        "moveLeft": [
+            "ArrowLeft",
+            "a"
+        ],
+        "moveRight": [
+            "ArrowRight",
+            "d"
+        ],
+        "sink": [
+            " "
+        ],
+        "action": [
+            "Enter"
+        ],
+        "pause": [
+            "Escape"
+        ]
+    }
+}

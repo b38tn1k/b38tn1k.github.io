@@ -1,0 +1,11 @@
+{
+  "player": true,
+  "terrain": true,
+  "vegetation": false,
+  "staticVegetation": false,
+  "current": true,
+  "background": true,
+  "ambient": true,
+  "enemy": true
+  
+}

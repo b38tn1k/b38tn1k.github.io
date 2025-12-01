@@ -29,55 +29,55 @@ export class MenuScene extends BaseScene {
         this.p.shared.audio.play('theme');
     }
 
-    createTextTitle() {
-        const font = this.p.shared.mainFont;
-        const uiLayer = this.renderer.layers.uiLayer;
-        const baseWidth = this.renderer.layers.uiLayer.width;
-        const baseHeight = this.renderer.layers.uiLayer.height;
-        const baseSize = Math.min(baseHeight, baseWidth) / 8;
-        this.title.push(new WobbleText(
-            this.p,
-            font,
-            "THE ANENOME",
-            baseWidth / 2,   // x
-            // baseHeight / 3 - baseSize * 1.3,  // y
-            baseHeight / 3 - baseSize,  // y
-            baseSize,   // size
-            this.renderer.layers.entitiesLayer,
-            {
-                centered: true,
-                outlineOffset: 1,
-            }
-        ));
-        this.title.push(new WobbleText(
-            this.p,
-            font,
-            "OF MY",
-            baseWidth / 2,   // x
-            // baseHeight / 3 - baseSize * 0.8,  // y
-            baseHeight / 3 - baseSize * 0.5,  // y
-            baseSize / 2,   // size
-            this.renderer.layers.entitiesLayer,
-            {
-                centered: true,
-                outlineOffset: 1,
-            }
-        ))
+    // createTextTitle() {
+    //     const font = this.p.shared.mainFont;
+    //     const uiLayer = this.renderer.layers.uiLayer;
+    //     const baseWidth = this.renderer.layers.uiLayer.width;
+    //     const baseHeight = this.renderer.layers.uiLayer.height;
+    //     const baseSize = Math.min(baseHeight, baseWidth) / 8;
+    //     this.title.push(new WobbleText(
+    //         this.p,
+    //         font,
+    //         "THE ANENOME",
+    //         baseWidth / 2,   // x
+    //         // baseHeight / 3 - baseSize * 1.3,  // y
+    //         baseHeight / 3 - baseSize,  // y
+    //         baseSize,   // size
+    //         this.renderer.layers.entitiesLayer,
+    //         {
+    //             centered: true,
+    //             outlineOffset: 1,
+    //         }
+    //     ));
+    //     this.title.push(new WobbleText(
+    //         this.p,
+    //         font,
+    //         "OF MY",
+    //         baseWidth / 2,   // x
+    //         // baseHeight / 3 - baseSize * 0.8,  // y
+    //         baseHeight / 3 - baseSize * 0.5,  // y
+    //         baseSize / 2,   // size
+    //         this.renderer.layers.entitiesLayer,
+    //         {
+    //             centered: true,
+    //             outlineOffset: 1,
+    //         }
+    //     ))
 
-        this.title.push(new WobbleText(
-            this.p,
-            font,
-            "ANEMONE",
-            baseWidth / 2,   // x
-            baseHeight / 3 + (2 * baseSize / 3),  // y
-            baseSize * 1.6,   // size
-            this.renderer.layers.entitiesLayer,
-            {
-                centered: true,
-                outlineOffset: 1,
-            }
-        ))
-    }
+    //     this.title.push(new WobbleText(
+    //         this.p,
+    //         font,
+    //         "ANEMONE",
+    //         baseWidth / 2,   // x
+    //         baseHeight / 3 + (2 * baseSize / 3),  // y
+    //         baseSize * 1.6,   // size
+    //         this.renderer.layers.entitiesLayer,
+    //         {
+    //             centered: true,
+    //             outlineOffset: 1,
+    //         }
+    //     ))
+    // }
 
     onResize(w, h) {
         super.onResize(w, h);
@@ -226,8 +226,9 @@ export class MenuScene extends BaseScene {
             layers.uiLayer.noFill();
             layers.uiLayer.stroke(0);
             layers.uiLayer.textAlign(layers.uiLayer.CENTER, layers.uiLayer.CENTER);
-
-            let textSize = layers.uiLayer.width / 10;
+            
+            let textSize = Math.min(layers.uiLayer.width/10, layers.uiLayer.height/6);
+            // textSize = layers.uiLayer.width / 10;
             layers.entitiesLayer.textSize(textSize);
             layers.uiLayer.textSize(textSize);
 
@@ -239,7 +240,10 @@ export class MenuScene extends BaseScene {
 
             anchory += layers.uiLayer.height / 8;
 
-            textSize = layers.uiLayer.width / 15;
+            
+            // textSize = Math.min(layers.uiLayer.width/15, layers.uiLayer.height/10)
+            // textSize = layers.uiLayer.width / 15;
+            textSize *= 0.6;
             layers.entitiesLayer.textSize(textSize);
             layers.uiLayer.textSize(textSize);
 
@@ -247,7 +251,9 @@ export class MenuScene extends BaseScene {
             layers.uiLayer.text("OF MY", textX, anchory);
             anchory += layers.uiLayer.height / 8;
 
-            textSize = layers.uiLayer.width / 7;
+            // textSize = Math.min(layers.uiLayer.width/7, layers.uiLayer.height/5);
+            // textSize = layers.uiLayer.width / 15;
+            textSize *= 3.0;
             layers.entitiesLayer.textSize(textSize);
             layers.uiLayer.textSize(textSize);
 

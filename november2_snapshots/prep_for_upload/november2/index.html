@@ -13,14 +13,42 @@
 
     <script src="libs/p5/p5.min.js"></script>
     <script src="libs/p5/p5.sound.min.js"></script>
+    <script>
+        // Basic mobile detection — reliable on Safari, iOS WebView, and Android
+        const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isOnItch = window.location.hostname.includes("itch");
 
-    <script type="module" src="./main.js"></script>
+        if (isMobile && isOnItch) {
+            document.write(`
+                <style>
+                    body {
+                    font-family: sans-serif;
+                    padding: 2rem;
+                    text-align: center;
+                    }
+                </style>
+                <h2>Mobile Not Supported</h2>
+                <p>This game currently requires a desktop browser to run when hosted on itch.io.</p>
+                <p>You can play the mostly-mobile-compatible version here:<br><a href="https://b38tn1k.github.io/november2/" target="_blank">https://b38tn1k.github.io/november2/</a></p>
+                `);
+
+            window.__BLOCK_GAME__ = true;
+        }
+    </script>
+
+    <!-- <script type="module" src="./main.js"></script> -->
+    <script type="module">
+        if (!window.__BLOCK_GAME__) {
+            import('./main.js');
+        }
+    </script>
 
 </head>
 
 <body>
     <div id="p5_loading"></div>
     <div id="landing_fg"></div>
+
 </body>
 
 </html>

@@ -42,14 +42,14 @@ canvas.ready {
   width: 100vw;
   height: 100vh;
 
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
 
   /* background: url('assets/created/logo1.png') no-repeat center center;
   background-size: 50vw auto; */
 
-  z-index: 9999;
+  z-index: 999;
   /* ensure it sits above everything */
 }
 

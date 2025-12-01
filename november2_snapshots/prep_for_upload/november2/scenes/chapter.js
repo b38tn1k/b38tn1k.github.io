@@ -7,6 +7,7 @@ export class ChapterScene extends BaseScene {
         super(p);
         this.title = null;
         this.levelLabels = opts.levels;
+        this.columns = 3;
     }
 
     init() {
@@ -32,27 +33,79 @@ export class ChapterScene extends BaseScene {
         this.title.forEach(t => t.onResize?.(this.renderer.layers.entitiesLayer));
     }
 
+    // addLevelButtons() {
+    //     const layer = this.renderer.layers.uiLayer;
+    //     const W = layer.width;
+    //     const H = layer.height;
+
+    //     const rowWidth = W * 0.85;          // row = 1/3 total width
+    //     const btnHeight = H * 0.07;         // 10% screen height
+    //     const y = H /2 - btnHeight;                // bottom third
+
+    //     const count = this.levelLabels.length;
+    //     const padding = rowWidth * 0.1;    // 5% relative internal spacing
+    //     const totalPadding = padding * (count - 1);
+
+    //     const availableWidth = rowWidth - totalPadding;
+    //     const btnWidth = availableWidth / count;
+
+    //     // center the whole row
+    //     const originX = (W - rowWidth) / 2;
+
+    //     this.levelLabels.forEach((level, i) => {
+    //         const x = originX + i * (btnWidth + padding);
+
+    //         const btn = new MyButton(
+    //             x,
+    //             y,
+    //             btnWidth,
+    //             btnHeight,
+    //             "Level " + level,
+    //             this.renderer.layers.uiLayer,
+    //             () => {
+    //                 // selectable action — replace as needed
+    //                 this.p.shared.sceneManager.change("level" + (level));
+    //             },
+    //             this.p
+    //         );
+
+    //         this.registerUI(btn);
+    //     });
+    // }
+
     addLevelButtons() {
         const layer = this.renderer.layers.uiLayer;
         const W = layer.width;
         const H = layer.height;
 
-        const rowWidth = W * 0.85;          // row = 1/3 total width
-        const btnHeight = H * 0.07;         // 10% screen height
-        const y = H /2 - btnHeight;                // bottom third
+        // --- Configurable ---
+        const columns = this.columns;
+        const colCount = Math.min(columns, this.levelLabels.length);
+        const total = this.levelLabels.length;
 
-        const count = this.levelLabels.length;
-        const padding = rowWidth * 0.1;    // 5% relative internal spacing
-        const totalPadding = padding * (count - 1);
+        // Compute rows needed
+        const rows = Math.ceil(total / columns);
 
-        const availableWidth = rowWidth - totalPadding;
-        const btnWidth = availableWidth / count;
+        // Button sizing
+        const rowWidth = W * 0.85;
+        const btnHeight = H * 0.07;
 
-        // center the whole row
+        // Vertical layout: center the grid block
+        const totalHeight = rows * btnHeight + (rows - 1) * (btnHeight * 0.3);
+        const originY = (H - totalHeight) / 2;
+
+        const horizontalPadding = rowWidth * 0.05;
+        const colTotalPadding = horizontalPadding * (colCount - 1);
+        const btnWidth = (rowWidth - colTotalPadding) / colCount;
         const originX = (W - rowWidth) / 2;
 
-        this.levelLabels.forEach((level, i) => {
-            const x = originX + i * (btnWidth + padding);
+        for (let i = 0; i < total; i++) {
+            const level = this.levelLabels[i];
+            const row = Math.floor(i / columns);
+            const col = i % columns;
+
+            const x = originX + col * (btnWidth + horizontalPadding);
+            const y = originY + row * (btnHeight * 2.0); // 1.3 gives vertical spacing
 
             const btn = new MyButton(
                 x,
@@ -61,15 +114,12 @@ export class ChapterScene extends BaseScene {
                 btnHeight,
                 "Level " + level,
                 this.renderer.layers.uiLayer,
-                () => {
-                    // selectable action — replace as needed
-                    this.p.shared.sceneManager.change("level" + (level));
-                },
+                () => this.p.shared.sceneManager.change("level" + level),
                 this.p
             );
 
             this.registerUI(btn);
-        });
+        }
     }
 
     update() {

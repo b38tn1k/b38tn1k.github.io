@@ -18,7 +18,8 @@
             "d"
         ],
         "sink": [
-            " "
+            " ",
+            "Space"
         ],
         "action": [
             "Enter"

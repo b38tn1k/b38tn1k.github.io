@@ -13,6 +13,13 @@ export async function registerControls(p) {
 
   const delay = res.debounceTime || 50;
 
+  function normalizeKey(k) {
+    if (!k) return k;
+    if (k === '\u00A0') return ' '; // NBSP → normal space
+    if (k.length === 1) return k.toLowerCase();
+    return k;
+  }
+
   function debounceControl(keyId, fn) {
     clearTimeout(p.shared.debounce.controls[keyId]);
     p.shared.debounce.controls[keyId] = setTimeout(fn, delay);
@@ -22,20 +29,8 @@ export async function registerControls(p) {
     const scene = p.shared?.sceneManager?.current;
     const player = p.shared?.player;
     const handlers = [scene, player];
-
-    // const rect = p.shared.mainCanvas.elt.getBoundingClientRect();
-    // const localX = p.mouseX - rect.left;
-    // const localY = p.mouseY - rect.top;
     p.correctedMouseX = p.mouseX;
     p.correctedMouseY = p.mouseY;
-
-    // if (p.shared.isPortrait) {
-    //   p.correctedMouseX = localY;
-    //   p.correctedMouseY = p.width - localX;
-    // } else {
-    //   p.correctedMouseX = localX;
-    //   p.correctedMouseY = localY;
-    // }
 
     if (eventName === 'onTouchStarted' || eventName === 'onTouchEnded') {
       const sinkKeys = p.shared.controls.map.sink;  // array
@@ -44,9 +39,15 @@ export async function registerControls(p) {
       keyCode = sinkKey.charCodeAt(0);
     }
 
-    // find which actions this key belongs to
+    // Support both character keys and physical-key identification
+    const normKey = normalizeKey(key);
+    const physicalKey = (keyCode === 32 ? 'Space' : null);
+
     const actions = Object.entries(p.shared.controls.map)
-      .filter(([_, keys]) => keys.includes(key))
+      .filter(([_, keys]) =>
+        keys.includes(normKey) ||
+        (physicalKey && keys.includes(physicalKey))
+      )
       .map(([action]) => action);
 
     for (const handler of handlers) {
@@ -66,8 +67,12 @@ export async function registerControls(p) {
   }
 
   function setKeyState(key, isDown) {
+    const normKey = normalizeKey(key);
     for (const action in keyMap) {
-      if (keyMap[action].includes(key)) {
+      if (
+        keyMap[action].includes(normKey) ||
+        keyMap[action].includes('Space')
+      ) {
         p.shared.controls.state[action] = isDown;
       }
     }
@@ -104,7 +109,8 @@ export async function registerControls(p) {
   });
 
   p.keyPressed = () => {
-    const key = p.key;
+    const raw = p.key;
+    const key = normalizeKey(raw);
     const keyCode = p.keyCode;
     Debug.log('controls', `Key pressed: ${key} (${keyCode})`);
     setKeyState(key, true);
@@ -114,7 +120,8 @@ export async function registerControls(p) {
   };
 
   p.keyReleased = () => {
-    const key = p.key;
+    const raw = p.key;
+    const key = normalizeKey(raw);
     const keyCode = p.keyCode;
     const releaseTime = performance.now();
     const debounceKey = `keyReleased_${key}`;

@@ -895,6 +895,7 @@
             let handle = null;
             let audioCtx = null;
             let lastBeepKey = "";
+            let unlockInstalled = false;
 
             function fmt(sec) {
                 const m = Math.floor(sec / 60);
@@ -908,15 +909,45 @@
                     if (!Ctx) return null;
                     audioCtx = new Ctx();
                 }
-                if (audioCtx.state === "suspended") {
-                    audioCtx.resume();
-                }
                 return audioCtx;
             }
 
-            function beep(freq = 880, duration = 0.08, gainValue = 0.05) {
+            async function unlockAudio() {
                 const ctx = ensureAudio();
-                if (!ctx) return;
+                if (!ctx) return false;
+                try {
+                    if (ctx.state !== "running") await ctx.resume();
+                    // iOS/Safari can require a started source during a gesture to fully unlock.
+                    const buffer = ctx.createBuffer(1, 1, 22050);
+                    const src = ctx.createBufferSource();
+                    src.buffer = buffer;
+                    src.connect(ctx.destination);
+                    src.start(0);
+                    return true;
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            function installUnlockHandlers() {
+                if (unlockInstalled) return;
+                unlockInstalled = true;
+                const tryUnlock = () => {
+                    unlockAudio().then((ok) => {
+                        if (!ok) return;
+                        window.removeEventListener("touchstart", tryUnlock);
+                        window.removeEventListener("pointerdown", tryUnlock);
+                        window.removeEventListener("keydown", tryUnlock);
+                    });
+                };
+                window.addEventListener("touchstart", tryUnlock, { passive: true });
+                window.addEventListener("pointerdown", tryUnlock);
+                window.addEventListener("keydown", tryUnlock);
+            }
+
+            function beep(freq = 880, duration = 0.1, gainValue = 0.12) {
+                const ctx = ensureAudio();
+                if (!ctx || ctx.state !== "running") return;
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 const now = ctx.currentTime;
@@ -942,7 +973,7 @@
                 const key = `${idx}:${secondsLeft}`;
                 if (key === lastBeepKey) return;
                 lastBeepKey = key;
-                beep(secondsLeft === 1 ? 1100 : 800, 0.07, 0.04);
+                beep(secondsLeft === 1 ? 1100 : 800, 0.1, 0.12);
             }
 
             function updateUI() {
@@ -982,6 +1013,7 @@
             }
 
             function start() {
+                unlockAudio();
                 if (!timeline.length) {
                     timeline = buildTimeline(state);
                     idx = 0;
@@ -1012,6 +1044,7 @@
                 if (state.ui.nextDoing) state.ui.nextDoing.textContent = "Next: -";
             }
 
+            installUnlockHandlers();
             state.timer = { start, pause, reset };
         }
 

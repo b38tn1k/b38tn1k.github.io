@@ -38,6 +38,16 @@
   ],
   "exercises": [
     {
+      "id": "hip_thrusts",
+      "name": "Easy Bar Hip Thrusts",
+      "category": "lower",
+      "modes": [
+        "strength"
+      ],
+      "equipment": [],
+      "description": "Lie on your back on a bench/ball or the floor with easy bar on your hips, lift hips towards the ceiling, squeezing glutes at the top."
+    },
+    {
       "id": "leg_flutters",
       "name": "Leg Flutters",
       "category": "core",

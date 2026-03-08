@@ -821,6 +821,9 @@
             const setBreak = parseInt(state.ui.setBreakSec.value, 10);
 
             const timeline = [];
+            if (sets > 0 && perSetItems.length > 0) {
+                timeline.push({ phase: "Starting In", seconds: 5, label: "Get ready" });
+            }
             for (let s = 1; s <= sets; s++) {
                 perSetItems.forEach((ex, idx) => {
                     timeline.push({ phase: "Work", seconds: work, label: `Set ${s}: ${ex.name}` });
@@ -844,11 +847,56 @@
             let idx = 0;
             let remaining = 0;
             let handle = null;
+            let audioCtx = null;
+            let lastBeepKey = "";
 
             function fmt(sec) {
                 const m = Math.floor(sec / 60);
                 const s = sec % 60;
                 return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+            }
+
+            function ensureAudio() {
+                if (!audioCtx) {
+                    const Ctx = window.AudioContext || window.webkitAudioContext;
+                    if (!Ctx) return null;
+                    audioCtx = new Ctx();
+                }
+                if (audioCtx.state === "suspended") {
+                    audioCtx.resume();
+                }
+                return audioCtx;
+            }
+
+            function beep(freq = 880, duration = 0.08, gainValue = 0.05) {
+                const ctx = ensureAudio();
+                if (!ctx) return;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                const now = ctx.currentTime;
+
+                osc.type = "sine";
+                osc.frequency.value = freq;
+                gain.gain.value = 0;
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                gain.gain.setValueAtTime(0.0001, now);
+                gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+                osc.start(now);
+                osc.stop(now + duration);
+            }
+
+            function maybeCountdownBeep(item, secondsLeft) {
+                if (!item || secondsLeft <= 0) return;
+                const shouldBeep = item.phase === "Starting In" ? secondsLeft <= 5 : secondsLeft <= 3;
+                if (!shouldBeep) return;
+                const key = `${idx}:${secondsLeft}`;
+                if (key === lastBeepKey) return;
+                lastBeepKey = key;
+                beep(secondsLeft === 1 ? 1100 : 800, 0.07, 0.04);
             }
 
             function updateUI() {
@@ -864,6 +912,7 @@
                 state.ui.phase.textContent = item.phase;
                 state.ui.clock.textContent = fmt(remaining);
                 state.ui.nowDoing.textContent = item.label;
+                maybeCountdownBeep(item, remaining);
                 if (state.ui.nextDoing) {
                     const next = timeline[idx + 1];
                     state.ui.nextDoing.textContent = next ? "Next: " + next.label : "Next: -";
@@ -910,6 +959,7 @@
                 timeline = [];
                 idx = 0;
                 remaining = 0;
+                lastBeepKey = "";
                 state.ui.phase.textContent = "Idle";
                 state.ui.clock.textContent = "00:00";
                 state.ui.nowDoing.textContent = "-";

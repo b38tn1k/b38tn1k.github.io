@@ -33,14 +33,21 @@
             color: var(--ink);
             background: radial-gradient(circle at 20% 20%, #322b58 0%, #1a1630 100%);
             background-attachment: fixed;
+            min-height: 100svh;
+            overflow-x: hidden;
         }
 
         .wrap {
-            max-width: 1100px;
+            width: min(1100px, 100%);
             margin: 0 auto;
-            padding: 16px;
+            padding: 12px;
+            padding-top: calc(12px + env(safe-area-inset-top, 0px));
+            padding-right: calc(12px + env(safe-area-inset-right, 0px));
+            padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+            padding-left: calc(12px + env(safe-area-inset-left, 0px));
             display: grid;
             gap: var(--gap);
+            box-sizing: border-box;
         }
 
         .row {
@@ -78,6 +85,7 @@
             border-radius: 8px;
             background: #222;
             color: var(--ink);
+            font-size: 16px;
         }
 
         input[type="number"]::-webkit-outer-spin-button,
@@ -105,7 +113,8 @@
             color: #1e1b2e;
             font-weight: 600;
             padding: 12px 12px;
-            font-size: 12px;
+            font-size: 14px;
+            min-height: 44px;
             letter-spacing: 0.02em;
             box-shadow: 0 2px 6px rgba(255, 179, 243, 0.4);
             transition: transform 0.1s ease, box-shadow 0.3s ease;
@@ -140,6 +149,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
         }
 
 
@@ -172,11 +182,12 @@
         }
 
         .list {
-            min-height: 240px;
+            min-height: clamp(220px, 36vh, 420px);
             background: #181818;
             border: 1px dashed #333;
             border-radius: 10px;
             padding: 8px;
+            overflow: auto;
         }
 
         .list h3 {
@@ -190,36 +201,33 @@
         }
 
         .timer {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
+            align-items: stretch;
         }
 
         .timer .timebox {
             font-feature-settings: "tnum";
             font-variant-numeric: tabular-nums;
-            font-size: 18px;
+            font-size: clamp(16px, 2.3vw, 22px);
             padding: 8px 10px;
             border-radius: 8px;
             color: var(--accent);
             background: rgba(42, 37, 66, 0.9);
             border: 1px solid var(--border);
-        }
-
-        .timer {
-            height: 35vh;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .timer .timebox {
-            flex: 1 1 100%;
+            min-width: 0;
+            overflow-wrap: anywhere;
         }
 
         .timer button {
-            flex: 1 1 auto;
+            width: 100%;
+        }
+
+        #phase,
+        #clock,
+        #nowDoing {
+            grid-column: 1 / -1;
         }
 
         .running {
@@ -232,12 +240,6 @@
             color: var(--muted);
         }
 
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: var(--gap);
-        }
-
         .inline {
             display: flex;
             gap: 8px;
@@ -247,11 +249,12 @@
 
         #p5-timer {
             width: 100%;
-            height: 45vh;
+            height: clamp(220px, 38vh, 420px);
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 1rem 0;
+            overflow: hidden;
         }
 
         canvas {
@@ -263,7 +266,51 @@
             stroke: #7effa0;
         }
 
-        /* @media (max-width: 800px) { ... } section removed to enforce desktop styles on all viewports */
+        @media (max-width: 900px) {
+            body {
+                background-attachment: scroll;
+            }
+
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .inline button {
+                flex: 1 1 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .wrap {
+                --gap: 10px;
+                --pad: 10px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .timer {
+                grid-template-columns: 1fr;
+            }
+
+            .timer button {
+                font-size: 15px;
+            }
+
+            #p5-timer {
+                height: clamp(200px, 34vh, 320px);
+                padding: 0.4rem 0;
+            }
+
+            .list {
+                min-height: clamp(180px, 30vh, 320px);
+            }
+
+            .exercise h4 {
+                font-size: 14px;
+            }
+        }
 
         #p5-timer canvas {
             border-radius: 12px;
@@ -314,7 +361,6 @@
                 <div id="phase" class="timebox">Idle</div>
                 <div id="clock" class="timebox">00:00</div>
                 <div id="nowDoing" class="timebox">-</div>
-                <br>
                 <button id="start" class="primary">Start</button>
                 <button id="pause">Pause</button>
                 <button id="reset">Reset</button>
@@ -1080,9 +1126,16 @@
                 let baseSize = 0;
                 let prevPhase = null, prevRem = null;
 
-                p.setup = function () {
+                function getCanvasSize() {
                     const parent = document.getElementById("p5-timer");
-                    const size = Math.min(parent.offsetWidth, window.innerHeight * 0.6);
+                    const maxWidth = parent ? parent.clientWidth : window.innerWidth;
+                    const maxHeight = parent ? parent.clientHeight : window.innerHeight * 0.45;
+                    const size = Math.min(maxWidth, maxHeight, window.innerHeight * 0.45);
+                    return Math.max(180, Math.floor(size));
+                }
+
+                p.setup = function () {
+                    const size = getCanvasSize();
                     const c = p.createCanvas(size, size);
                     c.parent("p5-timer");
                     p.angleMode(p.RADIANS);
@@ -1090,8 +1143,7 @@
                 };
 
                 p.windowResized = function () {
-                    const parent = document.getElementById("p5-timer");
-                    const size = Math.min(parent.offsetWidth, window.innerHeight * 0.6);
+                    const size = getCanvasSize();
                     p.resizeCanvas(size, size);
                     baseSize = size;
                 };

@@ -44,7 +44,10 @@
       "modes": [
         "strength"
       ],
-      "equipment": ["easy bar", "exercise ball or bench"],
+      "equipment": [
+        "easy bar",
+        "exercise ball or bench"
+      ],
       "description": "Lie on your back on a bench/ball or the floor with easy bar on your hips, lift hips towards the ceiling, squeezing glutes at the top."
     },
     {
@@ -460,6 +463,19 @@
       ],
       "equipment": [],
       "description": "Lie on your back with legs raised vertically. Reach your hands toward your toes in a controlled crunch, lifting shoulder blades off the floor each rep."
+    },
+    {
+      "id": "lateral_leg_raise_band",
+      "name": "Lateral Leg Raise with Band",
+      "category": "lower",
+      "modes": [
+        "strength",
+        "core"
+      ],
+      "equipment": [
+        "band"
+      ],
+      "description": "Stand upright with a resistance band looped around your ankles or hips. Lift one leg out to the side, keeping it straight, hold for a moment, then return to the starting position. Repeat for the desired reps."
     }
   ]
 }

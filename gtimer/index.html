@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>gTimer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#e8b4f8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Fredoka+One&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --pastel-pink: #f8a4d0;
+            --pastel-aqua: #a4e4f8;
+            --pastel-mint: #a8f0c8;
+            --pastel-lavender: #c8a4f8;
+            --pastel-yellow: #f8eca4;
+            --pastel-peach: #f8c4a4;
+            --pastel-blue: #a4c4f8;
+            --bg: #1a1028;
+            --card-bg: rgba(30, 20, 50, 0.75);
+        }
+
+        @keyframes driftBg {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-14px) rotate(6deg); }
+            75% { transform: translateY(10px) rotate(-4deg); }
+        }
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.7); }
+            50% { opacity: 0.8; transform: scale(1.3); }
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes celebrate {
+            0% { transform: scale(1) rotate(0deg); }
+            15% { transform: scale(1.08) rotate(-4deg); }
+            30% { transform: scale(1.08) rotate(4deg); }
+            45% { transform: scale(1.04) rotate(-2deg); }
+            60% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        @keyframes rainbowText {
+            0%   { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        body {
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(145deg, #1a1028 0%, #201438 30%, #18102e 60%, #241840 100%);
+            background-size: 400% 400%;
+            animation: driftBg 20s ease infinite;
+            min-height: 100svh;
+            color: #f0e8f8;
+            overflow-x: hidden;
+        }
+
+        /* ---- floating bg shapes ---- */
+        .bg-shapes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+        .bg-shapes .shape {
+            position: absolute;
+            opacity: 0.12;
+            animation: float 7s ease-in-out infinite;
+        }
+        .star {
+            position: fixed;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 16px;
+            padding-top: calc(16px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 100svh;
+        }
+
+        /* ---- TIMER CARD ---- */
+        .timer-card {
+            position: relative;
+            border-radius: 28px;
+            padding: 20px 16px 16px;
+            background: var(--card-bg);
+            border: 2.5px solid var(--pastel-pink);
+            box-shadow:
+                0 0 25px rgba(248, 164, 208, 0.2),
+                0 0 60px rgba(164, 228, 248, 0.06),
+                inset 0 0 40px rgba(200, 164, 248, 0.04);
+            overflow: hidden;
+        }
+        .timer-card::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--pastel-aqua), var(--pastel-pink), var(--pastel-lavender), var(--pastel-mint), var(--pastel-aqua));
+            background-size: 400% 400%;
+            animation: driftBg 5s linear infinite;
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+        .timer-card.celebrating { animation: celebrate 0.8s ease; }
+
+        .phase-label {
+            text-align: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(10px, 3vw, 13px);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 4px;
+            min-height: 18px;
+            color: var(--pastel-lavender);
+        }
+        .phase-label.work { color: var(--pastel-mint); }
+        .phase-label.rest { color: var(--pastel-yellow); }
+        .phase-label.break { color: var(--pastel-peach); }
+        .phase-label.starting { color: var(--pastel-peach); animation: blink 0.5s ease infinite; }
+        .phase-label.done { color: var(--pastel-pink); }
+
+        #timer-canvas-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4px 0;
+        }
+        #timer-canvas-wrap canvas {
+            border-radius: 50%;
+            filter: drop-shadow(0 0 18px rgba(200, 164, 248, 0.25));
+        }
+
+        .session-count {
+            text-align: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            color: var(--pastel-pink);
+            min-height: 14px;
+            margin-top: 4px;
+        }
+
+        /* ---- CONTROLS ---- */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        .btn {
+            font-family: 'Fredoka One', cursive;
+            font-size: 16px;
+            border: none;
+            border-radius: 16px;
+            padding: 14px 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.12s ease;
+            min-height: 50px;
+        }
+        .btn:active { transform: scale(0.92); }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--pastel-mint), #80e8a8);
+            color: #1a3020;
+            box-shadow: 0 4px 16px rgba(168, 240, 200, 0.35);
+        }
+        .btn-pause {
+            background: linear-gradient(135deg, var(--pastel-yellow), var(--pastel-peach));
+            color: #3a2800;
+            box-shadow: 0 4px 16px rgba(248, 236, 164, 0.3);
+        }
+        .btn-reset {
+            background: linear-gradient(135deg, var(--pastel-pink), #e080b0);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(248, 164, 208, 0.35);
+        }
+
+        /* ---- SETTINGS ---- */
+        .settings {
+            background: var(--card-bg);
+            border: 2px solid rgba(164, 228, 248, 0.25);
+            border-radius: 22px;
+            padding: 16px;
+            box-shadow: 0 0 30px rgba(164, 228, 248, 0.05);
+        }
+        .settings-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 2px 0;
+        }
+        .settings-header h2 {
+            font-size: 17px;
+            background: linear-gradient(90deg, var(--pastel-aqua), var(--pastel-pink), var(--pastel-lavender));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .settings-toggle {
+            font-size: 18px;
+            color: var(--pastel-aqua);
+            transition: transform 0.3s;
+        }
+        .settings-toggle.open { transform: rotate(180deg); }
+
+        .settings-body {
+            display: grid;
+            gap: 14px;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease;
+            max-height: 400px;
+            opacity: 1;
+            margin-top: 14px;
+        }
+        .settings-body.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        .field { display: flex; flex-direction: column; gap: 5px; }
+        .field label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: var(--pastel-pink);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stepper {
+            display: flex;
+            align-items: stretch;
+            border: 2px solid rgba(164, 228, 248, 0.25);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .stepper input {
+            font-family: 'Fredoka One', cursive;
+            font-size: 16px !important;
+            border: none;
+            border-radius: 0;
+            text-align: center;
+            flex: 1;
+            min-width: 0;
+            padding: 10px 2px;
+            background: transparent;
+            color: #f0e8f8;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .stepper button {
+            font-family: 'Fredoka One', cursive;
+            font-size: 20px;
+            width: 38px;
+            border: none;
+            cursor: pointer;
+            color: var(--pastel-aqua);
+            background: rgba(164, 228, 248, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stepper button:active { background: rgba(164, 228, 248, 0.2); }
+
+        .total-time {
+            text-align: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: rgba(240, 232, 248, 0.25);
+            padding: 2px;
+        }
+
+        /* ---- DIVIDER ---- */
+        .divider {
+            text-align: center;
+            font-size: 11px;
+            color: var(--pastel-lavender);
+            letter-spacing: 10px;
+            opacity: 0.35;
+        }
+
+        /* ---- FOOTER ---- */
+        .footer {
+            text-align: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: rgba(248, 164, 208, 0.25);
+            padding: 8px;
+            letter-spacing: 1px;
+        }
+
+        .wakelock-hint {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            text-align: center;
+            color: rgba(255,255,255,0.15);
+        }
+
+        /* ---- FLASH ---- */
+        .flash-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.1s ease;
+        }
+        .flash-overlay.active {
+            opacity: 0.2;
+            transition: opacity 0.05s ease;
+        }
+
+        @media (max-width: 380px) {
+            .wrap { padding: 10px; gap: 12px; }
+            .timer-card { padding: 14px 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes" id="bgShapes"></div>
+    <div class="flash-overlay" id="flashOverlay"></div>
+
+    <div class="wrap">
+        <!-- Timer Display -->
+        <div class="timer-card" id="timerCard">
+            <div class="phase-label" id="phaseLabel">READY</div>
+            <div id="timer-canvas-wrap"></div>
+            <div class="session-count" id="sessionCount"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-start" id="btnStart">Start</button>
+            <button class="btn btn-pause" id="btnPause">Pause</button>
+            <button class="btn btn-reset" id="btnReset">Reset</button>
+        </div>
+
+        <div class="divider">* * * * *</div>
+
+        <!-- Settings -->
+        <div class="settings">
+            <div class="settings-header" id="settingsToggle">
+                <h2>Settings</h2>
+                <span class="settings-toggle open" id="toggleIcon">&#9660;</span>
+            </div>
+            <div class="settings-body" id="settingsBody">
+                <div class="time-grid">
+                    <div class="field">
+                        <label>Work (s)</label>
+                        <div class="stepper">
+                            <button onclick="stepVal('workSec', -5)">-</button>
+                            <input type="number" id="workSec" value="60" min="5" max="600" inputmode="numeric">
+                            <button onclick="stepVal('workSec', 5)">+</button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Rest (s)</label>
+                        <div class="stepper">
+                            <button onclick="stepVal('shortRest', -5)">-</button>
+                            <input type="number" id="shortRest" value="20" min="0" max="300" inputmode="numeric">
+                            <button onclick="stepVal('shortRest', 5)">+</button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Break (s)</label>
+                        <div class="stepper">
+                            <button onclick="stepVal('longRest', -10)">-</button>
+                            <input type="number" id="longRest" value="120" min="0" max="600" inputmode="numeric">
+                            <button onclick="stepVal('longRest', 10)">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Break every N sessions</label>
+                    <div class="stepper">
+                        <button onclick="stepVal('breakEvery', -1)">-</button>
+                        <input type="number" id="breakEvery" value="4" min="2" max="20" inputmode="numeric">
+                        <button onclick="stepVal('breakEvery', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wakelock-hint" id="wakelockHint"></div>
+        <div class="footer">made with vibes</div>
+    </div>
+
+    <script>
+    /* =======================================================
+       gTimer - pastel Y2K interval timer
+       Counts up sessions infinitely: work → rest → work → ...
+       ======================================================= */
+
+    // ---- Background shapes ----
+    (function initBg() {
+        const container = document.getElementById('bgShapes');
+        const shapes = ['●', '■', '▲', '◆', '★', '♦', '◐', '⬟', '⬡', '○', '□'];
+        const colors = ['#f8a4d0', '#a4e4f8', '#a8f0c8', '#f8eca4', '#c8a4f8', '#f8c4a4', '#a4c4f8'];
+        for (let i = 0; i < 20; i++) {
+            const el = document.createElement('div');
+            el.className = 'shape';
+            el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+            el.style.cssText = `
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                font-size: ${10 + Math.random() * 36}px;
+                color: ${colors[Math.floor(Math.random() * colors.length)]};
+                animation-delay: ${Math.random() * 7}s;
+                animation-duration: ${5 + Math.random() * 9}s;
+            `;
+            container.appendChild(el);
+        }
+        for (let i = 0; i < 35; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.cssText = `
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                animation: starTwinkle ${2 + Math.random() * 4}s ease-in-out ${Math.random() * 3}s infinite;
+                width: ${1 + Math.random() * 3}px;
+                height: ${1 + Math.random() * 3}px;
+            `;
+            document.body.appendChild(star);
+        }
+    })();
+
+    // ---- Helpers ----
+    function stepVal(id, delta) {
+        const el = document.getElementById(id);
+        el.value = Math.max(parseInt(el.min) || 0, Math.min(parseInt(el.max) || 999, parseInt(el.value || 0) + delta));
+    }
+
+    document.getElementById('settingsToggle').addEventListener('click', () => {
+        document.getElementById('settingsBody').classList.toggle('collapsed');
+        document.getElementById('toggleIcon').classList.toggle('open');
+    });
+
+    // ---- Audio (mobile-first) ----
+    let audioCtx = null;
+
+    function ensureAudio() {
+        if (!audioCtx) {
+            const C = window.AudioContext || window.webkitAudioContext;
+            if (!C) return null;
+            audioCtx = new C();
+        }
+        return audioCtx;
+    }
+
+    async function unlockAudio() {
+        const ctx = ensureAudio();
+        if (!ctx) return;
+        try {
+            if (ctx.state !== 'running') await ctx.resume();
+            const buf = ctx.createBuffer(1, 1, 22050);
+            const src = ctx.createBufferSource();
+            src.buffer = buf;
+            src.connect(ctx.destination);
+            src.start(0);
+        } catch (_) {}
+    }
+
+    ['touchstart', 'pointerdown', 'click'].forEach(e =>
+        window.addEventListener(e, () => unlockAudio(), { passive: true })
+    );
+
+    function beep(freq = 880, dur = 0.12, vol = 0.18) {
+        const ctx = ensureAudio();
+        if (!ctx) return;
+        if (ctx.state === 'suspended') ctx.resume();
+        if (ctx.state !== 'running') return;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        const now = ctx.currentTime;
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        g.gain.setValueAtTime(0.001, now);
+        g.gain.exponentialRampToValueAtTime(vol, now + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + dur + 0.01);
+    }
+
+    function beepCountdown(sec) {
+        if (sec === 1) beep(1200, 0.2, 0.22);
+        else if (sec <= 3) beep(880, 0.1, 0.16);
+    }
+
+    function beepPhaseChange(phase) {
+        if (phase === 'Work') {
+            beep(1200, 0.08, 0.18);
+            setTimeout(() => beep(1500, 0.12, 0.22), 100);
+        } else if (phase === 'Done') {
+            beep(800, 0.12, 0.18);
+            setTimeout(() => beep(1000, 0.12, 0.18), 130);
+            setTimeout(() => beep(1200, 0.12, 0.18), 260);
+            setTimeout(() => beep(1600, 0.25, 0.22), 400);
+        } else {
+            beep(600, 0.12, 0.14);
+        }
+    }
+
+    // ---- Wake Lock ----
+    let wakeLock = null;
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+                document.getElementById('wakelockHint').textContent = 'screen stay on';
+                wakeLock.addEventListener('release', () => {
+                    document.getElementById('wakelockHint').textContent = '';
+                });
+            }
+        } catch (_) {}
+    }
+    function releaseWakeLock() {
+        if (wakeLock) { wakeLock.release(); wakeLock = null; }
+        document.getElementById('wakelockHint').textContent = '';
+    }
+
+    // ---- Flash ----
+    function flash(color) {
+        const el = document.getElementById('flashOverlay');
+        el.style.background = color;
+        el.classList.add('active');
+        setTimeout(() => el.classList.remove('active'), 200);
+    }
+
+    // ---- Timer ----
+    // Runs infinitely: work → rest → work → rest → ...
+    // User stops whenever they want. Sessions count up.
+    const timer = {
+        phase: 'idle',     // idle | starting | work | rest | break
+        remaining: 0,
+        totalForPhase: 0,
+        session: 0,        // counts up
+        handle: null,
+        running: false,
+        lastBeepKey: '',
+
+        getWork() { return parseInt(document.getElementById('workSec').value) || 60; },
+        getRest() { return parseInt(document.getElementById('shortRest').value) || 0; },
+        getBreak() { return parseInt(document.getElementById('longRest').value) || 0; },
+        getBreakEvery() { return parseInt(document.getElementById('breakEvery').value) || 4; },
+
+        start() {
+            unlockAudio();
+            if (this.phase === 'idle') {
+                // Fresh start - begin with 5s countdown
+                this.phase = 'starting';
+                this.remaining = 5;
+                this.totalForPhase = 5;
+                this.session = 0;
+            }
+            if (this.handle) return;
+            this.running = true;
+            requestWakeLock();
+
+            // Collapse settings
+            document.getElementById('settingsBody').classList.add('collapsed');
+            document.getElementById('toggleIcon').classList.remove('open');
+
+            this.updateUI();
+            this.handle = setInterval(() => this.tick(), 1000);
+        },
+
+        pause() {
+            if (this.handle) { clearInterval(this.handle); this.handle = null; }
+            this.running = false;
+            releaseWakeLock();
+        },
+
+        reset() {
+            this.pause();
+            this.phase = 'idle';
+            this.remaining = 0;
+            this.totalForPhase = 0;
+            this.session = 0;
+            this.lastBeepKey = '';
+            document.getElementById('phaseLabel').textContent = 'READY';
+            document.getElementById('phaseLabel').className = 'phase-label';
+            document.getElementById('sessionCount').textContent = '';
+            // Reopen settings
+            document.getElementById('settingsBody').classList.remove('collapsed');
+            document.getElementById('toggleIcon').classList.add('open');
+        },
+
+        tick() {
+            this.remaining -= 1;
+
+            // Countdown beeps
+            if (this.remaining > 0 && this.remaining <= 3) {
+                const key = `${this.phase}:${this.session}:${this.remaining}`;
+                if (key !== this.lastBeepKey) {
+                    this.lastBeepKey = key;
+                    beepCountdown(this.remaining);
+                }
+            }
+
+            if (this.remaining <= 0) {
+                this.advancePhase();
+            }
+            this.updateUI();
+        },
+
+        advancePhase() {
+            if (this.phase === 'starting') {
+                this.phase = 'work';
+                this.session = 1;
+                this.remaining = this.getWork();
+                this.totalForPhase = this.remaining;
+                beepPhaseChange('Work');
+                flash('var(--pastel-mint)');
+            } else if (this.phase === 'work') {
+                // Check if it's time for a long break
+                const brk = this.getBreak();
+                const every = this.getBreakEvery();
+                if (brk > 0 && this.session % every === 0) {
+                    // Long break
+                    this.phase = 'break';
+                    this.remaining = brk;
+                    this.totalForPhase = brk;
+                    beepPhaseChange('Rest');
+                    flash('var(--pastel-peach)');
+                } else {
+                    // Short rest
+                    const rest = this.getRest();
+                    if (rest > 0) {
+                        this.phase = 'rest';
+                        this.remaining = rest;
+                        this.totalForPhase = rest;
+                        beepPhaseChange('Rest');
+                        flash('var(--pastel-yellow)');
+                    } else {
+                        this.session += 1;
+                        this.phase = 'work';
+                        this.remaining = this.getWork();
+                        this.totalForPhase = this.remaining;
+                        beepPhaseChange('Work');
+                        flash('var(--pastel-mint)');
+                    }
+                }
+            } else if (this.phase === 'rest' || this.phase === 'break') {
+                this.session += 1;
+                this.phase = 'work';
+                this.remaining = this.getWork();
+                this.totalForPhase = this.remaining;
+                beepPhaseChange('Work');
+                flash('var(--pastel-mint)');
+            }
+        },
+
+        updateUI() {
+            const phaseEl = document.getElementById('phaseLabel');
+            const countEl = document.getElementById('sessionCount');
+
+            if (this.phase === 'starting') {
+                phaseEl.textContent = 'GET READY';
+                phaseEl.className = 'phase-label starting';
+                countEl.textContent = '';
+            } else if (this.phase === 'work') {
+                phaseEl.textContent = 'WORK';
+                phaseEl.className = 'phase-label work';
+                countEl.textContent = `session ${this.session}`;
+            } else if (this.phase === 'rest') {
+                phaseEl.textContent = 'REST';
+                phaseEl.className = 'phase-label rest';
+                countEl.textContent = `session ${this.session} done`;
+            } else if (this.phase === 'break') {
+                phaseEl.textContent = 'BREAK';
+                phaseEl.className = 'phase-label break';
+                countEl.textContent = `${this.session} sessions done`;
+            }
+        },
+
+        getFraction() {
+            if (this.totalForPhase <= 0) return 1;
+            return this.remaining / this.totalForPhase;
+        },
+
+        getPhaseColor() {
+            if (this.phase === 'work') return '#a8f0c8';
+            if (this.phase === 'rest') return '#f8eca4';
+            if (this.phase === 'break') return '#f8c4a4';
+            if (this.phase === 'starting') return '#f8c4a4';
+            return '#c8a4f8';
+        }
+    };
+
+    document.getElementById('btnStart').addEventListener('click', () => timer.start());
+    document.getElementById('btnPause').addEventListener('click', () => timer.pause());
+    document.getElementById('btnReset').addEventListener('click', () => timer.reset());
+
+    // ---- Canvas Timer Ring ----
+    (function initCanvas() {
+        const wrap = document.getElementById('timer-canvas-wrap');
+        const canvas = document.createElement('canvas');
+        const dpr = window.devicePixelRatio || 1;
+
+        function getSize() {
+            return Math.min(wrap.clientWidth - 16, 260);
+        }
+
+        let size = getSize();
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
+        wrap.appendChild(canvas);
+
+        const c = canvas.getContext('2d');
+        let animFrac = 1;
+        let hue = 0;
+
+        function resize() {
+            size = getSize();
+            canvas.width = size * dpr;
+            canvas.height = size * dpr;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+        }
+        window.addEventListener('resize', resize);
+
+        function draw() {
+            const targetFrac = timer.getFraction();
+            animFrac += (targetFrac - animFrac) * 0.18;
+
+            const phaseColor = timer.getPhaseColor();
+
+            c.setTransform(dpr, 0, 0, dpr, 0, 0);
+            c.clearRect(0, 0, size, size);
+
+            const cx = size / 2;
+            const cy = size / 2;
+            const radius = size * 0.39;
+            const ringW = size * 0.055;
+
+            // Decorative orbiting dots
+            hue += 0.25;
+            for (let i = 0; i < 16; i++) {
+                const angle = (i / 16) * Math.PI * 2 + hue * 0.015;
+                const dr = radius + ringW * 2.5;
+                const dx = cx + Math.cos(angle) * dr;
+                const dy = cy + Math.sin(angle) * dr;
+                const ds = 1.5 + Math.sin(hue * 0.04 + i * 0.8) * 1;
+                c.beginPath();
+                c.arc(dx, dy, ds, 0, Math.PI * 2);
+                const h = (hue * 0.5 + i * 22) % 360;
+                c.fillStyle = `hsla(${h}, 60%, 80%, 0.25)`;
+                c.fill();
+            }
+
+            // Background ring
+            c.beginPath();
+            c.arc(cx, cy, radius, 0, Math.PI * 2);
+            c.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+            c.lineWidth = ringW;
+            c.lineCap = 'round';
+            c.stroke();
+
+            // Active arc with glow
+            const startA = -Math.PI / 2;
+            const endA = startA + Math.PI * 2 * animFrac;
+            if (animFrac > 0.005) {
+                c.shadowColor = phaseColor;
+                c.shadowBlur = 14;
+                c.beginPath();
+                c.arc(cx, cy, radius, startA, endA);
+                c.strokeStyle = phaseColor;
+                c.lineWidth = ringW;
+                c.lineCap = 'round';
+                c.stroke();
+                c.shadowBlur = 0;
+            }
+
+            // Inner subtle gradient
+            const grad = c.createRadialGradient(cx, cy, 0, cx, cy, radius - ringW);
+            grad.addColorStop(0, 'rgba(200, 164, 248, 0.03)');
+            grad.addColorStop(1, 'rgba(0, 0, 0, 0.15)');
+            c.beginPath();
+            c.arc(cx, cy, radius - ringW / 2, 0, Math.PI * 2);
+            c.fillStyle = grad;
+            c.fill();
+
+            // Time text
+            const rem = timer.remaining;
+            const min = Math.floor(rem / 60);
+            const sec = rem % 60;
+            let timeStr;
+            if (timer.phase === 'idle') {
+                timeStr = '0:00';
+            } else {
+                timeStr = min > 0
+                    ? `${min}:${String(sec).padStart(2, '0')}`
+                    : String(sec);
+            }
+
+            c.fillStyle = '#f0e8f8';
+            c.font = `bold ${size * 0.2}px 'Fredoka One', sans-serif`;
+            c.textAlign = 'center';
+            c.textBaseline = 'middle';
+            c.fillText(timeStr, cx, cy);
+
+            // Inner decorative ring
+            c.beginPath();
+            c.arc(cx, cy, radius * 0.52, 0, Math.PI * 2);
+            c.strokeStyle = `hsla(${hue % 360}, 50%, 75%, 0.06)`;
+            c.lineWidth = 1;
+            c.stroke();
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+    })();
+    </script>
+</body>
+</html>

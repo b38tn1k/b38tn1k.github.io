@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Exercises</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1028">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Fredoka+One&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --pastel-pink: #f8a4d0;
+            --pastel-aqua: #a4e4f8;
+            --pastel-mint: #a8f0c8;
+            --pastel-lavender: #c8a4f8;
+            --pastel-yellow: #f8eca4;
+            --pastel-peach: #f8c4a4;
+            --pastel-blue: #a4c4f8;
+            --bg: #1a1028;
+            --card-bg: rgba(30, 20, 50, 0.75);
+        }
+
+        @keyframes driftBg {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-14px) rotate(6deg); }
+            75% { transform: translateY(10px) rotate(-4deg); }
+        }
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.7); }
+            50% { opacity: 0.8; transform: scale(1.3); }
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes popIn {
+            0%   { transform: scale(0.85); opacity: 0; }
+            70%  { transform: scale(1.04); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes rainbowShift {
+            0%   { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        html { background: #1a1028; }
+
+        body {
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(145deg, #1a1028 0%, #201438 30%, #18102e 60%, #241840 100%);
+            background-size: 400% 400%;
+            animation: driftBg 20s ease infinite;
+            min-height: 100svh;
+            color: #f0e8f8;
+            overflow-x: hidden;
+        }
+
+        /* ---- bg decoration ---- */
+        .bg-shapes {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .bg-shapes .shape {
+            position: absolute; opacity: 0.1;
+            animation: float 7s ease-in-out infinite;
+        }
+        .star {
+            position: fixed; background: #fff; border-radius: 50%;
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ---- layout ---- */
+        .wrap {
+            position: relative; z-index: 1;
+            max-width: 540px; margin: 0 auto;
+            padding: 16px;
+            padding-top: calc(16px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+            display: flex; flex-direction: column; gap: 16px;
+            min-height: 100svh;
+        }
+
+        /* ---- header ---- */
+        .header {
+            text-align: center;
+            padding: 10px 0 4px;
+        }
+        .header h1 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(13px, 4vw, 18px);
+            background: linear-gradient(90deg,
+                var(--pastel-aqua), var(--pastel-pink),
+                var(--pastel-lavender), var(--pastel-mint),
+                var(--pastel-aqua));
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbowShift 6s linear infinite;
+            line-height: 1.5;
+        }
+        .header p {
+            font-size: 13px;
+            color: rgba(240, 232, 248, 0.4);
+            margin-top: 6px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            letter-spacing: 1px;
+        }
+
+        /* ---- card shell ---- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 22px;
+            padding: 16px;
+            border: 2px solid rgba(164, 228, 248, 0.18);
+            box-shadow: 0 0 28px rgba(164, 228, 248, 0.04);
+        }
+
+        /* ---- section label ---- */
+        .section-label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: var(--pastel-pink);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        /* ---- category filter pills ---- */
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+        .pill {
+            font-family: 'Fredoka One', cursive;
+            font-size: 14px;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            padding: 7px 15px;
+            cursor: pointer;
+            transition: transform 0.1s ease, background 0.15s ease, border-color 0.15s ease;
+            background: rgba(0,0,0,0.35);
+            color: rgba(240, 232, 248, 0.55);
+            border-color: rgba(240, 232, 248, 0.1);
+            letter-spacing: 0.5px;
+        }
+        .pill:active { transform: scale(0.93); }
+        .pill.active {
+            color: #1a1028;
+            border-color: transparent;
+        }
+
+        /* category colours */
+        .pill[data-cat="all"].active       { background: var(--pastel-lavender); }
+        .pill[data-cat="core"].active      { background: var(--pastel-aqua); }
+        .pill[data-cat="upper"].active     { background: var(--pastel-pink); }
+        .pill[data-cat="lower"].active     { background: var(--pastel-mint); }
+        .pill[data-cat="conditioning"].active { background: var(--pastel-peach); }
+        .pill[data-cat="full"].active      { background: var(--pastel-yellow); }
+
+        /* mode pill colours */
+        .pill[data-mode="all"].active      { background: var(--pastel-lavender); }
+        .pill[data-mode="strength"].active { background: var(--pastel-blue); }
+        .pill[data-mode="core"].active     { background: var(--pastel-aqua); }
+        .pill[data-mode="hiit"].active     { background: var(--pastel-pink); }
+
+        /* ---- exercise list ---- */
+        .exercise-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ex-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid rgba(164, 228, 248, 0.12);
+            border-radius: 16px;
+            padding: 13px 14px;
+            cursor: pointer;
+            transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+            animation: cardIn 0.25s ease both;
+            user-select: none;
+        }
+        .ex-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(164, 228, 248, 0.25);
+        }
+        .ex-card:active { transform: scale(0.97); }
+        .ex-card.selected {
+            border-color: var(--pastel-mint);
+            background: rgba(168, 240, 200, 0.07);
+            box-shadow: 0 0 18px rgba(168, 240, 200, 0.12);
+        }
+
+        .ex-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .ex-name {
+            font-size: 17px;
+            color: #f0e8f8;
+            line-height: 1.2;
+            flex: 1;
+        }
+        .ex-check {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 2px solid rgba(168, 240, 200, 0.3);
+            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            transition: background 0.15s, border-color 0.15s;
+            margin-top: 1px;
+        }
+        .ex-card.selected .ex-check {
+            background: var(--pastel-mint);
+            border-color: var(--pastel-mint);
+            color: #1a3020;
+        }
+
+        .ex-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 7px;
+        }
+        .tag {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            padding: 3px 7px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+        .tag-cat-core        { background: rgba(164, 228, 248, 0.15); color: var(--pastel-aqua); }
+        .tag-cat-upper       { background: rgba(248, 164, 208, 0.15); color: var(--pastel-pink); }
+        .tag-cat-lower       { background: rgba(168, 240, 200, 0.15); color: var(--pastel-mint); }
+        .tag-cat-conditioning{ background: rgba(248, 196, 164, 0.15); color: var(--pastel-peach); }
+        .tag-cat-full        { background: rgba(248, 236, 164, 0.15); color: var(--pastel-yellow); }
+
+        .tag-mode-strength   { background: rgba(164, 196, 248, 0.15); color: var(--pastel-blue); }
+        .tag-mode-core       { background: rgba(164, 228, 248, 0.15); color: var(--pastel-aqua); }
+        .tag-mode-hiit       { background: rgba(248, 164, 208, 0.15); color: var(--pastel-pink); }
+
+        .ex-desc {
+            font-size: 13px;
+            color: rgba(240, 232, 248, 0.55);
+            line-height: 1.45;
+        }
+
+        .ex-equipment {
+            margin-top: 6px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            color: rgba(240, 232, 248, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 32px 16px;
+            color: rgba(240, 232, 248, 0.3);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            line-height: 2;
+        }
+
+        /* ---- selected workout panel ---- */
+        .workout-panel {
+            border: 2.5px solid var(--pastel-lavender);
+            box-shadow: 0 0 25px rgba(200, 164, 248, 0.15),
+                        inset 0 0 30px rgba(200, 164, 248, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+        .workout-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--pastel-lavender), var(--pastel-pink), var(--pastel-aqua), var(--pastel-mint), var(--pastel-lavender));
+            background-size: 400% 400%;
+            animation: driftBg 6s linear infinite;
+            border-radius: 24px;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        .workout-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 2px 0;
+            margin-bottom: 0;
+        }
+        .workout-header h2 {
+            font-size: 17px;
+            background: linear-gradient(90deg, var(--pastel-lavender), var(--pastel-pink), var(--pastel-aqua));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .workout-count {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: var(--pastel-lavender);
+            background: rgba(200, 164, 248, 0.12);
+            border-radius: 20px;
+            padding: 4px 9px;
+        }
+
+        .workout-body {
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease;
+            max-height: 600px;
+            opacity: 1;
+            margin-top: 14px;
+        }
+        .workout-body.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+        }
+
+        .workout-empty {
+            text-align: center;
+            color: rgba(240, 232, 248, 0.25);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            padding: 16px 0 8px;
+            line-height: 2.2;
+        }
+
+        .workout-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 14px;
+        }
+        .workout-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: rgba(0,0,0,0.25);
+            border-radius: 12px;
+            padding: 10px 12px;
+            animation: popIn 0.2s ease both;
+        }
+        .workout-item-name {
+            font-size: 15px;
+            flex: 1;
+            color: #f0e8f8;
+        }
+        .workout-item-remove {
+            background: none;
+            border: 1.5px solid rgba(248, 164, 208, 0.3);
+            border-radius: 50%;
+            width: 26px; height: 26px;
+            font-size: 14px;
+            color: var(--pastel-pink);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.12s, transform 0.1s;
+            flex-shrink: 0;
+            padding: 0;
+            font-family: 'Fredoka One', cursive;
+        }
+        .workout-item-remove:active { transform: scale(0.88); background: rgba(248, 164, 208, 0.15); }
+
+        .btn-clear {
+            width: 100%;
+            font-family: 'Fredoka One', cursive;
+            font-size: 15px;
+            border: none;
+            border-radius: 14px;
+            padding: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--pastel-pink), #e080b0);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(248, 164, 208, 0.25);
+            transition: transform 0.1s ease;
+        }
+        .btn-clear:active { transform: scale(0.96); }
+
+        /* ---- divider ---- */
+        .divider {
+            text-align: center;
+            font-size: 11px;
+            color: var(--pastel-lavender);
+            letter-spacing: 10px;
+            opacity: 0.3;
+        }
+
+        /* ---- footer ---- */
+        .footer {
+            text-align: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: rgba(248, 164, 208, 0.2);
+            letter-spacing: 1px;
+            padding: 8px;
+        }
+
+        @media (max-width: 380px) {
+            .wrap { padding: 10px; gap: 12px; }
+            .ex-name { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes" id="bgShapes"></div>
+
+    <div class="wrap">
+        <div class="header">
+            <h1>Exercises</h1>
+            <p>tap to add &bull; build your workout</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="card">
+            <div class="section-label">Category</div>
+            <div class="filter-row" id="catFilters"></div>
+
+            <div class="section-label" style="margin-top:14px;">Mode</div>
+            <div class="filter-row" id="modeFilters"></div>
+        </div>
+
+        <!-- Exercise list -->
+        <div class="exercise-list" id="exerciseList"></div>
+
+        <div class="divider">* * * * *</div>
+
+        <!-- Workout panel -->
+        <div class="card workout-panel">
+            <div class="workout-header" id="workoutToggle">
+                <h2>My Workout</h2>
+                <span class="workout-count" id="workoutCount">0</span>
+            </div>
+            <div class="workout-body" id="workoutBody">
+                <div class="workout-empty" id="workoutEmpty">
+                    no exercises selected<br>tap a card to add one
+                </div>
+                <div class="workout-list" id="workoutList"></div>
+                <button class="btn-clear" id="btnClear" style="display:none;" onclick="clearWorkout()">
+                    Clear All
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">made with vibes</div>
+    </div>
+
+    <script>
+    /* =====================================================
+       Exercises — pastel Y2K exercise browser
+       ===================================================== */
+
+    const DATA = {
+      "version": "1.0",
+      "categories": [
+        { "id": "core",         "label": "Core" },
+        { "id": "upper",        "label": "Upper Body" },
+        { "id": "lower",        "label": "Lower Body" },
+        { "id": "conditioning", "label": "Conditioning" },
+        { "id": "full",         "label": "Full Body" }
+      ],
+      "modes": [
+        { "id": "strength", "label": "Strength" },
+        { "id": "core",     "label": "Core Focus" },
+        { "id": "hiit",     "label": "HIIT" }
+      ],
+      "exercises": [
+        { "id": "hip_thrusts", "name": "Easy Bar Hip Thrusts", "category": "lower", "modes": ["strength"], "equipment": ["easy bar", "exercise ball or bench"], "description": "Lie on your back on a bench/ball or the floor with easy bar on your hips, lift hips towards the ceiling, squeezing glutes at the top." },
+        { "id": "leg_flutters", "name": "Leg Flutters", "category": "core", "modes": ["core", "hiit"], "equipment": [], "description": "Lie on your back. Keep legs straight and alternate small, fast kicks while bracing your core. Lower back stays pressed into floor." },
+        { "id": "windshield_wipers", "name": "Leg Side To Side (Windshield Wipers)", "category": "core", "modes": ["core"], "equipment": [], "description": "On your back with legs together and lifted. Slowly lower legs side to side under control to hit the obliques." },
+        { "id": "russian_twist", "name": "Russian Twist", "category": "core", "modes": ["core", "hiit"], "equipment": ["med ball optional"], "description": "Seated with torso leaned back and feet up or down. Rotate ribcage side to side. Keep shoulders down and core tight." },
+        { "id": "bicycle_crunch", "name": "Bicycle Crunch", "category": "core", "modes": ["core", "hiit"], "equipment": [], "description": "Alternate elbow to opposite knee with controlled rotation. Extend the other leg long and low." },
+        { "id": "static_leg_raise", "name": "Static Leg Raise (6 to 12 inches)", "category": "core", "modes": ["core"], "equipment": [], "description": "Hold both legs off the floor at a fixed height while keeping ribs down and lower back braced." },
+        { "id": "stir_the_pot", "name": "Stir The Pot", "category": "core", "modes": ["core", "hiit"], "equipment": ["stability ball"], "description": "Forearms on ball in plank. Make small circles without letting hips sag. Keep glutes and core engaged." },
+        { "id": "med_ball_slams", "name": "Medicine Ball Slams", "category": "conditioning", "modes": ["hiit", "strength"], "equipment": ["medicine ball"], "description": "Lift ball overhead with tall posture, brace ribs, then slam straight down using hips and lats. Reset quickly." },
+        { "id": "rope_slams", "name": "Battle Rope Slams", "category": "conditioning", "modes": ["hiit"], "equipment": ["battle ropes"], "description": "Powerful double arm slams to the floor. Sit into hips, brace core, and keep shoulders packed." },
+        { "id": "rope_waves", "name": "Battle Rope Waves", "category": "conditioning", "modes": ["hiit"], "equipment": ["battle ropes"], "description": "Alternating or double arm waves. Smooth cycles while maintaining athletic stance and neutral spine." },
+        { "id": "heel_touches", "name": "Heel Touches", "category": "core", "modes": ["core"], "equipment": [], "description": "On back with knees bent. Crunch side to side reaching to touch heels. Short controlled range." },
+        { "id": "mountain_climbers", "name": "Mountain Climbers", "category": "conditioning", "modes": ["hiit", "core"], "equipment": [], "description": "High plank. Drive knees toward chest with quick rhythm. Keep hips level and shoulders stacked over wrists." },
+        { "id": "boat_pose", "name": "Boat Pose", "category": "core", "modes": ["core"], "equipment": [], "description": "Balance on sit bones with legs lifted and spine long. Chest open and core braced." },
+        { "id": "rollouts_trx_ball", "name": "Rollouts on TRX or Ball", "category": "core", "modes": ["core", "strength"], "equipment": ["TRX or stability ball"], "description": "From kneeling or plank, reach arms forward to extend and then pull back using lats and core without hyperextending." },
+        { "id": "pikes_trx_ball", "name": "Pikes with TRX or Ball", "category": "core", "modes": ["core", "hiit"], "equipment": ["TRX or stability ball"], "description": "From plank with feet in straps or on ball, lift hips to form a pike. Control return to plank." },
+        { "id": "squats", "name": "Squats", "category": "lower", "modes": ["strength", "hiit"], "equipment": ["bodyweight or load"], "description": "Sit hips back and down with neutral spine, knees tracking over toes. Drive through midfoot to stand." },
+        { "id": "reverse_lunge", "name": "Reverse Lunge", "category": "lower", "modes": ["strength", "hiit"], "equipment": ["bodyweight or load"], "description": "Step back into a lunge. Front shin vertical, torso tall, drive through front heel to stand." },
+        { "id": "forward_lunge", "name": "Forward Lunge", "category": "lower", "modes": ["strength", "hiit"], "equipment": ["bodyweight or load"], "description": "Step forward and lower under control. Push back to start using the front leg." },
+        { "id": "plank", "name": "Plank", "category": "core", "modes": ["core", "hiit"], "equipment": [], "description": "Forearm or high plank. Straight line from head to heels, glutes squeezed, ribs down." },
+        { "id": "walkout_rope_hold", "name": "Walk Out Isometric Rope Hold", "category": "full", "modes": ["strength", "hiit"], "equipment": ["cable or rope machine"], "description": "Walk out from the machine holding arms straight at chest height under tension. Brace and hold." },
+        { "id": "wood_chops", "name": "Wood Chops", "category": "full", "modes": ["strength", "hiit"], "equipment": ["cable or band or med ball"], "description": "Rotate from high to low or low to high using hips and core. Keep arms long and shoulders packed." },
+        { "id": "trx_row", "name": "TRX Row", "category": "upper", "modes": ["strength"], "equipment": ["TRX"], "description": "Keep body rigid, pull chest to handles. Squeeze shoulder blades without shrugging." },
+        { "id": "side_plank", "name": "Side Plank", "category": "core", "modes": ["core"], "equipment": [], "description": "Elbow under shoulder, hips stacked. Hold a straight line from head to heels." },
+        { "id": "chest_pulls", "name": "Chest Pulls", "category": "upper", "modes": ["strength"], "equipment": ["cable or band"], "description": "Horizontal pull pattern. Keep ribs down and control the movement through a full range of motion." },
+        { "id": "face_pulls", "name": "Face Pulls", "category": "upper", "modes": ["strength"], "equipment": ["cable or band"], "description": "Pull rope toward face with elbows high and out. Focus on rear delts and mid traps." },
+        { "id": "power_pulls", "name": "Power Pulls", "category": "upper", "modes": ["strength", "hiit"], "equipment": ["cable or band"], "description": "Explosive high pull with rotational finish. Keep core braced and control the eccentric." },
+        { "id": "chest_press_ball", "name": "Chest Press on Ball", "category": "upper", "modes": ["strength"], "equipment": ["dumbbells and stability ball"], "description": "Bridge hips, upper back on ball, press dumbbells from chest to lockout with wrists neutral." },
+        { "id": "chest_fly_ball", "name": "Chest Fly on Ball", "category": "upper", "modes": ["strength"], "equipment": ["dumbbells and stability ball"], "description": "With back on ball, open arms with slight elbow bend then squeeze chest to return bells over chest." },
+        { "id": "snow_angels", "name": "Snow Angels (Laying or Standing)", "category": "upper", "modes": ["strength", "hiit"], "equipment": [], "description": "Arms sweep out and up like making a snow angel. Keep ribs down and neck long." },
+        { "id": "shoulder_press", "name": "Shoulder Press", "category": "upper", "modes": ["strength"], "equipment": ["dumbbells or barbell or cables"], "description": "Press overhead with ribs stacked over hips. Finish with biceps by ears and no low back arch." },
+        { "id": "curtsey_lunge_trx", "name": "Curtsey Lunge TRX", "category": "lower", "modes": ["strength", "hiit"], "equipment": ["TRX"], "description": "Cross back step with TRX support. Keep front knee tracking and hips square." },
+        { "id": "rev_lunge_to_knee", "name": "Reverse Lunge to Explosive Knee", "category": "lower", "modes": ["hiit", "strength"], "equipment": [], "description": "Step back to lunge then drive up through the front leg to an explosive knee lift." },
+        { "id": "bulldog_bear", "name": "Bulldog/Bear", "category": "core", "modes": ["hiit", "strength"], "equipment": [], "description": "Start in a bear plank with knees hovering above the ground. Engage your core and move forward and backward in small controlled steps, keeping hips low." },
+        { "id": "scissors", "name": "Scissors", "category": "core", "modes": ["hiit", "core"], "equipment": [], "description": "Lie on your back with legs extended. Alternate lifting one leg at a time in a scissoring motion, keeping your lower back pressed to the floor." },
+        { "id": "reverse_crunch_stab_ball", "name": "Reverse Crunch with Stability Ball", "category": "core", "modes": ["strength", "core"], "equipment": ["stability ball"], "description": "Start in a plank / push-up position with your shins on a stability ball. Pull your knees toward your chest lifting hips, then slowly return." },
+        { "id": "sky_touches", "name": "Sky Touches", "category": "core", "modes": ["hiit", "core"], "equipment": [], "description": "Lie on your back with legs raised vertically. Reach your hands toward your toes in a controlled crunch, lifting shoulder blades off the floor each rep." },
+        { "id": "lateral_leg_raise_band", "name": "Lateral Leg Raise with Band", "category": "lower", "modes": ["strength", "core"], "equipment": ["band"], "description": "Stand upright with a resistance band around your ankles. Lift one leg out to the side, keeping it straight, hold, then return. Repeat for desired reps." }
+      ]
+    };
+
+    // ---- State ----
+    let activeCat  = 'all';
+    let activeMode = 'all';
+    let selected   = new Set();
+    let workoutOpen = true;
+
+    // ---- Background decoration ----
+    (function initBg() {
+        const container = document.getElementById('bgShapes');
+        const shapes = ['●', '■', '▲', '◆', '★', '♦', '◐', '⬟', '⬡', '○', '□'];
+        const colors = ['#f8a4d0','#a4e4f8','#a8f0c8','#f8eca4','#c8a4f8','#f8c4a4','#a4c4f8'];
+        for (let i = 0; i < 18; i++) {
+            const el = document.createElement('div');
+            el.className = 'shape';
+            el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+            el.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${10+Math.random()*32}px;color:${colors[Math.floor(Math.random()*colors.length)]};animation-delay:${Math.random()*7}s;animation-duration:${5+Math.random()*9}s;`;
+            container.appendChild(el);
+        }
+        for (let i = 0; i < 35; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;animation:starTwinkle ${2+Math.random()*4}s ease-in-out ${Math.random()*3}s infinite;width:${1+Math.random()*2.5}px;height:${1+Math.random()*2.5}px;`;
+            document.body.appendChild(star);
+        }
+    })();
+
+    // ---- Build filter pills ----
+    function buildFilters() {
+        const catWrap  = document.getElementById('catFilters');
+        const modeWrap = document.getElementById('modeFilters');
+
+        const allCatPill = makePill('All', 'all', 'cat', activeCat === 'all');
+        catWrap.appendChild(allCatPill);
+        DATA.categories.forEach(c => {
+            catWrap.appendChild(makePill(c.label, c.id, 'cat', activeCat === c.id));
+        });
+
+        const allModePill = makePill('All', 'all', 'mode', activeMode === 'all');
+        modeWrap.appendChild(allModePill);
+        DATA.modes.forEach(m => {
+            modeWrap.appendChild(makePill(m.label, m.id, 'mode', activeMode === m.id));
+        });
+    }
+
+    function makePill(label, id, type, isActive) {
+        const btn = document.createElement('button');
+        btn.className = 'pill' + (isActive ? ' active' : '');
+        btn.textContent = label;
+        btn.dataset[type === 'cat' ? 'cat' : 'mode'] = id;
+        btn.addEventListener('click', () => {
+            if (type === 'cat') {
+                activeCat = id;
+                document.querySelectorAll('#catFilters .pill').forEach(p => {
+                    p.classList.toggle('active', p.dataset.cat === id);
+                });
+            } else {
+                activeMode = id;
+                document.querySelectorAll('#modeFilters .pill').forEach(p => {
+                    p.classList.toggle('active', p.dataset.mode === id);
+                });
+            }
+            renderExercises();
+        });
+        return btn;
+    }
+
+    // ---- Render exercises ----
+    function renderExercises() {
+        const list = document.getElementById('exerciseList');
+        list.innerHTML = '';
+
+        const filtered = DATA.exercises.filter(ex => {
+            const catOk  = activeCat  === 'all' || ex.category === activeCat;
+            const modeOk = activeMode === 'all' || ex.modes.includes(activeMode);
+            return catOk && modeOk;
+        });
+
+        if (filtered.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'no-results';
+            empty.innerHTML = 'no exercises found<br>try a different filter';
+            list.appendChild(empty);
+            return;
+        }
+
+        filtered.forEach((ex, idx) => {
+            const card = buildExCard(ex, idx);
+            list.appendChild(card);
+        });
+    }
+
+    function buildExCard(ex, idx) {
+        const card = document.createElement('div');
+        card.className = 'ex-card' + (selected.has(ex.id) ? ' selected' : '');
+        card.style.animationDelay = (idx * 30) + 'ms';
+        card.dataset.id = ex.id;
+
+        // Top row: name + check
+        const top = document.createElement('div');
+        top.className = 'ex-top';
+        const name = document.createElement('div');
+        name.className = 'ex-name';
+        name.textContent = ex.name;
+        const check = document.createElement('div');
+        check.className = 'ex-check';
+        check.textContent = selected.has(ex.id) ? '✓' : '';
+        top.appendChild(name);
+        top.appendChild(check);
+
+        // Tags
+        const tags = document.createElement('div');
+        tags.className = 'ex-tags';
+        const catTag = document.createElement('span');
+        catTag.className = `tag tag-cat-${ex.category}`;
+        catTag.textContent = DATA.categories.find(c => c.id === ex.category)?.label || ex.category;
+        tags.appendChild(catTag);
+        ex.modes.forEach(m => {
+            const mTag = document.createElement('span');
+            mTag.className = `tag tag-mode-${m}`;
+            mTag.textContent = DATA.modes.find(md => md.id === m)?.label || m;
+            tags.appendChild(mTag);
+        });
+
+        // Description
+        const desc = document.createElement('div');
+        desc.className = 'ex-desc';
+        desc.textContent = ex.description;
+
+        card.appendChild(top);
+        card.appendChild(tags);
+        card.appendChild(desc);
+
+        // Equipment
+        if (ex.equipment && ex.equipment.length > 0) {
+            const eq = document.createElement('div');
+            eq.className = 'ex-equipment';
+            eq.textContent = '⚙ ' + ex.equipment.join(' · ');
+            card.appendChild(eq);
+        }
+
+        card.addEventListener('click', () => toggleExercise(ex.id));
+        return card;
+    }
+
+    // ---- Toggle selection ----
+    function toggleExercise(id) {
+        if (selected.has(id)) {
+            selected.delete(id);
+        } else {
+            selected.add(id);
+            if (!workoutOpen) {
+                workoutOpen = true;
+                document.getElementById('workoutBody').classList.remove('collapsed');
+            }
+        }
+        // Update card in list
+        const card = document.querySelector(`.ex-card[data-id="${id}"]`);
+        if (card) {
+            card.classList.toggle('selected', selected.has(id));
+            const check = card.querySelector('.ex-check');
+            check.textContent = selected.has(id) ? '✓' : '';
+        }
+        renderWorkout();
+    }
+
+    // ---- Render workout panel ----
+    function renderWorkout() {
+        const countEl   = document.getElementById('workoutCount');
+        const emptyEl   = document.getElementById('workoutEmpty');
+        const listEl    = document.getElementById('workoutList');
+        const clearBtn  = document.getElementById('btnClear');
+
+        countEl.textContent = selected.size;
+        listEl.innerHTML = '';
+
+        if (selected.size === 0) {
+            emptyEl.style.display = '';
+            clearBtn.style.display = 'none';
+        } else {
+            emptyEl.style.display = 'none';
+            clearBtn.style.display = '';
+
+            [...selected].forEach(id => {
+                const ex = DATA.exercises.find(e => e.id === id);
+                if (!ex) return;
+                const item = document.createElement('div');
+                item.className = 'workout-item';
+
+                const itemName = document.createElement('div');
+                itemName.className = 'workout-item-name';
+                itemName.textContent = ex.name;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'workout-item-remove';
+                removeBtn.textContent = '×';
+                removeBtn.setAttribute('aria-label', 'Remove ' + ex.name);
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleExercise(id);
+                });
+
+                item.appendChild(itemName);
+                item.appendChild(removeBtn);
+                listEl.appendChild(item);
+            });
+        }
+    }
+
+    function clearWorkout() {
+        selected.clear();
+        // Update all visible cards
+        document.querySelectorAll('.ex-card.selected').forEach(card => {
+            card.classList.remove('selected');
+            const check = card.querySelector('.ex-check');
+            if (check) check.textContent = '';
+        });
+        renderWorkout();
+    }
+
+    // ---- Workout panel toggle ----
+    document.getElementById('workoutToggle').addEventListener('click', () => {
+        workoutOpen = !workoutOpen;
+        document.getElementById('workoutBody').classList.toggle('collapsed', !workoutOpen);
+    });
+
+    // ---- Init ----
+    buildFilters();
+    renderExercises();
+    renderWorkout();
+    </script>
+</body>
+</html>

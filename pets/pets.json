@@ -11,7 +11,7 @@
         "Cat free-feed bowls are in the downstairs bathroom — Finn + Ellie have a dedicated cat door for access.",
         "Cabbage's eating spot is her shelf near the CDs. There is no bowl. Cabbage doesn't do bowls. Pour her food directly on the shelf.",
         "Litter boxes are in the basement — should be fine for the trip; scoop if they look full.",
-        "Chicken feed bin (black, near the coop gate) — one bag of cracked corn, one bag of laying pellets, and the feed bowl all live inside."
+        "Chicken feed bin (black, near the coop gate) — bag of cracked corn, bag of laying pellets, and the scattering bowl all live inside. The bowl is just a scoop — you toss the feed over the fence so it lands on the hay."
       ]
     },
     {
@@ -381,9 +381,9 @@
         "spice": 1
       },
       "feeding": {
-        "when": "Once between 8:00 AM and noon. If you had to lure an escapee back in with food, just top the bowl up again afterward.",
-        "where": "Inside the large chicken area. The black bin near the coop gate holds the cracked corn, laying pellets, and the feed bowl.",
-        "what": "A full feed bowl of laying pellets + two bowls of cracked corn.",
+        "when": "Once between 8:00 AM and noon. If you had to lure an escapee back in with food, just scatter a little extra over the fence afterward.",
+        "where": "The black bin near the coop gate holds the corn, pellets, and the scattering bowl. Scoop the feed with the bowl and toss it over the fence onto the hay — the hens eat off the ground, not from a bowl.",
+        "what": "One bowl-scoop of laying pellets + two bowl-scoops of cracked corn — toss each over the fence so it scatters across the hay.",
         "notes": "Water is automated — just glance to confirm it's flowing."
       },
       "meds": null,

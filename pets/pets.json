@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "intro": "thanks for looking after the menagerie. tap any card for the full briefing.",
+  "intro": "thanks for looking after the menagerie!",
   "house_notes": [
     {
       "title": "Important locations",
@@ -60,7 +60,7 @@
             "cabbage"
           ]
         },
-        "Ziggy's morning pill — wrapped in cheese.",
+        "Ziggy's morning pill (wrapped in cheese.)",
         "Bear & Lucy get a little cheese too if they're nearby."
       ]
     },
@@ -105,7 +105,7 @@
       "kind": "meds",
       "event": [
         {
-          "text": "Dog dinner — Bear, Lucy & Ziggy.",
+          "text": "Dog dinner!",
           "pets": [
             "bear",
             "lucy",
@@ -183,7 +183,7 @@
       },
       "feeding": {
         "when": "Twice daily — 8:00–10:00 AM and around 6:30 PM",
-        "where": "On her shelf near the CDs (NOT a bowl)",
+        "where": "Pour dry food directly on her shelf near the CDs (NOT a bowl)",
         "what": "Small plastic cup of dry food (cups live on top of the wet dog food in the side closet).",
         "notes": "Pour carefully onto her shelf. The dogs (Bear especially) will hoover up anything that falls — this is expected and welcomed by all parties."
       },

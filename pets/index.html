@@ -214,42 +214,21 @@
             background: var(--ink-fade);
         }
 
-        /* Clickable timeline items — whole row/bullet is a tap target */
-        .tl-event.is-clickable,
-        .tl-bullets li.is-clickable {
+        /* Clickable timeline text — looks like a link */
+        .tl-link {
+            color: var(--accent);
+            font-weight: 600;
             cursor: pointer;
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            gap: 10px;
-            transition: background 0.15s ease, color 0.15s ease;
+            text-decoration: underline;
+            text-decoration-color: rgba(226, 88, 88, 0.45);
+            text-decoration-thickness: 1px;
+            text-underline-offset: 3px;
+            transition: text-decoration-color 0.15s ease;
             outline: none;
         }
-        .tl-event.is-clickable:hover,
-        .tl-event.is-clickable:focus-visible {
-            background: rgba(226, 88, 88, 0.08);
-        }
-        .tl-bullets li.is-clickable:hover,
-        .tl-bullets li.is-clickable:focus-visible {
-            color: var(--accent);
-        }
-        .tl-bullets li.is-clickable::before { background: var(--accent); }
-
-        .tl-clickable-text {
-            flex: 1;
-        }
-        .tl-chev {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 20px;
-            line-height: 1;
-            flex-shrink: 0;
-            transition: transform 0.15s ease;
-            display: inline-block;
-        }
-        .is-clickable:hover .tl-chev,
-        .is-clickable:focus-visible .tl-chev {
-            transform: translateX(3px);
+        .tl-link:hover,
+        .tl-link:focus-visible {
+            text-decoration-color: var(--accent);
         }
 
         /* Timeline detail modal — pet blocks */
@@ -705,25 +684,19 @@
         if (item && typeof item === 'object') {
             const hasDetails = (item.pets && item.pets.length) || item.details;
             if (hasDetails) {
-                container.classList.add('is-clickable');
-                container.addEventListener('click', () => openTimelineDetail(item));
-                container.setAttribute('role', 'button');
-                container.setAttribute('tabindex', '0');
-                container.addEventListener('keydown', (e) => {
+                const link = document.createElement('span');
+                link.className = 'tl-link';
+                link.textContent = item.text || '';
+                link.setAttribute('role', 'button');
+                link.setAttribute('tabindex', '0');
+                link.addEventListener('click', () => openTimelineDetail(item));
+                link.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
                         openTimelineDetail(item);
                     }
                 });
-
-                const txt = document.createElement('span');
-                txt.className = 'tl-clickable-text';
-                txt.textContent = item.text || '';
-                const chev = document.createElement('span');
-                chev.className = 'tl-chev';
-                chev.textContent = '›';
-                container.appendChild(txt);
-                container.appendChild(chev);
+                container.appendChild(link);
             } else {
                 container.textContent = item.text || '';
             }

@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Pet Dex — sitter briefing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#faf3ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Fredoka+One&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --pastel-pink: #f8a4d0;
+            --pastel-aqua: #a4e4f8;
+            --pastel-mint: #a8f0c8;
+            --pastel-lavender: #c8a4f8;
+            --pastel-yellow: #f8eca4;
+            --pastel-peach: #f8c4a4;
+            --pastel-blue: #a4c4f8;
+            --pastel-red: #f8a4a4;
+            --bg: #faf3ff;
+            --card-bg: rgba(255, 255, 255, 0.82);
+            --ink: #2d1b3d;
+            --ink-soft: rgba(45, 27, 61, 0.7);
+            --ink-mute: rgba(45, 27, 61, 0.45);
+            --surface-sub: rgba(45, 27, 61, 0.05);
+            --border-soft: rgba(45, 27, 61, 0.12);
+            --accent-deep: #7a4ea8;
+
+            /* deeper variants for readable text on light bg */
+            --deep-pink: #c75a8e;
+            --deep-aqua: #3a8aa8;
+            --deep-mint: #4aa078;
+            --deep-lavender: #6a4ea8;
+            --deep-yellow: #b88a1e;
+            --deep-peach: #b87038;
+            --deep-blue: #4a6ec0;
+            --deep-red: #b84a4a;
+
+            /* species accents */
+            --dog: var(--pastel-peach);
+            --cat: var(--pastel-pink);
+            --bird: var(--pastel-yellow);
+        }
+
+        @keyframes driftBg {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes holoShift {
+            0%   { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-14px) rotate(6deg); }
+            75% { transform: translateY(10px) rotate(-4deg); }
+        }
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.7); }
+            50% { opacity: 0.9; transform: scale(1.3); }
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scanline {
+            0%   { background-position: 0 0; }
+            100% { background-position: 0 6px; }
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes overlayIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        html { background: var(--bg); }
+
+        body {
+            font-family: 'Fredoka One', cursive;
+            background:
+                linear-gradient(145deg, #fff6fb 0%, #f3ecff 35%, #ecf5ff 65%, #fff4ec 100%);
+            background-size: 400% 400%;
+            animation: driftBg 30s ease infinite;
+            min-height: 100svh;
+            color: var(--ink);
+            overflow-x: hidden;
+        }
+
+        .bg-shapes {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .bg-shapes .shape {
+            position: absolute; opacity: 0.22;
+            animation: float 12s ease-in-out infinite;
+        }
+        .star {
+            position: fixed; background: rgba(122, 78, 168, 0.5); border-radius: 50%;
+            pointer-events: none; z-index: 0;
+        }
+
+        .wrap {
+            position: relative; z-index: 1;
+            max-width: 980px; margin: 0 auto;
+            padding: 16px;
+            padding-top: calc(16px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+            display: flex; flex-direction: column; gap: 18px;
+            min-height: 100svh;
+        }
+
+        .header { text-align: center; padding: 10px 0 4px; }
+        .header h1 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(14px, 4.5vw, 22px);
+            background: linear-gradient(90deg,
+                var(--pastel-aqua), var(--pastel-pink),
+                var(--pastel-lavender), var(--pastel-mint),
+                var(--pastel-yellow), var(--pastel-aqua));
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: holoShift 7s linear infinite;
+            line-height: 1.5;
+        }
+        .header p {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: var(--ink-soft);
+            margin-top: 8px;
+            letter-spacing: 1.5px;
+            line-height: 1.7;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border-radius: 22px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-soft);
+            box-shadow: 0 4px 20px rgba(45, 27, 61, 0.06);
+        }
+
+        .section-label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: var(--accent-deep);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .filter-row { display: flex; flex-wrap: wrap; gap: 7px; }
+        .pill {
+            font-family: 'Fredoka One', cursive;
+            font-size: 14px;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            padding: 7px 15px;
+            cursor: pointer;
+            transition: transform 0.1s ease, background 0.15s ease, border-color 0.15s ease;
+            background: var(--surface-sub);
+            color: var(--ink-soft);
+            border-color: var(--border-soft);
+            letter-spacing: 0.5px;
+        }
+        .pill:active { transform: scale(0.93); }
+        .pill.active { color: var(--ink); border-color: transparent; }
+        .pill[data-species="all"].active  { background: var(--pastel-lavender); }
+        .pill[data-species="dog"].active  { background: var(--dog); }
+        .pill[data-species="cat"].active  { background: var(--cat); }
+        .pill[data-species="bird"].active { background: var(--bird); }
+
+        /* ---- House notes ---- */
+        .house-notes {
+            background: rgba(248, 236, 164, 0.22);
+            border: 1.5px dashed rgba(180, 140, 30, 0.45);
+            border-radius: 14px;
+            padding: 12px 14px;
+        }
+        .house-notes ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .house-notes li {
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(45, 27, 61, 0.78);
+            padding-left: 16px;
+            position: relative;
+        }
+        .house-notes li::before {
+            content: '★';
+            position: absolute;
+            left: 0; top: 0;
+            color: var(--deep-yellow);
+            font-size: 10px;
+            line-height: 1.8;
+        }
+
+        /* ---- Day timeline ---- */
+        .timeline {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+        }
+        .tl-row {
+            display: grid;
+            grid-template-columns: 90px 1fr;
+            gap: 12px;
+            align-items: stretch;
+        }
+        .tl-time {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            letter-spacing: 1px;
+            color: var(--deep-aqua);
+            padding-top: 12px;
+            text-align: right;
+            line-height: 1.3;
+        }
+        .tl-event {
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(45, 27, 61, 0.85);
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: rgba(122, 78, 168, 0.07);
+            border-left: 3px solid var(--pastel-aqua);
+        }
+        .tl-row[data-kind="chickens"] .tl-time   { color: var(--deep-yellow); }
+        .tl-row[data-kind="chickens"] .tl-event  { border-left-color: var(--pastel-yellow); }
+        .tl-row[data-kind="meds"] .tl-time       { color: var(--deep-red); }
+        .tl-row[data-kind="meds"] .tl-event      { border-left-color: var(--pastel-red); }
+        .tl-row[data-kind="cats"] .tl-time       { color: var(--deep-pink); }
+        .tl-row[data-kind="cats"] .tl-event      { border-left-color: var(--pastel-pink); }
+        .tl-row[data-kind="dogs"] .tl-time       { color: var(--deep-peach); }
+        .tl-row[data-kind="dogs"] .tl-event      { border-left-color: var(--pastel-peach); }
+
+        .tl-bullets {
+            list-style: none;
+            display: flex; flex-direction: column;
+            gap: 4px;
+            margin: 0; padding: 0;
+        }
+        .tl-bullets li {
+            position: relative;
+            padding-left: 14px;
+        }
+        .tl-bullets li::before {
+            content: '◆';
+            position: absolute;
+            left: 0; top: 0;
+            font-size: 8px;
+            line-height: 1.9;
+            opacity: 0.7;
+        }
+
+        /* ---- Card grid ---- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        .card {
+            position: relative;
+            background:
+                linear-gradient(180deg, #ffffff 0%, #fbf3ff 100%);
+            border-radius: 18px;
+            padding: 10px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            animation: cardIn 0.3s ease both;
+            border: 2px solid var(--border-soft);
+        }
+        .card:active { transform: scale(0.97); }
+        .card:hover { border-color: rgba(122, 78, 168, 0.4); }
+
+        /* holo border via gradient */
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(120deg,
+                var(--pastel-aqua), var(--pastel-pink),
+                var(--pastel-lavender), var(--pastel-mint),
+                var(--pastel-yellow), var(--pastel-aqua));
+            background-size: 300% 100%;
+            animation: holoShift 8s linear infinite;
+            z-index: -1;
+            border-radius: 20px;
+            opacity: 0.35;
+        }
+        .card:hover::before { opacity: 0.6; }
+
+        .card[data-species="dog"]  { box-shadow: 0 0 22px rgba(248, 196, 164, 0.1); }
+        .card[data-species="cat"]  { box-shadow: 0 0 22px rgba(248, 164, 208, 0.1); }
+        .card[data-species="bird"] { box-shadow: 0 0 22px rgba(248, 236, 164, 0.12); }
+
+        .card-image {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f0e6fa;
+            margin-bottom: 10px;
+        }
+        .card-image img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .card:hover .card-image img { transform: scale(1.04); }
+
+        /* species ribbon on image */
+        .card-ribbon {
+            position: absolute;
+            top: 8px; left: 8px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            letter-spacing: 1px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: rgba(15, 24, 48, 0.85);
+            backdrop-filter: blur(4px);
+        }
+        .card[data-species="dog"]  .card-ribbon { color: var(--dog); border: 1px solid var(--dog); }
+        .card[data-species="cat"]  .card-ribbon { color: var(--cat); border: 1px solid var(--cat); }
+        .card[data-species="bird"] .card-ribbon { color: var(--bird); border: 1px solid var(--bird); }
+
+        /* warning flash */
+        .card-warning {
+            position: absolute;
+            top: 8px; right: 8px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: rgba(248, 164, 164, 0.9);
+            color: #2a0a0a;
+            letter-spacing: 1px;
+        }
+
+        .card-name {
+            font-size: 19px;
+            color: var(--ink);
+            line-height: 1.15;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .card-name .aka {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            color: rgba(45, 27, 61, 0.5);
+            letter-spacing: 1px;
+        }
+        .card-tagline {
+            font-size: 12px;
+            color: rgba(45, 27, 61, 0.6);
+            margin-top: 4px;
+            line-height: 1.35;
+        }
+        .card-badges {
+            display: flex; flex-wrap: wrap; gap: 4px;
+            margin-top: 8px;
+        }
+        .badge {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            letter-spacing: 0.5px;
+            padding: 3px 7px;
+            border-radius: 20px;
+            background: rgba(122, 78, 168, 0.1);
+            color: rgba(45, 27, 61, 0.75);
+        }
+        .badge.meds       { background: rgba(248, 164, 164, 0.18); color: var(--pastel-red); }
+        .badge.senior     { background: rgba(248, 236, 164, 0.15); color: var(--pastel-yellow); }
+        .badge.escape     { background: rgba(248, 196, 164, 0.18); color: var(--pastel-peach); }
+        .badge.shy        { background: rgba(164, 196, 248, 0.15); color: var(--pastel-blue); }
+        .badge.bitey      { background: rgba(248, 164, 208, 0.18); color: var(--pastel-pink); }
+
+        /* ---- Modal ---- */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(45, 27, 61, 0.45);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 20px;
+            padding-top: calc(20px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            overflow-y: auto;
+            animation: overlayIn 0.2s ease both;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            position: relative;
+            background: linear-gradient(180deg, #ffffff 0%, #fbf3ff 100%);
+            border-radius: 22px;
+            max-width: 560px;
+            width: 100%;
+            padding: 18px;
+            box-shadow: 0 20px 60px rgba(45, 27, 61, 0.18);
+            animation: modalIn 0.25s ease both;
+            border: 2px solid var(--border-soft);
+        }
+        .modal::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(120deg,
+                var(--pastel-aqua), var(--pastel-pink),
+                var(--pastel-lavender), var(--pastel-mint),
+                var(--pastel-yellow), var(--pastel-aqua));
+            background-size: 300% 100%;
+            animation: holoShift 8s linear infinite;
+            z-index: -1;
+            border-radius: 24px;
+            opacity: 0.45;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px; right: 12px;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(45, 27, 61, 0.85);
+            color: #fff;
+            border: 1.5px solid rgba(45, 27, 61, 0.3);
+            font-family: 'Fredoka One', cursive;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 2;
+            transition: transform 0.1s ease, background 0.15s ease;
+        }
+        .modal-close:active { transform: scale(0.9); background: rgba(248, 164, 164, 0.3); }
+
+        .modal-hero {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            background: #f0e6fa;
+            margin-bottom: 14px;
+        }
+        .modal-hero img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .modal-hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(180deg, transparent 50%, rgba(15, 24, 48, 0.9) 100%);
+        }
+
+        .modal-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            background: linear-gradient(90deg, var(--pastel-lavender), var(--pastel-pink), var(--pastel-aqua));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        .modal-aka {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: rgba(45, 27, 61, 0.45);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .modal-tagline {
+            font-size: 14px;
+            color: rgba(45, 27, 61, 0.75);
+            margin-bottom: 14px;
+            font-style: italic;
+        }
+
+        .modal-badges {
+            display: flex; flex-wrap: wrap; gap: 5px;
+            margin-bottom: 16px;
+        }
+
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .stat {
+            background: rgba(122, 78, 168, 0.08);
+            border-radius: 12px;
+            padding: 10px 8px;
+            text-align: center;
+        }
+        .stat-label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            color: rgba(45, 27, 61, 0.45);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .stat-bar {
+            display: flex; justify-content: center; gap: 3px;
+        }
+        .stat-dot {
+            width: 8px; height: 8px;
+            border-radius: 2px;
+            background: rgba(45, 27, 61, 0.1);
+        }
+        .stat-dot.on { background: var(--pastel-aqua); box-shadow: 0 0 6px var(--pastel-aqua); }
+        .stat[data-key="energy"] .stat-dot.on { background: var(--pastel-peach); box-shadow: 0 0 6px var(--pastel-peach); }
+        .stat[data-key="chill"] .stat-dot.on { background: var(--pastel-mint); box-shadow: 0 0 6px var(--pastel-mint); }
+        .stat[data-key="spice"] .stat-dot.on { background: var(--pastel-pink); box-shadow: 0 0 6px var(--pastel-pink); }
+
+        .modal-section {
+            background: rgba(122, 78, 168, 0.07);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--pastel-aqua);
+        }
+        .modal-section[data-kind="meds"]    { border-left-color: var(--pastel-red); }
+        .modal-section[data-kind="quirks"]  { border-left-color: var(--pastel-lavender); }
+        .modal-section[data-kind="warning"] { border-left-color: var(--pastel-peach); background: rgba(248, 196, 164, 0.08); }
+
+        .modal-section h3 {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 8px;
+            letter-spacing: 2px;
+            color: var(--deep-aqua);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .modal-section[data-kind="meds"] h3    { color: var(--deep-red); }
+        .modal-section[data-kind="quirks"] h3  { color: var(--deep-lavender); }
+        .modal-section[data-kind="warning"] h3 { color: var(--deep-peach); }
+
+        .modal-section p, .modal-section li {
+            font-size: 14px;
+            color: rgba(45, 27, 61, 0.85);
+            line-height: 1.55;
+        }
+        .modal-section ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .modal-section li {
+            padding-left: 16px;
+            position: relative;
+        }
+        .modal-section li::before {
+            content: '◆';
+            position: absolute;
+            left: 0; top: 0;
+            font-size: 9px;
+            line-height: 1.7;
+            color: var(--deep-aqua);
+        }
+        .modal-section[data-kind="quirks"] li::before  { color: var(--deep-lavender); }
+        .modal-section[data-kind="warning"] li::before { color: var(--deep-peach); }
+
+        .field-grid {
+            display: grid;
+            gap: 8px;
+        }
+        .field {
+            display: grid;
+            grid-template-columns: 70px 1fr;
+            gap: 8px;
+            align-items: baseline;
+        }
+        .field-label {
+            font-family: 'Press Start 2P', monospace;
+            font-size: 6px;
+            color: rgba(45, 27, 61, 0.45);
+            letter-spacing: 1px;
+            padding-top: 2px;
+        }
+        .field-value {
+            font-size: 14px;
+            color: rgba(45, 27, 61, 0.85);
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            color: rgba(122, 78, 168, 0.5);
+            letter-spacing: 1px;
+            padding: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+            .card-name { font-size: 17px; }
+            .modal { padding: 14px; }
+            .modal-title { font-size: 12px; }
+            .field { grid-template-columns: 60px 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes" id="bgShapes"></div>
+
+    <div class="wrap">
+        <div class="header">
+            <h1>~ Pet Dex ~</h1>
+            <p id="introLine">loading the menagerie&hellip;</p>
+        </div>
+
+        <div class="panel" id="houseNotesPanel" style="display:none;">
+            <div class="section-label">House Notes</div>
+            <div class="house-notes">
+                <ul id="houseNotesList"></ul>
+            </div>
+        </div>
+
+        <div class="panel" id="timelinePanel" style="display:none;">
+            <div class="section-label">A Day in the Life</div>
+            <ol class="timeline" id="timelineList"></ol>
+        </div>
+
+        <div class="grid" id="petGrid"></div>
+
+        <div class="footer">made with vibes &middot; tap a card for the briefing</div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+            <div class="modal-hero">
+                <img id="modalImg" alt="">
+            </div>
+            <div class="modal-title" id="modalTitle"></div>
+            <div class="modal-aka" id="modalAka"></div>
+            <div class="modal-tagline" id="modalTagline"></div>
+            <div class="modal-badges" id="modalBadges"></div>
+            <div class="stat-row" id="modalStats"></div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+    /* =====================================================
+       Pet Dex — sitter briefing
+       ===================================================== */
+
+    let DATA = null;
+
+    /* ---- Background fluff ---- */
+    (function initBg() {
+        const container = document.getElementById('bgShapes');
+        const shapes = ['●', '■', '▲', '◆', '★', '♦', '◐', '⬟', '⬡', '○', '□', '♥'];
+        const colors = ['#f8a4d0','#a4e4f8','#a8f0c8','#f8eca4','#c8a4f8','#f8c4a4','#a4c4f8'];
+        for (let i = 0; i < 10; i++) {
+            const el = document.createElement('div');
+            el.className = 'shape';
+            el.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+            el.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${10+Math.random()*32}px;color:${colors[Math.floor(Math.random()*colors.length)]};animation-delay:${Math.random()*7}s;animation-duration:${5+Math.random()*9}s;`;
+            container.appendChild(el);
+        }
+        for (let i = 0; i < 18; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;animation:starTwinkle ${2+Math.random()*4}s ease-in-out ${Math.random()*3}s infinite;width:${1+Math.random()*2.5}px;height:${1+Math.random()*2.5}px;`;
+            document.body.appendChild(star);
+        }
+    })();
+
+    /* ---- Boot ---- */
+    fetch('pets.json', { cache: 'no-cache' })
+        .then(r => r.json())
+        .then(data => {
+            DATA = data;
+            document.getElementById('introLine').textContent = data.intro || '';
+            renderHouseNotes();
+            renderTimeline();
+            renderGrid();
+        })
+        .catch(err => {
+            document.getElementById('introLine').textContent = 'failed to load pets.json — sad face';
+            console.error(err);
+        });
+
+    /* ---- House notes ---- */
+    function renderHouseNotes() {
+        if (!DATA.house_notes || DATA.house_notes.length === 0) return;
+        const panel = document.getElementById('houseNotesPanel');
+        const list = document.getElementById('houseNotesList');
+        DATA.house_notes.forEach(note => {
+            const li = document.createElement('li');
+            li.textContent = note;
+            list.appendChild(li);
+        });
+        panel.style.display = '';
+    }
+
+    /* ---- Day timeline ---- */
+    function renderTimeline() {
+        if (!DATA.day_timeline || DATA.day_timeline.length === 0) return;
+        const panel = document.getElementById('timelinePanel');
+        const list = document.getElementById('timelineList');
+        DATA.day_timeline.forEach(row => {
+            const li = document.createElement('li');
+            li.className = 'tl-row';
+            if (row.kind) li.dataset.kind = row.kind;
+            const t = document.createElement('div');
+            t.className = 'tl-time';
+            t.textContent = row.time;
+            const e = document.createElement('div');
+            e.className = 'tl-event';
+            if (Array.isArray(row.event)) {
+                const ul = document.createElement('ul');
+                ul.className = 'tl-bullets';
+                row.event.forEach(item => {
+                    const liItem = document.createElement('li');
+                    liItem.textContent = item;
+                    ul.appendChild(liItem);
+                });
+                e.appendChild(ul);
+            } else {
+                e.textContent = row.event;
+            }
+            li.appendChild(t);
+            li.appendChild(e);
+            list.appendChild(li);
+        });
+        panel.style.display = '';
+    }
+
+    /* ---- Grid ---- */
+    function renderGrid() {
+        const grid = document.getElementById('petGrid');
+        grid.innerHTML = '';
+        DATA.pets.forEach((pet, idx) => grid.appendChild(buildCard(pet, idx)));
+    }
+
+    function buildCard(pet, idx) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.species = pet.species;
+        card.style.animationDelay = (idx * 40) + 'ms';
+
+        const flashLabel = pet.meds ? 'MEDS' : null;
+
+        const imgWrap = document.createElement('div');
+        imgWrap.className = 'card-image';
+
+        const img = document.createElement('img');
+        img.src = pet.image;
+        img.alt = pet.name;
+        img.loading = 'lazy';
+        if (pet.focus) img.style.objectPosition = pet.focus;
+        imgWrap.appendChild(img);
+
+        if (flashLabel) {
+            const warn = document.createElement('div');
+            warn.className = 'card-warning';
+            warn.textContent = flashLabel;
+            imgWrap.appendChild(warn);
+        }
+
+        const name = document.createElement('div');
+        name.className = 'card-name';
+        const nameText = document.createElement('span');
+        nameText.textContent = pet.name;
+        name.appendChild(nameText);
+        if (pet.aka) {
+            const aka = document.createElement('span');
+            aka.className = 'aka';
+            aka.textContent = '“' + pet.aka + '”';
+            name.appendChild(aka);
+        }
+
+        const tagline = document.createElement('div');
+        tagline.className = 'card-tagline';
+        tagline.textContent = pet.tagline || '';
+
+        const badges = document.createElement('div');
+        badges.className = 'card-badges';
+        (pet.badges || []).forEach(b => {
+            const span = document.createElement('span');
+            span.className = 'badge ' + badgeClass(b);
+            span.textContent = b;
+            badges.appendChild(span);
+        });
+
+        card.appendChild(imgWrap);
+        card.appendChild(name);
+        card.appendChild(tagline);
+        card.appendChild(badges);
+
+        card.addEventListener('click', () => openModal(pet));
+        return card;
+    }
+
+    function badgeClass(b) {
+        const v = b.toLowerCase();
+        if (v.includes('med')) return 'meds';
+        if (v.includes('senior')) return 'senior';
+        if (v.includes('escape') || v.includes('door')) return 'escape';
+        if (v.includes('shy') || v.includes('no-pickup')) return 'shy';
+        if (v.includes('bite') || v.includes('boss')) return 'bitey';
+        return '';
+    }
+
+    /* ---- Modal ---- */
+    const overlay = document.getElementById('modalOverlay');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalAka = document.getElementById('modalAka');
+    const modalTagline = document.getElementById('modalTagline');
+    const modalBadges = document.getElementById('modalBadges');
+    const modalStats = document.getElementById('modalStats');
+    const modalBody = document.getElementById('modalBody');
+
+    function openModal(pet) {
+        modalImg.src = pet.image;
+        modalImg.alt = pet.name;
+        modalImg.style.objectPosition = pet.focus || '50% 50%';
+        modalTitle.textContent = pet.name;
+        modalAka.textContent = pet.aka ? 'aka ' + pet.aka : '';
+        modalAka.style.display = pet.aka ? '' : 'none';
+        modalTagline.textContent = pet.tagline || '';
+
+        // Badges
+        modalBadges.innerHTML = '';
+        (pet.badges || []).forEach(b => {
+            const s = document.createElement('span');
+            s.className = 'badge ' + badgeClass(b);
+            s.textContent = b;
+            modalBadges.appendChild(s);
+        });
+
+        // Stats
+        modalStats.innerHTML = '';
+        const statKeys = [
+            { key: 'energy', label: 'Energy' },
+            { key: 'chill',  label: 'Chill'  },
+            { key: 'spice',  label: 'Spice'  }
+        ];
+        statKeys.forEach(({ key, label }) => {
+            const val = pet.stats && pet.stats[key] ? pet.stats[key] : 0;
+            const stat = document.createElement('div');
+            stat.className = 'stat';
+            stat.dataset.key = key;
+            const lbl = document.createElement('div');
+            lbl.className = 'stat-label';
+            lbl.textContent = label;
+            stat.appendChild(lbl);
+            const bar = document.createElement('div');
+            bar.className = 'stat-bar';
+            for (let i = 1; i <= 5; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'stat-dot' + (i <= val ? ' on' : '');
+                bar.appendChild(dot);
+            }
+            stat.appendChild(bar);
+            modalStats.appendChild(stat);
+        });
+
+        // Body
+        modalBody.innerHTML = '';
+
+        // Feeding
+        if (pet.feeding) {
+            const f = pet.feeding;
+            const section = sectionEl('feeding', '🍽 Feeding');
+            const grid = document.createElement('div');
+            grid.className = 'field-grid';
+            if (f.when)  grid.appendChild(fieldEl('When', f.when));
+            if (f.where) grid.appendChild(fieldEl('Where', f.where));
+            if (f.what)  grid.appendChild(fieldEl('What', f.what));
+            if (f.notes) grid.appendChild(fieldEl('Notes', f.notes));
+            section.appendChild(grid);
+            modalBody.appendChild(section);
+        }
+
+        // Meds
+        if (pet.meds) {
+            const m = pet.meds;
+            const section = sectionEl('meds', '💊 Medication');
+            const grid = document.createElement('div');
+            grid.className = 'field-grid';
+            if (m.schedule) grid.appendChild(fieldEl('Schedule', m.schedule));
+            if (m.location) grid.appendChild(fieldEl('Location', m.location));
+            if (m.morning)  grid.appendChild(fieldEl('Morning', m.morning));
+            if (m.evening)  grid.appendChild(fieldEl('Evening', m.evening));
+            section.appendChild(grid);
+            modalBody.appendChild(section);
+        }
+
+        // Quirks
+        if (pet.quirks && pet.quirks.length) {
+            const section = sectionEl('quirks', '✨ Quirks');
+            const ul = document.createElement('ul');
+            pet.quirks.forEach(q => {
+                const li = document.createElement('li');
+                li.textContent = q;
+                ul.appendChild(li);
+            });
+            section.appendChild(ul);
+            modalBody.appendChild(section);
+        }
+
+        // Warnings
+        if (pet.warnings && pet.warnings.length) {
+            const section = sectionEl('warning', '⚠ Warnings');
+            const ul = document.createElement('ul');
+            pet.warnings.forEach(w => {
+                const li = document.createElement('li');
+                li.textContent = w;
+                ul.appendChild(li);
+            });
+            section.appendChild(ul);
+            modalBody.appendChild(section);
+        }
+
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function sectionEl(kind, title) {
+        const sec = document.createElement('div');
+        sec.className = 'modal-section';
+        sec.dataset.kind = kind;
+        const h = document.createElement('h3');
+        h.textContent = title;
+        sec.appendChild(h);
+        return sec;
+    }
+
+    function fieldEl(label, value) {
+        const row = document.createElement('div');
+        row.className = 'field';
+        const l = document.createElement('div');
+        l.className = 'field-label';
+        l.textContent = label;
+        const v = document.createElement('div');
+        v.className = 'field-value';
+        v.textContent = value;
+        row.appendChild(l);
+        row.appendChild(v);
+        return row;
+    }
+
+    function closeModal() {
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+    </script>
+</body>
+</html>

@@ -2,11 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Pet Dex — sitter briefing</title>
+    <title>petdex</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#15161b">
+    <meta name="description" content="Everything you need to look after the menagerie — feeding, meds, quirks, and the rhythm of a day in the house.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://b38tn1k.github.io/pets/">
+
+    <!-- Open Graph (iMessage, Slack, Discord, FB, etc.) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="petdex">
+    <meta property="og:title" content="petdex">
+    <meta property="og:description" content="Everything you need to look after the menagerie — feeding, meds, quirks, and the rhythm of a day in the house.">
+    <meta property="og:url" content="https://b38tn1k.github.io/pets/">
+    <!-- Swap this filename to change the link-preview thumbnail -->
+    <meta property="og:image" content="https://b38tn1k.github.io/pets/images/boomba.jpeg">
+    <meta property="og:image:alt" content="One of the resident creatures.">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="petdex">
+    <meta name="twitter:description" content="A sitter briefing for the resident creatures.">
+    <meta name="twitter:image" content="https://b38tn1k.github.io/pets/images/boomba.jpeg">
+
+    <!-- iOS / Apple -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="petdex">
+    <link rel="apple-touch-icon" href="https://b38tn1k.github.io/pets/images/boomba.jpeg">
+
+    <link rel="icon" href="/favicon.ico">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -224,32 +251,18 @@
 
         .card-warning {
             position: absolute;
-            top: 8px; right: 8px;
+            top: 10px; right: 10px;
             font-family: 'JetBrains Mono', ui-monospace, monospace;
-            font-size: 10px;
+            font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.14em;
-            padding: 3px 7px;
-            border-radius: 6px;
+            padding: 5px 11px;
+            border-radius: 8px;
             background: var(--accent);
             color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
-        .card-meta {
-            font-family: 'JetBrains Mono', ui-monospace, monospace;
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--ink-mute);
-            margin-bottom: 4px;
-            display: flex; align-items: center; gap: 7px;
-        }
-        .card-meta .dot {
-            width: 3px; height: 3px;
-            border-radius: 50%;
-            background: var(--ink-fade);
-        }
         .card-name {
             font-size: 17px;
             font-weight: 600;
@@ -341,15 +354,6 @@
             display: block;
         }
 
-        .modal-meta {
-            font-family: 'JetBrains Mono', ui-monospace, monospace;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 5px;
-        }
         .modal-title {
             font-size: 26px;
             font-weight: 700;
@@ -527,7 +531,6 @@
         <div class="modal" id="modal">
             <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
             <div class="modal-hero"><img id="modalImg" alt=""></div>
-            <div class="modal-meta" id="modalMeta"></div>
             <div class="modal-title" id="modalTitle"></div>
             <div class="modal-aka" id="modalAka"></div>
             <div class="modal-tagline" id="modalTagline"></div>
@@ -614,8 +617,6 @@
         DATA.pets.forEach((pet, idx) => grid.appendChild(buildCard(pet, idx)));
     }
 
-    const speciesLabel = { dog: 'Dog', cat: 'Cat', bird: 'Bird' };
-
     function buildCard(pet, idx) {
         const card = document.createElement('div');
         card.className = 'card';
@@ -637,18 +638,6 @@
             imgWrap.appendChild(warn);
         }
 
-        const meta = document.createElement('div');
-        meta.className = 'card-meta';
-        const num = document.createElement('span');
-        num.textContent = 'No. ' + String(idx + 1).padStart(3, '0');
-        const dot = document.createElement('span');
-        dot.className = 'dot';
-        const sp = document.createElement('span');
-        sp.textContent = speciesLabel[pet.species] || pet.species;
-        meta.appendChild(num);
-        meta.appendChild(dot);
-        meta.appendChild(sp);
-
         const name = document.createElement('div');
         name.className = 'card-name';
         const nameText = document.createElement('span');
@@ -666,18 +655,16 @@
         tagline.textContent = pet.tagline || '';
 
         card.appendChild(imgWrap);
-        card.appendChild(meta);
         card.appendChild(name);
         card.appendChild(tagline);
 
-        card.addEventListener('click', () => openModal(pet, idx));
+        card.addEventListener('click', () => openModal(pet));
         return card;
     }
 
     /* ---- Modal ---- */
     const overlay = document.getElementById('modalOverlay');
     const modalImg = document.getElementById('modalImg');
-    const modalMeta = document.getElementById('modalMeta');
     const modalTitle = document.getElementById('modalTitle');
     const modalAka = document.getElementById('modalAka');
     const modalTagline = document.getElementById('modalTagline');
@@ -685,11 +672,10 @@
     const modalStats = document.getElementById('modalStats');
     const modalBody = document.getElementById('modalBody');
 
-    function openModal(pet, idx) {
+    function openModal(pet) {
         modalImg.src = pet.image;
         modalImg.alt = pet.name;
         modalImg.style.objectPosition = pet.focus || '50% 50%';
-        modalMeta.textContent = 'No. ' + String(idx + 1).padStart(3, '0') + ' · ' + (speciesLabel[pet.species] || pet.species);
         modalTitle.textContent = pet.name;
         modalAka.textContent = pet.aka ? 'aka ' + pet.aka : '';
         modalAka.style.display = pet.aka ? '' : 'none';

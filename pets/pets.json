@@ -42,13 +42,24 @@
     {
       "time": "08:00 – 12:00",
       "kind": "chickens",
-      "event": "Feed the hens — a full feed bowl of laying pellets + two bowls of cracked corn. Bowl + feed all live in the black bin near the coop gate."
+      "event": {
+        "text": "Feed the hens.",
+        "pets": [
+          "hens"
+        ]
+      }
     },
     {
       "time": "09:00",
       "kind": "meds",
       "event": [
-        "Morning feed for Boomba & Cabbage.",
+        {
+          "text": "Morning feed for Boomba & Cabbage.",
+          "pets": [
+            "boomba",
+            "cabbage"
+          ]
+        },
         "Ziggy's morning pill — wrapped in cheese.",
         "Bear & Lucy get a little cheese too if they're nearby."
       ]
@@ -66,7 +77,13 @@
     {
       "time": "18:30",
       "kind": "cats",
-      "event": "Evening feed for Boomba & Cabbage."
+      "event": {
+        "text": "Evening feed for Boomba & Cabbage.",
+        "pets": [
+          "boomba",
+          "cabbage"
+        ]
+      }
     },
     {
       "time": "20:30",
@@ -87,7 +104,14 @@
       "time": "22:30",
       "kind": "meds",
       "event": [
-        "Dog dinner — Bear, Lucy & Ziggy.",
+        {
+          "text": "Dog dinner — Bear, Lucy & Ziggy.",
+          "pets": [
+            "bear",
+            "lucy",
+            "ziggy"
+          ]
+        },
         "Hide Ziggy's evening pill inside his wet food.",
         "Add Ziggy's fish oil capsule."
       ]

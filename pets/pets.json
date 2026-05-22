@@ -88,7 +88,7 @@
     {
       "time": "20:30",
       "kind": "chickens",
-      "event": "Chicken roll-call — confirm all 9 are tucked into the shed."
+      "event": "Chicken roll-call — confirm all 11 are tucked into the shed."
     },
     {
       "time": "21:00",
@@ -222,7 +222,7 @@
         "notes": "Half the wet can is Ziggy's; the other half splits between Lucy and Bear."
       },
       "meds": {
-        "schedule": "One pill twice a day (morning + evening)",
+        "schedule": "One Mycophenolate pill twice a day (morning + evening)",
         "location": "Kitchen counter (gloves also on the counter)",
         "morning": "Wrap pill in cheese. Bear and Lucy get a little cheese too if they're around.",
         "evening": "Push pill into his wet food to hide it. Also give a fish oil capsule."
@@ -369,7 +369,7 @@
       "species": "bird",
       "image": "images/hens.jpeg",
       "focus": "50% 50%",
-      "tagline": "9-strong flock, plus Colin the rooster.",
+      "tagline": "11-strong flock, Colin the rooster included.",
       "badges": [
         "flock",
         "escape-risk"
@@ -388,7 +388,7 @@
       },
       "meds": null,
       "quirks": [
-        "9 hens total, including Colin the rooster.",
+        "11 birds in the coop, including Colin the rooster.",
         "Fat Face (the black one) and Karen (the pure white one) might escape — toss extra food in, open the door, and chase them back in.",
         "Colin does a great job putting everyone to bed."
       ],

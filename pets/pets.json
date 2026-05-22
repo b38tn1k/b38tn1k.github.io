@@ -2,12 +2,30 @@
   "version": "1.0",
   "intro": "thanks for looking after the menagerie. tap any card for the full briefing.",
   "house_notes": [
-    "All dog and cat food lives in the kitchen side closet — senior dry, high-protein dry, large-dog dry, wet food cans, plus the measuring cups (sitting on top of the wet food).",
-    "Finn + Ellie free-feed from two bowls in the downstairs bathroom — top up from the closet as needed.",
-    "Ziggy's meds + gloves are on the kitchen counter. One pill twice a day, plus a fish oil capsule in the evening.",
-    "Cans of wet dog food get split: half to Ziggy, half to Lucy, with a quarter of Lucy's half going to Bear.",
-    "Cabbage doesn't eat from bowls — pour her food onto her shelf near the CDs. Bear loves cleaning up after her.",
-    "The hens' rooster Colin puts everyone to bed at dusk, but raccoons have been around — double-check the shed is closed by sundown."
+    {
+      "title": "Important locations",
+      "items": [
+        "All dog and cat food lives in the kitchen side closet — senior dry, high-protein dry, large-dog dry, wet food cans, plus the measuring cups (sitting on top of the wet food).",
+        "Ziggy's meds + gloves live on the kitchen counter.",
+        "Cat free-feed bowls are in the downstairs bathroom.",
+        "Cabbage's eating spot is her shelf near the CDs (not a bowl)."
+      ]
+    },
+    {
+      "title": "Feeding quirks",
+      "items": [
+        "Wet can split: half to Ziggy, half to Lucy, with a quarter of Lucy's half going to Bear.",
+        "Pour Cabbage's food onto her shelf — Bear loves cleaning up after her.",
+        "Finn + Ellie free-feed all day; just keep the downstairs bathroom bowls topped up from the closet."
+      ]
+    },
+    {
+      "title": "Watch-outs",
+      "items": [
+        "Ziggy needs one pill twice a day, plus a fish oil capsule in the evening.",
+        "Raccoons have been around — double-check the chicken shed is closed by sundown (Colin usually puts everyone to bed, but verify)."
+      ]
+    }
   ],
   "day_timeline": [
     { "time": "07:00", "kind": "chickens", "event": "Chicken shed door auto-opens." },

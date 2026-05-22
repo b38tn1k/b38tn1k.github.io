@@ -99,23 +99,35 @@
 
         /* ---- House Notes ---- */
         .house-notes {
-            list-style: none;
-            display: flex; flex-direction: column; gap: 9px;
+            display: flex; flex-direction: column; gap: 16px;
         }
-        .house-notes li {
+        .notes-group { display: flex; flex-direction: column; gap: 8px; }
+        .notes-group-title {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+        .notes-group ul {
+            list-style: none;
+            display: flex; flex-direction: column; gap: 7px;
+        }
+        .notes-group li {
             font-size: 14.5px;
             line-height: 1.55;
             color: var(--ink-soft);
             padding-left: 16px;
             position: relative;
         }
-        .house-notes li::before {
+        .notes-group li::before {
             content: '';
             position: absolute;
             left: 0; top: 9px;
             width: 5px; height: 5px;
             border-radius: 50%;
-            background: var(--accent);
+            background: var(--ink-fade);
         }
 
         /* ---- Day Timeline ---- */
@@ -498,7 +510,7 @@
 
         <div class="panel" id="houseNotesPanel" style="display:none;">
             <div class="section-label">House Notes</div>
-            <ul class="house-notes" id="houseNotesList"></ul>
+            <div class="house-notes" id="houseNotesList"></div>
         </div>
 
         <div class="panel" id="timelinePanel" style="display:none;">
@@ -545,10 +557,22 @@
     function renderHouseNotes() {
         if (!DATA.house_notes || !DATA.house_notes.length) return;
         const list = document.getElementById('houseNotesList');
-        DATA.house_notes.forEach(note => {
-            const li = document.createElement('li');
-            li.textContent = note;
-            list.appendChild(li);
+        list.innerHTML = '';
+        DATA.house_notes.forEach(group => {
+            const block = document.createElement('div');
+            block.className = 'notes-group';
+            const h = document.createElement('div');
+            h.className = 'notes-group-title';
+            h.textContent = group.title;
+            block.appendChild(h);
+            const ul = document.createElement('ul');
+            (group.items || []).forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                ul.appendChild(li);
+            });
+            block.appendChild(ul);
+            list.appendChild(block);
         });
         document.getElementById('houseNotesPanel').style.display = '';
     }

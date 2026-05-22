@@ -34,7 +34,7 @@
       "Ziggy's morning pill — wrapped in cheese.",
       "Bear & Lucy get a little cheese too if they're nearby."
     ] },
-    { "time": "post-meds", "kind": "dogs", "event": "Dogs out for the toilet, then back inside." },
+    { "time": "post-meds", "kind": "dogs", "event": "Dogs go outside for a little bit." },
     { "time": "16:00 – 19:00", "kind": "dogs", "event": "Dogs usually want a second outdoor session." },
     { "time": "18:30", "kind": "cats", "event": "Evening feed for Boomba & Cabbage." },
     { "time": "20:30", "kind": "chickens", "event": "Chicken roll-call — confirm all 9 are tucked into the shed." },
@@ -45,7 +45,7 @@
       "Hide Ziggy's evening pill inside his wet food.",
       "Add Ziggy's fish oil capsule."
     ] }
-    ,{ "time": "22:35", "kind": "dogs", "event": "Post-dinner outside session for Bear" }
+    ,{ "time": "22:35", "kind": "dogs", "event": ["Ziggy has to stay inside after dinner","Post-dinner outside session for Bear (supervised)"]}
   ],
   "pets": [
     {

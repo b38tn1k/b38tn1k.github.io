@@ -7,8 +7,11 @@
       "items": [
         "All dog and cat food lives in the kitchen side closet — senior dry, high-protein dry, large-dog dry, wet food cans, plus the measuring cups (sitting on top of the wet food).",
         "Ziggy's meds + gloves live on the kitchen counter.",
-        "Cat free-feed bowls are in the downstairs bathroom.",
-        "Cabbage's eating spot is her shelf near the CDs (not a bowl)."
+        "Communal water jug in the kitchen — every dog and cat drinks from it. Keep it topped up.",
+        "Cat free-feed bowls are in the downstairs bathroom — Finn + Ellie have a dedicated cat door for access.",
+        "Cabbage's eating spot is her shelf near the CDs (not a bowl).",
+        "Litter boxes are in the basement — should be fine for the trip; scoop if they look full.",
+        "Chicken feed bin (black, near the coop gate) — one bag of cracked corn, one bag of laying pellets, and the feed bowl all live inside."
       ]
     },
     {
@@ -17,126 +20,88 @@
         "Wet dog food split: half to Ziggy, half to Lucy, with a quarter of Lucy's half going to Bear.",
         "Pour Cabbage's food onto her shelf — Bear loves cleaning up after her.",
         "Finn + Ellie free-feed all day; just keep the downstairs bathroom bowls topped up from the closet.",
-        "    The black bin near the coop gate contains the chicken feed: one bag of cracked corn and one bag of laying pellets."
-
+        "The roosters are pre-stocked — no feeding needed during the trip. Just glance to confirm food + water look fine.",
+        "Eggs from the hens — take as many as you'd like, or leave them. No pressure either way."
       ]
     },
     {
       "title": "Watch-outs",
       "items": [
         "Ziggy needs one pill twice a day, plus a fish oil capsule in the evening.",
-        "Raccoons have been around — double-check the chicken shed is closed by sundown (Colin usually puts everyone to bed, but verify)."
+        "Raccoons have been around — double-check the chicken shed is closed by sundown (Colin usually puts everyone to bed, but verify).",
+        "Bear shouldn't be outside alone — raccoons and coyotes leave Lucy + Ziggy together alone, but Bear solo is fair game. Supervise him."
       ]
     }
   ],
   "day_timeline": [
-    { "time": "07:00", "kind": "chickens", "event": "Chicken shed door auto-opens." },
-    { "time": "09:00", "kind": "meds", "event": [
-      "Morning feed for Boomba & Cabbage.",
-      "Ziggy's morning pill — wrapped in cheese.",
-      "Bear & Lucy get a little cheese too if they're nearby."
-    ] },
-    { "time": "post-meds", "kind": "dogs", "event": "Dogs go outside for a little bit." },
-    { "time": "16:00 – 19:00", "kind": "dogs", "event": "Dogs usually want a second outdoor session." },
-    { "time": "18:30", "kind": "cats", "event": "Evening feed for Boomba & Cabbage." },
-    { "time": "20:30", "kind": "chickens", "event": "Chicken roll-call — confirm all 9 are tucked into the shed." },
-    { "time": "21:00", "kind": "chickens", "event": "Chicken shed door auto-closes." },
-    { "time": "22:00", "kind": "dogs", "event": "Pre-dinner outside session for Ziggy & Lucy" },
-    { "time": "22:30", "kind": "meds", "event": [
-      "Dog dinner — Bear, Lucy & Ziggy.",
-      "Hide Ziggy's evening pill inside his wet food.",
-      "Add Ziggy's fish oil capsule."
-    ] }
-    ,{ "time": "22:35", "kind": "dogs", "event": ["Ziggy has to stay inside after dinner","Post-dinner outside session for Bear (supervised)"]}
+    {
+      "time": "07:00",
+      "kind": "chickens",
+      "event": "Chicken shed door auto-opens."
+    },
+    {
+      "time": "08:00 – 12:00",
+      "kind": "chickens",
+      "event": "Feed the hens — a full feed bowl of laying pellets + two bowls of cracked corn. Bowl + feed all live in the black bin near the coop gate."
+    },
+    {
+      "time": "09:00",
+      "kind": "meds",
+      "event": [
+        "Morning feed for Boomba & Cabbage.",
+        "Ziggy's morning pill — wrapped in cheese.",
+        "Bear & Lucy get a little cheese too if they're nearby."
+      ]
+    },
+    {
+      "time": "post-meds",
+      "kind": "dogs",
+      "event": "Dogs go outside for a little bit."
+    },
+    {
+      "time": "16:00 – 19:00",
+      "kind": "dogs",
+      "event": "Dogs usually want a second outdoor session."
+    },
+    {
+      "time": "18:30",
+      "kind": "cats",
+      "event": "Evening feed for Boomba & Cabbage."
+    },
+    {
+      "time": "20:30",
+      "kind": "chickens",
+      "event": "Chicken roll-call — confirm all 9 are tucked into the shed."
+    },
+    {
+      "time": "21:00",
+      "kind": "chickens",
+      "event": "Chicken shed door auto-closes."
+    },
+    {
+      "time": "22:00",
+      "kind": "dogs",
+      "event": "Pre-dinner outside session for Ziggy & Lucy"
+    },
+    {
+      "time": "22:30",
+      "kind": "meds",
+      "event": [
+        "Dog dinner — Bear, Lucy & Ziggy.",
+        "Hide Ziggy's evening pill inside his wet food.",
+        "Add Ziggy's fish oil capsule."
+      ]
+    },
+    {
+      "time": "22:35",
+      "kind": "dogs",
+      "event": [
+        "Ziggy has to stay inside after dinner",
+        "Post-dinner outside session for Bear (supervised)"
+      ]
+    }
   ],
   "pets": [
-    {
-      "id": "bear",
-      "name": "Bear",
-      "species": "dog",
-      "image": "images/bear.jpeg",
-      "focus": "50% 40%",
-      "tagline": "old man. couch enthusiast. very small.",
-      "badges": ["senior", "snuggler", "tiny"],
-      "stats": {
-        "vibe": "Couch potato grandpa",
-        "energy": 3,
-        "chill": 5,
-        "spice": 0
-      },
-      "feeding": {
-        "when": "Evening, 9:00–10:00 PM",
-        "where": "Under the plants near the piano",
-        "what": "1/4 bowl senior dry food (kitchen side closet) + a small dollop of wet food — about a quarter of Lucy's half of the can.",
-        "notes": "Needs to go outside for the toilet right after eating."
-      },
-      "meds": null,
-      "quirks": [
-        "Loves sitting outside with Lucy to relax.",
-        "Will happily clean up after Cabbage when she eats off her shelf."
-      ],
-      "warnings": []
-    },
-    {
-      "id": "lucy",
-      "name": "Lucy",
-      "species": "dog",
-      "image": "images/lucy.jpeg",
-      "focus": "50% 50%",
-      "tagline": "all bark, all love.",
-      "badges": ["lover", "shy-at-first"],
-      "stats": {
-        "vibe": "Pats-and-love specialist",
-        "energy": 2,
-        "chill": 4,
-        "spice": 1
-      },
-      "feeding": {
-        "when": "Evening (same time as Bear)",
-        "where": "Kitchen side closet for food; usual dog feeding spot",
-        "what": "About 1/2 bowl high-protein dry food + half a can of wet food on top.",
-        "notes": "Wet can splits: Ziggy gets half, Lucy gets half, Bear gets a quarter of Lucy's half."
-      },
-      "meds": null,
-      "quirks": [
-        "Might bark a little when you first arrive — she's a lover underneath.",
-        "A bit afraid of strange men, but warms up quickly.",
-        "Loves chilling outside with Bear."
-      ],
-      "warnings": []
-    },
-    {
-      "id": "ziggy",
-      "name": "Ziggy",
-      "species": "dog",
-      "image": "images/ziggy.jpeg",
-      "focus": "50% 35%",
-      "tagline": "world's largest lap dog. sensitive soul.",
-      "badges": ["meds", "sensitive", "lap-dog"],
-      "stats": {
-        "vibe": "Gentle giant with feelings",
-        "energy": 3,
-        "chill": 4,
-        "spice": 1
-      },
-      "feeding": {
-        "when": "Morning + Evening",
-        "where": "Kitchen — dry food and wet food in the side closet",
-        "what": "A full big bowl of large-dog dry food + half a can of wet food on top (evening). The evening pill goes pushed into the wet food. He also gets a fish oil capsule in the evening.",
-        "notes": "Half the wet can is Ziggy's; the other half splits between Lucy and Bear."
-      },
-      "meds": {
-        "schedule": "One pill twice a day (morning + evening)",
-        "location": "Kitchen counter (gloves also on the counter)",
-        "morning": "Wrap pill in cheese. Bear and Lucy get a little cheese too if they're around.",
-        "evening": "Push pill into his wet food to hide it. Also give a fish oil capsule."
-      },
-      "quirks": [
-        "Sometimes scared to go outside — be patient.",
-        "Terrified of storms. Scratching his butt calms him down."
-      ],
-      "warnings": ["needs daily meds"]
-    },
     {
       "id": "boomba",
       "name": "Boomba",
@@ -144,7 +109,11 @@
       "image": "images/boomba.jpeg",
       "focus": "50% 40%",
       "tagline": "smart, bossy, occasionally bitey.",
-      "badges": ["bitey", "escape-risk", "boss"],
+      "badges": [
+        "bitey",
+        "escape-risk",
+        "boss"
+      ],
       "stats": {
         "vibe": "Manipulator",
         "energy": 4,
@@ -153,8 +122,8 @@
       },
       "feeding": {
         "when": "Twice daily — 8:00–10:00 AM and around 6:30 PM",
-        "where": "Kitchen",
-        "what": "Morning: slightly LARGER plastic cup. Evening: slightly SMALLER plastic cup. Both cups sit on top of the wet dog food in the side closet.",
+        "where": "Downstairs hallway — his bowl sits on the tiled surface near the basement stairs, directly opposite the kitchen side closet.",
+        "what": "Morning: slightly LARGER plastic cup. Evening: slightly SMALLER plastic cup. Both cups live on top of the wet dog food in the side closet.",
         "notes": "He will demand food and try to trick you into feeding him more. Don't fall for it."
       },
       "meds": null,
@@ -170,62 +139,6 @@
       ]
     },
     {
-      "id": "finn",
-      "name": "Finn",
-      "species": "cat",
-      "image": "images/finn.jpeg",
-      "focus": "50% 45%",
-      "tagline": "extremely loveable. extremely not smart.",
-      "badges": ["love-y", "door-runner"],
-      "stats": {
-        "vibe": "Goofy sweetheart",
-        "energy": 5,
-        "chill": 3,
-        "spice": 0
-      },
-      "feeding": {
-        "when": "Free-feeds during the day",
-        "where": "Downstairs bathroom — shares two bowls with Cabbage/Ellie",
-        "what": "Dry cat food, kept topped up",
-        "notes": null
-      },
-      "meds": null,
-      "quirks": [
-        "Will run into any open door.",
-        "Sometimes gets himself trapped inside cupboards or stuck outside.",
-        "Pure love muffin energy."
-      ],
-      "warnings": ["watch open doors — he goes through them all"]
-    },
-    {
-      "id": "ellie",
-      "name": "Ellie",
-      "species": "cat",
-      "image": "images/ellie.jpeg",
-      "focus": "50% 40%",
-      "tagline": "confident shoulder-rider.",
-      "badges": ["confident"],
-      "stats": {
-        "vibe": "Princess of the upstairs",
-        "energy": 4,
-        "chill": 3,
-        "spice": 3
-      },
-      "feeding": {
-        "when": "Free-feeds during the day",
-        "where": "Downstairs bathroom — two bowls shared with Finn",
-        "what": "Dry cat food, kept topped up",
-        "notes": null
-      },
-      "meds": null,
-      "quirks": [
-        "Spends most of her time upstairs unless she's in the mood to bully Cabbage.",
-        "Ragdoll-ish but prefers riding on your shoulder over being carried.",
-        "Confident and playful."
-      ],
-      "warnings": ["may bully Cabbage — give Cabbage space if Ellie is around"]
-    },
-    {
       "id": "cabbage",
       "name": "Cabbage",
       "aka": "Kapustka",
@@ -233,7 +146,11 @@
       "image": "images/cabage.jpeg",
       "focus": "50% 40%",
       "tagline": "sensitive shelf-dweller.",
-      "badges": ["shy", "no-pickup", "shelf-cat"],
+      "badges": [
+        "shy",
+        "no-pickup",
+        "shelf-cat"
+      ],
       "stats": {
         "vibe": "Soft library ghost",
         "energy": 2,
@@ -248,10 +165,179 @@
       },
       "meds": null,
       "quirks": [
-        "Likes her chair and her shelf. Otherwise prefers to be left alone.",
+        "Likes her blue chair and her CD shelf. Otherwise prefers to be left alone.",
+        "Sometimes confuses Bear for a cat and tries to clean him. Very cute.",
         "Does not like being picked up by strangers."
       ],
-      "warnings": ["can be bullied by Ellie — keep an eye on their interactions"]
+      "warnings": [
+        "can be bullied by Ellie — keep an eye on their interactions"
+      ]
+    },
+    {
+      "id": "ziggy",
+      "name": "Ziggy",
+      "species": "dog",
+      "image": "images/ziggy.jpeg",
+      "focus": "50% 35%",
+      "tagline": "world's largest lap dog. sensitive soul.",
+      "badges": [
+        "meds",
+        "sensitive",
+        "lap-dog"
+      ],
+      "stats": {
+        "vibe": "Gentle giant with feelings",
+        "energy": 3,
+        "chill": 4,
+        "spice": 1
+      },
+      "feeding": {
+        "when": "Morning + Evening",
+        "where": "Kitchen — his bowl sits on a wooden stand right next to the communal water jug.",
+        "what": "Fill his bowl (on the wooden stand) with large-dog dry food. Evening: add half a can of wet food on top, with his pill hidden in the wet food + a fish oil capsule.",
+        "notes": "Half the wet can is Ziggy's; the other half splits between Lucy and Bear."
+      },
+      "meds": {
+        "schedule": "One pill twice a day (morning + evening)",
+        "location": "Kitchen counter (gloves also on the counter)",
+        "morning": "Wrap pill in cheese. Bear and Lucy get a little cheese too if they're around.",
+        "evening": "Push pill into his wet food to hide it. Also give a fish oil capsule."
+      },
+      "quirks": [
+        "Sometimes scared to go outside — be patient.",
+        "Terrified of storms. Scratching his butt calms him down."
+      ],
+      "warnings": [
+        "needs daily meds"
+      ]
+    },
+    {
+      "id": "bear",
+      "name": "Bear",
+      "species": "dog",
+      "image": "images/bear.jpeg",
+      "focus": "50% 40%",
+      "tagline": "old man. couch enthusiast. very small.",
+      "badges": [
+        "senior",
+        "snuggler",
+        "tiny"
+      ],
+      "stats": {
+        "vibe": "Couch potato grandpa",
+        "energy": 3,
+        "chill": 5,
+        "spice": 0
+      },
+      "feeding": {
+        "when": "Evening, 9:00–10:00 PM",
+        "where": "Under the plants near the front door — the little cubby below the plant window is his eating spot.",
+        "what": "Fill his small metal bowl about 1/4 full with senior dry food (kitchen side closet) + a small dollop of wet food — about a quarter of Lucy's half of the can.",
+        "notes": "Needs to go outside for the toilet right after eating — and Bear outside means human supervision (see Watch-outs)."
+      },
+      "meds": null,
+      "quirks": [
+        "Loves sitting outside with Lucy to relax.",
+        "Will happily clean up after Cabbage when she eats off her shelf.",
+        "Sleeps in a small towel-covered crate in the living room, near his eating cubby."
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lucy",
+      "name": "Lucy",
+      "species": "dog",
+      "image": "images/lucy.jpeg",
+      "focus": "50% 50%",
+      "tagline": "all bark, all love.",
+      "badges": [
+        "lover",
+        "shy-at-first"
+      ],
+      "stats": {
+        "vibe": "Pats-and-love specialist",
+        "energy": 2,
+        "chill": 4,
+        "spice": 1
+      },
+      "feeding": {
+        "when": "Evening (same time as Bear)",
+        "where": "Kitchen, near the fridge. When she's done, put her bowl back next to Ziggy's wooden stand.",
+        "what": "Fill her bowl about 1/2 full with high-protein dry food + half a can of wet food on top.",
+        "notes": "Wet can splits: Ziggy gets half, Lucy gets half, Bear gets a quarter of Lucy's half."
+      },
+      "meds": null,
+      "quirks": [
+        "Might bark a little when you first arrive — she's a lover underneath.",
+        "A bit afraid of strange men, but warms up quickly.",
+        "Loves chilling outside with Bear."
+      ],
+      "warnings": []
+    },
+    {
+      "id": "ellie",
+      "name": "Ellie",
+      "species": "cat",
+      "image": "images/ellie.jpeg",
+      "focus": "50% 40%",
+      "tagline": "confident shoulder-rider.",
+      "badges": [
+        "confident"
+      ],
+      "stats": {
+        "vibe": "Princess of the upstairs",
+        "energy": 4,
+        "chill": 3,
+        "spice": 3
+      },
+      "feeding": {
+        "when": "Free-feeds during the day",
+        "where": "Downstairs bathroom — Finn and Ellie share two bowls in there. They have a dedicated cat door for access.",
+        "what": "Dry cat food, kept topped up from the kitchen side closet.",
+        "notes": null
+      },
+      "meds": null,
+      "quirks": [
+        "Spends most of her time upstairs unless she's in the mood to bully Cabbage.",
+        "Ragdoll-ish but prefers riding on your shoulder over being carried.",
+        "Confident and playful."
+      ],
+      "warnings": [
+        "may bully Cabbage — give Cabbage space if Ellie is around"
+      ]
+    },
+    {
+      "id": "finn",
+      "name": "Finn",
+      "species": "cat",
+      "image": "images/finn.jpeg",
+      "focus": "50% 45%",
+      "tagline": "extremely loveable. extremely not smart.",
+      "badges": [
+        "love-y",
+        "door-runner"
+      ],
+      "stats": {
+        "vibe": "Goofy sweetheart",
+        "energy": 5,
+        "chill": 3,
+        "spice": 0
+      },
+      "feeding": {
+        "when": "Free-feeds during the day",
+        "where": "Downstairs bathroom — Finn and Ellie share two bowls in there. They have a dedicated cat door for access.",
+        "what": "Dry cat food, kept topped up from the kitchen side closet.",
+        "notes": null
+      },
+      "meds": null,
+      "quirks": [
+        "Will run into any open door.",
+        "Sometimes gets himself trapped inside cupboards or stuck outside.",
+        "Pure love muffin energy."
+      ],
+      "warnings": [
+        "watch open doors — he goes through them all"
+      ]
     },
     {
       "id": "hens",
@@ -260,7 +346,10 @@
       "image": "images/hens.jpeg",
       "focus": "50% 50%",
       "tagline": "9-strong flock, plus Colin the rooster.",
-      "badges": ["flock", "escape-risk"],
+      "badges": [
+        "flock",
+        "escape-risk"
+      ],
       "stats": {
         "vibe": "Feathered chaos collective",
         "energy": 5,
@@ -268,10 +357,10 @@
         "spice": 1
       },
       "feeding": {
-        "when": "Once in the morning",
-        "where": "The large chicken area",
-        "what": "A full bowl of laying pellets + two bowls of cracked corn.",
-        "notes": "Water is automated — just glance at it to confirm it's flowing."
+        "when": "Once between 8:00 AM and noon. If you had to lure an escapee back in with food, just top the bowl up again afterward.",
+        "where": "Inside the large chicken area. The black bin near the coop gate holds the cracked corn, laying pellets, and the feed bowl.",
+        "what": "A full feed bowl of laying pellets + two bowls of cracked corn.",
+        "notes": "Water is automated — just glance to confirm it's flowing."
       },
       "meds": null,
       "quirks": [
@@ -292,7 +381,10 @@
       "image": "images/roosters.jpeg",
       "focus": "50% 50%",
       "tagline": "mostly chill.",
-      "badges": ["small-flock", "escape-risk"],
+      "badges": [
+        "small-flock",
+        "escape-risk"
+      ],
       "stats": {
         "vibe": "Tiny tough guys",
         "energy": 3,
@@ -300,9 +392,9 @@
         "spice": 4
       },
       "feeding": {
-        "when": "Stocked up — just check levels",
-        "where": "Winter house (their summer house in the dog yard isn't ready yet)",
-        "what": "Food and water topped up; should last fine for the trip.",
+        "when": "No feeding needed during the trip.",
+        "where": "Winter house (their summer house in the dog yard isn't ready yet).",
+        "what": "Pre-stocked with food and water. Just glance to confirm levels look OK; top up only if something looks empty.",
         "notes": null
       },
       "meds": null,

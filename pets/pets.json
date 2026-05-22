@@ -58,9 +58,9 @@
       "badges": ["senior", "snuggler", "tiny"],
       "stats": {
         "vibe": "Couch potato grandpa",
-        "energy": 1,
+        "energy": 3,
         "chill": 5,
-        "spice": 1
+        "spice": 0
       },
       "feeding": {
         "when": "Evening, 9:00–10:00 PM",
@@ -115,7 +115,7 @@
         "vibe": "Gentle giant with feelings",
         "energy": 3,
         "chill": 4,
-        "spice": 2
+        "spice": 1
       },
       "feeding": {
         "when": "Morning + Evening",
@@ -179,7 +179,7 @@
         "vibe": "Goofy sweetheart",
         "energy": 5,
         "chill": 3,
-        "spice": 1
+        "spice": 0
       },
       "feeding": {
         "when": "Free-feeds during the day",

@@ -21,11 +21,13 @@
     { "time": "18:30", "kind": "cats", "event": "Evening feed for Boomba & Cabbage." },
     { "time": "20:30", "kind": "chickens", "event": "Chicken roll-call — confirm all 9 are tucked into the shed." },
     { "time": "21:00", "kind": "chickens", "event": "Chicken shed door auto-closes." },
+    { "time": "22:00", "kind": "dogs", "event": "Pre-dinner outside session for Ziggy & Lucy" },
     { "time": "22:30", "kind": "meds", "event": [
       "Dog dinner — Bear, Lucy & Ziggy.",
       "Hide Ziggy's evening pill inside his wet food.",
       "Add Ziggy's fish oil capsule."
     ] }
+    ,{ "time": "22:35", "kind": "dogs", "event": "Post-dinner outside session for Bear" }
   ],
   "pets": [
     {
@@ -121,13 +123,13 @@
       "species": "cat",
       "image": "images/boomba.jpeg",
       "focus": "50% 40%",
-      "tagline": "smart, bossy, not a cat person's cat.",
+      "tagline": "smart, bossy, occasionally bitey.",
       "badges": ["bitey", "escape-risk", "boss"],
       "stats": {
-        "vibe": "Tiny manipulator",
+        "vibe": "Manipulator",
         "energy": 4,
         "chill": 2,
-        "spice": 5
+        "spice": 3
       },
       "feeding": {
         "when": "Twice daily — 8:00–10:00 AM and around 6:30 PM",
@@ -157,8 +159,8 @@
       "badges": ["love-y", "door-runner"],
       "stats": {
         "vibe": "Goofy sweetheart",
-        "energy": 3,
-        "chill": 4,
+        "energy": 5,
+        "chill": 3,
         "spice": 1
       },
       "feeding": {
@@ -181,10 +183,10 @@
       "species": "cat",
       "image": "images/ellie.jpeg",
       "focus": "50% 40%",
-      "tagline": "confident shoulder-rider, occasional bully.",
-      "badges": ["confident", "climber"],
+      "tagline": "confident shoulder-rider.",
+      "badges": ["confident"],
       "stats": {
-        "vibe": "Ragdoll with a mean streak",
+        "vibe": "Princess of the upstairs",
         "energy": 4,
         "chill": 3,
         "spice": 3
@@ -210,13 +212,13 @@
       "species": "cat",
       "image": "images/cabage.jpeg",
       "focus": "50% 40%",
-      "tagline": "sensitive shelf-dweller. best friends with Boomba.",
+      "tagline": "sensitive shelf-dweller.",
       "badges": ["shy", "no-pickup", "shelf-cat"],
       "stats": {
         "vibe": "Soft library ghost",
         "energy": 2,
-        "chill": 3,
-        "spice": 2
+        "chill": 1,
+        "spice": 5
       },
       "feeding": {
         "when": "Twice daily — 8:00–10:00 AM and around 6:30 PM",
@@ -226,7 +228,6 @@
       },
       "meds": null,
       "quirks": [
-        "Best friends with Boomba.",
         "Likes her chair and her shelf. Otherwise prefers to be left alone.",
         "Does not like being picked up by strangers."
       ],
@@ -242,9 +243,9 @@
       "badges": ["flock", "escape-risk"],
       "stats": {
         "vibe": "Feathered chaos collective",
-        "energy": 4,
-        "chill": 3,
-        "spice": 2
+        "energy": 5,
+        "chill": 5,
+        "spice": 1
       },
       "feeding": {
         "when": "Once in the morning",
@@ -270,13 +271,13 @@
       "species": "bird",
       "image": "images/roosters.jpeg",
       "focus": "50% 50%",
-      "tagline": "two survivors. mostly chill.",
+      "tagline": "mostly chill.",
       "badges": ["small-flock", "escape-risk"],
       "stats": {
         "vibe": "Tiny tough guys",
         "energy": 3,
-        "chill": 4,
-        "spice": 2
+        "chill": 1,
+        "spice": 4
       },
       "feeding": {
         "when": "Stocked up — just check levels",
@@ -287,7 +288,8 @@
       "meds": null,
       "quirks": [
         "Priscilla is the small fancy one. Alta Vista is the large black one.",
-        "Mostly chill — only remaining roosters after a recent raccoon attack."
+        "Mostly chill, will go crazy if they see a hen.",
+        "Priscilla might try to bite. But Priscilla is very small."
       ],
       "warnings": [
         "if you go inside their house, Priscilla (the small one) will try to escape — block the door"

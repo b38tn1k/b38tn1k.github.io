@@ -27,10 +27,13 @@ Port 4000–4002 are usually occupied locally — pick something else.
 
 ## Data model — `pets.json`
 
-Three top-level arrays power the page:
+Four top-level arrays power the page:
 
 - **`house_notes`** — grouped subsections. Each entry is `{ title, items[] }`
   where `items` is an array of strings.
+- **`vets`** — vet-care cards rendered between House Notes and the timeline.
+  Each entry is `{ label, name, url }`. The card is an external link that
+  opens in a new tab.
 - **`day_timeline`** — ordered rows shown in the "A Day in the Life" panel.
   Each row is `{ time, kind, event }` where:
     - `kind` is one of `chickens | meds | cats | dogs` (used for left-border
@@ -105,8 +108,9 @@ new URL.
   surrounding fields you weren't asked to touch.
 - For multi-field JSON updates, a Python script that mutates specific keys
   is safer than wholesale rewrites or many sequential `Edit` calls.
-- Don't add vet / emergency / wifi / owner-contact info to the page —
-  that's handled out-of-band via direct phone hand-off, by design.
+- Vet links live in the `vets` array. Phone numbers, wifi, owner-contact
+  and after-hours/emergency exception info stay **off** the page — handled
+  out-of-band via direct phone hand-off, by design.
 - When in doubt about a style choice, default to less: smaller, quieter,
   fewer animations. The page should feel like a calm reference, not a
   showcase.

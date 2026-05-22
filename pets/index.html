@@ -157,6 +157,58 @@
             background: var(--ink-fade);
         }
 
+        /* ---- Vet cards ---- */
+        .vet-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .vet-card {
+            position: relative;
+            display: block;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            text-decoration: none;
+            color: var(--ink);
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+        .vet-card:hover {
+            border-color: var(--border-strong);
+            background: rgba(226, 88, 88, 0.06);
+        }
+        .vet-card-label {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+        .vet-card-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--ink);
+            line-height: 1.4;
+            padding-right: 22px;
+        }
+        .vet-card-arrow {
+            position: absolute;
+            top: 12px; right: 14px;
+            color: var(--ink-mute);
+            font-size: 15px;
+            transition: color 0.15s ease, transform 0.15s ease;
+        }
+        .vet-card:hover .vet-card-arrow {
+            color: var(--accent);
+            transform: translate(2px, -2px);
+        }
+        @media (max-width: 520px) {
+            .vet-grid { grid-template-columns: 1fr; }
+        }
+
         /* ---- Day Timeline ---- */
         .timeline {
             list-style: none;
@@ -575,6 +627,11 @@
             <div class="house-notes" id="houseNotesList"></div>
         </div>
 
+        <div class="panel" id="vetPanel" style="display:none;">
+            <div class="section-label">Vet Care</div>
+            <div class="vet-grid" id="vetList"></div>
+        </div>
+
         <div class="panel" id="timelinePanel" style="display:none;">
             <div class="section-label">A Day in the Life</div>
             <ol class="timeline" id="timelineList"></ol>
@@ -615,6 +672,7 @@
             DATA = data;
             document.getElementById('introLine').textContent = data.intro || '';
             renderHouseNotes();
+            renderVets();
             renderTimeline();
             renderGrid();
         })
@@ -644,6 +702,34 @@
             list.appendChild(block);
         });
         document.getElementById('houseNotesPanel').style.display = '';
+    }
+
+    function renderVets() {
+        if (!DATA.vets || !DATA.vets.length) return;
+        const list = document.getElementById('vetList');
+        DATA.vets.forEach(v => {
+            const card = document.createElement('a');
+            card.className = 'vet-card';
+            card.href = v.url;
+            card.target = '_blank';
+            card.rel = 'noopener noreferrer';
+
+            const label = document.createElement('div');
+            label.className = 'vet-card-label';
+            label.textContent = v.label;
+            const name = document.createElement('div');
+            name.className = 'vet-card-name';
+            name.textContent = v.name;
+            const arrow = document.createElement('div');
+            arrow.className = 'vet-card-arrow';
+            arrow.textContent = '↗';
+
+            card.appendChild(label);
+            card.appendChild(name);
+            card.appendChild(arrow);
+            list.appendChild(card);
+        });
+        document.getElementById('vetPanel').style.display = '';
     }
 
     function renderTimeline() {

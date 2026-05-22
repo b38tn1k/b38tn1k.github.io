@@ -33,6 +33,18 @@
       ]
     }
   ],
+  "vets": [
+    {
+      "label": "Regular vet",
+      "name": "Humane Society of Huron Valley",
+      "url": "https://www.hshv.org"
+    },
+    {
+      "label": "Urgent care",
+      "name": "Ann Arbor Animal Hospital — Pet Urgent Care",
+      "url": "https://annarboranimalhospital.com/pet-urgent-care/"
+    }
+  ],
   "day_timeline": [
     {
       "time": "07:00",

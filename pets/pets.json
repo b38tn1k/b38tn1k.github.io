@@ -136,6 +136,11 @@
         "Ziggy has to stay inside after dinner",
         "Post-dinner outside session for Bear (supervised)"
       ]
+    },
+    {
+      "time": "22:40",
+      "kind": "dogs",
+      "event": "Crate Bear for the night — shut the door (he pees on things if he wanders). Treats on top of the crate help lure him in."
     }
   ],
   "pets": [
@@ -275,7 +280,9 @@
       "meds": null,
       "quirks": [
         "Loves sitting outside with Lucy to relax.",
-        "Will happily clean up after Cabbage when she eats off her shelf."
+        "Will happily clean up after Cabbage when she eats off her shelf.",
+        "Sleeps in a small towel-covered crate in the living room, near his eating cubby — door shut overnight because he pees on things if he wanders the house. Treats on top of the crate help lure him in.",
+        "If you're heading out for more than an hour during the day, crate him too — same wandering-and-peeing problem."
       ],
       "warnings": []
     },

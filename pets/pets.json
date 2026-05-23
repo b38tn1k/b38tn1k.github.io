@@ -72,6 +72,7 @@
             "cabbage"
           ]
         },
+        "Bear needs to be let out of his sleeping crate in the living room",
         "Ziggy's morning pill (wrapped in cheese.)",
         "Bear & Lucy get a little cheese too if they're nearby."
       ]
@@ -269,13 +270,12 @@
         "when": "Evening, 9:00–10:00 PM",
         "where": "Under the plants near the front door — the little cubby below the plant window is his eating spot.",
         "what": "Fill his small metal bowl about 1/4 full with senior dry food (kitchen side closet) + a small dollop of wet food — about a quarter of Lucy's half of the can.",
-        "notes": "Needs to go outside for the toilet right after eating — and Bear outside means human supervision (see Watch-outs)."
+        "notes": "Needs to go outside for the toilet right after eating — and Bear outside means human supervision. Bear sleeps in the small towel-covered crate in the living room, near his eating cubby. He needs ~4 of the treats in the bag on the plant shelf to be coaxed in there. Keep the door shut for his sleeping hours so the cats dont bully him out."
       },
       "meds": null,
       "quirks": [
         "Loves sitting outside with Lucy to relax.",
-        "Will happily clean up after Cabbage when she eats off her shelf.",
-        "Sleeps in a small towel-covered crate in the living room, near his eating cubby."
+        "Will happily clean up after Cabbage when she eats off her shelf."
       ],
       "warnings": []
     },

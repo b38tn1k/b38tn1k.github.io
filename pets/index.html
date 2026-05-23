@@ -123,6 +123,14 @@
             color: var(--ink-mute);
             margin-bottom: 12px;
         }
+        .panel-sub {
+            font-size: 13px;
+            color: var(--ink-mute);
+            font-style: italic;
+            line-height: 1.5;
+            margin: -6px 0 14px;
+            max-width: 60ch;
+        }
 
         /* ---- House Notes ---- */
         .house-notes {
@@ -634,6 +642,7 @@
 
         <div class="panel" id="timelinePanel" style="display:none;">
             <div class="section-label">A Day in the Life</div>
+            <div class="panel-sub" id="timelineNote" style="display:none;"></div>
             <ol class="timeline" id="timelineList"></ol>
         </div>
 
@@ -734,6 +743,13 @@
 
     function renderTimeline() {
         if (!DATA.day_timeline || !DATA.day_timeline.length) return;
+
+        if (DATA.timeline_note) {
+            const note = document.getElementById('timelineNote');
+            note.textContent = DATA.timeline_note;
+            note.style.display = '';
+        }
+
         const list = document.getElementById('timelineList');
         DATA.day_timeline.forEach(row => {
             const li = document.createElement('li');

@@ -160,7 +160,7 @@
         "vibe": "Manipulator",
         "energy": 4,
         "chill": 2,
-        "spice": 3
+        "spice": 4
       },
       "feeding": {
         "when": "Twice daily — 8:00–10:00 AM and around 6:30 PM",
@@ -299,7 +299,7 @@
       ],
       "stats": {
         "vibe": "Pats-and-love specialist",
-        "energy": 2,
+        "energy": 4,
         "chill": 4,
         "spice": 1
       },

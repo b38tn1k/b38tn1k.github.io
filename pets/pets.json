@@ -162,14 +162,14 @@
       "feeding": {
         "when": "Twice daily — morning (with Ziggy's cheese pill, ~9:00 AM) and evening (with the dogs' dinner, ~10:30 PM)",
         "where": "Downstairs hallway — his bowl sits on the tiled surface near the basement stairs, directly opposite the kitchen side closet.",
-        "what": "Wet food — half a container in the morning, the other half in the evening, with his methimazole hidden in each half (see Medication).",
+        "what": "Wet food — a full container in the morning and another full container in the evening, with his methimazole hidden in each (see Medication).",
         "notes": "He will demand food and try to trick you into feeding him more. Don't fall for it. Watch that the pills actually go down, and keep Finn off his bowl — Finn will happily lick the wet-food butter knife instead."
       },
       "meds": {
         "schedule": "Methimazole (hot pink) — 2 pills in the morning, 1 in the evening, hidden in his wet food",
         "location": "Kitchen counter (next to Ziggy's)",
-        "morning": "Hide 2 hot pink methimazole in his morning half-container of wet food — same time as Ziggy's cheese ball.",
-        "evening": "Hide 1 hot pink methimazole in his evening half-container of wet food — same time as the dogs' dinner.",
+        "morning": "Hide 2 hot pink methimazole in his morning container of wet food — same time as Ziggy's cheese ball.",
+        "evening": "Hide 1 hot pink methimazole in his evening container of wet food — same time as the dogs' dinner.",
         "notes": "Watch him eat — he sometimes leaves the pills, and Finn will try to steal his wet food. Letting Finn lick the wet-food butter knife keeps him busy and away from Boomba."
       },
       "quirks": [

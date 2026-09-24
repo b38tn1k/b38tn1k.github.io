@@ -6,28 +6,29 @@
       "title": "Important locations",
       "items": [
         "All dog and cat food lives in the kitchen side closet — senior dry, high-protein dry, large-dog dry, wet food cans, plus the measuring cups (sitting on top of the wet food).",
-        "Ziggy's meds + gloves live on the kitchen counter.",
+        "Ziggy's and Boomba's meds live on the kitchen counter.",
         "Communal water jug in the kitchen — every dog and cat drinks from it. Keep it topped up.",
-        "Cat free-feed bowls are in the downstairs bathroom — Finn + Ellie have a dedicated cat door for access.",
-        "Cabbage's eating spot is her shelf near the CDs. There is no bowl. Cabbage doesn't do bowls. Pour her food directly on the shelf.",
-        "Litter boxes are in the basement — should be fine for the trip; scoop if they look full.",
-        "Chicken feed bin (black, near the coop gate) — bag of cracked corn, bag of laying pellets, and the scattering bowl all live inside. The bowl is just a scoop — you toss the feed over the fence so it lands on the hay."
+        "Cat free-feed bowls are in the window bay in the living room — Finn, Ellie + Cabbage all eat there.",
+        "Litter boxes (the Litter Robots) are in the downstairs bathroom — they're self-cleaning, nothing to do. That bathroom also has the blockade that keeps Ziggy out, so use the upstairs bathroom yourself.",
+        "Chicken feed bin (black, near the coop gate) — bag of laying pellets and the scattering bowl live inside. The bowl is just a scoop — you toss the feed over the fence so it lands on the hay.",
+        "Chickens are in three spots: the coop (Colin + the hens), the front-yard chicken tractor next to the coop (a mother hen with 3 chicks, plus a few teenagers who kept escaping the coop — locked in for the weekend), and the dog-yard chicken tractor (the roosters)."
       ]
     },
     {
       "title": "Feeding quirks",
       "items": [
         "Wet dog food split: half to Ziggy, half to Lucy, with a quarter of Lucy's half going to Bear.",
-        "Pour Cabbage's food onto her shelf — Bear loves cleaning up after her.",
-        "Finn + Ellie free-feed all day; just keep the downstairs bathroom bowls topped up from the closet.",
+        "Finn, Ellie + Cabbage free-feed all day; just keep the window-bay bowls topped up from the closet.",
         "The roosters are pre-stocked — no feeding needed during the trip. Just glance to confirm food + water look fine.",
+        "Pellets: the coop gets one and a half bowls, the front-yard tractor (mum, chicks + teenagers) gets one large bowl — both from the same black bin, same time. Tractor water is fine for the trip.",
         "Eggs from the hens — take as many as you'd like, or leave them. No pressure either way."
       ]
     },
     {
       "title": "Watch-outs",
       "items": [
-        "Ziggy needs one pill twice a day, plus a fish oil capsule in the evening.",
+        "Ziggy: 7 pills in the morning wrapped in a cheese slice (1 mycophenolate, 2 gabapentin, 4 clonidine), then 1 mycophenolate + fish oil in his evening wet food. The purple mycophenolate is the one that really matters.",
+        "Boomba: 2 methimazole in his morning wet food, 1 in the evening. Watch him eat them — Finn tries to steal his wet food.",
         "Raccoons have been around — double-check the chicken shed is closed by sundown (Colin usually puts everyone to bed, but verify).",
         "Bear shouldn't be outside alone — raccoons and coyotes leave Lucy + Ziggy together alone, but Bear solo is fair game. Supervise him."
       ]
@@ -55,7 +56,7 @@
       "time": "08:00 – 12:00",
       "kind": "chickens",
       "event": {
-        "text": "Feed the hens.",
+        "text": "Feed the hens + the front-yard tractor birds.",
         "pets": [
           "hens"
         ]
@@ -66,14 +67,13 @@
       "kind": "meds",
       "event": [
         {
-          "text": "Morning feed for Boomba & Cabbage.",
+          "text": "Morning feed for Boomba — 2 pills hidden in his wet food.",
           "pets": [
-            "boomba",
-            "cabbage"
+            "boomba"
           ]
         },
         "Bear needs to be let out of his sleeping crate in the living room",
-        "Ziggy's morning pill (wrapped in cheese.)",
+        "Ziggy's morning pills — 7 of them, wrapped in a cheese slice and rolled into a ball in his bowl.",
         "Bear & Lucy get a little cheese too if they're nearby."
       ]
     },
@@ -88,20 +88,9 @@
       "event": "Dogs usually want a second outdoor session."
     },
     {
-      "time": "18:30",
-      "kind": "cats",
-      "event": {
-        "text": "Evening feed for Boomba & Cabbage.",
-        "pets": [
-          "boomba",
-          "cabbage"
-        ]
-      }
-    },
-    {
       "time": "20:30",
       "kind": "chickens",
-      "event": "Chicken roll-call — confirm all 11 are tucked into the shed."
+      "event": "Chicken roll-call — confirm the whole coop flock is tucked into the shed (the tractor birds stay where they are)."
     },
     {
       "time": "21:00",
@@ -125,8 +114,13 @@
             "ziggy"
           ]
         },
-        "Hide Ziggy's evening pill inside his wet food.",
-        "Add Ziggy's fish oil capsule."
+        "Push Ziggy's evening mycophenolate + fish oil capsule into his wet food.",
+        {
+          "text": "Evening feed for Boomba — 1 pill hidden in his wet food.",
+          "pets": [
+            "boomba"
+          ]
+        }
       ]
     },
     {
@@ -152,6 +146,7 @@
       "focus": "50% 40%",
       "tagline": "smart, bossy, occasionally bitey.",
       "badges": [
+        "meds",
         "bitey",
         "escape-risk",
         "boss"
@@ -163,12 +158,18 @@
         "spice": 4
       },
       "feeding": {
-        "when": "Twice daily — 8:00–10:00 AM and around 6:30 PM",
+        "when": "Twice daily — morning (with Ziggy's cheese pill, ~9:00 AM) and evening (with the dogs' dinner, ~10:30 PM)",
         "where": "Downstairs hallway — his bowl sits on the tiled surface near the basement stairs, directly opposite the kitchen side closet.",
-        "what": "Morning: slightly LARGER plastic cup. Evening: slightly SMALLER plastic cup. Both cups live on top of the wet dog food in the side closet.",
-        "notes": "He will demand food and try to trick you into feeding him more. Don't fall for it."
+        "what": "Wet food — half a container in the morning, the other half in the evening, with his methimazole hidden in each half (see Medication).",
+        "notes": "He will demand food and try to trick you into feeding him more. Don't fall for it. Watch that the pills actually go down, and keep Finn off his bowl — Finn will happily lick the wet-food butter knife instead."
       },
-      "meds": null,
+      "meds": {
+        "schedule": "Methimazole (hot pink) — 2 pills in the morning, 1 in the evening, hidden in his wet food",
+        "location": "Kitchen counter (next to Ziggy's)",
+        "morning": "Hide 2 hot pink methimazole in his morning half-container of wet food — same time as Ziggy's cheese ball.",
+        "evening": "Hide 1 hot pink methimazole in his evening half-container of wet food — same time as the dogs' dinner.",
+        "notes": "Watch him eat — he sometimes leaves the pills, and Finn will try to steal his wet food. Letting Finn lick the wet-food butter knife keeps him busy and away from Boomba."
+      },
       "quirks": [
         "If you sit, he will sit on you.",
         "Loud purring while sitting on you = he's about to bite. You have been warned.",
@@ -176,6 +177,7 @@
         "Mostly bites people who like cats."
       ],
       "warnings": [
+        "needs daily meds",
         "may try to dart outside — he's fast",
         "if he escapes, he hides under the deck (he doesn't go far)"
       ]
@@ -200,10 +202,10 @@
         "spice": 5
       },
       "feeding": {
-        "when": "Twice daily — 8:00–10:00 AM and around 6:30 PM",
-        "where": "Pour dry food directly on her shelf near the CDs (NOT a bowl)",
-        "what": "Small plastic cup of dry food (cups live on top of the wet dog food in the side closet).",
-        "notes": "Pour carefully onto her shelf. The dogs (Bear especially) will hoover up anything that falls — this is expected and welcomed by all parties."
+        "when": "Free-feeds during the day",
+        "where": "Living room window bay — same free-feed bowls as Finn and Ellie.",
+        "what": "Dry cat food, kept topped up from the kitchen side closet.",
+        "notes": null
       },
       "meds": null,
       "quirks": [
@@ -236,14 +238,15 @@
       "feeding": {
         "when": "Morning + Evening",
         "where": "Kitchen — his bowl sits on a wooden stand right next to the communal water jug.",
-        "what": "Fill his bowl (on the wooden stand) with large-dog dry food. Evening: add half a can of wet food on top, with his pill hidden in the wet food + a fish oil capsule.",
+        "what": "Fill his bowl (on the wooden stand) with large-dog dry food. Evening: add half a can of wet food on top, with his mycophenolate + fish oil capsule pushed into the wet food.",
         "notes": "Half the wet can is Ziggy's; the other half splits between Lucy and Bear."
       },
       "meds": {
-        "schedule": "One Mycophenolate pill twice a day (morning + evening)",
-        "location": "Kitchen counter (gloves also on the counter)",
-        "morning": "Wrap pill in cheese. Bear and Lucy get a little cheese too if they're around.",
-        "evening": "Push pill into his wet food to hide it. Also give a fish oil capsule."
+        "schedule": "Morning: 1 mycophenolate + 2 gabapentin + 4 clonidine (in cheese). Evening: 1 mycophenolate + 1 fish oil (in wet food).",
+        "location": "Kitchen counter. Cheese slices are in the fridge, bottom drawer.",
+        "morning": "Wrap 1 purple mycophenolate, 2 brown/cream gabapentin and 4 light pink clonidine in a cheese slice, roll it into a ball and put it in his bowl. Bear and Lucy get a little cheese too if they're around.",
+        "evening": "Push 1 purple mycophenolate + 1 fish oil capsule into his wet food.",
+        "notes": "Make sure he eats every pill — the purple mycophenolate is the one that really matters. If he spits one out, wrap it in more cheese and try again."
       },
       "quirks": [
         "Sometimes scared to go outside — be patient.",
@@ -280,7 +283,6 @@
       "meds": null,
       "quirks": [
         "Loves sitting outside with Lucy to relax.",
-        "Will happily clean up after Cabbage when she eats off her shelf.",
         "Sleeps in a small towel-covered crate in the living room, near his eating cubby — door shut overnight because he pees on things if he wanders the house. Treats on top of the crate help lure him in.",
         "If you're heading out for more than an hour during the day, crate him too — same wandering-and-peeing problem."
       ],
@@ -335,7 +337,7 @@
       },
       "feeding": {
         "when": "Free-feeds during the day",
-        "where": "Downstairs bathroom — Finn and Ellie share two bowls in there. They have a dedicated cat door for access.",
+        "where": "Living room window bay — Finn, Ellie and Cabbage share the free-feed bowls in there.",
         "what": "Dry cat food, kept topped up from the kitchen side closet.",
         "notes": null
       },
@@ -368,7 +370,7 @@
       },
       "feeding": {
         "when": "Free-feeds during the day",
-        "where": "Downstairs bathroom — Finn and Ellie share two bowls in there. They have a dedicated cat door for access.",
+        "where": "Living room window bay — Finn, Ellie and Cabbage share the free-feed bowls in there.",
         "what": "Dry cat food, kept topped up from the kitchen side closet.",
         "notes": null
       },
@@ -388,7 +390,7 @@
       "species": "bird",
       "image": "images/hens.jpeg",
       "focus": "50% 50%",
-      "tagline": "11-strong flock, Colin the rooster included.",
+      "tagline": "the coop flock, Colin the rooster included.",
       "badges": [
         "flock",
         "escape-risk"
@@ -401,13 +403,13 @@
       },
       "feeding": {
         "when": "Once between 8:00 AM and noon. If you had to lure an escapee back in with food, just scatter a little extra over the fence afterward.",
-        "where": "The black bin near the coop gate holds the corn, pellets, and the scattering bowl. Scoop the feed with the bowl and toss it over the fence onto the hay — the hens eat off the ground, not from a bowl.",
-        "what": "One bowl-scoop of laying pellets + two bowl-scoops of cracked corn — toss each over the fence so it scatters across the hay.",
-        "notes": "Water is automated — just glance to confirm it's flowing."
+        "where": "The black bin near the coop gate holds the pellets and the scattering bowl. Scoop the feed with the bowl and toss it over the fence onto the hay — the hens eat off the ground, not from a bowl.",
+        "what": "Coop: one and a half bowls of laying pellets — toss over the fence so it scatters across the hay. Front-yard tractor: one large bowl of pellets for mum, the chicks and the teenagers.",
+        "notes": "Water is automated — just glance to confirm it's flowing. The tractor birds' water is fine for the trip too."
       },
       "meds": null,
       "quirks": [
-        "11 birds in the coop, including Colin the rooster.",
+        "Colin the rooster and the hens live in the coop. The front-yard chicken tractor next to it holds a mother hen with 3 chicks plus a few teenagers who kept escaping the coop — they're locked in for the weekend. Mum bullies the teenagers a little; they can deal with it.",
         "Fat Face (the black one) and Karen (the pure white one) might escape — toss extra food in, open the door, and chase them back in.",
         "Colin does a great job putting everyone to bed."
       ],
@@ -436,7 +438,7 @@
       },
       "feeding": {
         "when": "No feeding needed during the trip.",
-        "where": "Winter house (their summer house in the dog yard isn't ready yet).",
+        "where": "The chicken tractor in the dog yard.",
         "what": "Pre-stocked with food and water. Just glance to confirm levels look OK; top up only if something looks empty.",
         "notes": null
       },

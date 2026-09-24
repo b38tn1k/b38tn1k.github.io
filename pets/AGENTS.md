@@ -88,8 +88,8 @@ Don't re-crop the JPEGs; CSS handles it.
 - **Hint at cutesy, don't be over the top.** Restraint over ornament. No
   floating shapes, no twinkling stars, no holo gradient borders, no
   rainbow gradient text.
-- **MEDS chip on Ziggy** — the one corner-of-the-photo badge that stays.
-  Driven by `pet.meds` being non-null.
+- **MEDS chip on Ziggy and Boomba** — the one corner-of-the-photo badge that
+  stays. Driven by `pet.meds` being non-null.
 
 ## Sharing / link previews
 

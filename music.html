@@ -1,19 +1,20 @@
 ---
 layout: page
 title: Music
+hide_title: true
 permalink: /music/
 wide: true
-blurb: Releases as B38TN1K and Royal Chant.
+description: "Releases as B38TN1K and Royal Chant."
 ---
 {% comment %}
-  Two lists on purpose: `release` is the current catalogue, `releasehidden` is the
-  early back catalogue the old site kept out of the main listing. Both are real
-  pages either way; this only decides what gets top billing.
+  Straight to the covers: the nav already says [music], so a title, a blurb and
+  a "releases" heading were three labels for the same thing. `release` is the
+  current catalogue, `releasehidden` the early back catalogue the old site kept
+  out of the main listing; only the second group still needs a divider.
 {% endcomment %}
 {% assign current = site.tags.release %}
 {% assign older = site.tags.releasehidden %}
 
-<h2 class="section-head">Releases <span class="count">({{ current.size }})</span></h2>
 {% include releaselist.html releases=current %}
 
 {% if older.size > 0 %}

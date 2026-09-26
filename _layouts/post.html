@@ -1,43 +1,39 @@
 ---
 layout: default
 ---
-
 <article class="post">
-  <h1 class="post-title">{{ page.title }}</h1>
-  <div class="post-categories">
-    {% if post %}
-      {% assign categories = post.categories %}
-    {% else %}
-      {% assign categories = page.categories %}
-    {% endif %}
-    {% for category in categories %}
-    <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
-    {% unless forloop.last %}&nbsp;{% endunless %}
-    {% endfor %}
-  </div>
-  <br>
-  <time datetime="{{ page.date | date_to_xmlschema }}" class="post-date">{{ page.date | date_to_string }}</time>
+  <h1 class="post-title">{{ page.title | strip }}</h1>
 
-  {{ content }}
+  <p class="post-meta">
+    <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y-%m-%d" }}</time>
+    {% if page.categories.size > 0 %}<span class="sep">::</span>{% for c in page.categories %}<a href="{{ '/categories/' | relative_url }}#{{ c | slugify }}">{{ c }}</a>{% unless forloop.last %}, {% endunless %}{% endfor %}{% endif %}
+  </p>
+
+{% comment %}
+    Demo posts are often a line or two of text, so without the preview and the
+    launch link they read as an empty page. Both already live in front matter.
+  {% endcomment %}
+  {% if page.image or page.link %}
+  <div class="demo-head">
+    {% if page.link %}
+    <p class="demo-launch"><a href="{{ page.link }}">launch {{ page.title | strip }} &rarr;</a></p>
+    {% endif %}
+    {% if page.image %}
+    <a href="{{ page.link | default: page.url }}" tabindex="-1" aria-hidden="true"><img src="{{ page.image }}" alt=""></a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="post-body">
+    {{ content | replace: '[description]', '' }}
+  </div>
 </article>
 
+{% if page.tags contains 'demo' %}
+<p class="more-of-kind"><a href="{{ '/demos/' | relative_url }}">all demos &rarr;</a></p>
+{% endif %}
 
-
-
-<!-- {% if site.related_posts != empty %}
-<aside class="related">
-  <h2>Related Posts</h2>
-  <ul class="related-posts">
-    {% for post in site.related_posts limit:3 %}
-      <li>
-        <h3>
-          <a href="{{ site.baseurl }}{{ post.url }}">
-            {{ post.title }}
-            <small><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time></small>
-          </a>
-        </h3>
-      </li>
-    {% endfor %}
-  </ul>
-</aside>
-{% endif %} -->
+<nav class="post-nav" aria-label="More posts">
+  {% if page.previous %}<a class="prev" href="{{ page.previous.url | relative_url }}">&larr; older: {{ page.previous.title | strip }}</a>{% else %}<span></span>{% endif %}
+  {% if page.next %}<a class="next" href="{{ page.next.url | relative_url }}">newer: {{ page.next.title | strip }} &rarr;</a>{% endif %}
+</nav>

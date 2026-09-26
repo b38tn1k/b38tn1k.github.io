@@ -1,0 +1,5 @@
+<nav class="filters" aria-label="Filter by topic">
+  <a href="{{ '/' | relative_url }}"{% if page.url == '/' %} aria-current="page"{% endif %}>all</a>
+  <a href="{{ '/techy/' | relative_url }}"{% if page.url == '/techy/' %} aria-current="page"{% endif %}>techy</a>
+  <a href="{{ '/arty/' | relative_url }}"{% if page.url == '/arty/' %} aria-current="page"{% endif %}>arty</a>
+</nav>

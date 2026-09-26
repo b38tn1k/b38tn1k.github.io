@@ -1,28 +1,387 @@
 ---
-# Use a comment to ensure Jekyll reads the file to be transformed into CSS later
-# only main files contain this front matter, not partials.
+# Hand-written. No framework, no Poole. Dark is the default, light is the override.
+# Everything the Jekyll layer needs lives in this one file.
 ---
 
-//
-//                        ___
-//                       /\_ \
-//  _____     ___     ___\//\ \      __
-// /\ '__`\  / __`\  / __`\\ \ \   /'__`\
-// \ \ \_\ \/\ \_\ \/\ \_\ \\_\ \_/\  __/
-//  \ \ ,__/\ \____/\ \____//\____\ \____\
-//   \ \ \/  \/___/  \/___/ \/____/\/____/
-//    \ \_\
-//     \/_/
-//
-// Designed, built, and released under MIT license by @mdo. Learn more at
-// https://github.com/poole/poole.
+// ── palette ──────────────────────────────────────────────────────────
+// Monochrome on purpose. Hierarchy comes from weight, underline and grey
+// level; no hue carries meaning anywhere. Light is a straight inversion.
+@mixin theme-dark {
+  --bg:    #000000;
+  --fg:    #c9c9c9;
+  --link:  #ffffff;
+  --dim:   #7a7a7a;
+  --rule:  #262626;
+  --panel: #101010;
+  --art:   #141414;   // barely there, which is the point
+}
 
-@import "base";
-@import "type";
-@import "syntax";
-@import "code";
-@import "layout";
-@import "masthead";
-@import "posts";
-@import "pagination";
-@import "message";
+@mixin theme-light {
+  --bg:    #ffffff;
+  --fg:    #333333;
+  --link:  #000000;
+  --dim:   #6b6b6b;
+  --rule:  #dcdcdc;
+  --panel: #f4f4f4;
+  --art:   #efefef;
+}
+
+:root { @include theme-dark; --measure: 76ch; }
+@media (prefers-color-scheme: light) { :root { @include theme-light; } }
+
+// An explicit choice beats the OS preference, so these have to stay last.
+[data-theme="dark"]  { @include theme-dark; }
+[data-theme="light"] { @include theme-light; }
+
+// ── base ──────────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "DejaVu Sans Mono", monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+  @media (min-width: 46em) { font-size: 17px; }
+}
+
+html { background: var(--bg); }
+
+body {
+  margin: 0;
+  padding: 2rem 1.25rem 4rem;
+  color: var(--fg);
+}
+
+a {
+  color: var(--link);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  &:hover, &:focus { text-decoration-thickness: 3px; }
+}
+
+:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+::selection { background: var(--link); color: var(--bg); }
+
+.skip {
+  position: absolute; left: -9999px;
+  &:focus { left: 1rem; top: 1rem; background: var(--panel); padding: .5rem 1rem; z-index: 10; }
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+// ── shell ─────────────────────────────────────────────────────────────
+.masthead, main, .footer {
+  max-width: var(--measure);
+  margin-left: auto;
+  margin-right: auto;
+}
+main.wide { --measure: 104ch; max-width: 104ch; }
+
+.masthead { margin-bottom: 2rem; }
+
+// The ASCII wordmark is 55 characters wide, so it only gets shown once the
+// viewport can hold it. Narrow screens get the plain-text name instead.
+.wordmark {
+  margin: 0 0 .75rem;
+  font-size: 1rem;
+  font-weight: normal;
+  a { color: var(--fg); font-weight: normal; text-decoration: none; }
+  a:hover, a:focus { color: var(--link); }
+  pre {
+    display: none;
+    margin: 0; padding: 0;
+    background: none; border: 0;
+  }
+}
+.wordmark-text { font-size: 1.5rem; letter-spacing: .05em; }
+
+@media (min-width: 60em) {
+  .wordmark {
+    // line-height 1 so the box-drawing glyphs join up vertically.
+    pre { display: block; font-size: .66rem; line-height: 1; }
+    // Visually redundant once the ASCII shows, but screen readers still need it.
+    .wordmark-text {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+  }
+}
+
+.tagline { margin: 0 0 1rem; color: var(--dim); }
+
+// ── nav ───────────────────────────────────────────────────────────────
+// Current page is marked with brackets, so the signal survives without colour.
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5ch;
+  padding-top: .75rem;
+  border-top: 1px solid var(--rule);
+  a { text-decoration: none; }
+  a:hover, a:focus { text-decoration: underline; }
+  [aria-current="page"] { color: var(--fg); font-weight: bold; }
+  [aria-current="page"]::before { content: "[" / ""; color: var(--dim); }
+  [aria-current="page"]::after  { content: "]" / ""; color: var(--dim); }
+}
+
+// ── entry lists ───────────────────────────────────────────────────────
+// Flex-wrap instead of a grid + breakpoint: long titles wrap on their own.
+.entries { list-style: none; margin: 0; padding: 0; }
+
+.entry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5ch;
+  padding: .3rem 0;
+}
+.entry-date { flex: 0 0 10ch; color: var(--dim); }
+.entry-kind { flex: 0 0 8ch; color: var(--dim); }
+.entry-title { flex: 1 1 24ch; }
+
+.section-head {
+  margin: 2.5rem 0 .75rem;
+  padding-bottom: .4rem;
+  font-size: 1rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--dim);
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  &::before { content: "## " / ""; }
+}
+
+.count { color: var(--dim); }
+
+.empty {
+  padding: 1rem 0;
+  color: var(--dim);
+}
+
+// ── filter bar ────────────────────────────────────────────────────────
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5ch;
+  margin-bottom: 1.5rem;
+  a { text-decoration: none; }
+  a:hover, a:focus { text-decoration: underline; }
+  [aria-current="page"] { color: var(--fg); font-weight: bold; }
+  [aria-current="page"]::before { content: "[" / ""; color: var(--dim); }
+  [aria-current="page"]::after  { content: "]" / ""; color: var(--dim); }
+}
+
+// ── cards (demos, releases) ───────────────────────────────────────────
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 2rem 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  h3 { margin: 0 0 .25rem; font-size: 1rem; }
+  p  { margin: 0 0 .5rem; color: var(--fg); }
+  img {
+    width: 100%;
+    margin: 0 0 .6rem;
+  }
+}
+
+// Square boxes, never cropped. Every preview and all but one cover in the repo
+// is already square, so `contain` almost never letterboxes -- and when it does,
+// the frame absorbs it instead of slicing the image.
+.cards img,
+.demo-head img {
+  aspect-ratio: 1;
+  object-fit: contain;
+  background: var(--panel);
+  border: 2px solid var(--rule);
+}
+
+.card-meta { color: var(--dim); margin: 0 0 .5rem; }
+.card-links { display: flex; flex-wrap: wrap; gap: 0 1.5ch; margin-top: auto; }
+
+// ── article ───────────────────────────────────────────────────────────
+.post, .page { margin-bottom: 3rem; }
+
+.post-title, .page-title {
+  margin: 0 0 .4rem;
+  font-size: 1.6rem;
+  line-height: 1.25;
+  color: var(--fg);
+}
+
+.post-meta {
+  margin: 0 0 2rem;
+  color: var(--dim);
+  a { color: var(--dim); }
+  a:hover, a:focus { color: var(--link); }
+}
+.post-meta .sep { padding: 0 .5ch; }
+
+// The game-jam articles inline each devlog entry, dates included.
+.post-date { display: block; margin: -.3rem 0 1rem; color: var(--dim); }
+
+// Markdown-style prefixes: reads as a heading level without relying on size alone.
+.post-body, .page-body {
+  h2, h3, h4 { margin: 2rem 0 .5rem; line-height: 1.3; }
+  h2 { font-size: 1.3rem; }
+  h3 { font-size: 1.1rem; }
+  h4 { font-size: 1rem; }
+
+  p, ul, ol, blockquote, pre, table { margin: 0 0 1.2rem; }
+  ul, ol { padding-left: 2.5ch; }
+  li { margin-bottom: .2rem; }
+
+  blockquote {
+    padding-left: 2ch;
+    border-left: 2px solid var(--rule);
+    color: var(--fg);
+  }
+
+  hr { margin: 2rem 0; border: 0; border-top: 1px solid var(--rule); }
+
+  img { display: block; max-width: 100%; height: auto; margin: 0 0 1.2rem; }
+
+  // ponytail: max-width alone fixes the overflow; embeds keep their own
+  // authored height. Add per-embed aspect-ratio only if letterboxing annoys.
+  iframe { max-width: 100%; border: 0; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: .3rem .6rem; border: 1px solid var(--rule); text-align: left; }
+  th { background: var(--panel); }
+}
+
+// Markdown-style prefixes: signals heading depth without relying on size alone.
+.post-body {
+  h2::before { content: "## "   / ""; color: var(--dim); }
+  h3::before { content: "### "  / ""; color: var(--dim); }
+  h4::before { content: "#### " / ""; color: var(--dim); }
+}
+
+// Entry and card lists sit inside a body wrapper but are not prose lists.
+.post-body, .page-body {
+  .entries, .cards { padding-left: 0; }
+}
+
+// ── code ──────────────────────────────────────────────────────────────
+code, pre { font-family: inherit; font-size: .9em; }
+
+code {
+  padding: .1em .4em;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+}
+
+pre {
+  padding: .8rem 1rem;
+  overflow-x: auto;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  code { padding: 0; background: none; border: 0; }
+}
+
+.highlight { margin: 0 0 1.2rem; }
+
+// Monochrome tokens: italic for comments, weight for keywords, nothing else.
+.highlight {
+  .c, .c1, .cm, .cs { color: var(--dim); font-style: italic; }
+  .k, .kd, .kn, .kp, .kr, .kt, .kc, .nf, .nc { font-weight: bold; }
+  .err { text-decoration: underline; }
+}
+
+// ── demo header ──────────────────────────────────────────────────────
+// The launch link comes first: it is the point of the page.
+.demo-head {
+  margin-bottom: 1.5rem;
+  img {
+    width: 100%;
+    max-width: 22rem;   // a full-measure square would be enormous
+    margin: 0;
+  }
+}
+.demo-launch { margin: 0 0 1rem; font-size: 1.1rem; }
+.more-of-kind { margin: 2rem 0 1rem; }
+
+// ── post nav ──────────────────────────────────────────────────────────
+.post-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2ch;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  a { flex: 1 1 18ch; }
+  .next { text-align: right; }
+}
+
+// ── background art ───────────────────────────────────────────────────
+// Static texture from tools/gen_art.py. Decorative only: aria-hidden in the
+// markup, unselectable, and never in the way of a click.
+.art {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+
+  pre {
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: .62rem;
+    line-height: 1;
+    color: var(--art);
+    white-space: pre;
+    // Fades out to the left, same trick the old landing page used.
+    -webkit-mask-image: linear-gradient(to left, #000 25%, transparent 92%);
+            mask-image: linear-gradient(to left, #000 25%, transparent 92%);
+  }
+}
+
+// No gutter to put it in once the column fills the viewport.
+@media (max-width: 72em) { .art { display: none; } }
+
+// ── theme toggle ─────────────────────────────────────────────────────
+// Hidden until the script unhides it, so no-JS never shows a dead control.
+.theme-toggle {
+  margin-left: auto;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--link);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: .15em;
+  cursor: pointer;
+  &:hover, &:focus { text-decoration-thickness: 3px; }
+  &[hidden] { display: none; }
+}
+.theme-toggle-icon { padding-right: .5ch; text-decoration: none; }
+
+// ── footer ────────────────────────────────────────────────────────────
+.footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  color: var(--dim);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5ch;
+}

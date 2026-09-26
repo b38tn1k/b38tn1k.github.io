@@ -1,0 +1,10 @@
+{%- assign p = include.post -%}
+{%- if p.tags contains 'demo' -%}{%- assign kind = 'demo' -%}
+{%- elsif p.tags contains 'release' or p.tags contains 'releasehidden' -%}{%- assign kind = 'music' -%}
+{%- elsif p.tags contains 'gameprogress' or p.tags contains 'game2progress' -%}{%- assign kind = 'devlog' -%}
+{%- else -%}{%- assign kind = 'post' -%}{%- endif -%}
+<li class="entry">
+  <span class="entry-date"><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%Y-%m-%d" }}</time></span>
+  {% unless include.hidekind %}<span class="entry-kind">[{{ kind }}]</span>{% endunless %}
+  <span class="entry-title"><a href="{{ p.url | relative_url }}">{{ p.title | strip }}</a></span>
+</li>

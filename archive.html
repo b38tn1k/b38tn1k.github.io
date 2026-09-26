@@ -1,0 +1,14 @@
+---
+layout: page
+title: Archive
+permalink: /archive/
+blurb: Everything on the site, newest year first.
+---
+{% assign years = site.posts | group_by_exp: "p", "p.date | date: '%Y'" %}
+<p class="count">{{ site.posts.size }} posts</p>
+{% for y in years %}
+<h2 class="section-head" id="y{{ y.name }}">{{ y.name }} <span class="count">({{ y.items.size }})</span></h2>
+<ul class="entries">
+  {% for p in y.items %}{% include entry.html post=p %}{% endfor %}
+</ul>
+{% endfor %}

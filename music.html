@@ -1,0 +1,22 @@
+---
+layout: page
+title: Music
+permalink: /music/
+wide: true
+blurb: Releases as B38TN1K and Royal Chant.
+---
+{% comment %}
+  Two lists on purpose: `release` is the current catalogue, `releasehidden` is the
+  early back catalogue the old site kept out of the main listing. Both are real
+  pages either way; this only decides what gets top billing.
+{% endcomment %}
+{% assign current = site.tags.release %}
+{% assign older = site.tags.releasehidden %}
+
+<h2 class="section-head">Releases <span class="count">({{ current.size }})</span></h2>
+{% include releaselist.html releases=current %}
+
+{% if older.size > 0 %}
+<h2 class="section-head">Back catalogue <span class="count">({{ older.size }})</span></h2>
+{% include releaselist.html releases=older %}
+{% endif %}

@@ -1,0 +1,30 @@
+---
+layout: page
+title: Demos
+permalink: /demos/
+wide: true
+blurb: Small interactive toys, mostly p5.js. They run in the browser, no install.
+---
+{% assign demos = site.tags.demo %}
+{% if demos.size == 0 %}
+<p class="empty">No demos yet. Adding one means a post tagged <code>demo</code> with
+<code>image</code> and <code>link</code> in its front matter.</p>
+{% else %}
+<ul class="cards cards--demos">
+  {% for p in demos %}
+  {% assign target = p.link | default: p.url %}
+  <li class="card">
+    {% if p.image %}
+    <a href="{{ target }}" tabindex="-1" aria-hidden="true"><img src="{{ p.image }}" alt="" loading="lazy"></a>
+    {% endif %}
+    <h3><a href="{{ target }}">{{ p.title | strip }}</a></h3>
+    <p class="card-meta"><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%Y" }}</time></p>
+    <p>{{ p.content | replace: '[description]', '' | strip_html | strip | truncate: 180 }}</p>
+    <p class="card-links">
+      {% if p.link %}<a href="{{ p.link }}">launch &rarr;</a>{% endif %}
+      <a href="{{ p.url | relative_url }}">notes</a>
+    </p>
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}

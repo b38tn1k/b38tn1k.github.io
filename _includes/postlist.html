@@ -1,0 +1,30 @@
+{%- comment -%}
+  The whole roll, newest first. Devlog posts are left out because each game jam
+  has one article here that already inlines its entire progress blog.
+
+  bucket=<category list> filters by topic. Demos and releases carry a type tag
+  rather than categories, so kindfallback= keeps them in the relevant filter.
+{%- endcomment -%}
+{%- assign shown = 0 -%}
+<ul class="entries">
+{%- for p in site.posts -%}
+  {%- if p.tags contains 'gameprogress' or p.tags contains 'game2progress' -%}{%- continue -%}{%- endif -%}
+  {%- assign hit = true -%}
+  {%- if include.bucket -%}
+    {%- assign hit = false -%}
+    {%- for c in p.categories -%}
+      {%- if include.bucket contains c -%}{%- assign hit = true -%}{%- endif -%}
+    {%- endfor -%}
+    {%- if include.kindfallback == 'demo' and p.tags contains 'demo' -%}{%- assign hit = true -%}{%- endif -%}
+    {%- if include.kindfallback == 'music' -%}
+      {%- if p.tags contains 'release' or p.tags contains 'releasehidden' -%}{%- assign hit = true -%}{%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- if hit %}{% assign shown = shown | plus: 1 %}{% include entry.html post=p %}{% endif -%}
+{%- endfor -%}
+</ul>
+{%- if shown == 0 %}
+<p class="empty">Nothing in this topic yet. <a href="{{ '/' | relative_url }}">See everything &rarr;</a></p>
+{%- else %}
+<p class="count">{{ shown }} entries</p>
+{%- endif %}

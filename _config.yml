@@ -1,36 +1,48 @@
 # Permalinks
-#
-# Use of `relative_permalinks` ensures post links from the index work properly.
 permalink:           pretty
 
 # Setup
 title:               B38TN1K
 tagline:             aka James
-url:                 https://b38tn1k.github.io/
+url:                 https://b38tn1k.github.io
 repository:          b38tn1k/b38tn1k.github.io
-paginate:            1
 baseurl:             ""
+description:         "James Carthew (B38TN1K): music, robots, games, generative art and other junk."
 
 # Assets
-#
-# We specify the directory for Jekyll so we can use @imports.
 sass:
-  sass_dir:          _sass
-  style:            :compressed
+  style:             compressed
 
 # About/contact
 author:
   name:              James Carthew
   url:               https://b38tn1k.github.io/
-  # email:             b38tn1k@gmail.com
 
-# Custom vars
 github: https://github.com/b38tn1k
 
-plugins: [jekyll-paginate]
+plugins: [jekyll-feed]
 
-pages_list:
-  # Hello!: '/about'
-  # Archive: '/archive'
-  # Topics: '/categories/'
-  # Music: '/stream/'
+# Sections in the masthead, in order. Home is added by the layout.
+nav:
+  - { name: demos,   url: /demos/ }
+  - { name: music,   url: /music/ }
+  - { name: topics,  url: /categories/ }
+
+# Curated buckets behind the blog's techy/arty filters. These are category names
+# exactly as they appear in post front matter, so check /categories/ before editing.
+techy_categories: [code, arduino, robots, patent, rover, safety, processing, ux, "LÖVE and Lua"]
+arty_categories:  [music, art, fun, "i made another outsider art filmclip", photography, travel]
+
+# Local-only bulk: these are gitignored, so they never reach the published site anyway.
+exclude:
+  - "**/AGENTS.md"          # agent notes, not site content
+  - "**/CLAUDE.md"
+  - pets/AGENTS.md
+  - "junk/old custom css"   # dead Poole stylesheet, still @imports the deleted partials
+  - "*.zip"
+  - "*.py"
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - README.md
+  - LICENSE.md

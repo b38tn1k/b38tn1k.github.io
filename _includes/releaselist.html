@@ -1,0 +1,21 @@
+{%- assign releases = include.releases | sort: 'date' | reverse -%}
+<ul class="cards cards--music">
+  {%- for p in releases %}
+  {%- if p.albumcover contains '://' %}{% assign cover = p.albumcover %}{% else %}{% assign cover = p.albumcover | relative_url %}{% endif %}
+  <li class="card">
+    {% if p.albumcover %}
+    <a href="{{ p.url | relative_url }}" tabindex="-1" aria-hidden="true"><img src="{{ cover }}" alt="" loading="lazy"></a>
+    {% endif %}
+    <h3><a href="{{ p.url | relative_url }}">{{ p.title | strip }}</a></h3>
+    <p class="card-meta">
+      {% if p.artists %}{{ p.artists }} &middot; {% endif %}
+      <time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%Y" }}</time>
+    </p>
+    <p class="card-links">
+      {% if p.spotify %}<a href="{{ p.spotify }}">spotify</a>{% endif %}
+      {% if p.applemusic %}<a href="{{ p.applemusic }}">apple</a>{% endif %}
+      {% if p.bandcamp %}<a href="{{ p.bandcamp }}">bandcamp</a>{% endif %}
+    </p>
+  </li>
+  {%- endfor %}
+</ul>

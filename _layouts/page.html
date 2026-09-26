@@ -1,8 +1,10 @@
 ---
 layout: default
 ---
-
 <article class="page">
-  <!-- <h1 class="page-title">{{ page.title }}</h1> -->
-  {{ content }}
+  {% if page.title and page.hide_title != true %}<h1 class="page-title">{{ page.title }}</h1>{% endif %}
+  {% if page.blurb %}<p class="tagline">{{ page.blurb }}</p>{% endif %}
+  <div class="page-body">
+    {{ content }}
+  </div>
 </article>

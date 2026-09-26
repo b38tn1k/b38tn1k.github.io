@@ -1,41 +1,11 @@
 ---
-layout: empty
-title: "oops"
-permalink: 404.html
+layout: page
+title: Not found
+permalink: /404.html
 ---
-
-
-<html>
-<head>
-<title>404</title>
-
-<!-- CSS -->	
-<style type="text/css">
-html, 
-body {
-height: 100%;
-}
-
-body {
-background-image: url(https://cataas.com/cat/says/404);
-background-repeat: no-repeat;
-background-size: 100% 100%;
-}
-
-/* 
-<div class="page">
-  <!-- <h1 class="page-title">404: Page not found</h1>
-  <p class="lead">Sorry, we've misplaced that URL or it's pointing to something that doesn't exist. <a href="{{ site.baseurl }}/">Head back home</a> to try finding it again.</p> -->
-  <img src="https://cataas.com/cat/says/404" alt="404 dummy">
-</div>
-<!-- <div class="post-categories">
-  {% if post %}
-    {% assign categories = post.categories %}
-  {% else %}
-    {% assign categories = page.categories %}
-  {% endif %}
-  {% for category in categories %}
-  <a href="{{site.baseurl}}/categories/#{{category|slugize}}">{{category}}</a>
-  {% unless forloop.last %}&nbsp;{% endunless %}
-  {% endfor %}
-</div> --> */
+<p>That page is not here. It may have moved when the site was rebuilt.</p>
+<ul>
+  <li><a href="{{ '/' | relative_url }}">Home</a> &mdash; the latest of everything</li>
+  <li><a href="{{ '/archive/' | relative_url }}">Archive</a> &mdash; every post, by year</li>
+  <li><a href="{{ '/categories/' | relative_url }}">Topics</a> &mdash; browse by category</li>
+</ul>

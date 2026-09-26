@@ -1,24 +1,14 @@
 ---
 layout: page
-permalink: /categories/
 title: Topics
+permalink: /categories/
+blurb: Every category, and what is in it.
 ---
-
-
-<div id="archives">
-{% for category in site.categories %}
-  <div class="archive-group">
-    {% capture category_name %}{{ category | first }}{% endcapture %}
-    <div id="#{{ category_name | slugize }}"></div>
-    <p></p>
-
-    <h3 class="category-head">{{ category_name }}</h3>
-    <a name="{{ category_name | slugize }}"></a>
-    {% for post in site.categories[category_name] %}
-    <article class="archive-item">
-      <h4><a href="{{ site.baseurl }}{{ post.url }}">{{post.title}}</a></h4>
-    </article>
-    {% endfor %}
-  </div>
+{% assign cats = site.categories | sort %}
+<p class="count">{{ cats.size }} topics</p>
+{% for cat in cats %}
+<h2 class="section-head" id="{{ cat[0] | slugify }}">{{ cat[0] }} <span class="count">({{ cat[1].size }})</span></h2>
+<ul class="entries">
+  {% for p in cat[1] %}{% include entry.html post=p %}{% endfor %}
+</ul>
 {% endfor %}
-</div>

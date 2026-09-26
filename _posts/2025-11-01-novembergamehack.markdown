@@ -18,8 +18,10 @@ It's November again.
 
 {% for pst in site.posts %}
 {% if pst.tags contains 'game2progress' %}
-<h3> {{ pst.title }} </h3>
+<section class="devlog" markdown="1">
+<h2 class="devlog-title">{{ pst.title }}</h2>
 <time datetime="{{ pst.date | date_to_xmlschema }}" class="post-date">{{ pst.date | date_to_string }}</time>
 {{ pst.content }}
+</section>
 {% endif %}
 {% endfor %}

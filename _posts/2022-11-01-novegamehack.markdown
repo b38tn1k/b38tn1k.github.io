@@ -21,8 +21,10 @@ Dec 3 update: [play on Itch](https://b38tn1k.itch.io/november-man-and-possum)
 
 {% for pst in site.posts %}
 {% if pst.tags contains 'gameprogress' %}
-<h3> {{ pst.title }} </h3>
+<section class="devlog" markdown="1">
+<h2 class="devlog-title">{{ pst.title }}</h2>
 <time datetime="{{ pst.date | date_to_xmlschema }}" class="post-date">{{ pst.date | date_to_string }}</time>
 {{ pst.content }}
+</section>
 {% endif %}
 {% endfor %}

@@ -275,6 +275,26 @@ main.wide { --measure: 104ch; max-width: 104ch; }
   .entries, .cards { padding-left: 0; }
 }
 
+// Game-jam articles inline each devlog entry whole. The entry title has to
+// outrank the headings inside the entry, which are h2s from that devlog's own
+// markdown -- otherwise "## Result" renders larger than the post containing it.
+.post-body {
+  .devlog { margin: 0 0 3rem; }
+  .devlog-title {
+    margin-top: 2.5rem;
+    font-size: 1.45rem;
+    &::before { content: "## " / ""; color: var(--dim); }
+  }
+  .devlog h2:not(.devlog-title) {
+    font-size: 1.05rem;
+    &::before { content: "### " / ""; color: var(--dim); }
+  }
+  .devlog h3 {
+    font-size: 1rem;
+    &::before { content: "#### " / ""; color: var(--dim); }
+  }
+}
+
 // ── code ──────────────────────────────────────────────────────────────
 code, pre { font-family: inherit; font-size: .9em; }
 

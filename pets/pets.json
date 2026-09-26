@@ -136,7 +136,7 @@
     {
       "time": "22:40",
       "kind": "dogs",
-      "event": "Crate Bear for the night in the living room — shut the door (he pees on things if he wanders). Treats from the kitchen closet help lure him in."
+      "event": "Crate Bear for the night in the living room and shut the door so he doesn't wander. Treats from the kitchen closet help lure him in."
     }
   ],
   "pets": [
@@ -286,8 +286,7 @@
       "meds": null,
       "quirks": [
         "Loves sitting outside with Lucy to relax.",
-        "Sleeps in a small towel-covered crate in the living room — door shut overnight because he pees on things if he wanders the house. Treats (bag in the kitchen closet) help lure him in.",
-        "If you're heading out for more than an hour during the day, crate him too — same wandering-and-peeing problem."
+        "Sleeps in a small towel-covered crate in the living room, door shut overnight so he doesn't wander and have an accident. Treats (bag in the kitchen closet) help lure him in. No need to crate him during the day."
       ],
       "warnings": []
     },

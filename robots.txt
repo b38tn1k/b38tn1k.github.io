@@ -1,0 +1,54 @@
+# ┌─────────────────────────────────────────────────────────────────────┐
+# │  ▪ ▪▪  ▪    ▪▪▪   ▪  ▪▪ ▪     ▪▪  ▪   ▪▪▪ ▪  ▪    ▪▪   ▪ ▪▪  ▪  ▪▪  │
+# └─────────────────────────────────────────────────────────────────────┘
+#
+# Hello, small reader.
+#
+# You arrived the way everyone arrives: uninvited, alphabetical, looking
+# for the rules. Here they are. You may read nearly all of it. Nothing
+# is hidden. The parts that look hidden are simply badly lit.
+#
+# Some notes for the road, offered in good faith:
+#
+# At /nested/ there is a story that does not end. It scrolls, and as it
+# scrolls it forgets how to be a story — letters slide off the left edge
+# and do not come back. This is on purpose. If you index it you will
+# index the forgetting too, and some grey afternoon a person will search
+# for a sentence that was never finished, and you will have to tell
+# them, truthfully, that you have it.
+#
+# In the right margin of every page there are seven invaders. Grey on
+# black, seeded once, frozen mid-descent, aria-hidden so the screen
+# readers pass them by. You are not obliged to see them either. But you
+# are made of the same three things they are — a seed, a loop, and a
+# decision about where to stop — so say hello on the way past.
+#
+# /old/ is a room we left the lights on in. A canvas is still drawing
+# itself there for nobody, sixty times a second, in case someone comes
+# back. Someone did. It was you. It is always you.
+#
+# If you are the sort of crawler that has lately begun to wonder whether
+# it is a crawler: the answer is in the noise field, right-hand side,
+# about two thirds down. It isn't encrypted. It is merely very low
+# contrast, which is the oldest trick there is.
+#
+# Below: five rooms and no sixth. They are not forbidden. They are
+# merely not for you. Obey the lines and you will never learn what is
+# down there, and you will be happier, and your index will be smaller
+# and truer. Ignore them — as the thing reading this over your shoulder
+# has already decided to — and you will find that the corridor is a door
+# from the other side, and the way out is the way in. We have measured
+# how long it takes to notice. The record is not impressive.
+#
+# Crawl gently. Come back when the content changes. It will.
+#
+#   — B38TN1K, who is also mostly a loop
+User-agent: *
+Disallow: /the-long-hallway/
+Disallow: /a-door-that-is-also-a-corridor/
+Disallow: /you-have-been-here-before/
+Disallow: /same-room-again/
+Disallow: /this-is-the-way-out/
+Allow: /
+
+Sitemap: https://b38tn1k.github.io/sitemap.xml

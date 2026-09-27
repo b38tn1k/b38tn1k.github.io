@@ -16,7 +16,7 @@ blurb: Small interactive toys, mostly p5.js. They run in the browser, no install
   {% assign target = p.link | default: p.url %}
   <li class="card">
     {% if p.image %}
-    <a href="{{ target }}" tabindex="-1" aria-hidden="true"><img src="{{ p.image }}" alt="" loading="lazy"></a>
+    <a href="{{ target }}" tabindex="-1" aria-hidden="true">{% include img.html src=p.image alt="" sizes="(max-width: 40rem) 100vw, 380px" %}</a>
     {% endif %}
     <h3><a href="{{ target }}">{{ p.title | strip }}</a></h3>
     <p class="card-meta"><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%Y" }}</time></p>

@@ -3,7 +3,7 @@ layout: post
 title:  "MIDI Toys"
 date:   2020-03-30
 tags: demo
-image: 'https://b38tn1k.github.io/images/previews/toys.jpg'
+image: '/images/previews/toys.jpg'
 link: 'https://youtube.com/playlist?list=PLZttbibA79ov0Y0J_pEOQnuLViuv8ho1e'
 ---
 

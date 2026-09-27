@@ -3,7 +3,7 @@ layout: post
 title:  "personal space invaders"
 date:   2019-04-28
 tags: demo
-image: 'https://b38tn1k.github.io/images/previews/invaders.png'
+image: '/images/previews/invaders.png'
 link: 'https://b38tn1k.github.io/invaders/'
 ---
 

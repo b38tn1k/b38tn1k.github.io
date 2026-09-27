@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""
+pre-commit: complains about heavy images instead of silently rewriting them.
+
+This hook never edits a file. It tells you what is oversized and which command
+fixes it, then gets out of the way. Bypass with `git commit --no-verify`.
+
+Enable (already done once, but this is how):
+    git config core.hooksPath tools/hooks
+"""
+import os
+import subprocess
+import sys
+
+MAX_KB = 400
+MAX_PX = 2000
+EXTS = (".png", ".jpg", ".jpeg", ".gif")
+GENERATED = ("-760.webp", "-1600.webp")
+
+
+def staged():
+    out = subprocess.run(
+        ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"],
+        capture_output=True, text=True).stdout.split("\n")
+    return [f for f in out if f.strip() and f.lower().endswith(EXTS)
+            and not f.endswith(GENERATED) and os.path.isfile(f)]
+
+
+def dimensions(path):
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            return im.size
+    except Exception:
+        return None
+
+
+def main():
+    problems = []
+    for f in staged():
+        kb = os.path.getsize(f) // 1024
+        size = dimensions(f)
+        why = []
+        if kb > MAX_KB:
+            why.append(f"{kb} KB")
+        if size and max(size) > MAX_PX:
+            why.append(f"{size[0]}x{size[1]}")
+        if why:
+            problems.append((f, ", ".join(why)))
+
+    stale = subprocess.run(
+        [sys.executable, "tools/optimize_images.py", "--check"],
+        capture_output=True, text=True)
+    derivatives_stale = stale.returncode == 1
+
+    if not problems and not derivatives_stale:
+        return 0
+
+    print("\n  heavy images in this commit\n")
+    for f, why in problems:
+        print(f"    {f}  ({why})")
+    if derivatives_stale:
+        print(f"    {stale.stdout.strip()}")
+
+    print("\n  card art (front-matter image: / albumcover:):")
+    print("      python3 tools/optimize_images.py")
+    print("\n  anything else -- resize and re-save before committing, e.g.:")
+    print("      sips -Z 1600 path/to/image.png")
+    print("\n  or skip this check:  git commit --no-verify\n")
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

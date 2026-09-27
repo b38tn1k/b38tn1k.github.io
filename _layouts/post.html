@@ -19,7 +19,7 @@ layout: default
     <p class="demo-launch"><a href="{{ page.link }}">launch {{ page.title | strip }} &rarr;</a></p>
     {% endif %}
     {% if page.image %}
-    <a href="{{ page.link | default: page.url }}" tabindex="-1" aria-hidden="true"><img src="{{ page.image }}" alt=""></a>
+    <a href="{{ page.link | default: page.url }}" tabindex="-1" aria-hidden="true">{% include img.html src=page.image alt="" sizes="(max-width: 40rem) 100vw, 22rem" eager=true %}</a>
     {% endif %}
   </div>
   {% endif %}

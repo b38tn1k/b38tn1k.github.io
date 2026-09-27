@@ -3,7 +3,7 @@ layout: post
 title:  "Satellite Physics Toy"
 date:   2022-05-26
 tags: demo
-image: 'https://b38tn1k.github.io/images/previews/sat.png'
+image: '/images/previews/sat.png'
 link: 'https://b38tn1k.github.io/toysat/'
 ---
 

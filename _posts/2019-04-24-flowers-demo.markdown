@@ -3,7 +3,7 @@ layout: post
 title:  "flowers"
 date:   2019-04-24
 tags: demo
-image: 'https://b38tn1k.github.io/images/previews/flowers.png'
+image: '/images/previews/flowers.png'
 link: 'https://b38tn1k.github.io/flowers/'
 ---
 

@@ -3,7 +3,7 @@ layout: post
 title:  "spiro"
 date:   2019-05-11
 tags: demo
-image: 'https://b38tn1k.github.io/images/previews/spirograph.png'
+image: '/images/previews/spirograph.png'
 link: 'https://b38tn1k.github.io/spiro/'
 ---
 

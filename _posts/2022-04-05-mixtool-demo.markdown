@@ -3,7 +3,7 @@ layout: post
 title:  "mix tool"
 date:   2022-04-05
 tags: demo
-image: 'https://b38tn1k.github.io/images/previews/mixtool.png'
+image: '/images/previews/mixtool.png'
 link: 'https://b38tn1k.github.io/mixtool/'
 ---
 

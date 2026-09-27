@@ -3,7 +3,7 @@ layout: post
 title:  "WIP: TRIZ Card Game"
 date:   2022-08-10
 tags: demo
-image: 'https://b38tn1k.github.io/images/previews/triz.png'
+image: '/images/previews/triz.png'
 link: 'https://b38tn1k.github.io/triz/'
 ---
 

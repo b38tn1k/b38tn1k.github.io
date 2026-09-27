@@ -3,7 +3,7 @@ layout: post
 title:  "November Man And Possum"
 date:   2022-11-28
 tags: demo
-image: 'https://b38tn1k.github.io/images/covers/nmap.jpg'
+image: '/images/covers/nmap.jpg'
 link: 'https://b38tn1k.itch.io/november-man-and-possum'
 ---
 [description]

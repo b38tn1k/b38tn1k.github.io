@@ -201,6 +201,9 @@ main.wide { --measure: 104ch; max-width: 104ch; }
 // Square boxes, never cropped. Every preview and all but one cover in the repo
 // is already square, so `contain` almost never letterboxes -- and when it does,
 // the frame absorbs it instead of slicing the image.
+.cards picture,
+.demo-head picture { display: block; }
+
 .cards img,
 .demo-head img {
   aspect-ratio: 1;

@@ -3,7 +3,7 @@ layout: post
 title:  "lumpy space"
 date:   2019-05-12
 tags: demo
-image: 'https://b38tn1k.github.io/images/previews/lumpy.png'
+image: '/images/previews/lumpy.png'
 link: 'https://b38tn1k.github.io/lumpy/'
 ---
 

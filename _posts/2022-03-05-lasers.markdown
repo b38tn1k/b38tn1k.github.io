@@ -3,7 +3,7 @@ layout: post
 title:  "Lasers"
 date:   2022-03-05
 tags: demo
-image: 'https://b38tn1k.github.io/images/previews/laser.png'
+image: '/images/previews/laser.png'
 link: 'https://b38tn1k.github.io/lasers/'
 ---
 

@@ -1,0 +1,16 @@
+{%- comment -%}
+  Renders an image as <picture>, preferring a WebP derivative when
+  tools/optimize_images.py has made one, and falling back to the original
+  otherwise. width/height come from the manifest so there is no layout shift
+  before the stylesheet lands.
+
+  Params: src (required), alt, sizes, eager
+{%- endcomment -%}
+{%- assign key = include.src | replace: 'https://b38tn1k.github.io/', '' | remove_first: '/' -%}
+{%- assign meta = site.data.images[key] -%}
+<picture>
+{%- if meta.w760 %}
+  <source type="image/webp" srcset="{{ meta.w760 | relative_url }} 760w{% if meta.w1600 %}, {{ meta.w1600 | relative_url }} 1600w{% endif %}" sizes="{{ include.sizes | default: '380px' }}">
+{%- endif %}
+  <img src="{{ key | prepend: '/' | relative_url }}" alt="{{ include.alt }}"{% if meta.w %} width="{{ meta.w }}" height="{{ meta.h }}"{% endif %}{% if include.eager %} fetchpriority="high"{% else %} loading="lazy"{% endif %} decoding="async">
+</picture>

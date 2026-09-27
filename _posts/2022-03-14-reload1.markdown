@@ -10,6 +10,4 @@ albumcover: "/images/covers/reload1.jpeg"
 artists: RELOAD, Mark Mothersbaugh (DEVO!??!), mastered by me
 ---
 
-![cover]({{ site.url }}/images/covers/reload1.jpg)
-
 I mastered a record for someone other than RC or myself! sorta fun, sorta scary.

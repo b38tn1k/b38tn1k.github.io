@@ -9,7 +9,6 @@ applemusic: ""
 albumcover: "/images/covers/support.jpg"
 artists: Various, B38TN1K
 ---
-![cover]({{ site.url }}/images/covers/support.jpg)
 
 I am really excited to be featured alongside some excellent artists on this compilation from Manchester, UK based label Forbidden Drink Recordings.
 

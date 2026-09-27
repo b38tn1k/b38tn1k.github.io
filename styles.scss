@@ -202,10 +202,12 @@ main.wide { --measure: 104ch; max-width: 104ch; }
 // is already square, so `contain` almost never letterboxes -- and when it does,
 // the frame absorbs it instead of slicing the image.
 .cards picture,
-.demo-head picture { display: block; }
+.demo-head picture,
+.release-head picture { display: block; }
 
 .cards img,
-.demo-head img {
+.demo-head img,
+.release-head img {
   aspect-ratio: 1;
   object-fit: contain;
   background: var(--panel);
@@ -336,6 +338,12 @@ pre {
 }
 .demo-launch { margin: 0 0 1rem; font-size: 1.1rem; }
 .more-of-kind { margin: 2rem 0 1rem; }
+
+.release-head {
+  margin-bottom: 1.5rem;
+  img { width: 100%; max-width: 22rem; margin: 0 0 1rem; }
+}
+.release-artists { margin: 0 0 .5rem; color: var(--dim); }
 
 // ── post nav ──────────────────────────────────────────────────────────
 .post-nav {

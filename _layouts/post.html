@@ -13,6 +13,23 @@ layout: default
     Demo posts are often a line or two of text, so without the preview and the
     launch link they read as an empty page. Both already live in front matter.
   {% endcomment %}
+  {% comment %}
+    Release posts carry everything in front matter already. Rendering it here
+    means a post needs no body at all, and no release has to repeat its own
+    cover and streaming links in prose.
+  {% endcomment %}
+  {% if page.albumcover and page.albumcover != "" %}
+  <div class="release-head">
+    {% include img.html src=page.albumcover alt="" sizes="(max-width: 40rem) 100vw, 22rem" eager=true %}
+    {% if page.artists and page.artists != "" %}<p class="release-artists">{{ page.artists }}</p>{% endif %}
+    <p class="card-links">
+      {% if page.spotify and page.spotify != "" %}<a href="{{ page.spotify }}">spotify</a>{% endif %}
+      {% if page.applemusic and page.applemusic != "" %}<a href="{{ page.applemusic }}">apple music</a>{% endif %}
+      {% if page.bandcamp and page.bandcamp != "" %}<a href="{{ page.bandcamp }}">bandcamp</a>{% endif %}
+    </p>
+  </div>
+  {% endif %}
+
   {% if page.image or page.link %}
   <div class="demo-head">
     {% if page.link %}

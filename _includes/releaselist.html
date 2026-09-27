@@ -8,13 +8,13 @@
     {% endif %}
     <h3><a href="{{ p.url | relative_url }}">{{ p.title | strip }}</a></h3>
     <p class="card-meta">
-      {% if p.artists %}{{ p.artists }} &middot; {% endif %}
+      {% if p.artists and p.artists != "" %}{{ p.artists }} &middot; {% endif %}
       <time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%Y" }}</time>
     </p>
     <p class="card-links">
-      {% if p.spotify %}<a href="{{ p.spotify }}">spotify</a>{% endif %}
-      {% if p.applemusic %}<a href="{{ p.applemusic }}">apple</a>{% endif %}
-      {% if p.bandcamp %}<a href="{{ p.bandcamp }}">bandcamp</a>{% endif %}
+      {% if p.spotify and p.spotify != "" %}<a href="{{ p.spotify }}">spotify</a>{% endif %}
+      {% if p.applemusic and p.applemusic != "" %}<a href="{{ p.applemusic }}">apple</a>{% endif %}
+      {% if p.bandcamp and p.bandcamp != "" %}<a href="{{ p.bandcamp }}">bandcamp</a>{% endif %}
     </p>
   </li>
   {%- endfor %}

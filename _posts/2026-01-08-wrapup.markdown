@@ -1,0 +1,24 @@
+---
+layout: post
+title: Wrap Up
+date: 2026-01-08
+categories: [game, november]
+tags: game2progress
+---
+Game Off 2025 is done and The Anemone Of My Anemone is finished and up on itch. I really love how this one turned out.
+
+[The Anemone Of My Anemone](https://b38tn1k.itch.io/the-anemone-of-my-anemone)
+
+Rankings are in. Had a heap of fun making it, and I'm still aiming to land in the top 10% next time!
+
+![Game Off 2025 jam statistics: 710 entries, 10,414 ratings across 699 entries, median 16 ratings per game.](/images/gameoff2025/jam-stats.webp)
+
+![Results table, ranked from 15 ratings: Innovation 117th, Theme interpretation 172nd, Graphics 189th, Overall 225th, Audio 248th, Gameplay 262nd.](/images/gameoff2025/results.webp)
+
+The Anemone also got some really nice written reviews. In the order I screenshotted them:
+
+![Comment from Wafflenaut Games: "this is such a charming little game! somehow it's still complex even though there is only one button! I love the voice acting, expecially in the beginning. 'im coming to save you' '...ok'. Great work!!"](/images/gameoff2025/comment-wafflenaut.webp)
+
+![Two comments. Introspection Games: "Nice concept and cool art. Addition of level editor very cool!" bryengx: "Not bad! Aside from it not working on firefox it played fine on chrome. best aspect id definetly presentation - sound, colors, animations. Stages are quite simple considering player has just one button to control the character but this was used to its full potential."](/images/gameoff2025/comments-ragged-ashegore.webp)
+
+![Two comments. Greg Molot: "Incredibly cute art! The idea was also very cool and really well executed!" jam_bone: "Cool idea, it was really nice touch on the sound design. I wish it was a bit clearer which way the waves where flowing. Nice entry, congrats."](/images/gameoff2025/comments-noir-wave.webp)

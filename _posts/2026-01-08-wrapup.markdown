@@ -1,21 +1,22 @@
 ---
 layout: post
 title: Wrap Up
-date: 2026-01-08
+date: 2026-10-01
 categories: [game, november]
 tags: game2progress
 ---
-Game Off 2025 is done and The Anemone Of My Anemone is finished and up on itch. I really love how this one turned out.
+
+It was a race to the finish and then I didnt want to think about it for an age. There was a Mozilla glitch post entry deadliine that really frustrated me, but I still love this one. I really appreciate Alex and Cassie's contributions, which gave the game a lot of charm. As usual I spent too much time focused on minor details (shader color stuf and the currents/animation wobbles). Anyway, here it is:
 
 [The Anemone Of My Anemone](https://b38tn1k.itch.io/the-anemone-of-my-anemone)
 
-Rankings are in. Had a heap of fun making it, and I'm still aiming to land in the top 10% next time!
+I'm still aiming to land in the top 10% next time, but still a respectable outcome :-D
 
 ![Game Off 2025 jam statistics: 710 entries, 10,414 ratings across 699 entries, median 16 ratings per game.](/images/gameoff2025/jam-stats.webp)
 
 ![Results table, ranked from 15 ratings: Innovation 117th, Theme interpretation 172nd, Graphics 189th, Overall 225th, Audio 248th, Gameplay 262nd.](/images/gameoff2025/results.webp)
 
-The Anemone Of My Anemone also got some really nice written reviews. In the order I screenshotted them:
+Some lovely comments from the commmunity below. As I said, I was DONE with it after launch and the Mozilla bug, which made it hard for me to go back in and contribute as much as I wanted to. I played some awesome games though - my fav had you play as a turtle navigating pollution and human construction to save other turtles, all while monitoring you air levels.
 
 ![Comment from Wafflenaut Games: "this is such a charming little game! somehow it's still complex even though there is only one button! I love the voice acting, expecially in the beginning. 'im coming to save you' '...ok'. Great work!!"](/images/gameoff2025/comment-wafflenaut.webp)
 

@@ -1,0 +1,484 @@
+---
+layout: empty
+title: B38TN1K's World
+permalink: /world/
+description: "The fun version of B38TN1K: music, robots, games, generative art and other junk, GeoCities style."
+---
+{%- comment -%}
+  The fun version of the home page: one themed zone per section, a la
+  cameronsworld.net. Anything that changes when you post (what's new, demos,
+  releases, the archive, counts, dates) is Liquid; robots & patents is hand-picked.
+{%- endcomment -%}
+{%- assign entries = site.posts.size | minus: site.tags.gameprogress.size | minus: site.tags.game2progress.size -%}
+{%- assign since = site.posts.last.date | date: "%Y" -%}
+{%- assign releases = site.tags.release | sort: 'date' | reverse -%}
+{%- assign backcat = site.tags.releasehidden | sort: 'date' | reverse -%}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>~*~ {{ page.title }} ~*~</title>
+<meta name="description" content="{{ page.description }}">
+<link rel="shortcut icon" href="{{ '/public/favicon.ico' | relative_url }}">
+<link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ '/atom.xml' | relative_url }}">
+<style>
+* { box-sizing: border-box; }
+html { background: #000; scroll-behavior: smooth; }
+body { margin: 0; color: #fff; font: 18px/1.4 "Times New Roman", Times, serif; overflow-x: hidden; }
+a { color: #0ff; }
+a:visited { color: #f6f; }
+a:hover { color: #ff0; }
+:focus-visible { outline: 3px dashed #ff0; outline-offset: 3px; }
+.pix { image-rendering: pixelated; }
+picture { display: contents; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ── the little icon rail on the left, like Cameron's ─────────────────── */
+.rail { position: fixed; left: 6px; top: 50%; transform: translateY(-50%); z-index: 50;
+  display: flex; flex-direction: column; gap: 6px; }
+.rail a { display: block; width: 44px; height: 44px; background: #c0c0c0;
+  border: 3px outset #eee; overflow: hidden; }
+.rail a:active { border-style: inset; }
+.rail img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rail span { display: none; }
+
+/* ── shared biome bits ──────────────────────────────────────────────── */
+.biome { position: relative; overflow: hidden; padding: 56px 24px 72px 72px; }
+.stage { position: relative; max-width: 1040px; margin: 0 auto; z-index: 2; }
+.deco { position: absolute; pointer-events: none; z-index: 1; }
+.center { text-align: center; }
+
+.collage { display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+  gap: 18px 6px; margin: 28px 0; }
+.collage > * { transform: rotate(var(--r, 0deg)); transition: transform .15s; }
+.collage > *:hover, .collage > *:focus-within { transform: rotate(0) scale(1.08); z-index: 5; }
+
+.wordart { font: 900 clamp(38px, 8vw, 92px)/1 Impact, "Arial Black", sans-serif;
+  letter-spacing: .02em; margin: 0; color: transparent;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-stroke: 2px #000;
+  filter: drop-shadow(4px 4px 0 var(--shadow, #f0f)); }
+.script { font: italic clamp(22px, 4vw, 38px) "Brush Script MT", "Apple Chancery", "Comic Sans MS", cursive; margin: .2em 0; }
+.comic { font-family: "Comic Sans MS", "Chalkboard SE", "Comic Neue", cursive; }
+
+.wave span { display: inline-block; background-image: inherit; -webkit-background-clip: text; background-clip: text; animation: wave 1.6s ease-in-out infinite; animation-delay: calc(var(--i) * .1s); }
+@keyframes wave { 50% { transform: translateY(-14px); } }
+
+.blink { animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { visibility: hidden; } }
+
+.bob { animation: bob 3s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-16px); } }
+
+.spin { animation: spin 9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.marquee { overflow: hidden; white-space: nowrap; }
+.marquee span { display: inline-block; padding-left: 100%; animation: marquee 24s linear infinite; }
+@keyframes marquee { to { transform: translateX(-100%); } }
+
+.rainbow-bar { height: 8px; background: linear-gradient(90deg, #f00, #f80, #ff0, #0f0, #0cf, #00f, #a0f, #f00); background-size: 200% 100%; animation: slide 3s linear infinite; }
+@keyframes slide { to { background-position: 200% 0; } }
+
+/* gold bar with gems, a la the divider under Cameron's welcome */
+.divider { display: flex; justify-content: space-between; align-items: center; height: 22px; margin: 22px auto; max-width: 560px;
+  background: linear-gradient(transparent 9px, #a70 9px 10px, #fd6 10px 12px, #a70 12px 13px, transparent 13px); }
+.divider span { color: #0ff; font-size: 22px; text-shadow: 0 0 8px #0ff; }
+
+/* bevelled panel: every 1999 table ever */
+.panel { border: 6px ridge #c0c0c0; background: #000080; padding: 14px 18px; text-align: left; }
+.panel h3 { margin: 0 0 8px; color: #ff0; font: 700 20px "Comic Sans MS", cursive; }
+.panel ul { margin: 0; padding-left: 1.2em; }
+.panel li { margin: 4px 0; }
+.panel time { color: #9cf; font-family: "Courier New", monospace; font-size: 14px; }
+
+.new { display: inline-grid; place-items: center; width: 54px; height: 54px; margin-left: 6px; vertical-align: middle;
+  background: #f00; color: #ff0; font: 900 13px Impact, sans-serif; transform: rotate(-12deg);
+  clip-path: polygon(50% 0, 61% 18%, 82% 10%, 79% 32%, 100% 38%, 84% 54%, 98% 72%, 76% 74%, 74% 96%, 56% 83%, 40% 100%, 34% 78%, 12% 86%, 18% 64%, 0 52%, 18% 38%, 8% 18%, 30% 20%, 38% 0); }
+
+/* ── 1. SPACE / home ───────────────────────────────────────────────── */
+.space { background:
+    radial-gradient(1px 1px at 12px 20px, #fff, transparent),
+    radial-gradient(1px 1px at 60px 90px, #ccf, transparent),
+    radial-gradient(2px 2px at 110px 40px, #fff, transparent),
+    radial-gradient(1px 1px at 150px 150px, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 30px 170px, #ffd, transparent),
+    radial-gradient(1px 1px at 180px 70px, #fff, transparent),
+    radial-gradient(40px 40px at 90px 120px, #2a1a5a66, transparent);
+  background-color: #02000a; background-size: 200px 200px; }
+
+.wordmark { margin: 0; font: 700 clamp(5px, 2.6vw, 13px)/1.05 "Courier New", monospace; white-space: pre;
+  background: linear-gradient(90deg, #f0f, #0ff, #ff0, #0f0, #f0f); background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: slide 4s linear infinite; }
+.welcome { --shadow: #60f; background-image: linear-gradient(#fff 0%, #aef 40%, #035 50%, #6cf 62%, #fff 100%); }
+
+.planet { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+.mars   { width: 110px; height: 110px; left: 4%; top: 60px;  background: radial-gradient(circle at 35% 30%, #fc8, #d52 45%, #611 100%); box-shadow: 0 0 30px #f418; }
+.moon   { width: 46px;  height: 46px;  left: 16%; top: 210px; background: radial-gradient(circle at 60% 60%, #888 0 4px, transparent 5px), radial-gradient(circle at 30% 35%, #999 0 6px, transparent 7px), radial-gradient(circle at 40% 35%, #eee, #888 70%, #333); }
+.earth  { width: 150px; height: 150px; right: 5%; top: 40px; background: radial-gradient(circle at 70% 70%, transparent 40%, #0008 75%), radial-gradient(ellipse 30% 20% at 35% 40%, #3a5 90%, transparent), radial-gradient(ellipse 25% 30% at 70% 30%, #4b6 90%, transparent), radial-gradient(circle at 40% 35%, #6cf, #04a 70%); box-shadow: 0 0 40px #39f6; }
+.saturn { width: 90px; height: 90px; right: 13%; top: 380px; background: repeating-linear-gradient(170deg, #eb7 0 8px, #c94 8px 14px, #fda 14px 20px); box-shadow: inset -20px -16px 30px #0009; }
+.saturn::after { content: ""; position: absolute; inset: 34px -40px; border: 6px solid #dc9c; border-radius: 50%; transform: rotate(-16deg); }
+.sun    { width: 70px; height: 70px; left: 8%; top: 470px; background: radial-gradient(circle, #fff 0 10%, #ff0 30%, #f80 60%, #f000 72%); filter: blur(.5px); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(1.15); } }
+
+.fleet { position: absolute; left: 0; right: 0; bottom: 0; height: 120px; z-index: 1; pointer-events: none; mix-blend-mode: screen; opacity: .7;
+  background: url(/inv.png) 0 0 / 520px auto repeat-x; animation: fleet 30s linear infinite; }
+@keyframes fleet { to { background-position: 520px 0; } }
+
+.greeting { color: #ff0; font-size: 15px; }
+.greeting a { color: #ff0; }
+.twinkle { position: absolute; color: #fff; text-shadow: 0 0 6px #fff; animation: twinkle 1.4s ease-in-out infinite; pointer-events: none; }
+@keyframes twinkle { 50% { opacity: .1; transform: scale(.5); } }
+
+/* ── 2. DUNGEON / games ───────────────────────────────────────────── */
+.dungeon { background: #2a1838 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='40'%3E%3Crect width='64' height='40' fill='%233a2150'/%3E%3Crect x='3' y='3' width='26' height='14' fill='%23442860'/%3E%3Cpath d='M0 0H64M0 20H64M0 40H64M0 0V20M32 0V20M16 20V40M48 20V40' stroke='%23140a1c' stroke-width='3'/%3E%3C/svg%3E"); }
+.slime { --shadow: #030; background-image: linear-gradient(#efc 0%, #8f4 45%, #170 55%, #6e2 75%, #cf9 100%); }
+.torch { position: absolute; font-size: 42px; animation: flicker .25s infinite alternate; }
+@keyframes flicker { to { transform: scale(1.06, .94); filter: brightness(1.4); } }
+
+.cart { display: block; width: 170px; background: #888; border: 5px outset #bbb; padding: 8px 8px 4px; text-decoration: none; color: #000 !important; }
+.cart img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border: 3px inset #555; background: #000; }
+.cart b { display: block; margin-top: 4px; font: 700 13px "Courier New", monospace; text-align: center; background: #ffd; border: 1px solid #000; padding: 2px; }
+.cart.featured { width: 220px; background: #c33; border-color: #f66; }
+.cart.featured img { aspect-ratio: 630 / 500; }   /* itch cover proportions */
+.start { font: 700 22px "Courier New", monospace; color: #fff; text-shadow: 3px 3px 0 #f0f; }
+.coin { display: inline-block; margin: 6px; padding: 8px 16px; font: 700 18px "Courier New", monospace; color: #000 !important; background: linear-gradient(#ff0, #fa0); border: 4px outset #ff8; text-decoration: none; }
+
+.walker { position: absolute; bottom: 8px; width: 96px; z-index: 3; pointer-events: none; animation: walk 22s linear infinite; }
+@keyframes walk { from { left: -110px; } to { left: 100%; } }
+.hpbar { width: 120px; height: 10px; border: 2px solid #fff; background: linear-gradient(90deg, #f22 70%, #400 70%); margin: 2px auto 0; }
+
+/* ── 3. DISCO / music ─────────────────────────────────────────────── */
+.disco { background: #2b003a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Crect width='90' height='90' fill='%23300040'/%3E%3Ctext x='8' y='30' font-size='22' fill='%23ff3fa8'%3E%E2%99%AB%3C/text%3E%3Ctext x='52' y='74' font-size='18' fill='%23ffe14d'%3E%E2%9C%A6%3C/text%3E%3Ctext x='58' y='26' font-size='12' fill='%2366e0ff'%3E%E2%99%AA%3C/text%3E%3C/svg%3E"); }
+.chrome { --shadow: #f09; background-image: linear-gradient(#fff 0%, #fcf 40%, #636 50%, #f9e 60%, #fff 100%); }
+
+.cd { display: block; width: 150px; text-align: center; text-decoration: none; }
+.cd .disc { display: block; width: 150px; aspect-ratio: 1; border-radius: 50%; position: relative; overflow: hidden;
+  box-shadow: 0 0 0 3px #ccc, 0 0 18px #f0f8; animation: spin 7s linear infinite; }
+.cd img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cd .disc::before { content: ""; position: absolute; inset: 0; mix-blend-mode: screen; opacity: .45;
+  background: conic-gradient(from 20deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
+.cd .disc::after { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle, #300040 0 9px, #ddd 9px 11px, #fff6 11px 28px, transparent 28px); }
+.cd small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 6px; font: 700 14px "Comic Sans MS", cursive; color: #ff0; text-shadow: 1px 1px 0 #000; }
+.cd:hover .disc { animation-duration: 1s; }
+
+.bin { display: flex; flex-wrap: wrap; justify-content: center; max-width: 760px; margin: 0 auto; }
+.bin a { width: 84px; margin: -6px; transform: rotate(var(--r)); border: 3px solid #fff; box-shadow: 3px 3px 0 #000; }
+.bin a:hover { transform: scale(1.4); z-index: 5; position: relative; }
+.bin img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
+
+/* ── 4. BLUEPRINT / robots ────────────────────────────────────────── */
+.lab { background-color: #0b3d91;
+  background-image: linear-gradient(#ffffff30 1px, transparent 1px), linear-gradient(90deg, #ffffff30 1px, transparent 1px),
+                    linear-gradient(#ffffff14 1px, transparent 1px), linear-gradient(90deg, #ffffff14 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px; font-family: "Courier New", monospace; }
+.lab h2 { font: 700 clamp(28px, 6vw, 60px) "Courier New", monospace; margin: 0; letter-spacing: .1em; color: #fff; text-shadow: 0 0 10px #8cf; }
+
+.folder { position: relative; display: block; width: 220px; margin-top: 16px; padding: 12px; background: #e8c97a; color: #321 !important;
+  font: 700 14px "Courier New", monospace; text-decoration: none; box-shadow: 4px 4px 0 #0005; }
+.folder::before { content: "PATENT"; position: absolute; top: -18px; left: 0; padding: 2px 10px; background: #e8c97a; font-size: 11px; border-radius: 4px 4px 0 0; }
+.folder img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; background: #fff; margin-bottom: 8px; box-shadow: 2px 2px 0 #0003; }
+
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin: 28px 0; }
+.grid.folders { row-gap: 40px; padding-top: 18px; }   /* room for the PATENT tabs */
+.grid > .polaroid, .grid > .folder { width: auto; margin: 0; }
+
+.polaroid { display: block; width: 190px; background: #fff; padding: 10px 10px 34px; box-shadow: 4px 4px 0 #0006; text-decoration: none; position: relative; }
+.polaroid img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.polaroid span { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; color: #00a; font: 16px "Comic Sans MS", cursive; }
+
+.sheet { width: 120px; height: 120px; background: url(/sprites/megaComputer.png) 0 0 / 960px 120px; image-rendering: pixelated; animation: sheet .9s steps(8) infinite; }
+@keyframes sheet { to { background-position: -960px 0; } }
+
+/* ── 5. UNDER THE SEA / archive ──────────────────────────────────── */
+.sea { background: linear-gradient(#00aaff22 0%, #0478c866 35%, #002244ee 100%), url(/november2/assets/found/geocities-water.gif) #0478c8; }
+.aqua { --shadow: #024; background-image: linear-gradient(#fff 0%, #9ff 45%, #077 55%, #6ff 70%, #fff 100%); }
+.bubble { position: absolute; bottom: -40px; border-radius: 50%; border: 2px solid #fff8; background: radial-gradient(circle at 30% 30%, #fff8 0 15%, transparent 30%); pointer-events: none; animation: rise linear infinite; }
+@keyframes rise { to { transform: translateY(-1400px) translateX(30px); } }
+.fish { position: absolute; font-size: 38px; pointer-events: none; animation: swim linear infinite; }
+@keyframes swim { from { left: 105%; } to { left: -10%; } }
+
+.scroller { max-width: 640px; height: 340px; overflow: auto; margin: 0 auto; background: #00224480; }
+.scroller li { list-style: "🐚 "; }
+.porthole { display: block; width: 190px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; border: 12px solid #b87333; box-shadow: inset 0 0 0 4px #fff4, 0 0 0 4px #5a3a1a; }
+.porthole img { width: 100%; height: 100%; object-fit: cover; }
+.chest { display: inline-block; text-align: center; font: 700 16px "Comic Sans MS", cursive; color: #ff0 !important; text-decoration: none; }
+.chest img { width: 120px; display: block; margin: 0 auto; }
+
+/* ── 6. CLOUDS / elsewhere ───────────────────────────────────────── */
+.sky { background: #5bf url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='160'%3E%3Cg fill='%23fff' opacity='.9'%3E%3Cellipse cx='60' cy='50' rx='40' ry='16'/%3E%3Cellipse cx='85' cy='40' rx='26' ry='18'/%3E%3Cellipse cx='190' cy='120' rx='46' ry='14'/%3E%3Cellipse cx='170' cy='112' rx='24' ry='16'/%3E%3C/g%3E%3C/svg%3E");
+  color: #000; padding-bottom: 40px; }
+.sky a { color: #00e; }
+.sky a:visited { color: #551a8b; }
+.win { max-width: 520px; margin: 0 auto; background: #c0c0c0; border: 3px outset #fff; font: 14px Tahoma, "MS Sans Serif", sans-serif; text-align: left; }
+.win .bar { background: linear-gradient(90deg, #000080, #1084d0); color: #fff; font-weight: 700; padding: 3px 6px; display: flex; justify-content: space-between; }
+.win .body { padding: 14px; }
+.buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 24px auto; max-width: 600px; }
+.b88 { width: 88px; height: 31px; display: grid; place-items: center; text-align: center; text-decoration: none; overflow: hidden;
+  font: 700 9px/1.05 Verdana, sans-serif; border: 2px outset #ddd; color: #fff !important; text-shadow: 1px 1px 0 #000; }
+.footer-note { font: 12px Verdana, sans-serif; }
+
+/* ── small screens: rail becomes a bottom dock, decorations thin out ── */
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+@media (max-width: 700px) {
+  .biome { padding: 40px 16px 64px; }
+  .space, .dungeon, .lab { padding-top: 124px; }   /* a band for sprites above the heading */
+  .dungeon { padding-top: 160px; }                  /* the Rat King brings his own health bar */
+
+  /* the dock: thumb-reachable, labelled, clear of the home indicator */
+  .rail { top: auto; bottom: 0; left: 0; right: 0; transform: none; flex-direction: row; justify-content: space-around;
+    background: #c0c0c0; padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); border-top: 3px outset #fff; }
+  .rail a { width: auto; height: auto; background: none; border: 0; overflow: visible; display: flex; flex-direction: column; align-items: center;
+    text-decoration: none; color: #000 !important; font: 11px/1.3 Tahoma, Verdana, sans-serif; }
+  .rail img { width: 38px; height: 38px; border: 2px outset #eee; background: #c0c0c0; }
+  .rail a:active img { border-style: inset; }
+  .rail span { display: block; }
+  .sky { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+
+  .planet, .torch, .hide-sm { display: none; }
+  .m-tl, .m-tr, .m-tc { display: block !important; top: 16px !important; bottom: auto !important; }
+  .m-tl { left: 14px !important; right: auto !important; }
+  .m-tr { right: 14px !important; left: auto !important; }
+  .m-tc { left: 50% !important; right: auto !important; }
+  img.m-tl, img.m-tr, img.m-tc { width: 84px !important; }
+  img.m-tc { margin-left: -42px; }
+  .planet.m-tl { width: 72px; height: 72px; }
+  .planet.m-tr { width: 88px; height: 88px; }
+  div.m-tr img { width: 84px !important; }
+  .m-tr .hpbar { width: 84px; }
+  .sheet.m-tc { margin-left: -60px; transform: scale(.75); transform-origin: top center; }
+
+  .panel { padding: 12px 14px; }
+  .panel h3 { font-size: 18px; }
+  .panel ul { padding-left: 1em; }
+  .panel time { display: block; }
+
+  .collage { gap: 16px 8px; }
+  .cart, .cart.featured { width: calc(50% - 8px); padding: 6px 6px 4px; border-width: 4px; }
+  .cart b { font-size: 11px; }
+  .cd, .cd .disc { width: 100px; }
+  .cd small { font-size: 12px; }
+
+  .grid { gap: 12px; }
+  .grid.folders { row-gap: 32px; }
+  .polaroid { padding: 6px 6px 28px; }
+  .polaroid span { font-size: 14px; }
+  .folder { padding: 8px; font-size: 12px; }
+
+  .porthole { width: 140px; border-width: 9px; order: 1; }
+  .scroller { order: 2; width: 100%; height: 300px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .marquee span { padding-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<nav class="rail" aria-label="Jump to section">
+  <a href="#home" title="Home (space)"><img class="pix" src="/sprites/GhostIdle.gif" alt="Home"><span aria-hidden="true">home</span></a>
+  <a href="#demos" title="Demos"><img class="pix" src="/sprites/SlumeWalk10x.gif" alt="Demos"><span aria-hidden="true">demos</span></a>
+  <a href="#music" title="Music"><img src="/images/covers/a201-760.webp" alt="Music"><span aria-hidden="true">music</span></a>
+  <a href="#robots" title="Robots &amp; patents"><img src="/images/pixyrover.jpg" alt="Robots and patents"><span aria-hidden="true">robots</span></a>
+  <a href="#archive" title="The archive"><img src="/images/anemones.jpeg" alt="Archive"><span aria-hidden="true">archive</span></a>
+</nav>
+
+<!-- ═══════════════════════ 1. SPACE ═══════════════════════ -->
+<section class="biome space" id="home">
+  <div class="planet mars m-tl"></div><div class="planet moon"></div><div class="planet earth m-tr"></div>
+  <div class="planet saturn"></div><div class="planet sun"></div>
+  <span class="twinkle" style="left:30%;top:40px;font-size:26px">✦</span>
+  <span class="twinkle" style="left:70%;top:260px;font-size:18px;animation-delay:.5s">✦</span>
+  <span class="twinkle" style="left:22%;top:420px;font-size:30px;animation-delay:.9s">✧</span>
+  <span class="twinkle" style="left:84%;top:560px;font-size:22px;animation-delay:.3s">✦</span>
+  <img class="deco pix bob hide-sm m-tc" src="/sprites/GhostIdle.gif" alt="" style="width:110px;left:2%;top:300px">
+  <img class="deco pix bob hide-sm" src="/sprites/GhostAttack1.gif" alt="" style="width:90px;right:3%;top:230px;animation-delay:-1.4s">
+
+  <div class="stage center">
+    <h1 class="sr-only">B38TN1K's World</h1>
+<pre class="wordmark" aria-hidden="true">██████╗ ██████╗  █████╗ ████████╗███╗   ██╗ ██╗██╗  ██╗
+██╔══██╗╚════██╗██╔══██╗╚══██╔══╝████╗  ██║███║██║ ██╔╝
+██████╔╝ █████╔╝╚█████╔╝   ██║   ██╔██╗ ██║╚██║█████╔╝
+██╔══██╗ ╚═══██╗██╔══██╗   ██║   ██║╚██╗██║ ██║██╔═██╗
+██████╔╝██████╔╝╚█████╔╝   ██║   ██║ ╚████║ ██║██║  ██╗
+╚═════╝ ╚═════╝  ╚════╝    ╚═╝   ╚═╝  ╚═══╝ ╚═╝╚═╝  ╚═╝</pre>
+    <p class="wordart welcome">Welcome to my website</p>
+    <p class="script" style="color:#c9f">~ music, robots, games, generative art &amp; other junk ~</p>
+
+    <div class="divider" aria-hidden="true"><span>◆</span><span>◆</span><span>◆</span><span>◆</span><span>◆</span></div>
+
+    <p class="greeting">▶ <a href="{{ releases.first.url | relative_url }}">Click here</a> and you can listen to my latest release!</p>
+
+    <div class="panel comic" style="max-width:560px;margin:24px auto">
+      <h3>★ What's NEW on my page ★</h3>
+      <ul>
+        {%- assign shown = 0 -%}
+        {%- for p in site.posts -%}
+          {%- if p.tags contains 'gameprogress' or p.tags contains 'game2progress' -%}{%- continue -%}{%- endif -%}
+          {%- assign shown = shown | plus: 1 -%}
+          {%- if shown > 5 -%}{%- break -%}{%- endif %}
+        <li><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%Y-%m-%d" }}</time> <a href="{{ p.url | relative_url }}">{{ p.title | strip }}</a>{% if shown == 1 %} <span class="new blink">NEW!</span>{% endif %}</li>
+        {%- endfor %}
+      </ul>
+    </div>
+
+    <div class="marquee comic" style="color:#0f0;font-size:20px"><span>★彡 welcome 2 my homepage 彡★ &nbsp; music, robots, games &amp; generative art since {{ since }} &nbsp; ★ &nbsp; {{ entries }} entries and counting &nbsp; ★ &nbsp; everything here is clickable, go explore!!! &nbsp; ★</span></div>
+  </div>
+  <div class="fleet" aria-hidden="true"></div>
+</section>
+<div class="rainbow-bar" aria-hidden="true"></div>
+
+<!-- ═══════════════════════ 2. DUNGEON ═══════════════════════ -->
+<section class="biome dungeon" id="demos">
+  <span class="torch" style="left:6%;top:30px" aria-hidden="true">🔥</span>
+  <span class="torch" style="right:4%;top:30px" aria-hidden="true">🔥</span>
+  <div class="deco hide-sm center m-tr" style="right:2%;top:120px">
+    <img class="pix" src="/sprites/RatKingIdleShrunk.gif" alt="" style="width:170px;display:block">
+    <span class="start" style="font-size:13px">RAT KING</span><div class="hpbar"></div>
+  </div>
+  <img class="deco pix bob hide-sm m-tl" src="/sprites/skullsidle.gif" alt="" style="width:120px;left:1%;top:160px">
+  <img class="deco pix hide-sm" src="/sprites/RattusIdle2.gif" alt="" style="width:110px;left:2%;bottom:120px">
+  <img class="deco pix hide-sm" src="/sprites/RattlingIdle.gif" alt="" style="width:110px;right:3%;bottom:140px">
+
+  <div class="stage center">
+    <h2 class="wordart slime wave" aria-label="Demo Zone"><span style="--i:0">D</span><span style="--i:1">E</span><span style="--i:2">M</span><span style="--i:3">O</span> <span style="--i:5">Z</span><span style="--i:6">O</span><span style="--i:7">N</span><span style="--i:8">E</span></h2>
+    <p class="start blink">PRESS START</p>
+
+    <div class="collage">
+      <a class="cart featured" style="--r:-3deg" href="https://b38tn1k.itch.io/the-anemone-of-my-anemone"><img src="/november2/assets/created/logo.png" alt="" loading="lazy"><b>THE ANEMONE OF MY ANEMONE ★ NEW</b></a>
+      {%- assign tilts = "2,4,-5,3,-2,5,-4,2,-3,4" | split: "," -%}
+      {%- for p in site.tags.demo %}
+      {%- assign target = p.link | default: p.url -%}
+      {%- assign t = forloop.index0 | modulo: 10 %}
+      <a class="cart{% if forloop.first %} featured{% endif %}" style="--r:{{ tilts[t] }}deg" href="{{ target }}">{% if p.image %}{% include img.html src=p.image alt="" sizes="220px" %}{% endif %}<b>{{ p.title | strip | upcase }}</b></a>
+      {%- endfor %}
+    </div>
+    <a class="coin" href="https://b38tn1k.itch.io/">🪙 INSERT COIN → itch.io</a>
+    <a class="coin" href="/demos/">ALL DEMOS ▶</a>
+  </div>
+  <img class="walker pix" src="/sprites/SlumeWalk10x.gif" alt="">
+  <img class="walker pix" src="/sprites/SlumeWalkAltColor10x.gif" alt="" style="animation-delay:-11s">
+</section>
+<div class="rainbow-bar" aria-hidden="true"></div>
+
+<!-- ═══════════════════════ 3. DISCO ═══════════════════════ -->
+<section class="biome disco" id="music">
+  <div class="stage center">
+    <h2 class="wordart chrome">♫ My Music ♫</h2>
+    <p class="script" style="color:#ff9">now spinning in the B38TN1K jukebox...</p>
+
+    <div class="collage" style="gap:26px 18px">
+      {%- for p in releases %}
+      <a class="cd" href="{{ p.url | relative_url }}" title="{{ p.title | strip | escape }}"><span class="disc" style="animation-delay:-{{ forloop.index }}s">{% include img.html src=p.albumcover alt="" sizes="150px" %}</span><small>{{ p.title | strip }}</small></a>
+      {%- endfor %}
+    </div>
+
+    <p class="comic" style="color:#fff;font-size:20px">~ the bargain bin (Royal Chant, DOAB &amp; the early stuff) ~</p>
+    <div class="bin">
+      {%- assign tilts = "-8,6,-3,9,-6,4,-9,7,-4,5,-7,3" | split: "," -%}
+      {%- for p in backcat %}
+      {%- assign t = forloop.index0 | modulo: 12 %}
+      <a style="--r:{{ tilts[t] }}deg" href="{{ p.url | relative_url }}" title="{{ p.title | strip | escape }}">{% include img.html src=p.albumcover alt=p.title sizes="84px" %}</a>
+      {%- endfor %}
+    </div>
+    <p style="margin-top:28px"><a class="coin" href="/music/">ALL MUSIC ▶</a></p>
+  </div>
+</section>
+<div class="rainbow-bar" aria-hidden="true"></div>
+
+<!-- ═══════════════════════ 4. BLUEPRINT ═══════════════════════ -->
+<section class="biome lab" id="robots">
+  <div class="deco sheet hide-sm m-tc" style="right:3%;top:40px"></div>
+  <div class="stage center">
+    <h2>ROBOTS &amp; PATENTS</h2>
+
+    <div class="grid">
+      <a class="polaroid" href="/rover/code/2016/02/25/I-should-build-a-robot/"><img src="/images/pixyrover.jpg" alt=""><span>my rover!!</span></a>
+      <a class="polaroid" href="/arduino/code/music/2019/09/27/EEPROM-IDs/"><img src="/images/4arduinos.jpg" alt=""><span>4 arduinos lol</span></a>
+      <a class="polaroid" href="/arduino/code/music/2019/10/24/chordtoy/"><img src="/images/midipedal.jpg" alt=""><span>chordtoy</span></a>
+      <a class="polaroid" href="/2022/03/05/lasers/"><img src="/images/laserdonkey.jpg" alt=""><span>laser donkey</span></a>
+    </div>
+
+    <div class="grid folders">
+      <a class="folder" href="/robots/patent/2022/02/15/safe-box/"><img src="/images/patents/pancake.png" alt="">Securing drones during transport</a>
+      <a class="folder" href="/robots/patent/2022/02/01/zones-patent/"><img src="/images/patents/zones.png" alt="">Zone-based UAV landing systems</a>
+      <a class="folder" href="/robots/patent/2022/01/04/beeps/"><img src="/images/patents/beeps.png" alt="">Safe deployment of UAVs</a>
+      <a class="folder" href="/robots/patent/2021/08/31/drones-on-drones-on-drones/"><img src="/images/patents/multi.png" alt="">Multi-drone automotive systems</a>
+      <a class="folder" href="/robots/patent/2021/03/16/roof-top-pizza/"><img src="/images/patents/roof.png" alt="">Roof-top UAV delivery</a>
+      <a class="folder" href="/robots/patent/2021/02/09/deployable-landing-targets/"><img src="/images/patents/target.png" alt="">Precision landing targets</a>
+      <a class="folder" href="/robots/patent/2021/01/26/launcher/"><img src="/images/patents/launcher.png" alt="">Fixed-wing UAV launcher</a>
+      <a class="folder" href="/robots/patent/2020/11/03/flipper/"><img src="/images/patents/flipper.png" alt="">Last-mile package loading</a>
+    </div>
+
+  </div>
+</section>
+<div class="rainbow-bar" aria-hidden="true"></div>
+
+<!-- ═══════════════════════ 5. UNDER THE SEA ═══════════════════════ -->
+<section class="biome sea" id="archive">
+  <span class="bubble" style="left:10%;width:24px;height:24px;animation-duration:9s"></span>
+  <span class="bubble" style="left:22%;width:12px;height:12px;animation-duration:7s;animation-delay:-3s"></span>
+  <span class="bubble" style="left:48%;width:30px;height:30px;animation-duration:12s;animation-delay:-6s"></span>
+  <span class="bubble" style="left:76%;width:16px;height:16px;animation-duration:8s;animation-delay:-2s"></span>
+  <span class="bubble" style="left:90%;width:22px;height:22px;animation-duration:10s;animation-delay:-5s"></span>
+  <span class="fish" style="top:80px;animation-duration:18s" aria-hidden="true">🐠</span>
+  <span class="fish" style="top:420px;animation-duration:25s;animation-delay:-9s" aria-hidden="true">🐟</span>
+  <span class="fish" style="top:620px;animation-duration:15s;animation-delay:-4s" aria-hidden="true">🐡</span>
+
+  <div class="stage center">
+    <h2 class="wordart aqua">Dive into the Archive</h2>
+    <p class="script" style="color:#cff">{{ entries }} entries at the bottom of the sea...</p>
+
+    <div class="collage">
+      <a class="porthole" style="--r:-6deg" href="/game/november/2025/11/11/TheAnemoneOfMyAnemone/" title="The Anemone Of My Anemone"><img src="/images/anemones.jpeg" alt="The Anemone Of My Anemone"></a>
+      <div class="panel comic scroller" style="--r:1deg">
+        <h3>🐚 Shells from the seabed 🐚</h3>
+        <ul>
+          {%- assign shown = 0 -%}
+          {%- for p in site.posts -%}
+            {%- if p.tags contains 'gameprogress' or p.tags contains 'game2progress' -%}{%- continue -%}{%- endif -%}
+            {%- assign shown = shown | plus: 1 -%}
+            {%- if shown <= 5 -%}{%- continue -%}{%- endif %}
+          <li><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%Y-%m-%d" }}</time> <a href="{{ p.url | relative_url }}">{{ p.title | strip }}</a></li>
+          {%- endfor %}
+        </ul>
+      </div>
+      <a class="porthole" style="--r:5deg" href="/fun/travel/photography/2025/04/15/Peru/" title="Peru"><img src="/images/peru/cusco/01.jpeg" alt="Peru"></a>
+    </div>
+
+    <a class="chest" href="/archive/"><img class="pix" src="/sprites/chest.png" alt="">open the treasure chest<br>(full archive)</a>
+  </div>
+</section>
+<div class="rainbow-bar" aria-hidden="true"></div>
+
+<!-- ═══════════════════════ 6. SKY / elsewhere ═══════════════════════ -->
+<section class="biome sky" id="elsewhere">
+  <div class="stage center">
+    <div class="win">
+      <div class="bar"><span>🌐 Links.exe</span><span aria-hidden="true">_ □ ✕</span></div>
+      <div class="body">
+        <p style="margin-top:0">Thanks 4 visiting!! Find me elsewhere on the web:</p>
+        <div class="buttons" style="margin:12px 0 0">
+          <a class="b88" style="background:linear-gradient(#036,#09c)" href="https://b38tn1k.bandcamp.com/">BANDCAMP<br>♫ LISTEN ♫</a>
+          <a class="b88" style="background:linear-gradient(#a02,#f46)" href="https://b38tn1k.itch.io/">itch.io<br>PLAY NOW</a>
+          <a class="b88" style="background:linear-gradient(#222,#666)" href="https://github.com/b38tn1k">GITHUB<br>&lt;source/&gt;</a>
+          <a class="b88" style="background:linear-gradient(#e60,#fb0)" href="/atom.xml">RSS<br>XML ✓</a>
+          <a class="b88" style="background:linear-gradient(#a03,#e38)" href="https://p5js.org/">MADE WITH<br>p5.js</a>
+          <a class="b88" style="background:linear-gradient(#036,#0a9)" href="https://www.arduino.cc/">POWERED BY<br>ARDUINO</a>
+          <a class="b88" style="background:linear-gradient(#c33,#f9a)" href="https://love2d.org/">LÖVE<br>&amp; LUA</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="footer-note" style="margin-top:28px">Last updated {{ site.time | date: "%-d %B %Y" }} · © {{ since }}–{{ site.time | date: "%Y" }} {{ site.author.name }}<br>
+      <a href="/archive/">archive</a> · <a href="/old/">old index</a> · <a href="/">exit to the boring version</a></p>
+  </div>
+</section>
+
+</body>
+</html>

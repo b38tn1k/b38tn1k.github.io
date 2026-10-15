@@ -43,6 +43,10 @@ html {
   line-height: 1.6;
   -webkit-text-size-adjust: 100%;
   @media (min-width: 46em) { font-size: 17px; }
+  // Portrait monitors are wide as well as tall, so a fixed 17px leaves a thin
+  // strip of small text down the middle. Grow the type with the width instead;
+  // the column stays 76ch, it just takes up a similar share of the screen.
+  @media (orientation: portrait) and (min-width: 60em) { font-size: clamp(17px, 1.5vw, 28px); }
 }
 
 html { background: var(--bg); }

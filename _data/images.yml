@@ -63,6 +63,10 @@
   w: 750
   h: 750
   w760: '/images/covers/z-760.webp'
+"images/previews/anemone.png":
+  w: 630
+  h: 630
+  w760: '/images/previews/anemone-760.webp'
 "images/previews/flowers.png":
   w: 1400
   h: 1400

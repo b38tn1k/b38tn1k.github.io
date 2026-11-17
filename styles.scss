@@ -337,6 +337,7 @@ pre {
   img {
     width: 100%;
     max-width: 22rem;   // a full-measure square would be enormous
+    height: auto;      // override the original image height from img.html
     margin: 0;
   }
 }

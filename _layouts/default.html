@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% include head.html %}
-<body>
+<body{% if page.wide %} class="wide"{% endif %}>
   <a class="skip" href="#main">skip to content</a>
   {% include art.html %}
 
@@ -19,7 +19,7 @@
     </nav>
   </header>
 
-  <main id="main"{% if page.wide %} class="wide"{% endif %}>
+  <main id="main">
     {{ content }}
   </main>
 

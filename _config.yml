@@ -26,7 +26,6 @@ plugins: [jekyll-feed]
 nav:
   - { name: demos,   url: /demos/ }
   - { name: music,   url: /music/ }
-  - { name: topics,  url: /categories/ }
 
 # Curated buckets behind the blog's techy/arty filters. These are category names
 # exactly as they appear in post front matter, so check /categories/ before editing.

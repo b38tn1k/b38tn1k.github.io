@@ -1,0 +1,36 @@
+{
+  "artifactSHA256": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+  "checks": [
+    {
+      "id": "editor_draw_erase",
+      "passed": false,
+      "evidence": ""
+    },
+    {
+      "id": "play_controls",
+      "passed": false,
+      "evidence": ""
+    },
+    {
+      "id": "brick_score",
+      "passed": false,
+      "evidence": ""
+    },
+    {
+      "id": "lives_game_over",
+      "passed": false,
+      "evidence": ""
+    },
+    {
+      "id": "restart_layout",
+      "passed": false,
+      "evidence": ""
+    },
+    {
+      "id": "json_roundtrip",
+      "passed": false,
+      "evidence": ""
+    }
+  ],
+  "allPassed": false
+}

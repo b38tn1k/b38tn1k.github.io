@@ -1,0 +1,28 @@
+{
+  "method": "Independent frozen-source VM/DOM/nativeCanvas2D; actual controls and output bytes, controlled state fixtures exposing existing functions only. No browser layout/GPU/default actions or physical printing. Qwen Snake receives the standard CanvasRenderingContext2D brand global solely for its instanceof check; the adapter otherwise omits this browser class. No game logic replaced.",
+  "sha256": "a159183cc02a989bd09cc5b20bbbe995d541b3f67a0d5833474e19916b3b9648",
+  "checks": [
+    {
+      "id": "start_and_reaction_excludes_wait",
+      "pass": true,
+      "evidence": {
+        "reaction": 200
+      }
+    },
+    {
+      "id": "pre_cue_false_start_is_detected",
+      "pass": false,
+      "error": "No waiting-state event handler invokes false-start branch",
+      "actual": 1,
+      "expected": 3
+    },
+    {
+      "id": "five_real_trials_reach_summary",
+      "pass": false,
+      "error": "Fifth showResult hides button and never calls showSummary",
+      "actual": 3,
+      "expected": 4
+    }
+  ],
+  "pass": false
+}

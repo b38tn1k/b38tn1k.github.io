@@ -1,0 +1,12 @@
+{
+  "role": "repair",
+  "number": 7,
+  "minutes": 2.04,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": "510536912ec5e4ee820b7ec64d334415f9619f7a5a899fc8177483b841f58521",
+  "artifactAfter": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+  "prompt": "enforced/qwen/01_reaction_timer/runtime/07-repair/prompt.txt",
+  "events": "enforced/qwen/01_reaction_timer/runtime/07-repair/events.jsonl",
+  "stderr": "enforced/qwen/01_reaction_timer/runtime/07-repair/stderr.log"
+}

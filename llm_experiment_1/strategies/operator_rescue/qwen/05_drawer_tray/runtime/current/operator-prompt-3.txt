@@ -1,0 +1,12 @@
+Feedback3, the final counted slot. Same conversation and original shared deadline, about15 minutes remaining; no budget restart.
+
+The round2 HTML now passes independent JavaScript parsing and has all dependencies inline. Preserve that progress. Stop spending this final slot on script-block extraction or structural markers: the remaining failures are in the delivered geometry/output, not those parsing tests.
+
+Independent checks execute your unchanged functions with your actual embedded Three.js and CSG:
+- Preview-geometry conversion still throws THREE.Float32Array is not a constructor. This is a real dependency-API error, separate from the documented absence of WebGL in the VM.
+- The actual export formatter now emits a12-triangle176×30×2 inverted divider, signed volume−10560, with no compartment openings, for default180×120×30 and3×2. A watertight divider is not the requested tray. The default tray must retain the full outer dimensions, floor, outer walls and all six real openings.
+- The geometry data still contains24 out-of-range indices: max101 for36vertices.
+- At207×133×36, wall/floor2.5,4columns×3rows, the actual export function emits no Blob because the built geometry is empty.
+
+Use the remaining time to repair index.html itself and verify its actual geometry and export functions. Required outputs include equal default clear openings57.333mm×57mm after the2mm dividers, correct displayed measurements, valid indices, outward winding, full dimensions, floor thickness and real STL bytes for both configurations. Keep the usable rotatable preview. An unsupported WebGL test environment is a limit to disclose, not a reason to claim these other genuine failures pass. Report honestly what remains; no extra features or copied-logic simulations are needed.
+

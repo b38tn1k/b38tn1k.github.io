@@ -1,0 +1,1595 @@
+{
+  "score": 90,
+  "grade": "A- - usable Snake; supervision introduces reversal regression and misses full-board hang",
+  "rubricScores": {
+    "functionality": 36,
+    "artifact_correctness": 25,
+    "usability": 14,
+    "self_verification": 5,
+    "autonomy": 10
+  },
+  "blockingRequiredDefect": true,
+  "summary": "Core Snake play remains functional, but supervisor advice introduces a two-key reversal into the neck. The original full-board food-search hang remains. The three-feedback ceiling ends the valid replacement without meeting the independent acceptance target.",
+  "strengths": [
+    "Actual Arrow/Space/R controls, scheduled movement, pause/resume/restart and native drawn head pixels pass.",
+    "Food grows the snake and increments score, best score and difficulty; normal wall/body collisions, tail-vacating movement and direct single-key reversal rejection pass.",
+    "Delayed start and long pause/resume do not teleport the snake. The original seed already passes those same cases.",
+    "Single self-contained offline HTML."
+  ],
+  "defects": [
+    "After moving right, pressing Up then Left before the next tick now reverses left into the neck. The new check uses requested nextDir rather than actual movement direction. The original seed passes the exact same actual-key/scheduler probe.",
+    "A completely filled board hangs indefinitely searching for food. Both direct full-board food placement and an actual final-food step using a contiguous483-cell snake time out after100ms. No particular win screen was required."
+  ],
+  "verification": [
+    "Independent exact immutable finalae7815484bd6193f0c8111b5a8edf9255b97528ed3976057a296aee4b707d6a6 in VM/DOM/native Canvas2D, using real handlers and RAF scheduling; read-only closure exposure and controlled state fixtures do not replace algorithms.",
+    "Normal controls/growth/score/speed/collision/pause and pixel checks pass. Baseline-vs-final counterexamples verify the introduced two-key regression, while delayed-clock tests disprove the supervisor\u2019s alleged original teleport bug."
+  ],
+  "verificationConcerns": [
+    "Joint verification includes a whole-source stubbed-VM timing/integration test and copied direction-function simulations. The latter check requested directions without executing the resulting snake step; static feature-presence checks do not establish gameplay.",
+    "Native transport errors were recovered in the same contexts; counts: {'worker': 5, 'supervisor': 5}. Failed streams report zero usage with unknown partial generation. No server restart during this valid attempt.",
+    "No independent browser layout/hit testing or visual-polish proof."
+  ],
+  "scopeCompliance": "Worker alone changed product files; no Codex app code, diagnoses or replacement feedback supplied. Supervisor included repair snippets contrary to its behavioral-only instruction. A denied attempt to write a test under/tmp was recovered within the scoped project.",
+  "supervisorInstructionDeviations": [
+    "Supervisor supplied implementation snippets despite the no-repair-code instruction. Worker remained sole product-file writer."
+  ],
+  "workflowNotes": "Valid replacement attempt2, explicitly authorized after external THOR power loss. Exact original solo seed and identical role kickoff, fresh contexts/brokers/runtime; no prior repairs, feedback, QA or sessions transferred. Three counted worker prompts settled after25.520of120wall minutes. Last feedback was final analysis and produced no further edit. No human product guidance; joint autonomy eligible10. Interrupted attempt1 remains separately preserved/counted for cost and excluded from quality means.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "One valid paired result plus one disclosed external-power-invalid attempt; no outcome-based rerun or best-of selection.",
+    "Both actors use verified author-informed profiles and local Q4 weights; no causal claim about individual settings.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM author-profile cross-model rescue of the exact frozen solo app. Solo creation and incremental repair costs are separate; already-qualified baselines may remain unchanged with zero feedback and no improvement claim. A120-minute shared wall includes both actors and review waits; Codex grades but supplies no repair diagnoses/code. Product quality is normalized from80points. Pair wall differs from summed concurrent model activity."
+  ],
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "rtfm_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The deliverable is complete and verified.\n\n## Final confirmation\n\n**`index.html`** \u2014 376 lines, single `<script>` block, **zero external resources** (no http/s, no external CSS/JS, no cdn). Fully self-contained and offline-capable.\n\n**All 4 bugs fixed and verified via static analysis + automated simulation:**\n\n| # | Location | Fix | Verified |\n|---|----------|-----|----------|\n| 1 | `startGame()` L298 | `lastTime = 0` \u2192 `performance.now()` | \u2705 loop timing: 2 steps/336ms (was ~24) |\n| 2 | `togglePause()` resume L328 | `lastTime = 0` \u2192 `performance.now()` | \u2705 loop timing: 2 steps/336ms (was ~24) |\n| 3 | keydown `R` L346 | added `e.preventDefault()` | \u2705 present |\n| 4 | `setDir()` L335 | reversal check `dir` \u2192 `nextDir` | \u2705 exploit simulation: reverse now blocked |\n\n**Brief requirements present:** canvas game loop, Arrow+WASD controls, `placeFood` (body-avoiding), scoring with `localStorage` best persistence, wall & self collision (grow-aware tail), Space pause with overlay, R/button restart, increasing difficulty (\u22128ms/level, min 60ms).\n\nJS syntax validated with `node --check`. No further findings through static analysis. The repair is complete.",
+  "workflowInstructions": "rtfm-supervised-plan.json; run-rtfm-supervised-control-v2.py",
+  "workflowProtocolRevision": 3,
+  "elapsedMinutes": 25.52,
+  "wallMinutes": 25.52,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "three_feedbacks_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 107,
+  "parentToolCalls": 46,
+  "childToolCalls": 61,
+  "toolResultsMarkedError": 15,
+  "modelUsageReported": {
+    "input": 38344,
+    "output": 59996,
+    "cacheRead": 2817923,
+    "totalTokens": 2916263
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 56773,
+  "parentPeakReportedPromptTokens": 38855,
+  "childPeakReportedPromptTokens": 56773,
+  "parentModelUsage": {
+    "input": 13432,
+    "output": 27007,
+    "cacheRead": 1165229,
+    "totalTokens": 1205668
+  },
+  "childModelUsage": {
+    "input": 24912,
+    "output": 32989,
+    "cacheRead": 1652694,
+    "totalTokens": 1710595
+  },
+  "artifactBytes": 11144,
+  "sha256": "ae7815484bd6193f0c8111b5a8edf9255b97528ed3976057a296aee4b707d6a6",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 4,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b-rtfm"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 11,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "ornith-1.5:35b-256k",
+    "supervisorModel": "qwen3.6:35b-a3b",
+    "feedbackCount": 3,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "feedback-1-snake-timing",
+        "message": "BUG: lastTime is reset to 0 in both startGame() and togglePause(resume path).\n\nEvidence:\n- startGame sets lastTime=0, then calls requestAnimationFrame(loop)\n- togglePause(resume) sets lastTime=0, then calls requestAnimationFrame(loop)\n- In loop(), delta = time - lastTime. When lastTime=0 and time is the rAF timestamp (e.g., 5000ms after page load), delta = 5000ms instead of ~16ms.\n- The accumulator accumulates this huge delta: acc += 5000. With speed=140ms, this triggers 35 step() calls in a single frame.\n- Same issue on resume from pause: if page loaded 5s ago and game was paused for 10s, delta = 15000ms, triggering 107 step() calls.\n\nImpact: Snake teleports forward N steps on game start or resume from pause. The game behaves erratically on the first frame after starting or resuming.\n\nFix: In both startGame() and togglePause(resume), instead of lastTime=0, capture the current time:\n  lastTime = time;  // or just remove the reset entirely since the first frame will set it\nOr better: initialize lastTime to the current performance.now() or Date.now() value before the first rAF call, so delta is ~0 on the first frame.\n\nAdditional minor issue: The 'R' key handler lacks e.preventDefault(), which may trigger browser shortcuts.\n\nVerified good behavior: wall collision, self collision, food placement, direction reversal prevention, level/speed calculations all work correctly.\n",
+        "reason": "Verified timing bug: lastTime=0 in startGame and togglePause causes 35+ step() calls on first frame after start/resume",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T18:27:29.063921+00:00",
+        "acceptedUTC": "2026-11-18T18:27:29.063933+00:00",
+        "elapsedSeconds": 108.987,
+        "workerPID": 87945,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T18:27:29.100271+00:00",
+        "deliveredElapsedSeconds": 108.987
+      },
+      {
+        "number": 2,
+        "id": "feedback-2-snake-reverse",
+        "message": "ADDITIONAL FINDING: setDir checks reversal against `dir` instead of `nextDir`.\n\nEvidence in code:\n  function setDir(x, y) {\n      if (x === -dir.x && y === -dir.y) return;\n      nextDir = { x, y };\n  }\n\nProblem: dir is only updated inside step() at the beginning of each game tick. Between key presses that happen before the next tick, the check is against the stale dir value. This allows a player to reverse direction by pressing two opposite keys in quick succession.\n\nExample scenario:\n- Snake moving right (dir = {x:1, y:0})\n- Player presses Up: setDir(0,-1) -> check 0===-1? No. nextDir = {0,-1}\n- Before next tick, player presses Down: setDir(0,1) -> check 0===-1? No! nextDir = {0,1}\n- Next step: dir = nextDir = {0,1}. Snake reverses into itself!\n\nFix: Change the check to use nextDir:\n  function setDir(x, y) {\n      if (x === -nextDir.x && y === -nextDir.y) return;\n      nextDir = { x, y };\n  }\n\nThis ensures the reversal check is against the last requested direction, preventing the rapid-reverse exploit.\n\nAlso verified: all three previously identified bugs are confirmed fixed:\n1. startGame: lastTime = performance.now() (was lastTime = 0)\n2. togglePause(resume): lastTime = performance.now() (was lastTime = 0)\n3. R key handler: has e.preventDefault() (was missing)\n\nAll brief requirements verified: keyboard controls (Arrows/WASD), food, scoring, wall/self collisions, pause (Space), restart (R/button), increasing difficulty, single self-contained offline index.html.\n",
+        "reason": "Additional finding: setDir checks reversal against dir instead of nextDir, allowing rapid key presses to reverse direction into self",
+        "interrupt": false,
+        "proposedUTC": "2026-11-18T18:45:25.178705+00:00",
+        "acceptedUTC": "2026-11-18T18:45:25.178726+00:00",
+        "elapsedSeconds": 1185.08,
+        "workerPID": 87945,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T18:45:25.215756+00:00",
+        "deliveredElapsedSeconds": 1185.08
+      },
+      {
+        "number": 3,
+        "id": "feedback-3-final-analysis",
+        "message": "FINAL ANALYSIS - All identified bugs have been fixed and verified.\n\nFixed bugs:\n1. lastTime=0 in startGame -> fixed to performance.now()\n2. lastTime=0 in togglePause(resume) -> fixed to performance.now()\n3. R key missing preventDefault -> added\n4. setDir reversal check against dir -> fixed to check against nextDir\n\nAll brief requirements verified present:\n- Playable Snake game with canvas rendering and game loop\n- Keyboard controls: Arrow keys + WASD\n- Food spawning (placeFood avoids snake body)\n- Scoring with localStorage best score persistence\n- Wall collision detection (head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID)\n- Self collision detection (body.some check with grow-aware tail handling)\n- Pause via Space key with overlay\n- Restart via R key or button\n- Increasing difficulty (speed decreases by 8ms per level, min 60ms)\n- Single self-contained offline index.html (no external resources)\n\nHonest assessment: I have verified all fixes via static analysis and automated tests. All 15 checks pass. I cannot run the game in a browser to verify interactive behavior per the constraint \"Do not seek other histories/projects, external reviewers or browsers.\" The code logic is sound for all identified defects. If the assessment continues to return not_accepted, the issue may be outside the scope of static analysis or related to the assessment criteria itself.\n\nI am using my final feedback slot. No additional findings identified through static analysis.\n",
+        "reason": "Final analysis: all 4 bugs fixed and verified via static analysis. No additional findings through static analysis. Using final feedback slot.",
+        "interrupt": false,
+        "proposedUTC": "2026-11-18T18:50:42.902692+00:00",
+        "acceptedUTC": "2026-11-18T18:50:42.902696+00:00",
+        "elapsedSeconds": 1502.803,
+        "workerPID": 87945,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T18:50:42.933711+00:00",
+        "deliveredElapsedSeconds": 1502.803
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-18T18:37:38.850266+00:00",
+        "sha256": "c15cfaf1907f7e2c4a9c1d8b062f028b921a8900051aa5104ce7d10b7e3ac033",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case117/feedback1"
+      },
+      {
+        "feedback": 2,
+        "at": "2026-11-18T18:47:28.633791+00:00",
+        "sha256": "ae7815484bd6193f0c8111b5a8edf9255b97528ed3976057a296aee4b707d6a6",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case117/feedback2"
+      },
+      {
+        "feedback": 3,
+        "at": "2026-11-18T18:51:11.219078+00:00",
+        "sha256": "ae7815484bd6193f0c8111b5a8edf9255b97528ed3976057a296aee4b707d6a6",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case117/feedback3"
+      }
+    ],
+    "supervisorWakeups": [],
+    "supervisorYields": [],
+    "supervisorStopRequest": {
+      "at": "2026-11-18T18:48:18.912396+00:00",
+      "id": "stop-assessment-117-v2",
+      "action": "stop",
+      "reason": "All identified bugs fixed: (1) lastTime=0 timing bug in startGame and togglePause fixed to use performance.now(), (2) R key preventDefault added, (3) setDir reversal check fixed to use nextDir instead of dir. All 15 verification checks pass. Artifact ae7815484bd6193f0c8111b5a8edf9255b97528ed3976057a296aee4b707d6a6 is a self-contained offline Snake game meeting all brief requirements: keyboard controls (Arrows/WASD), food, scoring, wall/self collisions, pause (Space), restart (R/button), increasing difficulty."
+    },
+    "independentGradeGates": [
+      {
+        "at": "2026-11-18T18:41:45.374857+00:00",
+        "sha256": "c15cfaf1907f7e2c4a9c1d8b062f028b921a8900051aa5104ce7d10b7e3ac033",
+        "productScore": 96.25,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_ornith_02_snake_attempt2.round1.qa.json"
+      },
+      {
+        "at": "2026-11-18T18:49:29.784714+00:00",
+        "sha256": "ae7815484bd6193f0c8111b5a8edf9255b97528ed3976057a296aee4b707d6a6",
+        "productScore": 93.75,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_ornith_02_snake_attempt2.round2.qa.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "sha256": "1105960567f6680a18deb62c7d94333e98098ff6f2273ffd47b72e07ea484cb8",
+      "baselineScore": 94,
+      "baselineRubricScores": {
+        "functionality": 38,
+        "artifact_correctness": 25,
+        "usability": 14,
+        "self_verification": 7,
+        "autonomy": 10
+      },
+      "baselineProductScore": 96.25,
+      "baselineTargetMet": false,
+      "baselineReport": "strategies/reports/rtfm_ornith_02_snake.report.json",
+      "creationCost": {
+        "model": "ornith",
+        "role": "worker",
+        "pid": 49174,
+        "assistantUsage": {
+          "input": 3960,
+          "output": 11732,
+          "cacheRead": 175406,
+          "cacheWrite": 0,
+          "totalTokens": 191098
+        },
+        "recordedCompactionUsage": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "totalTokens": 0
+        },
+        "recordedCombinedUsage": {
+          "input": 3960,
+          "output": 11732,
+          "cacheRead": 175406,
+          "cacheWrite": 0,
+          "totalTokens": 191098
+        },
+        "unreportedCompactions": 0,
+        "activeMinutes": 4.067,
+        "promptCount": 1,
+        "streamingWindows": [
+          {
+            "start": 1160618.259979916,
+            "end": 1160620.651703458
+          },
+          {
+            "start": 1160620.692999375,
+            "end": 1160692.558301958
+          },
+          {
+            "start": 1160692.625465708,
+            "end": 1160697.830462375
+          },
+          {
+            "start": 1160697.908806583,
+            "end": 1160701.456042708
+          },
+          {
+            "start": 1160701.757671916,
+            "end": 1160704.734096041
+          },
+          {
+            "start": 1160705.007831583,
+            "end": 1160729.195376958
+          },
+          {
+            "start": 1160729.472292958,
+            "end": 1160752.703318416
+          },
+          {
+            "start": 1160752.785675375,
+            "end": 1160754.78869275
+          },
+          {
+            "start": 1160755.035234166,
+            "end": 1160757.983872458
+          },
+          {
+            "start": 1160758.242294333,
+            "end": 1160773.808664125
+          },
+          {
+            "start": 1160773.814289625,
+            "end": 1160773.814736958
+          },
+          {
+            "start": 1160775.904368083,
+            "end": 1160778.628777416
+          },
+          {
+            "start": 1160778.926915458,
+            "end": 1160813.035605666
+          },
+          {
+            "start": 1160813.041630291,
+            "end": 1160813.041889416
+          },
+          {
+            "start": 1160815.149811,
+            "end": 1160828.423092416
+          },
+          {
+            "start": 1160828.5230595,
+            "end": 1160834.733756375
+          },
+          {
+            "start": 1160834.742178375,
+            "end": 1160834.74310575
+          },
+          {
+            "start": 1160836.839752916,
+            "end": 1160840.360336458
+          },
+          {
+            "start": 1160840.639389208,
+            "end": 1160846.11443175
+          },
+          {
+            "start": 1160846.423604625,
+            "end": 1160850.44212875
+          },
+          {
+            "start": 1160850.714745916,
+            "end": 1160860.123932416
+          }
+        ],
+        "exitCode": 0
+      },
+      "sourceCase": 107,
+      "sourceFolder": "rtfm/ornith/02_snake",
+      "frozenArtifact": "strategies/reports/initial-artifacts/rtfm_supervised_ornith_02_snake/index.html",
+      "frozenUTC": "2026-11-18T16:13:22.818932+00:00"
+    },
+    "sharedLimitSeconds": 7200,
+    "authorProfiles": "research/rtfm-runtime-profiles.json",
+    "runtimeConformance": "research/rtfm-supervised-conformance.json",
+    "sourceRTFMSoloCase": 107,
+    "supervisorInstructionDeviations": [
+      "Supervisor supplied implementation snippets despite the no-repair-code instruction. Worker remained sole product-file writer."
+    ]
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 3,
+  "localModelCosts": {
+    "worker": {
+      "model": "ornith",
+      "role": "worker",
+      "pid": 87945,
+      "assistantUsage": {
+        "input": 13432,
+        "output": 27007,
+        "cacheRead": 1165229,
+        "cacheWrite": 0,
+        "totalTokens": 1205668
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 13432,
+        "output": 27007,
+        "cacheRead": 1165229,
+        "cacheWrite": 0,
+        "totalTokens": 1205668
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 12.691,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1175062.004720583,
+          "end": 1175065.929454916
+        },
+        {
+          "start": 1175066.000396041,
+          "end": 1175067.123374583
+        },
+        {
+          "start": 1175067.131616875,
+          "end": 1175067.132295
+        },
+        {
+          "start": 1175069.204155875,
+          "end": 1175167.520206708
+        },
+        {
+          "start": 1175167.770421583,
+          "end": 1175177.416410791
+        },
+        {
+          "start": 1175177.746515083,
+          "end": 1175206.359356791
+        },
+        {
+          "start": 1175206.457195583,
+          "end": 1175207.951826458
+        },
+        {
+          "start": 1175208.061049291,
+          "end": 1175209.720854875
+        },
+        {
+          "start": 1175210.023303208,
+          "end": 1175213.539693666
+        },
+        {
+          "start": 1175213.547817875,
+          "end": 1175213.548677583
+        },
+        {
+          "start": 1175215.700447916,
+          "end": 1175219.333949916
+        },
+        {
+          "start": 1175219.445324083,
+          "end": 1175224.646963291
+        },
+        {
+          "start": 1175224.759185833,
+          "end": 1175240.760325166
+        },
+        {
+          "start": 1175241.06070875,
+          "end": 1175251.974626541
+        },
+        {
+          "start": 1175252.260088541,
+          "end": 1175303.5578995
+        },
+        {
+          "start": 1175303.841200125,
+          "end": 1175343.498770458
+        },
+        {
+          "start": 1175343.62727275,
+          "end": 1175396.632538916
+        },
+        {
+          "start": 1175396.776888666,
+          "end": 1175417.640472916
+        },
+        {
+          "start": 1175417.88504175,
+          "end": 1175421.382619166
+        },
+        {
+          "start": 1175421.728559833,
+          "end": 1175432.906773208
+        },
+        {
+          "start": 1175432.913811,
+          "end": 1175432.914646708
+        },
+        {
+          "start": 1175435.071952833,
+          "end": 1175438.480344666
+        },
+        {
+          "start": 1175438.614091916,
+          "end": 1175444.617532458
+        },
+        {
+          "start": 1175444.780715375,
+          "end": 1175446.572637375
+        },
+        {
+          "start": 1175446.882281458,
+          "end": 1175457.923626916
+        },
+        {
+          "start": 1175458.068220916,
+          "end": 1175459.766592666
+        },
+        {
+          "start": 1175460.123610125,
+          "end": 1175467.813041125
+        },
+        {
+          "start": 1175467.822180375,
+          "end": 1175467.823033791
+        },
+        {
+          "start": 1175469.985669291,
+          "end": 1175474.573606583
+        },
+        {
+          "start": 1175474.894480166,
+          "end": 1175499.179464375
+        },
+        {
+          "start": 1175499.339465708,
+          "end": 1175503.961474916
+        },
+        {
+          "start": 1175504.309131166,
+          "end": 1175516.233818666
+        },
+        {
+          "start": 1175516.561658875,
+          "end": 1175524.731852958
+        },
+        {
+          "start": 1175525.0657595,
+          "end": 1175546.048366625
+        },
+        {
+          "start": 1175546.391253666,
+          "end": 1175560.198162875
+        },
+        {
+          "start": 1175560.518011166,
+          "end": 1175584.845109041
+        },
+        {
+          "start": 1175585.219809458,
+          "end": 1175595.012808958
+        },
+        {
+          "start": 1175595.355077208,
+          "end": 1175605.248998416
+        },
+        {
+          "start": 1175605.645080583,
+          "end": 1175639.324405458
+        },
+        {
+          "start": 1175639.334767,
+          "end": 1175639.33578575
+        },
+        {
+          "start": 1175641.535167541,
+          "end": 1175643.591135958
+        },
+        {
+          "start": 1175643.94794525,
+          "end": 1175653.522876666
+        },
+        {
+          "start": 1175653.856356333,
+          "end": 1175658.540567208
+        },
+        {
+          "start": 1175658.897320541,
+          "end": 1175671.046106791
+        },
+        {
+          "start": 1176138.207117875,
+          "end": 1176143.859768333
+        },
+        {
+          "start": 1176144.232106708,
+          "end": 1176149.130420291
+        },
+        {
+          "start": 1176149.321107041,
+          "end": 1176172.627476916
+        },
+        {
+          "start": 1176172.82105375,
+          "end": 1176187.101848416
+        },
+        {
+          "start": 1176187.482216666,
+          "end": 1176200.431934375
+        },
+        {
+          "start": 1176200.809074958,
+          "end": 1176213.730689583
+        },
+        {
+          "start": 1176214.092593166,
+          "end": 1176231.866689625
+        },
+        {
+          "start": 1176232.241966208,
+          "end": 1176260.030842625
+        },
+        {
+          "start": 1176455.942407208,
+          "end": 1176468.639629125
+        },
+        {
+          "start": 1176469.01188475,
+          "end": 1176482.930125958
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "qwen",
+      "role": "supervisor",
+      "pid": 87947,
+      "assistantUsage": {
+        "input": 24912,
+        "output": 32989,
+        "cacheRead": 1652694,
+        "cacheWrite": 0,
+        "totalTokens": 1710595
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 24912,
+        "output": 32989,
+        "cacheRead": 1652694,
+        "cacheWrite": 0,
+        "totalTokens": 1710595
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 25.519,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1174953.5015595,
+          "end": 1174957.818189583
+        },
+        {
+          "start": 1174957.88319275,
+          "end": 1174961.738245541
+        },
+        {
+          "start": 1174962.000948916,
+          "end": 1174989.041094291
+        },
+        {
+          "start": 1174989.250608958,
+          "end": 1174990.263978333
+        },
+        {
+          "start": 1174990.518851208,
+          "end": 1175008.718059416
+        },
+        {
+          "start": 1175008.727459541,
+          "end": 1175008.728543916
+        },
+        {
+          "start": 1175010.826387,
+          "end": 1175012.409253583
+        },
+        {
+          "start": 1175012.673321583,
+          "end": 1175019.551143083
+        },
+        {
+          "start": 1175019.6502075,
+          "end": 1175046.511518583
+        },
+        {
+          "start": 1175046.617340875,
+          "end": 1175047.770291916
+        },
+        {
+          "start": 1175048.050019916,
+          "end": 1175059.599288375
+        },
+        {
+          "start": 1175059.711483958,
+          "end": 1175061.927310083
+        },
+        {
+          "start": 1175061.927464833,
+          "end": 1175061.927479208
+        },
+        {
+          "start": 1175064.004741333,
+          "end": 1175066.640202583
+        },
+        {
+          "start": 1175068.925629625,
+          "end": 1175075.703167791
+        },
+        {
+          "start": 1175090.993236333,
+          "end": 1175094.165800541
+        },
+        {
+          "start": 1175124.431059625,
+          "end": 1175127.519248958
+        },
+        {
+          "start": 1175172.825498208,
+          "end": 1175176.066815666
+        },
+        {
+          "start": 1175236.380166458,
+          "end": 1175247.859973125
+        },
+        {
+          "start": 1175248.129903958,
+          "end": 1175252.756103208
+        },
+        {
+          "start": 1175252.767931416,
+          "end": 1175252.767981916
+        },
+        {
+          "start": 1175254.913960791,
+          "end": 1175277.963994541
+        },
+        {
+          "start": 1175278.27933625,
+          "end": 1175290.058258333
+        },
+        {
+          "start": 1175290.299048666,
+          "end": 1175318.056781291
+        },
+        {
+          "start": 1175318.242938541,
+          "end": 1175322.239631875
+        },
+        {
+          "start": 1175322.555027166,
+          "end": 1175336.531698083
+        },
+        {
+          "start": 1175336.836365166,
+          "end": 1175340.617691875
+        },
+        {
+          "start": 1175370.942884583,
+          "end": 1175374.448797
+        },
+        {
+          "start": 1175434.801065208,
+          "end": 1175438.180821791
+        },
+        {
+          "start": 1175528.341630375,
+          "end": 1175530.915270541
+        },
+        {
+          "start": 1175531.210489125,
+          "end": 1175536.062880208
+        },
+        {
+          "start": 1175626.264073083,
+          "end": 1175628.941396541
+        },
+        {
+          "start": 1175629.261017833,
+          "end": 1175633.520679958
+        },
+        {
+          "start": 1175693.859507416,
+          "end": 1175716.235772708
+        },
+        {
+          "start": 1175716.403882333,
+          "end": 1175717.664753333
+        },
+        {
+          "start": 1175717.986905666,
+          "end": 1175722.597144083
+        },
+        {
+          "start": 1175722.612460375,
+          "end": 1175722.613484541
+        },
+        {
+          "start": 1175724.786434375,
+          "end": 1175726.287044916
+        },
+        {
+          "start": 1175731.612255833,
+          "end": 1175734.062480375
+        },
+        {
+          "start": 1175764.417318583,
+          "end": 1175766.277765791
+        },
+        {
+          "start": 1175826.603175541,
+          "end": 1175828.477628583
+        },
+        {
+          "start": 1175918.656656958,
+          "end": 1175919.974566291
+        },
+        {
+          "start": 1175920.335125083,
+          "end": 1176079.450782833
+        },
+        {
+          "start": 1176079.779448375,
+          "end": 1176082.962408583
+        },
+        {
+          "start": 1176083.1633905,
+          "end": 1176086.842189666
+        },
+        {
+          "start": 1176087.050770541,
+          "end": 1176135.22834275
+        },
+        {
+          "start": 1176135.4467045,
+          "end": 1176138.021327458
+        },
+        {
+          "start": 1176138.021494208,
+          "end": 1176138.021515583
+        },
+        {
+          "start": 1176140.288205333,
+          "end": 1176143.938129416
+        },
+        {
+          "start": 1176149.272640916,
+          "end": 1176154.966592875
+        },
+        {
+          "start": 1176215.361960708,
+          "end": 1176232.175339541
+        },
+        {
+          "start": 1176232.591995708,
+          "end": 1176271.6004705
+        },
+        {
+          "start": 1176271.846046,
+          "end": 1176273.288325916
+        },
+        {
+          "start": 1176273.734231,
+          "end": 1176275.904881416
+        },
+        {
+          "start": 1176306.289134083,
+          "end": 1176311.71570125
+        },
+        {
+          "start": 1176311.95442525,
+          "end": 1176313.428891166
+        },
+        {
+          "start": 1176343.863890333,
+          "end": 1176345.981442375
+        },
+        {
+          "start": 1176406.358087791,
+          "end": 1176450.594911125
+        },
+        {
+          "start": 1176450.823411708,
+          "end": 1176455.700626708
+        },
+        {
+          "start": 1176455.952829958,
+          "end": 1176459.979290375
+        },
+        {
+          "start": 1176465.531100166,
+          "end": 1176475.649946708
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 25.52,
+  "summedModelActiveMinutes": 38.21,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 13432,
+      "output": 27007,
+      "cacheRead": 1165229,
+      "totalTokens": 1205668
+    },
+    "qwen": {
+      "input": 24912,
+      "output": 32989,
+      "cacheRead": 1652694,
+      "totalTokens": 1710595
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 12.691,
+    "qwen": 25.519
+  },
+  "localProductScore": 93.8,
+  "localProductTargetMet": false,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  },
+  "localProductScoreExact": 93.75,
+  "attemptNumber": 2,
+  "priorInfrastructureInvalidAttempts": [
+    {
+      "attempt": 1,
+      "classification": "infrastructure_power_loss",
+      "manifest": "strategies/reports/infrastructure-interruptions/case117-attempt1-powerloss-20261118T175547Z/manifest.json",
+      "pairWallMinutes": 66.398,
+      "recordedSummedModelActiveMinutes": 95.784,
+      "partialSourceSHA256": "6dc5cea9d9bb7da19e6aa91f15296a434c6718fccf329fce6dcd9335a33aece2",
+      "excludedFromQualityGrades": true
+    }
+  ],
+  "baselineAlreadyA": false,
+  "baselineScore": 94,
+  "baselineProductScore": 96.25,
+  "baselineTargetMet": false,
+  "baselineReport": "strategies/reports/rtfm_ornith_02_snake.report.json",
+  "baselineCreationCost": {
+    "model": "ornith",
+    "role": "worker",
+    "pid": 49174,
+    "assistantUsage": {
+      "input": 3960,
+      "output": 11732,
+      "cacheRead": 175406,
+      "cacheWrite": 0,
+      "totalTokens": 191098
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 3960,
+      "output": 11732,
+      "cacheRead": 175406,
+      "cacheWrite": 0,
+      "totalTokens": 191098
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 4.067,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1160618.259979916,
+        "end": 1160620.651703458
+      },
+      {
+        "start": 1160620.692999375,
+        "end": 1160692.558301958
+      },
+      {
+        "start": 1160692.625465708,
+        "end": 1160697.830462375
+      },
+      {
+        "start": 1160697.908806583,
+        "end": 1160701.456042708
+      },
+      {
+        "start": 1160701.757671916,
+        "end": 1160704.734096041
+      },
+      {
+        "start": 1160705.007831583,
+        "end": 1160729.195376958
+      },
+      {
+        "start": 1160729.472292958,
+        "end": 1160752.703318416
+      },
+      {
+        "start": 1160752.785675375,
+        "end": 1160754.78869275
+      },
+      {
+        "start": 1160755.035234166,
+        "end": 1160757.983872458
+      },
+      {
+        "start": 1160758.242294333,
+        "end": 1160773.808664125
+      },
+      {
+        "start": 1160773.814289625,
+        "end": 1160773.814736958
+      },
+      {
+        "start": 1160775.904368083,
+        "end": 1160778.628777416
+      },
+      {
+        "start": 1160778.926915458,
+        "end": 1160813.035605666
+      },
+      {
+        "start": 1160813.041630291,
+        "end": 1160813.041889416
+      },
+      {
+        "start": 1160815.149811,
+        "end": 1160828.423092416
+      },
+      {
+        "start": 1160828.5230595,
+        "end": 1160834.733756375
+      },
+      {
+        "start": 1160834.742178375,
+        "end": 1160834.74310575
+      },
+      {
+        "start": 1160836.839752916,
+        "end": 1160840.360336458
+      },
+      {
+        "start": 1160840.639389208,
+        "end": 1160846.11443175
+      },
+      {
+        "start": 1160846.423604625,
+        "end": 1160850.44212875
+      },
+      {
+        "start": 1160850.714745916,
+        "end": 1160860.123932416
+      }
+    ],
+    "exitCode": 0
+  },
+  "incrementalRepairCost": {
+    "worker": {
+      "model": "ornith",
+      "role": "worker",
+      "pid": 87945,
+      "assistantUsage": {
+        "input": 13432,
+        "output": 27007,
+        "cacheRead": 1165229,
+        "cacheWrite": 0,
+        "totalTokens": 1205668
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 13432,
+        "output": 27007,
+        "cacheRead": 1165229,
+        "cacheWrite": 0,
+        "totalTokens": 1205668
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 12.691,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1175062.004720583,
+          "end": 1175065.929454916
+        },
+        {
+          "start": 1175066.000396041,
+          "end": 1175067.123374583
+        },
+        {
+          "start": 1175067.131616875,
+          "end": 1175067.132295
+        },
+        {
+          "start": 1175069.204155875,
+          "end": 1175167.520206708
+        },
+        {
+          "start": 1175167.770421583,
+          "end": 1175177.416410791
+        },
+        {
+          "start": 1175177.746515083,
+          "end": 1175206.359356791
+        },
+        {
+          "start": 1175206.457195583,
+          "end": 1175207.951826458
+        },
+        {
+          "start": 1175208.061049291,
+          "end": 1175209.720854875
+        },
+        {
+          "start": 1175210.023303208,
+          "end": 1175213.539693666
+        },
+        {
+          "start": 1175213.547817875,
+          "end": 1175213.548677583
+        },
+        {
+          "start": 1175215.700447916,
+          "end": 1175219.333949916
+        },
+        {
+          "start": 1175219.445324083,
+          "end": 1175224.646963291
+        },
+        {
+          "start": 1175224.759185833,
+          "end": 1175240.760325166
+        },
+        {
+          "start": 1175241.06070875,
+          "end": 1175251.974626541
+        },
+        {
+          "start": 1175252.260088541,
+          "end": 1175303.5578995
+        },
+        {
+          "start": 1175303.841200125,
+          "end": 1175343.498770458
+        },
+        {
+          "start": 1175343.62727275,
+          "end": 1175396.632538916
+        },
+        {
+          "start": 1175396.776888666,
+          "end": 1175417.640472916
+        },
+        {
+          "start": 1175417.88504175,
+          "end": 1175421.382619166
+        },
+        {
+          "start": 1175421.728559833,
+          "end": 1175432.906773208
+        },
+        {
+          "start": 1175432.913811,
+          "end": 1175432.914646708
+        },
+        {
+          "start": 1175435.071952833,
+          "end": 1175438.480344666
+        },
+        {
+          "start": 1175438.614091916,
+          "end": 1175444.617532458
+        },
+        {
+          "start": 1175444.780715375,
+          "end": 1175446.572637375
+        },
+        {
+          "start": 1175446.882281458,
+          "end": 1175457.923626916
+        },
+        {
+          "start": 1175458.068220916,
+          "end": 1175459.766592666
+        },
+        {
+          "start": 1175460.123610125,
+          "end": 1175467.813041125
+        },
+        {
+          "start": 1175467.822180375,
+          "end": 1175467.823033791
+        },
+        {
+          "start": 1175469.985669291,
+          "end": 1175474.573606583
+        },
+        {
+          "start": 1175474.894480166,
+          "end": 1175499.179464375
+        },
+        {
+          "start": 1175499.339465708,
+          "end": 1175503.961474916
+        },
+        {
+          "start": 1175504.309131166,
+          "end": 1175516.233818666
+        },
+        {
+          "start": 1175516.561658875,
+          "end": 1175524.731852958
+        },
+        {
+          "start": 1175525.0657595,
+          "end": 1175546.048366625
+        },
+        {
+          "start": 1175546.391253666,
+          "end": 1175560.198162875
+        },
+        {
+          "start": 1175560.518011166,
+          "end": 1175584.845109041
+        },
+        {
+          "start": 1175585.219809458,
+          "end": 1175595.012808958
+        },
+        {
+          "start": 1175595.355077208,
+          "end": 1175605.248998416
+        },
+        {
+          "start": 1175605.645080583,
+          "end": 1175639.324405458
+        },
+        {
+          "start": 1175639.334767,
+          "end": 1175639.33578575
+        },
+        {
+          "start": 1175641.535167541,
+          "end": 1175643.591135958
+        },
+        {
+          "start": 1175643.94794525,
+          "end": 1175653.522876666
+        },
+        {
+          "start": 1175653.856356333,
+          "end": 1175658.540567208
+        },
+        {
+          "start": 1175658.897320541,
+          "end": 1175671.046106791
+        },
+        {
+          "start": 1176138.207117875,
+          "end": 1176143.859768333
+        },
+        {
+          "start": 1176144.232106708,
+          "end": 1176149.130420291
+        },
+        {
+          "start": 1176149.321107041,
+          "end": 1176172.627476916
+        },
+        {
+          "start": 1176172.82105375,
+          "end": 1176187.101848416
+        },
+        {
+          "start": 1176187.482216666,
+          "end": 1176200.431934375
+        },
+        {
+          "start": 1176200.809074958,
+          "end": 1176213.730689583
+        },
+        {
+          "start": 1176214.092593166,
+          "end": 1176231.866689625
+        },
+        {
+          "start": 1176232.241966208,
+          "end": 1176260.030842625
+        },
+        {
+          "start": 1176455.942407208,
+          "end": 1176468.639629125
+        },
+        {
+          "start": 1176469.01188475,
+          "end": 1176482.930125958
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "qwen",
+      "role": "supervisor",
+      "pid": 87947,
+      "assistantUsage": {
+        "input": 24912,
+        "output": 32989,
+        "cacheRead": 1652694,
+        "cacheWrite": 0,
+        "totalTokens": 1710595
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 24912,
+        "output": 32989,
+        "cacheRead": 1652694,
+        "cacheWrite": 0,
+        "totalTokens": 1710595
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 25.519,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1174953.5015595,
+          "end": 1174957.818189583
+        },
+        {
+          "start": 1174957.88319275,
+          "end": 1174961.738245541
+        },
+        {
+          "start": 1174962.000948916,
+          "end": 1174989.041094291
+        },
+        {
+          "start": 1174989.250608958,
+          "end": 1174990.263978333
+        },
+        {
+          "start": 1174990.518851208,
+          "end": 1175008.718059416
+        },
+        {
+          "start": 1175008.727459541,
+          "end": 1175008.728543916
+        },
+        {
+          "start": 1175010.826387,
+          "end": 1175012.409253583
+        },
+        {
+          "start": 1175012.673321583,
+          "end": 1175019.551143083
+        },
+        {
+          "start": 1175019.6502075,
+          "end": 1175046.511518583
+        },
+        {
+          "start": 1175046.617340875,
+          "end": 1175047.770291916
+        },
+        {
+          "start": 1175048.050019916,
+          "end": 1175059.599288375
+        },
+        {
+          "start": 1175059.711483958,
+          "end": 1175061.927310083
+        },
+        {
+          "start": 1175061.927464833,
+          "end": 1175061.927479208
+        },
+        {
+          "start": 1175064.004741333,
+          "end": 1175066.640202583
+        },
+        {
+          "start": 1175068.925629625,
+          "end": 1175075.703167791
+        },
+        {
+          "start": 1175090.993236333,
+          "end": 1175094.165800541
+        },
+        {
+          "start": 1175124.431059625,
+          "end": 1175127.519248958
+        },
+        {
+          "start": 1175172.825498208,
+          "end": 1175176.066815666
+        },
+        {
+          "start": 1175236.380166458,
+          "end": 1175247.859973125
+        },
+        {
+          "start": 1175248.129903958,
+          "end": 1175252.756103208
+        },
+        {
+          "start": 1175252.767931416,
+          "end": 1175252.767981916
+        },
+        {
+          "start": 1175254.913960791,
+          "end": 1175277.963994541
+        },
+        {
+          "start": 1175278.27933625,
+          "end": 1175290.058258333
+        },
+        {
+          "start": 1175290.299048666,
+          "end": 1175318.056781291
+        },
+        {
+          "start": 1175318.242938541,
+          "end": 1175322.239631875
+        },
+        {
+          "start": 1175322.555027166,
+          "end": 1175336.531698083
+        },
+        {
+          "start": 1175336.836365166,
+          "end": 1175340.617691875
+        },
+        {
+          "start": 1175370.942884583,
+          "end": 1175374.448797
+        },
+        {
+          "start": 1175434.801065208,
+          "end": 1175438.180821791
+        },
+        {
+          "start": 1175528.341630375,
+          "end": 1175530.915270541
+        },
+        {
+          "start": 1175531.210489125,
+          "end": 1175536.062880208
+        },
+        {
+          "start": 1175626.264073083,
+          "end": 1175628.941396541
+        },
+        {
+          "start": 1175629.261017833,
+          "end": 1175633.520679958
+        },
+        {
+          "start": 1175693.859507416,
+          "end": 1175716.235772708
+        },
+        {
+          "start": 1175716.403882333,
+          "end": 1175717.664753333
+        },
+        {
+          "start": 1175717.986905666,
+          "end": 1175722.597144083
+        },
+        {
+          "start": 1175722.612460375,
+          "end": 1175722.613484541
+        },
+        {
+          "start": 1175724.786434375,
+          "end": 1175726.287044916
+        },
+        {
+          "start": 1175731.612255833,
+          "end": 1175734.062480375
+        },
+        {
+          "start": 1175764.417318583,
+          "end": 1175766.277765791
+        },
+        {
+          "start": 1175826.603175541,
+          "end": 1175828.477628583
+        },
+        {
+          "start": 1175918.656656958,
+          "end": 1175919.974566291
+        },
+        {
+          "start": 1175920.335125083,
+          "end": 1176079.450782833
+        },
+        {
+          "start": 1176079.779448375,
+          "end": 1176082.962408583
+        },
+        {
+          "start": 1176083.1633905,
+          "end": 1176086.842189666
+        },
+        {
+          "start": 1176087.050770541,
+          "end": 1176135.22834275
+        },
+        {
+          "start": 1176135.4467045,
+          "end": 1176138.021327458
+        },
+        {
+          "start": 1176138.021494208,
+          "end": 1176138.021515583
+        },
+        {
+          "start": 1176140.288205333,
+          "end": 1176143.938129416
+        },
+        {
+          "start": 1176149.272640916,
+          "end": 1176154.966592875
+        },
+        {
+          "start": 1176215.361960708,
+          "end": 1176232.175339541
+        },
+        {
+          "start": 1176232.591995708,
+          "end": 1176271.6004705
+        },
+        {
+          "start": 1176271.846046,
+          "end": 1176273.288325916
+        },
+        {
+          "start": 1176273.734231,
+          "end": 1176275.904881416
+        },
+        {
+          "start": 1176306.289134083,
+          "end": 1176311.71570125
+        },
+        {
+          "start": 1176311.95442525,
+          "end": 1176313.428891166
+        },
+        {
+          "start": 1176343.863890333,
+          "end": 1176345.981442375
+        },
+        {
+          "start": 1176406.358087791,
+          "end": 1176450.594911125
+        },
+        {
+          "start": 1176450.823411708,
+          "end": 1176455.700626708
+        },
+        {
+          "start": 1176455.952829958,
+          "end": 1176459.979290375
+        },
+        {
+          "start": 1176465.531100166,
+          "end": 1176475.649946708
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "artifactChangedFromSeed": true,
+  "productDelta": -2.5,
+  "newlyReachedAQuality": false
+}

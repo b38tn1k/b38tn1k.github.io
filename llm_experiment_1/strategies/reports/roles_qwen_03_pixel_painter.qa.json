@@ -1,0 +1,162 @@
+{
+  "method": "Exact-source DOM event and Canvas pixel-buffer checks; no browser and PNG encoding not modeled",
+  "sha256": "4ec7a0cabf0dcc2703be4b52aedc5315ada1aeea03be4ba1b6e54f482947e816",
+  "startup": "pass",
+  "fixtureNote": "CSS backgroundColor serialization normalized hex to RGB as browsers do; linkedom otherwise preserves hex.",
+  "zoomStyle": "512px",
+  "stroke": [
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ]
+  ],
+  "undo": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "redo": [
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ]
+  ],
+  "eraser": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "touch": [
+    255,
+    0,
+    0,
+    255
+  ],
+  "clear": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "undoClear": [
+    255,
+    0,
+    0,
+    255
+  ],
+  "resize": {
+    "width": 12,
+    "height": 8
+  },
+  "undoResizeDimensions": {
+    "width": 12,
+    "height": 8
+  },
+  "exportCalls": [
+    {
+      "kind": "canvasBlob",
+      "width": 12,
+      "height": 8
+    },
+    {
+      "kind": "blob"
+    },
+    {
+      "kind": "anchor",
+      "download": "pixel-art.png",
+      "href": "blob:qa-2"
+    }
+  ],
+  "errors": [],
+  "twoUndo": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "twoRedo": [
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "identityCanvasCopySelfCheck": "pass"
+}

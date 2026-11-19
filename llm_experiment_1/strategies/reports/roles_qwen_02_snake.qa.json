@@ -1,0 +1,111 @@
+{
+  "method": "Exact-source VM/DOM with deterministic timer and state-only instrumentation; no browser",
+  "sha256": "f98ae0bb6daa20c277b4317b4bb63bc4dda9d0fb2a94d711041ce3bfac204331",
+  "closedScripts": true,
+  "externalResources": [],
+  "startup": "pass",
+  "moves": true,
+  "paused": {
+    "snake": [
+      {
+        "x": 13,
+        "y": 12
+      },
+      {
+        "x": 12,
+        "y": 12
+      },
+      {
+        "x": 11,
+        "y": 12
+      }
+    ],
+    "direction": {
+      "x": 1,
+      "y": 0
+    },
+    "nextDirection": {
+      "x": 1,
+      "y": 0
+    },
+    "food": {
+      "x": 22,
+      "y": 22
+    },
+    "score": 0,
+    "gameState": "paused",
+    "tickInterval": 130
+  },
+  "pauseStable": true,
+  "resumed": true,
+  "foodGrowth": {
+    "score": 5,
+    "length": 4,
+    "tickInterval": 122
+  },
+  "wallFirstTick": {
+    "snake": [
+      {
+        "x": 24,
+        "y": 5
+      },
+      {
+        "x": 23,
+        "y": 5
+      },
+      {
+        "x": 22,
+        "y": 5
+      }
+    ],
+    "direction": {
+      "x": 1,
+      "y": 0
+    },
+    "nextDirection": {
+      "x": 1,
+      "y": 0
+    },
+    "food": {
+      "x": 0,
+      "y": 0
+    },
+    "score": 0,
+    "gameState": "gameover",
+    "tickInterval": 122
+  },
+  "wallSecondTick": "gameover",
+  "vacatedTail": "gameover",
+  "selfCollision": "gameover",
+  "restart": {
+    "snake": [
+      {
+        "x": 12,
+        "y": 12
+      },
+      {
+        "x": 11,
+        "y": 12
+      },
+      {
+        "x": 10,
+        "y": 12
+      }
+    ],
+    "direction": {
+      "x": 1,
+      "y": 0
+    },
+    "nextDirection": {
+      "x": 1,
+      "y": 0
+    },
+    "food": {
+      "x": 22,
+      "y": 22
+    },
+    "score": 0,
+    "gameState": "idle",
+    "tickInterval": 130
+  }
+}

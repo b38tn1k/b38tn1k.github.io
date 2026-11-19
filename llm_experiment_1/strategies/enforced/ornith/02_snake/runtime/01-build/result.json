@@ -1,0 +1,12 @@
+{
+  "role": "build",
+  "number": 1,
+  "minutes": 3.85,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": null,
+  "artifactAfter": "d7203e3ade6dea496fb0e7d01d7316d77eab084b9cd07d8d407e9bdddd775ff1",
+  "prompt": "enforced/ornith/02_snake/runtime/01-build/prompt.txt",
+  "events": "enforced/ornith/02_snake/runtime/01-build/events.jsonl",
+  "stderr": "enforced/ornith/02_snake/runtime/01-build/stderr.log"
+}

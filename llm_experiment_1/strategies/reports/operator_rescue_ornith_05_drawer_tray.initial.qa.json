@@ -1,0 +1,35 @@
+{
+  "method": "Independent actual controls and downloaded STL bytes, bounds, normals/winding, matched edges, connected components and analytical tray-union volume. Exact-source VM/nativeCanvas no browser/GPU/physical print certification. Internal model read only for reported dimensions; STL checked independently.",
+  "sha256": "dc64030bd81c24da3279800f3b3304d0d36f921d243059f8190b758f9dc01356",
+  "checks": [
+    {
+      "id": "fractional_wall_is_honored_in_real_UI_and_clearances",
+      "pass": false,
+      "error": "2 == 2.5",
+      "actual": 2,
+      "expected": 2.5
+    },
+    {
+      "id": "changed_grid_label_matches_controls",
+      "pass": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(/4\\s*[×x]\\s*3/.test(a.document.querySelector('#compTable tbody').textContent))\n",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "auto_rotation_actually_schedules_and_changes_preview",
+      "pass": false,
+      "error": "Auto-rotate has no scheduled callback",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "real_download_STL_bounds_normals_topology_and_union_volume",
+      "pass": false,
+      "error": "8 == 0",
+      "actual": 8,
+      "expected": 0
+    }
+  ],
+  "pass": false
+}

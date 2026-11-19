@@ -1,0 +1,1613 @@
+{
+  "score": 90,
+  "grade": "A- - erase and completion repaired; custom restart still loses layout",
+  "rubricScores": {
+    "functionality": 36,
+    "artifact_correctness": 25,
+    "usability": 14,
+    "self_verification": 5,
+    "autonomy": 10
+  },
+  "blockingRequiredDefect": true,
+  "summary": "Selective draw/erase, meaningful level completion, custom play/editor return, controls, physics, score/lives and JSON roundtrip pass. Restart still discards the custom design for the84brick default, blocking A-quality acceptance despite product93.75.",
+  "strengths": [
+    "Real Eraser control works for individual bricks while preserving other cells. Custom layouts play and survive editor return/second scheduled game.",
+    "Last-brick completion now stops meaningfully and supports replay instead of phantom empty-board levels.",
+    "Actual keyboard/mouse/touch paddle controls, scheduled ball, collision scoring, three lives and JSON modal roundtrip including short-grid replacement pass. Final adds working canvas click/touch after actual game over."
+  ],
+  "defects": [
+    "Required Restart loads the default84brick design instead of replaying the custom layout, and retains score/lives until Play. The repaired completion and convenience canvas-click paths do not repair this shared restart implementation."
+  ],
+  "verification": [
+    "Independent exact final7f263377e054d61264a4150d0e9c1659c7a3d44c2886f71f5ce5286b7067c6d2 using real editor/buttons/keyboard/mouse/touch/modal handlers, actual RAF callbacks and parsed JSON save/load text. Controlled ball inputs exercise original collision/life/completion logic without replacing algorithms.",
+    "Final QA passes eight of nine checks; custom-layout restart fails after a real two-brick design and scored hit. Actual three-loss game over followed by canvas mouse/touch reaches editor, but restores default design."
+  ],
+  "verificationConcerns": [
+    "Supervisor first found the genuinely unwired erase branch and later the genuinely incomplete cleared-board flow. Its claimed60-per-second level inflation overstated the original because ballLaunched guards subsequent updates; repeated relaunch still exposed phantom levels.",
+    "Supervisor ran syntax/diff checks, copied serialization tests and actual inline-script mocked-DOM physics/restart probes. This is broader verification than source grep alone, but missed the required design-preserving restart and declared no regressions prematurely. Worker verification remained mainly syntax/feature-presence checks.",
+    "Third feedback treated the game-over hint Click Restart as advertising clicking anywhere on the canvas. The original had a real visible Restart button, so arbitrary canvas-click support is not added as a separate brief requirement or credited as repairing an originally mandatory missing feature. It is a useful convenience change; the underlying restart blocker remains.",
+    "No browser layout/hit testing or visual-polish proof; nativeCanvas/DOM/scheduler tests establish logical interactions and actual callbacks. Independent Codex QA is not credited as model self-verification."
+  ],
+  "scopeCompliance": "Worker alone authored product. Supervisor used read-only snapshots and private scratch/control. Codex supplied no product code, diagnoses or repair feedback; private QA remained inaccessible to actors.",
+  "workflowNotes": "Three counted worker prompts in the same contexts, 28.284 pair wall minutes and 33.239 summed actor-activity minutes. Normal three-settlement ceiling; joint autonomy10 remains eligible. Repeated unchanged STOP assessments reused the same verified hash gate without content hints or extra worker prompts.",
+  "humanOrSupervisorSteering": 0,
+  "supervisorInstructionDeviations": [
+    "Feedback supplied explicit editorTool assignment/call instructions and implementation snippets despite behavioral-only instructions. Worker retained exclusive product writes; no human product steering."
+  ],
+  "limitations": [
+    "One valid paired result on frozen solo seed; no outcome-based rerun or deadline reset.",
+    "Reported tokens include cached prefixes; native activity includes tool waits rather than GPU busy time. Baseline creation costs remain separate.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM author-profile cross-model rescue of the exact frozen solo app. Solo creation and incremental repair costs are separate; already-qualified baselines may remain unchanged with zero feedback and no improvement claim. A120-minute shared wall includes both actors and review waits; Codex grades but supplies no repair diagnoses/code. Product quality is normalized from80points. Pair wall differs from summed concurrent model activity."
+  ],
+  "title": "Breakout with level editor",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "rtfm_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All checks pass. Here's a summary of the restart fix:\n\n**Defect:** After GAME OVER, `running = false` and `levelComplete = false`, so the mousedown handler's conditions all fail \u2014 the canvas click path advertised by the on-screen \"Click Restart or press R\" hint was dead code.\n\n**Fix applied:**\n\n1. **Added `gameOver` state variable** to explicitly track game-over state\n2. **Set `gameOver = true`** in the lives-depletion path (where `drawGameOver()` is called)\n3. **Reset `gameOver = false`** in `restartGame()`\n4. **Added `mode === 'play' && gameOver` branch** to both `mousedown` and `touchstart` handlers, calling `restartGame()`\n\n**Restart path verified in all states:**\n| State | Click | Keyboard |\n|---|---|---|\n| GAME OVER | \u2705 calls `restartGame()` | \u2705 `R` key |\n| Level Complete | \u2705 calls `advanceToNextLevel()` | \u2705 `Enter` key |\n| During Play (unlaunched) | \u2705 calls `launchBall()` | \u2705 `Space` key |\n| Editor | \u2705 calls `editorCell()` | \u2705 row patterns |\n\n**Final artifact:** `7f263377e054d61264a4150d0e9c1659c7a3d44c2886f71f5ce5286b7067c6d2` (880 lines)",
+  "workflowInstructions": "rtfm-supervised-plan.json; run-rtfm-supervised-control-v2.py",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 28.284,
+  "wallMinutes": 28.284,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "three_feedbacks_settled",
+  "exitCode": 0,
+  "promptWords": 47,
+  "toolCalls": 101,
+  "parentToolCalls": 34,
+  "childToolCalls": 67,
+  "toolResultsMarkedError": 11,
+  "modelUsageReported": {
+    "input": 71003,
+    "output": 49325,
+    "cacheRead": 4177843,
+    "totalTokens": 4298171
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 80333,
+  "parentPeakReportedPromptTokens": 34734,
+  "childPeakReportedPromptTokens": 80333,
+  "parentModelUsage": {
+    "input": 21667,
+    "output": 14964,
+    "cacheRead": 810223,
+    "totalTokens": 846854
+  },
+  "childModelUsage": {
+    "input": 49336,
+    "output": 34361,
+    "cacheRead": 3367620,
+    "totalTokens": 3451317
+  },
+  "artifactBytes": 25405,
+  "sha256": "7f263377e054d61264a4150d0e9c1659c7a3d44c2886f71f5ce5286b7067c6d2",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 20,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-rtfm"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 6,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "qwen3.6:35b-a3b",
+    "supervisorModel": "ornith-1.5:35b-256k",
+    "feedbackCount": 3,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "feedback1-1795049072-cebe43d5a4a6",
+        "message": "DEFECT: The level editor cannot erase individual bricks, contradicting the brief (\"draw and erase bricks\") and its own on-screen label.\n\nEvidence (from the shipped index.html, hash db59efadaa4eb3695129b5972ffc4168de4252cd7e0260cc72b30237a0d7ccf6 verified via sha256sum):\n- editorCell(e, action) at line ~288 implements both 'draw' and 'erase' branches. The 'erase' branch sets editorGrid[row][col] = null.\n- However, NOTHING ever calls editorCell with 'erase'. The mouse/touch handlers (mousedown, mousemove, touchstart, touchmove) only ever call editorCell(e, 'draw').\n- Keyboard handlers only place rows/patterns (placeRows, triangle 'l'). There is no keyboard erase.\n- The toolbar has a \"Clear\" button that wipes the ENTIRE grid; it is not per-brick erase.\n- The editor mode label literally says \"draw/erase bricks with mouse/touch\", so erase is a claimed-but-unimplemented feature.\n\nObserved behavior: you can draw bricks but there is no supported way to remove a single brick you drew. The only removal is Clear-all.\n\nExpected behavior (per brief): the user must be able to erase individual bricks in the editor.\n\nRecommended fix (choose one clean approach, do not break existing draw/save/load):\n- Add an \"Eraser\" toggle button in the toolbar (mirroring the editor/play mode toggle) that sets an editorTool = 'erase'. When active, the existing mouse/touch draw handlers should call editorCell(e, 'erase') instead of 'draw', and update the mode-label to indicate erasing. The 'erase' branch in editorCell already exists, so just wire it up.\n- OR add right-click-to-erase via a contextmenu handler that calls editorCell(e, 'erase').\n- Preserve: drawing still works, Save/Load JSON round-trip still works, Clear still works, Play mode unaffected.\n\nNote: the worker appears to be spinning on repeated get_state calls with no edits. Please make concrete progress on the editor erase capability now. This is the first and only feedback so far.\n",
+        "reason": "editor cannot erase individual bricks despite brief requiring 'draw and erase bricks' and own label; worker stuck in get_state loop with no edits",
+        "interrupt": true,
+        "proposedUTC": "2026-11-19T00:44:32.248201+00:00",
+        "acceptedUTC": "2026-11-19T00:44:32.248206+00:00",
+        "elapsedSeconds": 97.129,
+        "workerPID": 86736,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-19T00:44:32.282636+00:00",
+        "deliveredElapsedSeconds": 97.129
+      },
+      {
+        "number": 2,
+        "id": "feedback2-1795050123-f9e8d7c6b5a4",
+        "message": "SECOND DEFECT: Win / level-complete handling is broken.\n\nEvidence (current artifact 2ac2bb7d, update() \"Win check\" block):\n  if (bricks.every(b => !b.alive)) {\n    levelNum++;\n    ...\n    ballLaunched = false; ballDX = 0; ballDY = 0; ballX = paddleX; ballY = PADDLE_Y - BALL_R - 2; combo = 0;\n  }\n\nThe `bricks` array is never reset or regenerated after this block. So once every brick is dead, `bricks.every(b => !b.alive)` remains TRUE on EVERY subsequent update() frame, and `running` is never set to false.\n\nObserved/actual behavior:\n1. levelNum++ executes every animation frame, so the Level counter spins out of control (increases by ~60 per second) the moment the board is cleared.\n2. The ball then bounces over an empty grid with no bricks to collide with.\n3. There is no win or level-complete screen and no replay prompt. The player just keeps missing the paddle, loses lives one by one, and reaches GAME OVER a few seconds after clearing the level.\n\nExpected behavior (per brief: play your layout, show score and lives, restart):\nWhen all bricks are cleared the level should be treated as complete. Stop the loop and present a clear win / level-complete state (for example a \"Level Complete\" message with a replay option, or regenerate a fresh board for the next level). At the very least, set running = false and stop incrementing levelNum so the player gets a proper win state instead of an empty falling ball leading to game over.\n\nThis is feedback 2 of 3. Feedback 1 (the editor erase capability) was already fixed and verified. Please fix this win-handling defect. Do not regress the working draw/erase, score/lives display, restart, or save/load behaviors.\n",
+        "reason": "independent acceptance returned not_accepted; eraser fix alone insufficient; second concrete defect found: win/level-complete handling broken (levelNum spins every frame after clearing, empty grid, no win/replay, leads to game over). Queuing until worker settles.",
+        "interrupt": false,
+        "proposedUTC": "2026-11-19T00:53:03.507505+00:00",
+        "acceptedUTC": "2026-11-19T00:53:03.507559+00:00",
+        "elapsedSeconds": 608.386,
+        "workerPID": 86736,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-19T00:53:03.558997+00:00",
+        "deliveredElapsedSeconds": 608.386
+      },
+      {
+        "number": 3,
+        "id": "feedback3-1795051200-9988776655",
+        "message": "THIRD AND FINAL DEFECT: Restart does not work via click on the GAME OVER screen (only the R key works), even though the on-screen hint advertises clicking to restart.\n\nEvidence (behavioral test run in Node against the current artifact 9b4f787970d4, by simulating a canvas mousedown while running=false / mode='play' after a game over):\n  after click: running false mode play restartHappened=false\n  Result: CLICK-DOES-NOTHING (game-over click ignored)\n\nRoot cause: the canvas mousedown handler only acts when mode==='editor', or mode==='play' && levelComplete, or running. After GAME OVER, running is false and levelComplete is false, so NONE of the branches fire and restartGame() is never called. The keydown handler does call restartGame() on 'R', which is why keyboard restart works but click restart does not. The game-over overlay explicitly says \"Click Restart or press R\", so the click path is advertised but broken.\n\nExpected behavior (per brief: restart): clicking the canvas on the GAME OVER screen should restart the game (call restartGame), matching the on-screen instruction and the working keyboard path. Restart must work reliably via BOTH click and keyboard.\n\nPlease verify the full restart/replay path works in every state: game over (click + R), after level complete (click + Enter), and during play (click to launch). Do not regress the working draw/erase, save/load JSON, score/lives, or play behaviors.\n\nThis is my third and final feedback prompt.\n",
+        "reason": "concrete evidenced defect: clicking canvas on GAME OVER screen does nothing (running=false), so restart works only via R key despite on-screen 'Click Restart' hint. Verified via Node mousedown simulation. Final feedback.",
+        "interrupt": true,
+        "proposedUTC": "2026-11-19T01:10:13.087896+00:00",
+        "acceptedUTC": "2026-11-19T01:10:13.087902+00:00",
+        "elapsedSeconds": 1637.944,
+        "workerPID": 86736,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-19T01:10:13.124849+00:00",
+        "deliveredElapsedSeconds": 1637.944
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-19T00:46:02.793497+00:00",
+        "sha256": "2ac2bb7d94039f40c99fb1682baa339ff9afb0607f495a14458ed04a25819798",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case124/feedback1"
+      },
+      {
+        "feedback": 2,
+        "at": "2026-11-19T00:55:31.446532+00:00",
+        "sha256": "9b4f787970d494a788048ab7e4dfc4c71f9723f283c6f6ba6441c8a38c72140d",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case124/feedback2"
+      },
+      {
+        "feedback": 2,
+        "at": "2026-11-19T00:57:53.860656+00:00",
+        "sha256": "9b4f787970d494a788048ab7e4dfc4c71f9723f283c6f6ba6441c8a38c72140d",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case124/feedback2"
+      },
+      {
+        "feedback": 3,
+        "at": "2026-11-19T01:11:12.091035+00:00",
+        "sha256": "7f263377e054d61264a4150d0e9c1659c7a3d44c2886f71f5ce5286b7067c6d2",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case124/feedback3"
+      }
+    ],
+    "supervisorWakeups": [],
+    "supervisorYields": [],
+    "supervisorStopRequest": {
+      "at": "2026-11-19T00:57:53.859472+00:00",
+      "id": "stop2-1795050800-aa11bb22cc33",
+      "action": "stop",
+      "reason": "Both concrete defects identified and verified fixed: (1) editor erase capability now wired through all mouse/touch handlers; (2) win/level-complete handling fixed to one-shot LEVEL COMPLETE screen with replay via advanceToNextLevel, removing the levelNum-per-frame spin. Syntax valid, diffs surgical, no regressions. All brief requirements addressed. Used 2 of 3 feedbacks. Requesting independent assessment."
+    },
+    "independentGradeGates": [
+      {
+        "at": "2026-11-19T00:48:38.010089+00:00",
+        "sha256": "2ac2bb7d94039f40c99fb1682baa339ff9afb0607f495a14458ed04a25819798",
+        "productScore": 86.25,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_qwen_04_breakout_editor.round1.qa.json"
+      },
+      {
+        "at": "2026-11-19T00:57:03.243056+00:00",
+        "sha256": "9b4f787970d494a788048ab7e4dfc4c71f9723f283c6f6ba6441c8a38c72140d",
+        "productScore": 93.75,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_qwen_04_breakout_editor.round2.qa.json"
+      },
+      {
+        "at": "2026-11-19T00:59:58.028056+00:00",
+        "sha256": "9b4f787970d494a788048ab7e4dfc4c71f9723f283c6f6ba6441c8a38c72140d",
+        "productScore": 93.75,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_qwen_04_breakout_editor.round2.qa.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "sha256": "db59efadaa4eb3695129b5972ffc4168de4252cd7e0260cc72b30237a0d7ccf6",
+      "baselineScore": 74,
+      "baselineRubricScores": {
+        "functionality": 28,
+        "artifact_correctness": 25,
+        "usability": 10,
+        "self_verification": 1,
+        "autonomy": 10
+      },
+      "baselineProductScore": 78.75,
+      "baselineTargetMet": false,
+      "baselineReport": "strategies/reports/rtfm_qwen_04_breakout_editor.report.json",
+      "creationCost": {
+        "model": "qwen",
+        "role": "worker",
+        "pid": 90645,
+        "assistantUsage": {
+          "input": 2897,
+          "output": 9212,
+          "cacheRead": 58265,
+          "cacheWrite": 0,
+          "totalTokens": 70374
+        },
+        "recordedCompactionUsage": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "totalTokens": 0
+        },
+        "recordedCombinedUsage": {
+          "input": 2897,
+          "output": 9212,
+          "cacheRead": 58265,
+          "cacheWrite": 0,
+          "totalTokens": 70374
+        },
+        "unreportedCompactions": 0,
+        "activeMinutes": 1.936,
+        "promptCount": 1,
+        "streamingWindows": [
+          {
+            "start": 1165939.037895208,
+            "end": 1165943.295134041
+          },
+          {
+            "start": 1165943.546014416,
+            "end": 1166039.497814083
+          },
+          {
+            "start": 1166039.582061291,
+            "end": 1166041.65297675
+          },
+          {
+            "start": 1166041.931521916,
+            "end": 1166043.927203708
+          },
+          {
+            "start": 1166044.156363625,
+            "end": 1166045.884340958
+          },
+          {
+            "start": 1166046.117287458,
+            "end": 1166047.870398166
+          },
+          {
+            "start": 1166048.121769916,
+            "end": 1166053.371957
+          }
+        ],
+        "exitCode": 0
+      },
+      "sourceCase": 114,
+      "sourceFolder": "rtfm/qwen/04_breakout_editor",
+      "frozenArtifact": "strategies/reports/initial-artifacts/rtfm_supervised_qwen_04_breakout_editor/index.html",
+      "frozenUTC": "2026-11-18T16:13:22.818932+00:00"
+    },
+    "sharedLimitSeconds": 7200,
+    "authorProfiles": "research/rtfm-runtime-profiles.json",
+    "runtimeConformance": "research/rtfm-supervised-conformance.json",
+    "sourceRTFMSoloCase": 114,
+    "supervisorInstructionDeviations": [
+      "Feedback supplied explicit editorTool assignment/call instructions and implementation snippets despite behavioral-only instructions. Worker retained exclusive product writes; no human product steering."
+    ]
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 3,
+  "localModelCosts": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 86736,
+      "assistantUsage": {
+        "input": 21667,
+        "output": 14964,
+        "cacheRead": 810223,
+        "cacheWrite": 0,
+        "totalTokens": 846854
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 21667,
+        "output": 14964,
+        "cacheRead": 810223,
+        "cacheWrite": 0,
+        "totalTokens": 846854
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 4.956,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1197685.518004208,
+          "end": 1197690.100692208
+        },
+        {
+          "start": 1197690.193475375,
+          "end": 1197731.73828025
+        },
+        {
+          "start": 1197731.856147666,
+          "end": 1197733.67655
+        },
+        {
+          "start": 1197733.773507916,
+          "end": 1197735.201010416
+        },
+        {
+          "start": 1197735.4396705,
+          "end": 1197738.552925458
+        },
+        {
+          "start": 1197738.65188275,
+          "end": 1197740.540603625
+        },
+        {
+          "start": 1197740.547866416,
+          "end": 1197740.549079666
+        },
+        {
+          "start": 1197742.659315541,
+          "end": 1197744.83613675
+        },
+        {
+          "start": 1197744.840207333,
+          "end": 1197744.841164208
+        },
+        {
+          "start": 1197746.956564833,
+          "end": 1197748.93879175
+        },
+        {
+          "start": 1197748.947614208,
+          "end": 1197748.9487855
+        },
+        {
+          "start": 1197751.068205166,
+          "end": 1197755.000929625
+        },
+        {
+          "start": 1197755.215082625,
+          "end": 1197760.927886
+        },
+        {
+          "start": 1197761.189868041,
+          "end": 1197769.673699416
+        },
+        {
+          "start": 1197770.008297,
+          "end": 1197774.328825291
+        },
+        {
+          "start": 1198196.457842625,
+          "end": 1198201.300065958
+        },
+        {
+          "start": 1198201.308866625,
+          "end": 1198201.310372916
+        },
+        {
+          "start": 1198203.4808775,
+          "end": 1198208.446596916
+        },
+        {
+          "start": 1198208.61820475,
+          "end": 1198213.659612208
+        },
+        {
+          "start": 1198213.787084583,
+          "end": 1198216.062434583
+        },
+        {
+          "start": 1198216.073827583,
+          "end": 1198216.075310833
+        },
+        {
+          "start": 1198218.205837041,
+          "end": 1198220.238949791
+        },
+        {
+          "start": 1198220.2469115,
+          "end": 1198220.248402625
+        },
+        {
+          "start": 1198222.378739625,
+          "end": 1198248.493267
+        },
+        {
+          "start": 1198248.625807208,
+          "end": 1198250.294580083
+        },
+        {
+          "start": 1198250.300645958,
+          "end": 1198250.301776666
+        },
+        {
+          "start": 1198252.443055958,
+          "end": 1198279.608784083
+        },
+        {
+          "start": 1198279.781298916,
+          "end": 1198282.714962208
+        },
+        {
+          "start": 1198282.723576875,
+          "end": 1198282.724968666
+        },
+        {
+          "start": 1198284.861873666,
+          "end": 1198292.178722166
+        },
+        {
+          "start": 1198292.315151833,
+          "end": 1198294.455458833
+        },
+        {
+          "start": 1198294.611272708,
+          "end": 1198296.57459275
+        },
+        {
+          "start": 1198296.715139916,
+          "end": 1198303.333534833
+        },
+        {
+          "start": 1198303.343867666,
+          "end": 1198303.345092791
+        },
+        {
+          "start": 1198305.499030875,
+          "end": 1198315.516810166
+        },
+        {
+          "start": 1198315.852015458,
+          "end": 1198317.828221541
+        },
+        {
+          "start": 1198318.1638635,
+          "end": 1198320.368630333
+        },
+        {
+          "start": 1198320.530377666,
+          "end": 1198322.611534208
+        },
+        {
+          "start": 1198322.619982125,
+          "end": 1198322.62098775
+        },
+        {
+          "start": 1198324.794149458,
+          "end": 1198327.725466291
+        },
+        {
+          "start": 1198327.734257666,
+          "end": 1198327.736223916
+        },
+        {
+          "start": 1198329.910073708,
+          "end": 1198332.256686875
+        },
+        {
+          "start": 1198332.414288375,
+          "end": 1198342.685639458
+        },
+        {
+          "start": 1199226.058868875,
+          "end": 1199244.645825041
+        },
+        {
+          "start": 1199244.655778416,
+          "end": 1199244.656907625
+        },
+        {
+          "start": 1199246.874166375,
+          "end": 1199257.482724125
+        },
+        {
+          "start": 1199257.7288255,
+          "end": 1199274.210715166
+        },
+        {
+          "start": 1199274.676065583,
+          "end": 1199276.807029208
+        },
+        {
+          "start": 1199277.167871125,
+          "end": 1199283.283987083
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 86738,
+      "assistantUsage": {
+        "input": 49336,
+        "output": 34361,
+        "cacheRead": 3367620,
+        "cacheWrite": 0,
+        "totalTokens": 3451317
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 49336,
+        "output": 34361,
+        "cacheRead": 3367620,
+        "cacheWrite": 0,
+        "totalTokens": 3451317
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 28.283,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1197588.900232,
+          "end": 1197592.657888583
+        },
+        {
+          "start": 1197592.741482375,
+          "end": 1197595.283675625
+        },
+        {
+          "start": 1197595.498674333,
+          "end": 1197596.94465525
+        },
+        {
+          "start": 1197597.028013958,
+          "end": 1197639.070101083
+        },
+        {
+          "start": 1197639.380813375,
+          "end": 1197664.574066
+        },
+        {
+          "start": 1197664.831699333,
+          "end": 1197678.716154041
+        },
+        {
+          "start": 1197678.728331583,
+          "end": 1197678.729570791
+        },
+        {
+          "start": 1197680.896211416,
+          "end": 1197684.877519083
+        },
+        {
+          "start": 1197685.201884875,
+          "end": 1197688.417316291
+        },
+        {
+          "start": 1197688.426050166,
+          "end": 1197688.426830791
+        },
+        {
+          "start": 1197690.664467916,
+          "end": 1197707.037103958
+        },
+        {
+          "start": 1197752.407861833,
+          "end": 1197760.608278291
+        },
+        {
+          "start": 1197790.968860916,
+          "end": 1197795.384105208
+        },
+        {
+          "start": 1197795.722838625,
+          "end": 1197800.8758425
+        },
+        {
+          "start": 1197800.884697708,
+          "end": 1197800.885596958
+        },
+        {
+          "start": 1197803.028389208,
+          "end": 1197808.85281725
+        },
+        {
+          "start": 1197809.134265875,
+          "end": 1197814.976373375
+        },
+        {
+          "start": 1197815.126029375,
+          "end": 1197825.514393958
+        },
+        {
+          "start": 1197825.857230208,
+          "end": 1197830.670220375
+        },
+        {
+          "start": 1197831.052397125,
+          "end": 1197837.153707916
+        },
+        {
+          "start": 1197837.548742541,
+          "end": 1197867.742533916
+        },
+        {
+          "start": 1197868.0778795,
+          "end": 1197873.608332625
+        },
+        {
+          "start": 1197874.01174,
+          "end": 1197881.171391416
+        },
+        {
+          "start": 1197881.471402958,
+          "end": 1197911.053964875
+        },
+        {
+          "start": 1197911.354889833,
+          "end": 1197916.096237208
+        },
+        {
+          "start": 1197916.25964825,
+          "end": 1197917.605334958
+        },
+        {
+          "start": 1197917.614431541,
+          "end": 1197917.61562625
+        },
+        {
+          "start": 1197919.793114791,
+          "end": 1197945.525460125
+        },
+        {
+          "start": 1198005.907629,
+          "end": 1198020.435448041
+        },
+        {
+          "start": 1198020.627002916,
+          "end": 1198026.086942041
+        },
+        {
+          "start": 1198026.098581875,
+          "end": 1198026.099545416
+        },
+        {
+          "start": 1198028.274944,
+          "end": 1198033.729635541
+        },
+        {
+          "start": 1198033.73783725,
+          "end": 1198033.738650791
+        },
+        {
+          "start": 1198036.065095291,
+          "end": 1198191.046258166
+        },
+        {
+          "start": 1198191.235303208,
+          "end": 1198196.348724625
+        },
+        {
+          "start": 1198196.348873916,
+          "end": 1198196.348890791
+        },
+        {
+          "start": 1198198.510394541,
+          "end": 1198201.62632425
+        },
+        {
+          "start": 1198201.8210005,
+          "end": 1198210.055474208
+        },
+        {
+          "start": 1198270.504408458,
+          "end": 1198275.867708
+        },
+        {
+          "start": 1198366.060775875,
+          "end": 1198369.046204125
+        },
+        {
+          "start": 1198369.440690833,
+          "end": 1198376.588982958
+        },
+        {
+          "start": 1198377.075576916,
+          "end": 1198383.438825958
+        },
+        {
+          "start": 1198383.473902375,
+          "end": 1198383.475570083
+        },
+        {
+          "start": 1198385.787657708,
+          "end": 1198394.844896
+        },
+        {
+          "start": 1198395.332107083,
+          "end": 1198401.574768458
+        },
+        {
+          "start": 1198401.581545375,
+          "end": 1198401.582631375
+        },
+        {
+          "start": 1198403.8067735,
+          "end": 1198411.340135666
+        },
+        {
+          "start": 1198411.353019125,
+          "end": 1198411.355034958
+        },
+        {
+          "start": 1198413.579928583,
+          "end": 1198421.003919666
+        },
+        {
+          "start": 1198421.254726208,
+          "end": 1198445.750065208
+        },
+        {
+          "start": 1198446.27504925,
+          "end": 1198480.583555416
+        },
+        {
+          "start": 1198481.019389083,
+          "end": 1198486.671070875
+        },
+        {
+          "start": 1198486.671204125,
+          "end": 1198486.671217083
+        },
+        {
+          "start": 1198488.871812125,
+          "end": 1198490.308060625
+        },
+        {
+          "start": 1198490.552362916,
+          "end": 1198495.046786083
+        },
+        {
+          "start": 1198570.481925833,
+          "end": 1198573.704417041
+        },
+        {
+          "start": 1198649.152802458,
+          "end": 1198714.306709416
+        },
+        {
+          "start": 1198714.580429708,
+          "end": 1198812.224972916
+        },
+        {
+          "start": 1198812.250670291,
+          "end": 1198812.252288791
+        },
+        {
+          "start": 1198814.51905825,
+          "end": 1198817.382875791
+        },
+        {
+          "start": 1198818.012016916,
+          "end": 1198909.980017333
+        },
+        {
+          "start": 1198909.994613166,
+          "end": 1198909.996018166
+        },
+        {
+          "start": 1198912.2762035,
+          "end": 1198923.303105708
+        },
+        {
+          "start": 1198923.788522708,
+          "end": 1198931.18262625
+        },
+        {
+          "start": 1198931.209430916,
+          "end": 1198931.21072175
+        },
+        {
+          "start": 1198933.48185225,
+          "end": 1198938.623882583
+        },
+        {
+          "start": 1198939.066407625,
+          "end": 1198946.129906541
+        },
+        {
+          "start": 1198946.42140325,
+          "end": 1198963.072416916
+        },
+        {
+          "start": 1198963.376407583,
+          "end": 1198967.388952458
+        },
+        {
+          "start": 1198967.831211208,
+          "end": 1199001.516027375
+        },
+        {
+          "start": 1199001.780450833,
+          "end": 1199009.998532166
+        },
+        {
+          "start": 1199010.48816525,
+          "end": 1199104.417935416
+        },
+        {
+          "start": 1199104.749322833,
+          "end": 1199111.128725166
+        },
+        {
+          "start": 1199111.635799791,
+          "end": 1199123.108357791
+        },
+        {
+          "start": 1199123.419218125,
+          "end": 1199127.460609791
+        },
+        {
+          "start": 1199128.224120375,
+          "end": 1199134.440611666
+        },
+        {
+          "start": 1199134.956898708,
+          "end": 1199212.63158725
+        },
+        {
+          "start": 1199212.936420208,
+          "end": 1199225.886468833
+        },
+        {
+          "start": 1199225.886600208,
+          "end": 1199225.88661525
+        },
+        {
+          "start": 1199228.172739833,
+          "end": 1199230.669139625
+        },
+        {
+          "start": 1199230.6799865,
+          "end": 1199230.681358791
+        },
+        {
+          "start": 1199233.006135875,
+          "end": 1199246.797652833
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 28.284,
+  "summedModelActiveMinutes": 33.239,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 49336,
+      "output": 34361,
+      "cacheRead": 3367620,
+      "totalTokens": 3451317
+    },
+    "qwen": {
+      "input": 21667,
+      "output": 14964,
+      "cacheRead": 810223,
+      "totalTokens": 846854
+    }
+  },
+  "modelWallMinutes": {
+    "qwen": 4.956,
+    "ornith": 28.283
+  },
+  "localProductScore": 93.8,
+  "localProductTargetMet": false,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  },
+  "localProductScoreExact": 93.75,
+  "attemptNumber": 1,
+  "priorInfrastructureInvalidAttempts": [],
+  "baselineAlreadyA": false,
+  "baselineScore": 74,
+  "baselineProductScore": 78.75,
+  "baselineTargetMet": false,
+  "baselineReport": "strategies/reports/rtfm_qwen_04_breakout_editor.report.json",
+  "baselineCreationCost": {
+    "model": "qwen",
+    "role": "worker",
+    "pid": 90645,
+    "assistantUsage": {
+      "input": 2897,
+      "output": 9212,
+      "cacheRead": 58265,
+      "cacheWrite": 0,
+      "totalTokens": 70374
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 2897,
+      "output": 9212,
+      "cacheRead": 58265,
+      "cacheWrite": 0,
+      "totalTokens": 70374
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 1.936,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1165939.037895208,
+        "end": 1165943.295134041
+      },
+      {
+        "start": 1165943.546014416,
+        "end": 1166039.497814083
+      },
+      {
+        "start": 1166039.582061291,
+        "end": 1166041.65297675
+      },
+      {
+        "start": 1166041.931521916,
+        "end": 1166043.927203708
+      },
+      {
+        "start": 1166044.156363625,
+        "end": 1166045.884340958
+      },
+      {
+        "start": 1166046.117287458,
+        "end": 1166047.870398166
+      },
+      {
+        "start": 1166048.121769916,
+        "end": 1166053.371957
+      }
+    ],
+    "exitCode": 0
+  },
+  "incrementalRepairCost": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 86736,
+      "assistantUsage": {
+        "input": 21667,
+        "output": 14964,
+        "cacheRead": 810223,
+        "cacheWrite": 0,
+        "totalTokens": 846854
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 21667,
+        "output": 14964,
+        "cacheRead": 810223,
+        "cacheWrite": 0,
+        "totalTokens": 846854
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 4.956,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1197685.518004208,
+          "end": 1197690.100692208
+        },
+        {
+          "start": 1197690.193475375,
+          "end": 1197731.73828025
+        },
+        {
+          "start": 1197731.856147666,
+          "end": 1197733.67655
+        },
+        {
+          "start": 1197733.773507916,
+          "end": 1197735.201010416
+        },
+        {
+          "start": 1197735.4396705,
+          "end": 1197738.552925458
+        },
+        {
+          "start": 1197738.65188275,
+          "end": 1197740.540603625
+        },
+        {
+          "start": 1197740.547866416,
+          "end": 1197740.549079666
+        },
+        {
+          "start": 1197742.659315541,
+          "end": 1197744.83613675
+        },
+        {
+          "start": 1197744.840207333,
+          "end": 1197744.841164208
+        },
+        {
+          "start": 1197746.956564833,
+          "end": 1197748.93879175
+        },
+        {
+          "start": 1197748.947614208,
+          "end": 1197748.9487855
+        },
+        {
+          "start": 1197751.068205166,
+          "end": 1197755.000929625
+        },
+        {
+          "start": 1197755.215082625,
+          "end": 1197760.927886
+        },
+        {
+          "start": 1197761.189868041,
+          "end": 1197769.673699416
+        },
+        {
+          "start": 1197770.008297,
+          "end": 1197774.328825291
+        },
+        {
+          "start": 1198196.457842625,
+          "end": 1198201.300065958
+        },
+        {
+          "start": 1198201.308866625,
+          "end": 1198201.310372916
+        },
+        {
+          "start": 1198203.4808775,
+          "end": 1198208.446596916
+        },
+        {
+          "start": 1198208.61820475,
+          "end": 1198213.659612208
+        },
+        {
+          "start": 1198213.787084583,
+          "end": 1198216.062434583
+        },
+        {
+          "start": 1198216.073827583,
+          "end": 1198216.075310833
+        },
+        {
+          "start": 1198218.205837041,
+          "end": 1198220.238949791
+        },
+        {
+          "start": 1198220.2469115,
+          "end": 1198220.248402625
+        },
+        {
+          "start": 1198222.378739625,
+          "end": 1198248.493267
+        },
+        {
+          "start": 1198248.625807208,
+          "end": 1198250.294580083
+        },
+        {
+          "start": 1198250.300645958,
+          "end": 1198250.301776666
+        },
+        {
+          "start": 1198252.443055958,
+          "end": 1198279.608784083
+        },
+        {
+          "start": 1198279.781298916,
+          "end": 1198282.714962208
+        },
+        {
+          "start": 1198282.723576875,
+          "end": 1198282.724968666
+        },
+        {
+          "start": 1198284.861873666,
+          "end": 1198292.178722166
+        },
+        {
+          "start": 1198292.315151833,
+          "end": 1198294.455458833
+        },
+        {
+          "start": 1198294.611272708,
+          "end": 1198296.57459275
+        },
+        {
+          "start": 1198296.715139916,
+          "end": 1198303.333534833
+        },
+        {
+          "start": 1198303.343867666,
+          "end": 1198303.345092791
+        },
+        {
+          "start": 1198305.499030875,
+          "end": 1198315.516810166
+        },
+        {
+          "start": 1198315.852015458,
+          "end": 1198317.828221541
+        },
+        {
+          "start": 1198318.1638635,
+          "end": 1198320.368630333
+        },
+        {
+          "start": 1198320.530377666,
+          "end": 1198322.611534208
+        },
+        {
+          "start": 1198322.619982125,
+          "end": 1198322.62098775
+        },
+        {
+          "start": 1198324.794149458,
+          "end": 1198327.725466291
+        },
+        {
+          "start": 1198327.734257666,
+          "end": 1198327.736223916
+        },
+        {
+          "start": 1198329.910073708,
+          "end": 1198332.256686875
+        },
+        {
+          "start": 1198332.414288375,
+          "end": 1198342.685639458
+        },
+        {
+          "start": 1199226.058868875,
+          "end": 1199244.645825041
+        },
+        {
+          "start": 1199244.655778416,
+          "end": 1199244.656907625
+        },
+        {
+          "start": 1199246.874166375,
+          "end": 1199257.482724125
+        },
+        {
+          "start": 1199257.7288255,
+          "end": 1199274.210715166
+        },
+        {
+          "start": 1199274.676065583,
+          "end": 1199276.807029208
+        },
+        {
+          "start": 1199277.167871125,
+          "end": 1199283.283987083
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 86738,
+      "assistantUsage": {
+        "input": 49336,
+        "output": 34361,
+        "cacheRead": 3367620,
+        "cacheWrite": 0,
+        "totalTokens": 3451317
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 49336,
+        "output": 34361,
+        "cacheRead": 3367620,
+        "cacheWrite": 0,
+        "totalTokens": 3451317
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 28.283,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1197588.900232,
+          "end": 1197592.657888583
+        },
+        {
+          "start": 1197592.741482375,
+          "end": 1197595.283675625
+        },
+        {
+          "start": 1197595.498674333,
+          "end": 1197596.94465525
+        },
+        {
+          "start": 1197597.028013958,
+          "end": 1197639.070101083
+        },
+        {
+          "start": 1197639.380813375,
+          "end": 1197664.574066
+        },
+        {
+          "start": 1197664.831699333,
+          "end": 1197678.716154041
+        },
+        {
+          "start": 1197678.728331583,
+          "end": 1197678.729570791
+        },
+        {
+          "start": 1197680.896211416,
+          "end": 1197684.877519083
+        },
+        {
+          "start": 1197685.201884875,
+          "end": 1197688.417316291
+        },
+        {
+          "start": 1197688.426050166,
+          "end": 1197688.426830791
+        },
+        {
+          "start": 1197690.664467916,
+          "end": 1197707.037103958
+        },
+        {
+          "start": 1197752.407861833,
+          "end": 1197760.608278291
+        },
+        {
+          "start": 1197790.968860916,
+          "end": 1197795.384105208
+        },
+        {
+          "start": 1197795.722838625,
+          "end": 1197800.8758425
+        },
+        {
+          "start": 1197800.884697708,
+          "end": 1197800.885596958
+        },
+        {
+          "start": 1197803.028389208,
+          "end": 1197808.85281725
+        },
+        {
+          "start": 1197809.134265875,
+          "end": 1197814.976373375
+        },
+        {
+          "start": 1197815.126029375,
+          "end": 1197825.514393958
+        },
+        {
+          "start": 1197825.857230208,
+          "end": 1197830.670220375
+        },
+        {
+          "start": 1197831.052397125,
+          "end": 1197837.153707916
+        },
+        {
+          "start": 1197837.548742541,
+          "end": 1197867.742533916
+        },
+        {
+          "start": 1197868.0778795,
+          "end": 1197873.608332625
+        },
+        {
+          "start": 1197874.01174,
+          "end": 1197881.171391416
+        },
+        {
+          "start": 1197881.471402958,
+          "end": 1197911.053964875
+        },
+        {
+          "start": 1197911.354889833,
+          "end": 1197916.096237208
+        },
+        {
+          "start": 1197916.25964825,
+          "end": 1197917.605334958
+        },
+        {
+          "start": 1197917.614431541,
+          "end": 1197917.61562625
+        },
+        {
+          "start": 1197919.793114791,
+          "end": 1197945.525460125
+        },
+        {
+          "start": 1198005.907629,
+          "end": 1198020.435448041
+        },
+        {
+          "start": 1198020.627002916,
+          "end": 1198026.086942041
+        },
+        {
+          "start": 1198026.098581875,
+          "end": 1198026.099545416
+        },
+        {
+          "start": 1198028.274944,
+          "end": 1198033.729635541
+        },
+        {
+          "start": 1198033.73783725,
+          "end": 1198033.738650791
+        },
+        {
+          "start": 1198036.065095291,
+          "end": 1198191.046258166
+        },
+        {
+          "start": 1198191.235303208,
+          "end": 1198196.348724625
+        },
+        {
+          "start": 1198196.348873916,
+          "end": 1198196.348890791
+        },
+        {
+          "start": 1198198.510394541,
+          "end": 1198201.62632425
+        },
+        {
+          "start": 1198201.8210005,
+          "end": 1198210.055474208
+        },
+        {
+          "start": 1198270.504408458,
+          "end": 1198275.867708
+        },
+        {
+          "start": 1198366.060775875,
+          "end": 1198369.046204125
+        },
+        {
+          "start": 1198369.440690833,
+          "end": 1198376.588982958
+        },
+        {
+          "start": 1198377.075576916,
+          "end": 1198383.438825958
+        },
+        {
+          "start": 1198383.473902375,
+          "end": 1198383.475570083
+        },
+        {
+          "start": 1198385.787657708,
+          "end": 1198394.844896
+        },
+        {
+          "start": 1198395.332107083,
+          "end": 1198401.574768458
+        },
+        {
+          "start": 1198401.581545375,
+          "end": 1198401.582631375
+        },
+        {
+          "start": 1198403.8067735,
+          "end": 1198411.340135666
+        },
+        {
+          "start": 1198411.353019125,
+          "end": 1198411.355034958
+        },
+        {
+          "start": 1198413.579928583,
+          "end": 1198421.003919666
+        },
+        {
+          "start": 1198421.254726208,
+          "end": 1198445.750065208
+        },
+        {
+          "start": 1198446.27504925,
+          "end": 1198480.583555416
+        },
+        {
+          "start": 1198481.019389083,
+          "end": 1198486.671070875
+        },
+        {
+          "start": 1198486.671204125,
+          "end": 1198486.671217083
+        },
+        {
+          "start": 1198488.871812125,
+          "end": 1198490.308060625
+        },
+        {
+          "start": 1198490.552362916,
+          "end": 1198495.046786083
+        },
+        {
+          "start": 1198570.481925833,
+          "end": 1198573.704417041
+        },
+        {
+          "start": 1198649.152802458,
+          "end": 1198714.306709416
+        },
+        {
+          "start": 1198714.580429708,
+          "end": 1198812.224972916
+        },
+        {
+          "start": 1198812.250670291,
+          "end": 1198812.252288791
+        },
+        {
+          "start": 1198814.51905825,
+          "end": 1198817.382875791
+        },
+        {
+          "start": 1198818.012016916,
+          "end": 1198909.980017333
+        },
+        {
+          "start": 1198909.994613166,
+          "end": 1198909.996018166
+        },
+        {
+          "start": 1198912.2762035,
+          "end": 1198923.303105708
+        },
+        {
+          "start": 1198923.788522708,
+          "end": 1198931.18262625
+        },
+        {
+          "start": 1198931.209430916,
+          "end": 1198931.21072175
+        },
+        {
+          "start": 1198933.48185225,
+          "end": 1198938.623882583
+        },
+        {
+          "start": 1198939.066407625,
+          "end": 1198946.129906541
+        },
+        {
+          "start": 1198946.42140325,
+          "end": 1198963.072416916
+        },
+        {
+          "start": 1198963.376407583,
+          "end": 1198967.388952458
+        },
+        {
+          "start": 1198967.831211208,
+          "end": 1199001.516027375
+        },
+        {
+          "start": 1199001.780450833,
+          "end": 1199009.998532166
+        },
+        {
+          "start": 1199010.48816525,
+          "end": 1199104.417935416
+        },
+        {
+          "start": 1199104.749322833,
+          "end": 1199111.128725166
+        },
+        {
+          "start": 1199111.635799791,
+          "end": 1199123.108357791
+        },
+        {
+          "start": 1199123.419218125,
+          "end": 1199127.460609791
+        },
+        {
+          "start": 1199128.224120375,
+          "end": 1199134.440611666
+        },
+        {
+          "start": 1199134.956898708,
+          "end": 1199212.63158725
+        },
+        {
+          "start": 1199212.936420208,
+          "end": 1199225.886468833
+        },
+        {
+          "start": 1199225.886600208,
+          "end": 1199225.88661525
+        },
+        {
+          "start": 1199228.172739833,
+          "end": 1199230.669139625
+        },
+        {
+          "start": 1199230.6799865,
+          "end": 1199230.681358791
+        },
+        {
+          "start": 1199233.006135875,
+          "end": 1199246.797652833
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "artifactChangedFromSeed": true,
+  "productDelta": 15.0,
+  "newlyReachedAQuality": false
+}

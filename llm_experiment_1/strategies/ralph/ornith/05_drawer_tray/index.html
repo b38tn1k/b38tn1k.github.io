@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drawer Tray Maker</title>
+<style>
+  :root { --bg:#12141a; --panel:#1c1f28; --ink:#e8ecf3; --muted:#8a93a6; --accent:#4da3ff; --line:#2a2f3c; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--ink); }
+  h1 { font-size:18px; margin:0 0 4px; }
+  h2 { font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 10px; }
+  .wrap { display:grid; grid-template-columns:320px 1fr; gap:16px; padding:16px; max-width:1200px; margin:0 auto; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px; }
+  .field { margin-bottom:12px; }
+  .field label { display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+  .field .row { display:flex; gap:8px; }
+  input[type=number] { width:100%; padding:7px 9px; background:#11141b; color:var(--ink); border:1px solid var(--line); border-radius:8px; font:inherit; }
+  input.unit { width:56px; text-align:right; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .slider { width:100%; }
+  .val { color:var(--accent); font-variant-numeric:tabular-nums; }
+  .readout { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px; }
+  .cell { background:#11141b; border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
+  .cell .k { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .cell .v { font-size:16px; font-variant-numeric:tabular-nums; color:var(--ink); }
+  .cell .v small { font-size:11px; color:var(--muted); }
+  #view { position:relative; }
+  canvas { width:100%; height:auto; display:block; border-radius:10px; background:#0c0e13; touch-action:none; }
+  .hint { position:absolute; bottom:10px; left:12px; font-size:11px; color:var(--muted); }
+  .btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  button { background:var(--accent); color:#04121f; border:0; border-radius:8px; padding:9px 14px; font:inherit; font-weight:600; cursor:pointer; }
+  button.secondary { background:#232938; color:var(--ink); border:1px solid var(--line); }
+  .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; background:#232938; color:var(--muted); border:1px solid var(--line); }
+  .badge.ok { color:#7ee0a8; border-color:#2c5140; background:#14261f; }
+  .badge.bad { color:#ff9a9a; border-color:#5a2f2f; background:#281616; }
+  .footer { color:var(--muted); font-size:11px; margin-top:10px; }
+  .toggle { display:flex; gap:6px; align-items:center; margin-top:8px; font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="panel">
+    <h1>Drawer Tray Maker</h1>
+    <span class="badge ok" id="status">computing…</span>
+    <div style="height:12px"></div>
+    <h2>Outer dimensions (mm)</h2>
+    <div class="grid2">
+      <div class="field"><label for="outerWidth">Width</label>
+        <div class="row"><input type="number" id="outerWidth" min="20" max="600" step="1" value="180">
+        <input type="number" class="unit" value="mm" readonly></div></div>
+      <div class="field"><label for="outerDepth">Depth</label>
+        <div class="row"><input type="number" id="outerDepth" min="20" max="600" step="1" value="120">
+        <input type="number" class="unit" value="mm" readonly></div></div>
+      <div class="field"><label for="outerHeight">Height / rim</label>
+        <div class="row"><input type="number" id="outerHeight" min="5" max="200" step="1" value="30">
+        <input type="number" class="unit" value="mm" readonly></div></div>
+    </div>
+
+    <h2>Grid</h2>
+    <div class="grid2">
+      <div class="field"><label for="rowCount">Rows <span class="val" id="rowCountV">3</span></label>
+        <input type="range" id="rowCount" class="slider" min="1" max="12" step="1" value="3"></div>
+      <div class="field"><label for="colCount">Columns <span class="val" id="colCountV">2</span></label>
+        <input type="range" id="colCount" class="slider" min="1" max="12" step="1" value="2"></div>
+    </div>
+
+    <h2>Wall &amp; floor (mm)</h2>
+    <div class="grid2">
+      <div class="field"><label for="wallThickness">Wall <span class="val" id="wallV">3</span></label>
+        <input type="range" id="wallThickness" class="slider" min="1" max="12" step="0.5" value="3"></div>
+      <div class="field"><label for="floorThickness">Floor <span class="val" id="floorV">3</span></label>
+        <input type="range" id="floorThickness" class="slider" min="1" max="12" step="0.5" value="3"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="view">
+    <h2>3D preview — drag to rotate</h2>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <div class="hint">Drag to rotate · scroll to zoom</div>
+    <label class="toggle"><input type="checkbox" id="wire" checked> Show compartment dimensions</label>
+
+    <h2 style="margin-top:18px">Clear compartment dimensions</h2>
+    <div class="readout">
+      <div class="cell"><div class="k">Width</div><div class="v" id="cW">–</div></div>
+      <div class="cell"><div class="k">Depth</div><div class="v" id="cD">–</div></div>
+      <div class="cell"><div class="k">Height</div><div class="v" id="cH">–</div></div>
+      <div class="cell"><div class="k">Compartments</div><div class="v" id="cN">–</div></div>
+    </div>
+
+    <div class="btns">
+      <button id="download" type="button">Download STL</button>
+      <button class="secondary" id="reset" type="button">Reset</button>
+    </div>
+    <div class="footer">Export: ASCII + binary STL, 1 mm units, centered on origin.</div>
+  </section>
+</div>
+
+<script>
+// ============================================================
+// Drawer Tray Maker — single file, fully offline.
+// ============================================================
+const clamp=(v,min,max)=>{let n=Number(v);if(!Number.isFinite(n))n=min;return n<min?min:n>max?max:n;};
+
+const DEFAULTS={outerWidth:180,outerDepth:120,outerHeight:30,rowCount:3,colCount:2,wallThickness:3,floorThickness:3};
+
+const $=id=>document.getElementById(id);
+const canvas=$('canvas');
+let gl=null;
+
+function cfgFromInputs(){
+  return{
+    outerWidth:+$('outerWidth').value,
+    outerDepth:+$('outerDepth').value,
+    outerHeight:+$('outerHeight').value,
+    rowCount:+$('rowCount').value,
+    colCount:+$('colCount').value,
+    wallThickness:+$('wallThickness').value,
+    floorThickness:+$('floorThickness').value,
+  };
+}
+
+// Pure computation (mirrors tray-engine.mjs). Returns null if infeasible.
+function compute(c){
+  const w=clamp(c.wallThickness,0.1,1e6),f=clamp(c.floorThickness,0.1,1e6);
+  const rowCount=clamp(Math.trunc(c.rowCount),1,1e4),colCount=clamp(Math.trunc(c.colCount),1,1e4);
+  const OX=clamp(c.outerWidth,0.1,1e6),OY=clamp(c.outerDepth,0.1,1e6),OH=clamp(c.outerHeight,0.1,1e6);
+  const cW=(OX-(colCount+1)*w)/colCount;
+  const cD=(OY-(rowCount+1)*w)/rowCount;
+  const cH=OH-f;
+  if(!(OX>0&&OY>0&&OH>0&&rowCount>0&&colCount>0&&w>0&&f>0&&cW>0&&cD>0&&cH>0))return null;
+  return {rowCount,colCount,w,f,OX,OY,OH,cW,cD,cH,compartments:rowCount*colCount};
+}
+
+// Expand config into cubes [{x0,y0,z0,x1,y1,z1}] in mm.
+function buildCubes(c){
+  const d=compute(c); if(!d)return null;
+  const {OX,OY,OH,w,f,cW,cD,rowCount,colCount}=d;
+  const cubes=[];
+  const add=(x0,y0,z0,x1,y1,z1)=>cubes.push([x0,y0,z0,x1,y1,z1]);
+  add(0,0,0,OX,OY,f);                          // floor
+  add(0,0,f,w,OY,OH);  add(OX-w,0,f,OX,OY,OH);  // side walls
+  add(0,0,f,OX,w,OH);  add(0,OY-w,f,OX,OY,OH);  // front/back walls
+  for(let i=1;i<colCount;i++){const x=i*(cW+w);add(x-w/2,0,f,x+w/2,OY,OH);}
+  for(let i=1;i<rowCount;i++){const y=i*(cD+w);add(0,y-w/2,f,OX,y+w/2,OH);}
+  return {d,cubes};
+}
+
+function rounded(n){return Math.round((n||0)*100)/100;}
+
+// ---- STL export (ASCII + binary) — mm units, model centred on origin ----
+function cxOffset(cubes){
+  let minX=Infinity,maxX=-Infinity;
+  for(const [x0,,x1] of cubes){if(x0<minX)minX=x0;if(x1>maxX)maxX=x1;}
+  return (maxX+minX)/2;
+}
+
+function meshTriangles(cubes){
+  const hx=cxOffset(cubes);
+  const out=[];
+  const cube=(x0,y0,z0,x1,y1,z1)=>{
+    const hw=(x1-x0)/2,cx=(x0+x1)/2-hx;
+    const x0c=cx-hw,x1c=cx+hw;
+    const v=[[x0c,y0,z0],[x1c,y0,z0],[x1c,y1,z0],[x0c,y1,z0],
+             [x0c,y0,z1],[x1c,y0,z1],[x1c,y1,z1],[x0c,y1,z1]];
+    const faces=[[0,3,2],[0,2,1],[4,5,6],[4,6,7],[0,1,5],[0,5,4],[2,3,7],[2,7,1],[0,4,7],[0,7,3],[1,2,6],[1,6,5]];
+    for(const f of faces)out.push(v[f[0]],v[f[1]],v[f[2]]);
+  };
+  for(const c of cubes)cube(...c);
+  return out;
+}
+
+function fmtNum(n){return Number.isFinite(n)?String(Math.round(n*1000000)/1000000):'0';}
+
+function stlAscii(cubes,name='drawer_tray'){
+  const tr=meshTriangles(cubes);let out=`solid ${name}\n`;
+  for(let i=0;i<tr.length;i+=3){
+    const pA=tr[i],pB=tr[i+1],pC=tr[i+2];
+    const ux=pB[0]-pA[0],uy=pB[1]-pA[1],uz=pB[2]-pA[2];
+    const vx=pC[0]-pA[0],vy=pC[1]-pA[1],vz=pC[2]-pA[2];
+    let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;
+    const L=Math.hypot(nx,ny,nz)||1;nx/=L;ny/=L;nz/=L;
+    const ln=p=>`      vertex ${fmtNum(p[0])} ${fmtNum(p[1])} ${fmtNum(p[2])}`;
+    out+=`  facet normal ${fmtNum(nx)} ${fmtNum(ny)} ${fmtNum(nz)}\n    outer loop\n`+ln(pA)+`\n`+ln(pB)+`\n`+ln(pC)+`\n    endloop\n  endfacet\n`;
+  }
+  return out+`endsolid ${name}\n`;
+}
+
+function stlBinary(cubes){
+  const tr=meshTriangles(cubes);const n=tr.length/3;
+  const buf=new ArrayBuffer(84+n*50);const u=new Uint8Array(buf);const dv=new DataView(buf);
+  u.fill(0,0,80);dv.setUint32(80,n,true);
+  let p=84;
+  for(let i=0;i<tr.length;i+=3){
+    const pA=tr[i],pB=tr[i+1],pC=tr[i+2];
+    const ux=pB[0]-pA[0],uy=pB[1]-pA[1],uz=pB[2]-pA[2];
+    const vx=pC[0]-pA[0],vy=pC[1]-pA[1],vz=pC[2]-pA[2];
+    let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;const L=Math.hypot(nx,ny,nz)||1;nx/=L;ny/=L;nz/=L;
+    dv.setFloatLE(nx,p);p+=4;dv.setFloatLE(ny,p);p+=4;dv.setFloatLE(nz,p);p+=4;
+    for(const pp of [pA,pB,pC]){dv.setFloatLE(pp[0],p);p+=4;dv.setFloatLE(pp[1],p);p+=4;dv.setFloatLE(pp[2],p);p+=4;}
+    dv.setUint16(p,0,true);p+=2;
+  }
+  return buf;
+}
+
+// ============================================================
+// Minimal WebGL 3D preview — no external libraries.
+// ============================================================
+
+// ---- mat4 helpers (column-major) ----
+const M={
+  multiply(a,b){const o=new Float32Array(16);for(let r=0;r<4;r++)for(let c=0;c<4;c++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;},
+  perspective(fov,asp,near,far){const f=1/Math.tan(fov/2),nf=1-near;return Float32Array.of(f/asp,0,0,0, 0,f,0,0, 0,0,(far+near)/nf,-1, 0,0,(-2*near*far)/nf,0);},
+  lookAt(eye,cen,up){
+    let zx=eye[0]-cen[0],zy=eye[1]-cen[1],zz=eye[2]-cen[2];
+    let l=1/Math.hypot(zx,zy,zz);zx*=l;zy*=l;zz*=l;
+    let xzv=zy*up[0]-zx*up[2];let xyv=zx*up[1]-zy*up[0];
+    let xl=Math.hypot(xyv,xzv);if(xl){xl=1/xl;xyv*=xl;xzv*=xl;}else{xyv=0;xzv=0;}
+    const rx=xzv, ry=xyv, rz=zz;
+    const m=Float32Array.of(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+    m[0]=rx;m[1]=ry;m[2]=rz;
+    m[4]=0; m[5]=up[0]*0+up[1]*0+up[2]*0; // placeholder below
+    m[4]=xyv; m[5]=up[1]; m[6]=up[2]; // corrected
+    m[8]=rx*0; // placeholder
+    m[8]=xzv; m[9]=0; m[10]=zx;
+    const eyeVec=eye;
+    m[12]=-(rx*eyeVec[0]+xyv*eyeVec[1]+xzv*eyeVec[2]);
+    m[13]=-(ry*eyeVec[0]+up[1]*eyeVec[1]+up[2]*eyeVec[2]);
+    m[14]=-(rz*eyeVec[0]+zx*eyeVec[2]);
+    m[15]=1;
+    return m;
+  },
+  translate(a,v){const t=M.ident();t[12]=v[0];t[13]=v[1];t[14]=v[2];return M.multiply(a,t);},
+  scale(v){const s=M.ident();s[0]=v[0];s[5]=v[1];s[10]=v[2];return s;}
+};
+
+// ============================================================
+// App state + UI wiring
+// ============================================================
+const state = { yaw: -35, pitch: 18, zoom: 1.25, cubes: null, last: null };
+
+function fmt(n){ return Math.round((n||0)*100)/100; }
+
+// Recompute the tray (config -> cubes) from the live inputs.
+function buildCubesFromInputs(){
+  return buildCubes(cfgFromInputs());
+}
+
+// Populate the readout panel from a computed tray. Returns the report or null.
+function render(){
+  const cfg = cfgFromInputs();
+  const d = compute(cfg);
+  const cubes = d ? buildCubes(d) : null;
+  state.cubes = cubes ? cubes.cubes : null;
+  const status = $('status');
+  if(!d){
+    if(status){status.textContent='infeasible';status.className='badge bad';}
+    const cells = { cW:null, cD:null, cH:null, cN:null };
+    Object.keys(cells).forEach(id=>{const el=$(id); if(el)el.textContent='–';});
+    drawScene();
+    return null;
+  }
+  if(status){status.textContent='ready';status.className='badge ok';}
+  $('cW').textContent = fmt(d.cW) + ' mm';
+  $('cD').textContent = fmt(d.cD) + ' mm';
+  $('cH').textContent = fmt(d.cH) + ' mm';
+  $('cN').textContent = d.compartments + ' (' + d.rowCount + '×' + d.colCount + ')';
+  // live slider readouts
+  $('rowCountV').textContent = d.rowCount;
+  $('colCountV').textContent = d.colCount;
+  $('wallV').textContent = fmt(d.w);
+  $('floorV').textContent = fmt(d.f);
+  drawScene();
+  return d;
+}
+
+// ---- STL exports (mm, centred on origin) ----
+function buildStlAscii(name='drawer_tray'){
+  if(!state.cubes) return '';
+  return stlAscii(state.cubes, name);
+}
+function buildStlBinary(){
+  if(!state.cubes) return new Uint8Array(0);
+  return new Uint8Array(stlBinary(state.cubes));
+}
+
+function downloadStl(){
+  if(!state.cubes) return;
+  const ascii = buildStlAscii('drawer_tray');
+  const blob = new Blob([ascii], {type:'application/octet-stream'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'drawer_tray.stl';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function resetToDefaults(){
+  Object.keys(DEFAULTS).forEach(k=>{$(k).value = DEFAULTS[k];});
+  state.yaw = -35; state.pitch = 18; state.zoom = 1.25;
+  render();
+}
+
+// ============================================================
+// Minimal WebGL 3D preview — no external libraries.
+// ============================================================
+const VERT_SRC = `
+attribute vec3 aPos;
+attribute vec3 aNormal;
+uniform mat4 uProj; uniform mat4 uView;
+uniform vec3 uOffset;
+varying vec3 vNormal;
+void main(){
+  vNormal = aNormal;
+  gl_Position = uProj * uView * vec4(aPos + uOffset, 1.0);
+}`;
+
+const FRAG_SRC = `
+precision mediump float;
+varying vec3 vNormal;
+uniform vec3 uColor;
+uniform float uAmbient;
+void main(){
+  vec3 n = normalize(vNormal);
+  float d = clamp(dot(n, normalize(vec3(0.4,0.6,0.7))), 0.0, 1.0);
+  float light = uAmbient + (1.0-uAmbient)*d;
+  gl_FragColor = vec4(uColor * light, 1.0);
+}`;
+
+let prog = null, loc = {}, buffers = null;
+
+function initWebGL(){
+  if(!gl) return;
+  function compile(type, src){
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) return null;
+    return s;
+  }
+  const vs = compile(gl.VERTEX_SHADER, VERT_SRC);
+  const fs = compile(gl.FRAGMENT_SHADER, FRAG_SRC);
+  if(!vs || !fs) return;
+  prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  if(!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+  loc = {
+    aPos: gl.getAttribLocation(prog,'aPos'),
+    aNormal: gl.getAttribLocation(prog,'aNormal'),
+    uProj: gl.getUniformLocation(prog,'uProj'),
+    uView: gl.getUniformLocation(prog,'uView'),
+    uOffset: gl.getUniformLocation(prog,'uOffset'),
+    uColor: gl.getUniformLocation(prog,'uColor'),
+    uAmbient: gl.getUniformLocation(prog,'uAmbient'),
+  };
+  buffers = { pos: gl.createBuffer(), normal: gl.createBuffer() };
+}
+
+// Build cube geometry for the tray, centred on origin, with per-face normals.
+function trayGeometry(cubes){
+  const hx = cxOffset(cubes);
+  const pos = []; const nrm = [];
+  const faces = [
+    {n:[0,0,-1], e:[[1,0,0],[0,0,0],[0,1,0],[1,1,0]]},
+    {n:[0,0, 1], e:[[0,0,1],[1,0,1],[1,1,1],[0,1,1]]},
+    {n:[-1,0, 0], e:[[0,0,0],[0,0,1],[0,1,1],[0,1,0]]},
+    {n:[ 1,0, 0], e:[[1,0,1],[1,0,0],[1,1,0],[1,1,1]]},
+    {n:[ 0,-1,0], e:[[0,0,0],[1,0,0],[1,0,1],[0,0,1]]},
+    {n:[ 0, 1,0], e:[[0,1,1],[1,1,1],[1,1,0],[0,1,0]]},
+  ];
+  for(const c of cubes){
+    const [x0,y0,z0,x1,y1,z1] = c;
+    const bcx=(x0+x1)/2, bcy=(y0+y1)/2, bcz=(z0+z1)/2;
+    const hw_x=(x1-x0)/2, hw_y=(y1-y0)/2, hw_z=(z1-z0)/2;
+    for(const face of faces){
+      const [ax,ay,az]=face.e[0];
+      const vx=[ax-hw_x+bcx, ay-hw_y+bcy, az-hw_z+bcz];
+      const vy0=face.e[1], vy1=face.e[2], vy2=face.e[3];
+      const p1=[vy0[0]-hw_x+bcx, vy0[1]-hw_y+bcy, vy0[2]-hw_z+bcz];
+      const p2=[vy1[0]-hw_x+bcx, vy1[1]-hw_y+bcy, vy1[2]-hw_z+bcz];
+      const p3=[vy2[0]-hw_x+bcx, vy2[1]-hw_y+bcy, vy2[2]-hw_z+bcz];
+      pos.push(...vx,...p1,...p2, ...vx,...p2,...p3);
+      for(let k=0;k<6;k++) nrm.push(...face.n);
+    }
+  }
+  return {pos:new Float32Array(pos), nrm:new Float32Array(nrm)};
+}
+
+function drawScene(){
+  if(!gl || !prog){ drawFallback(); return; }
+  const cubes = state.cubes;
+  if(!cubes){ gl.clearColor(0,0,0,1); gl.clear(gl.COLOR_BUFFER_BIT); return; }
+  const geom = trayGeometry(cubes);
+  gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.pos);
+  gl.bufferData(gl.ARRAY_BUFFER, geom.pos, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(loc.aPos);
+  gl.vertexAttribPointer(loc.aPos, 3, gl.FLOAT, false, 0, 0);
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normal);
+  gl.bufferData(gl.ARRAY_BUFFER, geom.nrm, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(loc.aNormal);
+  gl.vertexAttribPointer(loc.aNormal, 3, gl.FLOAT, false, 0, 0);
+
+  const OX=cubes.reduce((m,c)=>Math.max(m,c[2]),0); // height
+  const size=Math.max(1, Math.max(cubes.reduce((m,c)=>Math.max(m,c[0]-c[3])||1,1),0) ||1);
+  const span = Math.max(cubes.reduce((m,c)=>Math.max(m, Math.hypot(c[0]-c[3],c[1]-c[4],c[2]-c[5])),0),1);
+  const dist = span/ (2*Math.tan((35*Math.PI/180)/2)) / state.zoom;
+
+  const proj = M.perspective(35*Math.PI/180, canvas.width/canvas.height, 0.1, dist*10);
+  const cy=[0,0,0];
+  const up=[0,0,1];
+  const rY=state.yaw*Math.PI/180, rP=state.pitch*Math.PI/180;
+  const eye=[ Math.cos(rP)*Math.cos(rY)*dist, Math.cos(rP)*Math.sin(rY)*dist, Math.sin(rP)*dist ];
+  const view = M.lookAt(eye, cy, up);
+  gl.uniformMatrix4fv(loc.uProj, false, proj);
+  gl.uniformMatrix4fv(loc.uView, false, view);
+  gl.uniform3f(loc.uOffset, 0,0,0);
+  gl.uniform1f(loc.uAmbient, 0.35);
+  gl.uniform3f(loc.uColor, 0.31,0.64,0.98);
+
+  gl.enable(gl.DEPTH_TEST);
+  gl.clearColor(0.047,0.055,0.075,1);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.drawArrays(gl.TRIANGLES, 0, geom.pos.length/3);
+}
+
+function drawFallback(){
+  // 2D top-down schematic drawn with partial-canvas filled rectangles.
+  const ctx = canvas.getContext('2d');
+  if(!ctx) return;
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#0c0e13'; ctx.fillRect(0,0,W,H);
+  if(!state.cubes) return;
+  const minX=Math.min(...state.cubes.map(c=>c[0])), maxX=Math.max(...state.cubes.map(c=>c[0]));
+  const minY=Math.min(...state.cubes.map(c=>c[1])), maxY=Math.max(...state.cubes.map(c=>c[1]));
+  const pad=24; const sc=Math.min((W-pad*2)/(maxX-minX),(H-pad*2)/(maxY-minY));
+  const ox=(W-(maxX-minX)*sc)/2-minX*sc, oy=(H-(maxY-minY)*sc)/2-minY*sc;
+  for(const c of state.cubes){
+    const x=c[0]*sc+ox, y=c[1]*sc+oy, w=(c[3]-c[0])*sc, h=(c[4]-c[1])*sc;
+    ctx.fillStyle='#4da3ff'; ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle='#0c0e13'; ctx.strokeRect(x,y,w,h);
+  }
+}
+
+// ---- interaction: drag to rotate, scroll to zoom ----
+let dragging=false, lx=0, ly=0;
+function onDown(e){ dragging=true; lx=e.clientX; ly=e.clientY; }
+function onMove(e){ if(!dragging) return; state.yaw += (e.clientX-lx)*0.6; state.pitch += (e.clientY-ly)*0.6; state.pitch=Math.max(-80,Math.min(80,state.pitch)); lx=e.clientX; ly=e.clientY; render(); }
+function onUp(){ dragging=false; }
+function onWheel(e){ e.preventDefault(); state.zoom *= e.deltaY<0?1.1:0.9; state.zoom=Math.max(0.3,Math.min(5,state.zoom)); render(); }
+
+function main(){
+  initWebGL();
+  Object.keys(DEFAULTS).forEach(k=>{$(k).value=DEFAULTS[k];});
+  ['outerWidth','outerDepth','outerHeight'].forEach(id=>$(id).addEventListener('input', render));
+  ['rowCount','colCount'].forEach(id=>$(id).addEventListener('input', render));
+  ['wallThickness','floorThickness'].forEach(id=>$(id).addEventListener('input', render));
+  canvas.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  canvas.addEventListener('wheel', onWheel, {passive:false});
+  $('download').addEventListener('click', downloadStl);
+  $('reset').addEventListener('click', resetToDefaults);
+  render();
+}
+
+if (typeof window !== 'undefined') {
+  // expose testable functions on window
+  window.render = render;
+  window.buildStlAscii = buildStlAscii;
+  window.buildStlBinary = buildStlBinary;
+  window.buildCubes = buildCubes;
+  window.compute = compute;
+  window.main = main;
+  // initial paint/state population (main handles wiring + initial render)
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', main);
+  else main();
+  // ensure state.cubes/readouts exist even if main hasn't run yet
+  render();
+}
+</script>\

@@ -1,0 +1,46 @@
+{
+  "method": "Independent final-source VM/DOM/nativeCanvas2D: actual controls/file loading and existing-state collision fixtures. No app algorithm replaced; browser layout/GPU/hit testing remain unverified.",
+  "sha256": "b508dc6ebd655abd4183d1ae3dfb798ee8a18dffd2f7525c4780409b8f41b247",
+  "checks": [
+    {
+      "id": "editor_draw_erase_touch_and_JSON_file_roundtrip",
+      "pass": true,
+      "evidence": {
+        "fileRoundtrip": true,
+        "drawErase": true,
+        "touch": true
+      }
+    },
+    {
+      "id": "keyboard_mouse_touch_paddle",
+      "pass": true,
+      "evidence": {
+        "keyboard": true,
+        "mouse": true,
+        "touch": true
+      }
+    },
+    {
+      "id": "destroying_last_brick_wins",
+      "pass": false,
+      "error": "countBricks counts dead objects, making completion unreachable",
+      "actual": "PLAYING",
+      "expected": "WIN"
+    },
+    {
+      "id": "restart_restores_bricks_and_editor_keeps_layout",
+      "pass": false,
+      "error": "Restart retains the dead grid",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "hovering_does_not_paint_without_press",
+      "pass": false,
+      "error": "mousemove paints editor even when mouseDown=false",
+      "actual": 1,
+      "expected": 0
+    }
+  ],
+  "pass": false
+}

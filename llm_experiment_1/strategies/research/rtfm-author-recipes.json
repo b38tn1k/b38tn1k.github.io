@@ -1,0 +1,59 @@
+{
+  "recordedUTC": "2026-11-18T06:32:29.992922+00:00",
+  "status": "author_guidance_verified_runtime_conformance_pending",
+  "sources": {
+    "ornith": {
+      "url": "https://huggingface.co/ornith-ai/Ornith-1.5-35B-A3B/raw/main/README.md",
+      "snapshot": "research/rtfm-author-sources/ornith-model-card.txt",
+      "sha256": "937d5091742dde0fa0bd14b32fc5b2a8e990d0a89b804b71297b546a7fd7c6d4"
+    },
+    "qwen": {
+      "url": "https://huggingface.co/Qwen/Qwen3.6-35B-A3B/raw/main/README.md",
+      "snapshot": "research/rtfm-author-sources/qwen-model-card.txt",
+      "sha256": "c4ddaa065649ff6352648f64747a16eda31726f3e34add94ce04abb461c77b75"
+    }
+  },
+  "models": {
+    "ornith": {
+      "model": "ornith-1.5:35b-256k",
+      "recipe": "Official general-task sampling; default reasoning enabled",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "outputBudgetBasis": "Common local benchmark cap; not presented as an Ornith-author universal recommendation. Their benchmark-specific larger budgets are separate.",
+      "preserveThinking": "Verify official template handling; no unsupported preservation promise."
+    },
+    "qwen": {
+      "model": "qwen3.6:35b-a3b",
+      "recipe": "Official thinking-mode precise-coding/WebDev sampling",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "presence_penalty": 0.0,
+      "repeat_penalty": 1.0,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "outputBudgetBasis": "Authors recommend32768 for mostqueries;81920 for difficult competition math/programming benchmarks.",
+      "preserveThinking": true,
+      "preserveThinkingBasis": "Official Preserve Thinking section says retaining prior reasoning helps agent scenarios; verify actual roundtrip/rendered history, not only requested flag."
+    }
+  },
+  "conformanceRequired": [
+    "Enable real reasoning and verify separated reasoning content plus valid structured toolcalls for both profiles.",
+    "Inspect actual backend sampler values: OpenAI extra_body fields alone do not establish Ollama applied top_k/min_p/repeat_penalty.",
+    "Verify official chat-template semantics incl tool history, developer/system compatibility and Qwen thinking preservation; record adaptations and rendered prompt tests.",
+    "Verify actual262144context permodel and Pi compaction budget agrees, without unneeded YaRN extension.",
+    "Exercise multi-turn Pi tool use before scored run; no benchmark product code in conformance fixtures.",
+    "Use isolated cohort profiles/aliases if server changes needed; apply only after current local supervision completes."
+  ],
+  "caveats": [
+    "Keep current Q4_K_M weights for local comparison; this does not reproduce authors full-precision benchmark results.",
+    "RTFM tests a bundle of author-informed settings, not the causal effect of reasoning or temperature alone.",
+    "No claim to globally optimal settings; select published coding/general recipe before outputs."
+  ]
+}

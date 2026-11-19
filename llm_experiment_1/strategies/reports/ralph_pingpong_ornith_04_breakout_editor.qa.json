@@ -1,0 +1,47 @@
+{
+  "method": "Exact frozen source with real editor, keyboard, mouse/touch, JSON and restart controls in Node VM/DOM/nativeCanvas. Controlled ball fixtures expose existing functions/state only; no app algorithm replaced. Browser layout/hit testing/GPU/default actions remain unverified.",
+  "sha256": "8dbaec74ed1e016f4d428c564088fc8529a3b86019592dee2f90bc57bc159536",
+  "checks": [
+    {
+      "id": "editor_and_JSON_roundtrip",
+      "pass": true,
+      "evidence": {
+        "roundtrip": true
+      }
+    },
+    {
+      "id": "actual_bricks_render_into_canvas",
+      "pass": false,
+      "error": "paintBrick receives ctx as x, shifting every argument; native canvas receives invalid coordinates",
+      "actual": [
+        10,
+        15,
+        22,
+        255
+      ],
+      "expected": [
+        126,
+        231,
+        135,
+        255
+      ]
+    },
+    {
+      "id": "keyboard_mouse_touch_play_controls",
+      "pass": true,
+      "evidence": {
+        "keyboard": true,
+        "mouse": true,
+        "touch": true
+      }
+    },
+    {
+      "id": "brick_score_and_restart_restore",
+      "pass": false,
+      "error": "Restart uses already destroyed editor grid",
+      "actual": 0,
+      "expected": 1
+    }
+  ],
+  "pass": false
+}

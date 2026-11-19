@@ -1,0 +1,93 @@
+{
+  "method": "Exact-source VM/DOM with deterministic timer and state-only instrumentation; no browser",
+  "sha256": "41c2518cd28d4797a1e39070ce4478ed94c015b9c21bca6b3330c18215d10c3d",
+  "closedScripts": true,
+  "externalResources": [],
+  "startup": "pass",
+  "early": {
+    "phase": "idle",
+    "trial": 0,
+    "results": []
+  },
+  "trials": [
+    {
+      "phase": "result",
+      "trial": 0,
+      "results": [
+        200
+      ]
+    },
+    {
+      "phase": "result",
+      "trial": 1,
+      "results": [
+        200,
+        210
+      ]
+    },
+    {
+      "phase": "result",
+      "trial": 2,
+      "results": [
+        200,
+        210,
+        220
+      ]
+    },
+    {
+      "phase": "result",
+      "trial": 3,
+      "results": [
+        200,
+        210,
+        220,
+        230
+      ]
+    },
+    {
+      "phase": "result",
+      "trial": 4,
+      "results": [
+        200,
+        210,
+        220,
+        230,
+        240
+      ]
+    },
+    {
+      "phase": "result",
+      "trial": 5,
+      "results": [
+        200,
+        210,
+        220,
+        230,
+        240,
+        250
+      ]
+    }
+  ],
+  "summary": [
+    "225 ms",
+    "200 ms",
+    "250 ms"
+  ],
+  "final": {
+    "phase": "result",
+    "trial": 5,
+    "results": [
+      200,
+      210,
+      220,
+      230,
+      240,
+      250
+    ]
+  },
+  "replay": {
+    "phase": "idle",
+    "trial": 0,
+    "results": []
+  }
+}

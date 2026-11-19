@@ -1,0 +1,17 @@
+{
+  "passed": false,
+  "artifactSHA256": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+  "errors": [
+    "Executable acceptance test did not exit successfully",
+    "Acceptance check missing/failed: resize_rectangular",
+    "Acceptance check missing/failed: palette_brush",
+    "Acceptance ledger contains a failed check; every recorded check must pass",
+    "Verifier did not trace loading the actual page and interacting with its controls",
+    "Independent review missing, stale or reports blocking findings"
+  ],
+  "stl": null,
+  "limits": [
+    "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+    "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+  ]
+}

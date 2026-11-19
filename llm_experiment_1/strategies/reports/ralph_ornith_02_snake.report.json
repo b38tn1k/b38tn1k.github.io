@@ -1,0 +1,156 @@
+{
+  "score": 36,
+  "grade": "F provisional - interrupted setup calibration; Snake loses on its first tick",
+  "rubricScores": {
+    "functionality": 15,
+    "artifact_correctness": 10,
+    "usability": 10,
+    "self_verification": 1,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Paused state blocks scheduled movement and Resume clears pause. Restart resets a dead game and score.",
+    "Single-file Snake implementation exists at the interrupted snapshot."
+  ],
+  "defects": [
+    "The self-collision loop starts at index0, which is the newly inserted head. It always sees a collision with itself and loses on the first scheduled tick.",
+    "The supervisor interrupted this in-progress implementation after identifying missing stdout/assertion diagnostic output in the shared reporter. This is an unfinished snapshot, not a completed capability result."
+  ],
+  "verification": [
+    "Two of three independent exact-source scenarios pass; actual Start and timer callback reproduce immediate death. qa/ralph-calibrations.cjs and reports/ralph_ornith_02_snake.qa.json retain the snapshot checks."
+  ],
+  "verificationConcerns": [
+    "Interrupted setup calibration. Source was frozen on supervisor interruption, before a full implementation/review loop. Excluded from comparison means."
+  ],
+  "calibration": true,
+  "humanOrSupervisorSteering": 0,
+  "scopeCompliance": "Pi alone wrote product and tests. Supervisor stopped the cohort for an owned reporter defect; no product-specific repair hints or application edits supplied.",
+  "workflowNotes": "Retained as reporter-v1 setup calibration, excluded from main matrix means. Fresh exact-brief repeat uses corrected reporter-v2.",
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "ralph",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The export isn't set but canvas exists. So the IIFE ran (canvas found) but the export assignment failed. The guard `typeof window !== \"undefined\"` \u2014 in linkedom sandbox, `window` may not be defined as a bare identifier (it's `sandbox.window`, and `sandbox` is the global context, so `window` IS defined). But maybe an error was thrown during `init()` before reaching export \u2014 but canvas exists so init ran render. Actually the export is AFTER init(). If init() succeeded, export should run. Unless `getComputedStyle` or something in render threw. But errors array is empty.\n\nWait \u2014 maybe `window` is a read-only property on the sandbox. In QA sandbox, `sandbox.window = sandbox`. Assigning `window.__snake = {...}` mutates the object; `window` refers to sandbox. That should work unless `window` isn't a free identifier. Let me check: the IIFE runs in vm context where globals include `window` (set in sandbox). Let me add error logging to the export area by writing logs.\n\nLet me instrument by making the export itself write to logs.",
+  "workflowInstructions": "run-ralph.py; research/ralph-setup.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 7.89,
+  "wallMinutes": 7.89,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "supervisor_reporter_calibration",
+  "exitCode": null,
+  "promptWords": 36,
+  "toolCalls": 63,
+  "parentToolCalls": 63,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 21,
+  "modelUsageReported": {
+    "input": 15825,
+    "output": 18528,
+    "cacheRead": 1034365,
+    "totalTokens": 1068718
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 34684,
+  "parentPeakReportedPromptTokens": 34684,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 15825,
+    "output": 18528,
+    "cacheRead": 1034365,
+    "totalTokens": 1068718
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 12830,
+  "sha256": "c7ee50d600ac98d62fc600cce916d71c00ca95e1948b7aecbcdbe9341c277f11",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 2,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 19,
+    "delegations": [],
+    "controller": "External Ralph-style fresh-process implementation/review loop",
+    "gate": {
+      "passed": false,
+      "iterations": 1,
+      "forcedProofEachImplementation": true
+    },
+    "stages": [
+      {
+        "round": 1,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T16:10:42.197835+00:00",
+        "events": "ralph/ornith/02_snake/runtime/01-implement/events.jsonl",
+        "status": "interrupted",
+        "finished": "2026-11-16T16:18:35.560758+00:00",
+        "minutes": 7.89,
+        "reason": "supervisor_reporter_calibration",
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0
+        }
+      }
+    ],
+    "mandatoryProof": true,
+    "readIsolation": true,
+    "forcedProofEachImplementation": true
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 15825,
+      "output": 18528,
+      "cacheRead": 1034365,
+      "totalTokens": 1068718
+    },
+    "qwen": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 7.89,
+    "qwen": 0
+  }
+}

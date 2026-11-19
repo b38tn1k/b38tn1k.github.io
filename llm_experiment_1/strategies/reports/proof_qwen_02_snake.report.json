@@ -1,0 +1,195 @@
+{
+  "score": 63,
+  "grade": "C- provisional - alternate keyboard start works, default Start immediately loses",
+  "rubricScores": {
+    "functionality": 24,
+    "artifact_correctness": 18,
+    "usability": 7,
+    "self_verification": 4,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Starting with ArrowRight permits actual scheduled movement, pause/resume, food growth and increased tick speed from 150 to 145 ms.",
+    "Restart button resets the game; proof activation/completion and protected 37-test pass are recorded."
+  ],
+  "defects": [
+    "Default Start points the head downward into its initial body and loses on the first 150 ms tick.",
+    "R cannot restart after death because the keyboard handler returns immediately when gameOver is true.",
+    "Wall collision checks the old head position, allowing one tick outside the board before detecting the wall.",
+    "The passing tests miss the normal Start path and advertise restart behavior that is blocked after game over."
+  ],
+  "verification": [
+    "Three of six independent scenarios pass. Actual buttons, document key handlers and scheduled intervals reproduce the failures; controlled head/body/food fixtures isolate boundary and growth behavior.",
+    "Independent checks run against final frozen source; report QA SHA must match the artifact before recording."
+  ],
+  "scopeCompliance": "Pi alone wrote application/tests. No observed cross-attempt index reads or supervisor task hints.",
+  "humanOrSupervisorSteering": 0,
+  "verificationConcerns": [
+    "Independent source/runtime checks only: no browser layout, focus/default-action or physical print verification. Scores are provisional single-trial POC assessments."
+  ],
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "proof",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All 37 tests pass now. The root cause was a color threshold bug in the \"renders food on the board\" test, not a canvas/shim issue:\n\n- Color `#ff1744` = RGB(255, 23, **68**)\n- The test checked `b < 60`, but B=68 > 60, so the assertion always failed\n- Fixed both red pixel checks to use `b < 90` instead of `b < 60`",
+  "workflowInstructions": "run-proof.py; research/pi-proof-setup.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 27.54,
+  "wallMinutes": 27.54,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 86,
+  "parentToolCalls": 86,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 9,
+  "modelUsageReported": {
+    "input": 460149,
+    "output": 52732,
+    "cacheRead": 2159182,
+    "totalTokens": 2672063
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 63497,
+  "parentPeakReportedPromptTokens": 63497,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 460149,
+    "output": 52732,
+    "cacheRead": 2159182,
+    "totalTokens": 2672063
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 13649,
+  "sha256": "aa66326c97fa6f7016ace91d5de8c56b6dbbcbfd516f3c28c75065e8003ebf24",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 3,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 18,
+    "delegations": [],
+    "reportedPassWithFailingTAP": {
+      "count": 0,
+      "toolCallIds": [],
+      "limit": "Detects explicit nonzero TAP final counts accompanying the extension PASS marker; not a general test-output parser."
+    },
+    "starts": 1,
+    "ends": 1,
+    "redTransitions": 1,
+    "greenTransitions": 1,
+    "blockedSpecifyingWrites": 0,
+    "finalTests": {
+      "exitCode": 0,
+      "timedOut": false
+    },
+    "shellWarnings": 1,
+    "note": "Transitions demonstrate procedure only, not test quality or application correctness. Independent final-source grading follows.",
+    "controller": "Single Pi RPC context with pinned pi-proof extension; no role chain",
+    "sequence": {
+      "successfulIndexWritesBeforeActivation": 0,
+      "successfulIndexWritesWhileActive": 1,
+      "satisfied": true,
+      "controllerSignalCriteriaMet": true,
+      "note": "A late start/end pair is not proof-first implementation. Layout-only scaffolding exceptions, if any, require explicit assessment notes."
+    },
+    "mechanicalDeadlineNotices": 0
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 8,
+    "completed": 8,
+    "aborted": 0,
+    "events": [
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49212,
+        "estimatedTokensAfter": 23730
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 52107,
+        "estimatedTokensAfter": 23515
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 50074,
+        "estimatedTokensAfter": 23363
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 53915,
+        "estimatedTokensAfter": 27601
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49266,
+        "estimatedTokensAfter": 22319
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 67743,
+        "estimatedTokensAfter": 19597
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 51036,
+        "estimatedTokensAfter": 11314
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49209,
+        "estimatedTokensAfter": 21772
+      }
+    ],
+    "reportedUsage": {
+      "input": 81273,
+      "output": 10757,
+      "cacheRead": 0,
+      "totalTokens": 92030
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "calibration": false
+}

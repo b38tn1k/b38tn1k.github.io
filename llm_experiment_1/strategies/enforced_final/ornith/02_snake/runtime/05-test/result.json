@@ -1,0 +1,12 @@
+{
+  "role": "test",
+  "number": 5,
+  "minutes": 6.1,
+  "reason": "stage_time_limit",
+  "exitCode": -9,
+  "artifactBefore": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+  "artifactAfter": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+  "prompt": "enforced_final/ornith/02_snake/runtime/05-test/prompt.txt",
+  "events": "enforced_final/ornith/02_snake/runtime/05-test/events.jsonl",
+  "stderr": "enforced_final/ornith/02_snake/runtime/05-test/stderr.log"
+}

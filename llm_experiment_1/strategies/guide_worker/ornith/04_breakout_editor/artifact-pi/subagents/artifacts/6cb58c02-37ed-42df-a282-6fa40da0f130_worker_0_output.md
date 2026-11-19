@@ -1,0 +1,1 @@
+The line `sb.window=Math=Math=win;` is still broken. Let me read the current state and fix it directly.

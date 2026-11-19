@@ -1,0 +1,64 @@
+{
+  "method": "Exact-source VM for controls/export, independent analysis of actual STL bytes. WebGL calls are stubbed only to reach control logic: GPU rendering and shader compilation are NOT verified.",
+  "controlStartup": "pass with WebGL stub",
+  "inputValues": {
+    "L": "180",
+    "W": "120",
+    "H": "30",
+    "cols": "3",
+    "rows": "2",
+    "wall": "2.4",
+    "floor": "2"
+  },
+  "defaultParams": {
+    "L": null,
+    "W": null,
+    "H": null,
+    "cols": 3,
+    "rows": 2,
+    "wall": null,
+    "floor": null
+  },
+  "nonFiniteParameterKeys": [
+    "L",
+    "W",
+    "H",
+    "wall",
+    "floor"
+  ],
+  "readouts": {
+    "compSize": "NaN × NaN mm",
+    "insideDepth": "NaN mm",
+    "nComp": "6 cells",
+    "vol": "NaN cm³"
+  },
+  "exportDisabled": true,
+  "rotationStateChanges": true,
+  "actualUIExport": "No Blob produced by normal button activation",
+  "directEngineError": "Cannot read properties of undefined (reading '0')",
+  "customParams": {
+    "L": null,
+    "W": null,
+    "H": null,
+    "cols": 4,
+    "rows": 2,
+    "wall": null,
+    "floor": null
+  },
+  "customExpected": {
+    "dimensions": [
+      150,
+      100,
+      20
+    ],
+    "cell": [
+      35,
+      47
+    ],
+    "insideDepth": 18.4,
+    "materialVolume": 57856.00000000003
+  },
+  "customUIExport": "No new Blob produced",
+  "webglUploadsWithNonFiniteData": 0,
+  "sha256": "a9102be20a6265c7099bfa5680f9d7105aef9fcebb8e94ece0d5e85b4d6a4570"
+}

@@ -1,0 +1,119 @@
+{
+  "method": "Independent exact-source VM/DOM, actual mouse/touch/control handlers, logical RGBA state, native Canvas2D and decoded real PNG bytes. Read-only closure exposure; no algorithms replaced. Native display adapter does not model alpha:false compositing or browser layout/hit testing. Export uses separate normal-alpha canvas and real PNG decoding. Center-preserving resize accepted; no top-left preservation rule invented.",
+  "sha256": "d70a1dce34956b7eb38c0939ac78ea6a7cc02b0924166d116ec3db4d1688a404",
+  "checks": [
+    {
+      "id": "initial_brush_size_matches_one_pixel_label",
+      "pass": false,
+      "error": "Displayed brush1 paints more than one logical pixel",
+      "actual": 9,
+      "expected": 1
+    },
+    {
+      "id": "mouse_touch_palette_and_clear_actual_pixels",
+      "pass": true,
+      "evidence": {
+        "mouse": true,
+        "touch": true,
+        "palette": true,
+        "clear": true
+      }
+    },
+    {
+      "id": "two_stroke_undo_redo_and_new_branch",
+      "pass": false,
+      "error": "Undo second stroke also loses first stroke",
+      "actual": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "eraser_drag_erases_instead_of_repainting",
+      "pass": false,
+      "error": "Eraser drag leaves painted pixel at2,3",
+      "actual": 255,
+      "expected": 0
+    },
+    {
+      "id": "clear_undo_restores_artwork",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  0,\n  0,\n  0,\n  0\n]\n\nshould loosely deep-equal\n\n[\n  255,\n  0,\n  0,\n  255\n]",
+      "actual": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "resize_modal_uses_edited_dimensions",
+      "pass": false,
+      "error": "Resize ignores edited modal dimensions",
+      "actual": [
+        32,
+        32
+      ],
+      "expected": [
+        48,
+        24
+      ]
+    },
+    {
+      "id": "toolbar_resize_preserves_centered_2D_pixels_and_undo_dimensions",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  48,\n  24\n]\n\nshould loosely deep-equal\n\n[\n  32,\n  32\n]",
+      "actual": [
+        48,
+        24
+      ],
+      "expected": [
+        32,
+        32
+      ]
+    },
+    {
+      "id": "shrinking_then_undo_does_not_throw",
+      "pass": false,
+      "error": "offset is out of bounds"
+    },
+    {
+      "id": "decoded_real_PNG_export_dimensions_pixels_transparency_and_download",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          48,
+          24
+        ],
+        "paintedPixel": [
+          0,
+          255,
+          0,
+          255
+        ],
+        "emptyPixel": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "bytes": 120
+      }
+    }
+  ],
+  "pass": false
+}

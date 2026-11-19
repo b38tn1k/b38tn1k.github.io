@@ -1,0 +1,32 @@
+{
+  "method": "Exact final source VM/DOM/nativeCanvas. Case63 uses exact extracted geometry functions, without GPU setup; WebGL rendering is unverified and unavailable context is not graded as app defect. Other checks invoke actual UI/export handlers. No app algorithm repaired.",
+  "sha256": "6f04e7bd4284055f59bece2338b2f0391aa4141ead31f5d7cf8fbc30ddd19117",
+  "checks": [
+    {
+      "id": "default_actual_ui_dimensions",
+      "pass": true,
+      "evidence": {
+        "width": "85.5 mm",
+        "depth": "36 mm",
+        "ready": "ready",
+        "cubes": null
+      }
+    },
+    {
+      "id": "actual_download_has_geometry",
+      "pass": false,
+      "error": "UI shows ready but no STL is downloaded"
+    },
+    {
+      "id": "raw_geometry_divider_positions_match_readout",
+      "pass": false,
+      "error": "Divider shifted from equal clear-spacing readout"
+    },
+    {
+      "id": "binary_writer_uses_real_DataView_API",
+      "pass": false,
+      "error": "dv.setFloatLE is not a function"
+    }
+  ],
+  "pass": false
+}

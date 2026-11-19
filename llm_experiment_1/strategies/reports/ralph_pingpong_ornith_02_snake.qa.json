@@ -1,0 +1,44 @@
+{
+  "method": "Exact final source in Node VM/DOM/native Canvas2D. Closure instrumentation exposes existing state/functions only for controlled fixtures; no application algorithm replaced. Actual input handlers used for interaction checks. Not browser layout, GPU or default actions.",
+  "sha256": "249457c44b3848e8342bbd049036c88d1ed237c27c4cce30d61bca6ee361bfbe",
+  "checks": [
+    {
+      "id": "start_move_keyboard_pause_resume",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pauseResume": true
+      }
+    },
+    {
+      "id": "growth_scoring_and_actual_speed_increase",
+      "pass": false,
+      "error": "HUD level rises, but scheduled interval stays160ms",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "wall_collision_and_restart",
+      "pass": true,
+      "evidence": {
+        "wall": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "body_collision_ends_game",
+      "pass": true,
+      "evidence": {
+        "selfCollision": true
+      }
+    },
+    {
+      "id": "departing_tail_legal",
+      "pass": true,
+      "evidence": {
+        "legal": true
+      }
+    }
+  ],
+  "pass": false
+}

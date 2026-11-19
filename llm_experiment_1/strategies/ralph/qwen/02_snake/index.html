@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake Game</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+    color: #eee;
+  }
+  #game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  #hud {
+    display: flex;
+    justify-content: space-between;
+    width: 602px;
+    font-size: 18px;
+    padding: 0 4px;
+  }
+  #hud span { color: #0f0; }
+  canvas {
+    border: 2px solid #333;
+    background: #16213e;
+    display: block;
+  }
+  #overlay {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    pointer-events: none;
+  }
+  #instructions {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #aaa;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div id="game-wrapper">
+  <div id="hud">
+    <div>Score: <span id="score">0</span></div>
+    <div>High Score: <span id="high-score">0</span></div>
+    <div>Level: <span id="level">1</span></div>
+  </div>
+  <div style="position:relative;">
+    <canvas id="gameCanvas" width="602" height="602"></canvas>
+    <div id="overlay"></div>
+  </div>
+  <div id="instructions">
+    Arrow keys / WASD — Move &nbsp;|&nbsp; P — Pause &nbsp;|&nbsp; R — Restart &nbsp;|&nbsp; Space — Start
+  </div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  const canvas = document.getElementById("gameCanvas");
+  const ctx    = canvas.getContext("2d");
+  const scoreEl     = document.getElementById("score");
+  const highScoreEl = document.getElementById("high-score");
+  const levelEl     = document.getElementById("level");
+  const overlay     = document.getElementById("overlay");
+
+  /* ── constants ─────────────────────────────── */
+  const GRID   = 30;          // cells across/down
+  const CELL   = canvas.width / GRID;   // ~20px
+  const INITIAL_SNAKE = [{x:15,y:15},{x:14,y:15},{x:13,y:15}];
+  const BASE_INTERVAL  = 180;   // ms per tick at level 1
+  const SPEED_STEP     = 15;    // ms faster per level
+  const MIN_INTERVAL   = 60;    // fastest possible
+
+  /* ── game state ──────────────────────────── */
+  let snake, direction, nextDirection, food;
+  let score, highScore, level;
+  let gameState;   // "ready" | "playing" | "paused" | "dead"
+  let intervalId;  // ms per tick (gets shorter)
+  let gameLoop;
+
+  highScore = parseInt(localStorage.getItem("snakeHigh") || "0", 10);
+  highScoreEl.textContent = highScore;
+
+  /* ── helpers ─────────────────────────────── */
+  function intervalForLevel(lv) {
+    return Math.max(MIN_INTERVAL, BASE_INTERVAL - (lv - 1) * SPEED_STEP);
+  }
+
+  function randomFood() {
+    const occupied = new Set(snake.map(s => s.x + "," + s.y));
+    if (occupied.size >= GRID * GRID) return { x: 0, y: 0 }; // grid full — should not happen
+    let pos;
+    let attempts = 0;
+    const maxAttempts = GRID * GRID;
+    do {
+      pos = { x: Math.floor(Math.random() * GRID), y: Math.floor(Math.random() * GRID) };
+      attempts++;
+    } while (occupied.has(pos.x + "," + pos.y) && attempts < maxAttempts);
+    return pos;
+  }
+
+  function updateOverlay(msg) {
+    if (msg == null) { overlay.textContent = ""; return; }
+    overlay.style.width   = canvas.width + "px";
+    overlay.style.height  = canvas.height + "px";
+    overlay.innerHTML     = msg;
+    overlay.style.background = "rgba(0,0,0,.55)";
+  }
+
+  /* ── init / restart ─────────────────────── */
+  function initGame() {
+    snake   = INITIAL_SNAKE.map(s => ({...s}));
+    direction      = {x:1, y:0};
+    nextDirection  = {x:1, y:0};
+    food           = randomFood();
+    score          = 0;
+    level          = 1;
+    intervalId     = BASE_INTERVAL;
+    gameState      = "ready";
+    scoreEl.textContent   = score;
+    levelEl.textContent   = level;
+    updateOverlay(
+      "<div>🐍 Snake</div>" +
+      "<br><span style='font-size:20px;color:#aaa;'>Press Space to start</span>"
+    );
+  }
+
+  /* ── tick (game logic) ──────────────────── */
+  function tick() {
+    direction = nextDirection;
+    const head = snake[0];
+    const newHead = { x: head.x + direction.x, y: head.y + direction.y };
+
+    // wall collision
+    if (newHead.x < 0 || newHead.x >= GRID || newHead.y < 0 || newHead.y >= GRID) {
+      die(); return;
+    }
+
+    // self collision
+    for (let i = 0; i < snake.length; i++) {
+      if (snake[i].x === newHead.x && snake[i].y === newHead.y) {
+        die(); return;
+      }
+    }
+
+    snake.unshift(newHead);
+
+    // eat food?
+    if (newHead.x === food.x && newHead.y === food.y) {
+      score += 10 * level;
+      scoreEl.textContent = score;
+      // level up every 5 foods (score threshold approach)
+      const expectedLevel = Math.floor(score / 50) + 1;
+      if (expectedLevel > level) {
+        level = expectedLevel;
+        levelEl.textContent = level;
+        // speed up on level change
+        const newInterval = intervalForLevel(level);
+        clearInterval(gameLoop);
+        gameLoop = setInterval(tick, newInterval);
+      }
+      food = randomFood();
+    } else {
+      snake.pop();  // remove tail when not eating
+    }
+
+    draw();
+  }
+
+  function die() {
+    gameState = "dead";
+    clearInterval(gameLoop);
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem("snakeHigh", String(highScore));
+      highScoreEl.textContent = highScore;
+    }
+    updateOverlay(
+      "<div style='color:#f44;'>Game Over!</div>" +
+      "<br>Score: " + score +
+      "<br><span style='font-size:20px;color:#aaa;'>Press R to restart</span>"
+    );
+  }
+
+  /* ── draw ────────────────────────────────── */
+  function draw() {
+    // background
+    ctx.fillStyle = "#16213e";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // grid (subtle)
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    for (let i = 0; i <= GRID; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * CELL, 0); ctx.lineTo(i * CELL, canvas.height);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, i * CELL); ctx.lineTo(canvas.width, i * CELL);
+      ctx.stroke();
+    }
+
+    // food (red circle)
+    ctx.fillStyle = "#e74c3c";
+    const fx = food.x * CELL + CELL / 2;
+    const fy = food.y * CELL + CELL / 2;
+    ctx.beginPath();
+    ctx.arc(fx, fy, CELL / 2 - 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // snake body with gradient
+    for (let i = 0; i < snake.length; i++) {
+      const s = snake[i];
+      if (i === 0) {
+        ctx.fillStyle = "#2ecc71";   // head — bright green
+      } else {
+        const t = i / snake.length;
+        const g = Math.round(180 + 75 * (1 - t));
+        ctx.fillStyle = "rgb(30," + g + ",60)";
+      }
+      ctx.fillRect(s.x * CELL + 1, s.y * CELL + 1, CELL - 2, CELL - 2);
+    }
+  }
+
+  /* ── input (keyboard controls) ──────────── */
+  document.addEventListener("keydown", function(e) {
+    var key = e.key;
+
+    // prevent default for all game-critical keys (scrolling, focus jumps, etc.)
+    if (/[wWsSaAdDpPrR ]/i.test(key) || /Arrow[UDLR]/.test(key)) {
+      e.preventDefault();
+    }
+
+    switch (key) {
+      case "ArrowUp":    case "w": case "W":
+        if (direction.y !== 1)  nextDirection = {x:0, y:-1};
+        break;
+      case "ArrowDown":  case "s": case "S":
+        if (direction.y !== -1) nextDirection = {x:0, y:1};
+        break;
+      case "ArrowLeft":  case "a": case "A":
+        if (direction.x !== 1)  nextDirection = {x:-1, y:0};
+        break;
+      case "ArrowRight": case "d": case "D":
+        if (direction.x !== -1) nextDirection = {x:1, y:0};
+        break;
+      case " ":
+        // Space: start game or toggle pause
+        if (gameState === "ready")   startGame();
+        else if (gameState === "dead") initGame();
+        else if (gameState === "playing" || gameState === "paused") togglePause();
+        break;
+      case "p": case "P":
+        // P: pause / resume
+        if (gameState === "playing" || gameState === "paused") togglePause();
+        break;
+      case "r": case "R":
+        // R: restart
+        initGame();
+        break;
+    }
+  });
+
+  function startGame() {
+    gameState = "playing";
+    updateOverlay(null);
+    draw();
+    gameLoop = setInterval(tick, intervalId);
+  }
+
+  function togglePause() {
+    if (gameState === "playing") {
+      // Pause
+      gameState = "paused";
+      clearInterval(gameLoop);
+      updateOverlay(
+        "<div style='color:#ff0;'>⏸ Paused</div>" +
+        "<br><span style='font-size:20px;color:#aaa;'>Press P or Space to resume</span>"
+      );
+    } else if (gameState === "paused") {
+      // Resume
+      gameState = "playing";
+      updateOverlay(null);
+      draw();
+      gameLoop = setInterval(tick, intervalId);
+    }
+  }
+
+  /* ── boot ────────────────────────────────── */
+  initGame();
+
+})();
+</script>
+</body>
+</html>

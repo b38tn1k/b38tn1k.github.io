@@ -1,0 +1,53 @@
+{
+  "method": "Independent exact-source Node VM/DOM and native Canvas2D checks of actual controls/timers/download bytes. Explicit fixtures observe private game state without replacing algorithms. No browser layout, GPU, focus/default action or physical print verification.",
+  "sha256": "aa66326c97fa6f7016ace91d5de8c56b6dbbcbfd516f3c28c75065e8003ebf24",
+  "checks": [
+    {
+      "id": "normal_start_survives_first_tick",
+      "pass": false,
+      "error": "Default downward movement immediately collides with initial body",
+      "actual": true,
+      "expected": false
+    },
+    {
+      "id": "arrow_start_movement_and_pause_resume",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pause": true,
+        "resume": true
+      }
+    },
+    {
+      "id": "food_growth_and_scheduled_speed",
+      "pass": true,
+      "evidence": {
+        "length": 4,
+        "score": 1,
+        "tickRate": 145
+      }
+    },
+    {
+      "id": "death_restart_keyboard",
+      "pass": false,
+      "error": "Game-over early return prevents advertised R restart",
+      "actual": true,
+      "expected": false
+    },
+    {
+      "id": "button_restart",
+      "pass": true,
+      "evidence": {
+        "reset": true
+      }
+    },
+    {
+      "id": "wall_collision_at_boundary",
+      "pass": false,
+      "error": "Head moves outside the board for one tick before wall collision",
+      "actual": false,
+      "expected": true
+    }
+  ],
+  "pass": false
+}

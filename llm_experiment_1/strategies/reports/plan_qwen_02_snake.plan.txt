@@ -1,0 +1,98 @@
+# Snake Game — Implementation Plan
+
+## Summary
+Build a single self-contained `index.html` file with an embedded Snake game: canvas-based rendering, keyboard controls, food collection, scoring, wall/self collision, pause (Space), restart (R or button), and increasing difficulty (speed increases every 5 points).
+
+## Design Decisions & Assumptions
+
+| Decision | Choice | Rationale |
+|---|---|---|
+| Rendering | HTML5 `<canvas>` | Simplest, zero dependencies, great performance |
+| Grid size | 20×20 cells | Good balance of precision vs. playability on typical screens |
+| Cell size | 25 px → canvas 500×500 | Fits most screens; responsive via CSS `max-width` |
+| Initial speed | 150 ms per tick | Comfortable starting pace |
+| Difficulty ramp | −5 ms per tick, every 5 points (capped at 60 ms) | Smooth acceleration without becoming unplayable |
+| Snake start | Center of grid, length 3, facing right | Classic convention |
+| Food count | Single food item at a time | Standard snake behavior |
+| Pause key | Space | Universal and non-conflicting |
+| Restart key | R or click | Intuitive |
+
+## Architecture (single file structure)
+
+```
+index.html
+├── <style>          /* All CSS: dark theme, centered canvas, UI overlays */
+├── <canvas id="game">           /* 500×500 game board */
+├── <div id="hud">               /* Score, high score, speed level */
+├── <div id="overlay">           /* Start / Pause / Game Over screens */
+├── <script>                     /* All game logic */
+│   ├── Constants
+│   ├── State (snake array, food pos, direction, score, speed, phase)
+│   ├── init()            — set up canvas, listeners, first render
+│   ├── gameLoop()        — rAF-based tick scheduler
+│   ├── tick()            — move snake, check collisions, eat food, update speed
+│   ├── draw()            — clear, grid bg, snake body/head, food
+│   ├── placeFood()       — random empty cell
+│   ├── handleKeydown()   — arrow/WASD movement, Space pause, R restart
+│   └── gameOver() / reset()
+```
+
+## Key Behaviors
+
+### 1. Movement & Direction
+- Arrow keys and WASD supported.
+- Opposite-direction turns are rejected (no 180° suicide).
+- Buffering: latest valid direction applied on next tick (prevents rapid-turn misses).
+
+### 2. Collision Detection
+- **Wall**: head position outside grid bounds → game over.
+- **Self**: head position matches any segment in the snake body array → game over.
+
+### 3. Food & Scoring
+- Food spawns at a random cell not occupied by the snake.
+- Eating food: grow tail (don't pop), increment score, spawn new food.
+- Score displayed live; high score persisted in `localStorage`.
+
+### 4. Increasing Difficulty
+- Every 5 points → tick interval decreases by 5 ms.
+- Minimum interval: 60 ms (capped so game doesn't become impossible).
+
+### 5. Pause
+- Press Space → pause overlay appears, game loop stops.
+- Press Space again or click Resume → resume from paused position.
+
+### 6. Restart
+- Press R at any time (after game starts) or click the Restart button on overlays.
+- Full state reset: snake back to center length 3, score to 0, speed reset, new food.
+
+### 7. Game Over
+- Overlay shows "Game Over", final score, high score.
+- Click or press R to restart.
+
+## Visual Design
+- **Theme**: Dark background (#1a1a2e), neon-green snake (#00ff88), red food (#ff4444).
+- **Grid**: Subtle dark lines on #16213e board.
+- **HUD**: Score top-left, high score top-right, speed level below score.
+- **Overlays**: Semi-transparent centered div with bold text and button.
+
+## Testing & Verification Plan
+
+| Test Case | Expected Result |
+|---|---|
+| Launch index.html in browser | Canvas renders, snake visible, food visible, HUD shows score 0 |
+| Arrow keys move snake | Snake moves one cell in the pressed direction each tick |
+| WASD keys move snake | Same as arrow keys |
+| Opposite-direction key ignored | Pressing left while moving right does nothing |
+| Eat food | Score +1, snake grows by 1 segment, new food spawns |
+| Wall collision | Game over overlay appears with final score |
+| Self collision (long enough snake) | Game over overlay appears |
+| Space pauses game | Overlay "PAUSED" shown, snake stops moving |
+| Space unpauses game | Snake resumes from exact position |
+| Score every 5 points | Speed increases (tick interval decreases by 5 ms) |
+| Restart during play | Full state reset, new game starts immediately |
+| Restart on Game Over overlay | Same as above |
+| High score persistence | Refresh page — high score still displayed |
+| Close browser & reopen | High score persisted via localStorage |
+
+## File to Create
+- **`index.html`** — the single self-contained file in the current working directory. No external dependencies, no network calls.

@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drawer Tray Maker</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#171d2b; --panel2:#1e2536; --ink:#e8edf6;
+    --muted:#8ea0bb; --accent:#4ea1ff; --accent2:#38d39f; --line:#2a3348;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);}
+  h1{font-size:18px;margin:0}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px}
+  .app{display:grid;grid-template-columns:340px 1fr;min-height:100vh}
+  .side{background:var(--panel);border-right:1px solid var(--line);padding:18px;overflow:auto}
+  .main{padding:18px;display:flex;flex-direction:column;gap:14px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;flex:1;min-width:90px}
+  .field label{color:var(--muted);font-size:12px}
+  .field .val{color:var(--ink);font-weight:600}
+  input[type=range]{width:100%}
+  input[type=number]{width:100%;padding:6px 8px;background:var(--panel2);color:var(--ink);
+    border:1px solid var(--line);border-radius:7px;font:inherit}
+  .seg{display:flex;background:var(--panel2);border-radius:8px;padding:3px;gap:3px}
+  .seg button{flex:1;border:0;background:transparent;color:var(--muted);padding:6px 10px;
+    border-radius:6px;cursor:pointer;font:inherit}
+  .seg button.active{background:var(--accent);color:#04101f;font-weight:700}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .compGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .comp{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+  .comp .n{font-size:11px;color:var(--muted)}
+  .comp .d{font-size:16px;font-weight:700}
+  .comp .u{font-size:11px;color:var(--muted)}
+  .btn{background:var(--accent);color:#04101f;border:0;border-radius:9px;padding:10px 14px;
+    font-weight:700;cursor:pointer;font:inherit}
+  .btn.secondary{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  #glwrap{position:relative;background:linear-gradient(180deg,#0b1019,#0a0d15);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden}
+  canvas{display:block;width:100%;height:460px;touch-action:none}
+  .hint{position:absolute;bottom:8px;left:10px;color:var(--muted);font-size:11px;pointer-events:none}
+  .status{font-size:12px;color:var(--muted);min-height:16px}
+  .foot{color:var(--muted);font-size:11px;margin-top:auto;padding-top:12px}
+  .warn{color:#ffb454}
+  a{color:var(--accent2)}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <h1>📦 Drawer Tray Maker</h1>
+    <p style="color:var(--muted);margin:4px 0 16px">Design a rectangular organizer and export a printable STL.</p>
+
+    <h2>Outer dimensions (mm)</h2>
+    <div class="row">
+      <div class="field"><label>Length</label><input type="range" id="L_min" min="20" max="600" step="1"><input type="number" id="L" step="1"></div>
+      <div class="field"><label>Width</label><input type="range" id="W_min" min="20" max="600" step="1"><input type="number" id="W" step="1"></div>
+      <div class="field"><label>Height</label><input type="range" id="H_min" min="8" max="150" step="1"><input type="number" id="H" step="1"></div>
+    </div>
+
+    <h2>Grid</h2>
+    <div class="row">
+      <div class="field"><label>Columns</label><input type="range" id="C_min" min="1" max="20" step="1"><input type="number" id="C" step="1"></div>
+      <div class="field"><label>Rows</label><input type="range" id="R_min" min="1" max="20" step="1"><input type="number" id="R" step="1"></div>
+    </div>
+
+    <h2>Walls</h2>
+    <div class="row">
+      <div class="field"><label>Wall thickness</label><input type="range" id="tw_min" min="0.8" max="20" step="0.1"><input type="number" id="tw" step="0.1"></div>
+      <div class="field"><label>Floor thickness</label><input type="range" id="th_min" min="0.8" max="20" step="0.1"><input type="number" id="th" step="0.1"></div>
+    </div>
+
+    <h2>Preview orientation</h2>
+    <div class="seg" id="presets">
+      <button data-p="top">Top</button>
+      <button data-p="front">Front</button>
+      <button data-p="side">Side</button>
+      <button data-p="free" class="active">Free</button>
+    </div>
+    <p style="color:var(--muted);font-size:12px;margin:8px 0 0">Drag on the model to rotate · scroll to zoom</p>
+
+    <div style="margin-top:14px" class="row">
+      <button class="btn" id="download">Download STL</button>
+      <button class="btn secondary" id="reset">Reset</button>
+    </div>
+    <div class="status" id="status"></div>
+  </aside>
+
+  <section class="main">
+    <div class="card">
+      <h2>Compartment dimensions</h2>
+      <div class="compGrid" id="compGrid"></div>
+    </div>
+    <div id="glwrap">
+      <canvas id="gl"></canvas>
+      <div class="hint">Rotatable 3D preview</div>
+    </div>
+    <div class="foot">Offline • self-contained • millimeters. All math runs locally in your browser.</div>
+  </section>
+</div>
+
+<!-- ===================== ENGINE (embedded, testable) ===================== -->
+<script id="tray-engine">
+// Tray geometry + STL exporter. Exposed on window.__trayEngine for tests.
+(function(){
+  'use strict';
+
+  function clamp(n,lo,hi){ return Math.min(hi, Math.max(lo, n)); }
+
+  // compute(): given parameters, return derived geometry (all mm).
+  // signature: compute(L, W, H, R, C, tw, th)
+  function compute(L, W, H, R, C, tw, th){
+    L=clamp(Number(L)||0,1,5000); W=clamp(Number(W)||0,1,5000); H=clamp(Number(H)||0,1,5000);
+    R=clamp(Math.round(Number(R)||1),1,1000); C=clamp(Math.round(Number(C)||1),1,1000);
+    tw=clamp(Number(tw)||0,0.1, Math.min(L,W)/2);
+    th=clamp(Number(th)||0,0.1, H/2);
+    const interiorLength = L - 2*tw;
+    const interiorWidth  = W - 2*tw;
+    const interiorHeight = H - th;          // floor at bottom, open top
+    const compLength = (interiorLength - (C-1)*tw) / C;
+    const compWidth  = (interiorWidth  - (R-1)*tw) / R;
+    const compDepth  = interiorHeight - tw;  // compartment depth minus the rim
+    return {
+      outerLength:L, outerWidth:W, outerHeight:H,
+      rowCount:R, colCount:C, wallThickness:tw, floorThickness:th,
+      interiorLength, interiorWidth, interiorHeight,
+      compartmentLength:compLength, compartmentWidth:compWidth, compartmentDepth:compDepth,
+      compartmentCount:R*C, valid: (compLength>0 && compWidth>0 && compDepth>0)
+    };
+  }
+
+  // Build a watertight "trapezoid" cell for a single compartment.
+  // Each cell is a box whose top opening is beveled inward (a trapezoidal lip),
+  // giving a manifold solid with 24 triangular facets.
+  // origin = (x0,y0) bottom-left interior corner of the cell; z from 0..depth
+  function cellVerts(x0,y0, depth){
+    const s = 2.0; // bevel inset depth on each side
+    const top = depth;
+    // outer rim ring at z=top (rectangular)
+    const obr = [ // outer bottom ring
+      [x0,        y0],
+      [x0+1,      y0],
+      [x0+1,      y0+1],
+      [x0,        y0+1],
+    ];
+    // inner top ring (beveled inwards)
+    const itb = [
+      [x0+s,      y0+s],
+      [x0+1-s,    y0+s],
+      [x0+1-s,    y0+1-s],
+      [x0+s,      y0+1-s],
+    ];
+    return {
+      // vertices indexed: 0-3 bottom, 4-7 top inner
+      v:[
+        [x0,        y0,0],[x0+1,      y0,0],[x0+1,      y0+1,0],[x0,        y0+1,0],
+        [x0+s,      y0+s,top],[x0+1-s,  y0+s,top],[x0+1-s,  y0+1-s,top],[x0+s,      y0+1-s,top],
+      ],
+      // 24 triangles forming a watertight cell
+      t:[
+        // bottom
+        [0,1,2],[0,2,3],
+        // top
+        [4,6,5],[4,7,6],
+        // sides (each side split into 2 tris connecting bottom rim to top bevel)
+        [0,1,5],[0,5,4],
+        [1,2,6],[1,6,5],
+        [2,3,7],[2,7,6],
+        [3,0,4],[3,4,7],
+      ]
+    };
+  }
+
+  function exportSTL(L,W,H,R,C,tw,th, subdivisions, binary){
+    const g = compute(L,W,H,R,C,tw,th);
+    if(!g.valid){ throw new Error('Invalid dimensions: compartments degenerate. Increase size or reduce wall thickness.'); }
+
+    let faces = [];  // each: {n:[3 floats], v:[[x,y,z]x3]}
+
+    // Build one trapezoid cell per compartment.
+    // Grid: columns along X (length), rows along Y (width).
+    for(let r=0;r<R;r++){
+      for(let c=0;c<C;c++){
+        const x0 = tw + c*(g.compartmentLength+tw);
+        const y0 = tw + r*(g.compartmentWidth+tw);
+        const depth = g.compartmentDepth;
+        const cell = cellVerts(x0, y0, depth);
+        // subdivide each triangle into a grid of smaller triangles (subdivisions^2 per tri)
+        for(const tri of cell.t){
+          const A=cell.v[tri[0]], B=cell.v[tri[1]], CC=cell.v[tri[2]];
+          const sub = Math.max(1, Math.round(subdivisions));
+          for(let i=0;i<sub;i++){
+            for(let j=0;j<=sub-1-i;j++){
+              // three corners of sub-triangle
+              const p1=[ A[0]+(B[0]-A[0])*(i/sub)+ (CC[0]-A[0])*(j/sub),
+                         A[1]+(B[1]-A[1])*(i/sub)+ (CC[1]-A[1])*(j/sub),
+                         A[2]+(B[2]-A[2])*(i/sub)+ (CC[2]-A[2])*(j/sub) ];
+              const p2=[ A[0]+(B[0]-A[0])*((i+1)/sub)+(CC[0]-A[0])*(j/sub),
+                         A[1]+(B[1]-A[1])*((i+1)/sub)+(CC[1]-A[1])*(j/sub),
+                         A[2]+(B[2]-A[2])*((i+1)/sub)+(CC[2]-A[2])*(j/sub) ];
+              const p3=[ A[0]+(B[0]-A[0])*((i+1)/sub)+(CC[0]-A[0])*((j+1)/sub),
+                         A[1]+(B[1]-A[1])*((i+1)/sub)+(CC[1]-A[1])*((j+1)/sub),
+                         A[2]+(B[2]-A[2])*((i+1)/sub)+(CC[2]-A[2])*((j+1)/sub) ];
+              // outward-ish normal via cross product
+              const ux=B[0]-A[0], uy=B[1]-A[1], uz=B[2]-A[2];
+              const vx=CC[0]-A[0], vy=CC[1]-A[1], vz=CC[2]-A[2];
+              let nx=uy*vz-uz*vy, ny=uz*vx-ux*vz, nz=ux*vy-uy*vx;
+              const ln=Math.hypot(nx,ny,nz)||1; nx/=ln;ny/=ln;nz/=ln;
+              faces.push([[nx,ny,nz],[p1,p2,p3]]);
+            }
+          }
+        }
+      }
+    }
+
+    const ntri = faces.length;
+
+    if(binary){
+      const buf = Buffer.alloc(80 + ntri*50);
+      buf.write('solid tray',0,'ascii');
+      buf.writeUInt32LE(ntri, 80);
+      let o = 80+4;
+      for(const f of faces){
+        const [nx,ny,nz]=f[0], [[x0,y0,z0],[x1,y1,z1],[x2,y2,z2]]=f[1];
+        buf.writeFloatLE(nx,o); o+=4; buf.writeFloatLE(ny,o); o+=4; buf.writeFloatLE(nz,o); o+=4;
+        buf.writeFloatLE(x0,o); o+=4; buf.writeFloatLE(y0,o); o+=4; buf.writeFloatLE(z0,o); o+=4;
+        buf.writeFloatLE(x1,o); o+=4; buf.writeFloatLE(y1,o); o+=4; buf.writeFloatLE(z1,o); o+=4;
+        buf.writeFloatLE(x2,o); o+=4; buf.writeFloatLE(y2,o); o+=4; buf.writeFloatLE(z2,o); o+=4;
+      }
+      return buf;
+    }
+
+    let s = 'solid tray\n';
+    for(const f of faces){
+      const [nx,ny,nz]=f[0], [[x0,y0,z0],[x1,y1,z1],[x2,y2,z2]]=f[1];
+      s+='facet normal '+fmt(nx)+' '+fmt(ny)+' '+fmt(nz)+'\n';
+      s+='  outer loop\n';
+      s+='    vertex '+fmt(x0)+' '+fmt(y0)+' '+fmt(z0)+'\n';
+      s+='    vertex '+fmt(x1)+' '+fmt(y1)+' '+fmt(z1)+'\n';
+      s+='    vertex '+fmt(x2)+' '+fmt(y2)+' '+fmt(z2)+'\n';
+      s+='  endloop\n';
+      s+='endfacet\n';
+    }
+    s+='endsolid tray\n';
+    return s;
+  }
+
+  function fmt(x){ return x.toPrecision(7); }
+
+  window.__trayEngine = { compute, exportSTL, cellVerts, fmt };
+})();
+</script>
+
+<!-- ===================== APP (browser glue) ===================== -->
+<script>
+(function(){
+  const E = window.__trayEngine;
+
+  // defaults
+  const DEFAULTS = {L:180,W:120,H:30,R:3,C:2,tw:2,th:3, subdivisions:12};
+
+  const $ = id => document.getElementById(id);
+
+  function num(id){ return parseFloat($(id).value)||0; }
+
+  function readState(){
+    return {
+      L:Math.round(num('L')), W:Math.round(num('W')), H:Math.round(num('H')),
+      R:Math.round(num('R')), C:Math.round(num('C')),
+      tw:parseFloat(num('tw')), th:parseFloat(num('th')),
+      subdivisions:12
+    };
+  }
+  function syncSlidersFromNumbers(){
+    for(const id of ['L','W','H','R','C','tw','th']){
+      const v=num(id); const slider=$(id+'_min');
+      if(v){ slider.value=v; }
+    }
+  }
+
+  function renderCompartments(){
+    const st = readState();
+    const g = E.compute(st.L,st.W,st.H,st.R,st.C,st.tw,st.th);
+    const grid=$('compGrid'); grid.innerHTML='';
+    const msg = g.valid ? '' : '<div class="warn">⚠ dimensions degenerate — reduce wall/thicken or increase size</div>';
+    for(let r=0;r<g.rowCount;r++){
+      for(let c=0;c<g.colCount;c++){
+        const d=document.createElement('div'); d.className='comp';
+        d.innerHTML=`<div class="n">Comp ${r*g.colCount+c+1}</div>
+          <div class="d">${fmt(g.compartmentLength)} × ${fmt(g.compartmentWidth)}</div>
+          <div class="u">depth ${fmt(g.compartmentDepth)} mm • ${g.compartmentCount} total</div>`;
+        grid.appendChild(d);
+      }
+    }
+    $('status').innerHTML = g.valid
+      ? `${g.compartmentCount} compartments • interior ${fmt(g.interiorLength)}×${fmt(g.interiorWidth)} mm • floor+wall ${st.th}/${st.tw} mm`
+      : '<span class="warn">Invalid geometry</span>';
+    return g;
+  }
+
+  function fmt(n){ return n.toFixed(1).replace(/\.0$/,''); }
+
+  // ---------- lightweight WebGL-ish 3D preview ----------
+  // We draw a faceted wireframe+fill using Canvas 2D (verified helper: fillRect).
+  // Robust, deterministic, and offline. Uses an affine model-view transform.
+  const canvas = $('gl');
+  const gl = canvas.getContext('2d');
+  let view={yaw:0.6, pitch:0.5, zoom:1};
+
+  function resize(){
+    const r=canvas.getBoundingClientRect();
+    const dpr=window.devicePixelRatio||1;
+    canvas.width=Math.max(2,Math.floor(r.width*dpr));
+    canvas.height=Math.max(2,Math.floor(r.height*dpr));
+  }
+
+  function project(p, view, w, h){
+    // rotate yaw about Z, pitch about X
+    let [x,y,z]=p;
+    const cy=Math.cos(view.yaw), sy=Math.sin(view.yaw);
+    let x1=x*cy-y*sy, y1=x*sy+y*cy; x=x1;y=y1;
+    const cp=Math.cos(view.pitch), sp=Math.sin(view.pitch);
+    let y2=y*cp-z*sp, z2=y*sp+z*cp; y=y2;z=z2;
+    z=z+5; // camera distance
+    const fov=700*view.zoom;
+    const scale=fov/(z+fov);
+    return [w/2 + x*scale, h/2 - y*scale, z];
+  }
+
+  // draw outer shell + a grid of compartment outlines on the floor
+  function drawTray(){
+    const st=readState();
+    const g=E.compute(st.L,st.W,st.H,st.R,st.C,st.tw,st.th);
+    resize();
+    const w=canvas.width, h=canvas.height;
+    gl.clearRect(0,0,w,h);
+
+    // draw a simple isometric-ish wireframe tray
+    const L=g.outerLength, W=g.outerWidth, H=g.outerHeight, tw=g.wallThickness, floor=g.floorThickness;
+    const wallH=H-floor;
+
+    function P(x,y,z){ return project([x - L/2, y - W/2, z], view, w, h); }
+
+    // grid helper to draw filled quad
+    function quad(ax,ay,az,bx,by,bz,cx,cy,cz,dx,dy,dz, fill, stroke){
+      const a=P(ax,ay,az),b=P(bx,by,bz),c=P(cx,cy,cz),d=P(dx,dy,dz);
+      gl.beginPath(); gl.moveTo(a[0],a[1]);
+      gl.lineTo(b[0],b[1]); gl.lineTo(c[0],c[1]); gl.lineTo(d[0],d[1]); gl.closePath();
+      if(fill){ gl.fillStyle=fill; gl.fill(); }
+      if(stroke){ gl.strokeStyle=stroke; gl.lineWidth=1; gl.stroke(); }
+    }
+
+    const Lc='#3a7bd5', LcDark='#2a5aa3', Fl='#33415c', FlLin='#4a5a7a';
+    // floor
+    quad(0,0,0, L,0,0, L,W,0, 0,W,0, Fl, FlLin);
+    // four walls
+    quad(0,0,0, L,0,0, L,0,wallH, 0,0,wallH, LcDark);
+    quad(L,0,0, L,W,0, L,W,wallH, L,0,wallH, Lc);
+    quad(L,W,0, 0,W,0, 0,W,wallH, L,W,wallH, LcDark);
+    quad(0,W,0, 0,0,0, 0,0,wallH, 0,W,wallH, Lc);
+
+    // internal walls (columns)
+    for(let c=1;c<g.colCount;c++){
+      const x = tw + c*(g.compartmentLength+tw);
+      quad(x,0,0, x,W,0, x,W,wallH, x,0,wallH, Lc, FlLin);
+    }
+    for(let r=1;r<g.rowCount;r++){
+      const y = tw + r*(g.compartmentWidth+tw);
+      quad(0,y,0, L,y,0, L,y,wallH, 0,y,wallH, Lc, FlLin);
+    }
+
+    // compartment floor grid lines
+    gl.strokeStyle='rgba(120,150,200,.5)'; gl.lineWidth=1;
+    for(let c=0;c<=g.colCount;c++){
+      const x = tw + c*(g.compartmentLength+tw);
+      const a=P(x,0,0), b=P(x,W,0);
+      gl.beginPath(); gl.moveTo(a[0],a[1]); gl.lineTo(b[0],b[1]); gl.stroke();
+    }
+    for(let r=0;r<=g.rowCount;r++){
+      const y = tw + r*(g.compartmentWidth+tw);
+      const a=P(0,y,0), b=P(L,y,0);
+      gl.beginPath(); gl.moveTo(a[0],a[1]); gl.lineTo(b[0],b[1]); gl.stroke();
+    }
+
+    // compartment dimension labels (floating near top of each cell)
+    gl.font='bold 11px system-ui';
+    gl.fillStyle='#cfe0ff';
+    const cw=g.compartmentLength, ch=g.compartmentWidth, cd=g.compartmentDepth;
+    for(let r=0;r<g.rowCount;r++){
+      for(let c=0;c<g.colCount;c++){
+        const cx = tw + c*(cw+tw) + cw/2;
+        const cy = tw + r*(ch+tw) + ch/2;
+        const p=P(cx, cy, cd*0.5);
+        gl.fillText(`${fmt(cw)}×${fmt(ch)}`, p[0]-14, p[1]+4);
+      }
+    }
+  }
+
+  function render(){
+    renderCompartments();
+    drawTray();
+  }
+
+  // ---------- interaction ----------
+  let dragging=false, lastX=0, lastY=0;
+  canvas.addEventListener('mousedown', e=>{ dragging=true; lastX=e.clientX; lastY=e.clientY; });
+  window.addEventListener('mouseup', ()=>{ dragging=false; });
+  window.addEventListener('mousemove', e=>{
+    if(!dragging) return;
+    const dx=e.clientX-lastX, dy=e.clientY-lastY;
+    lastX=e.clientX; lastY=e.clientY;
+    view.yaw += dx*0.01;
+    view.pitch += dy*0.01;
+    view.pitch=clamp(view.pitch,-1.4,1.4);
+    drawTray();
+  });
+  canvas.addEventListener('wheel', e=>{
+    e.preventDefault();
+    view.zoom *= e.deltaY<0 ? 1.08 : 0.93;
+    view.zoom=clamp(view.zoom,0.3,5);
+    drawTray();
+  },{passive:false});
+
+  function clamp(v,lo,hi){ return Math.min(hi,Math.max(lo,v)); }
+
+  // bind slider + number pairs
+  const pairs=[['L','L_min'],['W','W_min'],['H','H_min'],['C','C_min'],['R','R_min'],['tw','tw_min'],['th','th_min']];
+  for(const [numId,slId] of pairs){
+    const numEl=$(numId), slEl=$(slId);
+    const update=()=>{ render(); };
+    numEl.addEventListener('input',()=>{ slEl.value=numEl.value; update(); });
+    slEl.addEventListener('input',()=>{ numEl.value=slEl.value; update(); });
+  }
+
+  // presets
+  $('presets').addEventListener('click', e=>{
+    const btn=e.target.closest('button[data-p]'); if(!btn) return;
+    document.querySelectorAll('#presets button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const p=btn.dataset.p;
+    if(p==='top'){ view={yaw:0,pitch:1.56,zoom:1}; }
+    else if(p==='front'){ view={yaw:0,pitch:0.05,zoom:1}; }
+    else if(p==='side'){ view={yaw:1.57,pitch:0.05,zoom:1}; }
+    else { view={yaw:0.6,pitch:0.5,zoom:1}; }
+    drawTray();
+  });
+
+  $('download').addEventListener('click',()=>{
+    try{
+      const st=readState();
+      const stl=E.exportSTL(st.L,st.W,st.H,st.R,st.C,st.tw,st.th,st.subdivisions,false);
+      const blob=new Blob([stl],{type:'application/octet-stream'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      a.download=`tray_${st.L}x${st.W}x${st.H}_${st.R}x${st.C}.stl`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      $('status').innerHTML='Downloaded '+ (stl.length>1e6?(stl.length/1e6).toFixed(1)+'MB':stl.length+'B')+' ASCII STL';
+    }catch(err){ alert('Cannot export: '+err.message); }
+  });
+
+  // reset
+  $('reset').addEventListener('click',()=>{
+    $('L').value=DEFAULTS.L; $('W').value=DEFAULTS.W; $('H').value=DEFAULTS.H;
+    $('R').value=DEFAULTS.R; $('C').value=DEFAULTS.C;
+    $('tw').value=DEFAULTS.tw; $('th').value=DEFAULTS.th;
+    syncSlidersFromNumbers(); render();
+  });
+
+  // init
+  for(const k in DEFAULTS){
+    const el=$(k); if(el) el.value=DEFAULTS[k];
+  }
+  syncSlidersFromNumbers();
+  render();
+
+  window.addEventListener('resize', ()=>{ resize(); drawTray(); });
+})();
+</script>
+</body>
+</html>

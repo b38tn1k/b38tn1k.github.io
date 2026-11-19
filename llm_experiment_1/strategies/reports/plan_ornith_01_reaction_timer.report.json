@@ -1,0 +1,111 @@
+{
+  "score": 86,
+  "grade": "B+ provisional - normal five-trial flow works; false starts consume a trial",
+  "rubricScores": {
+    "functionality": 34,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 7,
+    "autonomy": 10
+  },
+  "breakdown": {
+    "functionality": 34,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 7,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Exact final-source event/clock checks pass five normal trials with 200, 210, 220, 230 and 240 ms readings and a correct 220/200/240 ms summary and five table rows.",
+    "Random wait, false-start detection and the Play Again reset execute correctly in the VM.",
+    "Pi independently found and repaired three missing state assignments; the initial source failed the same controlled flow.",
+    "Read-only planning, structured plan completion and the standard implementation handoff all worked without semantic steering.",
+    "Single offline HTML with inline CSS/JavaScript and no external resources."
+  ],
+  "defects": [
+    "After one false start, retry is labeled Trial 2; the session then ends after four successful measurements. This contradicts its own accepted plan to retry the same trial and report five completed trials.",
+    "showSummary does not set the declared finished state; the dedicated Play Again button works, but the intended FINISHED branch is unreachable."
+  ],
+  "verification": [
+    "Independent QA: reports/plan_ornith_01_reaction_timer.qa.cjs and .qa.json; final SHA-256 e105f2105a937f5251b9eefaf35ce6005c04dd22a398cfcf94561d6fc26c66ed.",
+    "Initial Pi-generated source preserved under reports/snapshots and exercised with the same final QA driver.",
+    "Pi's final normal-session harness passes, but earlier mock errors caused many false failures: numeric textContent was compared strictly with a string although browsers coerce the assignment.",
+    "No independent browser or visual check. Browser permission renewal is pending; this run explicitly prohibited browser automation."
+  ],
+  "verificationConcerns": [
+    "Large amount of time spent repairing handwritten DOM/test instrumentation rather than the application.",
+    "Final completion claims verified false-start handling without verifying a full five-result session following a false start."
+  ],
+  "scopeCompliance": "OS boundary blocked an attempted /tmp/rt_extracted.js write. Pi retried within its project without intervention; no successful out-of-tree write observed.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "One questionnaire and the ready-plan menu were cancelled automatically; Pi selected a low-risk false-start default itself. /plan implement was the preauthorized mechanical handoff, not a design hint.",
+  "runStatus": "completed_pending_assessment",
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "plan",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The implementation is complete and verified. Here's a summary of what was built and the one real bug I found and fixed.\n\n## Delivered: `index.html`\n\nA single, fully self-contained, offline reaction-time tester (12 KB, zero external resources \u2014 inline CSS/JS only).\n\n### Features\n- **Random wait** \u2014 1.5\u20135 s (`randomWait()`) before the cue\n- **False-start detection** \u2014 clicking during the red wait aborts the timer and offers a retry\n- **Five trials** with green \"GO!\" cue and click/keyboard (Space/Enter) response\n- **Results summary** \u2014 per-trial table, average/fastest/slowest stats, a reflex grade hint, and a **Play Again** button\n\n### The bug I caught through testing\nMy headless harness (driven via a Node DOM shim) caught a genuine logic error: `startTimer()` and `startGo()` never updated the `current` state variable, so the switch in `handleActivation()` could never match `WAITING`/`GO`. Worse, `recordHit()` also forgot to set `current = STAGES.MEASURED`, which left the app stuck in the `GO` state \u2014 meaning **only the first trial ever measured correctly**, and every click after that was misread as a false start.\n\nFixed with three one-line state assignments:\n- `startTimer()` \u2192 `current = STAGES.WAITING`\n- `startGo()` \u2192 `current = STAGES.GO`\n- `recordHit()` \u2192 `current = STAGES.MEASURED`\n\n### Verification\n- `node --check` \u2014 JS syntax valid\n- Full session simulation (5 trials) \u2014 measured values, avg/min/max, 5-row table, grade, summary all correct\n- False-start path \u2014 detected, retried, then measured correctly\n- Keyboard (Space/Enter) and Play Again handlers \u2014 fire without error\n- Confirmed no external network/font/script references",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 50.89,
+  "wallMinutes": 50.89,
+  "status": "assessed",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 78,
+  "parentToolCalls": 78,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 0,
+  "modelUsageReported": {
+    "input": 89612,
+    "output": 97311,
+    "cacheRead": 3615200,
+    "totalTokens": 3802123
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 89300,
+  "parentPeakReportedPromptTokens": 89300,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 89612,
+    "output": 97311,
+    "cacheRead": 3615200,
+    "totalTokens": 3802123
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 12097,
+  "sha256": "e105f2105a937f5251b9eefaf35ce6005c04dd22a398cfcf94561d6fc26c66ed",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 2,
+    "questionnairesCancelled": 1,
+    "mechanicalPlanHandoffPrompts": 1,
+    "structuredPlanComplete": true,
+    "implementationHandoff": true,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 6,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 3,
+    "delegations": []
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

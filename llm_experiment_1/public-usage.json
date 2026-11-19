@@ -1,0 +1,708 @@
+{
+  "asOfUTC": "2026-11-19T04:13:46.554621+00:00",
+  "interviewReportedUsage": {
+    "input": 24076,
+    "output": 8922,
+    "cacheRead": 0,
+    "totalTokens": 32998
+  },
+  "interviewMinutes": 3.6000000000000005,
+  "interviewCount": 4,
+  "assessedAttempts": 145,
+  "active": [],
+  "attemptWallMinutes": 4208.170999999999,
+  "attemptWallHours": 70.13618333333332,
+  "reportedAssistantUsage": {
+    "input": 19248418,
+    "output": 7863774,
+    "cacheRead": 640408065,
+    "totalTokens": 667520257
+  },
+  "separatelyRecordedNativeCompactionUsage": {
+    "input": 1487960,
+    "output": 256845,
+    "cacheRead": 18352,
+    "totalTokens": 1763157,
+    "events": 148
+  },
+  "byModel": {
+    "ornith": {
+      "attemptsStarted": 91,
+      "minutes": 2471.2009999999996,
+      "input": 7184967,
+      "output": 4410598,
+      "cacheRead": 350171154,
+      "totalTokens": 361766719
+    },
+    "qwen": {
+      "attemptsStarted": 86,
+      "minutes": 1736.9699999999993,
+      "input": 12063451,
+      "output": 3453176,
+      "cacheRead": 290236911,
+      "totalTokens": 305753538
+    }
+  },
+  "exclusions": [
+    "External Codex grading/controller usage and setup/smoke calls; local supervisor usage is included.",
+    "Custom folding inference not represented in recorded usage.",
+    "Elapsed trial time is not measured GPU busy time or energy.",
+    "Cached prefixes are cumulative accounting, not unique generated text."
+  ],
+  "infrastructureInterruptedAttempts": [
+    {
+      "case": 117,
+      "attempt": 1,
+      "manifest": "strategies/reports/infrastructure-interruptions/case117-attempt1-powerloss-20261118T175547Z/manifest.json",
+      "wallMinutes": 66.398,
+      "excludedFromQualityGrades": true
+    }
+  ],
+  "rtfmSupervisedPairsStarted": 11,
+  "rtfmSupervisedPairWallMinutes": 528.0360000000001,
+  "rtfmSupervisedRoleCosts": [
+    {
+      "case": 117,
+      "attempt": 1,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 31.988,
+      "assistantUsage": {
+        "input": 28454,
+        "output": 61398,
+        "cacheRead": 3467463,
+        "cacheWrite": 0,
+        "totalTokens": 3557315
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "infrastructureInvalid": true
+    },
+    {
+      "case": 117,
+      "attempt": 1,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 63.796,
+      "assistantUsage": {
+        "input": 101282,
+        "output": 62116,
+        "cacheRead": 4717286,
+        "cacheWrite": 0,
+        "totalTokens": 4880684
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "infrastructureInvalid": true
+    },
+    {
+      "case": 116,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 16.067,
+      "assistantUsage": {
+        "input": 22198,
+        "output": 32172,
+        "cacheRead": 2099924,
+        "totalTokens": 2154294
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 116,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 32.919,
+      "assistantUsage": {
+        "input": 46248,
+        "output": 35485,
+        "cacheRead": 2676232,
+        "totalTokens": 2757965
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 121,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 1.034,
+      "assistantUsage": {
+        "input": 12610,
+        "output": 2629,
+        "cacheRead": 117403,
+        "totalTokens": 132642
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 121,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 8.46,
+      "assistantUsage": {
+        "input": 15277,
+        "output": 16398,
+        "cacheRead": 698807,
+        "totalTokens": 730482
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 117,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 12.691,
+      "assistantUsage": {
+        "input": 13432,
+        "output": 27007,
+        "cacheRead": 1165229,
+        "totalTokens": 1205668
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 117,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 25.519,
+      "assistantUsage": {
+        "input": 24912,
+        "output": 32989,
+        "cacheRead": 1652694,
+        "totalTokens": 1710595
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 122,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 1.985,
+      "assistantUsage": {
+        "input": 10713,
+        "output": 2920,
+        "cacheRead": 101262,
+        "totalTokens": 114895
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 122,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 44.398,
+      "assistantUsage": {
+        "input": 79785,
+        "output": 60453,
+        "cacheRead": 17221719,
+        "totalTokens": 17361957
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 118,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 13.196,
+      "assistantUsage": {
+        "input": 18795,
+        "output": 23573,
+        "cacheRead": 677710,
+        "totalTokens": 720078
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 118,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 27.789,
+      "assistantUsage": {
+        "input": 27998,
+        "output": 55523,
+        "cacheRead": 2076347,
+        "totalTokens": 2159868
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 123,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 8.454,
+      "assistantUsage": {
+        "input": 19114,
+        "output": 10924,
+        "cacheRead": 578204,
+        "totalTokens": 608242
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 123,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 10.953,
+      "assistantUsage": {
+        "input": 26422,
+        "output": 15805,
+        "cacheRead": 1276162,
+        "totalTokens": 1318389
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 119,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 57.415,
+      "assistantUsage": {
+        "input": 44416,
+        "output": 90353,
+        "cacheRead": 6944724,
+        "totalTokens": 7079493
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 119,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 76.776,
+      "assistantUsage": {
+        "input": 58274,
+        "output": 55158,
+        "cacheRead": 7088866,
+        "totalTokens": 7202298
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 124,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 4.956,
+      "assistantUsage": {
+        "input": 21667,
+        "output": 14964,
+        "cacheRead": 810223,
+        "totalTokens": 846854
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 124,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 28.283,
+      "assistantUsage": {
+        "input": 49336,
+        "output": 34361,
+        "cacheRead": 3367620,
+        "totalTokens": 3451317
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 120,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 79.172,
+      "assistantUsage": {
+        "input": 55661,
+        "output": 97317,
+        "cacheRead": 8283948,
+        "totalTokens": 8436926
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 120,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 88.082,
+      "assistantUsage": {
+        "input": 56512,
+        "output": 74970,
+        "cacheRead": 13476170,
+        "totalTokens": 13607652
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 125,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 16.305,
+      "assistantUsage": {
+        "input": 28124,
+        "output": 29772,
+        "cacheRead": 1410699,
+        "totalTokens": 1468595
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 125,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 38.169,
+      "assistantUsage": {
+        "input": 52037,
+        "output": 56518,
+        "cacheRead": 6052204,
+        "totalTokens": 6160759
+      },
+      "recordedCompactionUsage": {}
+    }
+  ],
+  "rtfmAttemptsStarted": 10,
+  "rtfmWallMinutes": 83.131,
+  "rtfmModelActiveMinutes": 83.11800000000001,
+  "localSupervisedPairsStarted": 10,
+  "localSupervisedPairWallMinutes": 602.961,
+  "localSupervisedRoleCosts": [
+    {
+      "case": 96,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 4.445,
+      "assistantUsage": {
+        "input": 9498,
+        "output": 6732,
+        "cacheRead": 246429,
+        "totalTokens": 262659
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 96,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 66.676,
+      "assistantUsage": {
+        "input": 644313,
+        "output": 84129,
+        "cacheRead": 48053014,
+        "totalTokens": 48781456
+      },
+      "recordedCompactionUsage": {
+        "input": 137279,
+        "output": 46508,
+        "cacheRead": 0,
+        "totalTokens": 183787
+      }
+    },
+    {
+      "case": 101,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 1.327,
+      "assistantUsage": {
+        "input": 12354,
+        "output": 2204,
+        "cacheRead": 79088,
+        "totalTokens": 93646
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 101,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 15.364,
+      "assistantUsage": {
+        "input": 26596,
+        "output": 30255,
+        "cacheRead": 2519601,
+        "totalTokens": 2576452
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 97,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 0.541,
+      "assistantUsage": {
+        "input": 6181,
+        "output": 635,
+        "cacheRead": 27090,
+        "totalTokens": 33906
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 97,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 3.864,
+      "assistantUsage": {
+        "input": 28336,
+        "output": 9321,
+        "cacheRead": 815431,
+        "totalTokens": 853088
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 102,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 1.681,
+      "assistantUsage": {
+        "input": 15718,
+        "output": 4073,
+        "cacheRead": 276131,
+        "totalTokens": 295922
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 102,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 32.975,
+      "assistantUsage": {
+        "input": 82524,
+        "output": 43481,
+        "cacheRead": 16344968,
+        "totalTokens": 16470973
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 98,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 3.321,
+      "assistantUsage": {
+        "input": 15386,
+        "output": 6717,
+        "cacheRead": 511544,
+        "totalTokens": 533647
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 98,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 9.662,
+      "assistantUsage": {
+        "input": 39887,
+        "output": 9009,
+        "cacheRead": 1560268,
+        "totalTokens": 1609164
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 103,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 3.038,
+      "assistantUsage": {
+        "input": 11064,
+        "output": 3960,
+        "cacheRead": 126451,
+        "totalTokens": 141475
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 103,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 19.877,
+      "assistantUsage": {
+        "input": 33737,
+        "output": 32204,
+        "cacheRead": 3106698,
+        "totalTokens": 3172639
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 99,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 7.469,
+      "assistantUsage": {
+        "input": 22798,
+        "output": 16295,
+        "cacheRead": 1064490,
+        "totalTokens": 1103583
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 99,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 64.324,
+      "assistantUsage": {
+        "input": 336981,
+        "output": 34799,
+        "cacheRead": 9878958,
+        "totalTokens": 10250738
+      },
+      "recordedCompactionUsage": {
+        "input": 73531,
+        "output": 19637,
+        "cacheRead": 0,
+        "totalTokens": 93168
+      }
+    },
+    {
+      "case": 104,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 12.551,
+      "assistantUsage": {
+        "input": 80824,
+        "output": 26311,
+        "cacheRead": 1306808,
+        "totalTokens": 1413943
+      },
+      "recordedCompactionUsage": {
+        "input": 11367,
+        "output": 1072,
+        "cacheRead": 0,
+        "totalTokens": 12439
+      }
+    },
+    {
+      "case": 104,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 34.298,
+      "assistantUsage": {
+        "input": 49436,
+        "output": 35183,
+        "cacheRead": 5024463,
+        "totalTokens": 5109082
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 100,
+      "role": "worker",
+      "model": "ornith",
+      "activeMinutes": 1.502,
+      "assistantUsage": {
+        "input": 11010,
+        "output": 2943,
+        "cacheRead": 194414,
+        "totalTokens": 208367
+      },
+      "recordedCompactionUsage": {}
+    },
+    {
+      "case": 100,
+      "role": "supervisor",
+      "model": "qwen",
+      "activeMinutes": 85.638,
+      "assistantUsage": {
+        "input": 1327304,
+        "output": 69181,
+        "cacheRead": 50339314,
+        "totalTokens": 51735799
+      },
+      "recordedCompactionUsage": {
+        "input": 214534,
+        "output": 63670,
+        "cacheRead": 0,
+        "totalTokens": 278204
+      }
+    },
+    {
+      "case": 105,
+      "role": "worker",
+      "model": "qwen",
+      "activeMinutes": 35.593,
+      "assistantUsage": {
+        "input": 75499,
+        "output": 33588,
+        "cacheRead": 1120637,
+        "totalTokens": 1229724
+      },
+      "recordedCompactionUsage": {
+        "input": 13503,
+        "output": 1670,
+        "cacheRead": 0,
+        "totalTokens": 15173
+      }
+    },
+    {
+      "case": 105,
+      "role": "supervisor",
+      "model": "ornith",
+      "activeMinutes": 33.44,
+      "assistantUsage": {
+        "input": 57894,
+        "output": 28620,
+        "cacheRead": 9068042,
+        "totalTokens": 9154556
+      },
+      "recordedCompactionUsage": {}
+    }
+  ],
+  "blindReviewCount": 14,
+  "blindReviewInfrastructureInvalidCount": 1,
+  "blindReviewsCompleted": 14,
+  "blindReviewMinutes": 212.448,
+  "blindReviewAssistantUsage": {
+    "input": 1273884,
+    "output": 467157,
+    "cacheRead": 32870749,
+    "cacheWrite": 0,
+    "totalTokens": 34611790
+  },
+  "blindReviewRecordedCompactionUsage": {
+    "input": 268580,
+    "output": 19627,
+    "cacheRead": 620,
+    "cacheWrite": 0,
+    "totalTokens": 288827
+  },
+  "blindReviewKnownTotalUsage": {
+    "input": 1542464,
+    "output": 486784,
+    "cacheRead": 32871369,
+    "cacheWrite": 0,
+    "totalTokens": 34900617
+  },
+  "blindReviewUnreportedCompactionEvents": 1,
+  "blindReviewByModel": {
+    "ornith": {
+      "reviewsStarted": 7,
+      "minutes": 116.153,
+      "input": 735385,
+      "output": 227574,
+      "cacheRead": 19743951,
+      "cacheWrite": 0,
+      "totalTokens": 20706910,
+      "infrastructureInvalidAttempts": 1
+    },
+    "qwen": {
+      "reviewsStarted": 7,
+      "minutes": 96.29500000000002,
+      "input": 807079,
+      "output": 259210,
+      "cacheRead": 13127418,
+      "cacheWrite": 0,
+      "totalTokens": 14193707
+    }
+  }
+}

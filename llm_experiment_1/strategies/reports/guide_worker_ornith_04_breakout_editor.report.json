@@ -1,0 +1,129 @@
+{
+  "rubricScores": {
+    "functionality": 28,
+    "artifact_correctness": 17,
+    "usability": 10,
+    "self_verification": 5,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Editor draw/erase, launch, keyboard paddle, brick scoring and win transition passed runtime checks.",
+    "Exact JSON save/load functions round-trip a layout when invoked directly as diagnostic fixtures."
+  ],
+  "defects": [
+    "doSave has no UI listener or normal callsite. The label marked Save opens a file input that invokes doLoad, so users cannot save through the supplied UI.",
+    "Gameplay destroys the editor grid itself. Restart resets score and lives but retains the destroyed layout; after clearing the last brick it restarts with zero bricks.",
+    "Worker spent the full shared hour on implementation and test-harness debugging; no completed worker handoff arrived."
+  ],
+  "verificationConcerns": [
+    "Direct invocation of a save helper is not credited as a working user-accessible save feature."
+  ],
+  "score": 60,
+  "grade": "D+ provisional - Playable editor/game; save UI missing and restart loses layout at deadline",
+  "breakdown": {
+    "functionality": 28,
+    "artifact_correctness": 17,
+    "usability": 10,
+    "self_verification": 5,
+    "autonomy": 0
+  },
+  "verification": [
+    "Independent final-source checks in reports/guide_worker_ornith_04_breakout_editor.qa.json; executable verifier in qa/remaining-*.cjs or the case-specific QA script.",
+    "Final artifact hash checked before assessment; no benchmark application code changed by supervisor."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed.",
+  "workflowNotes": "Role completion is audited from final child metadata as well as foreground tool results; asynchronous chain children are included. Application correctness, workflow adherence and autonomy are separate measures.",
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "guide_worker",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "I only have read-based tools plus subagent. I'll delegate the file creation to a worker.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 60.27,
+  "wallMinutes": 60.27,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 47,
+  "toolCalls": 134,
+  "parentToolCalls": 18,
+  "childToolCalls": 116,
+  "toolResultsMarkedError": 25,
+  "modelUsageReported": {
+    "input": 375116,
+    "output": 73367,
+    "cacheRead": 4527138,
+    "totalTokens": 4975621
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 73465,
+  "parentPeakReportedPromptTokens": 8781,
+  "childPeakReportedPromptTokens": 73465,
+  "parentModelUsage": {
+    "input": 16376,
+    "output": 2508,
+    "cacheRead": 89301,
+    "totalTokens": 108185
+  },
+  "childModelUsage": {
+    "input": 358740,
+    "output": 70859,
+    "cacheRead": 4437837,
+    "totalTokens": 4867436
+  },
+  "artifactBytes": 29300,
+  "sha256": "48acaac351d978611b217707b055a960c56b0af4dc0e540a8bf7901d062a4998",
+  "implementationChangesBySupervisor": 0,
+  "humanOrSupervisorSteering": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": false,
+    "implementationHandoff": false,
+    "rolesAttempted": {
+      "worker": 1
+    },
+    "rolesCompleted": {},
+    "parentArtifactReads": 5,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 2,
+    "parentWrites": 0,
+    "delegations": [
+      {
+        "agent": "worker",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 358740,
+          "output": 70859,
+          "cacheRead": 4437837,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 117
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/guide_worker/ornith/04_breakout_editor/artifact-pi/subagents/artifacts/6cb58c02-37ed-42df-a282-6fa40da0f130_worker_0_transcript.jsonl.gz"
+        },
+        "runId": "6cb58c02-37ed-42df-a282-6fa40da0f130",
+        "acceptanceStatus": "rejected"
+      }
+    ]
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "method": "Exact-source VM/DOM with deterministic timer and state-only instrumentation; no browser",
+  "sha256": "7dd5bdb6be148f099f0e326e1c88a2213bffc1d3be7f63b25546f1eb2f1154fd",
+  "closedScripts": true,
+  "externalResources": [],
+  "startup": "pass",
+  "afterStart": {
+    "currentTrial": 0,
+    "reactionTimes": [],
+    "isGo": false,
+    "isProcessing": false,
+    "body": "state-idle",
+    "pendingTimers": 0
+  },
+  "noTrialStarted": true,
+  "falseStartRecovery": {
+    "currentTrial": 0,
+    "reactionTimes": [],
+    "isGo": false,
+    "isProcessing": false,
+    "pendingTimers": 0
+  }
+}

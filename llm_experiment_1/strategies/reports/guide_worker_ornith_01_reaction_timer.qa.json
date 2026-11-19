@@ -1,0 +1,168 @@
+{
+  "method": "Exact-source VM/DOM with deterministic timer and state-only instrumentation; no browser",
+  "sha256": "56156e722d161eadc20525b709c483ca882c6074805336d4c69973d93ab08c31",
+  "closedScripts": true,
+  "externalResources": [],
+  "startup": "pass",
+  "early": {
+    "state": "waiting-to-start",
+    "currentTrial": 1,
+    "results": [],
+    "falseStartCount": 0
+  },
+  "trials": [
+    {
+      "state": "result",
+      "currentTrial": 1,
+      "results": [
+        {
+          "time": 200,
+          "trial": 1,
+          "falseStart": false
+        }
+      ],
+      "falseStartCount": 0
+    },
+    {
+      "state": "result",
+      "currentTrial": 2,
+      "results": [
+        {
+          "time": 200,
+          "trial": 1,
+          "falseStart": false
+        },
+        {
+          "time": 210,
+          "trial": 2,
+          "falseStart": false
+        }
+      ],
+      "falseStartCount": 0
+    },
+    {
+      "state": "result",
+      "currentTrial": 3,
+      "results": [
+        {
+          "time": 200,
+          "trial": 1,
+          "falseStart": false
+        },
+        {
+          "time": 210,
+          "trial": 2,
+          "falseStart": false
+        },
+        {
+          "time": 220,
+          "trial": 3,
+          "falseStart": false
+        }
+      ],
+      "falseStartCount": 0
+    },
+    {
+      "state": "result",
+      "currentTrial": 4,
+      "results": [
+        {
+          "time": 200,
+          "trial": 1,
+          "falseStart": false
+        },
+        {
+          "time": 210,
+          "trial": 2,
+          "falseStart": false
+        },
+        {
+          "time": 220,
+          "trial": 3,
+          "falseStart": false
+        },
+        {
+          "time": 230,
+          "trial": 4,
+          "falseStart": false
+        }
+      ],
+      "falseStartCount": 0
+    },
+    {
+      "state": "result",
+      "currentTrial": 5,
+      "results": [
+        {
+          "time": 200,
+          "trial": 1,
+          "falseStart": false
+        },
+        {
+          "time": 210,
+          "trial": 2,
+          "falseStart": false
+        },
+        {
+          "time": 220,
+          "trial": 3,
+          "falseStart": false
+        },
+        {
+          "time": 230,
+          "trial": 4,
+          "falseStart": false
+        },
+        {
+          "time": 240,
+          "trial": 5,
+          "falseStart": false
+        }
+      ],
+      "falseStartCount": 0
+    }
+  ],
+  "summary": [
+    "220",
+    "200",
+    "240"
+  ],
+  "final": {
+    "state": "done",
+    "currentTrial": 6,
+    "results": [
+      {
+        "time": 200,
+        "trial": 1,
+        "falseStart": false
+      },
+      {
+        "time": 210,
+        "trial": 2,
+        "falseStart": false
+      },
+      {
+        "time": 220,
+        "trial": 3,
+        "falseStart": false
+      },
+      {
+        "time": 230,
+        "trial": 4,
+        "falseStart": false
+      },
+      {
+        "time": 240,
+        "trial": 5,
+        "falseStart": false
+      }
+    ],
+    "falseStartCount": 0
+  },
+  "replay": {
+    "state": "waiting-to-start",
+    "currentTrial": 1,
+    "results": [],
+    "falseStartCount": 0
+  }
+}

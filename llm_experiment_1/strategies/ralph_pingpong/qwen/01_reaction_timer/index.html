@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Time Tester</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f1a;
+    --text: #e8e8f0;
+    --accent: #6c63ff;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --amber: #f39c12;
+    --panel: rgba(255,255,255,0.04);
+  }
+
+  html, body { height: 100%; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
+
+  #game-area {
+    position: relative; width: 700px; max-width: 94vw; height: 420px;
+    border-radius: 18px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 18px;
+    transition: background 0.35s ease, box-shadow 0.35s ease;
+    cursor: default; overflow: hidden; user-select: none;
+  }
+
+  /* ---------- states ---------- */
+  #game-area.waiting  { background: linear-gradient(145deg,#1a1a2e,#16213e); box-shadow: 0 0 50px rgba(108,99,255,.12); }
+  #game-area.ready    { background: linear-gradient(145deg,#b71c1c,#d32f2f); box-shadow: 0 0 60px rgba(231,76,60,.25); cursor: pointer; }
+  #game-area.go       { background: linear-gradient(145deg,#1b5e20,#2e7d32); box-shadow: 0 0 80px rgba(46,204,113,.30); cursor: pointer; }
+  #game-area.early    { background: linear-gradient(145deg,#3e2723,#4e342e); box-shadow: 0 0 50px rgba(243,156,18,.15); }
+  #game-area.results  { background: linear-gradient(145deg,#1a1a2e,#16213e); box-shadow: 0 0 50px rgba(108,99,255,.12); cursor: default; }
+
+  /* ---------- content ---------- */
+  #content { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; z-index: 2; }
+  #hint    { font-size: 1.15rem; opacity: .85; text-align: center; min-height: 1.6em; line-height: 1.4; transition: opacity .3s; }
+  #timer   { font-size: 3.2rem; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+
+  /* ---------- button ---------- */
+  #start-btn, #retry-btn {
+    padding: 14px 40px; border: none; border-radius: 12px; font-size: 1.05rem;
+    font-weight: 600; cursor: pointer; transition: transform .15s, box-shadow .25s, background .25s;
+    color: #fff; letter-spacing: .3px;
+  }
+  #start-btn { background: var(--accent); box-shadow: 0 4px 24px rgba(108,99,255,.35); }
+  #start-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(108,99,255,.45); background: #5b52ee; }
+  #retry-btn { background: var(--amber); box-shadow: 0 4px 20px rgba(243,156,18,.30); }
+  #retry-btn:hover { transform: translateY(-2px); background: #e6950a; }
+
+  /* ---------- progress bar ---------- */
+  .progress-wrap { width: 70%; max-width: 500px; height: 8px; border-radius: 4px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .progress-bar  { height: 100%; border-radius: 4px; transition: width .35s ease, background .35s ease; background: var(--accent); width: 0%; }
+
+  /* ---------- streak dot ---------- */
+  .streak-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin: 0 4px; transition: transform .2s, background .2s; }
+
+  /* ---------- results panel ---------- */
+  .results-panel { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+  .grade-badge   { font-size: 4rem; font-weight: 800; margin-bottom: 6px; }
+  .stat-row      { display: flex; gap: 32px; justify-content: center; }
+  .stat-box      { text-align: center; min-width: 90px; }
+  .stat-label    { font-size: .8rem; text-transform: uppercase; opacity: .6; letter-spacing: 1px; }
+  .stat-value    { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .trial-list    { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+  .trial-pill    { padding: 6px 14px; border-radius: 8px; background: var(--panel); font-weight: 600; font-size: .95rem; }
+
+  /* ---------- grade colors ---------- */
+  .grade-S { color: #ffd700; }   /* gold */
+  .grade-A { color: #2ecc71; }    /* green */
+  .grade-B { color: #3498db; }    /* blue */
+  .grade-C { color: #f39c12; }    /* amber */
+  .grade-D { color: #e74c3c; }    /* red */
+
+  /* ---------- large text for ready/go ---------- */
+  .big-text { font-size: 2.8rem; font-weight: 800; letter-spacing: 1px; }
+  .sub-text { font-size: 1.1rem; opacity: .75; }
+</style>
+</head>
+<body>
+
+<div id="game-area" class="waiting">
+  <!-- Always-visible controls outside content so they survive innerHTML rebuilds -->
+  <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+  <div style="display:flex;gap:6px;margin-top:4px;" id="streak-row"></div>
+
+  <!-- Dynamic content area (gets rebuilt during gameplay) -->
+  <div id="content">
+    <div id="hint">Click to begin the reaction time test.</div>
+    <div id="timer"></div>
+    <button id="start-btn" onclick="ReactionTimer.startTest()">Start Test</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========== constants =========== */
+  const NUM_TRIALS      = 5;
+  const EARLY_THRESHOLD = 200;          // ms tolerance for "false start"
+  const MIN_WAIT        = 2000;         // ms
+  const MAX_WAIT        = 6000;         // ms
+
+  /* =========== DOM refs (never destroyed) =========== */
+  var _gameArea, _hintEl, _timerEl, _progressBar, _streakRow, _contentEl, _startBtn;
+
+  function refreshDom() {
+    _gameArea     = document.getElementById('game-area');
+    _hintEl       = document.getElementById('hint');
+    _timerEl      = document.getElementById('timer');
+    _progressBar  = document.getElementById('progress-bar');
+    _streakRow    = document.getElementById('streak-row');
+    _contentEl    = document.getElementById('content');
+    _startBtn     = document.getElementById('start-btn');
+  }
+  refreshDom();
+
+  /* =========== state =========== */
+  var state       = 'idle';          // idle | waiting | ready | early | result | results
+  var times       = [];              // recorded reaction times (ms)
+  var currentTrial = 0;
+  var waitTimer   = null;            // setTimeout ID
+  var clickStart  = 0;               // performance.now() when green appeared
+  var clickElapsed = -1;             // pre-computed elapsed (set by advance for testing)
+
+  /* =========== helpers =========== */
+  function setClass(cls) {
+    refreshDom();
+    _gameArea.className = cls;
+  }
+
+  function setHint(text) {
+    refreshDom();
+    if (_hintEl) _hintEl.textContent = text;
+  }
+
+  function showTimer(val) {
+    refreshDom();
+    if (_timerEl) _timerEl.textContent = val !== null ? (val | 0) + ' ms' : '';
+  }
+
+  function updateProgress() {
+    refreshDom();
+    if (!_progressBar) return;
+    var pct = currentTrial / NUM_TRIALS * 100;
+    _progressBar.style.width = pct + '%';
+  }
+
+  function renderStreak() {
+    refreshDom();
+    if (!_streakRow) return;
+    _streakRow.innerHTML = '';
+    for (var i = 0; i < times.length; i++) {
+      var dot = document.createElement('span');
+      dot.className = 'streak-dot';
+      var grade = getGrade(times[i]);
+      var color = grade === 'S' ? '#ffd700' : grade === 'A' ? '#2ecc71' : grade === 'B' ? '#3498db' : grade === 'C' ? '#f39c12' : '#e74c3c';
+      dot.style.background = color;
+      _streakRow.appendChild(dot);
+    }
+  }
+
+  function getGrade(ms) {
+    if (ms < 200) return 'S';
+    if (ms < 300) return 'A';
+    if (ms < 400) return 'B';
+    if (ms < 500) return 'C';
+    return 'D';
+  }
+
+  function getGradeClass(ms) {
+    return 'grade-' + getGrade(ms);
+  }
+
+  /* =========== core API =========== */
+  var ReactionTimer = {
+    NUM_TRIALS: NUM_TRIALS,
+    EARLY_THRESHOLD: EARLY_THRESHOLD,
+
+    getState: function() { refreshDom(); return state; },
+    getTimes: function() { return times.slice(); },
+
+    startTest: function() {
+      times        = [];
+      currentTrial = 0;
+      refreshDom();
+      _startBtn = document.getElementById('start-btn');
+      if (_startBtn) _startBtn.style.display = 'inline-block';
+      _progressBar.style.width = '0%';
+      _streakRow.innerHTML   = '';
+      _timerEl.textContent    = '';
+      this.nextTrial();
+    },
+
+    nextTrial: function() {
+      if (currentTrial >= NUM_TRIALS) {
+        renderResults();
+        return;
+      }
+      currentTrial++;
+      refreshDom();
+      updateProgress();
+      enterWaiting();
+    },
+
+    retryTrial: function() {
+      /* reset the current trial timer, go back to waiting */
+      clearTimeout(waitTimer);
+      waitTimer = null;
+      state = 'waiting';
+      setClass('waiting');
+      refreshDom();
+      if (_hintEl) _hintEl.textContent = 'Wait for green\u2026';
+      showTimer(null);
+      startWaiting();
+    },
+
+    restart: function() {
+      clearTimeout(waitTimer);
+      waitTimer = null;
+      state = 'idle';
+      times  = [];
+      currentTrial = 0;
+      refreshDom();
+      setClass('waiting');
+      if (_hintEl) _hintEl.textContent = 'Press Start to begin.';
+      showTimer(null);
+      if (_progressBar) _progressBar.style.width = '0%';
+      if (_streakRow) _streakRow.innerHTML = '';
+    },
+
+    advance: function(delta) {
+      /* fast-forward internal clock for testing */
+      _currentFakeTime = performance.now() + delta;
+
+      if (state === 'waiting' && waitTimer) {
+        clearTimeout(waitTimer);
+        waitTimer = null;
+        /* Manually enterReady at the faked time so clickStart matches */
+        state = 'ready';
+        setClass('go');
+        refreshDom();
+        showTimer(null);
+        /* Set clickStart relative to fakeTime so elapsed = delta */
+        clickStart = _currentFakeTime - delta;
+      }
+      return state;
+    },
+  };
+
+  /* ---- private entry-points called from public methods ---- */
+
+  function enterWaiting() {
+    state = 'waiting';
+    setClass('waiting');
+    refreshDom();
+    if (_hintEl) _hintEl.textContent = 'Wait for green\u2026';
+    showTimer(null);
+    startWaiting();
+  }
+
+  function startWaiting() {
+    var delay = MIN_WAIT + Math.random() * (MAX_WAIT - MIN_WAIT);
+    waitTimer = setTimeout(function() { enterReady(); }, delay);
+  }
+
+  function enterReady() {
+    state = 'ready';
+    setClass('go');
+    refreshDom();
+    showTimer(null);
+    clickStart = _getFakeTime();
+
+    /* build "CLICK!" large text inside content */
+    if (_timerEl) _timerEl.classList.add('big-text');
+    if (_hintEl) _hintEl.textContent = '';
+  }
+
+  function enterResult(ms) {
+    state = 'result';
+    times.push(ms);
+    refreshDom();
+    setClass('results');
+    showTimer(ms);
+
+    /* grade badge */
+    var grade = getGrade(ms);
+    if (_timerEl) _timerEl.className = 'grade-' + grade;
+
+    renderStreak();
+  }
+
+  function restoreContent() {
+    /* rebuild the original content after innerHTML was replaced by early/results views */
+    refreshDom();
+    var html = '<div id="hint">Click to begin the reaction time test.</div>';
+    html += '<div id="timer"></div>';
+    if (currentTrial > 0) {
+      html += '<button id="start-btn" onclick="ReactionTimer.startTest()">Start Test</button>';
+    }
+    _contentEl.innerHTML = html;
+  }
+
+  function renderResults() {
+    state = 'results';
+    refreshDom();
+    setClass('results');
+    showTimer('');
+
+    var best = Math.min.apply(null, times);
+    var avg  = Math.round(times.reduce(function(a, b) { return a + b; }, 0) / times.length);
+    var worst = Math.max.apply(null, times);
+    var overallGrade = getGrade(avg);
+
+    /* build results HTML inside content */
+    var html = '<div class="results-panel">';
+    html += '<div class="grade-badge ' + getGradeClass(avg) + '">' + overallGrade + '</div>';
+    html += '<div class="stat-row">';
+    html += '<div class="stat-box"><div class="stat-label">Best</div><div class="stat-value">' + best + ' ms</div></div>';
+    html += '<div class="stat-box"><div class="stat-label">Average</div><div class="stat-value">' + avg + ' ms</div></div>';
+    html += '<div class="stat-box"><div class="stat-label">Worst</div><div class="stat-value">' + worst + ' ms</div></div>';
+    html += '</div>';
+    html += '<div class="trial-list">';
+    for (var i = 0; i < times.length; i++) {
+      var g = getGrade(times[i]);
+      html += '<span class="trial-pill ' + getGradeClass(times[i]) + '">T' + (i + 1) + ': ' + times[i] + ' ms</span>';
+    }
+    html += '</div>';
+    html += '<button id="start-btn" onclick="ReactionTimer.startTest()">Start Test</button>';
+    html += '</div>';
+
+    /* replace inner content */
+    _contentEl.innerHTML = html;
+  }
+
+  /* ---- event handler attached to game-area ---- */
+
+  function handleClick() {
+    refreshDom();
+    if (state === 'early') return;          // ignore clicks outside retry button
+
+    if (state === 'waiting') {
+      /* false start! */
+      clearTimeout(waitTimer);
+      waitTimer = null;
+      state = 'early';
+      setClass('early');
+      var elapsed = performance.now() - clickStart;
+      showTimer(Math.max(0, elapsed | 0));
+
+      /* build retry button inside content */
+      var html = '<div id="hint">Too early! Press retry.</div>';
+      html += '<div id="timer">' + Math.max(0, elapsed | 0) + ' ms</div>';
+      html += '<button id="retry-btn" onclick="ReactionTimer.retryTrial()">Retry</button>';
+      _contentEl.innerHTML = html;
+      refreshDom();
+
+      return;
+    }
+
+    if (state === 'go' || state === 'ready') {
+      /* record reaction time */
+      clearTimeout(waitTimer);
+      waitTimer = null;
+      var ms = Math.max(0, _getFakeTime() - clickStart) | 0;
+
+      enterResult(ms);
+
+      refreshDom();
+      if (_hintEl) _hintEl.textContent = 'Trial complete. ' + (currentTrial < NUM_TRIALS ? 'Next trial starting\u2026' : 'Results shown!');
+      showTimer(ms);
+      renderStreak();
+      updateProgress();
+
+      if (currentTrial >= NUM_TRIALS) {
+        /* all done – brief delay then results */
+        setTimeout(function() { renderResults(); }, 1200);
+      } else {
+        /* next trial after a pause */
+        setTimeout(function() { ReactionTimer.nextTrial(); }, 1400);
+      }
+    }
+  }
+
+  _gameArea.addEventListener('mousedown', handleClick, false);
+  _gameArea.addEventListener('click', function (e) {
+    /* only fire when target is NOT a button (buttons handle their own onclick) */
+    if (e.target.tagName !== 'BUTTON') handleClick();
+  }, false);
+
+  /* =========== initial render =========== */
+  if (_hintEl) _hintEl.textContent = 'Click to begin the reaction time test.';
+
+  /* expose globally */
+  window.ReactionTimer = ReactionTimer;
+
+})();
+</script>
+</body>
+</html>

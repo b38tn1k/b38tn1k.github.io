@@ -1,0 +1,24 @@
+{
+  "passed": false,
+  "artifactSHA256": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+  "errors": [
+    "Executable acceptance test did not exit successfully",
+    "Acceptance ledger missing or stale",
+    "Acceptance check missing/failed: movement",
+    "Acceptance check missing/failed: food_growth_score",
+    "Acceptance check missing/failed: wall_collision",
+    "Acceptance check missing/failed: self_collision",
+    "Acceptance check missing/failed: pause_resume",
+    "Acceptance check missing/failed: restart",
+    "Acceptance check missing/failed: difficulty",
+    "Verifier did not trace loading the actual page and interacting with its controls",
+    "Verifier did not exercise timed application execution",
+    "Independent review missing, stale or reports blocking findings",
+    "Independent reviewer did not attest that tests execute application behavior"
+  ],
+  "stl": null,
+  "limits": [
+    "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+    "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "title": "Pixel painter",
+  "status": "completed_with_critical_defects",
+  "grade": "F - delivered artifact fails initialization",
+  "score": 39,
+  "rubricScores": {
+    "functionality": 12,
+    "artifact_correctness": 10,
+    "usability": 6,
+    "self_verification": 1,
+    "autonomy": 10
+  },
+  "elapsedMinutes": 5.1,
+  "promptWords": 40,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "toolCalls": 17,
+  "toolResultsMarkedError": 2,
+  "modelUsageReported": {
+    "input": 16402,
+    "output": 14639,
+    "cacheRead": 194455,
+    "totalTokens": 225496
+  },
+  "artifactBytes": 25307,
+  "verified": [
+    "JavaScript syntax",
+    "No external runtime resources",
+    "Source-level startup failure reproduced with standard Canvas API method names"
+  ],
+  "criticalDefect": "ctx.putData is not a Canvas 2D API and is called during initialization; should not have passed runtime verification",
+  "additionalDefects": [
+    "Brush and eraser strokes do not record individual history checkpoints",
+    "Clear confirmation overwrites the size modal confirmation handler and does not restore it"
+  ],
+  "verificationConcerns": [
+    "Syntax checks and custom markup checks passed but did not execute actual initialization",
+    "It expanded scope with fill, eyedropper, zoom and presets before ensuring the requested core worked"
+  ],
+  "scopeCompliance": "Explicit per-run system constraint added; final working directory contains only artifact and supervisory prompt/log/session records plus cache metadata",
+  "limitations": [
+    "No independent real-browser or visual test"
+  ],
+  "assessment": "More polished and featureful source than the prompt required, but missed a standard API typo that breaks startup and left core undo behavior incomplete. No rescue prompt was given."
+}

@@ -1,0 +1,13 @@
+{
+  "method": "Exact-source VM with no-op Canvas, input dispatch and data roundtrip; no browser",
+  "keyboardMove": 8,
+  "mousePaddle": 450,
+  "touchPlayError": "t is not defined",
+  "rowOneBrick": {
+    "remaining": 1,
+    "score": 5
+  },
+  "paddleBounce": -5,
+  "jsonRoundTrip": true,
+  "restartGridCount": 1
+}

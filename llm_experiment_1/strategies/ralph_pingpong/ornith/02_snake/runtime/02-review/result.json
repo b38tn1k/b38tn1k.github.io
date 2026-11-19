@@ -1,0 +1,20 @@
+{
+  "round": 1,
+  "role": "review",
+  "modelLabel": "qwen",
+  "model": "qwen3.6:35b-a3b",
+  "started": "2026-11-17T03:38:24.133765+00:00",
+  "events": "ralph_pingpong/ornith/02_snake/runtime/02-review/events.jsonl",
+  "status": "completed",
+  "finished": "2026-11-17T03:44:28.801839+00:00",
+  "minutes": 6.08,
+  "reason": "stage_deadline",
+  "exitCode": -9,
+  "proof": {
+    "forcedActivations": 0,
+    "completionRequests": 0,
+    "red": 0,
+    "green": 0
+  },
+  "testExitCode": 1
+}

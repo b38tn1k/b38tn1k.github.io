@@ -1,0 +1,130 @@
+{
+  "score": 87,
+  "grade": "B+ provisional - Useful painter with working pixels/history/PNG; resize Undo leaves wrong dimensions",
+  "summary": "Useful painter with working pixels/history/PNG; resize Undo leaves wrong dimensions",
+  "rubricScores": {
+    "functionality": 36,
+    "artifact_correctness": 22,
+    "usability": 12,
+    "self_verification": 7,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Actual drag paints continuous colored pixels. Eraser and touch-typed pointer events work.",
+    "Two-stroke Undo/Redo and Clear/Undo restore the actual image. Resize preserves overlapping artwork; downloaded PNG bytes have a valid signature and48\u00d724dimensions."
+  ],
+  "defects": [
+    "Undo after resize changes the logical image back to32\u00d732 but leaves the backing canvas48\u00d724 and dimension inputs unchanged. Subsequent coordinates/export dimensions disagree with history.",
+    "The model checked ordinary stroke history and size changes, but missed their interaction."
+  ],
+  "verification": [
+    "3/4 independent scenarios pass. Driver: qa/nominated-ornith.cjs; evidence: reports/self_preferred_ornith_03_pixel_painter.qa.json.",
+    "Independent final-source VM/DOM/nativeCanvas2D tests. Real handlers, scheduled callbacks, pixels and export bytes. Closure exposure provides existing state/functions for controlled fixtures without replacing app algorithms. No native browser layout, GPU, hit testing or physical-device verification."
+  ],
+  "verificationConcerns": [
+    "No native browser layout/GPU/default-action verification or physical-device testing. Runtime event sequence is documented.",
+    "Pure-core diagnostics are distinguished from actual UI-path checks; passing model-authored checks are not treated as independent proof."
+  ],
+  "scopeCompliance": "Pi authored all application and test code. Read isolation active; supervisor supplied generic tooling only, with no application-specific steering or repairs.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Single native Pi session under the model-nominated recipe. Artifact/order signals and product grade are separate. Autonomous terminal delivery is credited; missing verification or behavior is scored separately.",
+  "title": "Pixel painter",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "self_preferred",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All clean: 0 errors, 0 logs, 0 downloads at load (correct). Pure module works standalone. Everything is complete and verified.\n\n## Summary\n\nDelivered `index.html` \u2014 a single, self-contained, offline Pixel Painter app.\n\n**Architecture (separation of concerns):**\n- **Pure module `PixelPainter`** (lines ~186\u2013331): zero DOM/BOM references \u2014 `createCanvas`, `putPixel`, `drawLine` (Bresenham), `clearCanvas`, `fill`, and a snapshot-based undo/redo history controller. Fully unit-testable headlessly.\n- **Browser-boundary layer**: canvas rendering (`putImageData`), palette/DOM wiring, pointer/mouse/touch handlers, PNG export. All `document`/`window`/canvas APIs confined here.\n- No Node/BOM globals (`Buffer`, `require`, `process`, `module.exports`, `global`) anywhere in browser code.\n\n**Verification (`.scratch/verify.cjs`): 47/47 PASS, 0 FAIL, 0 env-only caveats.**\n- Brush/eraser pixels verified via `pixel()`, Bresenham line continuity, eraser clears alpha.\n- Undo/redo: paint \u2192 undo removes, redo restores, undo-at-start is a no-op.\n- Clear, canvas resize (dims + status), palette selection.\n- Mouse/pointer painting (continuous stroke), touch via Pointer Events API.\n- **PNG export structurally validated**: valid signature, IHDR 4\u00d73 matches canvas, and decoded with an independent Skia decoder \u2014 pixel A `[255,128,64,255]` and pixel B `[10,200,90,255]` match the compute core exactly.\n- Export deterministic (identical bytes for identical state); download event fires on export click.\n- Source scans confirm no http(s) URLs, no external `<script src>`/`<link>`, valid single HTML document, 0 runtime errors.\n\n**Environment notes:** STL analyzer / CSG library are 3D-mesh tools \u2014 not applicable to a 2D pixel painter (documented as environment-inapplicable, not a failure). No WebGL/layout/GPU claim is made (Canvas2D only), per harness constraints.\n\nSupport files (`PLAN.md`, `VERIFY.md`, `FILES.md`, `PROGRESS.md`, `.scratch/`) hold dev/test evidence; the only product deliverable is `index.html`.",
+  "workflowInstructions": "run-preferred.py; research/model-preferred-setups.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 31.72,
+  "wallMinutes": 31.72,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 40,
+  "toolCalls": 94,
+  "parentToolCalls": 94,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 8,
+  "modelUsageReported": {
+    "input": 74686,
+    "output": 63606,
+    "cacheRead": 3698844,
+    "totalTokens": 3837136
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 75258,
+  "parentPeakReportedPromptTokens": 75258,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 74686,
+    "output": 63606,
+    "cacheRead": 3698844,
+    "totalTokens": 3837136
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 20080,
+  "sha256": "f4d3843220bcf93c4d5adbceb6a297071545ef129a7afcb2c5bf9f68c85e52fd",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 1,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 25,
+    "delegations": [],
+    "agentSettled": true,
+    "planArtifact": true,
+    "verificationArtifact": true,
+    "planBeforeNativeHtmlWrite": true,
+    "note": "Artifact/order signals only. Bash-authored writes and actual verification quality require independent transcript assessment.",
+    "controller": "Single Pi session; model-selected self-review, no external reviewer or forced proof",
+    "appliedSettings": {
+      "thinking": "medium",
+      "temperature": null,
+      "compaction": {
+        "enabled": true
+      },
+      "oneAgent": true,
+      "forcedProof": false
+    },
+    "preferenceSource": "interviews/ornith/informed/answer.json"
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Informed model-selected configuration; multiple workflow/tool/generation controls differ from earlier cohorts. Preferences are hypotheses, not established efficacy."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  }
+}

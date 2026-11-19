@@ -1,0 +1,12 @@
+{
+  "role": "build",
+  "number": 1,
+  "minutes": 3.99,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": null,
+  "artifactAfter": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+  "prompt": "enforced/ornith/03_pixel_painter/runtime/01-build/prompt.txt",
+  "events": "enforced/ornith/03_pixel_painter/runtime/01-build/events.jsonl",
+  "stderr": "enforced/ornith/03_pixel_painter/runtime/01-build/stderr.log"
+}

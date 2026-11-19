@@ -1,0 +1,19 @@
+{
+  "method": "Exact final-source VM/DOM/nativeCanvas2D startup and export controls. No app algorithms replaced. Ordinary Vec3/Plane type mismatch precedes rendering; no GPU or native browser/physical print claim.",
+  "sha256": "1b0053344c8ee906371ba0eea821e6f5c90029dc400839163a7233dd9bd9efa7",
+  "checks": [
+    {
+      "id": "default_page_initializes_preview",
+      "pass": false,
+      "error": "this.normal.slice is not a function",
+      "stack": "TypeError: this.normal.slice is not a function\n    at Polygon.getPlane (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:96:45)\n    at BSPNode.build (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:121:24)\n    at new BSPNode (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:105:47)\n    at addBox (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:300:16)\n    at generateTrayGeometry (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:307:3)\n    at rebuildPreview (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:645:17)\n    at onParamChange (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:639:3)\n    at setupUI (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:633:3)\n    at HTMLDocument.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:809:3)\n    at dispatch (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/node_modules/linkedom/cjs/interface/event-target.js:8:14)"
+    },
+    {
+      "id": "export_control_produces_STL",
+      "pass": false,
+      "error": "this.normal.slice is not a function",
+      "stack": "TypeError: this.normal.slice is not a function\n    at Polygon.getPlane (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:96:45)\n    at BSPNode.build (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:121:24)\n    at new BSPNode (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:105:47)\n    at addBox (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:300:16)\n    at generateTrayGeometry (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:307:3)\n    at rebuildPreview (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:645:17)\n    at onParamChange (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:639:3)\n    at setupUI (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:633:3)\n    at HTMLDocument.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/self_preferred/qwen/05_drawer_tray/index.html:script0:809:3)\n    at dispatch (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/node_modules/linkedom/cjs/interface/event-target.js:8:14)"
+    }
+  ],
+  "pass": false
+}

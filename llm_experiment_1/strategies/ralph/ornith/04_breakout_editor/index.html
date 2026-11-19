@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Breakout + Level Editor</title>
+<style>
+  :root{
+    --bg:#0d1117; --fg:#e6edf3; --accent:#58a6ff; --brick:#ff7b72;
+    --panel:#161b22; --border:#30363d;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
+  .wrap{max-width:840px;margin:0 auto;padding:12px;}
+  h1{font-size:20px;margin:0 0 8px;}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;}
+  button,select{background:var(--panel);color:var(--fg);border:1px solid var(--border);
+    padding:8px 12px;border-radius:8px;font-size:14px;cursor:pointer;}
+  button:hover,select:hover{border-color:var(--accent);}
+  button.active{background:var(--accent);color:#04121f;border-color:var(--accent);}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  .mode-label{font-weight:600;margin-left:auto;}
+  .editor-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .tool-btn.min-w{min-width:88px;}
+  .status{display:flex;gap:18px;font-variant-numeric:tabular-nums;font-size:15px;margin:6px 0;}
+  .status b{color:var(--accent);}
+  .stage{position:relative;display:inline-block;border:1px solid var(--border);border-radius:6px;touch-action:none;}
+  canvas{display:block;border-radius:6px;touch-action:none;}
+  .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:12px;background:rgba(3,6,12,.72);border-radius:6px;text-align:center;padding:16px;}
+  .overlay.hidden{display:none;}
+  .overlay h2{margin:0;font-size:26px;}
+  .overlay p{margin:0;font-size:15px;opacity:.9;max-width:420px;}
+  .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .jsonarea{width:100%;min-height:160px;background:#04121f;color:#9cdcfe;border:1px solid var(--border);
+    border-radius:6px;padding:10px;font-family:ui-monospace,SFMono-Regular,menlo,monospace;font-size:13px;resize:vertical;}
+  .hint{font-size:13px;opacity:.8;margin-top:4px;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Breakout &amp; Level Editor</h1>
+
+  <div class="toolbar">
+    <button id="btnEditor" class="active">Editor</button>
+    <button id="btnPlay">Play</button>
+    <span class="mode-label" id="modeLabel">Mode: Editor</span>
+  </div>
+
+  <!-- Editor toolbar -->
+  <div class="toolbar editor-tools" id="editbar">
+    <button id="btnDraw" class="tool-btn active min-w">✏️ Draw</button>
+    <button id="btnErase" class="tool-btn min-w">🧽 Erase</button>
+    <input type="color" id="brickColor" value="#ff7b72" title="Brick color">
+    <button id="btnFill">Fill Area</button>
+    <button id="btnClear">Clear Bricks</button>
+    <button id="btnDefault">Default Level</button>
+    <button id="btnSaveJson">Export JSON</button>
+    <button id="btnLoadJson">Import JSON</button>
+  </div>
+
+  <div class="status">
+    <div>Score: <b id="score">0</b></div>
+    <div>Lives: <b id="lives">3</b></div>
+    <div>Bricks: <b id="brickcount">0</b></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="game" width="800" height="500"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Breakout</h2>
+      <p id="overlayText">Draw some bricks in the editor, then press Play.</p>
+      <div class="row" id="overlayActions"></div>
+    </div>
+  </div>
+
+  <p class="hint" id="hint">Editor: choose Draw/Erase, pick a color, click or drag on the grid to paint bricks. In Play, move the paddle with the mouse, touch, or ← / → keys. Press Space or Enter to launch the ball.</p>
+
+  <!-- Import/export panel -->
+  <details class="hidden" id="jsonPanel">
+    <summary>Level JSON</summary>
+    <textarea class="jsonarea" id="jsonText" spellcheck="false"></textarea>
+    <div class="row">
+      <button id="btnApplyJson">Apply to Editor</button>
+      <button id="btnCopyJson">Copy</button>
+    </div>
+  </details>
+</div>
+<script>
+/* Breakout + Level Editor — single-file, offline, self-contained. */
+(function(){
+'use strict';
+
+// ---------- Constants ----------
+const COLS = 20;
+const ROWS = 10;
+const CANVAS_W = 800;
+const CANVAS_H = 500;
+const CELL = CANVAS_W / COLS;          // 40
+const BRICK_H = 20;
+const BRICK_PAD = 3;
+const BRICK_TOP = 40;                  // top margin for brick grid
+const PADDLE_W = 110;
+const PADDLE_H = 14;
+const PADDLE_Y = CANVAS_H - 40;
+const BALL_R = 7;
+
+// ---------- State ----------
+const store = {
+  bricks: {},          // "r,c" -> {color}
+  mode: 'editor',      // 'editor' | 'play'
+  tool: 'draw',        // 'draw' | 'erase'
+  color: '#ff7b72',
+  score: 0,
+  lives: 3,
+  state: 'idle',       // play: 'idle'|'running'|'won'|'over'
+  paddleX: (CANVAS_W - PADDLE_W) / 2,
+  ball: { x: CANVAS_W/2, y: PADDLE_Y - BALL_R - 1, dx: 0, dy: 0 },
+  keys: { left:false, right:false },
+};
+
+// ---------- DOM ----------
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const stage = document.getElementById('stage');
+const overlay = document.getElementById('overlay');
+const overlayTitle = document.getElementById('overlayTitle');
+const overlayText = document.getElementById('overlayText');
+const overlayActions = document.getElementById('overlayActions');
+const scoreEl = document.getElementById('score');
+const livesEl = document.getElementById('lives');
+const brickcountEl = document.getElementById('brickcount');
+const modeLabel = document.getElementById('modeLabel');
+const editbar = document.getElementById('editbar');
+const jsonPanel = document.getElementById('jsonPanel');
+const jsonText = document.getElementById('jsonText');
+
+// ---------- Level helpers ----------
+function key(r,c){ return r + ',' + c; }
+
+function setBrick(r,c,color,notify){
+  const k = key(r,c);
+  if(!color){ delete store.bricks[k]; }
+  else { store.bricks[k] = { color: color }; }
+  if(notify !== false) renderBrickCount();
+}
+
+function brickCount(){ return Object.keys(store.bricks).length; }
+
+function renderBrickCount(){
+  brickcountEl.textContent = String(brickCount());
+}
+
+function defaultLevel(){
+  const next = {};
+  // A classic breakout layout: a few rows of bricks with a couple of gaps.
+  for(let r=0;r<4;r++){
+    for(let c=0;c<COLS;c++){
+      // leave a vertical gap so the ball can slip through
+      if((r===1 || r===2) && c>0 && c<COLS-1 && (c%7===3)) continue;
+      next[key(r,c)] = { color: rowColor(r) };
+    }
+  }
+  store.bricks = next;
+  renderBrickCount();
+}
+
+function rowColor(r){
+  const palette = ['#ff7b72','#ffab76','#ffd66b','#7ee787','#79c0ff'];
+  return palette[r % palette.length];
+}
+
+// ---------- Rendering ----------
+function paint(){
+  ctx.clearRect(0,0,CANVAS_W,CANVAS_H);
+
+  if(store.mode === 'editor'){
+    paintGrid();
+    paintEditorBricks();
+    paintPaddleEditor();
+  } else {
+    paintPlayBricks();
+    paintPaddle();
+    paintBall();
+    paintHud();
+  }
+}
+
+function paintGrid(){
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for(let c=0;c<=COLS;c++){
+    const x = c*CELL;
+    ctx.moveTo(x,0); ctx.lineTo(x, ROWS*BRICK_H);
+  }
+  for(let r=0;r<=ROWS;r++){
+    const y = BRICK_TOP + r*BRICK_H;
+    ctx.moveTo(0,y); ctx.lineTo(CANVAS_W, y);
+  }
+  ctx.stroke();
+}
+
+function brickRect(r,c){
+  return {
+    x: c*CELL + BRICK_PAD,
+    y: BRICK_TOP + r*BRICK_H + BRICK_PAD,
+    w: CELL - BRICK_PAD*2,
+    h: BRICK_H - BRICK_PAD*2
+  };
+}
+
+function paintEditorBricks(){
+  for(const k in store.bricks){
+    const [r,c] = k.split(',').map(Number);
+    const rect = brickRect(r,c);
+    ctx.fillStyle = store.bricks[k].color;
+    ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+  }
+}
+
+function paintPlayBricks(){
+  for(const k in store.bricks){
+    const [r,c] = k.split(',').map(Number);
+    const rect = brickRect(r,c);
+    ctx.fillStyle = store.bricks[k].color;
+    ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+  }
+}
+
+function paintPaddle(){
+  const x = clamp(store.paddleX, 0, CANVAS_W - PADDLE_W);
+  ctx.fillStyle = '#e6edf3';
+  ctx.fillRect(x, PADDLE_Y, PADDLE_W, PADDLE_H);
+}
+
+function paintPaddleEditor(){
+  // dim reference paddle in editor so players see where it sits
+  const x = clamp(store.paddleX, 0, CANVAS_W - PADDLE_W);
+  ctx.fillStyle = 'rgba(230,237,243,0.25)';
+  ctx.fillRect(x, PADDLE_Y, PADDLE_W, PADDLE_H);
+}
+
+function paintBall(){
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(store.ball.x, store.ball.y, BALL_R, 0, Math.PI*2);
+  ctx.fill();
+}
+
+function paintHud(){
+  scoreEl.textContent = String(store.score);
+  livesEl.textContent = String(store.lives);
+}
+
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+
+// ---------- Mode switching ----------
+function setEditorBrickHighlight(){ /* no-op helper */ }
+
+function enterEditor(){
+  store.mode = 'editor';
+  store.state = 'idle';
+  modeLabel.textContent = 'Mode: Editor';
+  editbar.classList.remove('hidden');
+  setModeBtn('btnEditor');
+  hideOverlay();
+  paint();
+}
+
+function enterPlay(){
+  if(brickCount() === 0){
+    flashOverlay('No Bricks', 'Draw some bricks in the editor first, then play.', [
+      { label:'Back to Editor', cls:'', action: enterEditor }
+    ]);
+    return;
+  }
+  store.mode = 'play';
+  store.score = 0;
+  store.lives = 3;
+  store.state = 'idle';
+  store.paddleX = (CANVAS_W - PADDLE_W) / 2;
+  resetBall();
+  modeLabel.textContent = 'Mode: Play';
+  editbar.classList.add('hidden');
+  setModeBtn('btnPlay');
+  paint();
+  showIdleOverlay('Press Space / Tap / Play to launch');
+}
+
+function setModeBtn(id){
+  document.getElementById('btnEditor').classList.toggle('active', id==='btnEditor');
+  document.getElementById('btnPlay').classList.toggle('active', id==='btnPlay');
+}
+
+// ---------- Ball / launch ----------
+function resetBall(){
+  store.ball.x = CANVAS_W/2;
+  store.ball.y = PADDLE_Y - BALL_R - PADDLE_H - 2;
+  store.ball.dx = 0;
+  store.ball.dy = 0;
+}
+
+function launchBall(){
+  if(store.state !== 'idle') return;
+  const speed = 6;
+  const angle = (-Math.PI/2) + (Math.random()*0.5 - 0.25);
+  store.ball.dx = Math.cos(angle) * speed;
+  store.ball.dy = Math.sin(angle) * speed;
+  store.state = 'running';
+  hideOverlay();
+  paint();
+}
+
+function nextLives(){
+  if(store.lives <= 1){
+    store.lives = 0;
+    store.state = 'over';
+    showGameOver();
+  } else {
+    store.lives -= 1;
+    store.paddleX = (CANVAS_W - PADDLE_W) / 2;
+    resetBall();
+    store.state = 'idle';
+    showIdleOverlay('Space / Tap to launch — Lives left: ' + store.lives);
+  }
+  paint();
+}
+
+function winLevel(){
+  store.state = 'won';
+  flashOverlay('You Win! 🎉', 'Score: ' + store.score + '. Return to the editor to keep editing.', [
+    { label:'Editor', cls:'', action: enterEditor }
+  ]);
+  paint();
+}
+
+// ---------- Overlay ----------
+function hideOverlay(){ overlay.classList.add('hidden'); overlayActions.innerHTML=''; }
+
+function showIdleOverlay(text){
+  overlayText.textContent = text;
+  overlayTitle.textContent = 'Ready';
+  overlayActions.innerHTML = '';
+  const b = document.createElement('button');
+  b.textContent = 'Play';
+  b.onclick = ()=>{ launchBall(); };
+  overlayActions.appendChild(b);
+  overlay.classList.remove('hidden');
+  paint();
+}
+
+function flashOverlay(title, text, buttons){
+  overlayTitle.textContent = title;
+  overlayText.textContent = text;
+  overlayActions.innerHTML = '';
+  for(const b of (buttons||[])){
+    const el = document.createElement('button');
+    el.textContent = b.label;
+    if(b.cls) el.className = b.cls;
+    el.onclick = b.action;
+    overlayActions.appendChild(el);
+  }
+  overlay.classList.remove('hidden');
+  paint();
+}
+
+function showGameOver(){
+  flashOverlay('Game Over', 'Final score: ' + store.score + '.', [
+    { label:'Restart', cls:'', action: restartPlay },
+    { label:'Editor', cls:'', action: enterEditor }
+  ]);
+}
+
+function restartPlay(){
+  store.score = 0;
+  store.lives = 3;
+  store.state = 'idle';
+  store.paddleX = (CANVAS_W - PADDLE_W) / 2;
+  resetBall();
+  showIdleOverlay('Press Space / Tap / Play to launch');
+  paint();
+}
+
+// ---------- Game update ----------
+function update(){
+  if(store.mode !== 'play' || store.state !== 'running') return;
+
+  // paddle keyboard movement
+  if(store.keys.left) store.paddleX -= 8;
+  if(store.keys.right) store.paddleX += 8;
+  store.paddleX = clamp(store.paddleX, 0, CANVAS_W - PADDLE_W);
+
+  const b = store.ball;
+  b.x += b.dx;
+  b.y += b.dy;
+
+  // walls
+  if(b.x - BALL_R < 0){ b.x = BALL_R; b.dx = Math.abs(b.dx); }
+  if(b.x + BALL_R > CANVAS_W){ b.x = CANVAS_W - BALL_R; b.dx = -Math.abs(b.dx); }
+  if(b.y - BALL_R < 0){ b.y = BALL_R; b.dy = Math.abs(b.dy); }
+
+  // paddle collision
+  if(b.dy > 0 &&
+     b.y + BALL_R >= PADDLE_Y &&
+     b.y + BALL_R <= PADDLE_Y + PADDLE_H + 8 &&
+     b.x >= store.paddleX - 2 &&
+     b.x <= store.paddleX + PADDLE_W + 2){
+    const hit = (b.x - (store.paddleX + PADDLE_W/2)) / (PADDLE_W/2);
+    const angle = hit * (Math.PI/3); // up to 60deg
+    const speed = Math.hypot(b.dx, b.dy);
+    b.dx = Math.sin(angle) * speed;
+    b.dy = -Math.abs(Math.cos(angle) * speed);
+    b.y = PADDLE_Y - BALL_R - PADDLE_H - 1;
+  }
+
+  // brick collisions
+  let anyHit = false;
+  for(const k in store.bricks){
+    const [r,c] = k.split(',').map(Number);
+    const rect = brickRect(r,c);
+    if(circleInRect(b, rect)){
+      // determine collision side using overlap depths
+      const overlapLeft = b.x + BALL_R - rect.x;
+      const overlapRight = (rect.x + rect.w) - (b.x - BALL_R);
+      const overlapTop = b.y + BALL_R - rect.y;
+      const overlapBottom = (rect.y + rect.h) - (b.y - BALL_R);
+      const minX = Math.min(overlapLeft, overlapRight);
+      const minY = Math.min(overlapTop, overlapBottom);
+      if(minX < minY){
+        b.dx = -b.dx;
+        b.x += b.dx > 0 ? minX : -minX;
+      } else {
+        b.dy = -b.dy;
+        b.y += b.dy > 0 ? minY : -minY;
+      }
+      delete store.bricks[k];
+      store.score += 10;
+      anyHit = true;
+    }
+  }
+
+  if(anyHit){
+    renderBrickCount();
+    if(brickCount() === 0){ winLevel(); return; }
+  }
+
+  // fell off bottom
+  if(b.y - BALL_R > CANVAS_H){
+    nextLives();
+    return;
+  }
+
+  paint();
+}
+
+function circleInRect(ball, rect){
+  const nx = Math.max(rect.x, Math.min(ball.x, rect.x + rect.w));
+  const ny = Math.max(rect.y, Math.min(ball.y, rect.y + rect.h));
+  const dx = ball.x - nx;
+  const dy = ball.y - ny;
+  return (dx*dx + dy*dy) <= BALL_R*BALL_R;
+}
+
+// ---------- Editor interaction ----------
+function canvasToGrid(ev){
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = CANVAS_W / rect.width;
+  const scaleY = CANVAS_H / rect.height;
+  let cx, cy;
+  if(ev.touches && ev.touches.length){
+    cx = ev.touches[0].clientX; cy = ev.touches[0].clientY;
+  } else {
+    cx = ev.clientX; cy = ev.clientY;
+  }
+  const x = (cx - rect.left) * scaleX;
+  const y = (cy - rect.top) * scaleY;
+  const c = Math.floor(x / CELL);
+  const r = Math.floor((y - BRICK_TOP) / BRICK_H);
+  return { r:r<0?null:r, c:c<0?null:c, x, y };
+}
+
+function paintAt(ev){
+  const { r, c } = canvasToGrid(ev);
+  if(r===null || c===null || r>=ROWS || c>=COLS) return;
+  if(store.tool === 'draw'){
+    if(!store.bricks[key(r,c)]) setBrick(r,c,store.color);
+  } else {
+    if(store.bricks[key(r,c)]) setBrick(r,c,null);
+  }
+  paint();
+}
+
+function fillAt(ev){
+  const { r, c } = canvasToGrid(ev);
+  if(r===null || c===null) return;
+  // flood fill existing content at the clicked cell, then replace
+  const targetKey = key(r,c);
+  const hasTarget = !!store.bricks[targetKey];
+  const stack = [[r,c]];
+  const seen = new Set();
+  while(stack.length){
+    const [rr,cc] = stack.pop();
+    if(rr<0||cc<0||rr>=ROWS||cc>=COLS) continue;
+    const kk = key(rr,cc);
+    const has = !!store.bricks[kk];
+    if(has !== hasTarget) continue;
+    if(seen.has(kk)) continue;
+    seen.add(kk);
+    if(hasTarget){ continue; } // mark region
+    else { setBrick(rr,cc,store.color); }
+    stack.push([rr+1,cc],[rr-1,cc],[rr,cc+1],[rr,cc-1]);
+  }
+  renderBrickCount();
+  paint();
+}
+
+// ---------- Save / Load JSON ----------
+function serializeLevel(){
+  return JSON.stringify({
+    version: 1,
+    cols: COLS,
+    rows: ROWS,
+    bricks: store.bricks
+  }, null, 2);
+}
+
+function deserializeLevel(text){
+  const data = JSON.parse(text);
+  if(!data || typeof data !== 'object') throw new Error('Invalid level: not an object');
+  if(!data.bricks || typeof data.bricks !== 'object') throw new Error('Invalid level: missing "bricks"');
+  const next = {};
+  for(const k in data.bricks){
+    const parts = k.split(',');
+    if(parts.length !== 2) throw new Error('Invalid brick key "'+k+'"');
+    const r = parseInt(parts[0],10);
+    const c = parseInt(parts[1],10);
+    if(!Number.isInteger(r) || !Number.isInteger(c)) throw new Error('Invalid brick coords in "'+k+'"');
+    if(r<0||r>=ROWS||c<0||c>=COLS) throw new Error('Brick out of bounds in "'+k+'"');
+    const col = data.bricks[k];
+    const color = (col && col.color) || col || '#ff7b72';
+    next[k] = { color: String(color) };
+  }
+  store.bricks = next;
+  renderBrickCount();
+  return next;
+}
+
+function exportJSON(){
+  jsonText.value = serializeLevel();
+  jsonPanel.classList.remove('hidden');
+}
+
+function applyJSON(){
+  const text = jsonText.value.trim();
+  if(!text){ throw new Error('JSON is empty'); }
+  deserializeLevel(text);
+  enterEditor();
+}
+
+// ---------- Timer / main loop ----------
+let rafId = 0;
+function loop(){
+  if(store.mode === 'play' && store.state === 'running'){
+    update();
+  }
+  rafId = requestAnimationFrame(loop);
+}
+
+// ---------- Input wiring ----------
+let pointerDown = false;
+
+function onCanvasPointerDown(ev){
+  if(store.mode !== 'editor') return;
+  pointerDown = true;
+  if(store.tool === 'fill') fillAt(ev);
+  else paintAt(ev);
+  if(ev.cancelable) ev.preventDefault();
+}
+
+function onCanvasMove(ev){
+  if(!pointerDown || store.mode !== 'editor' || store.tool === 'fill') return;
+  paintAt(ev);
+  if(ev.cancelable) ev.preventDefault();
+}
+
+function onCanvasPointerUp(){
+  pointerDown = false;
+}
+
+function onPointer(ev){
+  // pointer events carry pointerId/pointerType/isPrimary in the harness
+  if(ev.pointerType === 'touch' || ev.pointerId === 2){
+    if(ev.type==='pointerdown'){ pointerDown=true; paintAt(ev); }
+    else if(ev.type==='pointerup'||ev.type==='pointercancel'){ pointerDown=false; }
+  }
+}
+
+// ---------- Keyboard ----------
+function onKeyDown(ev){
+  const k = ev.key.toLowerCase();
+  if(store.mode === 'editor'){
+    if(k==='d'){ setTool('draw'); }
+    else if(k==='e'){ setTool('erase'); }
+    else if(k==='f'){ fillAt(currentPointer||{clientX:canvas.width/2,clientY:canvas.height/2}); }
+    return;
+  }
+  if(k==='arrowleft' || k==='a'){ store.keys.left = true; if(ev.cancelable) ev.preventDefault(); }
+  else if(k==='arrowright' || k==='d'){ store.keys.right = true; if(ev.cancelable) ev.preventDefault(); }
+  else if(k===' ' || k===' '|| k===' '|| k===' ' || k===' '){
+    // Space / Enter to launch or restart on game over
+    if(store.state==='running'||store.state==='idle'){ ev.preventDefault(); launchBall(); }
+    else if(store.state==='over'){ restartPlay(); }
+    else if(store.state==='won'){ /* ignore */ }
+  }
+}
+
+function onKeyUp(ev){
+  const k = ev.key.toLowerCase();
+  if(k==='arrowleft' || k==='a') store.keys.left = false;
+  else if(k==='arrowright' || k==='d') store.keys.right = false;
+}
+
+let currentPointer = null;
+function canvasPointerEvent(ev){
+  currentPointer = ev;
+}
+
+// ---------- Tool buttons ----------
+function setTool(t){
+  store.tool = t;
+  document.getElementById('btnDraw').classList.toggle('active', t==='draw');
+  document.getElementById('btnErase').classList.toggle('active', t==='erase');
+}
+
+// ---------- Wire up ----------
+function wire(){
+  document.getElementById('btnEditor').addEventListener('click', enterEditor);
+  document.getElementById('btnPlay').addEventListener('click', ()=>{ enterPlay(); });
+
+  document.getElementById('btnDraw').addEventListener('click', ()=>setTool('draw'));
+  document.getElementById('btnErase').addEventListener('click', ()=>setTool('erase'));
+  document.getElementById('brickColor').addEventListener('input', (e)=>{ store.color = e.target.value; });
+  document.getElementById('btnFill').addEventListener('click', ()=>{ setTool('fill'); });
+  document.getElementById('btnClear').addEventListener('click', ()=>{
+    for(const k in store.bricks) delete store.bricks[k];
+    renderBrickCount(); paint();
+  });
+  document.getElementById('btnDefault').addEventListener('click', ()=>{ defaultLevel(); enterEditor(); });
+
+  document.getElementById('btnSaveJson').addEventListener('click', exportJSON);
+  document.getElementById('btnLoadJson').addEventListener('click', ()=>{
+    if(!jsonPanel.classList.contains('hidden')){ jsonPanel.classList.add('hidden'); return; }
+    jsonText.value = serializeLevel();
+    jsonPanel.classList.remove('hidden');
+  });
+  document.getElementById('btnApplyJson').addEventListener('click', ()=>{
+    try { applyJSON(); } catch(e){ jsonText.value = 'Error: '+e.message; }
+  });
+  document.getElementById('btnCopyJson').addEventListener('click', ()=>{
+    if(navigator.clipboard){ navigator.clipboard.writeText(jsonText.value); }
+    jsonText.select();
+    // fallback select works on focus
+    jsonText.focus(); jsonText.select();
+  });
+
+  // canvas editor interaction (mouse + touch)
+  canvas.addEventListener('mousedown', onCanvasPointerDown);
+  window.addEventListener('mousemove', onCanvasMove);
+  window.addEventListener('mouseup', onCanvasPointerUp);
+  canvas.addEventListener('pointerdown', canvasPointerEvent);
+  canvas.addEventListener('touchstart', (e)=>{ onCanvasPointerDown(e); }, {passive:false});
+  canvas.addEventListener('touchmove', (e)=>{ onCanvasMove(e); }, {passive:false});
+  canvas.addEventListener('touchend', onCanvasPointerUp);
+
+  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('keyup', onKeyUp);
+}
+
+// ---------- Init ----------
+function init(){
+  // seed a default level
+  defaultLevel();
+  wire();
+  setTool('draw');
+  enterEditor();
+  requestAnimationFrame(loop);
+}
+
+// expose for tests
+window.__breakout = {
+  store: store,
+  setEditorBrick: setBrick,
+  deserializeLevel: deserializeLevel,
+  serializeLevel: serializeLevel,
+  defaultLevel: defaultLevel,
+  enterEditor: enterEditor,
+  enterPlay: enterPlay,
+  launchBall: launchBall,
+  update: update,
+  paint: paint,
+  resetBall: resetBall,
+  restartPlay: restartPlay,
+  nextLives: nextLives,
+  winLevel: winLevel,
+  renderBrickCount: renderBrickCount,
+  setTool: setTool,
+  COLS: COLS, ROWS: ROWS,
+};
+
+init();
+
+})();
+</script>
+</body>
+</html>

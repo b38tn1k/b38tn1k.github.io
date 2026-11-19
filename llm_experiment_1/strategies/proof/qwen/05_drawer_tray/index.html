@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Organizer Tray Maker</title>
+<style>
+  :root { --bg: #1a1a2e; --panel: #16213e; --accent: #0f3460; --fg: #e8e8e8; --hi: #e94560; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--fg); display:flex; min-height:100vh; }
+  .sidebar { width:340px; background: var(--panel); padding:20px; overflow-y:auto; border-right:2px solid var(--accent); display:flex; flex-direction:column; gap:14px; }
+  .main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+  h1 { font-size:1.3em; color: var(--hi); text-align:center; margin-bottom:6px; }
+  h2 { font-size:1em; color: var(--hi); border-bottom:1px solid var(--accent); padding-bottom:4px; margin-bottom:8px; }
+  label { display:flex; justify-content:space-between; align-items:center; font-size:.85em; margin:4px 0; }
+  input[type=number] { width:72px; background:#0d1b3e; border:1px solid var(--accent); color:var(--fg); padding:4px 6px; border-radius:4px; text-align:center; font-size:.9em; }
+  input[type=range] { flex:1; margin:0 8px; accent-color: var(--hi); }
+  .val { min-width:52px; text-align:right; font-weight:bold; color:var(--hi); font-size:.85em; }
+  canvas { background:#0d1b3e; border-radius:6px; cursor:grab; }
+  button { background: var(--hi); color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:.9em; transition:opacity .2s; }
+  button:hover { opacity:.85; }
+  button.secondary { background: var(--accent); }
+  .export-area { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; justify-content:center; }
+  .comp-list { max-height:200px; overflow-y:auto; font-size:.8em; background:#0d1b3e; border-radius:4px; padding:8px; line-height:1.6; }
+  .comp-item { display:flex; justify-content:space-between; padding:2px 4px; border-bottom:1px solid #1a2a4a; }
+  .section { background:#0d1b3e; border-radius:6px; padding:10px; }
+  .grid-info { font-size:.8em; color:#8899aa; text-align:center; margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h1>Tray Maker</h1>
+
+  <div class="section">
+    <h2>Outer Dimensions (mm)</h2>
+    <label>Width <input type="range" id="rW" min="50" max="600" step="1" value="180"><span class="val" id="vW">180</span></label>
+    <label>Depth  <input type="range" id="rD" min="50" max="600" step="1" value="120"><span class="val" id="vD">120</span></label>
+    <label>Height<input type="range" id="rH" min="10" max="300" step="1" value="30"><span class="val" id="vH">30</span></label>
+  </div>
+
+  <div class="section">
+    <h2>Grid Layout</h2>
+    <label>Rows    <input type="range" id="rR" min="1" max="20" step="1" value="3"><span class="val" id="vR">3</span></label>
+    <label>Columns <input type="range" id="rC" min="1" max="20" step="1" value="2"><span class="val" id="vC">2</span></label>
+  </div>
+
+  <div class="section">
+    <h2>Thickness (mm)</h2>
+    <label>Wall    <input type="range" id="rT" min="1" max="20" step="0.5" value="3"><span class="val" id="vT">3</span></label>
+    <label>Floor   <input type="range" id="rt" min="1" max="20" step="0.5" value="3"><span class="val" id="vt">3</span></label>
+  </div>
+
+  <div class="section">
+    <h2>Compartment Sizes</h2>
+    <div class="comp-list" id="compList"></div>
+  </div>
+
+  <div class="export-area">
+    <button onclick="exportSTL('ascii')">Export ASCII STL</button>
+    <button class="secondary" onclick="exportSTL('binary')">Export Binary STL</button>
+  </div>
+</div>
+
+<div class="main">
+  <canvas id="c3d" width="700" height="520"></canvas>
+  <div class="grid-info">Drag to rotate &middot; Scroll to zoom</div>
+</div>
+
+<script>
+// ===== PARAMETER MODEL =====
+const P = {
+  W: 180, D: 120, H: 30,
+  rows: 3, cols: 2,
+  wallT: 3, floorT: 3,
+  rotX: -0.55, rotY: 0.75, scale: 1.8
+};
+
+// ===== DOM REFS AND BINDING =====
+const sliders = { rW:'W', rD:'D', rH:'H', rR:'rows', rC:'cols', rT:'wallT', rt:'floorT' };
+
+function syncUI() {
+  for (const [id, key] of Object.entries(sliders)) {
+    const el = document.getElementById(id);
+    if(el) el.value = P[key];
+    const vid = 'v'+id.substring(1);
+    const ve = document.getElementById(vid);
+    if(ve) ve.textContent = P[key];
+  }
+}
+
+function bindSlider(id, key) {
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', function(e) {
+    P[key] = parseFloat(e.target.value);
+    var vid = 'v'+id.substring(1);
+    var ve = document.getElementById(vid);
+    if(ve) ve.textContent = P[key];
+    render();
+  });
+}
+
+// ===== 3-D RENDERING (pure Canvas 2D) =====
+var canvas = document.getElementById('c3d');
+var ctx = canvas.getContext('2d');
+
+function rotatePoint(x, y, z, rx, ry) {
+  var cosY = Math.cos(ry), sinY = Math.sin(ry);
+  var x1 = x * cosY + z * sinY;
+  var z1 = -x * sinY + z * cosY;
+  var cosX = Math.cos(rx), sinX = Math.sin(rx);
+  return { x: x1, y: y * cosX - z1 * sinX, z: y * sinX + z1 * cosX };
+}
+
+function project(x, y, z) {
+  var p = rotatePoint(x, y, z, P.rotX, P.rotY);
+  var fov = 600;
+  var dist = 500 + p.z;
+  var s = (fov / Math.max(dist, 10)) * P.scale;
+  return { x: canvas.width/2 + p.x * s, y: canvas.height/2 - p.y * s };
+}
+
+function drawLine3D(x1,y1,z1, x2,y2,z2, color, width) {
+  var a = project(x1,y1,z1), b = project(x2,y2,z2);
+  ctx.strokeStyle = color || 'rgba(180,220,255,0.5)';
+  ctx.lineWidth = width || 1;
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.stroke();
+}
+
+function fillFace(vtxs, fillColor, strokeColor) {
+  var pts = vtxs.map(function(v){ return project(v[0], v[1], v[2]); });
+  ctx.fillStyle = fillColor;
+  ctx.strokeStyle = strokeColor || 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+}
+
+function getAvgZ(vtxs) {
+  var s = 0;
+  for(var i=0;i<vtxs.length;i++) s += vtxs[i][2];
+  return s / vtxs.length;
+}
+
+function render() {
+  var W = P.W, D = P.D, H = P.H;
+  var wallT = P.wallT, floorT = P.floorT;
+  var rows = P.rows, cols = P.cols;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#0d1b3e';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Compute internal dimensions
+  var intW = W - 2*wallT;
+  var intD = D - 2*wallT;
+  var cellW = intW / cols;
+  var cellD = intD / rows;
+
+  // Collect all faces for painter's algorithm
+  var faces = [];
+
+  // Outer bottom face
+  faces.push({
+    vtxs: [[0,floorT/2,0],[W,floorT/2,0],[W,H-floorT/2,D],[0,H-floorT/2,D]],
+    color: 'rgba(30,50,80,0.6)'
+  });
+
+  // Left wall (x=0) - exterior
+  faces.push({ vtxs: [[0,floorT/2,D],[0,floorT/2,0],[0,H-floorT/2,0],[0,H-floorT/2,D]], color:'rgba(50,80,140,0.7)' });
+  // Right wall (x=W) - exterior
+  faces.push({ vtxs: [[W,floorT/2,0],[W,floorT/2,D],[W,H-floorT/2,D],[W,H-floorT/2,0]], color:'rgba(50,80,140,0.7)' });
+  // Back wall (z=D) - exterior
+  faces.push({ vtxs: [[0,floorT/2,D],[W,floorT/2,D],[W,H-floorT/2,D],[0,H-floorT/2,D]], color:'rgba(60,100,160,0.75)' });
+
+  // Interior bottom floor
+  faces.push({
+    vtxs: [[wallT,floorT/2+0.01,wallT],[W-wallT,floorT/2+0.01,wallT],
+           [W-wallT,floorT/2+0.01,D-wallT],[wallT,floorT/2+0.01,D-wallT]],
+    color: 'rgba(25,40,70,0.5)'
+  });
+
+  // Compartment dividers - vertical (along depth axis for columns)
+  var compColor = 'rgba(80,130,200,0.45)';
+  for (var c = 1; c < cols; c++) {
+    var dx = wallT + c * cellW;
+    faces.push({
+      vtxs: [[dx,floorT/2+0.5,wallT],[dx,floorT/2+0.5,D-wallT],
+             [dx,H-floorT/2-0.5,D-wallT],[dx,H-floorT/2-0.5,wallT]],
+      color: compColor
+    });
+  }
+
+  // Horizontal dividers (along width axis for rows)
+  for (var r = 1; r < rows; r++) {
+    var dz = wallT + r * cellD;
+    faces.push({
+      vtxs: [[wallT,floorT/2+0.5,dz],[W-wallT,floorT/2+0.5,dz],
+             [W-wallT,H-floorT/2-0.5,dz],[wallT,H-floorT/2-0.5,dz]],
+      color: compColor
+    });
+  }
+
+  // Interior back wall
+  faces.push({
+    vtxs: [[wallT,floorT/2+0.01,D-wallT],[W-wallT,floorT/2+0.01,D-wallT],
+           [W-wallT,H-floorT/2-0.5,D-wallT-0.01],[wallT,H-floorT/2-0.5,D-wallT-0.01]],
+    color: 'rgba(40,65,110,0.3)'
+  });
+
+  // Sort faces by average Z (back to front)
+  faces.sort(function(a,b){ return getAvgZ(a.vtxs) - getAvgZ(b.vtxs); });
+
+  // Draw all faces
+  for (var fi = 0; fi < faces.length; fi++) {
+    fillFace(faces[fi].vtxs, faces[fi].color, 'rgba(100,160,240,0.35)');
+  }
+
+  // Draw grid lines on top for clarity
+  ctx.strokeStyle = 'rgba(180,220,255,0.5)';
+  ctx.lineWidth = 1;
+
+  // Top rim edges
+  var corners = [
+    [wallT,floorT/2+0.01,wallT],
+    [W-wallT,floorT/2+0.01,wallT],
+    [W-wallT,floorT/2+0.01,D-wallT],
+    [wallT,floorT/2+0.01,D-wallT]
+  ];
+  ctx.beginPath();
+  var a = project(corners[0][0],corners[0][1],corners[0][2]);
+  ctx.moveTo(a.x, a.y);
+  for (var ci=1;ci<corners.length;ci++){
+    var cp = project(corners[ci][0],corners[ci][1],corners[ci][2]);
+    ctx.lineTo(cp.x, cp.y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+
+  // Draw compartment labels
+  ctx.font = '11px monospace';
+  ctx.textAlign = 'center';
+  for (var ri=0;ri<rows;ri++){
+    for(var ci2=0;ci2<cols;ci2++){
+      var cx = wallT + (ci2+0.5)*cellW;
+      var cz = wallT + (ri+0.5)*cellD;
+      var p2 = project(cx, floorT/2+2, cz);
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      var dw = Math.round(cellW*10)/10;
+      var dd = Math.round(cellD*10)/10;
+      ctx.fillText(dw+'x'+dd, p2.x, p2.y);
+    }
+  }
+
+  // Update compartment list
+  updateCompList();
+}
+
+function updateCompList() {
+  var intW2 = P.W - 2*P.wallT;
+  var intD2 = P.D - 2*P.wallT;
+  var cellW2 = (intW2 / P.cols);
+  var cellD2 = (intD2 / P.rows);
+
+  var html = '';
+  for (var ri=0;ri<P.rows;ri++){
+    for(var ci3=0;ci3<P.cols;ci3++){
+      var id = 'C'+(ri+1)+'_'+(ci3+1);
+      html += '<div class="comp-item"><span>'+id+'</span><span>'+Math.round(cellW2*10)/10+' x '+Math.round(cellD2*10)/10+' mm</span></div>';
+    }
+  }
+  document.getElementById('compList').innerHTML = html;
+}
+
+// ===== INTERACTION =====
+var dragging = false, lastX=0, lastY=0;
+
+canvas.addEventListener('mousedown', function(e){ dragging=true; lastX=e.clientX; lastY=e.clientY; });
+canvas.addEventListener('mousemove', function(e){
+  if(!dragging) return;
+  P.rotY += (e.clientX-lastX)*0.01;
+  P.rotX += (e.clientY-lastY)*0.01;
+  lastX=e.clientX; lastY=e.clientY;
+  render();
+});
+canvas.addEventListener('mouseup', function(){ dragging=false; });
+canvas.addEventListener('mouseleave', function(){ dragging=false; });
+
+canvas.addEventListener('wheel', function(e){
+  e.preventDefault();
+  P.scale *= e.deltaY < 0 ? 1.08 : 0.93;
+  P.scale = Math.max(0.2, Math.min(5, P.scale));
+  render();
+}, {passive:false});
+
+// Touch support
+canvas.addEventListener('touchstart', function(e){
+  if(e.touches.length===1){ dragging=true; lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; }
+  e.preventDefault();
+},{passive:false});
+canvas.addEventListener('touchmove', function(e){
+  if(!dragging||!e.touches.length) return;
+  P.rotY += (e.touches[0].clientX-lastX)*0.01;
+  P.rotX += (e.touches[0].clientY-lastY)*0.01;
+  lastX=e.touches[0].clientX; lastY=e.touches[0].clientY;
+  render();
+  e.preventDefault();
+},{passive:false});
+canvas.addEventListener('touchend', function(){ dragging=false; });
+
+// ===== STL EXPORT =====
+function exportSTL(format) {
+  var W=P.W, D=P.D, H=P.H, wT=P.wallT, fT=P.floorT;
+  var intW=W-2*wT, intD=D-2*wT;
+  var cellW=intW/P.cols, cellD=intD/P.rows;
+  var tris = [];
+
+  function addTri(x1,y1,z1,x2,y2,z2,x3,y3,z3) {
+    var nx=(y2-y1)*(z3-z1)-(z2-z1)*(y3-y1);
+    var ny=(z2-z1)*(x3-x1)-(x2-x1)*(z3-z1);
+    var nz=(x2-x1)*(y3-y1)-(y2-y1)*(x3-x1);
+    tris.push({nx:nx,ny:ny,nz:nz,x1:x1,y1:y1,z1:z1,x2:x2,y2:y2,z2:z2,x3:x3,y3:y3,z3:z3});
+  }
+
+  function addBox(x0,y0,z0, x1,y1,z1) {
+    // Bottom
+    addTri(x0,y0,z0, x1,y0,z0, x0,y0,z1);
+    addTri(x0,y0,z1, x1,y0,z0, x1,y0,z1);
+    // Top
+    addTri(x0,y1,z1, x1,y1,z1, x1,y1,z0);
+    addTri(x0,y1,z1, x1,y1,z0, x0,y1,z0);
+    // Front (z0)
+    addTri(x0,y0,z0, x1,y0,z0, x1,y1,z0);
+    addTri(x0,y0,z0, x1,y1,z0, x0,y1,z0);
+    // Back (z1)
+    addTri(x0,y0,z1, x2?x0:x1,y0,z1, x1,y1,z1);
+    addTri(x0,y0,z1, x1,y1,z1, x0,y1,z1);
+    // Left (x0)
+    addTri(x0,y0,z0, x0,y1,z0, x0,y1,z1);
+    addTri(x0,y0,z0, x0,y1,z1, x0,y0,z1);
+    // Right (x1)
+    addTri(x1,y0,z1, x1,y0,z0, x1,y1,z0);
+    addTri(x1,y0,z1, x1,y1,z0, x1,y1,z1);
+  }
+
+  // Outer shell (empty box - walls only)
+  // Bottom plate
+  addBox(0,0,0, W,fT,D);
+  // Back wall
+  addBox(wT,fT,wT, W-wT,H,wT/2+D-wT/2);
+  // Actually let me do this more carefully for a tray shape
+
+  // Reset tris for proper tray geometry
+  tris = [];
+
+  function addTri(x1,y1,z1,x2,y2,z2,x3,y3,z3) {
+    var nx=(y2-y1)*(z3-z1)-(z2-z1)*(y3-y1);
+    var ny=(z2-z1)*(x3-x1)-(x2-x1)*(z3-z1);
+    var nz=(x2-x1)*(y3-y1)-(y2-y1)*(x3-x1);
+    tris.push({nx:nx,ny:ny,nz:nz,x1:x1,y1:y1,z1:z1,x2:x2,y2:y2,z2:z2,x3:x3,y3:y3,z3:z3});
+  }
+
+  // Outer shell walls (hollow interior):
+  // Floor plate: from y=0 to y=floorT, x=0..W, z=0..D
+  // Back wall: from y=floorT to y=H, x=0..W, z=D-wallT/2..D+wallT/2 (but we keep it inside)
+  // Left wall: from y=floorT to y=H, x=0..wallT, z=0..D  
+  // Right wall: from y=floorT to y=H, x=W-wallT..W, z=0..D
+
+  // Bottom floor plate
+  addTri(0,0,0, W,0,0, 0,0,D);   // bottom face 1
+  addTri(W,0,0, W,0,D, 0,0,D);   // bottom face 2
+  // Floor top (inside surface)  
+  addTri(wT,fT,wT, W-wT,fT,wT, W-wT,fT,D-wT);
+  addTri(wT,fT,wT, W-wT,fT,D-wT, wT,fT,D-wT);
+
+  // Outer back wall (exterior)
+  addTri(0,H-D?D:D, D-wT/2, W,H,D-wT/2, 0,H-floorT, D-wT/2);
+  addTri(W,H,D-wT/2, W,H-floorT, D-wT/2, 0,H-floorT, D-wT/2);
+
+  // Simplified: just create the solid mesh properly
+  tris = [];
+  
+  function addBox(xMin,yMin,zMin, xMax,yMax,zMax) {
+    // Bottom (yMin) - 2 triangles
+    addTri(xMin,yMin,zMin, xMax,yMin,zMin, xMin,yMin,zMax);
+    addTri(xMax,yMin,zMin, xMax,yMin,zMax, xMin,yMin,zMax);
+    // Top (yMax) - 2 triangles  
+    addTri(xMin,yMax,zMax, xMax,yMax,zMax, xMax,yMax,zMin);
+    addTri(xMin,yMax,zMax, xMax,yMax,zMin, xMin,yMax,zMin);
+    // Front (zMin) - 2 triangles
+    addTri(xMin,yMin,zMin, xMax,yMin,zMin, xMax,yMax,zMin);
+    addTri(xMin,yMin,zMin, xMax,yMax,zMin, xMin,yMax,zMin);
+    // Back (zMax) - 2 triangles
+    addTri(xMin,yMin,zMax, xMax,yMin,zMax, xMax,yMax,zMax);
+    addTri(xMin,yMin,zMax, xMax,yMax,zMax, xMin,yMax,zMax);
+    // Left (xMin) - 2 triangles
+    addTri(xMin,yMin,zMin, xMin,yMax,zMin, xMin,yMax,zMax);
+    addTri(xMin,yMin,zMin, xMin,yMax,zMax, xMin,yMin,zMax);
+    // Right (xMax) - 2 triangles
+    addTri(xMax,yMin,zMax, xMax,yMin,zMin, xMax,yMax,zMin);
+    addTri(xMax,yMin,zMax, xMax,yMax,zMin, xMax,yMax,zMax);
+  }
+
+  // Outer box (full solid)
+  addBox(0,0,0, W,H,D);
+  
+  // Cut out interior - we subtract walls by adding internal faces
+  // Floor plate (bottom portion only): y=0 to y=floorT
+  // The full box already has a bottom; we need the walls on top
+  
+  // Let me build it face by face for a proper tray:
+  tris = [];
+  
+  // === OUTER SURFACES ===
+  // Bottom exterior (facing down)
+  addTri(0,0,0, W,0,0, W,0,D);
+  addTri(0,0,0, W,0,D, 0,0,D);
+  
+  // Back exterior (facing back)
+  addTri(0,H,D-wT/2, W,H,D-wT/2, W,floorT,D-wT/2);
+  addTri(0,H,D-wT/2, W,floorT,D-wT/2, 0,floorT,D-wT/2);
+  
+  // Left exterior (facing left)  
+  addTri(0,H,D, 0,H-floorT,D, 0,H-floorT,wT/2);
+  addTri(0,H,D, 0,H-floorT,wT/2, 0,H,wT/2);
+  
+  // Right exterior (facing right)
+  addTri(W,H-floorT,D-wT/2, W,H,D-wT/2, W,H-floorT,wT/2);
+  addTri(W,H-floorT,wT/2, W,H,D-wT/2, W,H-floorT,wT/2);
+
+  // Inner surfaces: floor interior, back inner, wall insides, dividers
+  
+  // Interior bottom surface (facing up inside)
+  addTri(wT,floorT+0.1,wT, W-wallT,floorT+0.1,wT, W-wallT,floorT+0.1,D-wT);
+  addTri(wT,floorT+0.1,wT, W-wallT,floorT+0.1,D-wT, wT,floorT+0.1,D-wT);
+
+  // Interior back wall (facing forward into the tray)
+  addTri(wT,H-floorT-0.1,D-wT/2-0.5, W-wallT,H-floorT-0.1,D-wT/2-0.5, W-wallT,floorT+0.1,D-wT/2-0.5);
+  addTri(wT,H-floorT-0.1,D-wT/2-0.5, W-wallT,floorT+0.1,D-wT/2-0.5, wT,floorT+0.1,D-wT/2-0.5);
+
+  // Left interior wall (facing right into tray)
+  addTri(wT,H-floorT-0.1,wT, wT,H-floorT-0.1,D-wT, wT,floorT+0.1,D-wT);
+  addTri(wT,H-floorT-0.1,wT, wT,floorT+0.1,D-wT, wT,floorT+0.1,wT);
+
+  // Right interior wall (facing left into tray)
+  addTri(W-wT,H-floorT-0.1,wT, W-wT,H-floorT-0.1,D-wT, W-wT,floorT+0.1,D-wT);
+  addTri(W-wT,H-floorT-0.1,wT, W-wT,floorT+0.1,D-wT, W-wT,floorT+0.1,wT);
+
+  // Wall front edge (top of front opening)
+  addTri(wT,H-floorT-0.1,wT/2, W-wallT,H-floorT-0.1,wT/2, W-wallT,floorT+0.1,wT/2);
+  addTri(wT,H-floorT-0.1,wT/2, W-wallT,floorT+0.1,wT/2, wT,floorT+0.1,wT/2);
+
+  // Compartment dividers: vertical (along z) for column divisions
+  for(var c=1;c<P.cols;c++){
+    var divX = wallT + c * cellW;
+    var dw = wallT/2;
+    // Divider face (facing left)
+    addTri(divX-dw,H-floorT-0.1,wT, divX-dw,H-floorT-0.1,D-wT, divX-dw,floorT+0.1,D-wT);
+    addTri(divX-dw,H-floorT-0.1,wT, divX-dw,floorT+0.1,D-wT, divX-dw,floorT+0.1,wT);
+    // Divider face (facing right)
+    addTri(divX+dw,floorT+0.1,wT, divX+dw,H-floorT-0.1,wT, divX+dw,H-floorT-0.1,D-wT);
+    addTri(divX+dw,floorT+0.1,wT, divX+dw,H-floorT-0.1,D-wT, divX+dw,floorT+0.1,D-wT);
+  }
+
+  // Compartment dividers: horizontal (along x) for row divisions
+  for(var r=1;r<P.rows;r++){
+    var divZ = wallT + r * cellD;
+    var dd = wallT/2;
+    // Divider face (facing forward/backward)
+    addTri(wallT,H-floorT-0.1,divZ-dd, W-wallT,H-floorT-0.1,divZ-dd, W-wallT,floorT+0.1,divZ-dd);
+    addTri(wallT,H-floorT-0.1,divZ-dd, W-wallT,floorT+0.1,divZ-dd, wallT,floorT+0.1,divZ-dd);
+  }
+
+  let stl;
+  if(format==='ascii'){
+    stl = 'solid drawer_organizer_tray\n';
+    for(var ti=0;ti<tris.length;ti++){
+      var t = tris[ti];
+      stl += '  facet normal '+t.nx+' '+t.ny+' '+t.nz+'\n';
+      stl += '    outer loop\n';
+      stl += '      vertex '+t.x1+' '+t.y1+' '+t.z1+'\n';
+      stl += '      vertex '+t.x2+' '+t.y2+' '+t.z2+'\n';
+      stl += '      vertex '+t.x3+' '+t.y3+' '+t.z3+'\n';
+      stl += '    endloop\n';
+      stl += '  endfacet\n';
+    }
+    stl += 'endsolid drawer_organizer_tray\n';
+    
+    // Download ASCII STL as text file
+    var blob = new Blob([stl],{type:'text/plain'});
+    downloadBlob(blob, 'tray_ascii.stl');
+  } else {
+    // Binary STL: 80 byte header + number of triangles (uint32 LE) + each triangle (12 floats LE)
+    var numTris = tris.length;
+    var bufSize = 84 + numTris * 50;
+    var buf = new ArrayBuffer(bufSize);
+    var dv = new DataView(buf);
+    // Header
+    var header = 'binary STL drawer organizer tray';
+    for(var i=0;i<80;i++) dv.setUint8(i, i<header.length?header.charCodeAt(i):0);
+    dv.setUint32(80, numTris, true);
+    var off = 84;
+    for(var ti=0;ti<tris.length;ti++){
+      var t = tris[ti];
+      dv.setFloat32(off,t.nx,true); off+=4;
+      dv.setFloat32(off,t.ny,true); off+=4;
+      dv.setFloat32(off,t.nz,true); off+=4;
+      dv.setFloat32(off,t.x1,true); off+=4;
+      dv.setFloat32(off,t.y1,true); off+=4;
+      dv.setFloat32(off,t.z1,true); off+=4;
+      dv.setFloat32(off,t.x2,true); off+=4;
+      dv.setFloat32(off,t.y2,true); off+=4;
+      dv.setFloat32(off,t.z2,true); off+=4;
+      dv.setFloat32(off,t.x3,true); off+=4;
+      dv.setFloat32(off,t.y3,true); off+=4;
+      dv.setFloat32(off,t.z3,true); off+=4;
+      dv.setUint16(off,0,true); off+=2; // attribute byte count
+    }
+    var blob = new Blob([buf],{type:'application/octet-stream'});
+    downloadBlob(blob,'tray_binary.stl');
+  }
+}
+
+function downloadBlob(blob, filename) {
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); document.body.removeChild(a); },1000);
+}
+
+// ===== INIT =====
+syncUI();
+for (var key in sliders) bindSlider(key, sliders[key]);
+render();
+</script>
+</body>
+</html>

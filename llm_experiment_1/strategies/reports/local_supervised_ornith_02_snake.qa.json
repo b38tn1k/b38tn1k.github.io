@@ -1,0 +1,51 @@
+{
+  "method": "Independent exact-source nativeCanvas/DOM actual keyboard/button/scheduled callbacks. Closure exposes existing state/functions for fixtures; algorithms unchanged. No browser layout or visual verification.",
+  "sha256": "d736ea7f9b3236c4088ee3a47cbf92b3588155d8d6bb7fea87f15a40ac24a2f9",
+  "checks": [
+    {
+      "id": "actual_start_keyboard_movement_pause_resume_restart",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pause": true,
+        "resume": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "rapid_pause_resume_has_single_animation_chain",
+      "pass": false,
+      "error": "Rapid pause/resume duplicates scheduled animation chains",
+      "actual": 6,
+      "expected": 1,
+      "blocking": false
+    },
+    {
+      "id": "controlled_growth_speed_collision_tail_and_full_board",
+      "pass": true,
+      "evidence": {
+        "growth": true,
+        "speed": true,
+        "wall": true,
+        "self": true,
+        "tail": true,
+        "win": true
+      }
+    },
+    {
+      "id": "rapid_pause_resume_preserves_actual_speed_and_pause_then_recovers_single_loop",
+      "pass": true,
+      "evidence": {
+        "cycles": 20,
+        "scheduledBeforeSettledPause": 21,
+        "movesIn160ms": 1,
+        "pausedMovement": false,
+        "pauseDrainsAllChains": true,
+        "resumedScheduled": 1
+      }
+    }
+  ],
+  "pass": false,
+  "classification": "Duplicate scheduled RAF chains are a known nonblocking rendering/performance defect: actual required gameplay speed, paused state and subsequent stable resume remain correct in this VM. Browser performance impact is unmeasured.",
+  "requiredBehaviorPass": true
+}

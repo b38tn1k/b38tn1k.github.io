@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0b1020">
+<title>Reflex — Reaction Time Tester</title>
+<style>
+  :root{
+    --bg:#0b1020;
+    --bg-2:#0f1730;
+    --panel:#141d38;
+    --panel-2:#1b2748;
+    --ink:#e8edf7;
+    --muted:#97a3c0;
+    --line:#25315a;
+    --accent:#6ea8fe;
+    --accent-2:#b794ff;
+    --green:#2ecc71;
+    --red:#ff5b6a;
+    --gold:#ffd166;
+    --shadow:0 18px 50px -18px rgba(0,0,0,.75);
+    --radius:18px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 800px at 80% -10%, rgba(183,148,255,.18), transparent 60%),
+      radial-gradient(1000px 700px at -10% 110%, rgba(110,168,254,.18), transparent 55%),
+      linear-gradient(160deg,var(--bg),var(--bg-2));
+    min-height:100%;
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:clamp(16px,4vw,40px);
+  }
+  header{width:100%;max-width:860px;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:42px;height:42px;border-radius:12px;flex:0 0 auto;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:grid;place-items:center;box-shadow:var(--shadow);
+  }
+  .logo svg{width:24px;height:24px}
+  h1{font-size:clamp(22px,3vw,30px);margin:0;letter-spacing:-.02em;font-weight:800}
+  .tagline{color:var(--muted);font-size:14px;margin-top:2px}
+
+  .stage{
+    width:100%;max-width:860px;
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:22px;
+  }
+  .hud{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .progress{font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .progress span{color:var(--accent)}
+  .hint{color:var(--muted);font-size:13px;text-align:right;max-width:55%}
+  .hint b{color:var(--ink)}
+
+  #box{
+    position:relative;
+    width:100%;
+    min-height:min(46vh,360px);
+    border-radius:16px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .18s ease, color .18s ease, box-shadow .18s ease;
+    border:1px solid rgba(255,255,255,.06);
+    overflow:hidden;
+    touch-action:manipulation;
+  }
+  #box::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(420px 220px at 50% 30%, rgba(255,255,255,.10), transparent 70%);
+    pointer-events:none;
+  }
+  #box .glyph{font-size:clamp(44px,9vw,84px);font-weight:800;line-height:1;letter-spacing:-.02em}
+  #box .caption{font-size:clamp(14px,2.2vw,18px);font-weight:600;opacity:.95;letter-spacing:.02em}
+  #box .sub{font-size:13px;opacity:.7;font-weight:500}
+
+  #box.bg-green{background:linear-gradient(160deg,#1f8f52,#156b3d);color:#eafff2;box-shadow:0 20px 60px -20px rgba(46,204,113,.55)}
+  #box.bg-red{background:linear-gradient(160deg,#b5324f,#7a1f33);color:#ffe9ec;box-shadow:0 20px 60px -20px rgba(255,91,106,.55)}
+  #box.bg-ready{background:linear-gradient(160deg,#2b3a6b,#1c2848)}
+  #box.bg-waiting{background:linear-gradient(160deg,#2a3a6b,#1c2848);color:#e8edf7}
+  #box.bg-finished{background:linear-gradient(160deg,#34355c,#232444);color:#e8edf7}
+  #box:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;align-items:center;justify-content:space-between}
+  .opts{display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+  .field{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+  .field label{font-weight:600;color:var(--ink)}
+  input[type=number]{
+    width:74px;padding:8px 10px;border-radius:10px;
+    background:var(--bg);color:var(--ink);
+    border:1px solid var(--line);font-size:14px;font-family:inherit;
+  }
+  input[type=number]:focus{outline:2px solid var(--accent);border-color:transparent}
+  button.action{
+    appearance:none;border:1px solid var(--line);cursor:pointer;
+    background:linear-gradient(180deg,var(--accent),#4f89f0);color:#06102a;
+    font-weight:700;font-size:15px;font-family:inherit;
+    padding:12px 22px;border-radius:12px;letter-spacing:.01em;
+    box-shadow:var(--shadow);transition:transform .06s ease,filter .15s ease;
+  }
+  button.action:hover{filter:brightness(1.05)}
+  button.action:active{transform:translateY(1px)}
+  button.action.secondary{background:linear-gradient(180deg,var(--panel-2),var(--panel));color:var(--ink)}
+
+  .log{margin-top:20px}
+  .log h2{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 10px;font-weight:700}
+  .trials{display:grid;gap:8px}
+  .trial{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;
+    font-variant-numeric:tabular-nums;
+  }
+  .trial .idx{color:var(--muted);font-weight:600}
+  .trial .val{font-weight:700}
+  .trial.bad .val{color:var(--gold)}
+  .trial.good .val{color:var(--green)}
+  .trial.bad .val{color:var(--red)}
+  .pill{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .pill.bad{color:var(--red);border-color:rgba(255,91,106,.4)}
+  .pill.ok{color:var(--green);border-color:rgba(46,204,113,.4)}
+
+  .results{margin-top:20px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .results h2{margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:700}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+  .metric{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .metric .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+  .metric .v{font-size:26px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+  .metric .v small{font-size:14px;font-weight:600;color:var(--muted)}
+  .rank{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;color:var(--muted);font-size:13px}
+  .rank b{color:var(--ink)}
+  .empty{color:var(--muted);font-size:14px;padding:14px;border:1px dashed var(--line);border-radius:12px;text-align:center}
+  footer{margin-top:22px;color:var(--muted);font-size:12px;text-align:center;max-width:640px}
+  kbd{background:var(--panel);border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;font-family:inherit;font-size:11px}
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <div class="logo" aria-hidden="true">⚡</div>
+      </div>
+      <div>
+        <h1>Reflex</h1>
+        <div class="tagline">Measure your reaction time across five trials</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="hud">
+      <div class="progress">Trial <span id="progress-current">0</span> / <span id="progress-total">5</span></div>
+      <div class="hint">When the box turns <b style="color:var(--green)">green</b>, click or press <kbd>Space</kbd> as fast as you can.</div>
+    </div>
+
+    <div id="box" class="bg-ready" tabindex="0" role="button" aria-live="polite">
+      <div class="glyph" id="box-glyph">⚡</div>
+      <div class="caption" id="signal-text">Press <b>Start</b> to begin</div>
+      <div class="sub" id="box-sub">5 rounds · random wait each round</div>
+    </div>
+
+    <div class="controls">
+      <div class="opts">
+        <div class="field">
+          <label for="min-wait">Min (ms)</label>
+          <input id="min-wait" type="number" min="200" max="10000" step="100" value="500">
+        </div>
+        <div class="field">
+          <label for="max-wait">Max (ms)</label>
+          <input id="max-wait" type="number" min="300" max="10000" step="100" value="5000">
+        </div>
+        <div class="field">
+          <label for="rounds">Rounds</label>
+          <input id="rounds" type="number" min="1" max="50" step="1" value="5">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="action" id="start" type="button">Start</button>
+        <button class="action secondary" id="reset" type="button" hidden>Restart</button>
+      </div>
+    </div>
+
+    <section class="log">
+      <h2>Results</h2>
+      <div id="results">
+        <div class="empty" id="results-empty">No valid yet — press Start to run your first trial.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Reaction time is the delay between a signal and your response. Results are measured locally in your browser and never leave this page.
+  </footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var TRIALS_KEY = "reflex.trials.v1";
+
+  // ---- DOM refs ----
+  var box       = document.getElementById('box');
+  var glyph     = document.getElementById('box-glyph');
+  var signalTxt = document.getElementById('signal-text');
+  var boxSub    = document.getElementById('box-sub');
+  var resultsEl = document.getElementById('results');
+  var resultsEmpty = document.getElementById('results-empty');
+  var progressCurrent = document.getElementById('progress-current');
+  var progressTotal   = document.getElementById('progress-total');
+  var startBtn = document.getElementById('start');
+  var resetBtn = document.getElementById('reset');
+  var minInput = document.getElementById('min-wait');
+  var maxInput = document.getElementById('max-wait');
+  var roundsInput = document.getElementById('rounds');
+
+  // ---- State ----
+  var state = 'ready';          // ready | waiting | armed | red | finished
+  var roundsTotal = 5;
+  var roundsDone  = 0;          // completed trials (valid)
+  var roundsLeft  = 0;          // trials remaining in this run (includes current)
+  var currentTrialNo = 0;
+  var trials = [];              // {t|null, kind:'ok'|'bad', ms|null, note}
+  var signalTime = 0;
+  var timerId = null;
+  var signalId = null;
+  var storageOk = false;
+  try { storageOk = (function(){var k="__rx__"; localStorage.setItem(k,"1"); localStorage.removeItem(k); return true;})(); } catch(e){ storageOk = false; }
+
+  var BG = {
+    ready:    'bg-ready',
+    waiting:  'bg-waiting',
+    armed:    'bg-green',
+    red:      'bg-red',
+    finished: 'bg-finished'
+  };
+
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+
+  function readSettings(){
+    var min = parseInt(minInput.value, 10) || 500;
+    var max = parseInt(maxInput.value, 10) || 5000;
+    var rounds = parseInt(roundsInput.value, 10) || 5;
+    min = clamp(min, 200, 10000);
+    max = clamp(Math.max(max, min + 100), 300, 10000);
+    rounds = clamp(rounds, 1, 50);
+    return { min:min, max:max, rounds:rounds };
+  }
+
+  function setBoxVisual(cls, g, caption, sub){
+    box.className = cls;
+    glyph.textContent = g;
+    signalTxt.innerHTML = caption;
+    if (boxSub) boxSub.textContent = sub || '';
+  }
+
+  function refreshProgress(){
+    progressCurrent.textContent = currentTrialNo;
+    progressTotal.textContent = roundsTotal;
+  }
+
+  function render(){
+    refreshProgress();
+    if (state === 'ready'){
+      setBoxVisual(BG.ready, '⚡', 'Press <b>Start</b> to begin', roundsTotal + ' rounds · random wait each round');
+    } else if (state === 'waiting'){
+      setBoxVisual(BG.waiting, '…', 'Get ready…', 'Wait for green — don’t jump the gun');
+    } else if (state === 'armed'){
+      setBoxVisual(BG.armed, 'GO!', 'Click now!', 'React as fast as you can');
+    } else if (state === 'red'){
+      setBoxVisual(BG.red, '✕', 'Too early!', 'False start — this trial is void');
+    } else if (state === 'finished'){
+      setBoxVisual(BG.finished, '✓', 'All rounds complete', 'Review your results below');
+    }
+    startBtn.hidden = (state !== 'ready' && state !== 'finished');
+    resetBtn.hidden = (state === 'ready');
+    renderLog();
+    renderResults();
+  }
+
+  // ---- Persistence ----
+  function save(){
+    if (!storageOk) return;
+    try {
+      localStorage.setItem(TRIALS_KEY, JSON.stringify({ total: roundsTotal, trials: trials }));
+    } catch(e){}
+  }
+  function loadStored(){
+    if (!storageOk) return null;
+    try {
+      var raw = localStorage.getItem(TRIALS_KEY);
+      if (!raw) return null;
+      var data = JSON.parse(raw);
+      if (data && Array.isArray(data.trials)) return data;
+    } catch(e){}
+    return null;
+  }
+
+  // ---- Logging ----
+  function renderLog(){
+    // remove old trial rows
+    var old = resultsEl.querySelectorAll('.trials');
+    old.forEach(function(node){ node.parentNode.removeChild(node); });
+    if (trials.length === 0) return;
+    var list = document.createElement('div');
+    list.className = 'trials';
+    trials.forEach(function(tr){
+      var row = document.createElement('div');
+      row.className = 'trial ' + (tr.kind === 'ok' ? 'good' : 'bad');
+      var left = document.createElement('div');
+      left.style.display='flex'; left.style.alignItems='center'; left.style.gap='10px';
+      var idx = document.createElement('span');
+      idx.className = 'idx';
+      idx.textContent = 'Round ' + tr.no;
+      left.appendChild(idx);
+      var val = document.createElement('span');
+      val.className = 'val';
+      val.textContent = (tr.ms != null) ? tr.ms + ' ms' : '—';
+      left.appendChild(val);
+      row.appendChild(left);
+      var pill = document.createElement('span');
+      pill.className = 'pill ' + (tr.kind === 'ok' ? 'ok' : 'bad');
+      pill.textContent = tr.kind === 'ok' ? 'Valid' : (tr.note || 'Void');
+      row.appendChild(pill);
+      list.appendChild(row);
+    });
+    resultsEl.appendChild(list);
+  }
+
+  // ---- Results summary ----
+  function renderResults(){
+    var existing = resultsEl.querySelector('.results');
+    if (existing) existing.parentNode.removeChild(existing);
+
+    var validTimes = trials.filter(function(t){ return t.kind === 'ok'; });
+    if (validTimes.length === 0){
+      var empty = document.createElement('div');
+      empty.className = 'results';
+      empty.innerHTML = '<h2>Results</h2>' +
+        '<div class="empty">No valid trials yet — press Start to run your first round.</div>';
+      resultsEl.appendChild(empty);
+      return;
+    }
+
+    var times = validTimes.map(function(t){ return t.ms; });
+    var sum = 0; for (var i=0;i<times.length;i++) sum += times[i];
+    var mean = sum / times.length;
+    var variance = 0;
+    for (var j=0;j<times.length;j++){ var d = times[j]-mean; variance += d*d; }
+    variance = variance / times.length;
+    var stdev = Math.sqrt(variance);
+    times.sort(function(a,b){ return a-b; });
+    var best = times[0], worst = times[times.length-1];
+
+    // simple heuristic ranking
+    var rank;
+    if (mean < 200) rank = "Elite reflexes.";
+    else if (mean < 250) rank = "Quick reaction — above average.";
+    else if (mean < 300) rank = "Above average reaction time.";
+    else if (mean < 350) rank = "Average for most adults.";
+    else rank = "Keep practising — it improves!";
+
+    var el = document.createElement('div');
+    el.className = 'results';
+    el.innerHTML =
+      '<h2>Results summary</h2>' +
+      '<div class="metrics">' +
+        metricEl('Mean', Math.round(mean) + ' <small>ms</small>') +
+        metricEl('Median', Math.round(median(times)) + ' <small>ms</small>') +
+        metricEl('Stdev', stdev.toFixed(1) + ' <small>ms</small>') +
+        metricEl('Best', best + ' <small>ms</small>') +
+        metricEl('Worst', worst + ' <small>ms</small>') +
+        metricEl('Trials', validTimes.length + ' <small>valid</small>') +
+      '</div>' +
+      '<div class="rank"><b>Your ranking:</b> ' + rank + '</div>';
+    resultsEl.appendChild(el);
+  }
+
+  function median(arr){
+    if (arr.length === 0) return 0;
+    var s = arr.slice().sort(function(a,b){return a-b;});
+    var m = Math.floor(s.length/2);
+    return s.length % 2 ? (s[m-1]+s[m])/2 : s[m];
+  }
+  function metricEl(k, v){ return '<div class="metric"><div class="k">'+k+'</div><div class="v">'+v+'</div></div>'; }
+
+  // ---- Core flow ----
+  function startRun(){
+    var settings = readSettings();
+    roundsTotal = settings.rounds;
+    roundsDone = 0;
+    roundsLeft = roundsTotal;
+    currentTrialNo = 0;
+    trials = [];
+    setBoxVisual(BG.ready, '…', 'Get ready…', settings.rounds + ' rounds · ' + settings.min + '–' + settings.max + ' ms wait');
+    // begin the first trial after a tiny settle
+    scheduleWaiting();
+  }
+
+  function scheduleWaiting(){
+    currentTrialNo++;
+    roundsLeft--;
+    state = 'waiting';
+    render();
+    var settings = readSettings();
+    var wait = settings.min + Math.floor(Math.random() * (settings.max - settings.min + 1));
+    if (timerId) { clearTimeout(timerId); timerId = null; }
+    if (signalId) { clearInterval(signalId); signalId = null; }
+    var startedAt = Date.now();
+    var deadline = startedAt + wait;
+    signalId = setInterval(function(){
+      var t = Date.now();
+      if (t >= deadline - 16){
+        clearInterval(signalId);
+        signalId = null;
+        fireSignal();
+      }
+    }, 16);
+    window.__sig = signalId;
+    window.__deadline = deadline;
+  }
+
+  function fireSignal(){
+    if (signalId){ clearInterval(signalId); signalId = null; }
+    timerId = null;
+    state = 'armed';
+    signalTime = Date.now();
+    render();
+  }
+
+  function pressBox(){
+    if (state === 'ready' || state === 'finished'){
+      if (state === 'finished'){ startRun(); return; }
+      startRun();
+      return;
+    }
+    if (state === 'waiting'){
+      // false start
+      state = 'red';
+      trials.push({ no: currentTrialNo, kind: 'bad', ms: null, note: 'False start' });
+      render();
+      save();
+      setTimeout(function(){
+        if (roundsLeft > 0) scheduleWaiting();
+        else finishRun();
+      }, 900);
+      return;
+    }
+    if (state === 'armed'){
+      var ms = Date.now() - signalTime;
+      state = 'waiting';
+      trials.push({ no: currentTrialNo, kind: 'ok', ms: ms, note: null });
+      roundsDone++;
+      render();
+      save();
+      setTimeout(function(){
+        if (roundsLeft > 0) scheduleWaiting();
+        else finishRun();
+      }, 700);
+      return;
+    }
+    // red or finished: tapping resumes / restarts
+    if (state === 'red'){
+      if (roundsLeft > 0) scheduleWaiting();
+      else finishRun();
+    }
+  }
+
+  function finishRun(){
+    state = 'finished';
+    render();
+    save();
+  }
+
+  function doReset(){
+    if (timerId) { clearTimeout(timerId); timerId = null; }
+    trials = [];
+    roundsDone = 0;
+    roundsLeft = 0;
+    currentTrialNo = 0;
+    roundsTotal = parseInt(roundsInput.value, 10) || 5;
+    state = 'ready';
+    render();
+    save();
+  }
+
+  // ---- Events ----
+  box.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    pressBox();
+  });
+  box.addEventListener('keydown', function(e){
+    if (e.key === ' ' || e.key === 'Enter'){
+      e.preventDefault();
+      pressBox();
+    }
+  });
+  startBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    startRun();
+  });
+  resetBtn.addEventListener('click', doReset);
+
+  [minInput, maxInput, roundsInput].forEach(function(inp){
+    inp.addEventListener('change', function(){
+      if (state === 'ready' || state === 'finished'){
+        var s = readSettings();
+        roundsTotal = s.rounds;
+        progressTotal.textContent = s.rounds;
+        if (state === 'ready') setBoxVisual(BG.ready, '⚡', 'Press <b>Start</b> to begin', s.rounds + ' rounds · ' + s.min + '–' + s.max + ' ms wait');
+      }
+    });
+  });
+
+  // ---- Init ----
+  var stored = loadStored();
+  if (stored){
+    roundsTotal = stored.total || 5;
+    trials = stored.trials.filter(function(t){ return t && typeof t.no === 'number'; });
+    roundsDone = trials.filter(function(t){ return t.kind === 'ok'; }).length;
+    currentTrialNo = trials.length ? trials[trials.length-1].no : 0;
+    roundsLeft = roundsTotal - roundsDone;
+    if (roundsLeft < 0) roundsLeft = 0;
+  } else {
+    roundsTotal = parseInt(roundsInput.value, 10) || 5;
+  }
+  render();
+
+})();
+</script>
+</body>
+</html>

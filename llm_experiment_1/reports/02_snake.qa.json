@@ -1,0 +1,19 @@
+{
+  "method": "Exact source executed in Node VM with canvas/DOM stubs and in-memory state hooks; no artifact changes, not real browser testing",
+  "syntaxValid": true,
+  "sha256": "0b0ecc83a919d6272e27d4b8891f14b65fb2f1e753a689a0c6659136f51130d5",
+  "checks": {
+    "growthAndScore": true,
+    "reversalPrevented": true,
+    "pauseStopsMovement": true,
+    "wallCollision": true,
+    "selfCollision": true,
+    "restart": true,
+    "difficultyIncreases": true,
+    "foodNeverOnSnake": true
+  },
+  "externalRuntimeResources": false,
+  "limitations": [
+    "No independent visual or interactive browser play test: origin permission declined."
+  ]
+}

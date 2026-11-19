@@ -1,0 +1,12 @@
+{
+  "role": "repair",
+  "number": 8,
+  "minutes": 10.1,
+  "reason": "stage_time_limit",
+  "exitCode": -9,
+  "artifactBefore": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+  "artifactAfter": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+  "prompt": "enforced/ornith/01_reaction_timer/runtime/08-repair/prompt.txt",
+  "events": "enforced/ornith/01_reaction_timer/runtime/08-repair/events.jsonl",
+  "stderr": "enforced/ornith/01_reaction_timer/runtime/08-repair/stderr.log"
+}

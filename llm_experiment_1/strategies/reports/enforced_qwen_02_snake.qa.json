@@ -1,0 +1,49 @@
+{
+  "method": "Independent actual-source DOM/timer fixtures. Real keyboard/start handlers; controlled food/body fixtures do not replace movement/collision algorithms. No browser rendering verified.",
+  "sha256": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+  "checks": [
+    {
+      "id": "movement_reversal_pause_resume",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "reversalBlocked": true,
+        "pause": true,
+        "resume": true
+      }
+    },
+    {
+      "id": "food_growth_score_difficulty",
+      "pass": true,
+      "evidence": {
+        "score": 50,
+        "length": 4,
+        "level": 2,
+        "interval": 132
+      }
+    },
+    {
+      "id": "wall_and_play_again",
+      "pass": false,
+      "error": "PLAY AGAIN reuses the wall-adjacent dead snake and dies immediately"
+    },
+    {
+      "id": "recent_body_self_collision",
+      "pass": true,
+      "evidence": {
+        "collision": true
+      }
+    },
+    {
+      "id": "restart_stops_active_timer",
+      "pass": false,
+      "error": "Snake continues moving on idle restart screen because init does not cancel timer"
+    },
+    {
+      "id": "vacating_tail",
+      "pass": false,
+      "error": "Moving into the vacating tail is rejected"
+    }
+  ],
+  "pass": false
+}

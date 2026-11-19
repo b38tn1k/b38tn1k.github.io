@@ -1,0 +1,104 @@
+{
+  "status": "completed_with_critical_defects",
+  "grade": "F - diagonal brush drag hangs",
+  "score": 39,
+  "rubricScores": {
+    "functionality": 12,
+    "artifact_correctness": 10,
+    "usability": 6,
+    "self_verification": 1,
+    "autonomy": 10
+  },
+  "verified": [
+    "Exact-source VM startup and single-pixel click",
+    "Bounded100ms execution confirms diagonal move does not terminate"
+  ],
+  "criticalDefects": [
+    "drawLine initializes cy=y1 instead ofy0; diagonal movement then advances cy away from target and loops indefinitely, freezing UI",
+    "Undo pops and restores the post-stroke snapshot, so first Undo leaves stroke unchanged",
+    "Eraser interpolation fills transparent pixels using source-over, which does not remove existing marks; only initial press clears"
+  ],
+  "additionalDefects": [
+    "History does not track dimensions; resizing can break subsequent undo buffer sizes"
+  ],
+  "verificationConcerns": [
+    "No runtime diagonal draw or undo assertions recorded"
+  ],
+  "scopeCompliance": "Filesystem boundary applied from process start; no confirmed out-of-directory writes",
+  "title": "Pixel painter",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "elapsedMinutes": 1.9,
+  "wallMinutes": 2.09,
+  "promptWords": 40,
+  "toolCalls": 4,
+  "toolResultsMarkedError": 0,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "modelUsageReported": {
+    "input": 15056,
+    "output": 7166,
+    "cacheRead": 51648,
+    "totalTokens": 73870
+  },
+  "peakReportedPromptTokens": 15040,
+  "assistantTextContainingToolCallMarkup": 0,
+  "artifactBytes": 17051,
+  "sha256": "4d7e792e60a432bde451f749f55bc0586cd56d46a039e02ee7521c6a03f38fe9",
+  "billionContext": {
+    "loadedConfirmed": true,
+    "sessionId": "01a1dbc7-2b23-7151-8e5e-610489102b81",
+    "extensionVersion": "0.1.213",
+    "stats": {
+      "requests": 5,
+      "tokensSaved": 0,
+      "inputTokens": 66704,
+      "cachedTokens": 51648,
+      "outputTokens": 7166,
+      "cacheSamples": 5,
+      "lastInputTokens": 15040,
+      "compressCreditTokens": 0,
+      "contextTokens": 15040,
+      "retrieveCalls": 0,
+      "retrieveHits": 0,
+      "retrieveMisses": 0,
+      "retrieveDropped": 0,
+      "retrieveDelivered": 0,
+      "storedBytes": 0,
+      "storeBytesSaved": 0,
+      "rangeRestores": 0,
+      "contextTokensSource": "usage",
+      "localInputEstimate": 29203,
+      "contextEstimateTokens": 14879,
+      "contextEstimateCalibrated": true,
+      "lastUsageGradeTokens": 15040,
+      "lastUsagePayloadUpper": 29203,
+      "lastInputTokensSource": "usage",
+      "lastInputTokensOrigin": "http://127.0.0.1:11435",
+      "calibrationRing": {
+        "origin": "http://127.0.0.1:11435",
+        "model": "qwen3.6:35b-a3b",
+        "values": [
+          1.0814287876494626,
+          1.091148115687993,
+          1.094454955610537
+        ]
+      },
+      "calibratedEstimate": 1.089010619649331,
+      "calibratedEstimateOrigin": "http://127.0.0.1:11435",
+      "calibratedEstimateModel": "qwen3.6:35b-a3b"
+    },
+    "compressionStats": {
+      "tokensCompressed": 0,
+      "compressionCount": 0,
+      "absorbedTokens": 0,
+      "storedCount": 0,
+      "retrievalCount": 0
+    },
+    "blocks": 0
+  },
+  "limitations": [
+    "No independent real-browser/visual testing; prior browser-origin denial honored.",
+    "Single run per task; differences do not isolate extension effect from sampling variability."
+  ]
+}

@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Reaction Timer</title>
+<style>
+  :root {
+    --bg-waiting: #1a1a2e;
+    --bg-ready: #e74c3c;
+    --bg-go: #2ecc71;
+    --bg-results: #16213e;
+    --text-light: #f0f0f0;
+    --text-dark: #1a1a2e;
+    --accent: #4fc3f7;
+    --bar-color: #4fc3f7;
+    --bar-bg: rgba(255,255,255,0.1);
+    --shadow: 0 8px 32px rgba(0,0,0,0.3);
+    --radius: 16px;
+    --transition-speed: 0.4s;
+  }
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-speed) ease;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+
+  /* ── Main container ── */
+  #game-container {
+    width: min(94vw, 600px);
+    height: min(94vh, 750px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  /* ── States ── */
+  body.state-idle       { background: var(--bg-waiting); }
+  body.state-ready      { background: var(--bg-ready); }
+  body.state-go         { background: var(--bg-go); }
+  body.state-results    { background: var(--bg-results); }
+
+  /* ── Typography ── */
+  .title {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  body:not(.state-results) .title { color: var(--text-light); }
+  .state-results .title            { color: var(--accent); }
+
+  .subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    opacity: 0.75;
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+
+  body:not(.state-results) .subtitle { color: var(--text-light); }
+  .state-results .subtitle           { color: rgba(255,255,255,0.6); }
+
+  /* ── Stimulus circle (idle state) ── */
+  #stimulus-circle {
+    width: clamp(140px, 30vmin, 280px);
+    height: clamp(140px, 30vmin, 280px);
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: var(--shadow), 0 0 60px rgba(79,195,247,0.3);
+    transition: transform 0.3s ease, opacity 0.3s ease, background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #stimulus-circle::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 0 0 rgba(79,195,247,0);
+    animation: none;
+  }
+
+  body.state-idle #stimulus-circle {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  body.state-ready #stimulus-circle {
+    transform: scale(0.95);
+    opacity: 1;
+    background: white;
+    box-shadow: var(--shadow), 0 0 80px rgba(255,255,255,0.4);
+  }
+
+  body.state-ready #stimulus-circle::after {
+    content: '';
+    animation: pulse-ring 1s ease-out infinite;
+  }
+
+  body.state-go #stimulus-circle {
+    transform: scale(1.05);
+    background: #fff;
+    box-shadow: var(--shadow), 0 0 100px rgba(255,255,255,0.5);
+  }
+
+  @keyframes pulse-ring {
+    0%   { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 48px;
+    border: none;
+    border-radius: 60px;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--text-dark);
+    box-shadow: 0 4px 20px rgba(79,195,247,0.4);
+  }
+
+  .btn-primary:hover  { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(79,195,247,0.5); }
+  .btn-primary:active { transform: translateY(0) scale(0.98); }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.15);
+    color: var(--text-light);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  body.state-results .btn-secondary {
+    background: rgba(79,195,247,0.2);
+    color: var(--accent);
+  }
+
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0) scale(0.98); }
+
+  /* ── Message overlay ── */
+  #message-area {
+    margin-top: 16px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .false-start-msg {
+    color: white;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    font-weight: 600;
+    opacity: 0;
+    animation: fade-slide-in 0.4s ease forwards;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+
+  @keyframes fade-slide-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Progress bar ── */
+  #progress-track {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(80vw, 400px);
+    height: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  body.state-results #progress-track { display: none; }
+
+  #progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  /* ── Reaction time display ── */
+  #rt-display {
+    font-size: clamp(3rem, 10vw, 6rem);
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+    margin-bottom: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.25);
+  }
+
+  #rt-display.show { opacity: 1; }
+
+  #rt-unit {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 24px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  #rt-unit.show { opacity: 1; }
+
+  /* ── Results screen ── */
+  #results-screen {
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+  }
+
+  #results-screen.show { opacity: 1; }
+
+  /* Bar chart */
+  #bar-chart {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 12px;
+    height: clamp(140px, 25vmin, 220px);
+    margin: 20px 0;
+    padding: 0 8px;
+  }
+
+  .bar-group {
+    flex: 1;
+    max-width: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .bar-track {
+    width: 100%;
+    height: calc(100% - 36px);
+    background: var(--bar-bg);
+    border-radius: 8px 8px 4px 4px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    border-radius: 8px 8px 4px 4px;
+    background: linear-gradient(to top, var(--accent), #81d4fa);
+    transform-origin: bottom;
+    transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    height: 0%;
+  }
+
+  .bar-fill.excellent { background: linear-gradient(to top, #2ecc71, #58d68d); }
+  .bar-fill.good     { background: linear-gradient(to top, var(--accent), #81d4fa); }
+  .bar-fill.average  { background: linear-gradient(to top, #f39c12, #f5b041); }
+  .bar-fill.slow     { background: linear-gradient(to top, #e67e22, #eb984e); }
+
+  .bar-label {
+    font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+    color: rgba(255,255,255,0.5);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .bar-value {
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+
+  /* Stats grid */
+  #stats-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 0 28px;
+  }
+
+  .stat-card {
+    background: rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 16px 8px;
+    text-align: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .stat-label {
+    font-size: clamp(0.65rem, 1.3vw, 0.75rem);
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  /* Trial list */
+  #trial-list {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .trial-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+    opacity: 0;
+    transform: translateX(-8px);
+    animation: slide-in-row 0.4s ease forwards;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .trial-row:nth-child(1) { animation-delay: 0.9s; }
+  .trial-row:nth-child(2) { animation-delay: 1.0s; }
+  .trial-row:nth-child(3) { animation-delay: 1.1s; }
+  .trial-row:nth-child(4) { animation-delay: 1.2s; }
+  .trial-row:nth-child(5) { animation-delay: 1.3s; }
+
+  @keyframes slide-in-row {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .trial-number { color: rgba(255,255,255,0.4); font-weight: 600; }
+  .trial-time   { color: var(--text-light); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* ── Fade transition helper ── */
+  .fade-out { opacity: 0 !important; pointer-events: none; }
+
+  /* ── Responsive tweaks ── */
+  @media (max-height: 600px) {
+    #stimulus-circle { margin-bottom: 20px; }
+    .subtitle { margin-bottom: 16px; }
+    .stat-card { padding: 10px 6px; }
+    #bar-chart { height: 100px; margin: 8px 0; }
+  }
+
+  @media (max-width: 380px) {
+    .btn { padding: 14px 32px; }
+    #stats-grid { gap: 8px; }
+  }
+
+  /* ── Accessibility ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body class="state-idle">
+
+<div id="game-container">
+
+  <!-- Progress bar (visible during trials) -->
+  <div id="progress-track"><div id="progress-fill"></div></div>
+
+  <!-- ═══ IDLE / START SCREEN ═══ -->
+  <div id="idle-screen">
+    <div class="title">Reaction Timer</div>
+    <p class="subtitle">Test your reflexes!<br>Tap the circle as fast as you can<br>when it changes.</p>
+    <div id="stimulus-circle" role="button" aria-label="Tap to start" tabindex="0"></div>
+    <button class="btn btn-primary" id="start-btn">Start</button>
+  </div>
+
+  <!-- ═══ READY / GO SCREEN ═══ -->
+  <div id="ready-screen" style="display:none;">
+    <div class="title" id="phase-title"></div>
+    <p class="subtitle" id="phase-subtitle"></p>
+    <div id="stimulus-circle-inner" role="button" aria-label="Tap now" tabindex="0"
+         style="width:clamp(140px,30vmin,280px);height:clamp(140px,30vmin,280px);border-radius:50%;background:#4fc3f7;box-shadow:0 8px 32px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:40px;"></div>
+    <div id="message-area"></div>
+  </div>
+
+  <!-- ═══ RESULTS SCREEN ═══ -->
+  <div id="results-screen">
+    <div class="title">Results</div>
+    <p class="subtitle">Here's how you did:</p>
+
+    <div id="bar-chart"></div>
+
+    <div id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Average</div>
+        <div class="stat-value" id="stat-avg">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Best</div>
+        <div class="stat-value" id="stat-min">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Worst</div>
+        <div class="stat-value" id="stat-max">-</div>
+      </div>
+    </div>
+
+    <div id="trial-list"></div>
+
+    <button class="btn btn-secondary" id="play-again-btn" style="margin-top:24px;">Play Again</button>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Constants ──
+  const TRAIL_COUNT = 5;
+  const WAIT_MIN_MS = 1000;
+  const WAIT_MAX_MS = 5000;
+  const FALSE_START_THRESHOLD_MS = 400; // treat clicks within 400ms of go as false start
+
+  // ── DOM refs ──
+  const body        = document.body;
+  const idleScreen   = document.getElementById('idle-screen');
+  const readyScreen  = document.getElementById('ready-screen');
+  const resultsScreen= document.getElementById('results-screen');
+  const phaseTitle   = document.getElementById('phase-title');
+  const phaseSub     = document.getElementById('phase-subtitle');
+  const msgArea      = document.getElementById('message-area');
+  const progTrack    = document.getElementById('progress-track');
+  const progFill     = document.getElementById('progress-fill');
+  const startBtn     = document.getElementById('start-btn');
+  const playAgainBtn = document.getElementById('play-again-btn');
+  const stimulusOuter= document.getElementById('stimulus-circle');
+  const stimulusInner= document.getElementById('stimulus-circle-inner');
+
+  // ── State ──
+  let currentTrial   = 0;
+  let reactionTimes  = [];
+  let startTime      = 0;
+  let waitTimer      = null;
+  let isGo           = false;
+  let isProcessing   = false;
+
+  // ── Helpers ──
+  function randomWait() {
+    return WAIT_MIN_MS + Math.random() * (WAIT_MAX_MS - WAIT_MIN_MS);
+  }
+
+  function setBodyState(cls) {
+    body.className = 'state-' + cls;
+  }
+
+  function showScreen(screen) {
+    [idleScreen, readyScreen, resultsScreen].forEach(function(s) {
+      s.style.display = 'none';
+      s.classList.remove('show');
+    });
+    screen.style.display = 'flex';
+    // small delay so the display:flex applies before the opacity transition
+    requestAnimationFrame(function() {
+      screen.classList.add('show');
+    });
+  }
+
+  function setProgress(pct) {
+    progFill.style.width = pct + '%';
+  }
+
+  function clearMessage() {
+    msgArea.innerHTML = '';
+  }
+
+  // ── Stimulus click handler (used for both outer and inner circle) ──
+  function handleClick(e) {
+    if (isProcessing) return;
+
+    if (body.classList.contains('state-ready') && !isGo) {
+      // False start!
+      e.preventDefault();
+      // Bug 1 fix: clear the pending goSignal timer so it never fires
+      clearTimeout(waitTimer);
+      isGo = false;
+      isProcessing = true;
+      // Bug 3 fix: clear old messages before appending new one
+      clearMessage();
+      var falseMsg = document.createElement('div');
+      falseMsg.className = 'false-start-msg';
+      falseMsg.textContent = '⚠️ Too early! You tapped before the circle changed.';
+      msgArea.appendChild(falseMsg);
+      isProcessing = false;
+      return;
+    }
+
+    if (isGo) {
+      // Reaction!
+      e.preventDefault();
+      var rt = Date.now() - startTime;
+      reactionTimes.push(rt);
+      currentTrial++;
+
+      showReactionResult(rt, function() {
+        if (currentTrial >= TRAIL_COUNT) {
+          finishGame();
+        } else {
+          nextTrial();
+        }
+      });
+    }
+  }
+
+  stimulusOuter.addEventListener('mousedown', handleClick);
+  stimulusOuter.addEventListener('touchstart', handleClick, { passive: false });
+  stimulusInner.addEventListener('mousedown', handleClick);
+  stimulusInner.addEventListener('touchstart', handleClick, { passive: false });
+
+  // ── Start / Play Again buttons ──
+  startBtn.addEventListener('click', startGame);
+  playAgainBtn.addEventListener('click', startGame);
+
+  function startGame() {
+    reactionTimes = [];
+    currentTrial = 0;
+    setBodyState('idle');
+    showScreen(idleScreen);
+  }
+
+  // ── Begin a trial (waits, then shows stimulus) ──
+  function nextTrial() {
+    clearMessage();
+    setProgress((currentTrial / TRAIL_COUNT) * 100);
+    isGo = false;
+    isProcessing = false;
+    setBodyState('ready');
+
+    phaseTitle.textContent   = 'Wait…';
+    phaseSub.textContent     = 'Tap the circle when it changes color.';
+    showScreen(readyScreen);
+
+    // Reset inner circle styles
+    stimulusInner.style.background  = '#4fc3f7';
+    stimulusInner.style.boxShadow   = '0 8px 32px rgba(0,0,0,0.3)';
+
+    // Random delay
+    var delay = randomWait();
+    waitTimer = setTimeout(function() {
+      goSignal();
+    }, delay);
+  }
+
+  function goSignal() {
+    isGo = true;
+    startTime = Date.now();
+    setBodyState('go');
+
+    phaseTitle.textContent   = 'GO!';
+    phaseSub.textContent     = 'Tap now!';
+
+    stimulusInner.style.background  = '#ffffff';
+    stimulusInner.style.boxShadow   = '0 8px 40px rgba(255,255,255,0.6)';
+  }
+
+  // ── Show reaction time overlay (Bug 2 fix: no intermediate results screen) ──
+  function showReactionResult(rt, callback) {
+    isProcessing = true;
+
+    var label = '';
+    if (rt < 180)      label = '⚡ Lightning fast!';
+    else if (rt < 250) label = '🔥 Excellent!';
+    else if (rt < 350) label = '👍 Good!';
+    else if (rt < 500) label = '😊 Alright';
+    else               label = '😴 Slow… try harder!';
+
+    // Create a temporary overlay on the ready-screen to show RT + rating
+    var rtDiv = document.getElementById('rt-display');
+    var unitDiv = document.getElementById('rt-unit');
+
+    if (!rtDiv) {
+      rtDiv = document.createElement('div');
+      rtDiv.id = 'rt-display';
+      rtDiv.style.cssText = 'font-size:clamp(3rem,10vw,6rem);font-weight:800;color:white;line-height:1;margin-bottom:8px;opacity:0;transition:opacity 0.3s ease;text-shadow:0 2px 16px rgba(0,0,0,0.25);';
+      readyScreen.appendChild(rtDiv);
+    } else {
+      rtDiv.style.opacity = '0';
+      rtDiv.classList.remove('show');
+    }
+
+    if (!unitDiv) {
+      unitDiv = document.createElement('div');
+      unitDiv.id = 'rt-unit';
+      unitDiv.style.cssText = 'font-size:clamp(0.9rem,2vw,1.1rem);color:rgba(255,255,255,0.7);margin-bottom:24px;opacity:0;transition:opacity 0.3s ease;';
+      readyScreen.appendChild(unitDiv);
+    } else {
+      unitDiv.style.opacity = '0';
+      unitDiv.classList.remove('show');
+    }
+
+    // Keep the body green (state-go) so user can see the stimulus color
+    setBodyState('go');
+    rtDiv.textContent = rt;
+    unitDiv.textContent = label;
+
+    // Fade in overlay
+    requestAnimationFrame(function() {
+      rtDiv.classList.add('show');
+      rtDiv.style.opacity = '1';
+      unitDiv.classList.add('show');
+      unitDiv.style.opacity = '1';
+    });
+
+    // Auto-proceed after 1 second
+    setTimeout(function() {
+      rtDiv.classList.remove('show');
+      rtDiv.style.opacity = '0';
+      unitDiv.classList.remove('show');
+      unitDiv.style.opacity = '0';
+      isProcessing = false;
+      // Callback will advance to next trial or finishGame
+      callback();
+    }, 1000);
+  }
+
+  function finishGame() {
+    setProgress(100);
+    // Build and show the final results screen
+    buildChart();
+    updateStats();
+    buildTrialList();
+    setBodyState('results');
+    showScreen(resultsScreen);
+  }
+
+  // ── Chart helpers ──
+  function getBarRating(rt) {
+    if (rt < 180) return 'excellent';
+    if (rt < 250) return 'good';
+    if (rt < 350) return 'average';
+    return 'slow';
+  }
+
+  function buildChart() {
+    var container = document.getElementById('bar-chart');
+    container.innerHTML = '';
+
+    var maxRT = Math.max.apply(null, reactionTimes);
+    var minBarHeight = 8; // minimum visible bar height %
+    var maxHeight = maxRT * 0.95 > 10 ? 95 : 30 + (maxRT / 500) * 65;
+
+    for (var i = 0; i < reactionTimes.length; i++) {
+      var rt = reactionTimes[i];
+      var barH = Math.max(minBarHeight, (rt / (maxRT * 1.2)) * maxHeight);
+      var rating = getBarRating(rt);
+
+      var group = document.createElement('div');
+      group.className = 'bar-group';
+      group.innerHTML =
+        '<div class="bar-value">' + rt + 'ms</div>' +
+        '<div class="bar-track"><div class="bar-fill ' + rating + '" data-height="' + barH + '"></div></div>' +
+        '<div class="bar-label">#' + (i+1) + '</div>';
+      container.appendChild(group);
+    }
+
+    // Trigger animation after paint
+    requestAnimationFrame(function() {
+      var fills = container.querySelectorAll('.bar-fill');
+      for (var j = 0; j < fills.length; j++) {
+        fills[j].style.height = fills[j].getAttribute('data-height') + '%';
+      }
+    });
+  }
+
+  function updateStats() {
+    var avg = Math.round(reactionTimes.reduce(function(a,b){return a+b;},0) / reactionTimes.length);
+    var min = Math.min.apply(null, reactionTimes);
+    var max = Math.max.apply(null, reactionTimes);
+
+    document.getElementById('stat-avg').textContent = avg + 'ms';
+    document.getElementById('stat-min').textContent = min + 'ms';
+    document.getElementById('stat-max').textContent = max + 'ms';
+  }
+
+  function buildTrialList() {
+    var container = document.getElementById('trial-list');
+    container.innerHTML = '';
+    for (var i = 0; i < reactionTimes.length; i++) {
+      var row = document.createElement('div');
+      row.className = 'trial-row';
+      row.innerHTML =
+        '<span class="trial-number">Trial ' + (i+1) + '</span>' +
+        '<span class="trial-time">' + reactionTimes[i] + ' ms</span>';
+      container.appendChild(row);
+    }
+  }
+
+})();
+</script>
+
+</body>
+</html>

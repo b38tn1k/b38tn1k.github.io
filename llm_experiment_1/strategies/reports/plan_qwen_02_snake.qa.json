@@ -1,0 +1,33 @@
+{
+  "method": "Exact-source VM with real DOM key/button handlers, deterministic RAF and controlled state fixtures; Canvas renderer partial, no browser",
+  "startup": "pass",
+  "startAndMovement": {
+    "phase": "playing",
+    "initialHead": {
+      "x": 10,
+      "y": 10
+    },
+    "movedHead": {
+      "x": 11,
+      "y": 10
+    }
+  },
+  "arrowDefaultPrevented": false,
+  "reverseBlocked": true,
+  "pauseFrozen": true,
+  "resumeMoves": true,
+  "liveRestart": true,
+  "wallCollision": true,
+  "selfCollision": true,
+  "tailVacateAllowed": false,
+  "foodAndDifficulty": {
+    "score": 5,
+    "length": 4,
+    "level": 2,
+    "tick": 145,
+    "displayedLevel": "1"
+  },
+  "fullBoardFoodMissing": true,
+  "fullBoardDrawError": "Cannot read properties of undefined (reading 'x')",
+  "sha256": "0387f55bd9b0a4bd1e12a5e6d58d7c13dc8e86d2c9a4c145b163bb0d89d8f31d"
+}

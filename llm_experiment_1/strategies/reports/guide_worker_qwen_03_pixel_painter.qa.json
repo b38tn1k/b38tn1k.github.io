@@ -1,0 +1,129 @@
+{
+  "method": "Exact-source DOM event and Canvas pixel-buffer checks; no browser and PNG encoding not modeled",
+  "sha256": "2fc29e49c54349c33be2f0b95f401deaae31ddfc9dd4ed90308e98d3e04705d7",
+  "startup": "pass",
+  "stroke": [
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ]
+  ],
+  "undo": [
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ]
+  ],
+  "redo": [
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ],
+    [
+      255,
+      0,
+      0,
+      255
+    ]
+  ],
+  "eraser": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "touch": [
+    255,
+    0,
+    0,
+    255
+  ],
+  "clear": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "undoClear": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "resize": {
+    "width": 12,
+    "height": 8
+  },
+  "undoResizeDimensions": {
+    "width": 12,
+    "height": 8
+  },
+  "exportCalls": [
+    {
+      "kind": "canvasDataURL",
+      "width": 12,
+      "height": 8
+    },
+    {
+      "kind": "anchor",
+      "download": "pixel-art-12x8-1794764568613.png",
+      "href": "data:image/png;base64,QA_NOT_REAL_PNG"
+    }
+  ],
+  "errors": [],
+  "identityCanvasCopySelfCheck": "pass"
+}

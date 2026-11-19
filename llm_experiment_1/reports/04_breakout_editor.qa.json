@@ -1,0 +1,20 @@
+{
+  "method": "Exact-source Node VM with mock DOM and no-op Canvas drawing; not browser testing",
+  "startup": "pass",
+  "initial": {
+    "mode": "play",
+    "score": 0,
+    "lives": 3,
+    "bricks": 42,
+    "W": 616,
+    "H": 528,
+    "CELL": 44
+  },
+  "paddleBefore": 0,
+  "directMouseMove": 447.2,
+  "dispatchedMouseMove": 447.2,
+  "keyboardPaddleFinite": false,
+  "paddleSpeed": "undefined",
+  "ownJSONRoundTrip": "pass",
+  "otherGridSize": "Cannot read properties of undefined (reading '0')"
+}

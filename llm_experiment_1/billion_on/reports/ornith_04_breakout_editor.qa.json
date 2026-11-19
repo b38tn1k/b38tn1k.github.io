@@ -1,0 +1,16 @@
+{
+  "method": "Exact-source VM with no-op Canvas; data export/load and event dispatch tested; no browser",
+  "startup": "pass",
+  "initialOverlayPlayHandler": "object",
+  "keyboardMovement": 8.819999999999993,
+  "mouseMovement": 0,
+  "paddleBounceVy": -5,
+  "nonFirstRowBrickDestroyed": true,
+  "savedFormat": [
+    [
+      "4,0",
+      "#ff0000"
+    ]
+  ],
+  "loadedBrickCount": 0
+}

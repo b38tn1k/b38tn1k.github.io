@@ -1,0 +1,76 @@
+# Pixel Art Painter — Single-File Web App
+
+## Summary
+Build one self-contained, offline-capable `index.html` implementing a pixel-art painting tool. No build step, no network, no external assets (all CSS/JS inline, palette as CSS/gradients, export via Canvas `toDataURL`). Runs in any modern browser on desktop (mouse) and mobile/tablet (touch).
+
+## Scope
+- **In scope:** Editable canvas size, color palette + picker, brush, eraser, undo/redo, clear, PNG export, mouse + touch input.
+- **Out of scope:** No backend, no image filters, no layers, no SVG import. (Optional localStorage autosave included as a low-risk bonus — see assumptions.)
+
+## Key Design Decisions
+
+### Canvas model (core)
+- The drawing surface is an **internal low-resolution grid** (e.g., default 32×32 pixels). Each grid cell stores an RGBA value.
+- The grid is rendered onto a display `<canvas>` scaled up with `imageRendering: pixelated` (crisp edges, no blur), so the pixel-art look is inherent and export resolution matches grid size.
+- The *display* canvas is scaled via CSS/`ctx.scale()` so pointer coordinates map 1:1 to cell coordinates: `cellX = floor(pointerX / cellPixelSize)`.
+
+### Editable canvas size
+- Two number inputs (Width, Height) + **Apply** button. Range: 1–512.
+- **Behavior on change:** growing extends with transparent cells; shrinking clips content (cells outside new bounds are dropped). Changing size is treated as a committed action and pushed onto the undo stack (so it's reversible).
+- Live preview disabled — apply explicitly to avoid surprise data loss while typing.
+
+### Colors
+- A **fixed palette** of ~28 swatches (grays, pure white/black, RGB primaries/secondaries, plus common web colors) rendered as clickable buttons.
+- A native `<input type="color">` for arbitrary hex, shown when a special "…" / custom swatch is clicked.
+- Selected color shown in a current-color indicator.
+- Eraser toggles an opaque-white/transparent erase mode; erasing sets the cell to fully transparent (0 alpha) so it shows the checkerboard background.
+
+### Tools
+- **Brush:** fills the tapped/dragged cell(s). Supports drag-painting (no line interpolation — pure pixel grid, consistent with pixel-art tools).
+- **Eraser:** same placement model as brush, sets alpha=0.
+- Keyboard shortcuts: `B` = brush, `E` = eraser.
+
+### History (undo/redo)
+- Undo/redo operate on **full-grid snapshots** (cloned RGBA arrays). Simpler and correct for the target grid sizes.
+- Stacks hold serialized cell arrays. Undo and redo are buttons **and** keyboard shortcuts `Ctrl/Cmd+Z` (undo) and `Ctrl/Cmd+Shift+Z` (redo).
+- Any edit (paint, erase, resize, clear, color change via palette doesn't count; tool switch doesn't count) pushes a new snapshot; redo stack clears.
+
+### Clear & Export
+- **Clear:** empties the grid to all-transparent, pushed onto undo stack.
+- **PNG export:** `canvas.toDataURL('image/png')` → programmatic `<a download="pixel-art.png">` click. Filename fixed to `pixel-art.png`.
+
+### Input handling (mouse + touch)
+- Unified pointer handling: pointer-down starts a stroke, pointer-move while drawing paints the current cell, pointer-up ends it.
+- Attach listeners to the canvas with `{ passive: false }`; call `preventDefault()` on touch events to stop scrolling/zoom during painting.
+- Compute cell coords from `event.clientX/Y` relative to the canvas bounding box, accounting for CSS scaling (divide by the scale factor).
+- Drag-outside-then-release doesn't leave a dangling stroke (guard with a `isDrawing` flag).
+
+### Persistence (bonus, low risk)
+- Autosave current grid + size to `localStorage` on every committed edit; load on page open if present. A small "Reset (clears saved)" note. Wrapped in try/catch to degrade gracefully (e.g., private mode).
+
+## Layout / UI
+- Top toolbar: Tool selector (Brush / Eraser), current color swatch + custom picker, palette grid.
+- Size controls: Width input, Height input, Apply button.
+- History controls: Undo, Redo, Clear.
+- Export button.
+- Canvas area below, centered, with a checkerboard background behind it to visualize transparency. Responsive: canvas scales to fit narrow screens while keeping square cells.
+
+## File
+- Single file: `index.html` in the current directory. All styles in `<style>`, all logic in `<script>`. Zero external dependencies — works fully offline (open via file:// or any static host).
+
+## Assumptions & Defaults
+- Default grid: **32×32** cells; display cell size auto-scaled to fit a ~480px area.
+- `localStorage` persistence is included by default (opt-out via clearing browser data); clearly labeled so users understand the "clear saved" behavior.
+- Erase = set transparent (not white); checkerboard communicates transparency.
+- Snapshots use structured-clone-friendly plain arrays; acceptable memory use for ≤512×512.
+
+## Verification
+1. **Static sanity:** open `index.html` in a headless/real browser; confirm no console errors on load and that palette, tools, and size inputs render.
+2. **Paint:** click/drag cells → colored cells appear; touch on a mobile device (or device emulator) paints without page scrolling.
+3. **Eraser:** erasing returns cells to transparent (verified against checkerboard).
+4. **Resize:** set 8×8, Apply → grid shrinks; set 64×64 → grows; undo restores previous dimensions/content.
+5. **Undo/Redo:** several strokes, then `Ctrl+Z`/`Ctrl+Shift+Z` and buttons restore/advance correctly; a new edit clears the redo stack.
+6. **Clear:** empties grid; undo restores prior drawing.
+7. **Export:** draw something → Export → download `pixel-art.png` → open the file → confirm pixel-art resolution (e.g., 32×32 px) matches the grid.
+8. **Offline:** reload with network disabled; confirm full functionality from local file.
+9. **Persistence:** edit, reload → drawing restored.

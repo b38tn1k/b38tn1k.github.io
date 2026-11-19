@@ -1,0 +1,118 @@
+{
+  "method": "Exact-source DOM event and Canvas pixel-buffer checks; no browser and PNG encoding not modeled",
+  "sha256": "46478ea18600461d8bd1ce014b0ffe4397c7ffe64cf28e12e11bc51ae3507536",
+  "startup": "pass",
+  "stroke": [
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ],
+    [
+      0,
+      0,
+      0,
+      255
+    ]
+  ],
+  "undo": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "redo": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "eraserLimit": "destination-out compositing not modeled; source implements eraser branch",
+  "clear": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "undoClear": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "resize": {
+    "width": 12,
+    "height": 8
+  },
+  "undoResizeDimensions": {
+    "width": 12,
+    "height": 8
+  },
+  "exportCalls": [
+    {
+      "kind": "canvasDataURL",
+      "width": 12,
+      "height": 8
+    },
+    {
+      "kind": "anchor",
+      "download": "pixel-art.png",
+      "href": "data:image/png;base64,QA_NOT_REAL_PNG"
+    }
+  ],
+  "errors": [],
+  "identityCanvasCopySelfCheck": "pass"
+}

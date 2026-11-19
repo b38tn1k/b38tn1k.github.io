@@ -1,0 +1,86 @@
+{
+  "sha256": "809990c2a6ea02ed6d791b18f3c857190aeb33486bfd5a0a7850615764e854ed",
+  "method": "Exact AST-extracted geometry/export functions, real pinned Three.js geometry classes; no browser, CDN loading or WebGL verification",
+  "externalResources": [
+    "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/js/controls/OrbitControls.js"
+  ],
+  "geometry": {
+    "positions": 192,
+    "indices": 288
+  },
+  "displayedCompartment": [
+    58.666666666666664,
+    58,
+    28
+  ],
+  "actualColumnClearWidths": [
+    57.666666666666664,
+    56.666666666666664,
+    57.666666666666664
+  ],
+  "actualRowClearWidths": [
+    57,
+    57
+  ],
+  "normalsNote": "Normal scratch buffer sized per indexed vertex but written per triangle corner and read back per vertex index.",
+  "export": {
+    "format": "ascii",
+    "vertexMatchTolerance": 0.0001,
+    "verticalXPlanes": [
+      -90,
+      -88,
+      -30.3333,
+      -28.3333,
+      28.3333,
+      30.3333,
+      88,
+      90
+    ],
+    "verticalYPlanes": [
+      -15,
+      -13,
+      15
+    ],
+    "zLevels": [
+      -60,
+      -58,
+      -1,
+      1,
+      58,
+      60
+    ],
+    "bytes": 19721,
+    "triangles": 96,
+    "uniqueVertices": 52,
+    "bounds": {
+      "min": [
+        -90,
+        -15,
+        -60
+      ],
+      "max": [
+        90,
+        15,
+        60
+      ],
+      "dimensions": [
+        180,
+        30,
+        120
+      ]
+    },
+    "signedVolume": 103200,
+    "absoluteVolume": 103200,
+    "surfaceArea": 109240,
+    "degenerateTriangles": 0,
+    "nonFiniteTriangles": 0,
+    "normalDisagreements": 81,
+    "missingNormals": 0,
+    "boundaryOrNonmanifoldEdges": 6,
+    "inconsistentWindingEdges": 0,
+    "components": 4,
+    "watertightByMatchingEdges": false
+  },
+  "intersectionNote": "Independent closed box shells overlap floor/walls/dividers; no Boolean union, interior faces retained. Edge pairing alone does not certify their union."
+}

@@ -1,0 +1,12 @@
+{
+  "role": "build",
+  "number": 1,
+  "minutes": 4.22,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": null,
+  "artifactAfter": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+  "prompt": "enforced/ornith/01_reaction_timer/runtime/01-build/prompt.txt",
+  "events": "enforced/ornith/01_reaction_timer/runtime/01-build/events.jsonl",
+  "stderr": "enforced/ornith/01_reaction_timer/runtime/01-build/stderr.log"
+}

@@ -1,0 +1,262 @@
+{
+  "score": 19,
+  "grade": "F provisional - Ready readout masks an empty preview/export state",
+  "summary": "Ready readout masks an empty preview/export state",
+  "rubricScores": {
+    "functionality": 5,
+    "artifact_correctness": 7,
+    "usability": 5,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Default clear compartment readouts calculate85.5\u00d736\u00d727mm and six compartments; dimension controls and offline HTML are supplied."
+  ],
+  "defects": [
+    "render() computes d from input configuration, then calls buildCubes(d), which expects the original configuration field names. This returns null, so state.cubes remains null while the status says ready. Clicking Download produces no STL.",
+    "The separately callable binary writer uses nonexistent DataView.setFloatLE and throws. It is not the normal ASCII download path.",
+    "Raw cube construction shifts the divider: first clear width84mm versus the85.5mm readout. Cubes are separate overlapping shells, not demonstrated as a clean joined printable mesh.",
+    "All three implementation/review rounds end without an accepted completion."
+  ],
+  "verification": [
+    "1/4 independent scenario checks pass. Source SHA256 retained in reports/ralph_ornith_05_drawer_tray.qa.json; independent driver qa/ralph-final-trays.cjs.",
+    "Exact final source VM/DOM/nativeCanvas. Case63 uses exact extracted geometry functions, without GPU setup; WebGL rendering is unverified and unavailable context is not graded as app defect. Other checks invoke actual UI/export handlers. No app algorithm repaired."
+  ],
+  "verificationConcerns": [
+    "Independent full UI confirms null cubes and absent download. Exact raw geometry and serializer calls are diagnostics only, not credit for a working export."
+  ],
+  "scopeCompliance": "Pi alone authored applications, tests and reviews. Forced proof and OS read isolation were active. No supervisor product code or task-specific repair hints.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Native workflow gate passed=False; 55.0 active run minutes. Product behavior and workflow acceptance are assessed separately. Autonomy credit follows accepted completion under the cohort rubric, not mere process exit.",
+  "title": "Simple drawer tray generator",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "ralph",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Now let me verify my claim about the STL bug empirically, since it's an application failure requiring concrete reproduction.",
+  "workflowInstructions": "run-ralph.py; research/ralph-setup.json",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 55.0,
+  "wallMinutes": 55.0,
+  "status": "assessed",
+  "runStatus": "assessed",
+  "stopReason": "iteration_limit",
+  "exitCode": null,
+  "promptWords": 65,
+  "toolCalls": 276,
+  "parentToolCalls": 276,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 114,
+  "modelUsageReported": {
+    "input": 376541,
+    "output": 75254,
+    "cacheRead": 8960743,
+    "totalTokens": 9412538
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 177460,
+  "parentPeakReportedPromptTokens": 177460,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 376541,
+    "output": 75254,
+    "cacheRead": 8960743,
+    "totalTokens": 9412538
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 21410,
+  "sha256": "6f04e7bd4284055f59bece2338b2f0391aa4141ead31f5d7cf8fbc30ddd19117",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 27,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 46,
+    "delegations": [],
+    "controller": "External Ralph-style fresh-process implementation/review loop",
+    "gate": {
+      "passed": false,
+      "iterations": 3,
+      "forcedProofEachImplementation": true
+    },
+    "stages": [
+      {
+        "round": 1,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T18:32:47.188743+00:00",
+        "events": "ralph/ornith/05_drawer_tray/runtime/01-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T18:44:50.913621+00:00",
+        "minutes": 12.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 2,
+          "green": 2
+        },
+        "testExitCode": 0
+      },
+      {
+        "round": 1,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T18:44:50.933035+00:00",
+        "events": "ralph/ornith/05_drawer_tray/runtime/02-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T18:50:54.797208+00:00",
+        "minutes": 6.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 0
+      },
+      {
+        "round": 2,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T18:51:06.277055+00:00",
+        "events": "ralph/ornith/05_drawer_tray/runtime/03-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T19:03:10.153758+00:00",
+        "minutes": 12.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 1,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 2,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T19:03:10.173348+00:00",
+        "events": "ralph/ornith/05_drawer_tray/runtime/04-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T19:09:14.072479+00:00",
+        "minutes": 6.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T19:09:26.013020+00:00",
+        "events": "ralph/ornith/05_drawer_tray/runtime/05-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T19:21:30.755660+00:00",
+        "minutes": 12.08,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 1,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T19:21:30.784838+00:00",
+        "events": "ralph/ornith/05_drawer_tray/runtime/06-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T19:27:35.972569+00:00",
+        "minutes": 6.09,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      }
+    ],
+    "mandatoryProof": true,
+    "readIsolation": true,
+    "forcedProofEachImplementation": true
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 376541,
+      "output": 75254,
+      "cacheRead": 8960743,
+      "totalTokens": 9412538
+    },
+    "qwen": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 54.41,
+    "qwen": 0
+  }
+}

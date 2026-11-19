@@ -1,0 +1,134 @@
+# Pixel Painter — Implementation Plan
+
+## Summary
+
+Build a single self-contained `index.html` file (HTML + CSS + JS inline) — a pixel-art painting tool with editable canvas, color palette, brush/eraser tools, undo/redo, clear, and PNG export. Supports mouse and touch input. Works fully offline with no dependencies.
+
+## Key Design Decisions (Assumptions)
+
+| Aspect | Choice | Rationale |
+|--------|--------|-----------|
+| Logical canvas size | Default **48×48**, editable 8–256 | Versatile middle ground; common pixel-art sizes are 16-128 |
+| Color palette | **16 preset swatches** + native `<input type="color">` for custom picks | Familiar to pixel artists, extensible |
+| Display scale | Auto-computed from viewport (`Math.floor(min(winW, winH) / max(logicalW, logicalH))`) | Fits on any screen, keeps pixels crisp at integer scale |
+| Render target | Fixed `48x48` offscreen canvas scaled up via CSS `image-rendering: pixelated` | Simple logic layer; browser handles scaling |
+| Undo/redo limit | **50 snapshots** (ImageData) | Memory-bounded; covers typical session needs |
+| UI layout | Horizontal toolbar (top), centered canvas below | Standard, minimal chrome |
+
+## File Structure
+
+```
+index.html  — everything in one file: <style>, <script>, markup inline
+```
+
+## Architecture
+
+### Data Model
+
+```
+logicalW, logicalH   — current grid dimensions (default 48)
+displayScale         — computed pixel-scale factor (≥1, integer)
+currentColor         — hex string, default #000000
+currentTool          — 'brush' | 'eraser'
+history              — array of ImageData snapshots
+historyIndex         — current position in history (-1 when cleared)
+isDrawing            — mouse/touch in-progress flag
+```
+
+### Core Components
+
+#### 1. Canvas Rendering
+- A `<canvas id="canvas">` with fixed logical dimensions (48×48 by default).
+- CSS `image-rendering: pixelated; width: W*scale; height: H*scale;` to display scaled-up pixels.
+- On logicalW/logicalH change, resize canvas and redraw.
+- Compute `displayScale = max(1, floor(min(viewportWidth, viewportHeight) / max(logicalW, logicalH)))` — update on load, resize, and size-change.
+
+#### 2. Tool: Brush
+- Draw a filled square of `currentColor` onto the canvas at grid coordinates `(floor(eventX/scale), floor(eventY/scale))`.
+- On drag, fill all intermediate grid cells along the line (Bresenham or simple step).
+
+#### 3. Tool: Eraser
+- Draw a filled transparent rectangle (`ctx.clearRect()`) onto the canvas at the same grid coordinates.
+
+#### 4. Input Handling (Mouse + Touch)
+- **Mouse**: `mousedown` → start drawing, `mousemove` → paint while `isDrawing`, `mouseup`/`mouseleave` → finalize & snapshot.
+- **Touch**: `touchstart` with `{passive: false}` → preventDefault, set `isDrawing`, record first pixel; `touchmove` → continue painting; `touchend`/`touchcancel` → finalize & snapshot.
+- Use `canvas.getBoundingClientRect()` to convert client coordinates to canvas-local, then divide by `displayScale` for grid indices.
+- Clamp grid indices to `[0, logicalW)`, `[0, logicalH)`.
+
+#### 5. Undo / Redo
+- **Save state**: `history.splice(historyIndex + 1); history.push(ctx.getImageData(0,0,W,H)); if (history.length > 50) history.shift(); historyIndex = history.length - 1;`
+- **Undo**: If `historyIndex > 0`, decrement `historyIndex`, restore from `history[historyIndex]`.
+- **Redo**: If `historyIndex < history.length - 1`, increment `historyIndex`, restore.
+- **New drawing**: Clears redo stack as above (standard behavior).
+
+#### 6. Clear Canvas
+- Fill canvas with transparent/black background (`ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,W,H);`), save to history.
+
+#### 7. PNG Export
+- Create `<a>` element, set `href = canvas.toDataURL('image/png')`, `download = 'pixel-art.png'`, click it programmatically.
+
+#### 8. UI Layout (HTML/CSS)
+```
+┌─────────────────────────────────────────┐
+│  [−] Canvas Size [+ ] │ Palette        │  ← Toolbar (top bar)
+│                        │ [swatch] [...] │
+│                        │ 🎨 color picker│
+│   ┌──────────────────┐ │                │
+│   │                  │ │ [🖌️ Brush]    │
+│   │     CANVAS       │ │ [🧹 Eraser]   │
+│   │  (scaled pixels) │ │                │
+│   │                  │ │ [↩ Undo]      │
+│   └──────────────────┘ │ [↪ Redo]      │
+│                        │ [✕ Clear]     │
+│                        │ [⬇ Export PNG]│
+│        48 × 48 pixels  │                │
+└─────────────────────────┴────────────────┘
+```
+
+- CSS: Flexbox layout, dark theme (dark toolbar bg `#1a1a2e`, light canvas area), touch-friendly button sizes (≥40px), pixel-art monospace font for labels.
+- Palette swatches: grid of 16 small square `<button>` elements, each with `background-color` set to a preset hex. On click, sets `currentColor` and highlights the active swatch.
+
+#### 9. Preset Colors (16)
+```
+#000000  #1D2B53  #7E2553  #008751
+#AB5236  #5F574F  #C2C3C7  #FFF1E8
+#FF004D  #FFA300  #FFEC27  #00E436
+#29ADFF  #83769C  #FF77A8  #FFCCAA
+```
+
+## Success Criteria
+
+1. **Editable canvas size**: +/- buttons adjust logical dimensions (8–256 range), canvas redraws correctly at the new scale.
+2. **Color palette**: Clicking any swatch selects that color; custom picker adds arbitrary colors. Selected state is visible.
+3. **Brush tool**: Drawing with mouse/touch fills pixels in the selected color on the grid.
+4. **Eraser tool**: Drawing removes pixels (transparent/white fill).
+5. **Undo**: Restores the previous pixel state. Works across drawing strokes.
+6. **Redo**: Restores undone states correctly.
+7. **Clear**: Resets canvas to white/blank, pushes to history.
+8. **PNG export**: Downloads a `.png` file at the logical resolution (e.g., 48×48 pixels).
+9. **Touch support**: Drawing works on touch devices (phone/tablet) with proper `preventDefault()` to avoid scrolling.
+10. **Single file, offline**: Zero external dependencies; works without network.
+
+## Verification Plan
+
+After building the file:
+1. Open `index.html` in a browser — no console errors, renders correctly.
+2. Resize canvas — tool updates, canvas visible at new size.
+3. Draw with brush and eraser — pixels appear/clear as expected.
+4. Undo/redo — state cycles correctly through history.
+5. Clear — canvas resets to white.
+6. Export PNG — downloads a file; open it to verify correct resolution.
+7. Test touch input (if device available) — drawing works, no scroll interference.
+
+## Edge Cases & Defaults
+
+| Edge Case | Handling |
+|-----------|----------|
+| Touch scrolling while drawing | `touchstart`/`touchmove` call `preventDefault()` on canvas |
+| Window resize during drawing | Recompute scale; painting coordinates use current `getBoundingClientRect()` each frame |
+| Canvas set to min/max limit | Disable the corresponding +/- button when at boundary |
+| Very small viewport | Scale floors to 1x minimum; canvas scrolls if needed |
+| History overflow | Auto-evict oldest when >50 snapshots (FIFO from bottom) |
+| Export on mobile Safari | `canvas.toDataURL` + `<a download>` works in modern browsers |
+

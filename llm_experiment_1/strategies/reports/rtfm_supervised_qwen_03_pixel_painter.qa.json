@@ -1,0 +1,140 @@
+{
+  "method": "Independent exact-source VM/DOM, actual mouse/touch/buttons/input attributes, logical RGBA and real nativeCanvas backing pixels plus decoded PNG. Generic execution of original inline input/change attribute handlers models browser event binding absent in DOM adapter; no app algorithms replaced. Canvas backing pixel geometry checked, not browser layout/hit testing.",
+  "sha256": "8be2fb33f91f94767c103d734e42189b72922281c42a577112c42596b8e5473e",
+  "checks": [
+    {
+      "id": "mouse_touch_palette_brush_eraser_history_clear_and_branch",
+      "pass": true,
+      "evidence": {
+        "logicalMouse": true,
+        "touch": true,
+        "eraserUsesDeclaredBackground": true,
+        "undoRedo": true,
+        "clearUndo": true,
+        "branch": true,
+        "palette": true
+      }
+    },
+    {
+      "id": "zoomed_display_renders_paint_under_actual_pointer",
+      "pass": false,
+      "error": "The painted backing pixel does not lie under the normalized actual pointer position",
+      "actual": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "resize_modal_dimensions_and_preserved_2D_coordinates",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          48,
+          24
+        ],
+        "preservedPixel": [
+          5,
+          5
+        ]
+      }
+    },
+    {
+      "id": "advertised_preset_does_not_scramble_existing_art",
+      "pass": false,
+      "error": "Clicking an advertised preset scrambles or loses existing painted pixels",
+      "actual": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "preset_export_preserves_actual_PNG_artwork",
+      "pass": false,
+      "error": "Actual preset PNG loses original pixel; sample21,3=[255,0,0,255]",
+      "actual": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "resize_undo_restores_dimensions_and_artwork",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  48,\n  24\n]\n\nshould loosely deep-equal\n\n[\n  32,\n  32\n]",
+      "actual": [
+        48,
+        24
+      ],
+      "expected": [
+        32,
+        32
+      ]
+    },
+    {
+      "id": "shrink_then_undo_does_not_throw",
+      "pass": false,
+      "error": "offset is out of bounds"
+    },
+    {
+      "id": "real_PNG_export_native_dimensions_and_decoded_pixels",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          32,
+          32
+        ],
+        "pixel": [
+          0,
+          255,
+          0,
+          255
+        ],
+        "bytes": 145
+      }
+    },
+    {
+      "id": "single_file_offline",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "optionalChecks": [
+    {
+      "id": "main_48x48_preset_changes_size",
+      "pass": true,
+      "blocking": false,
+      "evidence": {
+        "actual": [
+          48,
+          48
+        ]
+      }
+    }
+  ],
+  "pass": false
+}

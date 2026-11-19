@@ -1,0 +1,86 @@
+{
+  "method": "Independent exact-source VM/DOM/nativeCanvas, actual editor/mode/keyboard/mouse/touch/modal controls, actual RAF callbacks and parsed JSON save/load text. Ball coordinates/velocity are controlled inputs to existing collision logic; no algorithms replaced. No particular win overlay or file-download format required. No browser layout/hit testing or visual-polish proof.",
+  "sha256": "7f263377e054d61264a4150d0e9c1659c7a3d44c2886f71f5ce5286b7067c6d2",
+  "checks": [
+    {
+      "id": "actual_editor_draw_play_return_and_second_scheduled_game",
+      "pass": true,
+      "evidence": {
+        "editor": true,
+        "customPlay": true,
+        "return": true,
+        "secondGameScheduled": true
+      }
+    },
+    {
+      "id": "selective_erase_is_reachable_from_real_controls",
+      "pass": true,
+      "evidence": {
+        "selectiveErase": true,
+        "input": "advertised erase control"
+      }
+    },
+    {
+      "id": "keyboard_mouse_touch_controls_and_scheduled_ball",
+      "pass": true,
+      "evidence": {
+        "keyboard": true,
+        "mouse": true,
+        "touch": true,
+        "ballMoved": true
+      }
+    },
+    {
+      "id": "actual_JSON_save_modal_and_load_roundtrip_replaces_cells",
+      "pass": true,
+      "evidence": {
+        "saveJSON": true,
+        "load": true,
+        "exactRoundtrip": true,
+        "shortReplacement": true
+      }
+    },
+    {
+      "id": "collision_scoring_and_three_lives",
+      "pass": true,
+      "evidence": {
+        "score": true,
+        "lives": 0,
+        "playStops": true
+      }
+    },
+    {
+      "id": "restart_preserves_custom_layout_and_resets_game",
+      "pass": false,
+      "error": "Restart discards custom layout and loads the84brick default",
+      "actual": "[[\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\",\"#e94560\"],[\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\",\"#f5a623\"],[\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\",\"#f5c518\"],[\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\",\"#50fa7b\"],[\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\",\"#66d9ef\"],[\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\",\"#bd93f9\"],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]]",
+      "expected": "[[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,\"#e94560\",null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,\"#e94560\",null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null,null,null]]"
+    },
+    {
+      "id": "last_brick_completion_does_not_award_empty_relaunch_levels",
+      "pass": true,
+      "evidence": {
+        "completion": true
+      }
+    },
+    {
+      "id": "actual_gameover_canvas_click_and_touch_restart_paths",
+      "pass": true,
+      "evidence": {
+        "actualGameOverInputs": [
+          "mousedown",
+          "touchstart"
+        ],
+        "note": "Convenience canvas restart now works; custom-layout preservation is assessed separately. Original Click Restart copy also had a real Restart button, so canvas-click support is not invented as a separate brief requirement."
+      }
+    },
+    {
+      "id": "single_file_offline",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "pass": false
+}

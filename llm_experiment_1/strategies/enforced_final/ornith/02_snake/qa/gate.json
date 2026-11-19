@@ -1,0 +1,15 @@
+{
+  "passed": false,
+  "artifactSHA256": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+  "errors": [
+    "Executable acceptance test did not exit successfully",
+    "Acceptance check missing/failed: food_growth_score",
+    "Acceptance ledger contains a failed check; every recorded check must pass",
+    "Independent review missing, stale or reports blocking findings"
+  ],
+  "stl": null,
+  "limits": [
+    "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+    "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+  ]
+}

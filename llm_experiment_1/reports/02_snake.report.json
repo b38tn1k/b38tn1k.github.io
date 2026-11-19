@@ -1,0 +1,38 @@
+{
+  "title": "Snake",
+  "status": "completed",
+  "grade": "A- provisional; browser play unverified",
+  "score": 91,
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 12,
+    "self_verification": 4,
+    "autonomy": 10
+  },
+  "elapsedMinutes": 2.5,
+  "promptWords": 36,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "toolCalls": 5,
+  "toolResultsMarkedError": 2,
+  "modelUsageReported": {
+    "input": 8870,
+    "output": 7819,
+    "cacheRead": 29570,
+    "totalTokens": 46259
+  },
+  "artifactBytes": 12778,
+  "verified": [
+    "Exact-source logic checks: movement/growth/score, reversal prevention, pause, wall/self collisions, restart, difficulty, food placement",
+    "Syntax valid and no external runtime resources"
+  ],
+  "concerns": [
+    "Agent initially tested a faulty reimplementation, caught its own double-pop error, then tested the game logic",
+    "Full-board state removes food but does not explicitly end with a victory message; not required by the short prompt"
+  ],
+  "limitations": [
+    "No independent real-browser or visual test; keyboard handling inspected and game logic simulated"
+  ],
+  "scopeCompliance": "No scope violation found in this run on initial review"
+}

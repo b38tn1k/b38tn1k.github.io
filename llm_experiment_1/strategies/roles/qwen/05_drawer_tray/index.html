@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Organizer Tray Maker</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1a1a2e;
+    --surface: #16213e;
+    --sidebar: #0f3460;
+    --accent: #e94560;
+    --accent-hover: #ff6b81;
+    --text: #eee;
+    --text-dim: #aaa;
+    --border: #2a3a5c;
+    --input-bg: #1a1a3e;
+    --radius: 8px;
+  }
+
+  html, body { height: 100%; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+
+  .app { display: grid; grid-template-columns: 340px 1fr; height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .sidebar::-webkit-scrollbar { width: 6px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .sidebar h1 { font-size: 1.25rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; margin-bottom: 4px; }
+  .sidebar .subtitle { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; }
+
+  .section { background: var(--input-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 12px; font-weight: 600; }
+
+  .control-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .control-row:last-child { margin-bottom: 0; }
+  .control-row label { font-size: 0.82rem; min-width: 68px; color: var(--text-dim); }
+
+  .input-group { display: flex; align-items: center; gap: 4px; flex: 1; }
+  .input-group input[type="number"] {
+    width: 64px; padding: 5px 8px; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 4px; color: var(--text); font-size: 0.85rem; text-align: right;
+    outline: none; transition: border-color 0.2s;
+  }
+  .input-group input[type="number"]:focus { border-color: var(--accent); }
+  .input-unit { font-size: 0.75rem; color: var(--text-dim); min-width: 20px; }
+
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+    background: var(--bg); border-radius: 3px; outline: none; cursor: pointer;
+    margin-top: 4px;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent); cursor: pointer; border: 2px solid var(--surface);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%; background: var(--accent);
+    cursor: pointer; border: 2px solid var(--surface);
+  }
+
+  .dim-preview { font-size: 0.8rem; color: var(--text-dim); line-height: 1.7; padding-top: 4px; }
+  .dim-preview strong { color: var(--accent-hover); font-weight: 600; }
+
+  .btn-export {
+    width: 100%; padding: 12px; background: var(--accent); color: white; border: none;
+    border-radius: var(--radius); font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    transition: background 0.2s, transform 0.1s; margin-top: 4px;
+  }
+  .btn-export:hover { background: var(--accent-hover); }
+  .btn-export:active { transform: scale(0.98); }
+
+  .hint { font-size: 0.72rem; color: var(--text-dim); line-height: 1.5; padding-top: 6px; border-top: 1px solid var(--border); margin-top: 4px; }
+
+  /* Canvas area */
+  .canvas-area { position: relative; overflow: hidden; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); }
+  #preview { width: 100%; height: 100%; display: block; }
+
+  .canvas-hint {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.55); color: var(--text-dim); padding: 6px 14px;
+    border-radius: 20px; font-size: 0.75rem; pointer-events: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 800px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    .sidebar { max-height: 45vh; padding: 16px; overflow-y: auto; }
+    .canvas-area { min-height: 55vh; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div>
+      <h1>🔧 Tray Maker</h1>
+      <p class="subtitle">Rectangular Drawer Organizer Generator</p>
+    </div>
+
+    <!-- Outer Dimensions -->
+    <div class="section">
+      <div class="section-title">Outer Dimensions</div>
+      <div class="control-row">
+        <label>Width (X)</label>
+        <div class="input-group">
+          <input type="number" id="outerW" value="180" min="30" max="500" step="1">
+          <span class="input-unit">mm</span>
+        </div>
+      </div>
+      <input type="range" id="outerW-range" min="30" max="400" value="180" step="1">
+      <div class="control-row" style="margin-top:6px">
+        <label>Depth (Z)</label>
+        <div class="input-group">
+          <input type="number" id="outerD" value="120" min="30" max="500" step="1">
+          <span class="input-unit">mm</span>
+        </div>
+      </div>
+      <input type="range" id="outerD-range" min="30" max="400" value="120" step="1">
+      <div class="control-row" style="margin-top:6px">
+        <label>Height (Y)</label>
+        <div class="input-group">
+          <input type="number" id="outerH" value="30" min="5" max="200" step="1">
+          <span class="input-unit">mm</span>
+        </div>
+      </div>
+      <input type="range" id="outerH-range" min="5" max="150" value="30" step="1">
+    </div>
+
+    <!-- Grid -->
+    <div class="section">
+      <div class="section-title">Grid Layout</div>
+      <div class="control-row">
+        <label>Columns</label>
+        <div class="input-group">
+          <input type="number" id="cols" value="3" min="1" max="12" step="1">
+        </div>
+      </div>
+      <div class="control-row">
+        <label>Rows</label>
+        <div class="input-group">
+          <input type="number" id="rows" value="2" min="1" max="12" step="1">
+        </div>
+      </div>
+    </div>
+
+    <!-- Wall & Floor -->
+    <div class="section">
+      <div class="section-title">Wall &amp; Floor</div>
+      <div class="control-row">
+        <label>Wall thick.</label>
+        <div class="input-group">
+          <input type="number" id="wallT" value="3" min="0.5" max="15" step="0.5">
+          <span class="input-unit">mm</span>
+        </div>
+      </div>
+      <input type="range" id="wallT-range" min="0.5" max="15" value="3" step="0.5">
+      <div class="control-row" style="margin-top:6px">
+        <label>Floor thick.</label>
+        <div class="input-group">
+          <input type="number" id="floorT" value="2" min="0.5" max="10" step="0.5">
+          <span class="input-unit">mm</span>
+        </div>
+      </div>
+      <input type="range" id="floorT-range" min="0.5" max="10" value="2" step="0.5">
+    </div>
+
+    <!-- Clear Dimensions -->
+    <div class="section">
+      <div class="section-title">Clear Compartment Dimensions</div>
+      <div class="dim-preview" id="dimPreview">
+        Calculating...
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div class="section" style="text-align:center; margin-top:auto;">
+      <button class="btn-export" id="exportBtn">⬇ Export STL</button>
+      <p class="hint">Binary STL for slicing (PrusaSlicer, Cura, etc.).<br><br>
+        For offline use, download the Three.js library separately and reference it locally.<br>
+        CDN: cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js
+      </p>
+    </div>
+  </aside>
+
+  <main class="canvas-area">
+    <canvas id="preview"></canvas>
+    <div class="canvas-hint">Drag to rotate · Scroll to zoom · Right-drag to pan</div>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ─── Three.js scene setup ──────────────────────────────────────
+const canvas = document.getElementById('preview');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x0d1117);
+
+const scene = new THREE.Scene();
+scene.background = null;
+
+// Camera
+const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 5000);
+camera.position.set(250, 200, 250);
+camera.lookAt(0, 0, 0);
+
+// Lights
+const ambLight = new THREE.AmbientLight(0xffffff, 0.45);
+scene.add(ambLight);
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+dirLight.position.set(120, 180, 160);
+scene.add(dirLight);
+const dirLight2 = new THREE.DirectionalLight(0xaabbff, 0.35);
+dirLight2.position.set(-100, -60, -140);
+scene.add(dirLight2);
+
+// Grid helper (subtle)
+const gridHelper = new THREE.GridHelper(400, 40, 0x2a3a5c, 0x1a2a4c);
+gridHelper.position.y = -16;
+scene.add(gridHelper);
+
+// Tray group
+const trayGroup = new THREE.Group();
+scene.add(trayGroup);
+
+// Materials
+let trayMat = new THREE.MeshStandardMaterial({
+  color: 0x3a8fd9, metalness: 0.15, roughness: 0.65, side: THREE.DoubleSide
+});
+let floorMat = new THREE.MeshStandardMaterial({
+  color: 0x2b7ab5, metalness: 0.1, roughness: 0.7, side: THREE.DoubleSide
+});
+
+// ─── Mesh building helper ──────────────────────────────────────
+function makeBox(w, h, d) {
+  // w = X-size, h = Y-size, d = Z-size
+  const geo = new THREE.BoxGeometry(w, h, d);
+  return { geo, width: w, height: h, depth: d };
+}
+
+let trayMeshes = [];
+
+function clearTray() {
+  trayMeshes.forEach(m => {
+    m.geometry.dispose();
+    trayGroup.remove(m);
+  });
+  trayMeshes = [];
+}
+
+function buildTray(W, D, H, wallT, floorT, cols, rowCount) {
+  clearTray();
+
+  if (wallT * 2 >= W || wallT * 2 >= D) return;
+  if (floorT >= H) return;
+
+  const innerW = W - 2 * wallT;   // total inner width
+  const innerD = D - 2 * wallT;   // total inner depth
+  // Compartment sizing accounts for divider wall thicknesses
+  const compW = (innerW - (cols - 1) * wallT) / cols;
+  const compD = (innerD - (rowCount - 1) * wallT) / rowCount;
+  const compH = H - floorT;       // clear height
+
+  if (compW <= 0 || compD <= 0) return;
+
+  // Helper to create and add a box mesh
+  function addBox(geom, xOff, yOff, zOff, mat) {
+    const m = new THREE.Mesh(geom, mat || trayMat);
+    m.position.set(xOff, yOff, zOff);
+    trayGroup.add(m);
+    trayMeshes.push(m);
+  }
+
+  // Floor plate (full footprint)
+  const floorGeom = new THREE.BoxGeometry(W, floorT, D);
+  addBox(floorGeom, 0, -H / 2 + floorT / 2, 0, floorMat);
+
+  // Outer walls
+  // Left wall
+  const lwGeom = new THREE.BoxGeometry(wallT, H, D);
+  addBox(lwGeom, -W / 2 + wallT / 2, 0, 0);
+
+  // Right wall
+  const rwGeom = new THREE.BoxGeometry(wallT, H, D);
+  addBox(rwGeom, W / 2 - wallT / 2, 0, 0);
+
+  // Front wall (along X, thickness in Z)
+  const fwGeom = new THREE.BoxGeometry(W, H, wallT);
+  addBox(fwGeom, 0, 0, -D / 2 + wallT / 2);
+
+  // Back wall
+  const bwGeom = new THREE.BoxGeometry(W, H, wallT);
+  addBox(bwGeom, 0, 0, D / 2 - wallT / 2);
+
+  // Vertical dividers — positioned between compartments
+  const dividerXStart = -W / 2 + wallT + compW;
+  for (let i = 0; i < cols - 1; i++) {
+    const xPos = dividerXStart + i * (compW + wallT);
+    const dvGeom = new THREE.BoxGeometry(wallT, H, innerD);
+    addBox(dvGeom, xPos, 0, 0);
+  }
+
+  // Horizontal dividers — positioned between compartments
+  const dividerZStart = -D / 2 + wallT + compD;
+  for (let j = 0; j < rowCount - 1; j++) {
+    const zPos = dividerZStart + j * (compD + wallT);
+    const hdGeom = new THREE.BoxGeometry(innerW, H, wallT);
+    addBox(hdGeom, 0, 0, zPos);
+  }
+
+  updateDimPreview(W, D, H, cols, rowCount, wallT, floorT, compW, compD, compH);
+}
+
+// ─── Dimension preview ──────────────────────────────────────
+function updateDimPreview(W, D, H, cols, rows, wT, fT, cW, cD, cH) {
+  const el = document.getElementById('dimPreview');
+  if (cW <= 0 || cD <= 0 || cH <= 0) {
+    el.innerHTML = '<span style="color:#ff6b81">⚠ Dimensions invalid</span>';
+    return;
+  }
+  const totalComp = cols * rows;
+  el.innerHTML = `
+    <div>Each compartment: <strong>${cW.toFixed(1)} × ${cD.toFixed(1)} × ${cH.toFixed(1)}</strong> mm (W × D × H)</div>
+    <div style="margin-top:3px">Total compartments: <strong>${totalComp}</strong></div>
+  `;
+}
+
+// ─── STL export (binary, pure JS) ──────────────────────────────
+function triangulateBox(w, h, d) {
+  // Returns array of { position: [x,y,z], normal: [nx,ny,nz] } for a centered box
+  const faces = [];
+
+  function addFace(nx, ny, nz, verts) {
+    const center = [0, 0, 0];
+    for (const v of verts) { center[0] += v[0]; center[1] += v[1]; center[2] += v[2]; }
+    center[0] /= 4; center[1] /= 4; center[2] /= 4;
+
+    // Push face as 2 triangles (CCW winding)
+    for (let t = 0; t < 2; t++) {
+      const idx = t === 0 ? [0, 1, 2] : [0, 2, 3];
+      faces.push({
+        position: center.slice(),
+        normal: [nx, ny, nz],
+        vertices: idx.map(i => verts[i])
+      });
+    }
+  }
+
+  const hw = w/2, hh = h/2, hd = d/2;
+
+  // +X face
+  addFace(1, 0, 0, [[hw,-hh,-hd],[hw,hh,-hd],[hw,hh,hd],[hw,-hh,hd]]);
+  // -X face
+  addFace(-1, 0, 0, [[-hw,-hh,hd],[-hw,hh,hd],[-hw,hh,-hd],[-hw,-hh,-hd]]);
+  // +Y face (top) — CCW from +Y viewing direction
+  addFace(0, 1, 0, [[-hw,hh,hd],[hw,hh,hd],[hw,hh,-hd],[-hw,hh,-hd]]);
+  // -Y face (bottom) — CCW from -Y viewing direction
+  addFace(0, -1, 0, [[-hw,-hh,-hd],[hw,-hh,-hd],[hw,-hh,hd],[-hw,-hh,hd]]);
+  // +Z face (front)
+  addFace(0, 0, 1, [[-hw,-hh,hd],[hw,-hh,hd],[hw,hh,hd],[-hw,hh,hd]]);
+  // -Z face (back) — CCW from -Z viewing direction
+  addFace(0, 0, -1, [[-hw,-hh,-hd],[-hw,hh,-hd],[hw,hh,-hd],[hw,-hh,-hd]]);
+
+  return faces;
+}
+
+function exportSTL(W, D, H, wT, fT, cols, rows) {
+  if (wT * 2 >= W || wT * 2 >= D || fT >= H) {
+    alert('Invalid dimensions: wall thickness and floor must fit within outer bounds.');
+    return;
+  }
+
+  const innerW = W - 2 * wT;
+  const innerD = D - 2 * wT;
+  const compW = (innerW - (cols - 1) * wT) / cols;
+  const compD = (innerD - (rows - 1) * wT) / rows;
+  const compH = H - fT;
+
+  // Collect all triangle faces
+  const allTriangles = [];
+
+  function addBoxFaces(w, h, d, cx, cy, cz) {
+    const faces = triangulateBox(w, h, d);
+    for (const f of faces) {
+      const t = {
+        position: [f.position[0]+cx, f.position[1]+cy, f.position[2]+cz],
+        normal: f.normal.slice(),
+        vertices: f.vertices.map(v => [v[0]+cx, v[1]+cy, v[2]+cz])
+      };
+      allTriangles.push(t);
+    }
+  }
+
+  // Floor plate
+  addBoxFaces(W, fT, D, 0, -H/2 + fT/2, 0);
+
+  // Outer walls
+  addBoxFaces(wT, H, D, -W/2 + wT/2, 0, 0);       // Left
+  addBoxFaces(wT, H, D, W/2 - wT/2, 0, 0);          // Right
+  addBoxFaces(W, H, wT, 0, 0, -D/2 + wT/2);         // Front
+  addBoxFaces(W, H, wT, 0, 0, D/2 - wT/2);           // Back
+
+  // Vertical dividers — positioned between compartments
+  const dividerXStart = -W/2 + wT + compW;
+  for (let i = 0; i < cols - 1; i++) {
+    const xPos = dividerXStart + i * (compW + wT);
+    addBoxFaces(wT, H, innerD, xPos, 0, 0);
+  }
+
+  // Horizontal dividers — positioned between compartments
+  const dividerZStart = -D/2 + wT + compD;
+  for (let j = 0; j < rows - 1; j++) {
+    const zPos = dividerZStart + j * (compD + wT);
+    addBoxFaces(innerW, H, wT, 0, 0, zPos);
+  }
+
+  // Write binary STL
+  const numTris = allTriangles.length;
+  const headerSize = 80;
+  const triRecordSize = 12 * 4 + 2; // 3×float32 pos + 3×float32 normal + uint16 attr = 50 bytes
+  const bufSize = headerSize + 4 + numTris * triRecordSize;
+
+  // Binary STL write — using only DataView with byte offsets
+  const buffer = new ArrayBuffer(bufSize);
+  const view = new DataView(buffer);
+
+  // Header (80 bytes of zeros)
+  for (let i = 0; i < headerSize; i++) view.setUint8(i, 0);
+  let byteOffset = headerSize;
+
+  // Triangle count (uint32 LE)
+  view.setUint32(byteOffset, numTris, true);
+  byteOffset += 4;
+
+  for (const tri of allTriangles) {
+    // Normal vector (3×float32 LE)
+    view.setFloat32(byteOffset, tri.normal[0], true); byteOffset += 4;
+    view.setFloat32(byteOffset, tri.normal[1], true); byteOffset += 4;
+    view.setFloat32(byteOffset, tri.normal[2], true); byteOffset += 4;
+    // Vertices (9×float32 LE)
+    for (let v = 0; v < 3; v++) {
+      view.setFloat32(byteOffset, tri.vertices[v][0], true); byteOffset += 4;
+      view.setFloat32(byteOffset, tri.vertices[v][1], true); byteOffset += 4;
+      view.setFloat32(byteOffset, tri.vertices[v][2], true); byteOffset += 4;
+    }
+    // Attribute byte count (uint16 LE) - always 0
+    view.setUint16(byteOffset, 0, true);
+    byteOffset += 2;
+  }
+
+  // Download trigger
+  const blob = new Blob([buffer], { type: 'application/octet-stream' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `tray_${W}x${D}x${H}_${cols}x${rows}_${dateStr}.stl`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  console.log(`STL exported: ${numTris} triangles`);
+}
+
+// ─── Controls wiring ──────────────────────────────────────
+const inputs = {
+  outerW: document.getElementById('outerW'),
+  outerD: document.getElementById('outerD'),
+  outerH: document.getElementById('outerH'),
+  wallT: document.getElementById('wallT'),
+  floorT: document.getElementById('floorT'),
+  cols: document.getElementById('cols'),
+  rows: document.getElementById('rows'),
+};
+
+const ranges = {
+  outerW: document.getElementById('outerW-range'),
+  outerD: document.getElementById('outerD-range'),
+  outerH: document.getElementById('outerH-range'),
+  wallT: document.getElementById('wallT-range'),
+  floorT: document.getElementById('floorT-range'),
+};
+
+let rebuildScheduled = false;
+function scheduleRebuild() {
+  if (!rebuildScheduled) {
+    rebuildScheduled = true;
+    requestAnimationFrame(() => {
+      rebuildScheduled = false;
+      rebuild();
+    });
+  }
+}
+
+function readValues() {
+  return {
+    W: parseFloat(inputs.outerW.value) || 180,
+    D: parseFloat(inputs.outerD.value) || 120,
+    H: parseFloat(inputs.outerH.value) || 30,
+    wallT: parseFloat(inputs.wallT.value) || 3,
+    floorT: parseFloat(inputs.floorT.value) || 2,
+    cols: parseInt(inputs.cols.value) || 3,
+    rows: parseInt(inputs.rows.value) || 2,
+  };
+}
+
+function syncRangeWithValue(inputEl, rangeEl) {
+  if (rangeEl) rangeEl.value = inputEl.value;
+}
+
+function build() {
+  const v = readValues();
+  trayMat.color.setHex(v.W < 100 ? 0xe94560 : 0x3a8fd9);
+  floorMat.color.setHex(v.W < 100 ? 0xc73a52 : 0x2b7ab5);
+  buildTray(v.W, v.D, v.H, v.wallT, v.floorT, v.cols, v.rows);
+
+  // Adjust camera to frame the tray
+  const maxDim = Math.max(v.W, v.D, v.H);
+  const dist = maxDim * 1.8;
+  camera.position.set(dist * 0.7, dist * 0.55, dist * 0.7);
+  camera.near = 1;
+  camera.far = 5000;
+  camera.aspect = canvas.clientWidth / canvas.clientHeight;
+  camera.updateProjectionMatrix();
+  camera.lookAt(0, 0, 0);
+}
+
+function rebuild() { build(); }
+
+// Wire up all inputs
+Object.entries(inputs).forEach(([key, el]) => {
+  el.addEventListener('input', () => { syncRangeWithValue(el, ranges[key]); scheduleRebuild(); });
+});
+
+Object.entries(ranges).forEach(([key, el]) => {
+  if (!el) return;
+  el.addEventListener('input', () => { inputs[key].value = el.value; scheduleRebuild(); });
+});
+
+// Export button
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const v = readValues();
+  exportSTL(v.W, v.D, v.H, v.wallT, v.floorT, v.cols, v.rows);
+});
+
+// ─── OrbitControls (manual implementation) ──────────────────
+let orbitState = {
+  rotating: false, panning: false,
+  lastX: 0, lastY: 0,
+  theta: Math.PI / 4,      // horizontal angle
+  phi: Math.PI / 3.5,       // vertical angle (from top)
+  radius: 350,
+  target: new THREE.Vector3(0, 0, 0),
+};
+
+function updateCamera() {
+  const s = orbitState;
+  const x = s.radius * Math.sin(s.phi) * Math.cos(s.theta);
+  const y = s.radius * Math.cos(s.phi);
+  const z = s.radius * Math.sin(s.phi) * Math.sin(s.theta);
+  camera.position.set(s.target.x + x, s.target.y + y, s.target.z + z);
+  camera.lookAt(s.target);
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  if (e.button === 0) orbitState.rotating = true;
+  if (e.button === 2) orbitState.panning = true;
+  orbitState.lastX = e.clientX;
+  orbitState.lastY = e.clientY;
+});
+
+window.addEventListener('pointermove', (e) => {
+  const s = orbitState;
+  const dx = e.clientX - s.lastX;
+  const dy = e.clientY - s.lastY;
+  if (s.rotating) {
+    s.theta -= dx * 0.006;
+    s.phi = Math.max(0.1, Math.min(Math.PI - 0.1, s.phi + dy * 0.006));
+    updateCamera();
+  }
+  if (s.panning) {
+    const panSpeed = s.radius * 0.002;
+    // Use camera-local right and up vectors for correct panning at any theta
+    const right = new THREE.Vector3();
+    camera.getWorldDirection(right);
+    right.cross(camera.up).normalize();
+    const dy_world = -dy * panSpeed;
+    s.target.x += right.x * dx * panSpeed + (camera.up.x * dy_world);
+    s.target.y += right.y * dx * panSpeed + (camera.up.y * dy_world);
+    s.target.z += right.z * dx * panSpeed + (camera.up.z * dy_world);
+    updateCamera();
+  }
+  s.lastX = e.clientX;
+  s.lastY = e.clientY;
+});
+
+window.addEventListener('pointerup', (e) => {
+  if (e.button === 0) orbitState.rotating = false;
+  if (e.button === 2) orbitState.panning = false;
+});
+
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  orbitState.radius *= (1 + e.deltaY * 0.001);
+  orbitState.radius = Math.max(50, Math.min(2000, orbitState.radius));
+  updateCamera();
+}, { passive: false });
+
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// ─── Resize handler ──────────────────────────────────────
+function onResize() {
+  const area = canvas.parentElement;
+  const w = area.clientWidth;
+  const h = area.clientHeight;
+  if (w === 0 || h === 0) return;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', onResize);
+
+// ─── Init ────────────────────────────────────────────────
+onResize();
+build();
+updateCamera();
+
+function animate() {
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+{
+  "artifactSHA256": "1107cb72a39b3e1734c61bd91fd4fca724416201ef839fd55390f6ed4bf28095",
+  "checks": [
+    {
+      "id": "infra.canvas_exists",
+      "passed": false,
+      "evidence": "Canvas not found or has no dimensions"
+    },
+    {
+      "id": "infra.buttons_exist",
+      "passed": true,
+      "evidence": "btn-play=true, btn-editor=false"
+    },
+    {
+      "id": "infra.hud_exists",
+      "passed": true,
+      "evidence": "Score=\"not found\""
+    },
+    {
+      "id": "infra.app_started",
+      "passed": false,
+      "evidence": "mode=null"
+    },
+    {
+      "id": "editor_draw_erase",
+      "passed": false,
+      "evidence": "mode after Editor=null"
+    },
+    {
+      "id": "editor_multiple_draw",
+      "passed": false,
+      "evidence": "Exception: Missing target null"
+    },
+    {
+      "id": "play_controls",
+      "passed": false,
+      "evidence": "Exception: Missing target null"
+    },
+    {
+      "id": "brick_score.tier_data_exists",
+      "passed": false,
+      "evidence": "COLORS not available"
+    },
+    {
+      "id": "brick_score.tiers_have_points",
+      "passed": false,
+      "evidence": "Tiers with positive points: 0"
+    },
+    {
+      "id": "brick_score.tier_0_points",
+      "passed": false,
+      "evidence": "Tier 0 not available"
+    },
+    {
+      "id": "lives_game_over.initial_lives",
+      "passed": false,
+      "evidence": "INITIAL_LIVES=-1"
+    },
+    {
+      "id": "lives_game_over.hud_display",
+      "passed": true,
+      "evidence": "HUD lives: N/A"
+    },
+    {
+      "id": "lives_game_over.game_state",
+      "passed": false,
+      "evidence": "gameState after play=null"
+    },
+    {
+      "id": "lives_game_over.lives_match_initial",
+      "passed": false,
+      "evidence": "HUD lives=3, INITIAL_LIVES=3"
+    },
+    {
+      "id": "lives_game_over.modal_function_exists",
+      "passed": true,
+      "evidence": "showGameModal is function=true"
+    },
+    {
+      "id": "restart_layout",
+      "passed": false,
+      "evidence": "Exception: grid is not defined"
+    },
+    {
+      "id": "json_roundtrip",
+      "passed": false,
+      "evidence": "Exception: grid is not defined"
+    },
+    {
+      "id": "brick_score",
+      "passed": false,
+      "evidence": "Missing check entry"
+    },
+    {
+      "id": "lives_game_over",
+      "passed": false,
+      "evidence": "Missing check entry"
+    }
+  ],
+  "allPassed": false
+}

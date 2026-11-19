@@ -1,0 +1,17 @@
+{
+  "method": "Exact final source VM/DOM/nativeCanvas. Case63 uses exact extracted geometry functions, without GPU setup; WebGL rendering is unverified and unavailable context is not graded as app defect. Other checks invoke actual UI/export handlers. No app algorithm repaired.",
+  "sha256": "38bb48fcda1b537543c77513dbf8d6e5a6e3477523ed1797928ad3f2e5f5a63e",
+  "checks": [
+    {
+      "id": "exact_geometry_returns_export_iterable",
+      "pass": false,
+      "error": "getTrayGeometry builds boxes then returns undefined; rebuildBuffers/exportSTL both iterate it"
+    },
+    {
+      "id": "export_can_iterate_exact_geometry",
+      "pass": false,
+      "error": "getTrayGeometry is not a function or its return value is not iterable"
+    }
+  ],
+  "pass": false
+}

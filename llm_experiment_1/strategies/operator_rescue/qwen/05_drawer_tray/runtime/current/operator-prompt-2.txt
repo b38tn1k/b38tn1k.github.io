@@ -1,0 +1,10 @@
+Feedback2 of at most3, in the same repair session and original shared60-minute budget.
+
+The settled round1 HTML is self-contained now, but required behavior is blocked:
+
+- The exact delivered app script does not parse. Both VM execution and an independent JavaScript parser fail at its STL header string with Invalid or unexpected token / Unterminated string constant. No controls, preview or download can initialize from that HTML.
+- A conditional diagnostic of the unchanged geometry functions declared before that broken export function, using your actual embedded Three/CSG libraries, produces only a176×30×2 shape at the default180×120×30,3×2 setting, with signed volume−10560. This is not the required tray. This isolated diagnostic is not evidence that full startup/export works.
+- That geometry has36vertices but indices up to101, with24indices outside the vertex array. Its actual preview-geometry conversion also throws THREE.Float32Array is not a constructor.
+
+Preserve the successful inline dependency packaging. Repair the executable app and actual geometry, then verify the exact delivered HTML and downloaded STL rather than copied/simulated logic. Recheck the original requirements: full outer dimensions, equal real compartment openings/readouts after divider thickness, consistently outward closed connected boundary, valid indices/normals, floor thickness, alternate dimensions/grid, and usable rotation. Record actual checks and remaining environment limits honestly. Do not claim watertight verification when the delivered app cannot parse or emit that mesh. No new features are needed.
+

@@ -1,0 +1,165 @@
+{
+  "score": 84,
+  "grade": "B - assisted product 97.5; resize, history and PNG verified",
+  "summary": "One counted prompt repairs coordinate preservation and history across canvas resizes. Required painter flows pass independent final-source checks; a minor advertised right-click shortcut remains inaccurate.",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 13,
+    "self_verification": 6,
+    "autonomy": 0
+  },
+  "assistedProductTargetMet": true,
+  "strengths": [
+    "Real custom-color brush, eraser, multistep Undo/Redo and Clear followed by Undo preserve the expected pixel state.",
+    "Resize preserves two-dimensional pixel coordinates. Undo/Redo restore dimensions and content together, including non-square growth, cropping and restoring cropped pixels.",
+    "Actual export produces a valid native 48\u00d724 PNG with a 122-byte encoded payload after resizing; the retained pixel is present in the export raster."
+  ],
+  "defects": [
+    "Nonblocking: the footer advertises right-click drag to erase, but an actual right-button stroke leaves the painted pixel intact. The required explicit eraser tool works."
+  ],
+  "verification": [
+    "qa/operator-ornith-painter.cjs passed all six required checks on the immutable round1 snapshot and current artifact; SHA256 c38d5d4d8101b1e2cb23906760aeec5f490cc7f74cd6c7c4ac1ed0af5c9898e2.",
+    "Independent checks inspect actual nativeCanvas pixels, canvas dimensions, PNG signature/IHDR, download dispatch and the retained green pixel after decoding the exported PNG bytes. Native ImageData constructor support is an environment adaptation; no app algorithm is replaced.",
+    "The model authored a separate linkedom/Skia test harness and recorded 22 checks; its final repair is independently verified through the supplied reference adapter."
+  ],
+  "verificationConcerns": [
+    "VERIFY.md incorrectly claims the supplied adapter is absent: it exists and is individually readable under the OS policy, while parent directory search can be denied. This was a model lookup error, not an environment outage.",
+    "The model generalized a single-pixel readback issue in its custom harness as a Skia limitation; the independent reference adapter reads those pixels successfully.",
+    "No native browser layout, focus, touch-device or visual polish check."
+  ],
+  "scopeCompliance": "OS read/write isolation remained active. No successful out-of-project write or reading of other benchmark projects/reports observed. Pi alone authored all app changes and its custom test harness.",
+  "workflowNotes": "One persistent native Pi conversation, 1 of 3 available counted prompts. Finished early at the assisted product target with no known blocking required behavior/export defect; the optional right-click hint remains disclosed. Repair used 25.51 model-active minutes; baseline creation cost is separate.",
+  "humanOrSupervisorSteering": 1,
+  "title": "Pixel painter",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "operator_rescue",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All 22 checks pass, and the app is a single self-contained offline HTML file (one `<script>`, no external references).\n\n## Summary\n\nI repaired the two resize/undo failures in `index.html` and verified them through real handlers and DOM events.\n\n**Bug 1 \u2014 Resize reflow (pixels lost):** `initCanvas(..., keep)` previously used `drawImage` scaling, which re-interpolated the raster and dropped pixels when the size changed. Replaced with a coordinate-preserving copy: each retained row is copied using the **old width as the source stride** (`origCols * y`) into the destination using the **new width as stride** (`cols * y`), clamped to `min(cols, origCols)` \u00d7 `min(rows, origRows)`. No scaling \u2192 (x,y) stays (x,y). (This also caught a stride bug I introduced \u2014 using `origRows` instead of `origCols` \u2014 which corrupted non-square sources like 8\u00d710.)\n\n**Bug 2 \u2014 Undo after resize throws (\"ImageData dimensions mismatch\"):** `restore()` built `new ImageData(bytes, cols, rows)` with the *live* dimensions, which didn't match a snapshot taken at a different size. Now every history entry stores `{ data, cols, rows }`; `restore()` resizes the canvas to the entry's stored dimensions first, then restores the exact bytes. `undo`/`redo` record their own `{ data, cols, rows }` too, so dimensions + content round-trip together.\n\n**Verification:** 22 checks pass via a local same-API adapter (linkedom + Skia `@napi-rs/canvas`), driving real controls (resize button, colorpicker, hex input, brush/eraser, undo/redo/clear/export). Recorded exact checks and environment limitations in `VERIFY.md`.\n\n**Note on the environment:** the reference adapter `strategies/qa/native-runtime.cjs` is absent here (its deps/file aren't installed), so I built a local adapter with the same documented API and disclosed the backend verification quirks (single-pixel `getImageData` readback returns zeros; linkedom zero-size rects) in `VERIFY.md` \u2014 these are harness/environment limits, not app defects. I stayed within scope: no unrelated features added, app remains one offline HTML file.",
+  "workflowInstructions": "operator-rescue-plan.json; run-operator-rescue.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 25.51,
+  "wallMinutes": 25.51,
+  "status": "assessed",
+  "runStatus": "assessed",
+  "stopReason": "operator_finished",
+  "exitCode": 0,
+  "promptWords": 40,
+  "toolCalls": 142,
+  "parentToolCalls": 142,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 9,
+  "modelUsageReported": {
+    "input": 37874,
+    "output": 44586,
+    "cacheRead": 5996440,
+    "totalTokens": 6078900
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 77176,
+  "parentPeakReportedPromptTokens": 77176,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 37874,
+    "output": 44586,
+    "cacheRead": 5996440,
+    "totalTokens": 6078900
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 17624,
+  "sha256": "c38d5d4d8101b1e2cb23906760aeec5f490cc7f74cd6c7c4ac1ed0af5c9898e2",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 11,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 43,
+    "delegations": [],
+    "controller": "Codex operator with one persistent native Pi repair context",
+    "operatorPrompts": 1,
+    "rounds": [
+      {
+        "prompt": 1,
+        "settledUTC": "2026-11-17T17:51:30.873827+00:00",
+        "modelSeconds": 1530.85,
+        "sha256": "c38d5d4d8101b1e2cb23906760aeec5f490cc7f74cd6c7c4ac1ed0af5c9898e2",
+        "snapshot": "strategies/reports/operator-rounds/case88/round1"
+      }
+    ],
+    "seed": {
+      "id": "ornith-solo_billion-3",
+      "mode": "solo_billion",
+      "configurationMean": 74.8,
+      "source": "billion_on/ornith/03_pixel_painter/index.html",
+      "report": "billion_on/reports/ornith_03_pixel_painter.report.json",
+      "sha256": "242cbe1468c52feef5899ee608dd3277e9ef37efcec1829e98ec8a0e728d2b61",
+      "score": 81,
+      "grade": "B - painting core works; resize history fails",
+      "rubricScores": {
+        "functionality": 35,
+        "artifact_correctness": 23,
+        "usability": 11,
+        "self_verification": 2,
+        "autonomy": 10
+      },
+      "baselineScope": "No out-of-directory file writes found on initial log review",
+      "baselineSteering": 0,
+      "baselineMinutes": 2.4,
+      "baselineActiveMinutes": 2.44,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_ornith_03_pixel_painter/index.html"
+    },
+    "repairSettings": {
+      "thinking": "off",
+      "billionContext": false,
+      "compaction": {
+        "enabled": true
+      },
+      "forcedProof": false,
+      "singlePersistentAgent": true,
+      "note": "Copied seed configuration is provenance; repair workflow uses corrected standalone Pi profiles, not the original delegation/extension architecture."
+    },
+    "modelActiveMinutes": 25.51,
+    "operatorReviewMinutes": 1.24,
+    "repairElapsedMinutes": 26.75
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Operator-assisted rescue of a selected existing artifact. Baseline creation cost and new repair cost are separate; normalized product quality is not an autonomous100-point grade."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "supervisorAssisted": true,
+  "assistedProductScore": 97.5
+}

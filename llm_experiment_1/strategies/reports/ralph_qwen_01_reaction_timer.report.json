@@ -1,0 +1,227 @@
+{
+  "score": 84,
+  "grade": "B provisional - accurate timer and retry, false-start summary rows lose a valid result",
+  "rubricScores": {
+    "functionality": 36,
+    "artifact_correctness": 21,
+    "usability": 11,
+    "self_verification": 6,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Actual five-response flow records known200/225/250/275/300ms durations and displays a correct250msmean.",
+    "Pre-cue clicks produce a real false-start state; retry and Reset/cancellation work. The test/review gate clears in16.15minutes."
+  ],
+  "defects": [
+    "trialNum is initialized to0 and never advanced, so every false start is labelled trial1. After retrying and collecting five valid measurements, the results table substitutes a false-start row for the first valid result and omits one actual measurement, although aggregate statistics use all five values.",
+    "Repeated completed sessions append another standard-deviation summary item without removing the prior one."
+  ],
+  "verification": [
+    "Three of four independent actual-handler/virtual-clock checks pass. Live stage classes, actual result rows and rendered statistics are checked; source text inside script tags is not treated as interaction evidence."
+  ],
+  "humanOrSupervisorSteering": 0,
+  "scopeCompliance": "Pi models alone authored app, tests and reviews; OS read isolation and mandatory proof were active. No supervisor product implementation or task-specific repair hints.",
+  "verificationConcerns": [
+    "Independent Node VM/DOM/nativeCanvas execution, not browser layout or physical input verification. Single trial per task/configuration."
+  ],
+  "workflowNotes": "Frozen final source, original brief unchanged. qa/ralph-remaining-timers.cjs executes actual UI and scheduled timers; QA SHA must match before grading.",
+  "title": "Reaction timer",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "ralph",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All DOM elements confirmed present. The application is complete and correct. Here's my summary:\n\n---\n\n## Final Verification Summary\n\nThe `index.html` is a **polished, self-contained reaction-time tester** that satisfies every original requirement:\n\n| # | Requirement | Status | Evidence |\n|---|---|---|---|\n| 1 | Single offline index.html | \u2705 PASS | DOCTYPE, embedded `<style>` + `<script>`, no external imports |\n| 2 | Random wait (1.5s\u20136s) | \u2705 PASS | `MIN_WAIT_MS=1500`, `MAX_WAIT_MS=6000`, `Math.random()` delay calculation |\n| 3 | False-start detection | \u2705 PASS | `handleClick()` checks `state === 'waiting'`, clears timeout, shows \"Too early!\" error |\n| 4 | Five trials | \u2705 PASS | `TRAIL_COUNT = 5`, `validTrials.length >= TRAIL_COUNT` triggers results |\n| 5 | Results summary (avg/best/worst) | \u2705 PASS | `reduce` for avg, `Math.min/max` for best/worst written to DOM |\n| 6 | Canvas bar chart | \u2705 PASS | `drawChart()` with DPR scaling, gradient bars, value labels, avg line |\n| 7 | Millisecond precision | \u2705 PASS | `performance.now()` captured on ready, elapsed computed on click |\n| 8 | State machine (5 states) | \u2705 PASS | `idle\u2192waiting\u2192ready\u2192result\u2192done` transitions all present and correct |\n| 9 | Progress dots | \u2705 PASS | `.dot/.done/.current` classes managed by `updateDots()` |\n| 10 | Responsive CSS + viewport + charset | \u2705 PASS | `@media (max-width: 480px)`, viewport meta, charset UTF-8 |\n| 11 | Standard deviation | \u2705 PASS | Computed via `Math.sqrt` and variance, inserted into results grid |\n| 12 | No dead-code | \u2705 PASS | Single clean `buildResults()`, no abandoned comments/loops |\n\n**4 unverified behaviors** (all honest): CSS pulse animation timing, touch-end double-tap prevention, canvas pixel rendering, restart dynamic behavior \u2014 these require a browser/touch hardware to verify.\n\n**`passed: true`** with **empty `failures` array**. The review.json has been written at `.ralph/review.json`.",
+  "workflowInstructions": "run-ralph.py; research/ralph-setup.json",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 16.15,
+  "wallMinutes": 16.15,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "review_and_test_gate_passed",
+  "exitCode": null,
+  "promptWords": 34,
+  "toolCalls": 247,
+  "parentToolCalls": 247,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 131,
+  "modelUsageReported": {
+    "input": 147425,
+    "output": 41512,
+    "cacheRead": 3636200,
+    "totalTokens": 3825137
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 47607,
+  "parentPeakReportedPromptTokens": 47607,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 147425,
+    "output": 41512,
+    "cacheRead": 3636200,
+    "totalTokens": 3825137
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 16977,
+  "sha256": "1ce394660934c50d7b98e64d294c1f505f92c244bd2ab90190d411c34f4fc14e",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 13,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 21,
+    "delegations": [],
+    "controller": "External Ralph-style fresh-process implementation/review loop",
+    "gate": {
+      "passed": true,
+      "iterations": 2,
+      "forcedProofEachImplementation": true
+    },
+    "stages": [
+      {
+        "round": 1,
+        "role": "implement",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-16T19:27:58.314137+00:00",
+        "events": "ralph/qwen/01_reaction_timer/runtime/01-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T19:30:59.415195+00:00",
+        "minutes": 3.02,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 1,
+          "green": 1
+        },
+        "testExitCode": 0
+      },
+      {
+        "round": 1,
+        "role": "review",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-16T19:30:59.434173+00:00",
+        "events": "ralph/qwen/01_reaction_timer/runtime/02-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T19:32:56.879585+00:00",
+        "minutes": 1.96,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 0
+      },
+      {
+        "round": 2,
+        "role": "implement",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-16T19:33:08.016482+00:00",
+        "events": "ralph/qwen/01_reaction_timer/runtime/03-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T19:42:28.272224+00:00",
+        "minutes": 9.34,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 1,
+          "red": 1,
+          "green": 1
+        },
+        "testExitCode": 0
+      },
+      {
+        "round": 2,
+        "role": "review",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-16T19:42:28.296972+00:00",
+        "events": "ralph/qwen/01_reaction_timer/runtime/04-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T19:43:56.515568+00:00",
+        "minutes": 1.47,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 0
+      }
+    ],
+    "mandatoryProof": true,
+    "readIsolation": true,
+    "forcedProofEachImplementation": true
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 1,
+    "completed": 1,
+    "aborted": 0,
+    "events": [
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49877,
+        "estimatedTokensAfter": 22799
+      }
+    ],
+    "reportedUsage": {
+      "input": 22952,
+      "output": 446,
+      "cacheRead": 0,
+      "totalTokens": 23398
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "qwen": {
+      "input": 147425,
+      "output": 41512,
+      "cacheRead": 3636200,
+      "totalTokens": 3825137
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 0,
+    "qwen": 15.79
+  }
+}

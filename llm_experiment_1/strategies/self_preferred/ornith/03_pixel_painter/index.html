@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Pixel Painter</title>
+<style>
+  :root {
+    --bg: #1e1e24;
+    --panel: #2a2a33;
+    --panel2: #33333f;
+    --accent: #6ea8fe;
+    --text: #e8e8ef;
+    --muted: #9a9aa8;
+    --border: #40404c;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-user-select: none; user-select: none;
+  }
+  #app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  header {
+    padding: 12px 16px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .group > .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+  }
+  .btnrow { display: flex; gap: 6px; flex-wrap: wrap; }
+  button.tool, button.action, input.color-input + label {
+    background: var(--panel2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  button.tool:hover, button.action:hover { background: #3c3c48; }
+  button.tool.active { background: var(--accent); color: #10131a; border-color: var(--accent); font-weight: 600; }
+  button.action:disabled { opacity: 0.4; cursor: not-allowed; }
+  .palette { display: grid; grid-template-columns: repeat(8, 20px); gap: 4px; }
+  .swatch {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    padding: 0;
+  }
+  .swatch.active { outline: 2px solid var(--accent); outline-offset: 1px; }
+  input.color-input { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+  .color-preview {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .sizeinputs { display: flex; gap: 6px; align-items: center; }
+  .sizeinputs input {
+    width: 62px;
+    background: var(--panel2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  .sizeinputs span { color: var(--muted); font-size: 12px; }
+  main {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px;
+    overflow: auto;
+  }
+  #stage {
+    image-rendering: pixelated;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.45);
+    background:
+      repeating-conic-gradient(#3a3a44 0% 25%, #30303a 0% 50%) 0 / 20px 20px;
+    image-rendering: pixelated;
+  }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 10px; text-align: center; }
+  #status { color: var(--muted); font-size: 12px; min-height: 16px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>🎨 Pixel Painter</h1>
+    <div class="toolbar">
+      <div class="group">
+        <span class="label">Tool</span>
+        <div class="btnrow">
+          <button class="tool active" id="tool-brush" type="button">🖌 Brush</button>
+          <button class="tool" id="tool-eraser" type="button">🧽 Eraser</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="label">Color</span>
+        <div class="btnrow">
+          <div class="color-preview" id="color-preview" title="Pick a custom color"></div>
+          <input type="color" class="color-input" id="custom-color" value="#6ea8fe">
+        </div>
+        <div class="palette" id="palette"></div>
+      </div>
+
+      <div class="group">
+        <span class="label">Canvas size (px)</span>
+        <div class="sizeinputs">
+          <input type="number" id="size-w" min="1" max="512" value="32" inputmode="numeric">
+          <span>×</span>
+          <input type="number" id="size-h" min="1" max="512" value="32" inputmode="numeric">
+          <button class="action" id="resize-btn" type="button">Apply</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="label">Edit</span>
+        <div class="btnrow">
+          <button class="action" id="undo-btn" type="button">↶ Undo</button>
+          <button class="action" id="redo-btn" type="button">↷ Redo</button>
+          <button class="action" id="clear-btn" type="button">🗑 Clear</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <span class="label">Export</span>
+        <div class="btnrow">
+          <button class="action" id="export-btn" type="button">⬇ Download PNG</button>
+        </div>
+      </div>
+    </div>
+    <div id="status"></div>
+  </header>
+
+  <main>
+    <div>
+      <canvas id="stage" width="32" height="32"></canvas>
+      <div class="hint">Click or drag on the canvas to paint. Supports mouse and touch.</div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =====================================================================
+     PURE MODULE — PixelPainter
+     No browser/BOM/DOM/global references. Everything here is pure logic
+     and can be unit-tested in a headless VM (no document/window/canvas).
+     ===================================================================== */
+  var PixelPainter = (function () {
+    function isColor(c) {
+      return c && typeof c === "object" &&
+        typeof c.r === "number" && typeof c.g === "number" &&
+        typeof c.b === "number" && typeof c.a === "number";
+    }
+
+    function clamp8(n) {
+      if (n < 0) return 0;
+      if (n > 255) return 255;
+      return (n | 0);
+    }
+
+    // Create an empty canvas state. data = RGBA buffer, alpha 0 (transparent).
+    function createCanvas(width, height) {
+      width = clamp8(Math.max(1, width | 0));
+      height = clamp8(Math.max(1, height | 0));
+      return {
+        width: width,
+        height: height,
+        data: new Uint8ClampedArray(width * height * 4)
+      };
+    }
+
+    function cloneCanvas(state) {
+      return {
+        width: state.width,
+        height: state.height,
+        data: state.data.slice()
+      };
+    }
+
+    function setCanvasSize(state, width, height) {
+      width = clamp8(Math.max(1, width | 0));
+      height = clamp8(Math.max(1, height | 0));
+      var next = createCanvas(width, height);
+      var copyW = Math.min(width, state.width);
+      var copyH = Math.min(height, state.height);
+      for (var y = 0; y < copyH; y++) {
+        var src = ((y * state.width + 0) * 4);
+        var dst = ((y * width + 0) * 4);
+        next.data.set(state.data.subarray(src, src + copyW * 4), dst);
+      }
+      return next;
+    }
+
+    function index(state, x, y) {
+      return (y * state.width + x) * 4;
+    }
+
+    function inBounds(state, x, y) {
+      return x >= 0 && x < state.width && y >= 0 && y < state.height;
+    }
+
+    // Paint a single grid cell. color = {r,g,b,a}. Eraser uses alpha 0.
+    function putPixel(state, x, y, color) {
+      if (!inBounds(state, x, y) || !isColor(color)) return state;
+      var i = index(state, x, y);
+      var a = clamp8(color.a);
+      if (a <= 0) {
+        state.data[i] = 0; state.data[i + 1] = 0;
+        state.data[i + 2] = 0; state.data[i + 3] = 0;
+        return state;
+      }
+      var r = clamp8(color.r), g = clamp8(color.g), b = clamp8(color.b);
+      if (a >= 255) {
+        state.data[i] = r; state.data[i + 1] = g;
+        state.data[i + 2] = b; state.data[i + 3] = 255;
+      } else {
+        // straightforward alpha-over over transparent-ish background
+        var sa = a / 255;
+        var dr = clamp8((r * sa + state.data[i] * (1 - sa) * 255 / 255));
+        var dg = clamp8((g * sa + state.data[i + 1] * (1 - sa) * 255 / 255));
+        var db = clamp8((b * sa + state.data[i + 2] * (1 - sa) * 255 / 255));
+        state.data[i] = dr; state.data[i + 1] = dg;
+        state.data[i + 2] = db; state.data[i + 3] = a;
+      }
+      return state;
+    }
+
+    // Bresenham line so drag strokes are continuous.
+    function drawLine(state, x0, y0, x1, y1, color) {
+      x0 = x0 | 0; y0 = y0 | 0; x1 = x1 | 0; y1 = y1 | 0;
+      var dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+      var sx = x0 < x1 ? 1 : -1;
+      var sy = y0 < y1 ? 1 : -1;
+      var err = dx - dy;
+      for (;;) {
+        putPixel(state, x0, y0, color);
+        if (x0 === x1 && y0 === y1) break;
+        var e2 = 2 * err;
+        if (e2 > -dy) { err -= dy; x0 += sx; }
+        if (e2 < dx) { err += dx; y0 += sy; }
+      }
+      return state;
+    }
+
+    function clearCanvas(state) {
+      return createCanvas(state.width, state.height);
+    }
+
+    function fill(state, r, g, b, a) {
+      var c = { r: r, g: g, b: b, a: a == null ? 255 : a };
+      for (var y = 0; y < state.height; y++) {
+        for (var x = 0; x < state.width; x++) {
+          putPixel(state, x, y, c);
+        }
+      }
+      return state;
+    }
+
+    /* ---- History controller (pure, snapshot based) ---- */
+    function createHistory(initialState) {
+      return {
+        past: [],
+        future: [],
+        current: initialState
+      };
+    }
+
+    // Commit a freshly computed state after a mutation.
+    function commit(history, newState) {
+      history.past.push(cloneCanvas(history.current));
+      history.current = newState;
+      history.future.length = 0;
+      return history.current;
+    }
+
+    function undo(history) {
+      if (history.past.length === 0) return history.current;
+      history.future.push(cloneCanvas(history.current));
+      history.current = history.past.pop();
+      return history.current;
+    }
+
+    function redo(history) {
+      if (history.future.length === 0) return history.current;
+      history.past.push(cloneCanvas(history.current));
+      history.current = history.future.pop();
+      return history.current;
+    }
+
+    function canUndo(history) { return history.past.length > 0; }
+    function canRedo(history) { return history.future.length > 0; }
+
+    function stateOf(history) { return history.current; }
+
+    return {
+      createCanvas: createCanvas,
+      cloneCanvas: cloneCanvas,
+      setCanvasSize: setCanvasSize,
+      putPixel: putPixel,
+      drawLine: drawLine,
+      clearCanvas: clearCanvas,
+      fill: fill,
+      createHistory: createHistory,
+      commit: commit,
+      undo: undo,
+      redo: redo,
+      canUndo: canUndo,
+      canRedo: canRedo,
+      stateOf: stateOf
+    };
+  })();
+
+  /* =====================================================================
+     CONSTANTS & STATE — pure-ish, shared between module and boundary
+     ===================================================================== */
+  var PALETTE = [
+    "#000000", "#ffffff", "#808080", "#c0c0c0",
+    "#8b4513", "#d2691e", "#ffa500", "#ffe000",
+    "#00a800", "#00d000", "#00ff88", "#00ffcc",
+    "#0057ff", "#00aaff", "#6ea8fe", "#a0c0ff",
+    "#b00030", "#ff2266", "#ff66aa", "#c020d0",
+    "#7f00ff", "#a040ff", "#553010", "#332118"
+  ];
+
+  var currentColor = { r: 0, g: 0, b: 0, a: 255 };
+  var currentTool = "brush";
+  var history;
+  var painting = false;
+
+  /* =====================================================================
+     BROWSER BOUNDARY LAYER — DOM / canvas / pointer / file APIs only.
+     ===================================================================== */
+  function hexToRgb(hex) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+    if (!m) return { r: 0, g: 0, b: 0, a: 255 };
+    var num = parseInt(m[1], 16);
+    return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255, a: 255 };
+  }
+
+  var canvasEl, ctx;
+
+  function render() {
+    var state = history.current;
+    var imageData = ctx.createImageData(state.width, state.height);
+    imageData.data.set(state.data);
+    ctx.putImageData(imageData, 0, 0);
+    updateStatus();
+  }
+
+  function updateStatus() {
+    var s = history.current;
+    var el = document.getElementById("status");
+    if (el) el.textContent = s.width + " × " + s.height + " px · " +
+      (currentTool === "eraser" ? "eraser" : "brush");
+  }
+
+  function pointerToCell(clientX, clientY) {
+    var rect = canvasEl.getBoundingClientRect();
+    var sx = canvasEl.width / rect.width;
+    var sy = canvasEl.height / rect.height;
+    var x = Math.floor((clientX - rect.left) * sx);
+    var y = Math.floor((clientY - rect.top) * sy);
+    return { x: x, y: y, valid: x >= 0 && x < canvasEl.width && y >= 0 && y < canvasEl.height };
+  }
+
+  function activeColor() {
+    if (currentTool === "eraser") return { r: 0, g: 0, b: 0, a: 0 };
+    return currentColor;
+  }
+
+  var lastCell = { x: 0, y: 0 };
+  var preStroke = null;
+
+  function onPointerDown(e) {
+    if (painting) return;
+    painting = true;
+    var p = pointerToCell(e.clientX, e.clientY);
+    if (!p.valid) { painting = false; return; }
+    lastCell = { x: p.x, y: p.y };
+    preStroke = PixelPainter.cloneCanvas(history.current);
+    PixelPainter.putPixel(history.current, p.x, p.y, activeColor());
+    canvasEl.setPointerCapture && canvasEl.setPointerCapture(e.pointerId);
+    render();
+  }
+
+  function onPointerMove(e) {
+    if (!painting) return;
+    var p = pointerToCell(e.clientX, e.clientY);
+    if (!p.valid) return;
+    PixelPainter.drawLine(history.current, lastCell.x, lastCell.y, p.x, p.y, activeColor());
+    lastCell = { x: p.x, y: p.y };
+    render();
+  }
+
+  function onPointerUp(e) {
+    if (!painting) return;
+    painting = false;
+    var p = pointerToCell(e.clientX, e.clientY);
+    if (p.valid) {
+      PixelPainter.drawLine(history.current, lastCell.x, lastCell.y, p.x, p.y, activeColor());
+    }
+    // Commit the completed stroke as a single history step.
+    if (preStroke) { history.past.push(preStroke); }
+    history.future.length = 0;
+    preStroke = null;
+    render();
+  }
+
+  function buildPalette() {
+    var container = document.getElementById("palette");
+    if (!container) return;
+    PALETTE.forEach(function (hex) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "swatch";
+      b.style.background = hex;
+      b.setAttribute("data-color", hex);
+      b.setAttribute("aria-label", "Color " + hex);
+      b.addEventListener("click", function () {
+        setColor(hex);
+      });
+      container.appendChild(b);
+    });
+  }
+
+  function setColor(hex) {
+    currentColor = hexToRgb(hex);
+    if (currentTool === "eraser") currentTool = "brush";
+    selectTool(currentTool);
+    updateSwatchStates();
+    updateColorPreview();
+  }
+
+  function selectTool(tool) {
+    currentTool = tool;
+    updateSwatchStates();
+    updateStatus();
+  }
+
+  function updateSwatchStates() {
+    document.querySelectorAll("#palette .swatch").forEach(function (s) {
+      s.classList.toggle("active",
+        currentTool !== "eraser" && s.getAttribute("data-color") ===
+        rgbToHex(currentColor));
+    });
+    document.getElementById("tool-brush").classList.toggle("active", currentTool === "brush");
+    document.getElementById("tool-eraser").classList.toggle("active", currentTool === "eraser");
+    var cc = document.getElementById("custom-color");
+    if (cc && currentTool !== "eraser") cc.value = rgbToHex(currentColor);
+  }
+
+  function updateColorPreview() {
+    var prev = document.getElementById("color-preview");
+    if (prev) prev.style.background =
+      currentTool === "eraser" ? "#c020d0" : rgbToHex(currentColor);
+  }
+
+  function rgbToHex(c) {
+    function h(n) { var s = clampHex(n).toString(16); return s.length === 1 ? "0" + s : s; }
+    return "#" + h(c.r) + h(c.g) + h(c.b);
+  }
+  function clampHex(n) { return n < 0 ? 0 : n > 255 ? 255 : n | 0; }
+
+  function applySize() {
+    var wEl = document.getElementById("size-w");
+    var hEl = document.getElementById("size-h");
+    var w = parseInt(wEl.value, 10);
+    var h = parseInt(hEl.value, 10);
+    if (!isFinite(w) || !isFinite(h) || w < 1 || h < 1) {
+      setStatusText("Invalid size");
+      return;
+    }
+    if (w > 512 || h > 512) { setStatusText("Max 512px"); return; }
+    var next = PixelPainter.setCanvasSize(history.current, w, h);
+    PixelPainter.commit(history, next);
+    canvasEl.width = w;
+    canvasEl.height = h;
+    fitCanvas();
+    render();
+  }
+
+  function setStatusText(msg) {
+    var el = document.getElementById("status");
+    if (el) el.textContent = msg;
+  }
+
+  function exportPNG() {
+    var url = canvasEl.toDataURL("image/png");
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "pixel-art.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setStatusText("Exported pixel-art.png");
+  }
+
+  function fitCanvas() {
+    // Scale via CSS so small pixel art is comfortably clickable/tappable.
+    var maxW = Math.min(640, (window.innerWidth || 800) - 48);
+    var maxH = (window.innerHeight || 600) - 160;
+    var s = Math.max(1, Math.floor(Math.min(maxW / canvasEl.width, maxH / canvasEl.height)));
+    canvasEl.style.width = (canvasEl.width * s) + "px";
+    canvasEl.style.height = (canvasEl.height * s) + "px";
+  }
+
+  function init() {
+    canvasEl = document.getElementById("stage");
+    ctx = canvasEl.getContext("2d");
+    if (ctx) ctx.imageSmoothingEnabled = false;
+
+    var startW = Math.max(1, parseInt(document.getElementById("size-w").value, 10) || 32);
+    var startH = Math.max(1, parseInt(document.getElementById("size-h").value, 10) || 32);
+    var initial = PixelPainter.createCanvas(startW, startH);
+    history = PixelPainter.createHistory(initial);
+
+    buildPalette();
+    updateColorPreview();
+    updateSwatchStates();
+
+    // Pointer events cover mouse AND touch (Pointer Events API).
+    canvasEl.addEventListener("pointerdown", onPointerDown);
+    canvasEl.addEventListener("pointermove", onPointerMove);
+    canvasEl.addEventListener("pointerup", onPointerUp);
+    canvasEl.addEventListener("pointercancel", onPointerUp);
+    // Prevent context menu so right-drag doesn't interfere on touch.
+    canvasEl.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+
+    document.getElementById("tool-brush").addEventListener("click", function () { selectTool("brush"); });
+    document.getElementById("tool-eraser").addEventListener("click", function () { selectTool("eraser"); });
+    document.getElementById("resize-btn").addEventListener("click", applySize);
+    document.getElementById("undo-btn").addEventListener("click", function () {
+      if (PixelPainter.canUndo(history)) { PixelPainter.undo(history); render(); }
+    });
+    document.getElementById("redo-btn").addEventListener("click", function () {
+      if (PixelPainter.canRedo(history)) { PixelPainter.redo(history); render(); }
+    });
+    document.getElementById("clear-btn").addEventListener("click", function () {
+      PixelPainter.commit(history, PixelPainter.clearCanvas(history.current));
+      render();
+    });
+    document.getElementById("export-btn").addEventListener("click", exportPNG);
+
+    var preview = document.getElementById("color-preview");
+    if (preview) preview.addEventListener("click", function () {
+      var cc = document.getElementById("custom-color");
+      if (cc) cc.click();
+    });
+    var cc = document.getElementById("custom-color");
+    if (cc) cc.addEventListener("input", function () { if (cc.value) setColor(cc.value); });
+    cc.addEventListener("change", function () { if (cc.value) setColor(cc.value); });
+
+    window.addEventListener("resize", fitCanvas);
+
+    fitCanvas();
+    render();
+    updateStatus();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+  // Expose pure module for headless verification (test-only, harmless in app).
+  if (typeof PixelPainter !== "undefined" && window.PixelPainter === undefined) {
+    window.PixelPainter = PixelPainter;
+  }
+})();
+</script>
+</body>
+</html>

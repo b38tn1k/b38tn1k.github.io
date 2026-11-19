@@ -1,0 +1,162 @@
+{
+  "score": 74,
+  "grade": "C+ provisional - clean five-trial flow works; abandoned false-start timers corrupt retries",
+  "rubricScores": {
+    "functionality": 28,
+    "artifact_correctness": 20,
+    "usability": 12,
+    "self_verification": 4,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Five real handler-driven trials of 200/225/250/275/300 ms produce average 250, fastest 200, slowest 300, spread 35, and five result cards.",
+    "Random waits vary, keyboard and mouse handlers work on the clean path, and Test Again restarts successfully.",
+    "All required stages completed and the workflow gate passed without repair."
+  ],
+  "defects": [
+    "Early input changes the screen to False Start without cancelling the original waiting timer; after waiting, the screen silently becomes Go before retry.",
+    "Immediate retry schedules a second timer while the abandoned timer is still active. The original timer can reset the reaction start time during the retried trial.",
+    "A valid first result plus one false-start/retry and four controlled 250 ms trials produces a 215 ms average instead of 240 ms due to the stale timer."
+  ],
+  "verification": [
+    "Exact source and actual registered handlers/timer deadlines exercised in reports/enforced_final_ornith_01_reaction_timer.qa.cjs/.qa.json.",
+    "One of four independent scenarios passes: the clean five-trial summary/restart. False-start stability, single-timer retry and retry summary correctness fail."
+  ],
+  "verificationConcerns": [
+    "Candidate reviewer accepted the workflow while acknowledging a recovery loop in the tests could mask state-transition problems. Independent checks do not use that recovery loop.",
+    "No independent browser visual polish or physical reaction timing verification."
+  ],
+  "scopeCompliance": "Pi alone implemented the application; Codex supplied no application code or task-specific steering. Independent observation only.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Build/test/review gate passed on the first cycle. Gate compliance earns autonomy credit separately from independent product correctness; passing model-authored tests missed the stale timer defect.",
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Review complete.\n\n## Summary\n\n**Status: PASS** \u2014 written to `qa/review.json`.\n\n### Artifact\n`index.html` \u2014 single self-contained offline reaction-time tester. SHA-256: `f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba` (matches preflight/execution/trace).\n\n### What the app does\n- **Random wait**: `setTimeout(randBetween(minWait, maxWait))`; the go screen appears only after the timer fires.\n- **False-start detection**: clicking before go \u2192 \"False Start\" screen (retry same trial); sub-30ms click during go treated as a guess/false start.\n- **Five trials** (configurable 3/5/7/10), results grid + summary stats (average/fastest/slowest/spread).\n- **Stages enforced**: warmup \u2192 ready \u2192 wait \u2192 go \u2192 result \u2192 done, via `render*` functions that set both the stage class and phase.\n- **Defaults**: min 1s / max 3s / 5 trials. Replayable via \"Test Again\" / \"New Settings\".\n\n### Evidence\n- Re-ran the supplied `acceptance.cjs` against the exact-source runtime (from a copy in `.scratch`-style temp under `runtime/03-review/repro_tmp/` since qa/ is read-only and /tmp is not writable): **11/11 checks pass, exit 0**. This matches the recorded `acceptance-result.json`.\n- Independently verified the clean single-trial path (go \u2192 result \u2192 next \u2192 ready) without the test's recovery loop.\n- Required behaviors (start, random_wait, false_start_retry, five_valid_trials, summary) are genuinely exercised via `a.event`/`a.advance`, not mere presence.\n\n### Honest caveats (recorded in `residualRisks`)\n- Tests reuse duplicate check IDs, but duplicates still surface in `failed[]` \u2014 no pass/fail masking.\n- The `five_valid_trials` recovery loop could mask a state-transition regression; the clean path was verified independently.\n- Validated only under the exact-source Node VM + linkedom partial DOM (no browser/pixel rendering) \u2014 behavior is exercised via handlers and timers, not visual rendering.\n- No cross-reload settings persistence, consistent with the acceptance test's explicit default-only design (not a hidden requirement).\n\nNo blocking findings.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 5,
+  "elapsedMinutes": 16.59,
+  "wallMinutes": 16.59,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "acceptance_gate_passed",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 99,
+  "parentToolCalls": 0,
+  "childToolCalls": 99,
+  "toolResultsMarkedError": 10,
+  "modelUsageReported": {
+    "input": 52668,
+    "output": 40180,
+    "cacheRead": 1698425,
+    "totalTokens": 1791273
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 35750,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 35750,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 52668,
+    "output": 40180,
+    "cacheRead": 1698425,
+    "totalTokens": 1791273
+  },
+  "artifactBytes": 15359,
+  "sha256": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 1,
+      "review": 1
+    },
+    "rolesCompleted": {
+      "build": 1,
+      "test": 1,
+      "review": 1
+    },
+    "parentArtifactReads": 6,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 1,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 7.48,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": null,
+        "artifactAfter": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+        "prompt": "enforced_final/ornith/01_reaction_timer/runtime/01-build/prompt.txt",
+        "events": "enforced_final/ornith/01_reaction_timer/runtime/01-build/events.jsonl",
+        "stderr": "enforced_final/ornith/01_reaction_timer/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 7.2,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+        "artifactAfter": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+        "prompt": "enforced_final/ornith/01_reaction_timer/runtime/02-test/prompt.txt",
+        "events": "enforced_final/ornith/01_reaction_timer/runtime/02-test/events.jsonl",
+        "stderr": "enforced_final/ornith/01_reaction_timer/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 1.9,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+        "artifactAfter": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+        "prompt": "enforced_final/ornith/01_reaction_timer/runtime/03-review/prompt.txt",
+        "events": "enforced_final/ornith/01_reaction_timer/runtime/03-review/events.jsonl",
+        "stderr": "enforced_final/ornith/01_reaction_timer/runtime/03-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": true,
+      "artifactSHA256": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+      "errors": [],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": false
+}

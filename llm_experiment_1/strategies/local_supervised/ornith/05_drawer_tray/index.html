@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Drawer Tray Maker</title>
+<style>
+  :root{
+    --bg:#0f1216; --panel:#171b21; --panel2:#1e232b; --ink:#e7ebf0;
+    --muted:#8b97a7; --line:#2a313c; --accent:#4da3ff; --accent2:#2b7cff;
+    --warn:#ffb547; --ok:#46c47a; --err:#ff6b6b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:var(--bg); color:var(--ink);
+    font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex; flex-direction:column;
+  }
+  header{
+    padding:14px 20px; border-bottom:1px solid var(--line);
+    display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  }
+  header h1{font-size:18px;margin:0;font-weight:650;letter-spacing:.2px}
+  header .sub{color:var(--muted);font-size:13px}
+  main{flex:1;display:flex;min-height:0;gap:0}
+  .controls{
+    width:330px; flex:none; background:var(--panel); border-right:1px solid var(--line);
+    overflow:auto; padding:16px 18px 40px;
+  }
+  .stage{flex:1;display:flex;min-width:0}
+  .canvaswrap{flex:1;position:relative;background:
+      radial-gradient(120% 120% at 30% 10%, #1a2029 0%, #101318 60%, #0b0e12 100%)}
+  canvas{display:block;width:100%;height:100%;cursor:grab}
+  canvas:active{cursor:grabbing}
+  .sidebar{
+    width:320px; flex:none; border-left:1px solid var(--line); background:var(--panel);
+    overflow:auto; padding:16px 18px 40px;
+  }
+  .control{margin-bottom:16px}
+  .control label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted)}
+  .control .val{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:600}
+  .control .hint{font-size:11px;color:var(--muted);margin-top:2px}
+  input[type=range]{width:100%;accent-color:var(--accent);margin-top:6px}
+  input[type=number]{
+    width:78px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+    border-radius:7px;padding:4px 6px;font:inherit;text-align:right;
+  }
+  .row2{display:flex;gap:10px}
+  .row2 .control{flex:1}
+  .group-title{font-size:11px;text-transform:uppercase;letter-spacing:.12px;color:var(--muted);
+    margin:20px 0 8px;font-weight:650}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  button{
+    background:var(--accent2);color:#fff;border:0;border-radius:8px;padding:9px 14px;
+    font:inherit;font-weight:600;cursor:pointer;flex:1;min-width:90px;
+  }
+  button.secondary{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  .toggle{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;margin:10px 0}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);font-size:13px}
+  th{color:var(--muted);font-weight:600}
+  td.num{text-align:right}
+  .stat{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .stat span:last-child{font-weight:600}
+  .warn{color:var(--warn)} .ok{color:var(--ok)} .err{color:var(--err)}
+  .msg{font-size:12px;margin-top:6px;min-height:16px}
+  h3{font-size:13px;margin:0 0 8px;font-weight:650}
+  .pill{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
+  .foot{color:var(--muted);font-size:11px;margin-top:14px;line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+  <h1>Drawer Tray Maker</h1>
+  <span class="pill">rectangular organizer • printable STL</span>
+  <span class="sub">edit dimensions, grid, walls &amp; floor → rotate preview → export</span>
+</header>
+<main>
+  <section class="controls">
+    <div class="control">
+      <label>Overall size (L × D × H, mm)
+        <span class="val"><span id="szLbl">180 × 120 × 30</span></span>
+      </label>
+      <div class="row2">
+        <label class="control" style="margin:0">
+          Length
+          <input id="width" type="range" min="100" max="400" step="1" value="180">
+        </label>
+        <label class="control" style="margin:0">
+          Depth
+          <input id="depth" type="range" min="80" max="300" step="1" value="120">
+        </label>
+      </div>
+      <label class="control" style="margin-top:10px">
+        Height
+        <input id="height" type="range" min="15" max="80" step="1" value="30">
+      </label>
+    </div>
+
+    <div class="group-title">Grid</div>
+    <div class="row2">
+      <label class="control">
+        Rows (depth)
+        <input id="rows" type="range" min="1" max="10" step="1" value="2">
+      </label>
+      <label class="control">
+        Columns (length)
+        <input id="cols" type="range" min="1" max="12" step="1" value="3">
+      </label>
+    </div>
+
+    <div class="group-title">Wall &amp; floor</div>
+    <div class="row2">
+      <label class="control">
+        Wall thickness
+        <input id="wall" type="range" min="1" max="6" step="0.25" value="2.4">
+      </label>
+      <label class="control">
+        Floor thickness
+        <input id="floor" type="range" min="1" max="8" step="0.25" value="2.0">
+      </label>
+    </div>
+    <div class="msg" id="msg"></div>
+
+    <div class="group-title">Export</div>
+    <div class="btns">
+      <button id="exportStl">Download STL</button>
+      <button id="reset" class="secondary">Reset</button>
+    </div>
+    <label class="toggle"><input id="showEdges" type="checkbox" checked> Show compartment edges</label>
+    <label class="toggle"><input id="autoSpin" type="checkbox" checked> Auto-rotate preview</label>
+  </section>
+
+  <section class="stage">
+    <div class="canvaswrap"><canvas id="view"></canvas></div>
+    <aside class="sidebar">
+      <h3>Compartment dimensions</h3>
+      <table id="compTable">
+        <thead><tr><th>Layout</th><th class="num">Each compartment</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <h3 style="margin-top:22px">Model stats</h3>
+      <div class="stat"><span>Compartments</span><span id="stCount">6</span></div>
+      <div class="stat"><span>Wall thickness</span><span id="stWall">2.4 mm</span></div>
+      <div class="stat"><span>Floor thickness</span><span id="stFloor">2.0 mm</span></div>
+      <div class="stat"><span>Partition thickness</span><span id="stPart">2.4 mm</span></div>
+      <div class="stat"><span>Interior height</span><span id="stIntH">28.0 mm</span></div>
+      <div class="stat"><span>Cavity volume</span><span id="stCav">0 mL</span></div>
+      <div class="stat"><span>Approx. material</span><span id="stVol">0 cm³</span></div>
+      <div class="stat"><span>STL triangles</span><span id="stTri">0</span></div>
+
+      <div class="foot">
+        Compartment count = rows × columns. Compartment spacing assumes equal cells with
+        internal partitions of the same thickness as the outer walls. All measurements in
+        millimetres. The preview is a live wireframe/shaded model — drag to rotate.
+      </div>
+    </aside>
+  </section>
+</main>
+
+<script>
+"use strict";
+/* ============ GEOMETRY (pure, also used by node validator) ============ */
+function computeTray(params){
+  var W=+params.width, D=+params.depth, H=+params.height;
+  var tw=+params.wall, th=+params.floor;
+  var R=+params.rows, C=+params.cols;
+  var err=null, warn=null;
+  if(!(W>0&&D>0&&H>0)) err="Dimensions must be positive.";
+  if(!(tw>0&&th>0)) err="Wall and floor thickness must be positive.";
+  if(!(R>=1&&C>=1)) err="Grid must have at least 1 row and 1 column.";
+  // cells
+  var cellW=(W-(C+1)*tw)/C;      // along length (X)
+  var cellD=(D-(R+1)*tw)/R;      // along depth (Y)
+  if(cellW<=0) err="Length too small: walls + "+C+" columns don't fit ("+W+"mm).";
+  if(cellD<=0) err="Depth too small: walls + "+R+" rows don't fit ("+D+"mm).";
+  if(cellW<tw||cellD<tw) warn="Compartments are very small relative to wall thickness.";
+
+  // Build list of axis-aligned boxes (each: [x0,y0,z0,x1,y1,z1])
+  var boxes=[];
+  var ok=!!(err===null);
+  if(ok){
+    // floor plate
+    boxes.push([0,0,0, W,D,th]);
+    // outer walls (full height, trimmed to corners)
+    boxes.push([0, D-tw, 0, W, D, H]);               // back
+    boxes.push([0, 0, 0, W, tw, H]);                 // front
+    boxes.push([0, 0, 0, tw, D, H]);                 // left
+    boxes.push([W-tw, 0, 0, W, D, H]);               // right
+    // vertical partitions (column dividers) run full depth between walls
+    for(var i=1;i<C;i++){
+      var cx = tw + i*cellW;
+      boxes.push([cx - tw/2, tw, 0, cx + tw/2, D-tw, H]);
+    }
+    // horizontal partitions (row dividers) run full length between walls
+    for(var j=1;j<R;j++){
+      var cy = tw + j*cellD;
+      boxes.push([tw, cy - tw/2, 0, W-tw, cy + tw/2, H]);
+    }
+  }
+
+  var tri = [];
+  if(ok){ for(var b=0;b<boxes.length;b++) tri = tri.concat(boxTriangles(boxes[b])); }
+
+  var msg = err? ('err:'+err) : (warn?('warn:'+warn) : 'ok');
+  return {
+    ok: ok, err:err, warn:warn, msg:msg,
+    boxes: boxes, triangles: tri,
+    comp:{
+      count: R*C,
+      length: cellW,      // X
+      depth: cellD,       // Y
+      height: H - th,     // interior height (Z)
+      wall: tw, floor: th, partition: tw,
+      W:W, D:D, H:H
+    }
+  };
+}
+
+function boxTriangles(b){
+  var x0=b[0],y0=b[1],z0=b[2],x1=b[3],y1=b[4],z1=b[5];
+  var p=[
+    [x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],
+    [x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]
+  ];
+  // outward-facing faces (corner indices into p[])
+  var F=[
+    [0,3,2,1],[4,5,6,7], // z-bottom, z-top
+    [0,1,5,4],[3,7,6,2], // y-front, y-back
+    [0,4,7,3],[1,2,6,5]  // x-left, x-right
+  ];
+  var out=[];
+  function add(c0,c1,c2,c3){
+    out.push([p[c0],p[c1],p[c2]]); // tri 1
+    out.push([p[c0],p[c2],p[c3]]); // tri 2
+  }
+  for(var f=0;f<F.length;f++) add(F[f][0],F[f][1],F[f][2],F[f][3]);
+  return out.map(function(tri){
+    var a=tri[0],b=tri[1],c=tri[2];
+    var ux=b[0]-a[0], uy=b[1]-a[1], uz=b[2]-a[2];
+    var vx=c[0]-a[0], vy=c[1]-a[1], vz=c[2]-a[2];
+    var nx=uy*vz-uz*vy, ny=uz*vx-ux*vz, nz=ux*vy-uy*vx;
+    var len=Math.sqrt(nx*nx+ny*ny+nz*nz)||1;
+    return {v:[[a[0],a[1],a[2]],[b[0],b[1],b[2]],[c[0],c[1],c[2]]], n:[nx/len,ny/len,nz/len]};
+  });
+}
+
+/* ============ STL export (binary) ============ */
+function exportStl(triangles){
+  var header=new Uint8Array(80);
+  for(var i=0;i<header.length;i++) header[i]=0;
+  var n=triangles.length;
+  var buf=new ArrayBuffer(84 + n*50);
+  var dv=new DataView(buf);
+  for(var k=0;k<80;k++) dv.setUint8(k,0);
+  dv.setUint32(80, n, true);
+  var off=84;
+  for(var t=0;t<n;t++){
+    var tr=triangles[t], v=tr.v, nrm=tr.n;
+    var nx=nrm[0], ny=nrm[1], nz=nrm[2];
+    var cx=(v[0][0]+v[1][0]+v[2][0])/3,
+        cy=(v[0][1]+v[1][1]+v[2][1])/3,
+        cz=(v[0][2]+v[1][2]+v[2][2])/3;
+    // normal averaged over the 3 vertices for a nicer faceted look
+    nx=(nrm[0]+nrm[1]+nrm[2])/3; ny=(tr.n?0:0); // keep flat
+    nx=tr.n[0]; ny=tr.n[1]; nz=tr.n[2];
+    dv.setFloat32(off, nx,true); off+=4;
+    dv.setFloat32(off, ny,true); off+=4;
+    dv.setFloat32(off, nz,true); off+=4;
+    for(var f=0;f<3;f++){
+      dv.setFloat32(off, v[f][0],true); off+=4;
+      dv.setFloat32(off, v[f][1],true); off+=4;
+      dv.setFloat32(off, v[f][2],true); off+=4;
+    }
+    dv.setUint16(off, 0, true); off+=2;
+  }
+  return buf;
+}
+
+/* ============ RENDERER (own 2D-canvas projection, no external libs) ============ */
+var canvas=document.getElementById('view');
+var ctx=canvas.getContext('2d');
+var yaw=0.55, pitch=-0.5, autoRotate=true;
+var dragging=false, lastX=0, lastY=0;
+var currentModel=null;
+
+function resize(){
+  var r=canvas.getBoundingClientRect();
+  var dpr=window.devicePixelRatio||1;
+  canvas.width=Math.max(2, Math.floor(r.width*dpr));
+  canvas.height=Math.max(2, Math.floor(r.height*dpr));
+}
+window.addEventListener('resize', resize);
+
+function project(p){
+  // rotate around Y (yaw) then X (pitch)
+  var cy=Math.cos(yaw), sy=Math.sin(yaw);
+  var x1=p[0]*cy - p[2]*sy, z1=p[0]*sy + p[2]*cy, y1=p[1];
+  var cp=Math.cos(pitch), sp=Math.sin(pitch);
+  var y2=y1*cp - z1*sp, z2=y1*sp + z1*cp;
+  var vz = z2 + CAM_DIST;
+  if(vz <= 0.0001) vz = 0.0001;
+  var scale = (FOCAL*canvas.width)/ (canvas.width); // per-frame focal = width/...
+  var f = (canvas.width*0.62)/vz;
+  var sx = canvas.width/2 + f*x1;
+  var sy2 = canvas.height/2 - f*y2;
+  return {x:sx, y:sy2, z:vz};
+}
+
+var FOCAL=40, CAM_DIST=400;
+
+function renderModel(model){
+  if(!model.ok){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#ff6b6b'; ctx.font='bold 16px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText('Geometry invalid — fix dimensions above', canvas.width/2, canvas.height/2);
+    return;
+  }
+  // find bounding box to set camera distance
+  var minX=Infinity,minY=Infinity,minZ=Infinity,maxX=-Infinity,maxY=-Infinity,maxZ=-Infinity;
+  var boxes=model.boxes;
+  for(var b=0;b<boxes.length;b++){var x=boxes[b];
+    minX=Math.min(minX,x[0]);minY=Math.min(minY,x[1]);minZ=Math.min(minZ,x[2]);
+    maxX=Math.max(maxX,x[3]);maxY=Math.max(maxY,x[4]);maxZ=Math.max(maxZ,x[5]);
+  }
+  var d=Math.max(maxX-minX, maxY-minY, maxZ-minZ)||1;
+  CAM_DIST = (d/ (2*Math.tan((32*Math.PI/180))))*1.35;
+
+  var tri=model.triangles;
+  var projected=[];
+  for(var t=0;t<tri.length;t++){
+    var tr=tri[t];
+    var A=project(tr.v[0]), B=project(tr.v[1]), C=project(tr.v[2]);
+    var vz=(A.z+B.z+C.z)/3;
+    projected.push({A:A,B:B,C:C, vz:vz, nx:tr.n[0], ny:tr.n[1], nz:tr.n[2]});
+  }
+  // painter's algorithm: far triangles first
+  projected.sort(function(a,b){return b.vz-a.vz;});
+
+  var light=[0.35,-0.5,0.8], ll=Math.sqrt(light[0]*light[0]+light[1]*light[1]+light[2]*light[2]);
+  light[0]/=ll;light[1]/=ll;light[2]/=ll;
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(var i=0;i<projected.length;i++){
+    var f=projected[i];
+    var ndot=f.nx*light[0]+f.ny*light[1]+f.nz*light[2];
+    var shade = 0.32 + 0.62*Math.max(0,ndot);
+    var r=Math.round(78*shade), g=Math.round(132*shade), b=Math.round(196*shade);
+    ctx.beginPath();
+    ctx.moveTo(f.A.x, f.A.y);
+    ctx.lineTo(f.B.x, f.B.y);
+    ctx.lineTo(f.C.x, f.C.y);
+    ctx.closePath();
+    ctx.fillStyle='rgb('+r+','+g+','+b+')';
+    ctx.fill();
+  }
+  if(document.getElementById('showEdges').checked){
+    var edgeSet={}, edges=[];
+    for(var t=0;t<tri.length;t++){
+      var p=projected[t];
+      var pairs=[[0,1],[1,2],[2,0]];
+      for(var q=0;q<3;q++){
+        var i0=pairs[q][0], i1=pairs[q][1];
+        var a=p.A,p2=p.B; if(q===1){a=p.B;p2=p.C;} else if(q===2){a=p.C;p2=p.A;}
+        var key=Math.round(a.x*4)*1000000007 + Math.round(a.y*4);
+        var key2=Math.round(p2.x*4)*1000000007 + Math.round(p2.y*4);
+        var lo=key<key2?key+'|'+key2:key2+'|'+key;
+        if(!edgeSet[lo]){edgeSet[lo]=1;edges.push([a.x,a.y,p2.x,p2.y]);}
+      }
+    }
+    ctx.strokeStyle='rgba(10,14,20,0.55)';
+    ctx.lineWidth=Math.max(0.5,(canvas.width/900));
+    ctx.beginPath();
+    for(var e=0;e<edges.length;e++){
+      ctx.moveTo(edges[e][0],edges[e][1]);
+      ctx.lineTo(edges[e][2],edges[e][3]);
+    }
+    ctx.stroke();
+  }
+}
+
+/* ============ UI wiring ============ */
+var ids=['width','depth','height','rows','cols','wall','floor'];
+var map={};
+ids.forEach(function(k){map[k]=document.getElementById(k);});
+
+function fmt(n){ return n.toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1'); }
+
+function update(){
+  var params={};
+  ids.forEach(function(k){params[k]=parseFloat(map[k].value);});
+  var model=computeTray(params);
+  currentModel = model;
+  var c=model.comp;
+
+  document.getElementById('szLbl').textContent =
+    params.width+' × '+params.depth+' × '+params.height;
+
+  var tb=document.querySelector('#compTable tbody');
+  tb.innerHTML='';
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td>'+C+' × '+R+' grid → '+c.count+' cells</td>'+
+    '<td class="num">'+fmt(c.length)+' × '+fmt(c.depth)+' × '+fmt(c.height)+' mm</td>';
+  tb.appendChild(tr);
+  var tr2=document.createElement('tr');
+  tr2.innerHTML='<td style="color:var(--muted)">orientation</td>'+
+    '<td class="num" style="color:var(--muted)">length = along '+params.width+'mm side · depth = along '+params.depth+'mm side</td>';
+  tr2.style.borderBottom='0';
+  tb.appendChild(tr2);
+
+  document.getElementById('stCount').textContent = c.count;
+  document.getElementById('stWall').textContent = c.wall.toFixed(2)+' mm';
+  document.getElementById('stFloor').textContent = c.floor.toFixed(2)+' mm';
+  document.getElementById('stPart').textContent = c.partition.toFixed(2)+' mm';
+  document.getElementById('stIntH').textContent = c.height.toFixed(2)+' mm';
+  // cavity volume = total interior cell volume
+  var cavity = c.length*c.depth*c.height*c.count; // mm^3 (cells only)
+  document.getElementById('stCav').textContent = (cavity/1000).toFixed(1)+' mL';
+
+  renderModel(model);
+
+  // stats: material volume + triangles (approx)
+  var vol=0; for(var b=0;b<model.boxes.length;b++){var x=model.boxes[b];
+    vol+=(x[3]-x[0])*(x[4]-x[1])*(x[5]-x[2]);}
+  document.getElementById('stVol').textContent=(vol/1000).toFixed(1)+' cm³';
+  document.getElementById('stTri').textContent=model.triangles.length;
+
+  var msgEl=document.getElementById('msg');
+  if(model.err){ msgEl.className='msg err'; msgEl.textContent='⚠ '+model.err; }
+  else if(model.warn){ msgEl.className='msg warn'; msgEl.textContent='⚠ '+model.warn; }
+  else { msgEl.className='msg ok'; msgEl.textContent='✓ Compartment '+fmt(c.length)+' × '+fmt(c.depth)+' mm'; }
+
+  document.getElementById('exportStl').disabled = !model.ok;
+}
+
+ids.forEach(function(k){ map[k].addEventListener('input', update); });
+
+document.getElementById('showEdges').addEventListener('change', update);
+document.getElementById('autoSpin').addEventListener('change', function(e){ autoRotate=e.target.checked; });
+
+document.getElementById('reset').addEventListener('click', function(){
+  map.width.value=180; map.depth.value=120; map.height.value=30;
+  map.rows.value=2; map.cols.value=3; map.wall.value=2.4; map.floor.value=2.0;
+  yaw=0.55; pitch=-0.5; update();
+});
+
+/* export */
+document.getElementById('exportStl').addEventListener('click',function(){
+  if(!currentModel.ok){ return; }
+  var buf=exportStl(currentModel.triangles);
+  var bin=new Uint8Array(buf);
+  var blob=new Blob([bin],{type:'application/octet-stream'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  var size=currentModel.comp.W+'x'+currentModel.comp.D+'x'+currentModel.comp.H;
+  a.href=url; a.download='tray_'+size+'mm_'+currentModel.comp.count+'cells.stl';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},2000);
+});
+
+/* drag to rotate */
+canvas.addEventListener('pointerdown',function(e){dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId);});
+canvas.addEventListener('pointermove',function(e){
+  if(!dragging)return;
+  yaw += (e.clientX-lastX)*0.01;
+  pitch+= (e.clientY-lastY)*0.01;
+  pitch=Math.max(-1.4,Math.min(1.4,pitch));
+  lastX=e.clientX;lastY=e.clientY; renderModel(currentModel);
+});
+['pointerup','pointerleave'].forEach(function(ev){
+  canvas.addEventListener(ev,function(){dragging=false;});
+});
+
+/* auto-rotate animation loop */
+var lastFrame=performance.now();
+function animate(now){
+  var dt=(now-lastFrame)/1000; lastFrame=now;
+  if(autoRotate && !dragging){
+    yaw += dt*0.5; // ~0.5 rad/s continuous rotation
+  }
+  renderModel(currentModel);
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+// initial
+resize();
+yaw=0.55;pitch=-0.5;
+update();
+
+</script>
+</body>
+</html>

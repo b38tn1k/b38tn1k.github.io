@@ -1,0 +1,49 @@
+## Playable Snake Game — single-file `index.html`
+
+### Summary
+Create one self-contained `index.html` (HTML + inline CSS + inline JS, no external/network assets) in the current directory. A canvas-based Snake game with arrow-key/WASD controls, food pickup, scoring, wall + self collision detection, pause/resume, restart, and speed-based difficulty that increases as the score rises. It includes a minimal verification pass.
+
+### Design Decisions / Defaults
+- **Grid**: 20×20 cells; canvas scales to fit the viewport (responsive, `max-width: 100vw`).
+- **Cell rendering**: rounded rects with a subtle grid background; dark theme.
+- **Controls**: Arrow keys + WASD for direction; `Space`/`P` toggles pause; `R` or `Enter` restarts after game over.
+- **Difficulty**: movement speed (ms per tick) decreases as food is eaten — starts at ~150 ms/tick, decreasing by ~6 ms per food, floor ~60 ms. A `requestAnimationFrame` loop with a time-accumulator drives variable tick speed.
+- **Self-collision**: checks the snake's own body cells each tick (before head occupies them); tail move-away is handled by comparing against the planned tail position so chasing your tail on an empty move is legal.
+- **Food**: spawns randomly on an empty cell (never on the snake).
+- **Scoring**: +10 per food; stored in `localStorage` under `snake:best` for a persistent high score.
+- **Default low-risk choices** (assumptions, easily overridden): wall collision = game over (classic hard walls), start speed 150 ms/tick, floor 60 ms/tick, +10 pts per food, pause on window blur.
+
+### Behavior / Features (all in one `index.html`)
+1. **Rendering** — canvas redraws each tick with head, body, food, and an overlaid UI panel (score, best, current level/speed indicator). Overlay screens for "Start", "Paused", and "Game Over".
+2. **Keyboard controls** — directional input with a queued input buffer (accepts 1 queued change) to prevent 180° reversal and allow fast successive turns.
+3. **Food & scoring** — eating food grows the snake, increments score, re-spawns food, and increases difficulty (faster tick).
+4. **Collisions** — game over on wall hit or when the head enters any body cell.
+5. **Pause** — pause overlay, input blocked except resume/restart. Window blur auto-pauses (if not already game over).
+6. **Restart** — full state reset (snake to center, score 0, original speed, new food).
+7. **Difficulty ramp** — tick interval shrinks with score, clamped to a floor; shown as a level indicator.
+
+### Data Flow
+- Single `state` object: `{ snake: [{x,y}], dir, nextDir, food, score, best, running, paused, gameOver, tickMs, lastTick }`.
+- `loop(ts)` RAF accumulator → on threshold, `step()` (move + collide + eat) → `draw()`.
+- `keydown` handler → update `nextDir`/toggle pause/restart.
+- `best` loaded from `localStorage` on start, updated on game over.
+
+### Testing / Verification
+- **Syntax check**: extract the `<script>` block and run `node --check` (via bash) to catch JS errors.
+- **DOM sanity**: confirm the file loads with no network calls (grep confirms no `http://`, `https://`, `<script src`, `<link`).
+- **Static logic review**: manually trace `step()` for a wall collision, a self-collision, and a tail-chase move; confirm input buffer blocks 180° reversal.
+- **Browser verification**: open the file and play a short session (direction, eat food, pause, game over, restart). *Note: browser automation is unavailable in this harness, so final live browser play must be done manually by the user.*
+
+### Acceptance Criteria
+- File is a single self-contained `index.html`, opens offline.
+- Snake moves, changes direction via keyboard, eats food, scores points.
+- Hitting a wall or self ends the game with a restart option.
+- Pause/resume works; restart resets state and score.
+- Difficulty (speed) visibly increases as score grows.
+
+### Assumptions / Defaults
+- Hard walls (game over on wall hit) — classic behavior; soft/portal walls not implemented unless user prefers.
+- Start speed 150 ms/tick, floor 60 ms/tick, +10 pts/food, ~6 ms faster per food.
+- Persistent high score via `localStorage`.
+- No audio (kept offline + self-contained); visual-only feedback.
+

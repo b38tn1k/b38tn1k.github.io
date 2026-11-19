@@ -1,0 +1,168 @@
+{
+  "method": "Exact-source startup, actual input/drag/export handlers; partial WebGL calls only, not rendering. Independent fixture supplies the missing standard uniform3fv/getParameter/polygonOffset/drawElements stubs; shared scored kit is unchanged. Captured actual exported STL bytes; protected matching-edge validator and explicit geometry observation.",
+  "sha256": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+  "startup": true,
+  "initial": {
+    "params": {
+      "L": 180,
+      "W": 120,
+      "H": 30,
+      "rows": 3,
+      "cols": 2,
+      "wallT": 3,
+      "floorT": 3,
+      "gap": 0
+    },
+    "compartments": 6,
+    "error": ""
+  },
+  "resized": {
+    "length": 200,
+    "each": "97.0 × 38.0 mm"
+  },
+  "rotation": {
+    "before": -0.6,
+    "after": -0.19999999999999996
+  },
+  "geometry": {
+    "volumes": [
+      [
+        0,
+        0,
+        0,
+        200,
+        120,
+        3
+      ],
+      [
+        3,
+        0,
+        3,
+        197,
+        3,
+        30
+      ],
+      [
+        3,
+        117,
+        3,
+        197,
+        120,
+        30
+      ],
+      [
+        0,
+        3,
+        3,
+        3,
+        117,
+        30
+      ],
+      [
+        197,
+        3,
+        3,
+        200,
+        117,
+        30
+      ],
+      [
+        100,
+        3,
+        3,
+        100,
+        117,
+        30
+      ],
+      [
+        3,
+        41,
+        3,
+        197,
+        41,
+        30
+      ],
+      [
+        3,
+        79,
+        3,
+        197,
+        79,
+        30
+      ]
+    ],
+    "vertices": 144,
+    "positionLength": 432
+  },
+  "exportBytes": 20172,
+  "stlSyntax": {
+    "anchoredFacetNormalLines": 0,
+    "malformedFacetOuterLoops": 144,
+    "containsNonFiniteCoordinates": true
+  },
+  "firstExportLines": [
+    "solid drawer_tray",
+    "normal 0.000000e+0 0.000000e+0 0.000000e+0",
+    " facet outer loop",
+    "     vertex 0 0 0",
+    "     vertex 0 0 120",
+    "     vertex 0 0 0",
+    "  endloop",
+    " endfacet",
+    "normal 0.000000e+0 0.000000e+0 0.000000e+0"
+  ],
+  "stl": {
+    "format": "ascii",
+    "vertexMatchTolerance": 0.0001,
+    "verticalXPlanes": [
+      0
+    ],
+    "verticalYPlanes": [
+      0,
+      3
+    ],
+    "zLevels": [
+      0,
+      3,
+      30,
+      41,
+      79,
+      117,
+      120
+    ],
+    "bytes": 20172,
+    "triangles": 72,
+    "uniqueVertices": 36,
+    "bounds": {
+      "min": [
+        0,
+        0,
+        0
+      ],
+      "max": [
+        200,
+        120,
+        120
+      ],
+      "dimensions": [
+        200,
+        120,
+        120
+      ]
+    },
+    "signedVolume": 1008943.5,
+    "absoluteVolume": 1008943.5,
+    "surfaceArea": 100961.09679070367,
+    "degenerateTriangles": 6,
+    "nonFiniteTriangles": 36,
+    "normalDisagreements": 0,
+    "missingNormals": 6,
+    "boundaryOrNonmanifoldEdges": 74,
+    "inconsistentWindingEdges": 9,
+    "components": 1,
+    "watertightByMatchingEdges": false
+  },
+  "limits": [
+    "GPU rendering, slicer repair, self-intersections and physical prints unverified."
+  ]
+}

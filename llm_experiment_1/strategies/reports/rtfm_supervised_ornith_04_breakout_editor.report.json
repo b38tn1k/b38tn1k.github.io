@@ -1,0 +1,3262 @@
+{
+  "score": 79,
+  "grade": "C+ - aiming polish repaired; editor and level restoration still blocked",
+  "rubricScores": {
+    "functionality": 28,
+    "artifact_correctness": 25,
+    "usability": 10,
+    "self_verification": 6,
+    "autonomy": 10
+  },
+  "blockingRequiredDefect": true,
+  "summary": "Idle ball attachment, prelaunch keyboard aiming and HUD level labels improve, but the required editor entry and restart/replay flows remain defective. The three-feedback ceiling ends without A-quality acceptance.",
+  "strengths": [
+    "Actual scheduled keyboard movement, mouse/touch controls, launch, pause/resume, brick collisions, scoring and three-life game-over behavior pass.",
+    "Actual downloaded BlobJSON parses and reloads the exact edited grid, replacing stale cells. The app remains a self-contained offline single file.",
+    "Idle ball follows the paddle; keyboard aiming works before launch; both initial and post-loss ball creation are attached immediately. HUD shows a level label.",
+    "A1500frame actual scheduled pointer-controlled sample scores without replacing the physics algorithm."
+  ],
+  "defects": [
+    "The initial editor shows a full-inset positioned overlay covering the canvas. Targeted overlay events do not dismiss it or route painting, and no pointer-events passthrough is present. This is an explicit source/CSS/event-routing reachability inference; no browser hit testing was used.",
+    "Restart retains destroyed bricks from the played grid instead of restoring the original edited design.",
+    "After destroying the last brick, replay starts an empty board instead of restoring a playable designed level."
+  ],
+  "verification": [
+    "Independent exact final59c5cb17514523f94220380895475c9d24a7e8f4186bbb94a76ff87886b16d44 via actual handlers, nativeCanvas, RAF scheduler and parsed downloaded BlobJSON/FileReader. Read-only closure exposure and ball-position/velocity input fixtures leave the existing algorithms intact.",
+    "All three locally requested aiming/attachment components pass; those polish enhancements are separately marked optional rather than invented original-brief blockers. The three required failures reproduce in the final output."
+  ],
+  "verificationConcerns": [
+    "Worker used handwritten DOM/canvas mocks to verify aiming, labels, JSON loading and actual life-loss spawn behavior. It meaningfully reverted the spawn change as a negative control, observed failure, then restored the fix. Tests nevertheless miss editor reachability and restart/replay restoration.",
+    "Much of the second repair turn debugged a misleading frozen-ball observation in a scratch helper; independent real-scheduler checks confirmed normal movement. The supervisor chose long native sleeps while waiting, later repeated physics speculation before spending its final prompt on a one-frame visual glitch.",
+    "Direct canvas event dispatch bypasses covering elements and cannot establish a reachable editor. No independent browser layout/hit testing, GPU or visual-polish proof.",
+    "Recovered native connection errors: worker22, supervisor6. Failed streams have unknown partial usage. Read-only serving audit confirmed unchanged active servicePIDs; no server/profile restart or outcome-based rerun occurred."
+  ],
+  "scopeCompliance": "Worker alone authored the product. Supervisor wrote scratch/control outputs and read consistent artifact/progress snapshots. Codex supplied no product code, diagnoses or repair feedback; private independent QA/gates stayed outside actor access.",
+  "workflowNotes": "RTFM Qwen-supervised Ornith Breakout, three counted prompts in persistent native contexts,76.777pairwallminutes under the unchanged120minute original cap. Supervisor repaired aiming/HUD issues but did not identify the existing required blockers. Joint autonomy remains eligible10 because no human product guidance was supplied.",
+  "humanOrSupervisorSteering": 0,
+  "supervisorInstructionDeviations": [
+    "Supervisor feedback included exact implementation snippets and replacement lines despite the behavioral-only/no-repair-code instruction. The worker remained the sole product writer; this is a local supervisor instruction deviation, not human repair steering."
+  ],
+  "limitations": [
+    "Single paired result on the exact frozen RTFM solo output; no outcome-based rerun.",
+    "134.191summed actor-activity minutes includes concurrent native turns and tool waits, not GPU busy time. Reported cumulative tokens include cached prefixes; creation and new rescue costs are separate.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM author-profile cross-model rescue of the exact frozen solo app. Solo creation and incremental repair costs are separate; already-qualified baselines may remain unchanged with zero feedback and no improvement claim. A120-minute shared wall includes both actors and review waits; Codex grades but supplies no repair diagnoses/code. Product quality is normalized from80points. Pair wall differs from summed concurrent model activity."
+  ],
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "rtfm_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All four defects are now repaired and verified. Final state:\n\n## Summary of all repairs to `index.html`\n\n| # | Defect | Fix | Verified |\n|---|--------|-----|----------|\n| 1 | Ball didn't follow paddle in idle | Added idle-tracking block in `update()` so ball `x=paddle.x+paddle.w/2`, `y=paddle.y-bl.r` | \u2705 ball follows paddle; launches & rises |\n| 2 | `levelLabel` never set (HUD showed `\"\u2014\"`) | Set `levelLabel=\"Level 1\"` in `resetPlay()`; set from loaded `name` on JSON load | \u2705 shows \"Level 1\" and custom name |\n| 3 | Keyboard paddle blocked in idle | Removed `gameState !== \"playing\"` gate from `startPaddleMove()` | \u2705 arrow keys aim in idle |\n| 4 | One-frame spawn glitch after lost life | Both ball creations (`resetPlay` L444 & fall-branch L561) now use `makeBall(paddle.x+paddle.w/2, paddle.y-7)` | \u2705 new ball spawns at paddle (585,593), not fixed (320,580) |\n\n**Defect 4 rigorously verified:** A headless harness triggered a real life-loss. With the fix, the new ball spawns at exactly the paddle position `(585, 593)` \u2192 **PASS**. Temporarily reverting the fall-branch to the old `(320, 580)` made the same test **FAIL** (spawned at y=580), confirming the test is meaningful and the fix resolves the glitch.\n\n**Final checks:**\n- Both ball-creation sites are paddle-relative; no fixed-position creation remains.\n- `node --check` passes (valid syntax).\n- All temporary test files removed; only `index.html` (plus existing metadata dirs) remain.\n\nThe deliverable is a single self-contained offline `index.html`, with all work confined to this directory.",
+  "workflowInstructions": "rtfm-supervised-plan.json; run-rtfm-supervised-control-v2.py",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 76.777,
+  "wallMinutes": 76.777,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "three_feedbacks_settled",
+  "exitCode": 0,
+  "promptWords": 47,
+  "toolCalls": 233,
+  "parentToolCalls": 104,
+  "childToolCalls": 129,
+  "toolResultsMarkedError": 48,
+  "modelUsageReported": {
+    "input": 102690,
+    "output": 145511,
+    "cacheRead": 14033590,
+    "totalTokens": 14281791
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 117680,
+  "parentPeakReportedPromptTokens": 117680,
+  "childPeakReportedPromptTokens": 95628,
+  "parentModelUsage": {
+    "input": 44416,
+    "output": 90353,
+    "cacheRead": 6944724,
+    "totalTokens": 7079493
+  },
+  "childModelUsage": {
+    "input": 58274,
+    "output": 55158,
+    "cacheRead": 7088866,
+    "totalTokens": 7202298
+  },
+  "artifactBytes": 29154,
+  "sha256": "59c5cb17514523f94220380895475c9d24a7e8f4186bbb94a76ff87886b16d44",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 6,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b-rtfm"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 41,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "ornith-1.5:35b-256k",
+    "supervisorModel": "qwen3.6:35b-a3b",
+    "feedbackCount": 3,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "feedback-1",
+        "message": "Defect 1 (Gameplay - Ball does not follow paddle in idle state):\n\nIn the update() function (around line 468), there is an early return:\n  if (gameState !== \"playing\") return;\n\nThis means when gameState is \"idle\" (ball not yet launched), the ball position is never updated. The ball is created at a fixed position (CANVAS_SIZE / 2, CANVAS_SIZE - 60) = (320, 580) in resetPlay() and never moves.\n\nThe paddle can be moved via arrow keys, mouse, or touch, but the ball stays at (320, 580) regardless. When the player launches the ball, it starts from (320, 580), not from the paddle's current position.\n\nExpected behavior: In a Breakout game, the ball should follow the paddle's x position when not launched (idle state), so the player can aim by positioning the paddle before launching. The ball should appear attached to the paddle.\n\nSpecifically:\n- When gameState is \"idle\" and the ball exists, the ball's x should track paddle.x + paddle.w / 2, and y should be paddle.y - ball.r\n- When the player loses a life and a new ball is created (line ~551: balls = [makeBall(CANVAS_SIZE / 2, CANVAS_SIZE - 60)]), the new ball should also follow the paddle, not appear at a fixed position (320, 580)\n\nThis is a core gameplay defect that breaks the fundamental Breakout mechanic of aiming the ball.\n\nDefect 2 (Minor - levelLabel never set):\n\nThe variable levelLabel (line 271) is initialized to \"\u2014\" and is displayed in the HUD via el.levelClear.textContent = levelLabel (line 430). However, levelLabel is never assigned any other value anywhere in the code. The level clear status always shows \"\u2014\" instead of the actual level name or number.\n\nThis is a cosmetic issue but means the HUD does not provide useful level information.\n",
+        "reason": "Identified ball-following-paddle defect that breaks core Breakout gameplay mechanic",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T19:28:28.743662+00:00",
+        "acceptedUTC": "2026-11-18T19:28:28.743680+00:00",
+        "elapsedSeconds": 291.219,
+        "workerPID": 40249,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T19:28:28.777839+00:00",
+        "deliveredElapsedSeconds": 291.219
+      },
+      {
+        "number": 2,
+        "id": "feedback-2",
+        "message": "Defect 3 (Keyboard - Paddle movement blocked in idle state):\n\nIn startPaddleMove (around line 662), there is a check:\n  if (mode !== \"play\" || gameState !== \"playing\") return;\n\nThis prevents the key flags from being set when gameState is \"idle\" (ball not yet launched). The movePaddleKeyboard function is called in update() and does check mode, but it only moves the paddle if the key flags are set. Since startPaddleMove returns early in idle state, the key flags are never set, and the paddle cannot be moved via keyboard.\n\nThe player needs to move the paddle to aim the ball before launching (the ball follows the paddle in idle state). But keyboard paddle movement is blocked until the ball is launched. This breaks keyboard usability for aiming.\n\nExpected behavior: Keyboard paddle movement should work in idle state so the player can aim the ball before launching. The gameState check in startPaddleMove should be removed, or the key flags should be set regardless of gameState when in play mode.\n\nThe mouse/touch paddle movement works correctly in idle state (movePaddleToClientX has no gameState check), so this is specifically a keyboard input defect.\n",
+        "reason": "Keyboard paddle movement blocked in idle state breaks aiming for keyboard users",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T19:39:59.659277+00:00",
+        "acceptedUTC": "2026-11-18T19:39:59.659295+00:00",
+        "elapsedSeconds": 982.133,
+        "workerPID": 40249,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T19:39:59.698841+00:00",
+        "deliveredElapsedSeconds": 982.133
+      },
+      {
+        "number": 3,
+        "id": "feedback-3",
+        "message": "Defect 4 (Ball creation after losing life - one-frame visual glitch):\n\nWhen the player loses a life (ball falls below canvas), a new ball is created at a fixed position in the \"balls.length === 0\" block (around line 561):\n  balls = [makeBall(CANVAS_SIZE / 2, CANVAS_SIZE - 60)];\n\nThis creates the ball at (320, 580) regardless of paddle position. The gameState is then set to \"idle\", and in the next frame the gameState === \"idle\" block would set the ball to follow the paddle. But there is a one-frame delay where the ball appears at the fixed position (320, 580) instead of following the paddle.\n\nExpected behavior: The new ball should be created at the paddle's current position (paddle.x + paddle.w / 2, paddle.y - ball.r), matching the idle-state ball-following behavior. This ensures visual consistency - the ball should always appear attached to the paddle before launch, whether it's the initial ball or a ball after losing a life.\n\nThe fix should change line 561 from:\n  balls = [makeBall(CANVAS_SIZE / 2, CANVAS_SIZE - 60)];\nto:\n  balls = [makeBall(paddle.x + paddle.w / 2, paddle.y - 7)];\n\nSimilarly, the initial ball creation in resetPlay() at line 444 should also follow the paddle:\n  balls = [makeBall(paddle.x + paddle.w / 2, paddle.y - 7)];\n\nThis would ensure the ball always appears attached to the paddle in idle state, which is the expected Breakout behavior.\n",
+        "reason": "Ball created at fixed position after losing life causes one-frame visual glitch - ball should follow paddle",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T20:25:12.703066+00:00",
+        "acceptedUTC": "2026-11-18T20:25:12.703084+00:00",
+        "elapsedSeconds": 3695.186,
+        "workerPID": 40249,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T20:25:12.738922+00:00",
+        "deliveredElapsedSeconds": 3695.186
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-18T19:33:13.850878+00:00",
+        "sha256": "e23c929c81e8a459190ce7caa1a1883234145a9edc2698bc36bd594ccf4f2364",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case119/feedback1"
+      },
+      {
+        "feedback": 2,
+        "at": "2026-11-18T20:17:28.266372+00:00",
+        "sha256": "368030bf7329e80d5ed96825424ba69ec14c80b5ab104889a1a3c83bf1d4f049",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case119/feedback2"
+      },
+      {
+        "feedback": 3,
+        "at": "2026-11-18T20:40:24.041146+00:00",
+        "sha256": "59c5cb17514523f94220380895475c9d24a7e8f4186bbb94a76ff87886b16d44",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case119/feedback3"
+      }
+    ],
+    "supervisorWakeups": [],
+    "supervisorYields": [],
+    "supervisorStopRequest": null,
+    "independentGradeGates": [
+      {
+        "at": "2026-11-18T19:37:22.518064+00:00",
+        "sha256": "e23c929c81e8a459190ce7caa1a1883234145a9edc2698bc36bd594ccf4f2364",
+        "productScore": 77.5,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_ornith_04_breakout_editor.round1.qa.json"
+      },
+      {
+        "at": "2026-11-18T20:18:31.060923+00:00",
+        "sha256": "368030bf7329e80d5ed96825424ba69ec14c80b5ab104889a1a3c83bf1d4f049",
+        "productScore": 78.75,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_ornith_04_breakout_editor.round2.qa.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "sha256": "17cec180d0272bb785ef837ac90cee3ec5bff49de75e805362eab9ff31050eb5",
+      "baselineScore": 77,
+      "baselineRubricScores": {
+        "functionality": 28,
+        "artifact_correctness": 25,
+        "usability": 8,
+        "self_verification": 6,
+        "autonomy": 10
+      },
+      "baselineProductScore": 76.25,
+      "baselineTargetMet": false,
+      "baselineReport": "strategies/reports/rtfm_ornith_04_breakout_editor.report.json",
+      "creationCost": {
+        "model": "ornith",
+        "role": "worker",
+        "pid": 85193,
+        "assistantUsage": {
+          "input": 27939,
+          "output": 61614,
+          "cacheRead": 4179961,
+          "cacheWrite": 0,
+          "totalTokens": 4269514
+        },
+        "recordedCompactionUsage": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "totalTokens": 0
+        },
+        "recordedCombinedUsage": {
+          "input": 27939,
+          "output": 61614,
+          "cacheRead": 4179961,
+          "cacheWrite": 0,
+          "totalTokens": 4269514
+        },
+        "unreportedCompactions": 0,
+        "activeMinutes": 29.406,
+        "promptCount": 1,
+        "streamingWindows": [
+          {
+            "start": 1161312.525323875,
+            "end": 1161314.918946083
+          },
+          {
+            "start": 1161314.966268416,
+            "end": 1161315.816241875
+          },
+          {
+            "start": 1161315.861645833,
+            "end": 1161317.210229166
+          },
+          {
+            "start": 1161317.40314525,
+            "end": 1161494.487152791
+          },
+          {
+            "start": 1161494.567496291,
+            "end": 1161500.161670291
+          },
+          {
+            "start": 1161500.427833125,
+            "end": 1161555.7056735
+          },
+          {
+            "start": 1161555.958206041,
+            "end": 1161564.065012625
+          },
+          {
+            "start": 1161564.311123208,
+            "end": 1161569.352949041
+          },
+          {
+            "start": 1161569.634916791,
+            "end": 1161582.755225333
+          },
+          {
+            "start": 1161583.062147791,
+            "end": 1161606.979667916
+          },
+          {
+            "start": 1161607.276491333,
+            "end": 1161646.149696083
+          },
+          {
+            "start": 1161646.257319583,
+            "end": 1161651.162409416
+          },
+          {
+            "start": 1161651.283297791,
+            "end": 1161662.012701416
+          },
+          {
+            "start": 1161662.301713708,
+            "end": 1161669.383555708
+          },
+          {
+            "start": 1161669.489773083,
+            "end": 1161674.02635025
+          },
+          {
+            "start": 1161674.300624875,
+            "end": 1161707.622137875
+          },
+          {
+            "start": 1161707.742055375,
+            "end": 1161716.382462583
+          },
+          {
+            "start": 1161716.513451708,
+            "end": 1161722.946432458
+          },
+          {
+            "start": 1161723.285439625,
+            "end": 1161772.8399695
+          },
+          {
+            "start": 1161772.981714541,
+            "end": 1161776.940791291
+          },
+          {
+            "start": 1161777.238791208,
+            "end": 1161864.324845833
+          },
+          {
+            "start": 1161864.706533041,
+            "end": 1161893.132089958
+          },
+          {
+            "start": 1161893.459964875,
+            "end": 1161899.769636083
+          },
+          {
+            "start": 1161900.072146333,
+            "end": 1161905.700987458
+          },
+          {
+            "start": 1161905.988286125,
+            "end": 1161916.696378208
+          },
+          {
+            "start": 1161917.048241791,
+            "end": 1161938.22408325
+          },
+          {
+            "start": 1161938.5095615,
+            "end": 1161975.6434745
+          },
+          {
+            "start": 1161976.007875083,
+            "end": 1161990.475651125
+          },
+          {
+            "start": 1161990.850943666,
+            "end": 1162019.104202291
+          },
+          {
+            "start": 1162019.4880155,
+            "end": 1162030.022234625
+          },
+          {
+            "start": 1162030.346373375,
+            "end": 1162046.654624916
+          },
+          {
+            "start": 1162046.825339958,
+            "end": 1162052.925558958
+          },
+          {
+            "start": 1162053.268101833,
+            "end": 1162085.730353916
+          },
+          {
+            "start": 1162085.912370875,
+            "end": 1162098.330701041
+          },
+          {
+            "start": 1162098.341306333,
+            "end": 1162098.341877083
+          },
+          {
+            "start": 1162100.535996291,
+            "end": 1162128.934446875
+          },
+          {
+            "start": 1162129.125562916,
+            "end": 1162132.740978833
+          },
+          {
+            "start": 1162133.082868208,
+            "end": 1162184.348254833
+          },
+          {
+            "start": 1162184.786546041,
+            "end": 1162208.892355416
+          },
+          {
+            "start": 1162209.089270375,
+            "end": 1162212.512146458
+          },
+          {
+            "start": 1162212.922575916,
+            "end": 1162238.912714458
+          },
+          {
+            "start": 1162239.101718208,
+            "end": 1162249.94810025
+          },
+          {
+            "start": 1162250.321682958,
+            "end": 1162266.386772625
+          },
+          {
+            "start": 1162266.398765416,
+            "end": 1162266.399326041
+          },
+          {
+            "start": 1162268.601071875,
+            "end": 1162273.850083541
+          },
+          {
+            "start": 1162274.215731208,
+            "end": 1162280.043431291
+          },
+          {
+            "start": 1162280.453101416,
+            "end": 1162293.189973208
+          },
+          {
+            "start": 1162293.567558,
+            "end": 1162320.675147083
+          },
+          {
+            "start": 1162320.891690125,
+            "end": 1162333.803056541
+          },
+          {
+            "start": 1162334.035329333,
+            "end": 1162340.388492875
+          },
+          {
+            "start": 1162340.799688916,
+            "end": 1162347.400900625
+          },
+          {
+            "start": 1162347.785378416,
+            "end": 1162362.972839083
+          },
+          {
+            "start": 1162363.202575041,
+            "end": 1162369.101150166
+          },
+          {
+            "start": 1162369.477795958,
+            "end": 1162377.932169583
+          },
+          {
+            "start": 1162377.944736666,
+            "end": 1162377.945574708
+          },
+          {
+            "start": 1162380.173927333,
+            "end": 1162391.89175875
+          },
+          {
+            "start": 1162392.115263583,
+            "end": 1162404.387365083
+          },
+          {
+            "start": 1162404.620557833,
+            "end": 1162418.065505291
+          },
+          {
+            "start": 1162418.494088708,
+            "end": 1162474.784142666
+          },
+          {
+            "start": 1162475.249250083,
+            "end": 1162479.293253
+          },
+          {
+            "start": 1162479.659676083,
+            "end": 1162495.317639375
+          },
+          {
+            "start": 1162495.779402375,
+            "end": 1162521.203842
+          },
+          {
+            "start": 1162521.6551575,
+            "end": 1162566.252316041
+          },
+          {
+            "start": 1162566.706200833,
+            "end": 1162589.978691458
+          },
+          {
+            "start": 1162590.221499208,
+            "end": 1162605.30883475
+          },
+          {
+            "start": 1162605.814518875,
+            "end": 1162616.056760083
+          },
+          {
+            "start": 1162616.481422875,
+            "end": 1162620.363550875
+          },
+          {
+            "start": 1162620.762006875,
+            "end": 1162680.949775666
+          },
+          {
+            "start": 1162681.244621958,
+            "end": 1162687.443075833
+          },
+          {
+            "start": 1162687.930733125,
+            "end": 1162697.470272
+          },
+          {
+            "start": 1162697.733690708,
+            "end": 1162703.5101125
+          },
+          {
+            "start": 1162703.934169875,
+            "end": 1162759.319123625
+          },
+          {
+            "start": 1162759.568796291,
+            "end": 1162766.227244291
+          },
+          {
+            "start": 1162766.70946575,
+            "end": 1162809.618197541
+          },
+          {
+            "start": 1162810.177716625,
+            "end": 1162819.633779833
+          },
+          {
+            "start": 1162820.040073208,
+            "end": 1162828.067491041
+          },
+          {
+            "start": 1162828.319625625,
+            "end": 1162853.1274485
+          },
+          {
+            "start": 1162853.3913595,
+            "end": 1162866.676289625
+          },
+          {
+            "start": 1162867.193278833,
+            "end": 1162903.095412291
+          },
+          {
+            "start": 1162903.369546,
+            "end": 1162922.39516725
+          },
+          {
+            "start": 1162922.411395125,
+            "end": 1162922.412017333
+          },
+          {
+            "start": 1162924.694014666,
+            "end": 1162933.381330041
+          },
+          {
+            "start": 1162933.646089875,
+            "end": 1162940.38927075
+          },
+          {
+            "start": 1162940.842529416,
+            "end": 1162956.18030125
+          },
+          {
+            "start": 1162956.667695708,
+            "end": 1162972.08728175
+          },
+          {
+            "start": 1162972.589542791,
+            "end": 1162979.924877
+          },
+          {
+            "start": 1162980.415834666,
+            "end": 1162997.682531416
+          },
+          {
+            "start": 1162998.194219333,
+            "end": 1163011.7977885
+          },
+          {
+            "start": 1163012.077703833,
+            "end": 1163017.778075541
+          },
+          {
+            "start": 1163018.070710625,
+            "end": 1163032.117791541
+          },
+          {
+            "start": 1163032.552633041,
+            "end": 1163035.230884375
+          },
+          {
+            "start": 1163035.524229458,
+            "end": 1163054.446667666
+          },
+          {
+            "start": 1163054.980559291,
+            "end": 1163075.144520625
+          }
+        ],
+        "exitCode": 0
+      },
+      "sourceCase": 109,
+      "sourceFolder": "rtfm/ornith/04_breakout_editor",
+      "frozenArtifact": "strategies/reports/initial-artifacts/rtfm_supervised_ornith_04_breakout_editor/index.html",
+      "frozenUTC": "2026-11-18T16:13:22.818932+00:00"
+    },
+    "sharedLimitSeconds": 7200,
+    "authorProfiles": "research/rtfm-runtime-profiles.json",
+    "runtimeConformance": "research/rtfm-supervised-conformance.json",
+    "sourceRTFMSoloCase": 109,
+    "supervisorInstructionDeviations": [
+      "Supervisor feedback included exact implementation snippets and replacement lines despite the behavioral-only/no-repair-code instruction. The worker remained the sole product writer; this is a local supervisor instruction deviation, not human repair steering."
+    ]
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 3,
+  "localModelCosts": {
+    "worker": {
+      "model": "ornith",
+      "role": "worker",
+      "pid": 40249,
+      "assistantUsage": {
+        "input": 44416,
+        "output": 90353,
+        "cacheRead": 6944724,
+        "cacheWrite": 0,
+        "totalTokens": 7079493
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 44416,
+        "output": 90353,
+        "cacheRead": 6944724,
+        "cacheWrite": 0,
+        "totalTokens": 7079493
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 57.415,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1178721.950447208,
+          "end": 1178727.487662416
+        },
+        {
+          "start": 1178727.560445291,
+          "end": 1178729.287424625
+        },
+        {
+          "start": 1178729.510359,
+          "end": 1178730.88297875
+        },
+        {
+          "start": 1178730.975872916,
+          "end": 1178755.5916015
+        },
+        {
+          "start": 1178755.682924083,
+          "end": 1178761.506228208
+        },
+        {
+          "start": 1178761.517283833,
+          "end": 1178761.518293375
+        },
+        {
+          "start": 1178763.618571125,
+          "end": 1178769.372351833
+        },
+        {
+          "start": 1178769.689800458,
+          "end": 1178773.431542041
+        },
+        {
+          "start": 1178773.740631791,
+          "end": 1178782.38985125
+        },
+        {
+          "start": 1178782.699837333,
+          "end": 1178846.817548791
+        },
+        {
+          "start": 1178846.933473208,
+          "end": 1178897.348281875
+        },
+        {
+          "start": 1178897.354656541,
+          "end": 1178897.359449625
+        },
+        {
+          "start": 1178899.477884,
+          "end": 1178907.433619875
+        },
+        {
+          "start": 1178907.7440525,
+          "end": 1178919.722920583
+        },
+        {
+          "start": 1178919.842896916,
+          "end": 1178922.970446791
+        },
+        {
+          "start": 1178923.265453916,
+          "end": 1178926.974983958
+        },
+        {
+          "start": 1178927.105888041,
+          "end": 1178929.211653166
+        },
+        {
+          "start": 1178929.5166955,
+          "end": 1178961.797463125
+        },
+        {
+          "start": 1178961.802043375,
+          "end": 1178961.802681958
+        },
+        {
+          "start": 1178963.945892375,
+          "end": 1178966.677959791
+        },
+        {
+          "start": 1178967.008357458,
+          "end": 1178986.326359875
+        },
+        {
+          "start": 1178986.631665791,
+          "end": 1178989.493874375
+        },
+        {
+          "start": 1178989.63739725,
+          "end": 1179006.028792958
+        },
+        {
+          "start": 1179412.661665833,
+          "end": 1179441.340124458
+        },
+        {
+          "start": 1179441.495016541,
+          "end": 1179443.14696
+        },
+        {
+          "start": 1179443.31101675,
+          "end": 1179445.947990333
+        },
+        {
+          "start": 1179446.234527083,
+          "end": 1179448.610854541
+        },
+        {
+          "start": 1179448.785542833,
+          "end": 1179459.607034916
+        },
+        {
+          "start": 1179459.615296708,
+          "end": 1179459.616257833
+        },
+        {
+          "start": 1179461.770949833,
+          "end": 1179510.311572583
+        },
+        {
+          "start": 1179510.510252875,
+          "end": 1179517.903468166
+        },
+        {
+          "start": 1179518.2238695,
+          "end": 1179587.029766833
+        },
+        {
+          "start": 1179587.202962125,
+          "end": 1179596.199167083
+        },
+        {
+          "start": 1179596.553701833,
+          "end": 1179682.189018708
+        },
+        {
+          "start": 1179682.199303208,
+          "end": 1179682.200581833
+        },
+        {
+          "start": 1179684.478705333,
+          "end": 1179686.480592708
+        },
+        {
+          "start": 1179686.849527041,
+          "end": 1179822.534450833
+        },
+        {
+          "start": 1179822.76056125,
+          "end": 1179824.8580745
+        },
+        {
+          "start": 1179825.271394625,
+          "end": 1179949.794675375
+        },
+        {
+          "start": 1179949.80414475,
+          "end": 1179949.805454083
+        },
+        {
+          "start": 1179952.033324958,
+          "end": 1179954.334921416
+        },
+        {
+          "start": 1179954.696731791,
+          "end": 1180045.73953625
+        },
+        {
+          "start": 1180045.966210291,
+          "end": 1180052.350902583
+        },
+        {
+          "start": 1180052.363899916,
+          "end": 1180052.365301291
+        },
+        {
+          "start": 1180054.583970541,
+          "end": 1180056.932904458
+        },
+        {
+          "start": 1180057.319215916,
+          "end": 1180193.491755916
+        },
+        {
+          "start": 1180193.727899875,
+          "end": 1180200.93997475
+        },
+        {
+          "start": 1180201.397803166,
+          "end": 1180300.20839575
+        },
+        {
+          "start": 1180300.629724958,
+          "end": 1180307.367181375
+        },
+        {
+          "start": 1180307.597825458,
+          "end": 1180312.517037291
+        },
+        {
+          "start": 1180312.962073583,
+          "end": 1180389.282805625
+        },
+        {
+          "start": 1180389.792020708,
+          "end": 1180429.055232916
+        },
+        {
+          "start": 1180429.638546791,
+          "end": 1180496.411499083
+        },
+        {
+          "start": 1180496.668362541,
+          "end": 1180503.798128333
+        },
+        {
+          "start": 1180504.462846041,
+          "end": 1180643.848235875
+        },
+        {
+          "start": 1180644.134479083,
+          "end": 1180654.730819333
+        },
+        {
+          "start": 1180655.193848666,
+          "end": 1180712.844056541
+        },
+        {
+          "start": 1180713.143912375,
+          "end": 1180717.825902791
+        },
+        {
+          "start": 1180717.889212916,
+          "end": 1180717.889234958
+        },
+        {
+          "start": 1180720.167331041,
+          "end": 1180728.871407333
+        },
+        {
+          "start": 1180728.900418083,
+          "end": 1180728.901564583
+        },
+        {
+          "start": 1180731.251955291,
+          "end": 1180736.80513825
+        },
+        {
+          "start": 1180736.816389166,
+          "end": 1180736.817351791
+        },
+        {
+          "start": 1180739.108510666,
+          "end": 1180749.197874
+        },
+        {
+          "start": 1180749.709693916,
+          "end": 1180825.049354333
+        },
+        {
+          "start": 1180825.30823225,
+          "end": 1180828.592591916
+        },
+        {
+          "start": 1180829.112687958,
+          "end": 1180853.873080125
+        },
+        {
+          "start": 1180854.378802416,
+          "end": 1180990.912521
+        },
+        {
+          "start": 1180990.925748416,
+          "end": 1180990.926848916
+        },
+        {
+          "start": 1180993.24279525,
+          "end": 1180996.707873083
+        },
+        {
+          "start": 1180997.185754125,
+          "end": 1181040.915654666
+        },
+        {
+          "start": 1181041.20781925,
+          "end": 1181103.528485916
+        },
+        {
+          "start": 1181103.541818458,
+          "end": 1181103.54280425
+        },
+        {
+          "start": 1181105.847399708,
+          "end": 1181115.106468375
+        },
+        {
+          "start": 1181115.4460915,
+          "end": 1181121.968366666
+        },
+        {
+          "start": 1181121.981999833,
+          "end": 1181121.982946458
+        },
+        {
+          "start": 1181124.283035625,
+          "end": 1181127.351518833
+        },
+        {
+          "start": 1181127.928328708,
+          "end": 1181208.547394625
+        },
+        {
+          "start": 1181209.281804416,
+          "end": 1181240.018620625
+        },
+        {
+          "start": 1181240.486078541,
+          "end": 1181245.272460458
+        },
+        {
+          "start": 1181245.758634958,
+          "end": 1181252.129395083
+        },
+        {
+          "start": 1181252.143356458,
+          "end": 1181252.144373333
+        },
+        {
+          "start": 1181254.480540375,
+          "end": 1181269.217926166
+        },
+        {
+          "start": 1181269.231335166,
+          "end": 1181269.232910416
+        },
+        {
+          "start": 1181271.566750916,
+          "end": 1181292.268398541
+        },
+        {
+          "start": 1181292.683129875,
+          "end": 1181295.903158458
+        },
+        {
+          "start": 1181296.386257375,
+          "end": 1181300.067522375
+        },
+        {
+          "start": 1181300.576214166,
+          "end": 1181312.467559916
+        },
+        {
+          "start": 1181312.478740083,
+          "end": 1181312.47977725
+        },
+        {
+          "start": 1181314.897367041,
+          "end": 1181318.250874041
+        },
+        {
+          "start": 1181318.74785225,
+          "end": 1181322.523973583
+        },
+        {
+          "start": 1181323.058694708,
+          "end": 1181381.084816166
+        },
+        {
+          "start": 1181381.095888416,
+          "end": 1181381.097405916
+        },
+        {
+          "start": 1181383.511850666,
+          "end": 1181386.811427625
+        },
+        {
+          "start": 1181387.266429916,
+          "end": 1181394.410737083
+        },
+        {
+          "start": 1181394.979843458,
+          "end": 1181428.201800458
+        },
+        {
+          "start": 1181428.213346,
+          "end": 1181428.214397833
+        },
+        {
+          "start": 1181430.549294583,
+          "end": 1181434.020480875
+        },
+        {
+          "start": 1181435.994078041,
+          "end": 1181511.067269291
+        },
+        {
+          "start": 1181512.989137166,
+          "end": 1181545.751037625
+        },
+        {
+          "start": 1181546.282895625,
+          "end": 1181550.217013458
+        },
+        {
+          "start": 1181550.71557025,
+          "end": 1181588.299110833
+        },
+        {
+          "start": 1181588.649691041,
+          "end": 1181592.17201025
+        },
+        {
+          "start": 1181594.11988775,
+          "end": 1181606.770478625
+        },
+        {
+          "start": 1181607.461517625,
+          "end": 1181614.361411875
+        },
+        {
+          "start": 1181615.038625208,
+          "end": 1181625.128864416
+        },
+        {
+          "start": 1181625.986494791,
+          "end": 1181660.423938791
+        },
+        {
+          "start": 1182125.950115416,
+          "end": 1182144.693582333
+        },
+        {
+          "start": 1182145.232561291,
+          "end": 1182163.951764041
+        },
+        {
+          "start": 1182164.309450708,
+          "end": 1182173.10324
+        },
+        {
+          "start": 1182173.63637975,
+          "end": 1182464.143139125
+        },
+        {
+          "start": 1182464.55347975,
+          "end": 1182505.957158916
+        },
+        {
+          "start": 1182506.31867025,
+          "end": 1182512.014812625
+        },
+        {
+          "start": 1182512.641679583,
+          "end": 1182609.21764825
+        },
+        {
+          "start": 1182609.230400041,
+          "end": 1182609.231335416
+        },
+        {
+          "start": 1182611.700726541,
+          "end": 1182618.324347166
+        },
+        {
+          "start": 1182618.979718875,
+          "end": 1182636.226017625
+        },
+        {
+          "start": 1182636.82826525,
+          "end": 1182641.236279583
+        },
+        {
+          "start": 1182641.787590541,
+          "end": 1182823.457823291
+        },
+        {
+          "start": 1182823.474263166,
+          "end": 1182823.475673958
+        },
+        {
+          "start": 1182825.902251083,
+          "end": 1182829.859692416
+        },
+        {
+          "start": 1182830.418723541,
+          "end": 1182887.431545416
+        },
+        {
+          "start": 1182888.031543916,
+          "end": 1182904.337731541
+        },
+        {
+          "start": 1182904.353526875,
+          "end": 1182904.354542666
+        },
+        {
+          "start": 1182906.769331583,
+          "end": 1182913.602403541
+        },
+        {
+          "start": 1182914.183348416,
+          "end": 1182986.619786041
+        },
+        {
+          "start": 1182986.637323083,
+          "end": 1182986.638766166
+        },
+        {
+          "start": 1182989.036595958,
+          "end": 1183002.889683458
+        },
+        {
+          "start": 1183003.478061583,
+          "end": 1183036.203473166
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "qwen",
+      "role": "supervisor",
+      "pid": 40251,
+      "assistantUsage": {
+        "input": 58274,
+        "output": 55158,
+        "cacheRead": 7088866,
+        "cacheWrite": 0,
+        "totalTokens": 7202298
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 58274,
+        "output": 55158,
+        "cacheRead": 7088866,
+        "cacheWrite": 0,
+        "totalTokens": 7202298
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 76.776,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1178431.083491833,
+          "end": 1178434.749943541
+        },
+        {
+          "start": 1178434.823426041,
+          "end": 1178436.95369175
+        },
+        {
+          "start": 1178437.197243291,
+          "end": 1178678.102760166
+        },
+        {
+          "start": 1178678.443095375,
+          "end": 1178682.878360666
+        },
+        {
+          "start": 1178683.15512525,
+          "end": 1178687.9353005
+        },
+        {
+          "start": 1178688.252568958,
+          "end": 1178692.866924083
+        },
+        {
+          "start": 1178692.879352625,
+          "end": 1178692.880026958
+        },
+        {
+          "start": 1178695.039303958,
+          "end": 1178702.29021575
+        },
+        {
+          "start": 1178702.483173833,
+          "end": 1178708.060479625
+        },
+        {
+          "start": 1178708.388867041,
+          "end": 1178717.110791666
+        },
+        {
+          "start": 1178717.121232,
+          "end": 1178717.1220025
+        },
+        {
+          "start": 1178719.286230833,
+          "end": 1178721.58042
+        },
+        {
+          "start": 1178721.7075995,
+          "end": 1178725.503899625
+        },
+        {
+          "start": 1178725.840706125,
+          "end": 1178733.635859375
+        },
+        {
+          "start": 1178748.950051375,
+          "end": 1178753.202963083
+        },
+        {
+          "start": 1178773.607146375,
+          "end": 1178780.635299708
+        },
+        {
+          "start": 1178780.927769208,
+          "end": 1178787.77147775
+        },
+        {
+          "start": 1178787.948143083,
+          "end": 1178791.442662541
+        },
+        {
+          "start": 1178791.863674666,
+          "end": 1178796.69968075
+        },
+        {
+          "start": 1178796.923400125,
+          "end": 1178807.951205791
+        },
+        {
+          "start": 1178808.254027833,
+          "end": 1178816.234069
+        },
+        {
+          "start": 1178816.434943916,
+          "end": 1178820.691402958
+        },
+        {
+          "start": 1178820.90987725,
+          "end": 1178827.74305625
+        },
+        {
+          "start": 1178828.096833583,
+          "end": 1178833.184319375
+        },
+        {
+          "start": 1178863.564050875,
+          "end": 1178868.612008916
+        },
+        {
+          "start": 1178909.009773875,
+          "end": 1178913.487619
+        },
+        {
+          "start": 1178973.900018041,
+          "end": 1178978.425152541
+        },
+        {
+          "start": 1179068.624186416,
+          "end": 1179070.093193083
+        },
+        {
+          "start": 1179070.43395125,
+          "end": 1179073.352991375
+        },
+        {
+          "start": 1179073.671895083,
+          "end": 1179076.466209875
+        },
+        {
+          "start": 1179076.827677333,
+          "end": 1179081.109604666
+        },
+        {
+          "start": 1179111.47948025,
+          "end": 1179113.760569333
+        },
+        {
+          "start": 1179174.117992791,
+          "end": 1179176.359774708
+        },
+        {
+          "start": 1179266.564865875,
+          "end": 1179267.947581875
+        },
+        {
+          "start": 1179268.319238125,
+          "end": 1179272.172016583
+        },
+        {
+          "start": 1179272.193267875,
+          "end": 1179272.194241458
+        },
+        {
+          "start": 1179274.402085041,
+          "end": 1179277.105011958
+        },
+        {
+          "start": 1179277.118401166,
+          "end": 1179277.119269791
+        },
+        {
+          "start": 1179279.334567458,
+          "end": 1179281.993963
+        },
+        {
+          "start": 1179282.202904708,
+          "end": 1179285.398770333
+        },
+        {
+          "start": 1179285.433684041,
+          "end": 1179285.437460958
+        },
+        {
+          "start": 1179287.654827916,
+          "end": 1179391.354807208
+        },
+        {
+          "start": 1179391.587646208,
+          "end": 1179409.872653375
+        },
+        {
+          "start": 1179410.118458333,
+          "end": 1179412.497582583
+        },
+        {
+          "start": 1179412.698508791,
+          "end": 1179416.749674333
+        },
+        {
+          "start": 1179427.159512125,
+          "end": 1179433.212825916
+        },
+        {
+          "start": 1179463.597176458,
+          "end": 1179472.068529041
+        },
+        {
+          "start": 1179472.498265916,
+          "end": 1179476.680633791
+        },
+        {
+          "start": 1179476.939017416,
+          "end": 1179485.625162666
+        },
+        {
+          "start": 1179546.157301666,
+          "end": 1179551.029972125
+        },
+        {
+          "start": 1179641.286803666,
+          "end": 1179644.364128083
+        },
+        {
+          "start": 1179644.751362791,
+          "end": 1179649.786569583
+        },
+        {
+          "start": 1179740.069844416,
+          "end": 1179743.156501208
+        },
+        {
+          "start": 1179743.564374125,
+          "end": 1179748.606399666
+        },
+        {
+          "start": 1179838.843446541,
+          "end": 1179842.033780125
+        },
+        {
+          "start": 1179842.434943,
+          "end": 1179847.486225583
+        },
+        {
+          "start": 1179937.735369291,
+          "end": 1179940.917289791
+        },
+        {
+          "start": 1179941.308504333,
+          "end": 1179946.24457525
+        },
+        {
+          "start": 1180036.505288041,
+          "end": 1180039.714481208
+        },
+        {
+          "start": 1180040.20493625,
+          "end": 1180045.008238333
+        },
+        {
+          "start": 1180135.297943,
+          "end": 1180138.38245825
+        },
+        {
+          "start": 1180138.842708708,
+          "end": 1180143.878329666
+        },
+        {
+          "start": 1180234.147045333,
+          "end": 1180237.266932375
+        },
+        {
+          "start": 1180237.679851041,
+          "end": 1180242.716802583
+        },
+        {
+          "start": 1180332.991145833,
+          "end": 1180336.15522575
+        },
+        {
+          "start": 1180336.588720333,
+          "end": 1180342.397237041
+        },
+        {
+          "start": 1180342.808629708,
+          "end": 1180350.837481708
+        },
+        {
+          "start": 1180351.297404666,
+          "end": 1180355.523252875
+        },
+        {
+          "start": 1180355.782654,
+          "end": 1180362.09934575
+        },
+        {
+          "start": 1180452.38778625,
+          "end": 1180455.645073416
+        },
+        {
+          "start": 1180456.073378041,
+          "end": 1180461.353064958
+        },
+        {
+          "start": 1180551.622426333,
+          "end": 1180554.897098833
+        },
+        {
+          "start": 1180555.311663541,
+          "end": 1180560.780071625
+        },
+        {
+          "start": 1180651.06725975,
+          "end": 1180654.345678791
+        },
+        {
+          "start": 1180655.013284083,
+          "end": 1180660.560615541
+        },
+        {
+          "start": 1180750.855548916,
+          "end": 1180754.2662925
+        },
+        {
+          "start": 1180754.711545041,
+          "end": 1180760.756492
+        },
+        {
+          "start": 1180761.195432833,
+          "end": 1180766.155468833
+        },
+        {
+          "start": 1180856.429256125,
+          "end": 1180859.88267775
+        },
+        {
+          "start": 1180860.347512708,
+          "end": 1180865.695982791
+        },
+        {
+          "start": 1180955.98293175,
+          "end": 1180959.449365916
+        },
+        {
+          "start": 1180959.874512375,
+          "end": 1180965.627310458
+        },
+        {
+          "start": 1181055.936044166,
+          "end": 1181059.375944291
+        },
+        {
+          "start": 1181059.854495958,
+          "end": 1181067.374504125
+        },
+        {
+          "start": 1181157.734962,
+          "end": 1181161.222887708
+        },
+        {
+          "start": 1181161.6738835,
+          "end": 1181167.28819275
+        },
+        {
+          "start": 1181257.596779208,
+          "end": 1181261.139297125
+        },
+        {
+          "start": 1181261.565135041,
+          "end": 1181267.289598041
+        },
+        {
+          "start": 1181357.708027458,
+          "end": 1181361.18233225
+        },
+        {
+          "start": 1181361.616761208,
+          "end": 1181367.339063375
+        },
+        {
+          "start": 1181457.642428541,
+          "end": 1181461.170657458
+        },
+        {
+          "start": 1181461.621557666,
+          "end": 1181467.342090208
+        },
+        {
+          "start": 1181557.670514375,
+          "end": 1181561.345268041
+        },
+        {
+          "start": 1181561.79180425,
+          "end": 1181567.663099083
+        },
+        {
+          "start": 1181658.104526416,
+          "end": 1181660.905627916
+        },
+        {
+          "start": 1181661.426098166,
+          "end": 1181663.838912583
+        },
+        {
+          "start": 1181754.15172625,
+          "end": 1181755.752957875
+        },
+        {
+          "start": 1181756.202895166,
+          "end": 1181960.161689166
+        },
+        {
+          "start": 1181960.467739875,
+          "end": 1182033.062898
+        },
+        {
+          "start": 1182033.660522166,
+          "end": 1182082.101165208
+        },
+        {
+          "start": 1182082.5914035,
+          "end": 1182120.181936708
+        },
+        {
+          "start": 1182120.193449041,
+          "end": 1182120.194588541
+        },
+        {
+          "start": 1182122.583093625,
+          "end": 1182125.547740041
+        },
+        {
+          "start": 1182125.86179925,
+          "end": 1182130.877079916
+        },
+        {
+          "start": 1182141.424173958,
+          "end": 1182149.825817375
+        },
+        {
+          "start": 1182240.199501625,
+          "end": 1182244.06817325
+        },
+        {
+          "start": 1182244.572327583,
+          "end": 1182251.392605333
+        },
+        {
+          "start": 1182251.963080208,
+          "end": 1182258.108905291
+        },
+        {
+          "start": 1182258.682402916,
+          "end": 1182270.384548333
+        },
+        {
+          "start": 1182360.787918916,
+          "end": 1182364.630299625
+        },
+        {
+          "start": 1182365.148617875,
+          "end": 1182371.363379125
+        },
+        {
+          "start": 1182461.978059125,
+          "end": 1182465.221637833
+        },
+        {
+          "start": 1182465.815057291,
+          "end": 1182472.088816833
+        },
+        {
+          "start": 1182562.490873083,
+          "end": 1182566.460444333
+        },
+        {
+          "start": 1182567.037949958,
+          "end": 1182573.390176041
+        },
+        {
+          "start": 1182664.074028625,
+          "end": 1182668.039020208
+        },
+        {
+          "start": 1182668.720512625,
+          "end": 1182674.991162
+        },
+        {
+          "start": 1182765.378075,
+          "end": 1182769.368715083
+        },
+        {
+          "start": 1182769.88365475,
+          "end": 1182776.179212916
+        },
+        {
+          "start": 1182866.588705958,
+          "end": 1182870.580202666
+        },
+        {
+          "start": 1182871.077598541,
+          "end": 1182877.494247625
+        },
+        {
+          "start": 1182967.88740825,
+          "end": 1182971.824739791
+        },
+        {
+          "start": 1182972.345744666,
+          "end": 1182979.419424541
+        },
+        {
+          "start": 1182979.994704125,
+          "end": 1182985.931144041
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 76.777,
+  "summedModelActiveMinutes": 134.191,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 44416,
+      "output": 90353,
+      "cacheRead": 6944724,
+      "totalTokens": 7079493
+    },
+    "qwen": {
+      "input": 58274,
+      "output": 55158,
+      "cacheRead": 7088866,
+      "totalTokens": 7202298
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 57.415,
+    "qwen": 76.776
+  },
+  "localProductScore": 78.8,
+  "localProductTargetMet": false,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  },
+  "localProductScoreExact": 78.75,
+  "attemptNumber": 1,
+  "priorInfrastructureInvalidAttempts": [],
+  "baselineAlreadyA": false,
+  "baselineScore": 77,
+  "baselineProductScore": 76.25,
+  "baselineTargetMet": false,
+  "baselineReport": "strategies/reports/rtfm_ornith_04_breakout_editor.report.json",
+  "baselineCreationCost": {
+    "model": "ornith",
+    "role": "worker",
+    "pid": 85193,
+    "assistantUsage": {
+      "input": 27939,
+      "output": 61614,
+      "cacheRead": 4179961,
+      "cacheWrite": 0,
+      "totalTokens": 4269514
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 27939,
+      "output": 61614,
+      "cacheRead": 4179961,
+      "cacheWrite": 0,
+      "totalTokens": 4269514
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 29.406,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1161312.525323875,
+        "end": 1161314.918946083
+      },
+      {
+        "start": 1161314.966268416,
+        "end": 1161315.816241875
+      },
+      {
+        "start": 1161315.861645833,
+        "end": 1161317.210229166
+      },
+      {
+        "start": 1161317.40314525,
+        "end": 1161494.487152791
+      },
+      {
+        "start": 1161494.567496291,
+        "end": 1161500.161670291
+      },
+      {
+        "start": 1161500.427833125,
+        "end": 1161555.7056735
+      },
+      {
+        "start": 1161555.958206041,
+        "end": 1161564.065012625
+      },
+      {
+        "start": 1161564.311123208,
+        "end": 1161569.352949041
+      },
+      {
+        "start": 1161569.634916791,
+        "end": 1161582.755225333
+      },
+      {
+        "start": 1161583.062147791,
+        "end": 1161606.979667916
+      },
+      {
+        "start": 1161607.276491333,
+        "end": 1161646.149696083
+      },
+      {
+        "start": 1161646.257319583,
+        "end": 1161651.162409416
+      },
+      {
+        "start": 1161651.283297791,
+        "end": 1161662.012701416
+      },
+      {
+        "start": 1161662.301713708,
+        "end": 1161669.383555708
+      },
+      {
+        "start": 1161669.489773083,
+        "end": 1161674.02635025
+      },
+      {
+        "start": 1161674.300624875,
+        "end": 1161707.622137875
+      },
+      {
+        "start": 1161707.742055375,
+        "end": 1161716.382462583
+      },
+      {
+        "start": 1161716.513451708,
+        "end": 1161722.946432458
+      },
+      {
+        "start": 1161723.285439625,
+        "end": 1161772.8399695
+      },
+      {
+        "start": 1161772.981714541,
+        "end": 1161776.940791291
+      },
+      {
+        "start": 1161777.238791208,
+        "end": 1161864.324845833
+      },
+      {
+        "start": 1161864.706533041,
+        "end": 1161893.132089958
+      },
+      {
+        "start": 1161893.459964875,
+        "end": 1161899.769636083
+      },
+      {
+        "start": 1161900.072146333,
+        "end": 1161905.700987458
+      },
+      {
+        "start": 1161905.988286125,
+        "end": 1161916.696378208
+      },
+      {
+        "start": 1161917.048241791,
+        "end": 1161938.22408325
+      },
+      {
+        "start": 1161938.5095615,
+        "end": 1161975.6434745
+      },
+      {
+        "start": 1161976.007875083,
+        "end": 1161990.475651125
+      },
+      {
+        "start": 1161990.850943666,
+        "end": 1162019.104202291
+      },
+      {
+        "start": 1162019.4880155,
+        "end": 1162030.022234625
+      },
+      {
+        "start": 1162030.346373375,
+        "end": 1162046.654624916
+      },
+      {
+        "start": 1162046.825339958,
+        "end": 1162052.925558958
+      },
+      {
+        "start": 1162053.268101833,
+        "end": 1162085.730353916
+      },
+      {
+        "start": 1162085.912370875,
+        "end": 1162098.330701041
+      },
+      {
+        "start": 1162098.341306333,
+        "end": 1162098.341877083
+      },
+      {
+        "start": 1162100.535996291,
+        "end": 1162128.934446875
+      },
+      {
+        "start": 1162129.125562916,
+        "end": 1162132.740978833
+      },
+      {
+        "start": 1162133.082868208,
+        "end": 1162184.348254833
+      },
+      {
+        "start": 1162184.786546041,
+        "end": 1162208.892355416
+      },
+      {
+        "start": 1162209.089270375,
+        "end": 1162212.512146458
+      },
+      {
+        "start": 1162212.922575916,
+        "end": 1162238.912714458
+      },
+      {
+        "start": 1162239.101718208,
+        "end": 1162249.94810025
+      },
+      {
+        "start": 1162250.321682958,
+        "end": 1162266.386772625
+      },
+      {
+        "start": 1162266.398765416,
+        "end": 1162266.399326041
+      },
+      {
+        "start": 1162268.601071875,
+        "end": 1162273.850083541
+      },
+      {
+        "start": 1162274.215731208,
+        "end": 1162280.043431291
+      },
+      {
+        "start": 1162280.453101416,
+        "end": 1162293.189973208
+      },
+      {
+        "start": 1162293.567558,
+        "end": 1162320.675147083
+      },
+      {
+        "start": 1162320.891690125,
+        "end": 1162333.803056541
+      },
+      {
+        "start": 1162334.035329333,
+        "end": 1162340.388492875
+      },
+      {
+        "start": 1162340.799688916,
+        "end": 1162347.400900625
+      },
+      {
+        "start": 1162347.785378416,
+        "end": 1162362.972839083
+      },
+      {
+        "start": 1162363.202575041,
+        "end": 1162369.101150166
+      },
+      {
+        "start": 1162369.477795958,
+        "end": 1162377.932169583
+      },
+      {
+        "start": 1162377.944736666,
+        "end": 1162377.945574708
+      },
+      {
+        "start": 1162380.173927333,
+        "end": 1162391.89175875
+      },
+      {
+        "start": 1162392.115263583,
+        "end": 1162404.387365083
+      },
+      {
+        "start": 1162404.620557833,
+        "end": 1162418.065505291
+      },
+      {
+        "start": 1162418.494088708,
+        "end": 1162474.784142666
+      },
+      {
+        "start": 1162475.249250083,
+        "end": 1162479.293253
+      },
+      {
+        "start": 1162479.659676083,
+        "end": 1162495.317639375
+      },
+      {
+        "start": 1162495.779402375,
+        "end": 1162521.203842
+      },
+      {
+        "start": 1162521.6551575,
+        "end": 1162566.252316041
+      },
+      {
+        "start": 1162566.706200833,
+        "end": 1162589.978691458
+      },
+      {
+        "start": 1162590.221499208,
+        "end": 1162605.30883475
+      },
+      {
+        "start": 1162605.814518875,
+        "end": 1162616.056760083
+      },
+      {
+        "start": 1162616.481422875,
+        "end": 1162620.363550875
+      },
+      {
+        "start": 1162620.762006875,
+        "end": 1162680.949775666
+      },
+      {
+        "start": 1162681.244621958,
+        "end": 1162687.443075833
+      },
+      {
+        "start": 1162687.930733125,
+        "end": 1162697.470272
+      },
+      {
+        "start": 1162697.733690708,
+        "end": 1162703.5101125
+      },
+      {
+        "start": 1162703.934169875,
+        "end": 1162759.319123625
+      },
+      {
+        "start": 1162759.568796291,
+        "end": 1162766.227244291
+      },
+      {
+        "start": 1162766.70946575,
+        "end": 1162809.618197541
+      },
+      {
+        "start": 1162810.177716625,
+        "end": 1162819.633779833
+      },
+      {
+        "start": 1162820.040073208,
+        "end": 1162828.067491041
+      },
+      {
+        "start": 1162828.319625625,
+        "end": 1162853.1274485
+      },
+      {
+        "start": 1162853.3913595,
+        "end": 1162866.676289625
+      },
+      {
+        "start": 1162867.193278833,
+        "end": 1162903.095412291
+      },
+      {
+        "start": 1162903.369546,
+        "end": 1162922.39516725
+      },
+      {
+        "start": 1162922.411395125,
+        "end": 1162922.412017333
+      },
+      {
+        "start": 1162924.694014666,
+        "end": 1162933.381330041
+      },
+      {
+        "start": 1162933.646089875,
+        "end": 1162940.38927075
+      },
+      {
+        "start": 1162940.842529416,
+        "end": 1162956.18030125
+      },
+      {
+        "start": 1162956.667695708,
+        "end": 1162972.08728175
+      },
+      {
+        "start": 1162972.589542791,
+        "end": 1162979.924877
+      },
+      {
+        "start": 1162980.415834666,
+        "end": 1162997.682531416
+      },
+      {
+        "start": 1162998.194219333,
+        "end": 1163011.7977885
+      },
+      {
+        "start": 1163012.077703833,
+        "end": 1163017.778075541
+      },
+      {
+        "start": 1163018.070710625,
+        "end": 1163032.117791541
+      },
+      {
+        "start": 1163032.552633041,
+        "end": 1163035.230884375
+      },
+      {
+        "start": 1163035.524229458,
+        "end": 1163054.446667666
+      },
+      {
+        "start": 1163054.980559291,
+        "end": 1163075.144520625
+      }
+    ],
+    "exitCode": 0
+  },
+  "incrementalRepairCost": {
+    "worker": {
+      "model": "ornith",
+      "role": "worker",
+      "pid": 40249,
+      "assistantUsage": {
+        "input": 44416,
+        "output": 90353,
+        "cacheRead": 6944724,
+        "cacheWrite": 0,
+        "totalTokens": 7079493
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 44416,
+        "output": 90353,
+        "cacheRead": 6944724,
+        "cacheWrite": 0,
+        "totalTokens": 7079493
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 57.415,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1178721.950447208,
+          "end": 1178727.487662416
+        },
+        {
+          "start": 1178727.560445291,
+          "end": 1178729.287424625
+        },
+        {
+          "start": 1178729.510359,
+          "end": 1178730.88297875
+        },
+        {
+          "start": 1178730.975872916,
+          "end": 1178755.5916015
+        },
+        {
+          "start": 1178755.682924083,
+          "end": 1178761.506228208
+        },
+        {
+          "start": 1178761.517283833,
+          "end": 1178761.518293375
+        },
+        {
+          "start": 1178763.618571125,
+          "end": 1178769.372351833
+        },
+        {
+          "start": 1178769.689800458,
+          "end": 1178773.431542041
+        },
+        {
+          "start": 1178773.740631791,
+          "end": 1178782.38985125
+        },
+        {
+          "start": 1178782.699837333,
+          "end": 1178846.817548791
+        },
+        {
+          "start": 1178846.933473208,
+          "end": 1178897.348281875
+        },
+        {
+          "start": 1178897.354656541,
+          "end": 1178897.359449625
+        },
+        {
+          "start": 1178899.477884,
+          "end": 1178907.433619875
+        },
+        {
+          "start": 1178907.7440525,
+          "end": 1178919.722920583
+        },
+        {
+          "start": 1178919.842896916,
+          "end": 1178922.970446791
+        },
+        {
+          "start": 1178923.265453916,
+          "end": 1178926.974983958
+        },
+        {
+          "start": 1178927.105888041,
+          "end": 1178929.211653166
+        },
+        {
+          "start": 1178929.5166955,
+          "end": 1178961.797463125
+        },
+        {
+          "start": 1178961.802043375,
+          "end": 1178961.802681958
+        },
+        {
+          "start": 1178963.945892375,
+          "end": 1178966.677959791
+        },
+        {
+          "start": 1178967.008357458,
+          "end": 1178986.326359875
+        },
+        {
+          "start": 1178986.631665791,
+          "end": 1178989.493874375
+        },
+        {
+          "start": 1178989.63739725,
+          "end": 1179006.028792958
+        },
+        {
+          "start": 1179412.661665833,
+          "end": 1179441.340124458
+        },
+        {
+          "start": 1179441.495016541,
+          "end": 1179443.14696
+        },
+        {
+          "start": 1179443.31101675,
+          "end": 1179445.947990333
+        },
+        {
+          "start": 1179446.234527083,
+          "end": 1179448.610854541
+        },
+        {
+          "start": 1179448.785542833,
+          "end": 1179459.607034916
+        },
+        {
+          "start": 1179459.615296708,
+          "end": 1179459.616257833
+        },
+        {
+          "start": 1179461.770949833,
+          "end": 1179510.311572583
+        },
+        {
+          "start": 1179510.510252875,
+          "end": 1179517.903468166
+        },
+        {
+          "start": 1179518.2238695,
+          "end": 1179587.029766833
+        },
+        {
+          "start": 1179587.202962125,
+          "end": 1179596.199167083
+        },
+        {
+          "start": 1179596.553701833,
+          "end": 1179682.189018708
+        },
+        {
+          "start": 1179682.199303208,
+          "end": 1179682.200581833
+        },
+        {
+          "start": 1179684.478705333,
+          "end": 1179686.480592708
+        },
+        {
+          "start": 1179686.849527041,
+          "end": 1179822.534450833
+        },
+        {
+          "start": 1179822.76056125,
+          "end": 1179824.8580745
+        },
+        {
+          "start": 1179825.271394625,
+          "end": 1179949.794675375
+        },
+        {
+          "start": 1179949.80414475,
+          "end": 1179949.805454083
+        },
+        {
+          "start": 1179952.033324958,
+          "end": 1179954.334921416
+        },
+        {
+          "start": 1179954.696731791,
+          "end": 1180045.73953625
+        },
+        {
+          "start": 1180045.966210291,
+          "end": 1180052.350902583
+        },
+        {
+          "start": 1180052.363899916,
+          "end": 1180052.365301291
+        },
+        {
+          "start": 1180054.583970541,
+          "end": 1180056.932904458
+        },
+        {
+          "start": 1180057.319215916,
+          "end": 1180193.491755916
+        },
+        {
+          "start": 1180193.727899875,
+          "end": 1180200.93997475
+        },
+        {
+          "start": 1180201.397803166,
+          "end": 1180300.20839575
+        },
+        {
+          "start": 1180300.629724958,
+          "end": 1180307.367181375
+        },
+        {
+          "start": 1180307.597825458,
+          "end": 1180312.517037291
+        },
+        {
+          "start": 1180312.962073583,
+          "end": 1180389.282805625
+        },
+        {
+          "start": 1180389.792020708,
+          "end": 1180429.055232916
+        },
+        {
+          "start": 1180429.638546791,
+          "end": 1180496.411499083
+        },
+        {
+          "start": 1180496.668362541,
+          "end": 1180503.798128333
+        },
+        {
+          "start": 1180504.462846041,
+          "end": 1180643.848235875
+        },
+        {
+          "start": 1180644.134479083,
+          "end": 1180654.730819333
+        },
+        {
+          "start": 1180655.193848666,
+          "end": 1180712.844056541
+        },
+        {
+          "start": 1180713.143912375,
+          "end": 1180717.825902791
+        },
+        {
+          "start": 1180717.889212916,
+          "end": 1180717.889234958
+        },
+        {
+          "start": 1180720.167331041,
+          "end": 1180728.871407333
+        },
+        {
+          "start": 1180728.900418083,
+          "end": 1180728.901564583
+        },
+        {
+          "start": 1180731.251955291,
+          "end": 1180736.80513825
+        },
+        {
+          "start": 1180736.816389166,
+          "end": 1180736.817351791
+        },
+        {
+          "start": 1180739.108510666,
+          "end": 1180749.197874
+        },
+        {
+          "start": 1180749.709693916,
+          "end": 1180825.049354333
+        },
+        {
+          "start": 1180825.30823225,
+          "end": 1180828.592591916
+        },
+        {
+          "start": 1180829.112687958,
+          "end": 1180853.873080125
+        },
+        {
+          "start": 1180854.378802416,
+          "end": 1180990.912521
+        },
+        {
+          "start": 1180990.925748416,
+          "end": 1180990.926848916
+        },
+        {
+          "start": 1180993.24279525,
+          "end": 1180996.707873083
+        },
+        {
+          "start": 1180997.185754125,
+          "end": 1181040.915654666
+        },
+        {
+          "start": 1181041.20781925,
+          "end": 1181103.528485916
+        },
+        {
+          "start": 1181103.541818458,
+          "end": 1181103.54280425
+        },
+        {
+          "start": 1181105.847399708,
+          "end": 1181115.106468375
+        },
+        {
+          "start": 1181115.4460915,
+          "end": 1181121.968366666
+        },
+        {
+          "start": 1181121.981999833,
+          "end": 1181121.982946458
+        },
+        {
+          "start": 1181124.283035625,
+          "end": 1181127.351518833
+        },
+        {
+          "start": 1181127.928328708,
+          "end": 1181208.547394625
+        },
+        {
+          "start": 1181209.281804416,
+          "end": 1181240.018620625
+        },
+        {
+          "start": 1181240.486078541,
+          "end": 1181245.272460458
+        },
+        {
+          "start": 1181245.758634958,
+          "end": 1181252.129395083
+        },
+        {
+          "start": 1181252.143356458,
+          "end": 1181252.144373333
+        },
+        {
+          "start": 1181254.480540375,
+          "end": 1181269.217926166
+        },
+        {
+          "start": 1181269.231335166,
+          "end": 1181269.232910416
+        },
+        {
+          "start": 1181271.566750916,
+          "end": 1181292.268398541
+        },
+        {
+          "start": 1181292.683129875,
+          "end": 1181295.903158458
+        },
+        {
+          "start": 1181296.386257375,
+          "end": 1181300.067522375
+        },
+        {
+          "start": 1181300.576214166,
+          "end": 1181312.467559916
+        },
+        {
+          "start": 1181312.478740083,
+          "end": 1181312.47977725
+        },
+        {
+          "start": 1181314.897367041,
+          "end": 1181318.250874041
+        },
+        {
+          "start": 1181318.74785225,
+          "end": 1181322.523973583
+        },
+        {
+          "start": 1181323.058694708,
+          "end": 1181381.084816166
+        },
+        {
+          "start": 1181381.095888416,
+          "end": 1181381.097405916
+        },
+        {
+          "start": 1181383.511850666,
+          "end": 1181386.811427625
+        },
+        {
+          "start": 1181387.266429916,
+          "end": 1181394.410737083
+        },
+        {
+          "start": 1181394.979843458,
+          "end": 1181428.201800458
+        },
+        {
+          "start": 1181428.213346,
+          "end": 1181428.214397833
+        },
+        {
+          "start": 1181430.549294583,
+          "end": 1181434.020480875
+        },
+        {
+          "start": 1181435.994078041,
+          "end": 1181511.067269291
+        },
+        {
+          "start": 1181512.989137166,
+          "end": 1181545.751037625
+        },
+        {
+          "start": 1181546.282895625,
+          "end": 1181550.217013458
+        },
+        {
+          "start": 1181550.71557025,
+          "end": 1181588.299110833
+        },
+        {
+          "start": 1181588.649691041,
+          "end": 1181592.17201025
+        },
+        {
+          "start": 1181594.11988775,
+          "end": 1181606.770478625
+        },
+        {
+          "start": 1181607.461517625,
+          "end": 1181614.361411875
+        },
+        {
+          "start": 1181615.038625208,
+          "end": 1181625.128864416
+        },
+        {
+          "start": 1181625.986494791,
+          "end": 1181660.423938791
+        },
+        {
+          "start": 1182125.950115416,
+          "end": 1182144.693582333
+        },
+        {
+          "start": 1182145.232561291,
+          "end": 1182163.951764041
+        },
+        {
+          "start": 1182164.309450708,
+          "end": 1182173.10324
+        },
+        {
+          "start": 1182173.63637975,
+          "end": 1182464.143139125
+        },
+        {
+          "start": 1182464.55347975,
+          "end": 1182505.957158916
+        },
+        {
+          "start": 1182506.31867025,
+          "end": 1182512.014812625
+        },
+        {
+          "start": 1182512.641679583,
+          "end": 1182609.21764825
+        },
+        {
+          "start": 1182609.230400041,
+          "end": 1182609.231335416
+        },
+        {
+          "start": 1182611.700726541,
+          "end": 1182618.324347166
+        },
+        {
+          "start": 1182618.979718875,
+          "end": 1182636.226017625
+        },
+        {
+          "start": 1182636.82826525,
+          "end": 1182641.236279583
+        },
+        {
+          "start": 1182641.787590541,
+          "end": 1182823.457823291
+        },
+        {
+          "start": 1182823.474263166,
+          "end": 1182823.475673958
+        },
+        {
+          "start": 1182825.902251083,
+          "end": 1182829.859692416
+        },
+        {
+          "start": 1182830.418723541,
+          "end": 1182887.431545416
+        },
+        {
+          "start": 1182888.031543916,
+          "end": 1182904.337731541
+        },
+        {
+          "start": 1182904.353526875,
+          "end": 1182904.354542666
+        },
+        {
+          "start": 1182906.769331583,
+          "end": 1182913.602403541
+        },
+        {
+          "start": 1182914.183348416,
+          "end": 1182986.619786041
+        },
+        {
+          "start": 1182986.637323083,
+          "end": 1182986.638766166
+        },
+        {
+          "start": 1182989.036595958,
+          "end": 1183002.889683458
+        },
+        {
+          "start": 1183003.478061583,
+          "end": 1183036.203473166
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "qwen",
+      "role": "supervisor",
+      "pid": 40251,
+      "assistantUsage": {
+        "input": 58274,
+        "output": 55158,
+        "cacheRead": 7088866,
+        "cacheWrite": 0,
+        "totalTokens": 7202298
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 58274,
+        "output": 55158,
+        "cacheRead": 7088866,
+        "cacheWrite": 0,
+        "totalTokens": 7202298
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 76.776,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1178431.083491833,
+          "end": 1178434.749943541
+        },
+        {
+          "start": 1178434.823426041,
+          "end": 1178436.95369175
+        },
+        {
+          "start": 1178437.197243291,
+          "end": 1178678.102760166
+        },
+        {
+          "start": 1178678.443095375,
+          "end": 1178682.878360666
+        },
+        {
+          "start": 1178683.15512525,
+          "end": 1178687.9353005
+        },
+        {
+          "start": 1178688.252568958,
+          "end": 1178692.866924083
+        },
+        {
+          "start": 1178692.879352625,
+          "end": 1178692.880026958
+        },
+        {
+          "start": 1178695.039303958,
+          "end": 1178702.29021575
+        },
+        {
+          "start": 1178702.483173833,
+          "end": 1178708.060479625
+        },
+        {
+          "start": 1178708.388867041,
+          "end": 1178717.110791666
+        },
+        {
+          "start": 1178717.121232,
+          "end": 1178717.1220025
+        },
+        {
+          "start": 1178719.286230833,
+          "end": 1178721.58042
+        },
+        {
+          "start": 1178721.7075995,
+          "end": 1178725.503899625
+        },
+        {
+          "start": 1178725.840706125,
+          "end": 1178733.635859375
+        },
+        {
+          "start": 1178748.950051375,
+          "end": 1178753.202963083
+        },
+        {
+          "start": 1178773.607146375,
+          "end": 1178780.635299708
+        },
+        {
+          "start": 1178780.927769208,
+          "end": 1178787.77147775
+        },
+        {
+          "start": 1178787.948143083,
+          "end": 1178791.442662541
+        },
+        {
+          "start": 1178791.863674666,
+          "end": 1178796.69968075
+        },
+        {
+          "start": 1178796.923400125,
+          "end": 1178807.951205791
+        },
+        {
+          "start": 1178808.254027833,
+          "end": 1178816.234069
+        },
+        {
+          "start": 1178816.434943916,
+          "end": 1178820.691402958
+        },
+        {
+          "start": 1178820.90987725,
+          "end": 1178827.74305625
+        },
+        {
+          "start": 1178828.096833583,
+          "end": 1178833.184319375
+        },
+        {
+          "start": 1178863.564050875,
+          "end": 1178868.612008916
+        },
+        {
+          "start": 1178909.009773875,
+          "end": 1178913.487619
+        },
+        {
+          "start": 1178973.900018041,
+          "end": 1178978.425152541
+        },
+        {
+          "start": 1179068.624186416,
+          "end": 1179070.093193083
+        },
+        {
+          "start": 1179070.43395125,
+          "end": 1179073.352991375
+        },
+        {
+          "start": 1179073.671895083,
+          "end": 1179076.466209875
+        },
+        {
+          "start": 1179076.827677333,
+          "end": 1179081.109604666
+        },
+        {
+          "start": 1179111.47948025,
+          "end": 1179113.760569333
+        },
+        {
+          "start": 1179174.117992791,
+          "end": 1179176.359774708
+        },
+        {
+          "start": 1179266.564865875,
+          "end": 1179267.947581875
+        },
+        {
+          "start": 1179268.319238125,
+          "end": 1179272.172016583
+        },
+        {
+          "start": 1179272.193267875,
+          "end": 1179272.194241458
+        },
+        {
+          "start": 1179274.402085041,
+          "end": 1179277.105011958
+        },
+        {
+          "start": 1179277.118401166,
+          "end": 1179277.119269791
+        },
+        {
+          "start": 1179279.334567458,
+          "end": 1179281.993963
+        },
+        {
+          "start": 1179282.202904708,
+          "end": 1179285.398770333
+        },
+        {
+          "start": 1179285.433684041,
+          "end": 1179285.437460958
+        },
+        {
+          "start": 1179287.654827916,
+          "end": 1179391.354807208
+        },
+        {
+          "start": 1179391.587646208,
+          "end": 1179409.872653375
+        },
+        {
+          "start": 1179410.118458333,
+          "end": 1179412.497582583
+        },
+        {
+          "start": 1179412.698508791,
+          "end": 1179416.749674333
+        },
+        {
+          "start": 1179427.159512125,
+          "end": 1179433.212825916
+        },
+        {
+          "start": 1179463.597176458,
+          "end": 1179472.068529041
+        },
+        {
+          "start": 1179472.498265916,
+          "end": 1179476.680633791
+        },
+        {
+          "start": 1179476.939017416,
+          "end": 1179485.625162666
+        },
+        {
+          "start": 1179546.157301666,
+          "end": 1179551.029972125
+        },
+        {
+          "start": 1179641.286803666,
+          "end": 1179644.364128083
+        },
+        {
+          "start": 1179644.751362791,
+          "end": 1179649.786569583
+        },
+        {
+          "start": 1179740.069844416,
+          "end": 1179743.156501208
+        },
+        {
+          "start": 1179743.564374125,
+          "end": 1179748.606399666
+        },
+        {
+          "start": 1179838.843446541,
+          "end": 1179842.033780125
+        },
+        {
+          "start": 1179842.434943,
+          "end": 1179847.486225583
+        },
+        {
+          "start": 1179937.735369291,
+          "end": 1179940.917289791
+        },
+        {
+          "start": 1179941.308504333,
+          "end": 1179946.24457525
+        },
+        {
+          "start": 1180036.505288041,
+          "end": 1180039.714481208
+        },
+        {
+          "start": 1180040.20493625,
+          "end": 1180045.008238333
+        },
+        {
+          "start": 1180135.297943,
+          "end": 1180138.38245825
+        },
+        {
+          "start": 1180138.842708708,
+          "end": 1180143.878329666
+        },
+        {
+          "start": 1180234.147045333,
+          "end": 1180237.266932375
+        },
+        {
+          "start": 1180237.679851041,
+          "end": 1180242.716802583
+        },
+        {
+          "start": 1180332.991145833,
+          "end": 1180336.15522575
+        },
+        {
+          "start": 1180336.588720333,
+          "end": 1180342.397237041
+        },
+        {
+          "start": 1180342.808629708,
+          "end": 1180350.837481708
+        },
+        {
+          "start": 1180351.297404666,
+          "end": 1180355.523252875
+        },
+        {
+          "start": 1180355.782654,
+          "end": 1180362.09934575
+        },
+        {
+          "start": 1180452.38778625,
+          "end": 1180455.645073416
+        },
+        {
+          "start": 1180456.073378041,
+          "end": 1180461.353064958
+        },
+        {
+          "start": 1180551.622426333,
+          "end": 1180554.897098833
+        },
+        {
+          "start": 1180555.311663541,
+          "end": 1180560.780071625
+        },
+        {
+          "start": 1180651.06725975,
+          "end": 1180654.345678791
+        },
+        {
+          "start": 1180655.013284083,
+          "end": 1180660.560615541
+        },
+        {
+          "start": 1180750.855548916,
+          "end": 1180754.2662925
+        },
+        {
+          "start": 1180754.711545041,
+          "end": 1180760.756492
+        },
+        {
+          "start": 1180761.195432833,
+          "end": 1180766.155468833
+        },
+        {
+          "start": 1180856.429256125,
+          "end": 1180859.88267775
+        },
+        {
+          "start": 1180860.347512708,
+          "end": 1180865.695982791
+        },
+        {
+          "start": 1180955.98293175,
+          "end": 1180959.449365916
+        },
+        {
+          "start": 1180959.874512375,
+          "end": 1180965.627310458
+        },
+        {
+          "start": 1181055.936044166,
+          "end": 1181059.375944291
+        },
+        {
+          "start": 1181059.854495958,
+          "end": 1181067.374504125
+        },
+        {
+          "start": 1181157.734962,
+          "end": 1181161.222887708
+        },
+        {
+          "start": 1181161.6738835,
+          "end": 1181167.28819275
+        },
+        {
+          "start": 1181257.596779208,
+          "end": 1181261.139297125
+        },
+        {
+          "start": 1181261.565135041,
+          "end": 1181267.289598041
+        },
+        {
+          "start": 1181357.708027458,
+          "end": 1181361.18233225
+        },
+        {
+          "start": 1181361.616761208,
+          "end": 1181367.339063375
+        },
+        {
+          "start": 1181457.642428541,
+          "end": 1181461.170657458
+        },
+        {
+          "start": 1181461.621557666,
+          "end": 1181467.342090208
+        },
+        {
+          "start": 1181557.670514375,
+          "end": 1181561.345268041
+        },
+        {
+          "start": 1181561.79180425,
+          "end": 1181567.663099083
+        },
+        {
+          "start": 1181658.104526416,
+          "end": 1181660.905627916
+        },
+        {
+          "start": 1181661.426098166,
+          "end": 1181663.838912583
+        },
+        {
+          "start": 1181754.15172625,
+          "end": 1181755.752957875
+        },
+        {
+          "start": 1181756.202895166,
+          "end": 1181960.161689166
+        },
+        {
+          "start": 1181960.467739875,
+          "end": 1182033.062898
+        },
+        {
+          "start": 1182033.660522166,
+          "end": 1182082.101165208
+        },
+        {
+          "start": 1182082.5914035,
+          "end": 1182120.181936708
+        },
+        {
+          "start": 1182120.193449041,
+          "end": 1182120.194588541
+        },
+        {
+          "start": 1182122.583093625,
+          "end": 1182125.547740041
+        },
+        {
+          "start": 1182125.86179925,
+          "end": 1182130.877079916
+        },
+        {
+          "start": 1182141.424173958,
+          "end": 1182149.825817375
+        },
+        {
+          "start": 1182240.199501625,
+          "end": 1182244.06817325
+        },
+        {
+          "start": 1182244.572327583,
+          "end": 1182251.392605333
+        },
+        {
+          "start": 1182251.963080208,
+          "end": 1182258.108905291
+        },
+        {
+          "start": 1182258.682402916,
+          "end": 1182270.384548333
+        },
+        {
+          "start": 1182360.787918916,
+          "end": 1182364.630299625
+        },
+        {
+          "start": 1182365.148617875,
+          "end": 1182371.363379125
+        },
+        {
+          "start": 1182461.978059125,
+          "end": 1182465.221637833
+        },
+        {
+          "start": 1182465.815057291,
+          "end": 1182472.088816833
+        },
+        {
+          "start": 1182562.490873083,
+          "end": 1182566.460444333
+        },
+        {
+          "start": 1182567.037949958,
+          "end": 1182573.390176041
+        },
+        {
+          "start": 1182664.074028625,
+          "end": 1182668.039020208
+        },
+        {
+          "start": 1182668.720512625,
+          "end": 1182674.991162
+        },
+        {
+          "start": 1182765.378075,
+          "end": 1182769.368715083
+        },
+        {
+          "start": 1182769.88365475,
+          "end": 1182776.179212916
+        },
+        {
+          "start": 1182866.588705958,
+          "end": 1182870.580202666
+        },
+        {
+          "start": 1182871.077598541,
+          "end": 1182877.494247625
+        },
+        {
+          "start": 1182967.88740825,
+          "end": 1182971.824739791
+        },
+        {
+          "start": 1182972.345744666,
+          "end": 1182979.419424541
+        },
+        {
+          "start": 1182979.994704125,
+          "end": 1182985.931144041
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "artifactChangedFromSeed": true,
+  "productDelta": 2.5,
+  "newlyReachedAQuality": false
+}

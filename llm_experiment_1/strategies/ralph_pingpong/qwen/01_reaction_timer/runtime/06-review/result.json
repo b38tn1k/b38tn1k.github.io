@@ -1,0 +1,20 @@
+{
+  "round": 3,
+  "role": "review",
+  "modelLabel": "ornith",
+  "model": "ornith-1.5:35b-256k",
+  "started": "2026-11-17T06:18:13.605870+00:00",
+  "events": "ralph_pingpong/qwen/01_reaction_timer/runtime/06-review/events.jsonl",
+  "status": "completed",
+  "finished": "2026-11-17T06:21:45.641112+00:00",
+  "minutes": 3.53,
+  "reason": "agent_settled",
+  "exitCode": 143,
+  "proof": {
+    "forcedActivations": 0,
+    "completionRequests": 0,
+    "red": 0,
+    "green": 0
+  },
+  "testExitCode": 1
+}

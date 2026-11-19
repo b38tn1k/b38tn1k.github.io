@@ -1,0 +1,53 @@
+{
+  "method": "Independent final-source VM/DOM/nativeCanvas2D tests. Real handlers, scheduled callbacks, pixels and export bytes. Closure exposure provides existing state/functions for controlled fixtures without replacing app algorithms. No native browser layout, GPU, hit testing or physical-device verification.",
+  "sha256": "20353a74e6741d96cb50026146eabd19080296efca49b8f471c9f9cc9e7c9b6e",
+  "checks": [
+    {
+      "id": "actual_play_turn_pause_resume_restart",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pauseResume": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "actual_scheduled_difficulty_tracks_eating",
+      "pass": false,
+      "error": "State tickMs=140 but running setInterval stays150ms",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "wall_and_self_death",
+      "pass": true,
+      "evidence": {
+        "wall": true,
+        "self": true
+      }
+    },
+    {
+      "id": "departing_tail_legal_and_reversal_guard",
+      "pass": true,
+      "evidence": {
+        "tail": true,
+        "reversal": true
+      }
+    },
+    {
+      "id": "food_never_spawns_on_new_head",
+      "pass": false,
+      "error": "Food chosen from pre-move occupancy can occupy the newly inserted head",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "overlay_resume_keeps_progress",
+      "pass": true,
+      "evidence": {
+        "resumed": true
+      }
+    }
+  ],
+  "pass": false
+}

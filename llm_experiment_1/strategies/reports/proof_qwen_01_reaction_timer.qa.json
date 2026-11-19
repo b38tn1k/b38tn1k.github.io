@@ -1,0 +1,45 @@
+{
+  "method": "Independent exact-source Node VM/DOM and native Canvas2D checks of actual controls/timers/download bytes. Explicit fixtures observe private game state without replacing algorithms. No browser layout, GPU, focus/default action or physical print verification.",
+  "sha256": "a691ce86747f33770e453b3a94135009964d73346e932c3c33b69951e8056cc5",
+  "checks": [
+    {
+      "id": "five_actual_trials_and_summary",
+      "pass": true,
+      "evidence": {
+        "mean": 250,
+        "best": 200,
+        "worst": 300
+      }
+    },
+    {
+      "id": "false_start_retry_preserves_trial",
+      "pass": true,
+      "evidence": {
+        "valid": 1,
+        "retriedTrial": 1
+      }
+    },
+    {
+      "id": "reset_cancels_pending_cue",
+      "pass": true,
+      "evidence": {
+        "cancelled": true
+      }
+    },
+    {
+      "id": "advertised_space_key",
+      "pass": false,
+      "error": "Advertised Space control never starts a trial",
+      "actual": "idle",
+      "expected": "wait"
+    },
+    {
+      "id": "per_trial_result_is_visible",
+      "pass": false,
+      "error": "render immediately hides the recorded per-trial value",
+      "actual": "none",
+      "expected": "none"
+    }
+  ],
+  "pass": false
+}

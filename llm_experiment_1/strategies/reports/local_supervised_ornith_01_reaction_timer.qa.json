@@ -1,0 +1,61 @@
+{
+  "method": "Independent exact-source Node VM/DOM controlled scheduler; actual pointer/keyboard handlers and summary DOM. No browser layout, hit testing or native visual compatibility.",
+  "sha256": "d1c2cb2563c5f249614329512e4f8fff58d9846aeef0b6a8f27fed4cadb3494f",
+  "checks": [
+    {
+      "id": "five_real_trials_exact_summary_and_replay",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  'Trial 1',\n  'Trial 3',\n  'Trial 4',\n  'Trial 5',\n  'Trial 6'\n]\n\nshould loosely deep-equal\n\n[\n  'Trial 1',\n  'Trial 2',\n  'Trial 3',\n  'Trial 4',\n  'Trial 5'\n]",
+      "actual": [
+        "Trial 1",
+        "Trial 3",
+        "Trial 4",
+        "Trial 5",
+        "Trial 6"
+      ],
+      "expected": [
+        "Trial 1",
+        "Trial 2",
+        "Trial 3",
+        "Trial 4",
+        "Trial 5"
+      ]
+    },
+    {
+      "id": "repeated_false_starts_retry_same_trial_without_corrupt_summary",
+      "pass": false,
+      "error": "'Trial 3' == 'Trial 1'",
+      "actual": "Trial 3",
+      "expected": "Trial 1"
+    },
+    {
+      "id": "all_false_starts_never_show_NaN_or_Infinity",
+      "pass": true,
+      "evidence": {
+        "values": {
+          "statAvg": "–",
+          "statBest": "–",
+          "statWorst": "–",
+          "statStdev": "–"
+        },
+        "resultsVisible": true
+      }
+    },
+    {
+      "id": "restart_resets_actual_finished_run",
+      "pass": true,
+      "evidence": {
+        "resultsHidden": true,
+        "badge": "Trial 1"
+      }
+    },
+    {
+      "id": "keyboard_space_drives_actual_flow",
+      "pass": true,
+      "evidence": {
+        "space": true
+      }
+    }
+  ],
+  "pass": false
+}

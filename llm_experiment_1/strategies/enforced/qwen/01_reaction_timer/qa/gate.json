@@ -1,0 +1,16 @@
+{
+  "passed": false,
+  "artifactSHA256": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+  "errors": [
+    "Executable acceptance test did not exit successfully",
+    "Acceptance check missing/failed: five_valid_trials",
+    "Acceptance ledger contains a failed check; every recorded check must pass",
+    "Independent review missing, stale or reports blocking findings",
+    "Independent reviewer did not attest that tests execute application behavior"
+  ],
+  "stl": null,
+  "limits": [
+    "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+    "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+  ]
+}

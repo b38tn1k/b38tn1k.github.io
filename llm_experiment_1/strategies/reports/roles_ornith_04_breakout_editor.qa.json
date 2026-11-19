@@ -1,0 +1,63 @@
+{
+  "method": "Actual source, DOM mouse/pointer/touch/keyboard controls, localStorage JSON and controlled physics fixtures; partial Canvas, no browser",
+  "sha256": "5afdbf5f7d2d4a48b100580c80ac061340518337721b1f2fedd2eebf71e9e8e1",
+  "startup": "pass",
+  "initial": {
+    "mode": "edit",
+    "overlay": "Breakout",
+    "button": "Start Editing"
+  },
+  "bootButtonMode": "play",
+  "editorDraw": true,
+  "editorErase": true,
+  "editorTouch": true,
+  "saveModifyLoad": {
+    "savedCount": 1,
+    "afterLoadCount": 2,
+    "changedCellStillPresent": true,
+    "downloadCount": 0
+  },
+  "jsonFormat": {
+    "cols": 12,
+    "rows": 10,
+    "parserRoundTrip": true
+  },
+  "malformedStoredJSON": "Load failed: Expected property name or '}' in JSON at position 1 (line 1 column 2)",
+  "started": {
+    "running": true,
+    "stuck": true,
+    "liveBricks": 2
+  },
+  "keyboardPaddle": true,
+  "launchAndMove": true,
+  "mousePaddle": true,
+  "touchPointerPaddle": true,
+  "centerPaddleBounce": {
+    "vx": 0,
+    "vy": -5.2,
+    "vertical": true
+  },
+  "wallBounce": true,
+  "brickHit": {
+    "score": 10,
+    "remaining": 0,
+    "level": 2,
+    "overlay": "Level 1 Cleared!"
+  },
+  "lifeLoss": [
+    2,
+    1,
+    0
+  ],
+  "gameOver": {
+    "running": false,
+    "overlay": "Game Over"
+  },
+  "restart": {
+    "score": 0,
+    "lives": 3,
+    "level": 1,
+    "restoredBricks": 2,
+    "layoutBricks": 2
+  }
+}

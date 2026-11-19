@@ -1,0 +1,68 @@
+{
+  "method": "Exact source and real input, mouse/touch, tool, history and export handlers in independent Node VM/DOM with native Canvas2D; actual pixels and PNG bytes. White eraser/blank accepted as the chosen opaque canvas design. No browser layout or physical touch claim.",
+  "sha256": "c81bc158a6b338aab5d22b584c4a06a48854de0a22c16ca9e59bfac9c3ffa561",
+  "checks": [
+    {
+      "id": "brush_palette_white_eraser_and_touch",
+      "pass": true,
+      "evidence": {
+        "brush": true,
+        "whiteBackgroundEraser": true,
+        "touch": true
+      }
+    },
+    {
+      "id": "single_stroke_undo_then_redo",
+      "pass": false,
+      "error": "Redo restores another pre-stroke blank snapshot instead of the red stroke",
+      "actual": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "two_stroke_undo_preserves_first",
+      "pass": false,
+      "error": "First Undo skips the earlier red stroke",
+      "actual": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "clear_returns_to_white_background",
+      "pass": true,
+      "evidence": {
+        "whiteBlank": true
+      }
+    },
+    {
+      "id": "resize_preserves_paint_and_exports_png",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          48,
+          24
+        ],
+        "bytes": 156
+      }
+    }
+  ],
+  "pass": false
+}

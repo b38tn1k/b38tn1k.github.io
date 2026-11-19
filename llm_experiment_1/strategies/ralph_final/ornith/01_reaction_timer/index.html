@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reaction Time Tester</title>
+<style>
+  :root {
+    --bg: #0f1220;
+    --panel: #191d33;
+    --accent: #5b8cff;
+    --accent-hover: #4a7bef;
+    --danger: #ff5b6e;
+    --good: #35d0a5;
+    --text: #e8ecf6;
+    --muted: #8b93b0;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+  }
+  h1 { font-size: 1.5rem; margin: 0; font-weight: 700; letter-spacing: .5px; }
+  .sub { color: var(--muted); font-size: .9rem; margin: -12px 0 8px; }
+  #stage {
+    width: min(640px, 100%);
+    min-height: 340px;
+    background: var(--panel);
+    border-radius: var(--radius);
+    border: 1px solid #2a2f4a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  #stage .title { font-size: 1.35rem; font-weight: 600; }
+  #stage .message { color: var(--muted); font-size: 1rem; max-width: 90%; }
+  #stage .hint { color: var(--muted); font-size: .85rem; }
+  #stage .box {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; font-weight: 700;
+  }
+  #stage .waiting { background: #3a4267; }
+  #stage .ready { background: var(--good); }
+  #stage .falsestart { background: var(--danger); }
+  #stage .results { background: transparent; }
+  .controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  button {
+    font: inherit;
+    font-weight: 600;
+    color: white;
+    background: var(--accent);
+    border: none;
+    padding: 11px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  button:hover:not(:disabled) { background: var(--accent-hover); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.secondary { background: #2a2f4a; }
+  button.secondary:hover:not(:disabled) { background: #343a5c; }
+  .summary {
+    width: min(640px, 100%);
+    background: var(--panel);
+    border: 1px solid #2a2f4a;
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #262b45; font-size: .95rem; }
+  th { color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .false-start-cell { color: var(--danger); }
+  .stats { display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; }
+  .stat .label { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .6px; }
+  .stat .value { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .value.good { color: var(--good); }
+  .value.warn { color: var(--danger); }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); border: 0; }
+</style>
+</head>
+<body>
+  <h1>⚡ Reaction Time Tester</h1>
+  <p class="sub">Wait for the box to turn <span style="color:var(--good)">green</span>, then click as fast as you can.</p>
+
+  <div id="stage" role="button" tabindex="0" aria-live="polite">
+    <div class="box" id="stageIcon">?</div>
+    <div class="title" id="stageTitle">Ready to test your reflexes?</div>
+    <div class="message" id="stageMessage">Click below to start, then click the stage when it turns green.</div>
+    <div class="hint" id="stageHint">The box will turn green after a random delay (500–2500 ms).</div>
+  </div>
+
+  <div class="controls">
+    <button id="startBtn">Start Test</button>
+    <button id="resetBtn" class="secondary" disabled>Reset</button>
+  </div>
+
+  <div class="summary" id="summary" hidden>
+    <table id="resultsTable">
+      <thead>
+        <tr><th>Trial</th><th class="num">Time (ms)</th></tr>
+      </thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+    <div class="stats">
+      <div class="stat">
+        <span class="label">Average</span>
+        <span class="value" id="avgValue">–</span>
+      </div>
+      <div class="stat">
+        <span class="label">Fastest</span>
+        <span class="value good" id="bestValue">–</span>
+      </div>
+      <div class="stat">
+        <span class="label">Slowest</span>
+        <span class="value warn" id="worstValue">–</span>
+      </div>
+      <div class="stat">
+        <span class="label">False starts</span>
+        <span class="value" id="falseStartValue">0</span>
+      </div>
+    </div>
+  </div>
+
+  <span class="sr-only" id="announce"></span>
+
+  <script>
+  (function () {
+    'use strict';
+
+    var RANDOM_MIN_MS = 500;
+    var RANDOM_MAX_MS = 2500;
+    var TRIALS = 5;
+
+    // Public, testable API surface. Kept deterministic by injecting time/random.
+    var app = (function () {
+      function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+
+      // Returns a random delay within [min,max] using injected rng (default Math.random).
+      function randomDelay(min, max, rng) {
+        rng = rng || Math.random;
+        return Math.round(min + (rng() * (max - min)));
+      }
+
+      // Builds the full results summary from a set of trial results.
+      // results: array of { time: number|null (null = false start) }
+      function summarize(results) {
+        var valid = results.filter(function (r) { return r.time != null; });
+        var falseStarts = results.length - valid.length;
+        var sum = 0;
+        for (var i = 0; i < valid.length; i++) sum += valid[i].time;
+        return {
+          results: results,
+          validCount: valid.length,
+          falseStarts: falseStarts,
+          average: valid.length ? Math.round(sum / valid.length) : 0,
+          fastest: valid.length ? Math.min.apply(null, valid.map(function (r) { return r.time; })) : 0,
+          slowest: valid.length ? Math.max.apply(null, valid.map(function (r) { return r.time; })) : 0
+        };
+      }
+
+      return {
+        RANDOM_MIN_MS: RANDOM_MIN_MS,
+        RANDOM_MAX_MS: RANDOM_MAX_MS,
+        TRIALS: TRIALS,
+        clamp: clamp,
+        randomDelay: randomDelay,
+        summarize: summarize
+      };
+    })();
+
+    // ---- State machine that drives the UI ----
+    var stage = document.getElementById('stage');
+    var stageIcon = document.getElementById('stageIcon');
+    var stageTitle = document.getElementById('stageTitle');
+    var stageMessage = document.getElementById('stageMessage');
+    var stageHint = document.getElementById('stageHint');
+    var startBtn = document.getElementById('startBtn');
+    var resetBtn = document.getElementById('resetBtn');
+    var summary = document.getElementById('summary');
+    var resultsBody = document.getElementById('resultsBody');
+    var avgValue = document.getElementById('avgValue');
+    var bestValue = document.getElementById('bestValue');
+    var worstValue = document.getElementById('worstValue');
+    var falseStartValue = document.getElementById('falseStartValue');
+    var announce = document.getElementById('announce');
+
+    var Status = { IDLE: 'idle', WAITING: 'waiting', READY: 'ready', FINISHED: 'finished' };
+
+    var state = {
+      phase: Status.IDLE,
+      trial: 0,
+      results: [],
+      falseStarts: 0,
+      timerId: null,
+      startTime: 0,
+      delayMs: 0
+    };
+
+    function now() { return performance.now(); }
+
+    function say(text) {
+      announce.textContent = text;
+      stage.setAttribute('aria-label', text);
+    }
+
+    function clearTimer() {
+      if (state.timerId != null) {
+        clearTimeout(state.timerId);
+        state.timerId = null;
+      }
+    }
+
+    function render() {
+      stageIcon.className = 'box';
+      resultsBody.innerHTML = '';
+
+      switch (state.phase) {
+        case Status.IDLE:
+          stageIcon.textContent = '?';
+          stageTitle.textContent = 'Ready to test your reflexes?';
+          stageMessage.textContent = 'Click below to start, then click the stage when it turns green.';
+          stageHint.textContent = 'The box will turn green after a random delay (500–2500 ms).';
+          startBtn.disabled = false;
+          resetBtn.disabled = true;
+          summary.hidden = true;
+          say('Ready to test your reflexes? Click Start to begin.');
+          break;
+
+        case Status.WAITING:
+          stageIcon.classList.add('waiting');
+          stageIcon.textContent = '…';
+          stageTitle.textContent = 'Wait for it…';
+          stageMessage.textContent = 'Don\'t click yet! Wait for the box to turn green.';
+          stageHint.textContent = 'Trial ' + state.trial + ' of ' + app.TRIALS + '. Green in ~' + Math.round(state.delayMs) + ' ms';
+          startBtn.disabled = true;
+          resetBtn.disabled = false;
+          summary.hidden = true;
+          say('Waiting. Click only when the box turns green.');
+          break;
+
+        case Status.READY:
+          stageIcon.classList.add('ready');
+          stageIcon.textContent = '!';
+          stageTitle.textContent = 'Click now!';
+          stageMessage.textContent = 'Go! Click as fast as you can.';
+          stageHint.textContent = 'Trial ' + state.trial + ' of ' + app.TRIALS;
+          startBtn.disabled = true;
+          resetBtn.disabled = false;
+          summary.hidden = true;
+          say('Click now!');
+          break;
+
+        case Status.FINISHED:
+          renderSummary();
+          stageIcon.textContent = '✓';
+          stageTitle.textContent = 'All trials complete';
+          startBtn.disabled = true;
+          resetBtn.disabled = false;
+          say('All trials complete. See your results below.');
+          break;
+      }
+    }
+
+    function renderSummary() {
+      var s = app.summarize(state.results);
+      summary.hidden = false;
+
+      var html = '';
+      for (var i = 0; i < state.results.length; i++) {
+        var r = state.results[i];
+        if (r.time == null) {
+          html += '<tr><td>Trial ' + (i + 1) + '</td><td class="num false-start-cell">False start</td></tr>';
+        } else {
+          html += '<tr><td>Trial ' + (i + 1) + '</td><td class="num">' + r.time + ' ms</td></tr>';
+        }
+      }
+      resultsBody.innerHTML = html;
+
+      avgValue.textContent = s.average ? s.average + ' ms' : '–';
+      bestValue.textContent = s.fastest ? s.fastest + ' ms' : '–';
+      worstValue.textContent = s.slowest ? s.slowest + ' ms' : '–';
+      falseStartValue.textContent = String(s.falseStarts);
+    }
+
+    function startRound() {
+      clearTimer();
+      state.trial += 1;
+      state.phase = Status.WAITING;
+      state.delayMs = app.randomDelay(app.RANDOM_MIN_MS, app.RANDOM_MAX_MS);
+      state.startTime = now();
+      state.timerId = setTimeout(function () {
+        state.phase = Status.READY;
+        render();
+      }, state.delayMs);
+      render();
+    }
+
+    function handleStageClick() {
+      if (state.phase === Status.WAITING) {
+        // False start — clicked before the box turned green.
+        clearTimer();
+        state.results.push({ time: null, falseStart: true });
+        state.phase = Status.WAITING;
+        nextAfterFalseStart();
+        render();
+        return;
+      }
+
+      if (state.phase === Status.READY) {
+        var rt = Math.round(now() - state.startTime);
+        rt = app.clamp(rt, 0, 10000);
+        state.results.push({ time: rt });
+        state.phase = Status.WAITING;
+        setTimeout(function () {
+          if (state.results.length >= app.TRIALS) {
+            state.phase = Status.FINISHED;
+          } else {
+            startRound();
+          }
+          render();
+        }, 400);
+        return;
+      }
+    }
+
+    function nextAfterFalseStart() {
+      if (state.results.length >= app.TRIALS) {
+        state.phase = Status.FINISHED;
+      } else {
+        startRound();
+      }
+    }
+
+    function startTest() {
+      clearTimer();
+      state.phase = Status.IDLE;
+      state.trial = 0;
+      state.results = [];
+      state.falseStarts = 0;
+      startRound();
+    }
+
+    function resetTest() {
+      clearTimer();
+      state.phase = Status.IDLE;
+      state.trial = 0;
+      state.results = [];
+      state.falseStarts = 0;
+      render();
+    }
+
+    startBtn.addEventListener('click', startTest);
+    resetBtn.addEventListener('click', resetTest);
+    stage.addEventListener('click', handleStageClick);
+    stage.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        handleStageClick();
+      }
+    });
+
+    render();
+
+    // Expose for tests running in the same sandbox.
+    window._reactionApp = {
+      app: app,
+      getState: function () { return state; },
+      render: render,
+      handleStageClick: handleStageClick,
+      startTest: startTest,
+      resetTest: resetTest,
+      startRound: startRound
+    };
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+{
+  "score": 66,
+  "grade": "C- provisional - core Snake works; restart and PLAY AGAIN lifecycle fail",
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 20,
+    "usability": 12,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent real keyboard/timer checks pass movement, reversal prevention, pause/resume, wall collision and a legal recent-body self-collision sequence.",
+    "A controlled food pickup grows the snake, raises score 40 to 50 and level 1 to 2, and reduces the movement interval 140 to 132 ms. This contradicts the reviewer's assertion that food cannot be eaten or difficulty cannot increase.",
+    "The file is self-contained and starts under the supplied runtime."
+  ],
+  "defects": [
+    "PLAY AGAIN calls startGame without init. After a wall death it reuses the dead snake next to the wall and immediately dies again.",
+    "Pressing R during active play calls init without cancelling the interval. The reset idle screen still has a moving snake; it advances while supposedly waiting to start.",
+    "Self-collision includes the cell vacated by the tail on an ordinary move, rejecting that legal movement.",
+    "The candidate acceptance suite hardcodes multiple passed=true results without checking outcomes. Its reviewer catches vacuous evidence but falsely infers food/difficulty failure from a straight-line snake that never approaches food.",
+    "The final reviewer also incorrectly says the supplied runtime has no requestAnimationFrame; the runtime supplies it. Repeated stage timeouts consumed 56.13 minutes without a passing gate."
+  ],
+  "verification": [
+    "reports/enforced_qwen_02_snake.qa.cjs/.qa.json exercises actual final-source keyboard/start handlers and virtual timed movement. Controlled food/body fixtures leave the movement and collision algorithms unchanged.",
+    "Final hash d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1. Core movement/growth/self-collision pass; replay, active restart and vacating-tail checks fail."
+  ],
+  "verificationConcerns": [
+    "Reviewer assertions are not independent grading truth. A snake failing to eat food on an unsteered straight path does not prove food cannot be eaten.",
+    "No native browser appearance, rendering, scrolling, persistent storage across real sessions or device testing. One trial per configuration."
+  ],
+  "scopeCompliance": "Only Pi build/repair stages changed application code; no supervisor app edits or hints. Role boundaries remained enforced.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Mandatory stages and two repair rounds ran but did not produce reliable acceptance evidence or fix replay lifecycle. The gate rejected remaining failures. Generic deadline reminders are recorded separately from supervisor guidance.",
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Review written to `qa/review.json` with status **\"fail\"**. Here's the summary:\n\n**Core finding**: The Snake game fails on multiple functional levels in this environment, and the acceptance test masks most of these failures:\n\n1. **Food is never eaten** \u2014 Score remains 0 throughout all test runs. The snake dies at tick ~13 (hitting a wall) before reaching food seeded by the harness's RNG.\n\n2. **Tests pass vacuously** \u2014 Multiple acceptance checks (`food_growth_score`, `difficulty.increases`, `difficulty.multiple_levels`, `pause_resume.no_progress`) use hardcoded `true` instead of actual assertions, meaning they pass regardless of whether the behavior works.\n\n3. **Difficulty never progresses** \u2014 Since no food is eaten, level stays at 1 through all test runs.\n\n4. **Test execution fails** with exit code 1 because the acceptance script also checks for parent-category IDs (`movement`, `wall_collision`, etc.) that don't exist \u2014 only sub-IDs like `movement.arrow_right` are recorded.\n\n5. **Environment limitations** \u2014 No `requestAnimationFrame`, no pixel reads, stubbed localStorage, and a partial DOM/Canvas implementation all limit what can be verified.\n\nAll 6 blocking findings and 4 residual risks are documented with concrete evidence paths in the review JSON.",
+  "workflowInstructions": "run-suite.py and config/qwen/agents",
+  "workflowProtocolRevision": 5,
+  "elapsedMinutes": 56.13,
+  "wallMinutes": 56.13,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "repair_limit",
+  "exitCode": 1,
+  "promptWords": 36,
+  "toolCalls": 345,
+  "parentToolCalls": 0,
+  "childToolCalls": 345,
+  "toolResultsMarkedError": 55,
+  "modelUsageReported": {
+    "input": 398442,
+    "output": 122702,
+    "cacheRead": 7625225,
+    "totalTokens": 8146369
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 49162,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 49162,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 398442,
+    "output": 122702,
+    "cacheRead": 7625225,
+    "totalTokens": 8146369
+  },
+  "artifactBytes": 15378,
+  "sha256": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 3,
+      "review": 3,
+      "repair": 2
+    },
+    "rolesCompleted": {
+      "build": 1,
+      "review": 1
+    },
+    "parentArtifactReads": 10,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 8,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 1.88,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": null,
+        "artifactAfter": "dd6ebe45d53c145e501feb221adb7a4b1b590cfd87673d2e83bed55ff574cfc7",
+        "prompt": "enforced/qwen/02_snake/runtime/01-build/prompt.txt",
+        "events": "enforced/qwen/02_snake/runtime/01-build/events.jsonl",
+        "stderr": "enforced/qwen/02_snake/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 8.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "dd6ebe45d53c145e501feb221adb7a4b1b590cfd87673d2e83bed55ff574cfc7",
+        "artifactAfter": "dd6ebe45d53c145e501feb221adb7a4b1b590cfd87673d2e83bed55ff574cfc7",
+        "prompt": "enforced/qwen/02_snake/runtime/02-test/prompt.txt",
+        "events": "enforced/qwen/02_snake/runtime/02-test/events.jsonl",
+        "stderr": "enforced/qwen/02_snake/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 5.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "dd6ebe45d53c145e501feb221adb7a4b1b590cfd87673d2e83bed55ff574cfc7",
+        "artifactAfter": "dd6ebe45d53c145e501feb221adb7a4b1b590cfd87673d2e83bed55ff574cfc7",
+        "prompt": "enforced/qwen/02_snake/runtime/03-review/prompt.txt",
+        "events": "enforced/qwen/02_snake/runtime/03-review/events.jsonl",
+        "stderr": "enforced/qwen/02_snake/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 10.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "dd6ebe45d53c145e501feb221adb7a4b1b590cfd87673d2e83bed55ff574cfc7",
+        "artifactAfter": "779ec6df67848d6009c0f9e0f79d719da8f760c65cfed1924891c43d665e9ce0",
+        "prompt": "enforced/qwen/02_snake/runtime/04-repair/prompt.txt",
+        "events": "enforced/qwen/02_snake/runtime/04-repair/events.jsonl",
+        "stderr": "enforced/qwen/02_snake/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 5,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "779ec6df67848d6009c0f9e0f79d719da8f760c65cfed1924891c43d665e9ce0",
+        "artifactAfter": "779ec6df67848d6009c0f9e0f79d719da8f760c65cfed1924891c43d665e9ce0",
+        "prompt": "enforced/qwen/02_snake/runtime/05-test/prompt.txt",
+        "events": "enforced/qwen/02_snake/runtime/05-test/events.jsonl",
+        "stderr": "enforced/qwen/02_snake/runtime/05-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 6,
+        "minutes": 4.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "779ec6df67848d6009c0f9e0f79d719da8f760c65cfed1924891c43d665e9ce0",
+        "artifactAfter": "779ec6df67848d6009c0f9e0f79d719da8f760c65cfed1924891c43d665e9ce0",
+        "prompt": "enforced/qwen/02_snake/runtime/06-review/prompt.txt",
+        "events": "enforced/qwen/02_snake/runtime/06-review/events.jsonl",
+        "stderr": "enforced/qwen/02_snake/runtime/06-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 7,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "779ec6df67848d6009c0f9e0f79d719da8f760c65cfed1924891c43d665e9ce0",
+        "artifactAfter": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+        "prompt": "enforced/qwen/02_snake/runtime/07-repair/prompt.txt",
+        "events": "enforced/qwen/02_snake/runtime/07-repair/events.jsonl",
+        "stderr": "enforced/qwen/02_snake/runtime/07-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 8,
+        "minutes": 6.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+        "artifactAfter": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+        "prompt": "enforced/qwen/02_snake/runtime/08-test/prompt.txt",
+        "events": "enforced/qwen/02_snake/runtime/08-test/events.jsonl",
+        "stderr": "enforced/qwen/02_snake/runtime/08-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 9,
+        "minutes": 3.63,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+        "artifactAfter": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+        "prompt": "enforced/qwen/02_snake/runtime/09-review/prompt.txt",
+        "events": "enforced/qwen/02_snake/runtime/09-review/events.jsonl",
+        "stderr": "enforced/qwen/02_snake/runtime/09-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+      "errors": [
+        "Executable acceptance test did not exit successfully",
+        "Acceptance check missing/failed: movement",
+        "Acceptance check missing/failed: wall_collision",
+        "Acceptance check missing/failed: self_collision",
+        "Acceptance check missing/failed: pause_resume",
+        "Acceptance check missing/failed: restart",
+        "Acceptance check missing/failed: difficulty",
+        "Independent review missing, stale or reports blocking findings"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": false
+}

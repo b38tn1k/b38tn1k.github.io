@@ -1,0 +1,76 @@
+{
+  "method": "Exact-source VM and actual keyboard/button events, deterministic RAF, controlled geometry fixtures; partial Canvas, no browser",
+  "eventProbe": [
+    "listener",
+    "property"
+  ],
+  "initial": {
+    "snake": [
+      {
+        "x": 10,
+        "y": 10
+      },
+      {
+        "x": 9,
+        "y": 10
+      },
+      {
+        "x": 8,
+        "y": 10
+      }
+    ],
+    "dir": {
+      "x": 1,
+      "y": 0
+    },
+    "nextDir": {
+      "x": 1,
+      "y": 0
+    },
+    "food": {
+      "x": 18,
+      "y": 18
+    },
+    "score": 0,
+    "best": 0,
+    "state": "start",
+    "interval": 140
+  },
+  "started": "running",
+  "movement": {
+    "x": 11,
+    "y": 10
+  },
+  "reversalBlocked": true,
+  "spaceDefaultPrevented": false,
+  "pausedFrozen": true,
+  "keyResume": true,
+  "resumeButton": {
+    "state": "running",
+    "score": 0,
+    "length": 3
+  },
+  "wallCollision": true,
+  "restart": {
+    "state": "running",
+    "score": 0,
+    "length": 3
+  },
+  "selfCollision": true,
+  "tailVacateAllowed": true,
+  "food": {
+    "score": 1,
+    "length": 4,
+    "interval": 133,
+    "spawnUnoccupied": true
+  },
+  "nearlyFullBoard": {
+    "food": {
+      "x": 18,
+      "y": 18
+    },
+    "foodOnBody": true,
+    "fixture": "Deterministic RNG repeatedly chooses occupied (18,18); verifies bounded retry fallback, not empirical random failure frequency."
+  },
+  "sha256": "1a20a12a5805b08e5e0e0cd65f71346d9ea96fcf508018db267348b95099ea2a"
+}

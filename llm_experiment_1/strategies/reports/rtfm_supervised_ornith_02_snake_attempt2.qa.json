@@ -1,0 +1,167 @@
+{
+  "method": "Independent exact-source VM/DOM/native Canvas2D. Actual keyboard/buttons and scheduled RAF checked. Closure exposure/controlled state fixtures exercise existing step/food algorithms without replacement. Full-board fixture is an edge diagnostic, not an explicit win-screen requirement. No browser layout/hit testing or visual-polish proof.",
+  "sha256": "ae7815484bd6193f0c8111b5a8edf9255b97528ed3976057a296aee4b707d6a6",
+  "checks": [
+    {
+      "id": "actual_start_keyboard_pause_resume_restart_and_pixels",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pause": true,
+        "resume": true,
+        "restart": true,
+        "drawnHeadPixel": [
+          34,
+          197,
+          94,
+          255
+        ]
+      }
+    },
+    {
+      "id": "delayed_start_and_resume_do_not_teleport",
+      "pass": true,
+      "evidence": {
+        "delayedStartMS": 5000,
+        "pauseMS": 10000,
+        "beforeResume": {
+          "x": 12,
+          "y": 11
+        },
+        "afterResume": {
+          "x": 13,
+          "y": 11
+        },
+        "teleport": false
+      }
+    },
+    {
+      "id": "keyboard_before_first_tick_takes_effect",
+      "pass": true,
+      "evidence": {
+        "head": {
+          "x": 11,
+          "y": 10
+        },
+        "dir": {
+          "x": 0,
+          "y": -1
+        }
+      }
+    },
+    {
+      "id": "food_increases_score_and_snake_length",
+      "pass": true,
+      "evidence": {
+        "s": {
+          "snake": [
+            {
+              "x": 12,
+              "y": 11
+            },
+            {
+              "x": 11,
+              "y": 11
+            },
+            {
+              "x": 10,
+              "y": 11
+            },
+            {
+              "x": 9,
+              "y": 11
+            }
+          ],
+          "dir": {
+            "x": 1,
+            "y": 0
+          },
+          "nextDir": {
+            "x": 1,
+            "y": 0
+          },
+          "dirQueue": null,
+          "food": {
+            "x": 8,
+            "y": 18
+          },
+          "score": 1,
+          "level": 1,
+          "speed": 140,
+          "running": true,
+          "paused": false,
+          "gameOver": false,
+          "best": 1
+        }
+      }
+    },
+    {
+      "id": "increasing_difficulty_and_best_score",
+      "pass": true,
+      "evidence": {
+        "score": 5,
+        "level": 2,
+        "speedMS": 132,
+        "best": 5
+      }
+    },
+    {
+      "id": "immediate_wall_and_body_collisions_tail_rule_and_reverse_guard",
+      "pass": true,
+      "evidence": {
+        "wallImmediate": true,
+        "bodyImmediate": true,
+        "vacatedTailAllowed": true,
+        "directReversePrevented": true
+      }
+    },
+    {
+      "id": "rapid_pause_resume_has_one_animation_chain",
+      "pass": true,
+      "evidence": {
+        "scheduledCallbacks": 1
+      }
+    },
+    {
+      "id": "rapid_two_turns_do_not_reverse_against_actual_direction",
+      "pass": false,
+      "error": "Two rapid turns produced a reversal against the actual movement direction",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "rapid_three_turns_do_not_synthesize_direct_reversal",
+      "pass": true,
+      "evidence": {
+        "gameOver": false,
+        "head": {
+          "x": 12,
+          "y": 13
+        },
+        "dir": {
+          "x": 0,
+          "y": 1
+        },
+        "dirQueue": null
+      }
+    },
+    {
+      "id": "full_board_food_generation_terminates",
+      "pass": false,
+      "error": "Script execution timed out after 100ms"
+    },
+    {
+      "id": "actual_last_food_fills_contiguous_board_without_hang",
+      "pass": false,
+      "error": "Script execution timed out after 100ms"
+    },
+    {
+      "id": "self_contained_offline_source",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "pass": false
+}

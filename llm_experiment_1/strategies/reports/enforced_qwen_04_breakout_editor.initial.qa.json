@@ -1,0 +1,60 @@
+{
+  "method": "Independent exact-source UI/timer/JSON-byte checks with controlled ball fixtures; application algorithms unchanged. Scoped/global observations and actual inline-handler code only. Native browser rendering unverified.",
+  "sha256": "525f672fa77236bfadc03c4c3ac029918412fa9a73890273f8de65eb693bfe4b",
+  "artifact": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/reports/initial-artifacts/enforced_qwen_04_breakout_editor/index.html",
+  "checks": [
+    {
+      "id": "editor_draw_erase",
+      "pass": true,
+      "evidence": {
+        "bricks": 1
+      }
+    },
+    {
+      "id": "keyboard_and_touch_paddle",
+      "pass": true,
+      "evidence": {
+        "keyboard": true,
+        "touch": true
+      }
+    },
+    {
+      "id": "brick_collision_score",
+      "pass": true,
+      "evidence": {
+        "score": 25,
+        "bricks": 1
+      }
+    },
+    {
+      "id": "load_during_play_editor_action",
+      "pass": false,
+      "error": "editorGridFromBricks is not defined"
+    },
+    {
+      "id": "brick_score_and_restart_layout",
+      "pass": false,
+      "error": "Restart does not restore the two-brick edited layout"
+    },
+    {
+      "id": "three_lives_game_over",
+      "pass": true,
+      "evidence": {
+        "lives": [
+          2,
+          1,
+          0
+        ]
+      }
+    },
+    {
+      "id": "actual_json_roundtrip",
+      "pass": true,
+      "evidence": {
+        "blobBytes": 3658,
+        "bricks": 2
+      }
+    }
+  ],
+  "pass": false
+}

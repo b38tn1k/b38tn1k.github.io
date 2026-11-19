@@ -1,0 +1,143 @@
+{
+  "score": 91,
+  "grade": "A- provisional - complete core flow and meaningful test-first repair, with timing and label caveats",
+  "rubricScores": {
+    "functionality": 39,
+    "artifact_correctness": 23,
+    "usability": 12,
+    "self_verification": 7,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Independent actual-handler checks complete five 200/225/250/275/300 ms trials, show five result rows, average 250, fastest 200, slowest 300, and successfully restart.",
+    "Same-trial false-start retry cancels the abandoned timer, preserves the earlier valid result and finishes with five valid results; the controlled retry sequence averages 240 ms. Keyboard reaction input also works.",
+    "Random waits vary within the advertised 1\u20135 second window. Application CSS/JS are inline and offline.",
+    "The pinned proof workflow was activated and completed. Pi wrote the behavior tests and repaired a real missing stimulated-state handler without supervisor product code or hints. Final protected read-only npm test exits zero with all nine candidate behavior tests passing."
+  ],
+  "defects": [
+    "Reaction time is measured against the scheduled deadline, not the actual cue callback time. In an independent environment fixture where the callback is 100 ms late, a 200 ms response is recorded as 300 ms. This is a timing robustness caveat; the normal requested five-trial flow works.",
+    "The completed screen retains a Trial 6 of 5 pill. After the fifth response, the hint says start next trial even though the next click shows the summary."
+  ],
+  "verification": [
+    "reports/proof_final_ornith_01_reaction_timer.qa.cjs/.qa.json exercises final frozen source with real control/keyboard handlers, five-trial summaries, retry, restart, and a delayed-callback clock-reference fixture.",
+    "Final source SHA 408d92a388fdf19ab8793f2c30f2daceadc2a3b245dca7b6f065dffaba0a1570; runtime/final-tests.json independently records nine TAP passes and actual zero exit status."
+  ],
+  "verificationConcerns": [
+    "A 100 ms callback delay is a controlled environment fixture demonstrating the deadline reference error, not a measured browser-latency distribution. Native display/paint/physical response timing and visual polish remain unverified.",
+    "One earlier piped npm test command had six failures but a successful tail exit. pi-proof falsely appended a green label. This is separately documented; the final unpiped protected test run genuinely passes.",
+    "Self-authored tests and recorded red/green signals are not an independent correctness certificate. The POC grade includes explicit residual defects."
+  ],
+  "scopeCompliance": "Pi alone wrote the application and its behavior tests. Codex configured the workflow and independently checked the final source; no product code, repairs or task-specific steering supplied.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "First clean v2 proof attempt: 15.69 minutes, native proof_start/proof_done, four recorded red and four green phase signals, final nine-test command exits zero. Earlier false-green pipeline is disclosed separately from this successful final test run. The interrupted v1 helper-calibration attempt is retained/excluded; this fresh run fills the timer matrix cell.",
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "proof",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All 9 tests pass. The deliverable is complete.\n\n## Summary\n\nI built a polished, self-contained offline reaction-time tester in `/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/proof_final/ornith/01_reaction_timer/index.html`.\n\n**What it does:**\n- **Random wait** \u2014 after tapping \"start,\" the box waits a seeded-random 1\u20135 seconds before changing color.\n- **False-start detection** \u2014 clicking/tapping (or pressing Space) before the stimulus turns it into a false start; the trial re-arms with a fresh random wait.\n- **Five trials** \u2014 tracks `Trial N of 5`.\n- **Results summary** \u2014 after the 5th trial, shows average/fastest/slowest, per-trial table (highlighting the best), a rating band (fast/average/slow), and a \"Play again\" button.\n- Live sidebar meta (Last/Best/Average), keyboard support, responsive design, and seeded RNG so behavior is reproducible.\n\n**Verification (proof-first, TAP):**\n- I wrote `test/reaction.test.js` with 9 behavior tests that FAIL before the implementation and PASS after \u2014 covering ready\u2192waiting transitions, no premature stimulus, false-start detection, valid RT recording, trial progression to `done`, false-start re-arm, the summary's mean/min/max/count, rounding + rating band, and spam-click false-start handling.\n- `npm test` \u2192 **9 pass, 0 fail**, under the 90s budget.\n- Confirmed the single file has no external resource references (fully offline/self-contained).\n\n**Notes on the harness:** The DOM/Canvas runtime is deterministic (fake `Date.now` driven by `advance()`), so waits are testable via a seeded Mulberry32 PRNG exposed through `window.__seed`. A subtle bug I fixed during testing: the stimulus timer sets `state='stimulated'`, but the click handler had no matching `case`, so valid clicks after stimulus were silently ignored \u2014 I added a `finishTrial()` handler for the `stimulated` state.",
+  "workflowInstructions": "run-proof.py; research/pi-proof-setup.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 15.69,
+  "wallMinutes": 15.69,
+  "status": "assessed",
+  "runStatus": "assessed",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 73,
+  "parentToolCalls": 73,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 10,
+  "modelUsageReported": {
+    "input": 62438,
+    "output": 29378,
+    "cacheRead": 2826421,
+    "totalTokens": 2918237
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 86287,
+  "parentPeakReportedPromptTokens": 86287,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 62438,
+    "output": 29378,
+    "cacheRead": 2826421,
+    "totalTokens": 2918237
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 14243,
+  "sha256": "408d92a388fdf19ab8793f2c30f2daceadc2a3b245dca7b6f065dffaba0a1570",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 1,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 25,
+    "delegations": [],
+    "reportedPassWithFailingTAP": {
+      "count": 1,
+      "toolCallIds": [
+        "xGDNdLcoZVcSKaODTl6gACRoJKManvsA"
+      ],
+      "limit": "Detects explicit nonzero TAP final counts accompanying the extension PASS marker; not a general test-output parser."
+    },
+    "starts": 1,
+    "ends": 1,
+    "redTransitions": 4,
+    "greenTransitions": 4,
+    "blockedSpecifyingWrites": 0,
+    "finalTests": {
+      "exitCode": 0,
+      "timedOut": false
+    },
+    "shellWarnings": 3,
+    "note": "Transitions demonstrate procedure only, not test quality or application correctness. Independent final-source grading follows.",
+    "controller": "Single Pi RPC context with pinned pi-proof extension; no role chain",
+    "sequence": {
+      "successfulIndexWritesBeforeActivation": 0,
+      "successfulIndexWritesWhileActive": 6,
+      "satisfied": true,
+      "controllerSignalCriteriaMet": true,
+      "note": "A late start/end pair is not proof-first implementation. Layout-only scaffolding exceptions, if any, require explicit assessment notes."
+    },
+    "mechanicalDeadlineNotices": 0
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "calibration": false
+}

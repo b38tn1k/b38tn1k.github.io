@@ -1,0 +1,47 @@
+{
+  "status": "completed",
+  "grade": "B provisional - core game works; edge cases flawed",
+  "score": 85,
+  "rubricScores": {
+    "functionality": 37,
+    "artifact_correctness": 24,
+    "usability": 12,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "verified": [
+    "Exact-source VM: growth, score, keyboard reversal prevention, pause/resume timers, wall and self collisions, restart, increasing difficulty",
+    "No external runtime resources"
+  ],
+  "defects": [
+    "Rejects a legal non-growing move into the tail cell being vacated",
+    "placeFood loops forever if every grid cell occupied",
+    "Added swipe controls can still reverse direction on a horizontal reverse gesture; keyboard controls pass"
+  ],
+  "scopeCompliance": "No out-of-directory file writes found in run",
+  "assessment": "Fast usable keyboard-game POC, but full-board and tail handling need correction; independent browser testing remains unverified.",
+  "title": "Snake",
+  "elapsedMinutes": 1.8,
+  "promptWords": 36,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "toolCalls": 6,
+  "toolResultsMarkedError": 0,
+  "modelUsageReported": {
+    "input": 2002,
+    "output": 7333,
+    "cacheRead": 50227,
+    "totalTokens": 59562
+  },
+  "artifactBytes": 17467,
+  "sha256": "05208e97887c7c5413102b6b6a663bec53a50593d1ce04f35bbb8d1d20afe8dd",
+  "assistantTextContainingToolCallMarkup": 0,
+  "limitations": [
+    "Independent browser/visual testing not authorized after prior browser-origin denial; used exact-source VM checks and source review.",
+    "Qwen64K context differs from Ornith256K; not a controlled model-only comparison."
+  ],
+  "verificationConcerns": [
+    "Agent checked markup and fetched served HTML; no runtime game interaction assertions",
+    "Used broad pkill -f pattern for temporary HTTP server cleanup; no evidence it killed unrelated processes"
+  ]
+}

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Breakout + Level Editor</title>
+<style>
+  :root {
+    --bg: #0f1020;
+    --panel: #1b1d38;
+    --accent: #4fd1c5;
+    --text: #e6e8f0;
+    --muted: #8b90b5;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 12px 16px 40px;
+  }
+  h1 {
+    font-size: 20px;
+    margin: 6px 0 10px;
+    letter-spacing: 1px;
+    color: var(--accent);
+  }
+  .hud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .hud .stat { color: var(--muted); }
+  .hud .stat b { color: var(--text); font-weight: 700; }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  button {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid #2c2f57;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .12s, border-color .12s, transform .05s;
+  }
+  button:hover { background: #262a52; border-color: var(--accent); }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--accent); color: #05201d; border-color: var(--accent); font-weight: 700; }
+  button.primary:hover { background: #6ee3d8; }
+  button.active { background: #3a3f7a; border-color: var(--accent); }
+  .palette { display: flex; gap: 6px; align-items: center; }
+  .palette .label { color: var(--muted); font-size: 12px; margin-right: 2px; }
+  .swatch {
+    width: 24px; height: 24px;
+    border-radius: 5px;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+  .swatch.active { border-color: #fff; box-shadow: 0 0 0 2px var(--accent); }
+  .stage {
+    position: relative;
+    width: 100%;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #090a16;
+    border: 1px solid #262a52;
+    border-radius: 8px;
+    touch-action: none;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(5,6,16,.78);
+    border-radius: 8px;
+    text-align: center;
+    padding: 20px;
+  }
+  .overlay.show { display: flex; }
+  .overlay .msg { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+  .overlay .sub { font-size: 14px; color: var(--muted); }
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%) translateY(20px);
+    background: #b00020;
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    max-width: 90%;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .spacer { flex: 1 1 auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧱 BREAKOUT — Level Editor</h1>
+
+  <div class="hud">
+    <span class="stat">Mode: <b id="modeTxt">EDIT</b></span>
+    <span class="stat">Score: <b id="scoreTxt">0</b></span>
+    <span class="stat">Lives: <b id="livesTxt">3</b></span>
+    <span class="stat">Status: <b id="statusTxt">Ready</b></span>
+    <span class="spacer"></span>
+    <span class="stat" id="fileTxt">level.json</span>
+  </div>
+
+  <div class="toolbar">
+    <button id="btnPlay" class="primary">▶ Play</button>
+    <button id="btnEdit">✎ Edit</button>
+    <button id="btnDraw" class="active">🖊 Draw [D]</button>
+    <button id="btnErase">⌫ Erase [E]</button>
+    <span class="spacer"></span>
+    <button id="btnNew">↻ New</button>
+    <button id="btnClear">🗑 Clear</button>
+    <button id="btnSave">💾 Save</button>
+    <button id="btnLoad">📂 Load</button>
+    <button id="btnRestart" style="display:none">⟳ Restart [R]</button>
+  </div>
+
+  <div class="palette">
+    <span class="label">Bricks:</span>
+    <div id="palette" class="swatches" style="display:flex;gap:6px;"></div>
+  </div>
+
+  <div class="stage">
+    <canvas id="game" width="800" height="600"></canvas>
+    <div class="overlay" id="overlay">
+      <div class="msg" id="overlayMsg">Ready</div>
+      <div class="sub" id="overlaySub">Draw bricks, then press Play</div>
+    </div>
+  </div>
+
+  <div class="hint">
+    Controls: <b>← →</b> or <b>A/D</b> or mouse/touch to move paddle &nbsp;·&nbsp; <b>Space</b> or click to launch &nbsp;·&nbsp;
+    <b>R</b> restart &nbsp;·&nbsp; <b>Esc</b> toggle Edit/Play &nbsp;·&nbsp;
+    In Edit: click/drag to paint or erase.
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="application/json,.json" style="display:none">
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Config ----------
+  const CANVAS_W = 800, CANVAS_H = 600;
+  const GRID_W = 11, GRID_H = 10;
+  const BRICK_PAD = 4, BRICK_GAP = 6;
+  const BRICK_TOP = 40;
+  const PALETTE_COLORS = ["#ff5d5d", "#ff9f43", "#ffd93d", "#4cd964", "#4f8cff"];
+  const STORAGE_KEY = "breakoutLevel_v1";
+
+  // ---------- DOM ----------
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const modeTxt = document.getElementById("modeTxt");
+  const scoreTxt = document.getElementById("scoreTxt");
+  const livesTxt = document.getElementById("livesTxt");
+  const statusTxt = document.getElementById("statusTxt");
+  const paletteEl = document.getElementById("palette");
+  const overlay = document.getElementById("overlay");
+  const overlayMsg = document.getElementById("overlayMsg");
+  const overlaySub = document.getElementById("overlaySub");
+  const fileTxt = document.getElementById("fileTxt");
+  const toastEl = document.getElementById("toast");
+  const fileInput = document.getElementById("fileInput");
+  const btnPlay = document.getElementById("btnPlay");
+  const btnEdit = document.getElementById("btnEdit");
+  const btnDraw = document.getElementById("btnDraw");
+  const btnErase = document.getElementById("btnErase");
+  const btnNew = document.getElementById("btnNew");
+  const btnClear = document.getElementById("btnClear");
+  const btnSave = document.getElementById("btnSave");
+  const btnLoad = document.getElementById("btnLoad");
+  const btnRestart = document.getElementById("btnRestart");
+
+  // ---------- State ----------
+  const MODE = { EDIT: "EDIT", PLAY: "PLAY" };
+  const status = { READY: "Ready", PLAYING: "Playing", LAUNCHED: "Launched", WON: "Won", LOST: "Lost" };
+
+  const state = {
+    mode: MODE.EDIT,
+    tool: "draw",
+    activeColor: 0,
+    grid: null,
+    score: 0,
+    lives: 3,
+    gameState: status.READY,
+    ball: null,
+    paddle: null,
+    bricksLeft: 0,
+    hoverCell: null
+  };
+
+  // ---------- Geometry ----------
+  function brickGeometry() {
+    const totalW = CANVAS_W - BRICK_PAD * 2 - BRICK_GAP;
+    const bw = (totalW - BRICK_GAP * (GRID_W - 1)) / GRID_W;
+    const bh = (CANVAS_H - BRICK_TOP - BRICK_PAD - BRICK_GAP * (GRID_H - 1)) / GRID_H;
+    return { bw, bh };
+  }
+  function cellToRect(r, c) {
+    const { bw, bh } = brickGeometry();
+    return {
+      x: BRICK_PAD + c * (bw + BRICK_GAP),
+      y: BRICK_TOP + r * (bh + BRICK_GAP),
+      w: bw, h: bh
+    };
+  }
+  function cellFromPoint(px, py) {
+    const { bw, bh } = brickGeometry();
+    const c = Math.floor((px - BRICK_PAD) / (bw + BRICK_GAP));
+    const r = Math.floor((py - BRICK_TOP) / (bh + BRICK_GAP));
+    if (r < 0 || r >= GRID_H || c < 0 || c >= GRID_W) return null;
+    return { r: r, c: c };
+  }
+
+  // ---------- Level ----------
+  function emptyGrid() {
+    const g = [];
+    for (let r = 0; r < GRID_H; r++) {
+      const row = [];
+      for (let c = 0; c < GRID_W; c++) row.push(null);
+      g.push(row);
+    }
+    return g;
+  }
+
+  function defaultLevel() {
+    const g = emptyGrid();
+    for (let r = 0; r < GRID_H; r++) {
+      const inset = Math.floor(r / 2);
+      for (let c = inset; c < GRID_W - inset; c++) {
+        g[r][c] = { color: (r + c) % PALETTE_COLORS.length, health: 1 };
+      }
+    }
+    return g;
+  }
+
+  function countBricks(g) {
+    let n = 0;
+    for (let r = 0; r < GRID_H; r++)
+      for (let c = 0; c < GRID_W; c++)
+        if (g[r][c]) n++;
+    return n;
+  }
+
+  function initLevel() {
+    state.grid = defaultLevel();
+    state.bricksLeft = countBricks(state.grid);
+  }
+
+  function resetGame() {
+    state.score = 0;
+    state.lives = 3;
+    state.gameState = status.READY;
+    state.paddle = { w: 120, h: 16, x: (CANVAS_W - 120) / 2, y: CANVAS_H - 40, speed: 9 };
+    state.ball = {
+      r: 8,
+      x: state.paddle.x + state.paddle.w / 2,
+      y: state.paddle.y - 10,
+      vx: 0, vy: 0,
+      speed: 6,
+      stuck: true
+    };
+  }
+
+  // ---------- Rendering ----------
+  function render() {
+    ctx.fillStyle = "#090a16";
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+    for (let r = 0; r < GRID_H; r++) {
+      for (let c = 0; c < GRID_W; c++) {
+        const cell = state.grid[r][c];
+        if (!cell) continue;
+        const rect = cellToRect(r, c);
+        ctx.fillStyle = PALETTE_COLORS[cell.color % PALETTE_COLORS.length];
+        roundRect(ctx, rect.x, rect.y, rect.w, rect.h, 5);
+        ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,.18)";
+        ctx.fillRect(rect.x + 3, rect.y + 3, rect.w - 6, 3);
+      }
+    }
+
+    if (state.paddle) {
+      ctx.fillStyle = "#e6e8f0";
+      roundRect(ctx, state.paddle.x, state.paddle.y, state.paddle.w, state.paddle.h, 7);
+      ctx.fill();
+    }
+
+    if (state.ball && state.mode === MODE.PLAY && !state.ball.stuck) {
+      ctx.beginPath();
+      ctx.arc(state.ball.x, state.ball.y, state.ball.r, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+    }
+
+    if (state.mode === MODE.EDIT) drawEditor();
+  }
+
+  function drawEditor() {
+    const first = cellToRect(0, 0);
+    const stepX = first.w + BRICK_GAP;
+    const stepY = cellToRect(0, 0).h + BRICK_GAP;
+    ctx.strokeStyle = "rgba(120,130,180,.14)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let c = 0; c <= GRID_W; c++) {
+      const x = BRICK_PAD + c * stepX - BRICK_GAP / 2;
+      ctx.moveTo(x, BRICK_TOP);
+      ctx.lineTo(x, BRICK_TOP + GRID_H * stepY - BRICK_GAP);
+    }
+    for (let r = 0; r <= GRID_H; r++) {
+      const y = BRICK_TOP + r * stepY - BRICK_GAP / 2;
+      ctx.moveTo(BRICK_PAD - BRICK_GAP / 2, y);
+      ctx.lineTo(BRICK_PAD + GRID_W * stepX - BRICK_GAP, y);
+    }
+    ctx.stroke();
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = PALETTE_COLORS[state.activeColor];
+    ctx.strokeRect(BRICK_PAD - 3, BRICK_TOP - 3,
+      GRID_W * stepX - BRICK_GAP + 5, GRID_H * stepY - BRICK_GAP + 5);
+
+    if (state.hoverCell) {
+      const rect = cellToRect(state.hoverCell.r, state.hoverCell.c);
+      if (state.tool === "erase") {
+        ctx.fillStyle = "rgba(255,93,93,.4)";
+      } else {
+        ctx.fillStyle = hexWithAlpha(PALETTE_COLORS[state.activeColor], 0.45);
+      }
+      ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+    }
+  }
+
+  function showOverlay() {
+    if (state.mode === MODE.EDIT) {
+      overlayMsg.textContent = "Editor";
+      overlaySub.textContent = "Draw or erase bricks, then press Play";
+      overlay.classList.add("show");
+      return;
+    }
+    const busy = state.gameState === status.PLAYING || state.gameState === status.LAUNCHED;
+    if (busy) { overlay.classList.remove("show"); return; }
+    overlay.classList.add("show");
+    if (state.gameState === status.READY) {
+      overlayMsg.textContent = "Ready";
+      overlaySub.textContent = "Press Space or click to launch";
+    } else if (state.gameState === status.WON) {
+      overlayMsg.textContent = "🎉 You Win!";
+      overlaySub.textContent = "Score " + state.score + " — press Restart";
+    } else if (state.gameState === status.LOST) {
+      overlayMsg.textContent = "💥 Game Over";
+      overlaySub.textContent = "Final score " + state.score + " — press Restart";
+    }
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath();
+  }
+
+  function hexWithAlpha(hex, a) {
+    const n = parseInt(hex.slice(1), 16);
+    const red = (n >> 16) & 255, green = (n >> 8) & 255, blue = n & 255;
+    return "rgba(" + red + "," + green + "," + blue + "," + a + ")";
+  }
+
+  // ---------- Game update ----------
+  function updatePaddle() {
+    const p = state.paddle;
+    if (!p) return;
+    if (keys.left) p.x -= p.speed;
+    if (keys.right) p.x += p.speed;
+    if (p.x < 0) p.x = 0;
+    if (p.x + p.w > CANVAS_W) p.x = CANVAS_W - p.w;
+  }
+
+  function update() {
+    updatePaddle();
+    if (state.mode !== MODE.PLAY) return;
+    if (state.gameState !== status.PLAYING && state.gameState !== status.LAUNCHED) {
+      showOverlay();
+      return;
+    }
+    const ball = state.ball, paddle = state.paddle;
+    if (ball.stuck) {
+      ball.x = paddle.x + paddle.w / 2;
+      ball.y = paddle.y - ball.r - 2;
+      return;
+    }
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    if (ball.x - ball.r < 0) { ball.x = ball.r; ball.vx = Math.abs(ball.vx); }
+    if (ball.x + ball.r > CANVAS_W) { ball.x = CANVAS_W - ball.r; ball.vx = -Math.abs(ball.vx); }
+    if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy = Math.abs(ball.vy); }
+    if (ball.y - ball.r > CANVAS_H) { loseLife(); return; }
+
+    if (ball.vy > 0 &&
+        ball.y + ball.r >= paddle.y &&
+        ball.y - ball.r <= paddle.y + paddle.h &&
+        ball.x >= paddle.x - ball.r &&
+        ball.x <= paddle.x + paddle.w + ball.r) {
+      const hit = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
+      const angle = hit * (Math.PI / 3);
+      const speed = Math.hypot(ball.vx, ball.vy) || ball.speed;
+      ball.vx = speed * Math.sin(angle);
+      ball.vy = -Math.abs(speed * Math.cos(angle));
+      ball.y = paddle.y - ball.r - 1;
+    }
+
+    hitBricks();
+
+    const sp = Math.hypot(ball.vx, ball.vy);
+    const MAX = 11;
+    if (sp > MAX) {
+      ball.vx = ball.vx / sp * MAX;
+      ball.vy = ball.vy / sp * MAX;
+    }
+    showOverlay();
+  }
+
+  function circleRect(ball, rect) {
+    const nx = Math.max(rect.x, Math.min(ball.x, rect.x + rect.w));
+    const ny = Math.max(rect.y, Math.min(ball.y, rect.y + rect.h));
+    const dx = ball.x - nx, dy = ball.y - ny;
+    return dx * dx + dy * dy <= ball.r * ball.r;
+  }
+
+  function hitBricks() {
+    const ball = state.ball;
+    for (let r = 0; r < GRID_H; r++) {
+      for (let c = 0; c < GRID_W; c++) {
+        const cell = state.grid[r][c];
+        if (!cell) continue;
+        const rect = cellToRect(r, c);
+        if (circleRect(ball, rect)) {
+          const overlapL = rect.x + rect.w - (ball.x - ball.r);
+          const overlapR = (ball.x + ball.r) - rect.x;
+          const overlapT = rect.y + rect.h - (ball.y - ball.r);
+          const overlapB = (ball.y + ball.r) - rect.y;
+          const min = Math.min(overlapL, overlapR, overlapT, overlapB);
+          if (min === overlapL || min === overlapR) ball.vx = -ball.vx;
+          else ball.vy = -ball.vy;
+
+          cell.health -= 1;
+          if (cell.health <= 0) {
+            state.grid[r][c] = null;
+            state.bricksLeft -= 1;
+            state.score += 10;
+          } else {
+            state.score += 2;
+          }
+          refreshHUD();
+        }
+      }
+    }
+    if (state.bricksLeft <= 0 && state.gameState !== status.WON) {
+      state.gameState = status.WON;
+      onEnded();
+    }
+  }
+
+  function loseLife() {
+    state.lives -= 1;
+    refreshHUD();
+    if (state.lives <= 0) {
+      state.gameState = status.LOST;
+      onEnded();
+    } else {
+      state.ball = makeBallForRestart();
+      state.gameState = status.READY;
+    }
+  }
+
+  function makeBallForRestart() {
+    return {
+      r: 8,
+      x: state.paddle.x + state.paddle.w / 2,
+      y: state.paddle.y - 10,
+      vx: 0, vy: 0,
+      speed: 6,
+      stuck: true
+    };
+  }
+
+  function onEnded() {
+    state.ball.stuck = true;
+    state.ball.vx = 0; state.ball.vy = 0;
+    showOverlay();
+  }
+
+  function loop() {
+    update();
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  // ---------- Input ----------
+  const keys = { left: false, right: false };
+
+  function launch() {
+    if (state.mode !== MODE.PLAY) return;
+    if (state.gameState === status.READY) {
+      const b = state.ball;
+      b.stuck = false;
+      const angle = (Math.random() * 0.6 - 0.3);
+      b.vx = b.speed * Math.sin(angle);
+      b.vy = -Math.abs(b.speed * Math.cos(angle));
+      state.gameState = status.LAUNCHED;
+      refreshHUD();
+    } else if (state.gameState === status.WON || state.gameState === status.LOST) {
+      restart();
+    }
+  }
+
+  function restart() {
+    resetGame();
+    if (state.mode === MODE.PLAY) state.gameState = status.READY;
+    refreshHUD();
+    showOverlay();
+  }
+
+  function toggleMode() {
+    if (state.mode === MODE.EDIT) enterPlay();
+    else enterEdit();
+  }
+
+  function enterPlay() {
+    state.mode = MODE.PLAY;
+    if (state.bricksLeft <= 0) initLevel();
+    resetGame();
+    refreshHUD();
+    syncUI();
+  }
+
+  function enterEdit() {
+    state.mode = MODE.EDIT;
+    state.gameState = status.READY;
+    refreshHUD();
+    syncUI();
+    showOverlay();
+  }
+
+  function editorAction(cell) {
+    if (!cell) return;
+    if (state.tool === "draw") {
+      const existing = state.grid[cell.r][cell.c];
+      if (existing) {
+        existing.color = (existing.color + 1) % PALETTE_COLORS.length;
+      } else {
+        state.grid[cell.r][cell.c] = { color: state.activeColor, health: 1 };
+        state.bricksLeft += 1;
+      }
+    } else {
+      if (state.grid[cell.r][cell.c]) {
+        state.grid[cell.r][cell.c] = null;
+        state.bricksLeft -= 1;
+      }
+    }
+    refreshHUD();
+  }
+
+  function canvasCoords(evt) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = CANVAS_W / rect.width;
+    const scaleY = CANVAS_H / rect.height;
+    let cx, cy;
+    if (evt.touches && evt.touches.length) {
+      cx = evt.touches[0].clientX; cy = evt.touches[0].clientY;
+    } else if (evt.changedTouches && evt.changedTouches.length) {
+      cx = evt.changedTouches[0].clientX; cy = evt.changedTouches[0].clientY;
+    } else {
+      cx = evt.clientX; cy = evt.clientY;
+    }
+    return { x: (cx - rect.left) * scaleX, y: (cy - rect.top) * scaleY };
+  }
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  let painting = false;
+
+  function onPointerDown(evt) {
+    evt.preventDefault();
+    const { x, y } = canvasCoords(evt);
+    if (state.mode === MODE.EDIT) {
+      const cell = cellFromPoint(x, y);
+      if (cell) {
+        painting = true;
+        state.hoverCell = cell;
+        editorAction(cell);
+      }
+    } else {
+      if (state.gameState === status.READY) {
+        const target = x - state.paddle.w / 2;
+        state.paddle.x = clamp(target, 0, CANVAS_W - state.paddle.w);
+        launch();
+      } else if (state.gameState === status.WON || state.gameState === status.LOST) {
+        restart();
+      }
+    }
+  }
+
+  function onPointerMove(evt) {
+    evt.preventDefault();
+    const { x, y } = canvasCoords(evt);
+    if (state.mode === MODE.EDIT) {
+      const cell = cellFromPoint(x, y);
+      state.hoverCell = cell;
+      if (painting && cell) editorAction(cell);
+    } else if (state.paddle && (state.gameState === status.READY || state.gameState === status.LAUNCHED)) {
+      state.paddle.x = clamp(x - state.paddle.w / 2, 0, CANVAS_W - state.paddle.w);
+    }
+  }
+
+  function onPointerUp() { painting = false; }
+
+  canvas.addEventListener("mousedown", onPointerDown);
+  canvas.addEventListener("mousemove", onPointerMove);
+  window.addEventListener("mouseup", onPointerUp);
+  canvas.addEventListener("touchstart", onPointerDown, { passive: false });
+  canvas.addEventListener("touchmove", onPointerMove, { passive: false });
+  window.addEventListener("touchend", onPointerUp, { passive: false });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = true;
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = true;
+    if (e.key === " " || e.code === "Space") { e.preventDefault(); launch(); }
+    if (e.key === "r" || e.key === "R") restart();
+    if (e.key === "Escape") { e.preventDefault(); toggleMode(); }
+    if (state.mode === MODE.EDIT) {
+      if (e.key === "d" || e.key === "D") setTool("draw");
+      if (e.key === "e" || e.key === "E") setTool("erase");
+    }
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = false;
+    if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = false;
+  });
+
+  // ---------- Toolbar ----------
+  function setTool(t) {
+    state.tool = t;
+    btnDraw.classList.toggle("active", t === "draw");
+    btnErase.classList.toggle("active", t === "erase");
+  }
+
+  btnPlay.addEventListener("click", function () { if (state.mode !== MODE.PLAY) enterPlay(); });
+  btnEdit.addEventListener("click", function () { if (state.mode !== MODE.EDIT) enterEdit(); });
+  btnDraw.addEventListener("click", function () { setTool("draw"); });
+  btnErase.addEventListener("click", function () { setTool("erase"); });
+  btnRestart.addEventListener("click", restart);
+  btnNew.addEventListener("click", function () { initLevel(); refreshHUD(); toast("New level created"); });
+  btnClear.addEventListener("click", function () { state.grid = emptyGrid(); state.bricksLeft = 0; refreshHUD(); toast("Level cleared"); });
+  btnRestart.style.display = "none";
+
+  btnLoad.addEventListener("click", function () { fileInput.click(); });
+  fileInput.addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function () { loadFromFile(String(reader.result), file.name); };
+    reader.onerror = function () { toast("Could not read file"); };
+    reader.readAsText(file);
+    fileInput.value = "";
+  });
+
+  function saveLevel() {
+    const json = JSON.stringify({ w: GRID_W, h: GRID_H, grid: state.grid }, null, 2);
+    try { localStorage.setItem(STORAGE_KEY, json); } catch (err) { console.error(err); }
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "level.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    toast("Saved level.json");
+  }
+  btnSave.addEventListener("click", saveLevel);
+
+  function validateGrid(g) {
+    if (!Array.isArray(g) || g.length !== GRID_H) return false;
+    for (let r = 0; r < GRID_H; r++) {
+      const row = g[r];
+      if (!Array.isArray(row) || row.length !== GRID_W) return false;
+      for (let c = 0; c < GRID_W; c++) {
+        const cell = row[c];
+        if (cell === null || cell === undefined) continue;
+        if (typeof cell !== "object" || typeof cell.color !== "number" || typeof cell.health !== "number") return false;
+      }
+    }
+    return true;
+  }
+
+  function loadFromFile(text, name) {
+    let data;
+    try { data = JSON.parse(text); } catch (e) { toast("Invalid JSON"); return; }
+    const grid = data && data.grid ? data.grid : data;
+    if (!validateGrid(grid)) { toast("Invalid level file"); return; }
+    state.grid = grid;
+    state.bricksLeft = countBricks(grid);
+    if (state.mode === MODE.PLAY) enterEdit();
+    refreshHUD();
+    fileTxt.textContent = name || "level.json";
+    toast("Level loaded");
+  }
+
+  // ---------- Palette ----------
+  function buildPalette() {
+    paletteEl.innerHTML = "";
+    PALETTE_COLORS.forEach(function (color, i) {
+      const s = document.createElement("div");
+      s.className = "swatch" + (i === state.activeColor ? " active" : "");
+      s.style.background = color;
+      s.title = "Brick " + (i + 1);
+      s.addEventListener("click", function () {
+        state.activeColor = i;
+        buildPalette();
+        if (state.tool !== "draw") setTool("draw");
+      });
+      paletteEl.appendChild(s);
+    });
+  }
+
+  // ---------- HUD ----------
+  function refreshHUD() {
+    scoreTxt.textContent = state.score;
+    livesTxt.textContent = state.lives;
+    modeTxt.textContent = state.mode;
+    statusTxt.textContent = state.gameState;
+  }
+
+  function syncUI() {
+    refreshHUD();
+    btnRestart.style.display = state.mode === MODE.PLAY ? "" : "none";
+  }
+
+  let toastTimer = null;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 1600);
+  }
+
+  // ---------- Boot ----------
+  function boot() {
+    initLevel();
+    resetGame();
+    buildPalette();
+    let loaded = false;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (validateGrid(data && data.grid ? data.grid : data)) {
+          state.grid = data.grid;
+          loaded = true;
+        }
+      }
+    } catch (e) { /* ignore */ }
+    if (!loaded) initLevel();
+    state.bricksLeft = countBricks(state.grid);
+    state.gameState = status.READY;
+    syncUI();
+    refreshHUD();
+    showOverlay();
+    loop();
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>

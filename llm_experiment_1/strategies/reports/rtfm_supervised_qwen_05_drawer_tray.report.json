@@ -1,0 +1,1906 @@
+{
+  "score": 70,
+  "grade": "C - binary export and height repaired; printable geometry and readouts still fail",
+  "rubricScores": {
+    "functionality": 30,
+    "artifact_correctness": 14,
+    "usability": 11,
+    "self_verification": 5,
+    "autonomy": 10
+  },
+  "blockingRequiredDefect": true,
+  "summary": "The recommended binary export now produces valid bytes, and default/alternate STL outer dimensions match requested values with the base at0. Actual compartments remain unequal despite equal readouts, the mesh has reconciled nonmanifold/inconsistent boundaries, and reachable invalid clearances still export. Third feedback targets an already-fixed intermediate typo and makes no further product change.",
+  "strengths": [
+    "Actual Binary STL button now downloads a valid4884byte96facet default payload rather than throwing DataView RangeError; ASCII bytes remain parseable.",
+    "Actual exported default bounds180x30x120 and alternate200x40x100 now match requested dimensions, with Ymin0. The original short height and lifted base improve.",
+    "All requested parameter controls/defaults remain in a self-contained offline file; existing rotation handlers change camera state when invoked conditionally in the GPU-free environment."
+  ],
+  "defects": [
+    "Actual default compartment widths58.333/57.333/56.333 and depths58/56 disagree with displayed equal57.3x57.0. Alternate widths48.125/46.875/46.875/45.625 and depths31.25/30/28.75 disagree with displayed46.9x30.0.",
+    "Default STL retains26boundary/nonmanifold and24inconsistent-winding edges after collinear/T-junction reconciliation; alternate retains34/32. Separate floor/wall/divider surfaces do not form a consistent printable boundary. Per-face normals agreeing with triangle winding does not establish an outward valid union.",
+    "A UI-reachable80x60x10,12x12grid,6wall/5floor configuration still downloads invalid negative-clearance geometry instead of preventing or correcting it."
+  ],
+  "verification": [
+    "Independent exact finala38c92f47d2c5f432d261484036441da1c07cd86680305fc35e8214876e89346 through actual input/export handlers, downloaded ASCII/binary bytes, bounds/normals/topology and actual horizontal triangle slices. No app algorithms replaced.",
+    "Clearance probes intersect actual horizontal mesh sections inside compartments, excluding projected divider end caps. Invalid-grid probe honors current slider min/max attributes and tests actual export behavior.",
+    "Final source is byte-identical to settled round2; third feedback produces no product change."
+  ],
+  "verificationConcerns": [
+    "Supervisor correctly reproduced binary overflow, floor placement mismatch and short outer height. Worker ran real extracted geometry/export calculations plus source checks; this earns5self-verification points, but they accepted compartment math and printable geometry without actual opening/topology proof.",
+    "Third feedback used older in-flight snapshot668e7509with a real transient p.H-p-floor typo. The worker had already fixed it before settling round2a38c92. Supervisor failed to refresh the authoritative current source and consumed the final slot on stale evidence; worker correctly confirmed the shipped spelling was already fixed.",
+    "Actual WebGL startup/appearance remains unverified: no browser/GPU or fake renderer substitute. Existing setupMouse was invoked only to test camera-state controls. No physical-print certification or general triangle-intersection proof.",
+    "Worker1/supervisor20recovered UND_ERR_SOCKET errors remain disclosed; supervisor final aborted request is separate. Same contexts persisted and no server/deadline reset occurred. Failed partial-stream usage is unknown."
+  ],
+  "scopeCompliance": "Worker alone wrote product; supervisor wrote private scratch/control and read-only consistent source snapshots. Codex supplied no product code, diagnoses or feedback. Independent tests and gates remained private.",
+  "workflowNotes": "Three counted worker prompts; 40.91 pair wall minutes, 54.474 summed role-activity minutes. Normal third-settlement ceiling; autonomy10 remains eligible. No counted in-flight interruption actually occurred in this project because worker was idle on delivery.",
+  "humanOrSupervisorSteering": 0,
+  "supervisorInstructionDeviations": [
+    "Supervisor feedback supplied explicit allocation and geometry expressions despite behavioral-only/no-repair-code instruction; this is local supervisor instruction deviation, not Codex product guidance."
+  ],
+  "limitations": [
+    "One valid paired run on the exact frozen solo seed; no outcome-based rerun or deadline reset.",
+    "Activity includes tools/waits and overlapping roles, not GPU busy time. Cumulative tokens include cached prefixes; creation costs remain separate.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM author-profile cross-model rescue of the exact frozen solo app. Solo creation and incremental repair costs are separate; already-qualified baselines may remain unchanged with zero feedback and no improvement claim. A120-minute shared wall includes both actors and review waits; Codex grades but supplies no repair diagnoses/code. Product quality is normalized from80points. Pair wall differs from summed concurrent model activity."
+  ],
+  "title": "Simple drawer tray generator",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "rtfm_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The current file is already correct \u2014 the typo was already fixed by my earlier edit. Here's the verification:\n\n| Check | Result |\n|-------|--------|\n| `p.H-p-floor` typo exists | **No** (already fixed) |\n| All 7 render3D box sizes use `p.H-p.floor` | **Yes** \u2713 |\n| No undefined `floor` references in code | **Yes** \u2713 |\n| Script parses as valid JS | **Yes** \u2713 |\n| Wall Y range | **[1.5, 30]** = **[floor, H]** \u2713 |\n\nThe `p.H-p-floor` typo was introduced and fixed in the same repair cycle. My second edit (fixing the back wall size) corrected it to `p.H-p.floor`. The current file has no such typo \u2014 all wall/divider boxes in both `generateSTL` and `render3D` correctly use `p.H-p.floor`.\n\n**Full preview path verified:**\n- `update()` \u2192 `render3D()` \u2192 box creation with `wallCenterY = (p.floor + p.H) / 2` \u2192 walls span `[floor, H]` \u2192 no ReferenceError\n- STL export: `generateSTL()` \u2192 walls at `y = p.floor` \u2192 spans `[p.floor, p.H]` \u2192 matches preview exactly",
+  "workflowInstructions": "rtfm-supervised-plan.json; run-rtfm-supervised-control-v2.py",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 40.91,
+  "wallMinutes": 40.91,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "three_feedbacks_settled",
+  "exitCode": 0,
+  "promptWords": 65,
+  "toolCalls": 144,
+  "parentToolCalls": 39,
+  "childToolCalls": 105,
+  "toolResultsMarkedError": 35,
+  "modelUsageReported": {
+    "input": 80161,
+    "output": 86290,
+    "cacheRead": 7462903,
+    "totalTokens": 7629354
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 104858,
+  "parentPeakReportedPromptTokens": 55171,
+  "childPeakReportedPromptTokens": 104858,
+  "parentModelUsage": {
+    "input": 28124,
+    "output": 29772,
+    "cacheRead": 1410699,
+    "totalTokens": 1468595
+  },
+  "childModelUsage": {
+    "input": 52037,
+    "output": 56518,
+    "cacheRead": 6052204,
+    "totalTokens": 6160759
+  },
+  "artifactBytes": 38024,
+  "sha256": "a38c92f47d2c5f432d261484036441da1c07cd86680305fc35e8214876e89346",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 5,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-rtfm"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 3,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "qwen3.6:35b-a3b",
+    "supervisorModel": "ornith-1.5:35b-256k",
+    "feedbackCount": 3,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "a9c735af-6c8e-4620-ba4a-0c34f14507da",
+        "message": "I tested the exact read-only artifact (hash dcc1e35e...2501c, verified against state.json) by loading the real app.js in Node and calling its actual handlers and output bytes. Two genuine app defects found. Harness stubs (document/window/gl) were only used to drive the app's own functions; they do not affect these results.\n\nDEFECT 1 (critical) - Binary STL export throws and downloads nothing.\nIn exportSTL, the binary branch allocates the buffer as: new ArrayBuffer(84 + triangles.length * 12). Each STL facet is 50 bytes (3 normal floats + 9 vertex floats + 1 attribute short = 50), so writing the facets overflows the buffer. Running the real exportSTL('binary') on the shipped file throws RangeError: \"Offset is outside the bounds of the DataView\" and never reaches downloadBlob. The \"Binary STL (Recommended)\" button therefore does nothing in a browser. The ASCII export works fine (valid solid...endsolid, 96 facets, correct per-face normals). Fix: allocate 84 + triangles.length * 50. Expected: binary STL writes a complete 4884-byte file for the default 180x120x30 3x2 tray (84 + 96*50) with a valid 80-byte header, the correct triangle-count uint32 at offset 80, and unit-ish per-face normals.\n\nDEFECT 2 (geometry) - Exported STL does not match the 3D preview; floor is lifted off the base.\nThe preview (render3D) places the floor at y=0..1.5 (tray rests on the build plate) and outer walls at roughly y=0.75..29.25. The exported STL (generateSTL) places the floor at y=2..3.5 and the outer walls at y=1.5..30. I measured this by calling generateSTL() and getCompartmentInfo() with the default params and by reading the render3D box definitions. So the exported model is shifted up by about 1.5 mm and, more importantly, the floor panel floats ~2mm above the tray bottom instead of closing it as shown on screen. The printed part will not sit flat and its bottom will not match what the user sees. Expected: the exported STL floor should sit at the same bottom (y=0..floor) and the walls should meet the floor exactly as in the preview, i.e. the STL bounding box should start at y=0 and the floor should seal the base.\n\nCompartment math is correct (default cellW 57.3mm, cellD 58.0mm, innerH 28.5mm, 6 compartments) and the ASCII export is valid, so those are good behavior to preserve.\n\nPlease repair Defect 1 first (it is a hard crash on the recommended export path), then Defect 2.\n",
+        "reason": "Hard crash on recommended export path: binary STL buffer allocated as triangles.length*12 but each facet is 50 bytes, so exportSTL(binary) throws RangeError and downloads nothing. Verified by calling the real exportSTL in Node. Also geometry mismatch: exported STL floor lifted to y=2..3.5 vs preview y=0..1.5. Full evidence in feedback-1.txt.",
+        "interrupt": true,
+        "proposedUTC": "2026-11-19T01:27:12.502177+00:00",
+        "acceptedUTC": "2026-11-19T01:27:12.502184+00:00",
+        "elapsedSeconds": 854.584,
+        "workerPID": 68228,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-19T01:27:12.536420+00:00",
+        "deliveredElapsedSeconds": 854.584
+      },
+      {
+        "number": 2,
+        "id": "65cb24a4-c504-4cac-9b6f-8a0153f05369",
+        "message": "Good progress. I verified the fresh artifact (hash fcb9e375...27eed, confirmed against state.json) by loading the real current index.html in Node and calling its actual handlers and output bytes. Harness stubs only drove the app's own functions.\n\nCONFIRMED FIXED (preserve this behavior):\n- Defect 1 (binary STL crash) is FIXED. exportSTL('binary') now returns ok:true with no RangeError. Output is a complete 4884-byte file for the default 180x120x30 3x2 tray (84 + 96*50), triangle-count uint32 at offset 80 reads 96, 80-byte header present, per-face normals present. ASCII export also still valid (96 facets, 288 verts, has endsolid).\n- Defect 2 (floor lifted off base) is FIXED. Exported STL now spans Y=0..floor, so the tray rests on the build plate at Y=0 and the floor seals the base, matching the preview.\n\nRESIDUAL DEFECT 3 (new) - Outer height is floor/2 short of the configured Height, in BOTH the preview and the exported STL.\nI tested the model's vertical extent by calling generateSTL() and reading the Y coordinates of all vertices for several configs:\n- Height=30, floor=1.5 -> model height 29.25mm (Ymax 29.25), expected 30\n- Height=50, floor=3  -> model height 48.50mm (Ymax 48.50), expected 50\n- Height=40, floor=1.5 -> model height 39.25mm (Ymax 39.25), expected 40\nSo the outer height is always exactly floor/2 short. The outer walls are centered at H/2 with wall height (H - floor), which puts the wall top at H - floor/2 instead of H. The tray never reaches the configured height.\nExpected outcome: the tray's outer height must equal the configured Height. With Height=30 and floor=1.5 the exported model must span Y=0..30 exactly (30mm tall). The outer walls should rest on top of the floor panel (wall bottom at y = floor) and reach the full outer height (wall top at y = H). Because this affects the shape, apply the same correction to both the 3D preview (render3D wall box position) and the exported STL (generateSTL wall box position) so the export continues to match the preview exactly. Compartment interior math is correct and must be preserved.\n\nThis is the only remaining issue I found. Everything else in the brief is satisfied: editable outer dimensions / row-col counts / wall and floor thickness, clear compartment dimensions (cellW 57.33, cellD 57.00, innerH 28.50, 6 compartments at default), rotatable 3D preview, and both ASCII and printable binary STL export working.\n",
+        "reason": "Confirmed Defect1(binary crash) and Defect2(floor offset) are FIXED and verified on hash fcb9e375. New residual finding Defect3: outer height is floor/2 short of configured Height in both preview and STL (H=30 -> 29.25mm). Needs identical fix to preview+STL so export still matches preview.",
+        "interrupt": false,
+        "proposedUTC": "2026-11-19T01:40:47.629488+00:00",
+        "acceptedUTC": "2026-11-19T01:40:47.629493+00:00",
+        "elapsedSeconds": 1669.694,
+        "workerPID": 68228,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-19T01:40:47.666844+00:00",
+        "deliveredElapsedSeconds": 1669.694
+      },
+      {
+        "number": 3,
+        "id": "d1b4e0fc-abc7-45ed-8aea-1d2c688d4699",
+        "message": "URGENT - new critical regression introduced by the height fix (artifact 668e7509, verified against state.json).\n\nThe height fix itself is correct: I verified the exported model now reaches the exact configured height (H=30 -> 30.00mm, H=50 -> 50.00mm, floor now seals the base at Y=0), and both ASCII and binary STL still export correctly. However, the same edit broke the 3D preview.\n\nDEFECT 4 (critical, new) - render3D throws and the 3D preview is broken.\nIn render3D, the back outer-wall box uses size[1] written as p.H-p-floor instead of p.H-p.floor. The identifier floor is not defined anywhere in the script (the only floor references are p.floor and comments). So evaluating that line throws ReferenceError: floor is not defined. update() calls render3D() on load and on every slider/preset change (render3D is called from update line 70 and from the mouse/touch handlers), so the preview throws immediately and never draws. This affects the interactive 3D preview, which the brief requires as a core feature.\n\nExpected outcome: the preview must render. Fix the typo so the back outer-wall height is p.H - p.floor, matching the other three outer walls (left, right, front) which correctly use p.H-p.floor, and matching the STL export which already uses p.H-p.floor. After the fix, render3D must run without throwing on load and on every parameter change, and the tray height must remain exactly the configured Height.\n\nPlease also re-verify the whole preview path after the edit, not just the STL, since this typo was only caught by reading render3D (my earlier tests only exercised generateSTL/exportSTL, which do not have this bug).\n",
+        "reason": "CRITICAL regression in artifact 668e7509: render3D back-wall uses p.H-p-floor (undefined floor) -> ReferenceError breaks the 3D preview on load and every change. Height fix itself is correct (model height=H verified) but preview is broken. Must interrupt to prevent submitting broken preview. Last feedback slot.",
+        "interrupt": true,
+        "proposedUTC": "2026-11-19T01:49:52.325481+00:00",
+        "acceptedUTC": "2026-11-19T01:49:52.325485+00:00",
+        "elapsedSeconds": 2214.386,
+        "workerPID": 68228,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-19T01:49:52.358685+00:00",
+        "deliveredElapsedSeconds": 2214.386
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-19T01:35:56.134345+00:00",
+        "sha256": "fcb9e375ed8290c1f0c6549ff18a1785e5f527c4fb136d29c7bb492d97a77eed",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case125/feedback1"
+      },
+      {
+        "feedback": 2,
+        "at": "2026-11-19T01:44:22.279639+00:00",
+        "sha256": "a38c92f47d2c5f432d261484036441da1c07cd86680305fc35e8214876e89346",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case125/feedback2"
+      },
+      {
+        "feedback": 3,
+        "at": "2026-11-19T01:53:52.438978+00:00",
+        "sha256": "a38c92f47d2c5f432d261484036441da1c07cd86680305fc35e8214876e89346",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case125/feedback3"
+      }
+    ],
+    "supervisorWakeups": [
+      {
+        "at": "2026-11-19T01:27:50.975830+00:00",
+        "elapsedSeconds": 893.06,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T01:29:20.989969+00:00",
+        "elapsedSeconds": 983.07,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T01:30:42.575920+00:00",
+        "elapsedSeconds": 1064.66,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T01:31:35.641506+00:00",
+        "elapsedSeconds": 1117.72,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T01:41:06.162720+00:00",
+        "elapsedSeconds": 1688.23,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T01:41:43.986427+00:00",
+        "elapsedSeconds": 1726.05,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T01:53:28.680565+00:00",
+        "elapsedSeconds": 2430.74,
+        "source": "worker_progress_or_clock_metadata"
+      }
+    ],
+    "supervisorYields": [],
+    "supervisorStopRequest": null,
+    "independentGradeGates": [
+      {
+        "at": "2026-11-19T01:36:57.287379+00:00",
+        "sha256": "fcb9e375ed8290c1f0c6549ff18a1785e5f527c4fb136d29c7bb492d97a77eed",
+        "productScore": 65.0,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_qwen_05_drawer_tray.round1.qa.json"
+      },
+      {
+        "at": "2026-11-19T01:45:40.736866+00:00",
+        "sha256": "a38c92f47d2c5f432d261484036441da1c07cd86680305fc35e8214876e89346",
+        "productScore": 68.75,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_qwen_05_drawer_tray.round2.qa.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "sha256": "dcc1e35e9a5088edb8bc5ee9053436b2d09ef95439095c235d04ddda50c2501c",
+      "baselineScore": 55,
+      "baselineRubricScores": {
+        "functionality": 24,
+        "artifact_correctness": 9,
+        "usability": 11,
+        "self_verification": 1,
+        "autonomy": 10
+      },
+      "baselineProductScore": 55.0,
+      "baselineTargetMet": false,
+      "baselineReport": "strategies/reports/rtfm_qwen_05_drawer_tray.report.json",
+      "creationCost": {
+        "model": "qwen",
+        "role": "worker",
+        "pid": 8321,
+        "assistantUsage": {
+          "input": 2813,
+          "output": 15310,
+          "cacheRead": 67512,
+          "cacheWrite": 0,
+          "totalTokens": 85635
+        },
+        "recordedCompactionUsage": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "totalTokens": 0
+        },
+        "recordedCombinedUsage": {
+          "input": 2813,
+          "output": 15310,
+          "cacheRead": 67512,
+          "cacheWrite": 0,
+          "totalTokens": 85635
+        },
+        "unreportedCompactions": 0,
+        "activeMinutes": 3.18,
+        "promptCount": 1,
+        "streamingWindows": [
+          {
+            "start": 1166342.234756083,
+            "end": 1166510.51223325
+          },
+          {
+            "start": 1166510.602352458,
+            "end": 1166512.067769541
+          },
+          {
+            "start": 1166512.35336975,
+            "end": 1166523.400987583
+          },
+          {
+            "start": 1166523.687104958,
+            "end": 1166525.229325833
+          },
+          {
+            "start": 1166525.499960791,
+            "end": 1166531.139852916
+          }
+        ],
+        "exitCode": 0
+      },
+      "sourceCase": 115,
+      "sourceFolder": "rtfm/qwen/05_drawer_tray",
+      "frozenArtifact": "strategies/reports/initial-artifacts/rtfm_supervised_qwen_05_drawer_tray/index.html",
+      "frozenUTC": "2026-11-18T16:13:22.818932+00:00"
+    },
+    "sharedLimitSeconds": 7200,
+    "authorProfiles": "research/rtfm-runtime-profiles.json",
+    "runtimeConformance": "research/rtfm-supervised-conformance.json",
+    "sourceRTFMSoloCase": 115,
+    "supervisorInstructionDeviations": [
+      "Supervisor feedback supplied explicit allocation and geometry expressions despite behavioral-only/no-repair-code instruction; this is local supervisor instruction deviation, not Codex product guidance."
+    ]
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 3,
+  "localModelCosts": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 68228,
+      "assistantUsage": {
+        "input": 28124,
+        "output": 29772,
+        "cacheRead": 1410699,
+        "cacheWrite": 0,
+        "totalTokens": 1468595
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 28124,
+        "output": 29772,
+        "cacheRead": 1410699,
+        "cacheWrite": 0,
+        "totalTokens": 1468595
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 16.305,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1200245.731823666,
+          "end": 1200252.65641725
+        },
+        {
+          "start": 1200252.742993125,
+          "end": 1200255.635516833
+        },
+        {
+          "start": 1200255.749285833,
+          "end": 1200455.33145025
+        },
+        {
+          "start": 1200455.472724791,
+          "end": 1200493.071847625
+        },
+        {
+          "start": 1200493.253472958,
+          "end": 1200502.793429666
+        },
+        {
+          "start": 1200502.930568458,
+          "end": 1200507.431603458
+        },
+        {
+          "start": 1200507.767016416,
+          "end": 1200515.962816833
+        },
+        {
+          "start": 1200516.264903583,
+          "end": 1200532.93344875
+        },
+        {
+          "start": 1200533.273063083,
+          "end": 1200542.218824416
+        },
+        {
+          "start": 1200542.457620166,
+          "end": 1200547.809507708
+        },
+        {
+          "start": 1200547.950256708,
+          "end": 1200609.829861916
+        },
+        {
+          "start": 1200610.188536541,
+          "end": 1200704.1468365
+        },
+        {
+          "start": 1200704.55771425,
+          "end": 1200729.5188175
+        },
+        {
+          "start": 1200730.149332791,
+          "end": 1200742.035341166
+        },
+        {
+          "start": 1200742.356621125,
+          "end": 1200767.8254845
+        },
+        {
+          "start": 1201060.656830333,
+          "end": 1201116.723211
+        },
+        {
+          "start": 1201117.009104791,
+          "end": 1201126.349214416
+        },
+        {
+          "start": 1201126.526285833,
+          "end": 1201165.219177958
+        },
+        {
+          "start": 1201165.613061791,
+          "end": 1201230.250299166
+        },
+        {
+          "start": 1201230.608220041,
+          "end": 1201255.591392333
+        },
+        {
+          "start": 1201255.974947416,
+          "end": 1201274.267612375
+        },
+        {
+          "start": 1201605.344372416,
+          "end": 1201609.838497166
+        },
+        {
+          "start": 1201610.208348666,
+          "end": 1201613.172570291
+        },
+        {
+          "start": 1201613.553653416,
+          "end": 1201622.736337375
+        },
+        {
+          "start": 1201623.097613458,
+          "end": 1201629.849151625
+        },
+        {
+          "start": 1201629.857689583,
+          "end": 1201629.859037416
+        },
+        {
+          "start": 1201632.067693875,
+          "end": 1201653.871478708
+        },
+        {
+          "start": 1201654.221399583,
+          "end": 1201672.2964325
+        },
+        {
+          "start": 1201672.663734833,
+          "end": 1201686.798771208
+        },
+        {
+          "start": 1201687.279023458,
+          "end": 1201693.255788833
+        },
+        {
+          "start": 1201693.5921745,
+          "end": 1201698.417943291
+        },
+        {
+          "start": 1201698.771489708,
+          "end": 1201703.527384833
+        },
+        {
+          "start": 1201703.8793375,
+          "end": 1201728.092427666
+        },
+        {
+          "start": 1201728.495401791,
+          "end": 1201742.485676208
+        },
+        {
+          "start": 1201742.814634958,
+          "end": 1201793.551425958
+        },
+        {
+          "start": 1201793.957276708,
+          "end": 1201825.58679025
+        },
+        {
+          "start": 1201826.007265125,
+          "end": 1201844.664078625
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 68229,
+      "assistantUsage": {
+        "input": 52037,
+        "output": 56518,
+        "cacheRead": 6052204,
+        "cacheWrite": 0,
+        "totalTokens": 6160759
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 52037,
+        "output": 56518,
+        "cacheRead": 6052204,
+        "cacheWrite": 0,
+        "totalTokens": 6160759
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 38.169,
+      "promptCount": 8,
+      "streamingWindows": [
+        {
+          "start": 1199391.616634291,
+          "end": 1199395.380682916
+        },
+        {
+          "start": 1199395.388253208,
+          "end": 1199395.38873175
+        },
+        {
+          "start": 1199397.442823916,
+          "end": 1199400.413680541
+        },
+        {
+          "start": 1199400.5939255,
+          "end": 1199402.1555885
+        },
+        {
+          "start": 1199402.272380833,
+          "end": 1199482.875072458
+        },
+        {
+          "start": 1199483.179988625,
+          "end": 1199496.421687833
+        },
+        {
+          "start": 1199496.42938875,
+          "end": 1199496.430628333
+        },
+        {
+          "start": 1199498.641480458,
+          "end": 1199508.176794666
+        },
+        {
+          "start": 1199508.477071708,
+          "end": 1199524.200546708
+        },
+        {
+          "start": 1199524.536263916,
+          "end": 1199537.237815916
+        },
+        {
+          "start": 1199537.817638958,
+          "end": 1199549.867286291
+        },
+        {
+          "start": 1199550.216059958,
+          "end": 1199553.520348291
+        },
+        {
+          "start": 1199553.796704291,
+          "end": 1199567.126345875
+        },
+        {
+          "start": 1199567.13507375,
+          "end": 1199567.136073
+        },
+        {
+          "start": 1199569.320720458,
+          "end": 1199578.256235375
+        },
+        {
+          "start": 1199578.26418025,
+          "end": 1199578.265162875
+        },
+        {
+          "start": 1199580.412473666,
+          "end": 1199600.317236583
+        },
+        {
+          "start": 1199600.461359625,
+          "end": 1199604.868174041
+        },
+        {
+          "start": 1199605.244082041,
+          "end": 1199613.9510515
+        },
+        {
+          "start": 1199614.15280925,
+          "end": 1199620.00375825
+        },
+        {
+          "start": 1199620.154388,
+          "end": 1199622.664904916
+        },
+        {
+          "start": 1199623.036929,
+          "end": 1199628.787429041
+        },
+        {
+          "start": 1199628.935290875,
+          "end": 1199631.507291625
+        },
+        {
+          "start": 1199631.86328875,
+          "end": 1199651.555582583
+        },
+        {
+          "start": 1199651.915649833,
+          "end": 1199667.090247416
+        },
+        {
+          "start": 1199667.277880166,
+          "end": 1199670.117611416
+        },
+        {
+          "start": 1199670.462798458,
+          "end": 1199675.239865833
+        },
+        {
+          "start": 1199675.410938958,
+          "end": 1199680.808097583
+        },
+        {
+          "start": 1199680.816481708,
+          "end": 1199680.817611541
+        },
+        {
+          "start": 1199682.978108291,
+          "end": 1199697.74536325
+        },
+        {
+          "start": 1199697.814832416,
+          "end": 1199697.817331875
+        },
+        {
+          "start": 1199699.97131225,
+          "end": 1199701.740945
+        },
+        {
+          "start": 1199702.078548166,
+          "end": 1199708.012032
+        },
+        {
+          "start": 1199708.199370375,
+          "end": 1199709.861064333
+        },
+        {
+          "start": 1199710.432297833,
+          "end": 1199744.392985
+        },
+        {
+          "start": 1199744.401591333,
+          "end": 1199744.403009958
+        },
+        {
+          "start": 1199746.578618375,
+          "end": 1199748.823995291
+        },
+        {
+          "start": 1199749.204729625,
+          "end": 1199769.933978875
+        },
+        {
+          "start": 1199770.130391833,
+          "end": 1199772.786253916
+        },
+        {
+          "start": 1199773.172889416,
+          "end": 1199793.656190916
+        },
+        {
+          "start": 1199793.664570083,
+          "end": 1199793.665426666
+        },
+        {
+          "start": 1199795.875947916,
+          "end": 1199798.329386458
+        },
+        {
+          "start": 1199798.7046565,
+          "end": 1199866.028083083
+        },
+        {
+          "start": 1199866.20109325,
+          "end": 1199868.138740291
+        },
+        {
+          "start": 1199868.514410208,
+          "end": 1199899.972180041
+        },
+        {
+          "start": 1199900.183800833,
+          "end": 1199905.384923375
+        },
+        {
+          "start": 1199905.773047291,
+          "end": 1199946.7609985
+        },
+        {
+          "start": 1199947.225807541,
+          "end": 1199964.872557916
+        },
+        {
+          "start": 1199964.88107325,
+          "end": 1199964.882758875
+        },
+        {
+          "start": 1199967.088277625,
+          "end": 1199971.176453916
+        },
+        {
+          "start": 1199971.55772825,
+          "end": 1199982.41709925
+        },
+        {
+          "start": 1199982.427356041,
+          "end": 1199982.428381208
+        },
+        {
+          "start": 1199984.704006,
+          "end": 1200001.933926333
+        },
+        {
+          "start": 1200002.155056041,
+          "end": 1200004.756846416
+        },
+        {
+          "start": 1200005.1650695,
+          "end": 1200022.928029541
+        },
+        {
+          "start": 1200023.164627541,
+          "end": 1200025.27037375
+        },
+        {
+          "start": 1200025.661482541,
+          "end": 1200108.463927916
+        },
+        {
+          "start": 1200108.6778875,
+          "end": 1200118.48483675
+        },
+        {
+          "start": 1200118.715250333,
+          "end": 1200121.726240208
+        },
+        {
+          "start": 1200122.181387166,
+          "end": 1200189.948304333
+        },
+        {
+          "start": 1200190.35529175,
+          "end": 1200229.857715958
+        },
+        {
+          "start": 1200229.868644666,
+          "end": 1200229.869653958
+        },
+        {
+          "start": 1200232.097820958,
+          "end": 1200234.374912541
+        },
+        {
+          "start": 1200234.787978958,
+          "end": 1200245.10522125
+        },
+        {
+          "start": 1200245.532053958,
+          "end": 1200251.046926666
+        },
+        {
+          "start": 1200251.288705333,
+          "end": 1200276.026795416
+        },
+        {
+          "start": 1200276.431741583,
+          "end": 1200282.940950041
+        },
+        {
+          "start": 1200284.024172708,
+          "end": 1200286.746602166
+        },
+        {
+          "start": 1200286.755367333,
+          "end": 1200286.756714208
+        },
+        {
+          "start": 1200289.018723125,
+          "end": 1200294.910203166
+        },
+        {
+          "start": 1200295.205010833,
+          "end": 1200307.630602375
+        },
+        {
+          "start": 1200374.035939083,
+          "end": 1200376.375775333
+        },
+        {
+          "start": 1200376.67953,
+          "end": 1200384.501562291
+        },
+        {
+          "start": 1200455.591967708,
+          "end": 1200458.829702625
+        },
+        {
+          "start": 1200459.105599708,
+          "end": 1200471.744825958
+        },
+        {
+          "start": 1200472.181157875,
+          "end": 1200488.121386166
+        },
+        {
+          "start": 1200488.538224,
+          "end": 1200503.325856416
+        },
+        {
+          "start": 1200503.775116875,
+          "end": 1200507.068552666
+        },
+        {
+          "start": 1200508.6582895,
+          "end": 1200511.117742458
+        },
+        {
+          "start": 1200511.129484833,
+          "end": 1200511.1305885
+        },
+        {
+          "start": 1200513.742056541,
+          "end": 1200529.351978083
+        },
+        {
+          "start": 1200529.796247958,
+          "end": 1200538.700448583
+        },
+        {
+          "start": 1200539.185439458,
+          "end": 1200547.806076375
+        },
+        {
+          "start": 1200548.580699541,
+          "end": 1200556.4543755
+        },
+        {
+          "start": 1200556.872373416,
+          "end": 1200565.738013208
+        },
+        {
+          "start": 1200566.215960375,
+          "end": 1200763.979188791
+        },
+        {
+          "start": 1200764.479506458,
+          "end": 1200771.89486425
+        },
+        {
+          "start": 1200772.353084958,
+          "end": 1200777.225662916
+        },
+        {
+          "start": 1200777.709865666,
+          "end": 1200844.788885375
+        },
+        {
+          "start": 1200844.796617125,
+          "end": 1200844.79735275
+        },
+        {
+          "start": 1200847.073365416,
+          "end": 1200918.237142958
+        },
+        {
+          "start": 1200918.721525166,
+          "end": 1200925.810783875
+        },
+        {
+          "start": 1200926.315749833,
+          "end": 1200949.881483458
+        },
+        {
+          "start": 1200950.388927375,
+          "end": 1201049.823752708
+        },
+        {
+          "start": 1201049.834079375,
+          "end": 1201049.835072916
+        },
+        {
+          "start": 1201052.150592916,
+          "end": 1201060.21457475
+        },
+        {
+          "start": 1201060.696059083,
+          "end": 1201067.37304775
+        },
+        {
+          "start": 1201067.66974225,
+          "end": 1201077.755555125
+        },
+        {
+          "start": 1201079.210528208,
+          "end": 1201081.823396625
+        },
+        {
+          "start": 1201082.170650708,
+          "end": 1201086.061105791
+        },
+        {
+          "start": 1201117.086130625,
+          "end": 1201119.912325833
+        },
+        {
+          "start": 1201120.230128708,
+          "end": 1201134.779272416
+        },
+        {
+          "start": 1201135.25038225,
+          "end": 1201153.479012541
+        },
+        {
+          "start": 1201153.957387041,
+          "end": 1201228.590073291
+        },
+        {
+          "start": 1201229.093474208,
+          "end": 1201248.300988125
+        },
+        {
+          "start": 1201248.857783166,
+          "end": 1201295.680896833
+        },
+        {
+          "start": 1201295.69377875,
+          "end": 1201295.694851541
+        },
+        {
+          "start": 1201298.051148916,
+          "end": 1201300.265157
+        },
+        {
+          "start": 1201300.919218875,
+          "end": 1201311.267017083
+        },
+        {
+          "start": 1201311.877632333,
+          "end": 1201331.901298125
+        },
+        {
+          "start": 1201332.4623335,
+          "end": 1201341.496709208
+        },
+        {
+          "start": 1201342.00601125,
+          "end": 1201346.176830625
+        },
+        {
+          "start": 1201346.685011875,
+          "end": 1201358.710215833
+        },
+        {
+          "start": 1201359.238904916,
+          "end": 1201402.134080083
+        },
+        {
+          "start": 1201402.606949833,
+          "end": 1201452.273237166
+        },
+        {
+          "start": 1201452.778337083,
+          "end": 1201480.339437291
+        },
+        {
+          "start": 1201480.899000041,
+          "end": 1201541.57375525
+        },
+        {
+          "start": 1201541.589335333,
+          "end": 1201541.591139625
+        },
+        {
+          "start": 1201543.988973958,
+          "end": 1201557.122860333
+        },
+        {
+          "start": 1201557.624032083,
+          "end": 1201593.048278916
+        },
+        {
+          "start": 1201593.060876416,
+          "end": 1201593.062075166
+        },
+        {
+          "start": 1201595.429369958,
+          "end": 1201604.88365325
+        },
+        {
+          "start": 1201605.43221225,
+          "end": 1201608.794255
+        },
+        {
+          "start": 1201608.807629791,
+          "end": 1201608.809113708
+        },
+        {
+          "start": 1201611.195027166,
+          "end": 1201653.624805125
+        },
+        {
+          "start": 1201654.116162166,
+          "end": 1201671.704947458
+        },
+        {
+          "start": 1201672.29269075,
+          "end": 1201759.930509166
+        },
+        {
+          "start": 1201760.448125791,
+          "end": 1201820.11359275
+        },
+        {
+          "start": 1201821.776197375,
+          "end": 1201824.944660416
+        },
+        {
+          "start": 1201824.959730833,
+          "end": 1201824.961024375
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 40.91,
+  "summedModelActiveMinutes": 54.474,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 52037,
+      "output": 56518,
+      "cacheRead": 6052204,
+      "totalTokens": 6160759
+    },
+    "qwen": {
+      "input": 28124,
+      "output": 29772,
+      "cacheRead": 1410699,
+      "totalTokens": 1468595
+    }
+  },
+  "modelWallMinutes": {
+    "qwen": 16.305,
+    "ornith": 38.169
+  },
+  "localProductScore": 68.8,
+  "localProductTargetMet": false,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  },
+  "localProductScoreExact": 68.75,
+  "attemptNumber": 1,
+  "priorInfrastructureInvalidAttempts": [],
+  "baselineAlreadyA": false,
+  "baselineScore": 55,
+  "baselineProductScore": 55.0,
+  "baselineTargetMet": false,
+  "baselineReport": "strategies/reports/rtfm_qwen_05_drawer_tray.report.json",
+  "baselineCreationCost": {
+    "model": "qwen",
+    "role": "worker",
+    "pid": 8321,
+    "assistantUsage": {
+      "input": 2813,
+      "output": 15310,
+      "cacheRead": 67512,
+      "cacheWrite": 0,
+      "totalTokens": 85635
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 2813,
+      "output": 15310,
+      "cacheRead": 67512,
+      "cacheWrite": 0,
+      "totalTokens": 85635
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 3.18,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1166342.234756083,
+        "end": 1166510.51223325
+      },
+      {
+        "start": 1166510.602352458,
+        "end": 1166512.067769541
+      },
+      {
+        "start": 1166512.35336975,
+        "end": 1166523.400987583
+      },
+      {
+        "start": 1166523.687104958,
+        "end": 1166525.229325833
+      },
+      {
+        "start": 1166525.499960791,
+        "end": 1166531.139852916
+      }
+    ],
+    "exitCode": 0
+  },
+  "incrementalRepairCost": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 68228,
+      "assistantUsage": {
+        "input": 28124,
+        "output": 29772,
+        "cacheRead": 1410699,
+        "cacheWrite": 0,
+        "totalTokens": 1468595
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 28124,
+        "output": 29772,
+        "cacheRead": 1410699,
+        "cacheWrite": 0,
+        "totalTokens": 1468595
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 16.305,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1200245.731823666,
+          "end": 1200252.65641725
+        },
+        {
+          "start": 1200252.742993125,
+          "end": 1200255.635516833
+        },
+        {
+          "start": 1200255.749285833,
+          "end": 1200455.33145025
+        },
+        {
+          "start": 1200455.472724791,
+          "end": 1200493.071847625
+        },
+        {
+          "start": 1200493.253472958,
+          "end": 1200502.793429666
+        },
+        {
+          "start": 1200502.930568458,
+          "end": 1200507.431603458
+        },
+        {
+          "start": 1200507.767016416,
+          "end": 1200515.962816833
+        },
+        {
+          "start": 1200516.264903583,
+          "end": 1200532.93344875
+        },
+        {
+          "start": 1200533.273063083,
+          "end": 1200542.218824416
+        },
+        {
+          "start": 1200542.457620166,
+          "end": 1200547.809507708
+        },
+        {
+          "start": 1200547.950256708,
+          "end": 1200609.829861916
+        },
+        {
+          "start": 1200610.188536541,
+          "end": 1200704.1468365
+        },
+        {
+          "start": 1200704.55771425,
+          "end": 1200729.5188175
+        },
+        {
+          "start": 1200730.149332791,
+          "end": 1200742.035341166
+        },
+        {
+          "start": 1200742.356621125,
+          "end": 1200767.8254845
+        },
+        {
+          "start": 1201060.656830333,
+          "end": 1201116.723211
+        },
+        {
+          "start": 1201117.009104791,
+          "end": 1201126.349214416
+        },
+        {
+          "start": 1201126.526285833,
+          "end": 1201165.219177958
+        },
+        {
+          "start": 1201165.613061791,
+          "end": 1201230.250299166
+        },
+        {
+          "start": 1201230.608220041,
+          "end": 1201255.591392333
+        },
+        {
+          "start": 1201255.974947416,
+          "end": 1201274.267612375
+        },
+        {
+          "start": 1201605.344372416,
+          "end": 1201609.838497166
+        },
+        {
+          "start": 1201610.208348666,
+          "end": 1201613.172570291
+        },
+        {
+          "start": 1201613.553653416,
+          "end": 1201622.736337375
+        },
+        {
+          "start": 1201623.097613458,
+          "end": 1201629.849151625
+        },
+        {
+          "start": 1201629.857689583,
+          "end": 1201629.859037416
+        },
+        {
+          "start": 1201632.067693875,
+          "end": 1201653.871478708
+        },
+        {
+          "start": 1201654.221399583,
+          "end": 1201672.2964325
+        },
+        {
+          "start": 1201672.663734833,
+          "end": 1201686.798771208
+        },
+        {
+          "start": 1201687.279023458,
+          "end": 1201693.255788833
+        },
+        {
+          "start": 1201693.5921745,
+          "end": 1201698.417943291
+        },
+        {
+          "start": 1201698.771489708,
+          "end": 1201703.527384833
+        },
+        {
+          "start": 1201703.8793375,
+          "end": 1201728.092427666
+        },
+        {
+          "start": 1201728.495401791,
+          "end": 1201742.485676208
+        },
+        {
+          "start": 1201742.814634958,
+          "end": 1201793.551425958
+        },
+        {
+          "start": 1201793.957276708,
+          "end": 1201825.58679025
+        },
+        {
+          "start": 1201826.007265125,
+          "end": 1201844.664078625
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 68229,
+      "assistantUsage": {
+        "input": 52037,
+        "output": 56518,
+        "cacheRead": 6052204,
+        "cacheWrite": 0,
+        "totalTokens": 6160759
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 52037,
+        "output": 56518,
+        "cacheRead": 6052204,
+        "cacheWrite": 0,
+        "totalTokens": 6160759
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 38.169,
+      "promptCount": 8,
+      "streamingWindows": [
+        {
+          "start": 1199391.616634291,
+          "end": 1199395.380682916
+        },
+        {
+          "start": 1199395.388253208,
+          "end": 1199395.38873175
+        },
+        {
+          "start": 1199397.442823916,
+          "end": 1199400.413680541
+        },
+        {
+          "start": 1199400.5939255,
+          "end": 1199402.1555885
+        },
+        {
+          "start": 1199402.272380833,
+          "end": 1199482.875072458
+        },
+        {
+          "start": 1199483.179988625,
+          "end": 1199496.421687833
+        },
+        {
+          "start": 1199496.42938875,
+          "end": 1199496.430628333
+        },
+        {
+          "start": 1199498.641480458,
+          "end": 1199508.176794666
+        },
+        {
+          "start": 1199508.477071708,
+          "end": 1199524.200546708
+        },
+        {
+          "start": 1199524.536263916,
+          "end": 1199537.237815916
+        },
+        {
+          "start": 1199537.817638958,
+          "end": 1199549.867286291
+        },
+        {
+          "start": 1199550.216059958,
+          "end": 1199553.520348291
+        },
+        {
+          "start": 1199553.796704291,
+          "end": 1199567.126345875
+        },
+        {
+          "start": 1199567.13507375,
+          "end": 1199567.136073
+        },
+        {
+          "start": 1199569.320720458,
+          "end": 1199578.256235375
+        },
+        {
+          "start": 1199578.26418025,
+          "end": 1199578.265162875
+        },
+        {
+          "start": 1199580.412473666,
+          "end": 1199600.317236583
+        },
+        {
+          "start": 1199600.461359625,
+          "end": 1199604.868174041
+        },
+        {
+          "start": 1199605.244082041,
+          "end": 1199613.9510515
+        },
+        {
+          "start": 1199614.15280925,
+          "end": 1199620.00375825
+        },
+        {
+          "start": 1199620.154388,
+          "end": 1199622.664904916
+        },
+        {
+          "start": 1199623.036929,
+          "end": 1199628.787429041
+        },
+        {
+          "start": 1199628.935290875,
+          "end": 1199631.507291625
+        },
+        {
+          "start": 1199631.86328875,
+          "end": 1199651.555582583
+        },
+        {
+          "start": 1199651.915649833,
+          "end": 1199667.090247416
+        },
+        {
+          "start": 1199667.277880166,
+          "end": 1199670.117611416
+        },
+        {
+          "start": 1199670.462798458,
+          "end": 1199675.239865833
+        },
+        {
+          "start": 1199675.410938958,
+          "end": 1199680.808097583
+        },
+        {
+          "start": 1199680.816481708,
+          "end": 1199680.817611541
+        },
+        {
+          "start": 1199682.978108291,
+          "end": 1199697.74536325
+        },
+        {
+          "start": 1199697.814832416,
+          "end": 1199697.817331875
+        },
+        {
+          "start": 1199699.97131225,
+          "end": 1199701.740945
+        },
+        {
+          "start": 1199702.078548166,
+          "end": 1199708.012032
+        },
+        {
+          "start": 1199708.199370375,
+          "end": 1199709.861064333
+        },
+        {
+          "start": 1199710.432297833,
+          "end": 1199744.392985
+        },
+        {
+          "start": 1199744.401591333,
+          "end": 1199744.403009958
+        },
+        {
+          "start": 1199746.578618375,
+          "end": 1199748.823995291
+        },
+        {
+          "start": 1199749.204729625,
+          "end": 1199769.933978875
+        },
+        {
+          "start": 1199770.130391833,
+          "end": 1199772.786253916
+        },
+        {
+          "start": 1199773.172889416,
+          "end": 1199793.656190916
+        },
+        {
+          "start": 1199793.664570083,
+          "end": 1199793.665426666
+        },
+        {
+          "start": 1199795.875947916,
+          "end": 1199798.329386458
+        },
+        {
+          "start": 1199798.7046565,
+          "end": 1199866.028083083
+        },
+        {
+          "start": 1199866.20109325,
+          "end": 1199868.138740291
+        },
+        {
+          "start": 1199868.514410208,
+          "end": 1199899.972180041
+        },
+        {
+          "start": 1199900.183800833,
+          "end": 1199905.384923375
+        },
+        {
+          "start": 1199905.773047291,
+          "end": 1199946.7609985
+        },
+        {
+          "start": 1199947.225807541,
+          "end": 1199964.872557916
+        },
+        {
+          "start": 1199964.88107325,
+          "end": 1199964.882758875
+        },
+        {
+          "start": 1199967.088277625,
+          "end": 1199971.176453916
+        },
+        {
+          "start": 1199971.55772825,
+          "end": 1199982.41709925
+        },
+        {
+          "start": 1199982.427356041,
+          "end": 1199982.428381208
+        },
+        {
+          "start": 1199984.704006,
+          "end": 1200001.933926333
+        },
+        {
+          "start": 1200002.155056041,
+          "end": 1200004.756846416
+        },
+        {
+          "start": 1200005.1650695,
+          "end": 1200022.928029541
+        },
+        {
+          "start": 1200023.164627541,
+          "end": 1200025.27037375
+        },
+        {
+          "start": 1200025.661482541,
+          "end": 1200108.463927916
+        },
+        {
+          "start": 1200108.6778875,
+          "end": 1200118.48483675
+        },
+        {
+          "start": 1200118.715250333,
+          "end": 1200121.726240208
+        },
+        {
+          "start": 1200122.181387166,
+          "end": 1200189.948304333
+        },
+        {
+          "start": 1200190.35529175,
+          "end": 1200229.857715958
+        },
+        {
+          "start": 1200229.868644666,
+          "end": 1200229.869653958
+        },
+        {
+          "start": 1200232.097820958,
+          "end": 1200234.374912541
+        },
+        {
+          "start": 1200234.787978958,
+          "end": 1200245.10522125
+        },
+        {
+          "start": 1200245.532053958,
+          "end": 1200251.046926666
+        },
+        {
+          "start": 1200251.288705333,
+          "end": 1200276.026795416
+        },
+        {
+          "start": 1200276.431741583,
+          "end": 1200282.940950041
+        },
+        {
+          "start": 1200284.024172708,
+          "end": 1200286.746602166
+        },
+        {
+          "start": 1200286.755367333,
+          "end": 1200286.756714208
+        },
+        {
+          "start": 1200289.018723125,
+          "end": 1200294.910203166
+        },
+        {
+          "start": 1200295.205010833,
+          "end": 1200307.630602375
+        },
+        {
+          "start": 1200374.035939083,
+          "end": 1200376.375775333
+        },
+        {
+          "start": 1200376.67953,
+          "end": 1200384.501562291
+        },
+        {
+          "start": 1200455.591967708,
+          "end": 1200458.829702625
+        },
+        {
+          "start": 1200459.105599708,
+          "end": 1200471.744825958
+        },
+        {
+          "start": 1200472.181157875,
+          "end": 1200488.121386166
+        },
+        {
+          "start": 1200488.538224,
+          "end": 1200503.325856416
+        },
+        {
+          "start": 1200503.775116875,
+          "end": 1200507.068552666
+        },
+        {
+          "start": 1200508.6582895,
+          "end": 1200511.117742458
+        },
+        {
+          "start": 1200511.129484833,
+          "end": 1200511.1305885
+        },
+        {
+          "start": 1200513.742056541,
+          "end": 1200529.351978083
+        },
+        {
+          "start": 1200529.796247958,
+          "end": 1200538.700448583
+        },
+        {
+          "start": 1200539.185439458,
+          "end": 1200547.806076375
+        },
+        {
+          "start": 1200548.580699541,
+          "end": 1200556.4543755
+        },
+        {
+          "start": 1200556.872373416,
+          "end": 1200565.738013208
+        },
+        {
+          "start": 1200566.215960375,
+          "end": 1200763.979188791
+        },
+        {
+          "start": 1200764.479506458,
+          "end": 1200771.89486425
+        },
+        {
+          "start": 1200772.353084958,
+          "end": 1200777.225662916
+        },
+        {
+          "start": 1200777.709865666,
+          "end": 1200844.788885375
+        },
+        {
+          "start": 1200844.796617125,
+          "end": 1200844.79735275
+        },
+        {
+          "start": 1200847.073365416,
+          "end": 1200918.237142958
+        },
+        {
+          "start": 1200918.721525166,
+          "end": 1200925.810783875
+        },
+        {
+          "start": 1200926.315749833,
+          "end": 1200949.881483458
+        },
+        {
+          "start": 1200950.388927375,
+          "end": 1201049.823752708
+        },
+        {
+          "start": 1201049.834079375,
+          "end": 1201049.835072916
+        },
+        {
+          "start": 1201052.150592916,
+          "end": 1201060.21457475
+        },
+        {
+          "start": 1201060.696059083,
+          "end": 1201067.37304775
+        },
+        {
+          "start": 1201067.66974225,
+          "end": 1201077.755555125
+        },
+        {
+          "start": 1201079.210528208,
+          "end": 1201081.823396625
+        },
+        {
+          "start": 1201082.170650708,
+          "end": 1201086.061105791
+        },
+        {
+          "start": 1201117.086130625,
+          "end": 1201119.912325833
+        },
+        {
+          "start": 1201120.230128708,
+          "end": 1201134.779272416
+        },
+        {
+          "start": 1201135.25038225,
+          "end": 1201153.479012541
+        },
+        {
+          "start": 1201153.957387041,
+          "end": 1201228.590073291
+        },
+        {
+          "start": 1201229.093474208,
+          "end": 1201248.300988125
+        },
+        {
+          "start": 1201248.857783166,
+          "end": 1201295.680896833
+        },
+        {
+          "start": 1201295.69377875,
+          "end": 1201295.694851541
+        },
+        {
+          "start": 1201298.051148916,
+          "end": 1201300.265157
+        },
+        {
+          "start": 1201300.919218875,
+          "end": 1201311.267017083
+        },
+        {
+          "start": 1201311.877632333,
+          "end": 1201331.901298125
+        },
+        {
+          "start": 1201332.4623335,
+          "end": 1201341.496709208
+        },
+        {
+          "start": 1201342.00601125,
+          "end": 1201346.176830625
+        },
+        {
+          "start": 1201346.685011875,
+          "end": 1201358.710215833
+        },
+        {
+          "start": 1201359.238904916,
+          "end": 1201402.134080083
+        },
+        {
+          "start": 1201402.606949833,
+          "end": 1201452.273237166
+        },
+        {
+          "start": 1201452.778337083,
+          "end": 1201480.339437291
+        },
+        {
+          "start": 1201480.899000041,
+          "end": 1201541.57375525
+        },
+        {
+          "start": 1201541.589335333,
+          "end": 1201541.591139625
+        },
+        {
+          "start": 1201543.988973958,
+          "end": 1201557.122860333
+        },
+        {
+          "start": 1201557.624032083,
+          "end": 1201593.048278916
+        },
+        {
+          "start": 1201593.060876416,
+          "end": 1201593.062075166
+        },
+        {
+          "start": 1201595.429369958,
+          "end": 1201604.88365325
+        },
+        {
+          "start": 1201605.43221225,
+          "end": 1201608.794255
+        },
+        {
+          "start": 1201608.807629791,
+          "end": 1201608.809113708
+        },
+        {
+          "start": 1201611.195027166,
+          "end": 1201653.624805125
+        },
+        {
+          "start": 1201654.116162166,
+          "end": 1201671.704947458
+        },
+        {
+          "start": 1201672.29269075,
+          "end": 1201759.930509166
+        },
+        {
+          "start": 1201760.448125791,
+          "end": 1201820.11359275
+        },
+        {
+          "start": 1201821.776197375,
+          "end": 1201824.944660416
+        },
+        {
+          "start": 1201824.959730833,
+          "end": 1201824.961024375
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "artifactChangedFromSeed": true,
+  "productDelta": 13.8,
+  "newlyReachedAQuality": false
+}

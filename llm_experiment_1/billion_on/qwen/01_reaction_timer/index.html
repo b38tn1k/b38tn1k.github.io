@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Time Tester</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0f0f13;--surface:#1a1a24;--surface2:#24243a;
+    --text:#e8e8f0;--muted:#7a7a9a;--accent:#6c5ce7;
+    --green:#00b894;--red:#d63031;--yellow:#fdcb6e;
+    --radius:16px;--shadow:0 8px 32px rgba(0,0,0,.4);
+  }
+  html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text)}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;overflow:hidden;user-select:none}
+
+  #game-area{
+    width:min(90vw,560px);min-height:min(70vh,560px);
+    border-radius:var(--radius);cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:32px;transition:background .4s ease,box-shadow .4s ease;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  #game-area::before{
+    content:'';position:absolute;inset:-2px;border-radius:var(--radius);
+    background:conic-gradient(from 180deg,var(--accent),#a29bfe,var(--accent));
+    opacity:0;z-index:0;transition:opacity .4s;z-index:0;
+  }
+  #game-area.active::before{opacity:.5}
+
+  .state-idle{background:var(--surface)}
+  .state-waiting{background:#2d1f3d;border-radius:var(--radius)}
+  .state-ready{background:#1a3a2a;animation:pulse .6s ease-in-out infinite alternate}
+  .state-result{background:var(--surface2);border-radius:var(--radius)}
+  .state-false{background:#3d1f1f;border-radius:var(--radius)}
+
+  @keyframes pulse{from{box-shadow:0 0 30px rgba(108,92,231,.2)}to{box-shadow:0 0 60px rgba(108,92,231,.5)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+
+  .icon{font-size:48px;margin-bottom:16px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3))}
+  h1{font-size:clamp(20px,5vw,28px);font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+  h2{font-size:clamp(36px,8vw,56px);font-weight:800;margin:12px 0;font-variant-numeric:tabular-nums}
+  .subtitle{color:var(--muted);font-size:clamp(14px,3vw,17px);line-height:1.5;max-width:340px}
+  .hint{margin-top:24px;font-size:13px;color:var(--muted);opacity:.7}
+
+  .trial-badge{
+    position:absolute;top:16px;right:16px;background:rgba(255,255,255,.08);
+    padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;
+    backdrop-filter:blur(8px);z-index:1;animation:slideDown .3s ease;
+  }
+  .score-pill{
+    display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;
+    font-weight:600;margin-bottom:12px;animation:scaleIn .4s ease;z-index:1;position:relative;
+  }
+  .score-green{background:rgba(0,184,148,.15);color:var(--green)}
+  .score-yellow{background:rgba(253,203,110,.15);color:var(--yellow)}
+  .score-red{background:rgba(214,48,49,.15);color:var(--red)}
+
+  .btn{
+    margin-top:20px;padding:14px 36px;border:none;border-radius:12px;
+    background:var(--accent);color:#fff;font-size:16px;font-weight:600;
+    cursor:pointer;transition:transform .15s,box-shadow .15s;z-index:1;position:relative;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(108,92,231,.4)}
+  .btn:active{transform:translateY(0)}
+
+  /* Results view */
+  #results-view{width:min(90vw,560px);padding:32px;display:none;animation:fadeUp .5s ease}
+  #results-view.visible{display:block}
+  .stats-row{display:flex;gap:12px;margin-bottom:24px}
+  .stat-card{flex:1;background:var(--surface);border-radius:12px;padding:16px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+  .stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  .stat-value{font-size:clamp(22px,5vw,30px);font-weight:700;font-variant-numeric:tabular-nums}
+
+  .trial-list{margin-bottom:24px}
+  .trial-item{
+    display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:8px;
+    background:var(--surface);border-radius:10px;animation:slideDown .3s ease both;
+    position:relative;overflow:hidden;
+  }
+  .trial-item:nth-child(1){animation-delay:.05s}
+  .trial-item:nth-child(2){animation-delay:.1s}
+  .trial-item:nth-child(3){animation-delay:.15s}
+  .trial-item:nth-child(4){animation-delay:.2s}
+  .trial-item:nth-child(5){animation-delay:.25s}
+  .trial-num{font-size:14px;font-weight:700;color:var(--accent);min-width:32px}
+  .trial-time{flex:1;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+  .trial-bar-wrap{width:100px;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+  .trial-bar{height:100%;border-radius:3px;transition:width .6s ease}
+  .grade{font-size:12px;padding:2px 8px;border-radius:6px;font-weight:600}
+  .grade-great{background:rgba(0,184,148,.15);color:var(--green)}
+  .grade-ok{background:rgba(253,203,110,.15);color:var(--yellow)}
+  .grade-slow{background:rgba(214,48,49,.15);color:var(--red)}
+
+  /* Progress dots */
+  .progress{display:flex;gap:8px;margin-bottom:20px}
+  .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.1);transition:background .3s,transform .3s}
+  .dot.done{background:var(--accent);transform:scale(1.2)}
+  .dot.current{background:var(--yellow);transform:scale(1.3);animation:pulseDot .6s ease infinite alternate}
+  @keyframes pulseDot{to{box-shadow:0 0 8px var(--yellow)}}
+
+  /* confetti canvas */
+  #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:999}
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- Main game area (shown during play) -->
+<div id="game-area" class="state-idle">
+  <div id="play-content">
+    <div class="icon">⚡</div>
+    <h1>Reaction Time</h1>
+    <p class="subtitle" id="message">Wait for green, then tap as fast as you can.</p>
+    <button class="btn" id="start-btn">Start Test</button>
+    <p class="hint">Click or press Space / Enter anywhere to begin</p>
+  </div>
+</div>
+
+<!-- Results view -->
+<div id="results-view">
+  <div style="text-align:center;margin-bottom:24px">
+    <div class="icon" style="font-size:36px">🏆</div>
+    <h1 style="margin-bottom:4px">Results</h1>
+    <p class="subtitle">Your five trial summary</p>
+  </div>
+  <div class="progress" id="progress-dots"></div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Average</div><div class="stat-value" id="stat-avg" style="color:var(--accent)">—</div></div>
+    <div class="stat-card"><div class="stat-label">Best</div><div class="stat-value" id="stat-best" style="color:var(--green)">—</div></div>
+    <div class="stat-card"><div class="stat-label">Worst</div><div class="stat-value" id="stat-worst" style="color:var(--red)">—</div></div>
+  </div>
+  <div class="trial-list" id="trial-list"></div>
+  <div style="text-align:center"><button class="btn" id="restart-btn">Try Again ↻</button></div>
+</div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const gameArea = $('#game-area');
+  const playContent = $('#play-content');
+  const resultsView = $('#results-view');
+  const msgEl = $('#message');
+  const startBtn = $('#start-btn');
+
+  // State machine states: 'idle' | 'waiting' | 'ready' | 'result' | 'false-start'
+  let state = 'idle';
+  let trial = 0;
+  const NUM_TRIALS = 5;
+  let trials = [];
+  let timeoutId = null;
+  let startTime = 0;
+  let hasFired = false;
+
+  function setState(s) {
+    state = s;
+    gameArea.className = 'state-' + s;
+    // Show/hide trial badge
+    let badge = gameArea.querySelector('.trial-badge');
+    if (s === 'idle' || s === 'result') {
+      gameArea.classList.remove('active');
+      return;
+    }
+    if (!badge) {
+      badge = document.createElement('div');
+      badge.className = 'trial-badge';
+      gameArea.appendChild(badge);
+    }
+    badge.textContent = `Trial ${trial + 1} / ${NUM_TRIALS}`;
+
+    playContent.style.display = s === 'result' || s === 'false-start' ? 'none' : '';
+    if (s === 'idle') {
+      gameArea.classList.remove('active');
+      return;
+    }
+    gameArea.classList.add('active');
+
+    const iconEl = playContent.querySelector('.icon');
+    const h1El = playContent.querySelector('h1');
+    const subtitleEl = playContent.querySelector('.subtitle');
+
+    switch (s) {
+      case 'waiting':
+        iconEl.textContent = '🔴'; h1El.textContent = 'Wait for green…';
+        subtitleEl.style.display = 'none'; break;
+      case 'ready':
+        iconEl.textContent = '⚡'; h1El.textContent = 'NOW! Tap!';
+        subtitleEl.style.display = 'none'; break;
+      case 'false-start':
+        iconEl.textContent = '❌'; h1El.textContent = 'Too early!';
+        subtitleEl.textContent = 'You tapped before the green signal.';
+        subtitleEl.style.display = ''; break;
+    }
+  }
+
+  function showPlayUI(icon, title, subtitle) {
+    let iconEl = playContent.querySelector('.icon');
+    let h1El = playContent.querySelector('h1');
+    let subEl = playContent.querySelector('.subtitle');
+    if (!iconEl) {
+      iconEl = document.createElement('div'); iconEl.className = 'icon'; playContent.prepend(iconEl);
+      h1El = document.createElement('h1'); playContent.appendChild(h1El);
+      subEl = document.createElement('p'); subEl.className = 'subtitle'; playContent.appendChild(subEl);
+    }
+    iconEl.textContent = icon; h1El.textContent = title;
+    subEl.textContent = subtitle; subEl.style.display = '';
+    let badge = gameArea.querySelector('.trial-badge');
+    if (badge) badge.remove();
+  }
+
+  function hidePlayUI() { playContent.style.display = 'none'; }
+  function showPlayUIAgain() { playContent.style.display = ''; }
+
+  function startTrial() {
+    trial++;
+    hasFired = false;
+    const delay = 2000 + Math.random() * 3000; // 2–5s random
+    setState('waiting');
+    timeoutId = setTimeout(() => {
+      hasFired = true;
+      setState('ready');
+      startTime = performance.now();
+    }, delay);
+  }
+
+  function react() {
+    if (!hasFired && state === 'waiting') {
+      // False start!
+      clearTimeout(timeoutId);
+      timeoutId = null;
+      setState('false-start');
+      msgEl.textContent = 'You tapped before the green signal.';
+      let btn = playContent.querySelector('.btn');
+      if (!btn) {
+        btn = document.createElement('button'); btn.className = 'btn';
+        btn.textContent = 'Continue'; btn.onclick = continueOnFalseStart;
+        playContent.appendChild(btn);
+      } else { btn.textContent = 'Continue'; btn.style.display = ''; }
+      return;
+    }
+    if (state !== 'ready') return;
+
+    const rt = Math.round(performance.now() - startTime);
+    trials.push(rt);
+    clearTimeout(timeoutId);
+    timeoutId = null;
+
+    showPlayUI('⏱', formatMs(rt), getLabel(rt));
+    setState('result');
+
+    let btn = playContent.querySelector('.btn');
+    if (!btn) { btn = document.createElement('button'); btn.className = 'btn'; playContent.appendChild(btn); }
+
+    if (trial >= NUM_TRIALS) {
+      btn.textContent = 'See Results';
+      btn.onclick = showResults;
+    } else {
+      btn.textContent = 'Next Trial →';
+      btn.onclick = nextTrial;
+    }
+
+    // Show button in playContent
+    btn.style.display = '';
+    let badge = gameArea.querySelector('.trial-badge');
+    if (badge) badge.remove();
+  }
+
+  function formatMs(ms) {
+    return ms < 1000 ? `${ms}ms` : `${(ms/1000).toFixed(2)}s`;
+  }
+
+  function getLabel(ms) {
+    if (ms < 200) return 'Incredible!';
+    if (ms < 300) return 'Excellent!';
+    if (ms < 400) return 'Great!';
+    if (ms < 500) return 'Good';
+    if (ms < 600) return 'Average';
+    return 'Keep trying!';
+  }
+
+  function getScoreClass(ms) {
+    if (ms < 250) return 'score-green';
+    if (ms < 450) return 'score-yellow';
+    return 'score-red';
+  }
+
+  function getGrade(ms) {
+    if (ms < 250) return 'Great';
+    if (ms < 400) return 'OK';
+    return 'Slow';
+  }
+  function getGradeClass(ms) {
+    if (ms < 250) return 'grade-great';
+    if (ms < 400) return 'grade-ok';
+    return 'grade-slow';
+  }
+
+  function continueOnFalseStart() {
+    playContent.querySelector('.btn')?.remove();
+    startTrial();
+  }
+
+  function nextTrial() {
+    playContent.querySelector('.btn')?.remove();
+    startTrial();
+  }
+
+  // ---- Results ----
+  function showResults() {
+    hidePlayUI();
+    gameArea.style.display = 'none';
+    resultsView.classList.add('visible');
+
+    const avg = Math.round(trials.reduce((a,b)=>a+b,0) / trials.length);
+    const best = Math.min(...trials);
+    const worst = Math.max(...trials);
+
+    $('#stat-avg').textContent = formatMs(avg);
+    $('#stat-best').textContent = formatMs(best);
+    $('#stat-worst').textContent = formatMs(worst);
+
+    // Progress dots
+    const dotsWrap = $('#progress-dots');
+    dotsWrap.innerHTML = '';
+    for (let i = 0; i < NUM_TRIALS; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot done';
+      if (i === trials.length - 1) dot.classList.add('current');
+      dotsWrap.appendChild(dot);
+    }
+
+    // Trial list
+    const list = $('#trial-list');
+    list.innerHTML = '';
+    const maxBar = Math.max(...trials, 600);
+    trials.forEach((rt, i) => {
+      const item = document.createElement('div');
+      item.className = 'trial-item';
+      const pct = Math.min(rt / maxBar * 100, 100);
+      const barColor = rt < 250 ? 'var(--green)' : rt < 400 ? 'var(--yellow)' : 'var(--red)';
+      item.innerHTML = `
+        <span class="trial-num">#${i+1}</span>
+        <span class="trial-time">${formatMs(rt)}</span>
+        <div class="trial-bar-wrap"><div class="trial-bar" style="width:0%;background:${barColor}"></div></div>
+        <span class="grade ${getGradeClass(rt)}">${getGrade(rt)}</span>
+      `;
+      list.appendChild(item);
+      // Animate bar
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        item.querySelector('.trial-bar').style.width = pct + '%';
+      }));
+    });
+
+    if (avg < 300) launchConfetti();
+  }
+
+  function restart() {
+    trials = []; trial = 0; timeoutId = null; hasFired = false;
+    resultsView.classList.remove('visible');
+    gameArea.style.display = '';
+    showPlayUI('⚡', 'Reaction Time', 'Wait for green, then tap as fast as you can.');
+    let btn = playContent.querySelector('.btn');
+    if (!btn) { btn = document.createElement('button'); btn.className = 'btn'; playContent.appendChild(btn); }
+    btn.textContent = 'Start Test'; btn.onclick = onStart;
+    btn.style.display = '';
+    gameArea.className = 'state-idle'; setState('idle');
+  }
+
+  function onStart() {
+    let btn = playContent.querySelector('.btn');
+    if (btn) btn.remove();
+    startTrial();
+  }
+
+  // ---- Events ----
+  startBtn.addEventListener('click', e => { e.stopPropagation(); onStart(); });
+  $('#restart-btn').addEventListener('click', restart);
+
+  gameArea.addEventListener('pointerdown', e => {
+    if (e.target.tagName === 'BUTTON') return;
+    if (state === 'waiting' || state === 'ready') react();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' || e.code === 'Enter') {
+      e.preventDefault();
+      if (state === 'idle' || state === 'result' || state === 'false-start') {
+        if (!playContent.querySelector('.btn')) onStart();
+      } else if (state === 'waiting' || state === 'ready') {
+        react();
+      }
+    }
+  });
+
+  // ---- Confetti burst (lightweight) ----
+  function launchConfetti() {
+    const canvas = $('#confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const particles = [];
+    const colors = ['#6c5ce7','#00b894','#fdcb6e','#d63031','#a29bfe','#55efc4'];
+    for (let i = 0; i < 80; i++) {
+      particles.push({
+        x: canvas.width/2 + (Math.random()-0.5)*200,
+        y: canvas.height/2,
+        vx: (Math.random()-0.5)*16,
+        vy: Math.random()*-14 - 4,
+        r: Math.random()*6+3,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        life: 1,
+      });
+    }
+    let frame = 0;
+    function draw() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      let alive = false;
+      particles.forEach(p => {
+        p.x += p.vx; p.vy += 0.4; p.y += p.vy; p.life -= 0.012;
+        if (p.life > 0) {
+          alive = true; ctx.globalAlpha = p.life;
+          ctx.fillStyle = p.color;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+        }
+      });
+      ctx.globalAlpha = 1;
+      frame++;
+      if (alive && frame < 180) requestAnimationFrame(draw);
+      else ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+    draw();
+  }
+
+  // Initialize idle state
+  showPlayUI('⚡', 'Reaction Time', 'Wait for green, then tap as fast as you can.');
+})();
+</script>
+</body>
+</html>

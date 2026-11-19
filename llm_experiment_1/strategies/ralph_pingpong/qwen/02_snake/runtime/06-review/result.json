@@ -1,0 +1,20 @@
+{
+  "round": 3,
+  "role": "review",
+  "modelLabel": "ornith",
+  "model": "ornith-1.5:35b-256k",
+  "started": "2026-11-17T07:04:45.658944+00:00",
+  "events": "ralph_pingpong/qwen/02_snake/runtime/06-review/events.jsonl",
+  "status": "completed",
+  "finished": "2026-11-17T07:10:49.395644+00:00",
+  "minutes": 6.06,
+  "reason": "stage_deadline",
+  "exitCode": -9,
+  "proof": {
+    "forcedActivations": 0,
+    "completionRequests": 0,
+    "red": 0,
+    "green": 0
+  },
+  "testExitCode": 1
+}

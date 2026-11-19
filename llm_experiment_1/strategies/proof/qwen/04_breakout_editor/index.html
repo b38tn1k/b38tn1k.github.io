@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Breakout with Level Editor</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1a1a2e;
+  color: #eee;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+#header {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #16213e;
+  border-radius: 8px 8px 0 0;
+  margin-top: 8px;
+}
+#header .stat { font-size: 16px; font-weight: bold; }
+#header .stat span { color: #fff; background: #e94560; padding: 2px 8px; border-radius: 4px; }
+#toolbar {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: #0f3460;
+  border-radius: 0;
+  flex-wrap: wrap;
+}
+#toolbar button, #toolbar label {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  background: #e94560;
+  color: white;
+  transition: background 0.2s;
+}
+#toolbar button:hover { background: #c73652; }
+#toolbar button.active { background: #533483; }
+#toolbar button.secondary { background: #1a1a2e; border: 1px solid #533483; }
+#toolbar button.secondary:hover { background: #0f3460; }
+#canvas-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+}
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #0a0a1a;
+  border-radius: 0 0 8px 8px;
+  touch-action: none;
+}
+#message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  pointer-events: none;
+  text-align: center;
+}
+#json-input {
+  display: none;
+  width: 100%;
+  max-width: 640px;
+  margin-top: 8px;
+  padding: 8px;
+  font-size: 12px;
+  font-family: monospace;
+  background: #16213e;
+  color: #eee;
+  border: 1px solid #533483;
+  border-radius: 4px;
+  resize: vertical;
+  min-height: 80px;
+}
+#json-input.visible { display: block; }
+#save-load-row {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  justify-content: center;
+}
+#save-load-row button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  background: #533483;
+  color: white;
+}
+#save-load-row button:hover { background: #6b44a0; }
+#instructions {
+  width: 100%;
+  max-width: 640px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #aaa;
+  text-align: center;
+}
+#editor-colors { display: none; gap: 4px; align-items: center; }
+#editor-colors.visible { display: flex; }
+.color-btn {
+  width: 24px; height: 24px; border-radius: 4px; border: 2px solid #fff3;
+  cursor: pointer; padding: 0;
+}
+.color-btn.active { border-color: #fff; box-shadow: 0 0 4px #fff; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="stat">Score: <span id="score-display">0</span></div>
+  <div class="stat">Lives: <span id="lives-display">3</span></div>
+  <div class="stat" id="level-label">Level: <span id="level-display">1</span></div>
+</div>
+
+<div id="toolbar">
+  <button id="btn-edit" class="active" onclick="setMode('edit')">Editor</button>
+  <button id="btn-play" onclick="setMode('play')">Play</button>
+  <div id="editor-colors" class="">
+    <span style="font-size:12px;margin-right:2px;">Color:</span>
+    <button class="color-btn active" data-color="#e94560" onclick="setColor(this,'#e94560')" style="background:#e94560"></button>
+    <button class="color-btn" data-color="#f5a623" onclick="setColor(this,'#f5a623')" style="background:#f5a623"></button>
+    <button class="color-btn" data-color="#7ed321" onclick="setColor(this,'#7ed321')" style="background:#7ed321"></button>
+    <button class="color-btn" data-color="#4a90d9" onclick="setColor(this,'#4a90d9')" style="background:#4a90d9"></button>
+    <button class="color-btn" data-color="#bd10e0" onclick="setColor(this,'#bd10e0')" style="background:#bd10e0"></button>
+  </div>
+  <button onclick="clearAll()" title="Clear all bricks">Clear</button>
+  <button onclick="fillDefault()" title="Fill with default pattern">Default</button>
+  <button id="btn-grid" class="secondary" onclick="toggleGrid()">Grid</button>
+</div>
+
+<div id="canvas-wrap">
+  <canvas id="game" width="640" height="480"></canvas>
+  <div id="message"></div>
+</div>
+
+<div id="save-load-row">
+  <button onclick="saveLevel()">Save JSON</button>
+  <button onclick="loadLevel()">Load JSON</button>
+  <button onclick="restartGame()">Restart</button>
+  <button onclick="clearAll()">Clear All</button>
+</div>
+
+<textarea id="json-input" class="" placeholder="Paste level JSON here or click Save to copy..."></textarea>
+
+<div id="instructions">
+  Editor: Click/drag to draw bricks, right-click/drag to erase | Play: Mouse/Touch to move paddle, Space to launch ball<br>
+  Arrow keys / A,D move paddle in editor too | Scroll wheel changes brick color | Press E=editor, P=play
+</div>
+
+<script>
+(function() {
+  // ============ CONSTANTS ============
+  const CANVAS_W = 640, CANVAS_H = 480;
+  const GRID_COLS = 12, GRID_ROWS = 8;
+  const BRICK_PAD = 3;
+  const BRICK_W = (CANVAS_W - (GRID_COLS + 1) * BRICK_PAD) / GRID_COLS;
+  const BRICK_H = 22;
+  const PADDLE_W = 90, PADDLE_H = 14, PADDLE_Y = CANVAS_H - 36;
+  const BALL_R = 8;
+  const BRICK_COLORS = ['#e94560','#f5a623','#7ed321','#4a90d9','#bd10e0'];
+  const DEFAULT_BRICK_ROWS = 5, DEFAULT_BRICK_COLS = 10;
+
+  // ============ STATE ============
+  let mode = 'edit'; // 'edit' or 'play'
+  let showGrid = true;
+  let selectedColor = BRICK_COLORS[0];
+  let bricks = {}; // key: "row,col" -> {color, hp}
+  let score = 0;
+  let lives = 3;
+  let levelNum = 1;
+  let gameRunning = false;
+  let ballLaunched = false;
+
+  // Paddle
+  let paddleX = (CANVAS_W - PADDLE_W) / 2;
+  const keysDown = {};
+
+  // Ball
+  let ballX = CANVAS_W / 2, ballY = PADDLE_Y - BALL_R - 1;
+  let ballDX = 0, ballDY = -4;
+  const BALL_SPEED = 5;
+  const PADDLE_SPEED = 8;
+
+  // Mouse tracking for editor
+  let mouseDown = false;
+  let mouseButton = 0;
+  let lastGridCell = null;
+
+  // ============ DOM REFS ============
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const scoreDisplay = document.getElementById('score-display');
+  const livesDisplay = document.getElementById('lives-display');
+  const levelDisplay = document.getElementById('level-display');
+  const messageEl = document.getElementById('message');
+  const btnEdit = document.getElementById('btn-edit');
+  const btnPlay = document.getElementById('btn-play');
+  const editorColorsDiv = document.getElementById('editor-colors');
+  const jsonInput = document.getElementById('json-input');
+
+  // ============ CANVAS RENDERING (filled rects only) ============
+  function drawRect(x, y, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+  }
+
+  function drawBall() {
+    ctx.fillStyle = '#ffffff';
+    const bx = Math.round(ballX - BALL_R);
+    const by = Math.round(ballY - BALL_R);
+    if (mode === 'edit') {
+      drawRect(bx, by, BALL_R * 2, BALL_R * 2, '#ffffff');
+    } else {
+      // Approximate circle with small rects for visibility
+      const r = BALL_R;
+      const steps = 16;
+      for (let i = 0; i < steps; i++) {
+        const angle = (i / steps) * Math.PI * 2;
+        drawRect(ballX - r + Math.cos(angle) * (r - 1), ballY - r + Math.sin(angle) * (r - 1), 2, 2, '#fff');
+      }
+    }
+  }
+
+  function drawPaddle() {
+    const grad = ctx.createLinearGradient(paddleX, PADDLE_Y, paddleX, PADDLE_Y + PADDLE_H);
+    grad.addColorStop(0, '#53d8fb');
+    grad.addColorStop(1, '#4a90d9');
+    drawRect(paddleX, PADDLE_Y, PADDLE_W, PADDLE_H, grad);
+  }
+
+  function drawBrick(row, col) {
+    const key = row + ',' + col;
+    const brick = bricks[key];
+    if (!brick) return;
+    const x = BRICK_PAD + col * (BRICK_W + BRICK_PAD);
+    const y = BRICK_PAD + 20 + row * (BRICK_H + BRICK_PAD);
+    drawRect(x, y, BRICK_W, BRICK_H, brick.color || selectedColor);
+  }
+
+  function render() {
+    // Background
+    ctx.fillStyle = '#0a0a1a';
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+    if (mode === 'edit') {
+      drawGrid();
+      for (const key in bricks) {
+        const [r, c] = key.split(',').map(Number);
+        drawBrick(r, c);
+      }
+      // Show paddle preview
+      drawPaddle();
+    } else {
+      // Play mode - draw existing bricks
+      for (const key in bricks) {
+        const [r, c] = key.split(',').map(Number);
+        drawBrick(r, c);
+      }
+      drawPaddle();
+      drawBall();
+      if (!gameRunning && !ballLaunched && lives > 0) {
+        messageEl.textContent = 'Press SPACE or Click to Launch';
+      } else if (lives <= 0) {
+        messageEl.innerHTML = 'GAME OVER<br><small>Score: ' + score + '</small><br><small>Click Restart</small>';
+      } else if (!ballLaunched) {
+        messageEl.textContent = 'Press SPACE or Click to Launch';
+      } else {
+        messageEl.textContent = '';
+      }
+    }
+  }
+
+  function drawGrid() {
+    if (!showGrid) return;
+    ctx.strokeStyle = '#ffffff11';
+    ctx.lineWidth = 0.5;
+    for (let c = 0; c <= GRID_COLS; c++) {
+      const x = BRICK_PAD + c * (BRICK_W + BRICK_PAD) - BRICK_PAD / 2;
+      ctx.beginPath();
+      ctx.moveTo(Math.round(x), BRICK_PAD + 19);
+      ctx.lineTo(Math.round(x), CANVAS_H - PADDLE_Y - 8);
+      ctx.stroke();
+    }
+    for (let r = 0; r <= GRID_ROWS; r++) {
+      const y = BRICK_PAD + 19 + r * (BRICK_H + BRICK_PAD) - BRICK_PAD / 2;
+      ctx.beginPath();
+      ctx.moveTo(0, Math.round(y));
+      ctx.lineTo(CANVAS_W, Math.round(y));
+      ctx.stroke();
+    }
+  }
+
+  // ============ GAME LOGIC ============
+  function startGame() {
+    score = 0;
+    lives = 3;
+    levelNum = 1;
+    updateUI();
+    resetBall();
+    gameRunning = false;
+    ballLaunched = false;
+  }
+
+  function resetBall() {
+    ballX = paddleX + PADDLE_W / 2;
+    ballY = PADDLE_Y - BALL_R - 1;
+    ballDX = 0;
+    ballDY = -BALL_SPEED;
+    ballLaunched = false;
+  }
+
+  function launchBall() {
+    if (ballLaunched) return;
+    ballLaunched = true;
+    const angle = (Math.random() - 0.5) * Math.PI * 0.6;
+    ballDX = Math.sin(angle) * BALL_SPEED;
+    ballDY = -BALL_SPEED;
+    messageEl.textContent = '';
+  }
+
+  function updateGame() {
+    if (!gameRunning || !ballLaunched) return;
+
+    // Move ball
+    ballX += ballDX;
+    ballY += ballDY;
+
+    // Wall collision
+    if (ballX - BALL_R <= 0) { ballX = BALL_R; ballDX = Math.abs(ballDX); }
+    if (ballX + BALL_R >= CANVAS_W) { ballX = CANVAS_W - BALL_R; ballDX = -Math.abs(ballDX); }
+    if (ballY - BALL_R <= 0) { ballY = BALL_R; ballDY = Math.abs(ballDY); }
+
+    // Bottom - lose life
+    if (ballY + BALL_R > CANVAS_H) {
+      lives--;
+      updateUI();
+      if (lives <= 0) {
+        gameRunning = false;
+        messageEl.innerHTML = 'GAME OVER<br><small>Score: ' + score + '</small>';
+      } else {
+        resetBall();
+        messageEl.textContent = 'Press SPACE to Launch';
+      }
+      return;
+    }
+
+    // Paddle collision
+    if (ballY + BALL_R >= PADDLE_Y && ballY + BALL_R <= PADDLE_Y + PADDLE_H &&
+        ballX >= paddleX && ballX <= paddleX + PADDLE_W) {
+      const hitPos = (ballX - (paddleX + PADDLE_W / 2)) / (PADDLE_W / 2);
+      const angle = hitPos * Math.PI / 3;
+      ballDX = Math.sin(angle) * BALL_SPEED;
+      ballDY = -Math.abs(Math.cos(angle) * BALL_SPEED);
+      ballY = PADDLE_Y - BALL_R;
+    }
+
+    // Brick collision
+    let hitBrick = null;
+    const bCol = Math.floor((ballX + BALL_R) / (BRICK_W + BRICK_PAD)) - 1;
+    const bRow = Math.floor((ballY + BALL_R) / (BRICK_H + BRICK_PAD));
+
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        const key = (bRow + dr) + ',' + (bCol + dc);
+        if (bricks[key]) {
+          const bx = BRICK_PAD + (bCol + dc) * (BRICK_W + BRICK_PAD);
+          const by = BRICK_PAD + 20 + (bRow + dr) * (BRICK_H + BRICK_PAD);
+          const ballLeft = ballX - BALL_R;
+          const ballRight = ballX + BALL_R;
+          const ballTop = ballY - BALL_R;
+          const ballBottom = ballY + BALL_R;
+
+          if (ballRight > bx && ballLeft < bx + BRICK_W && ballBottom > by && ballTop < by + BRICK_H) {
+            hitBrick = { key, row: bRow + dr, col: bCol + dc };
+          }
+        }
+      }
+    }
+
+    if (hitBrick) {
+      const brick = bricks[hitBrick.key];
+      brick.hp = (brick.hp || 1) - 1;
+      if (brick.hp <= 0) {
+        delete bricks[hitBrick.key];
+        score += 10 * levelNum;
+      } else {
+        score += 5;
+      }
+      updateUI();
+
+      const brickCx = BRICK_PAD + hitBrick.col * (BRICK_W + BRICK_PAD) + BRICK_W / 2;
+      const brickCy = BRICK_PAD + 20 + hitBrick.row * (BRICK_H + BRICK_PAD) + BRICK_H / 2;
+      const dx = ballX - brickCx;
+      const dy = ballY - brickCy;
+
+      if (Math.abs(dx / BRICK_W) > Math.abs(dy / BRICK_H)) {
+        ballDX = dx > 0 ? BALL_SPEED : -BALL_SPEED;
+        ballDY *= 0.7;
+      } else {
+        ballDY = dy > 0 ? BALL_SPEED : -BALL_SPEED;
+        ballDX *= 0.7;
+      }
+
+      // Check if all bricks cleared
+      const remaining = Object.keys(bricks).length;
+      if (remaining === 0) {
+        levelNum++;
+        messageEl.textContent = 'Level ' + (levelNum - 1) + ' Complete!';
+        setTimeout(() => {
+          gameRunning = false;
+          ballLaunched = false;
+          resetBall();
+          messageEl.textContent = 'Press SPACE or Click to Launch';
+        }, 1500);
+      }
+    }
+  }
+
+  function updateUI() {
+    scoreDisplay.textContent = score;
+    livesDisplay.textContent = lives;
+    levelDisplay.textContent = levelNum;
+  }
+
+  // ============ EDITOR LOGIC ============
+  function getGridFromEvent(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = CANVAS_W / rect.width;
+    const scaleY = CANVAS_H / rect.height;
+    let clientX, clientY;
+    if (e.touches) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    const x = (clientX - rect.left) * scaleX;
+    const y = (clientY - rect.top) * scaleY;
+    const col = Math.floor((x - BRICK_PAD) / (BRICK_W + BRICK_PAD));
+    const row = Math.floor((y - BRICK_PAD - 20) / (BRICK_H + BRICK_PAD));
+    if (row < 0 || row >= GRID_ROWS || col < 0 || col >= GRID_COLS) return null;
+    return { row, col };
+  }
+
+  function handleEditorCell(row, col, isRightClick) {
+    const key = row + ',' + col;
+    if (isRightClick) {
+      delete bricks[key];
+    } else {
+      bricks[key] = { color: selectedColor, hp: 1 };
+    }
+  }
+
+  // ============ MODE SWITCHING ============
+  window.setMode = function(m) {
+    mode = m;
+    messageEl.textContent = '';
+    btnEdit.classList.toggle('active', m === 'edit');
+    btnPlay.classList.toggle('active', m === 'play');
+    editorColorsDiv.classList.toggle('visible', m === 'edit');
+    if (m === 'play') {
+      gameRunning = false;
+      ballLaunched = false;
+      paddleX = (CANVAS_W - PADDLE_W) / 2;
+      resetBall();
+    } else {
+      gameRunning = false;
+    }
+    render();
+  };
+
+  window.setColor = function(el, color) {
+    selectedColor = color;
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  };
+
+  window.clearAll = function() {
+    bricks = {};
+    score = 0;
+    lives = 3;
+    levelNum = 1;
+    ballLaunched = false;
+    gameRunning = false;
+    updateUI();
+    render();
+  };
+
+  window.fillDefault = function() {
+    bricks = {};
+    const rows = Math.min(DEFAULT_BRICK_ROWS, GRID_ROWS);
+    const cols = Math.min(DEFAULT_BRICK_COLS, GRID_COLS);
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        bricks[r + ',' + c] = { color: BRICK_COLORS[r % BRICK_COLORS.length], hp: 1 };
+      }
+    }
+    score = 0;
+    lives = 3;
+    levelNum = 1;
+    updateUI();
+    render();
+  };
+
+  window.toggleGrid = function() {
+    showGrid = !showGrid;
+    document.getElementById('btn-grid').classList.toggle('active', showGrid);
+    render();
+  };
+
+  // ============ SAVE / LOAD ============
+  window.saveLevel = function() {
+    const data = {
+      version: 1,
+      level: levelNum,
+      score: score,
+      lives: lives,
+      bricks: {}
+    };
+    for (const key in bricks) {
+      data.bricks[key] = bricks[key];
+    }
+    const json = JSON.stringify(data, null, 2);
+    jsonInput.value = json;
+    jsonInput.classList.add('visible');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json).catch(() => {});
+    }
+  };
+
+  window.loadLevel = function() {
+    try {
+      const jsonInputEl = document.getElementById('json-input');
+      jsonInputEl.classList.add('visible');
+      jsonInputEl.focus();
+    } catch(e) {}
+  };
+
+  window.applyJsonLevel = function(jsonStr) {
+    try {
+      const data = JSON.parse(jsonStr);
+      bricks = {};
+      if (data.bricks && typeof data.bricks === 'object') {
+        for (const key in data.bricks) {
+          bricks[key] = data.bricks[key];
+        }
+      }
+      if (data.lives !== undefined) lives = data.lives;
+      if (data.score !== undefined) score = data.score;
+      if (data.level !== undefined) levelNum = data.level;
+      updateUI();
+      ballLaunched = false;
+      gameRunning = false;
+      render();
+    } catch(e) {
+      console.error('Failed to load level:', e);
+    }
+  };
+
+  window.restartGame = function() {
+    startGame();
+    setMode('play');
+  };
+
+  // ============ INPUT HANDLING ============
+  document.addEventListener('keydown', (e) => {
+    keysDown[e.key] = true;
+    if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      if (mode === 'play' && !ballLaunched && lives > 0) {
+        launchBall();
+        gameRunning = true;
+      }
+    }
+    if (e.key === 'p' || e.key === 'P') setMode('play');
+    if (e.key === 'e' || e.key === 'E') setMode('edit');
+  });
+
+  document.addEventListener('keyup', (e) => {
+    keysDown[e.key] = false;
+  });
+
+  // Mouse events on canvas
+  canvas.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    mouseDown = true;
+    mouseButton = e.button;
+    const cell = getGridFromEvent(e);
+    if (cell && mode === 'edit') {
+      handleEditorCell(cell.row, cell.col, e.button === 2);
+      lastGridCell = cell.row + ',' + cell.col;
+    } else if (mode === 'play' && !ballLaunched && lives > 0) {
+      launchBall();
+      gameRunning = true;
+    }
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    const cell = getGridFromEvent(e);
+    if (mouseDown && cell && mode === 'edit') {
+      const ck = cell.row + ',' + cell.col;
+      if (ck !== lastGridCell) {
+        handleEditorCell(cell.row, cell.col, mouseButton === 2);
+        lastGridCell = ck;
+      }
+    }
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    mouseDown = false;
+    mouseButton = 0;
+    lastGridCell = null;
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    mouseDown = false;
+    mouseButton = 0;
+    lastGridCell = null;
+  });
+
+  canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Touch events
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    mouseDown = true;
+    mouseButton = 0;
+    const cell = getGridFromEvent(e);
+    if (cell && mode === 'edit') {
+      handleEditorCell(cell.row, cell.col, false);
+      lastGridCell = cell.row + ',' + cell.col;
+    } else if (mode === 'play' && !ballLaunched && lives > 0) {
+      launchBall();
+      gameRunning = true;
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const cell = getGridFromEvent(e);
+    if (mouseDown && cell && mode === 'edit') {
+      const ck = cell.row + ',' + cell.col;
+      if (ck !== lastGridCell) {
+        handleEditorCell(cell.row, cell.col, false);
+        lastGridCell = ck;
+      }
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    mouseDown = false;
+    lastGridCell = null;
+  }, { passive: false });
+
+  // Scroll wheel changes color in editor mode
+  canvas.addEventListener('wheel', (e) => {
+    if (mode !== 'edit') return;
+    e.preventDefault();
+    const idx = BRICK_COLORS.indexOf(selectedColor);
+    let newIdx;
+    if (e.deltaY > 0) {
+      newIdx = (idx + 1) % BRICK_COLORS.length;
+    } else {
+      newIdx = (idx - 1 + BRICK_COLORS.length) % BRICK_COLORS.length;
+    }
+    selectedColor = BRICK_COLORS[newIdx];
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.querySelector('.color-btn[data-color="' + selectedColor + '"]');
+    if (activeBtn) activeBtn.classList.add('active');
+  });
+
+  // Paste JSON into textarea
+  jsonInput.addEventListener('paste', (e) => {
+    setTimeout(() => {
+      applyJsonLevel(jsonInput.value);
+    }, 10);
+  });
+
+  // ============ MAIN LOOP ============
+  function gameLoop() {
+    // Handle keyboard input
+    if (keysDown['ArrowLeft'] || keysDown['a'] || keysDown['A']) {
+      paddleX -= PADDLE_SPEED;
+    }
+    if (keysDown['ArrowRight'] || keysDown['d'] || keysDown['D']) {
+      paddleX += PADDLE_SPEED;
+    }
+
+    // Clamp paddle
+    paddleX = Math.max(0, Math.min(CANVAS_W - PADDLE_W, paddleX));
+
+    if (mode === 'play') {
+      updateGame();
+    }
+
+    render();
+    requestAnimationFrame(gameLoop);
+  }
+
+  // ============ INIT ============
+  function init() {
+    startGame();
+    setMode('edit');
+    fillDefault();
+    gameRunning = false;
+    ballLaunched = false;
+    messageEl.textContent = 'Press E to edit, P to play';
+    render();
+    requestAnimationFrame(gameLoop);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

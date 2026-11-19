@@ -1,0 +1,45 @@
+{
+  "title": "Breakout with level editor",
+  "status": "completed_with_critical_defects",
+  "grade": "D - renders and simulates; player controls broken",
+  "score": 57,
+  "rubricScores": {
+    "functionality": 19,
+    "artifact_correctness": 18,
+    "usability": 6,
+    "self_verification": 4,
+    "autonomy": 10
+  },
+  "elapsedMinutes": 8.4,
+  "promptWords": 47,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "toolCalls": 24,
+  "toolResultsMarkedError": 8,
+  "modelUsageReported": {
+    "input": 24574,
+    "output": 23259,
+    "cacheRead": 419805,
+    "totalTokens": 467638
+  },
+  "artifactBytes": 30495,
+  "verified": [
+    "Startup and basic game state in exact-source VM",
+    "Own-format JSON round trip",
+    "Agent ran 2000-frame physics simulation; this did not validate real control events"
+  ],
+  "criticalDefects": [
+    "paddle.speed is never initialized: keyboard movement makes paddle.x NaN",
+    "Mouse/touch move dispatch is gated on pointerActive or edit mode; pointerActive is only set in edit mode, so normal gameplay pointer control is unavailable"
+  ],
+  "additionalDefects": [
+    "JSON loader accepts different grid dimensions but retains fixed 14x12 constants and then crashes",
+    "Restart uses already-damaged live grid rather than restoring original level",
+    "Space during play sticks the ball without a corresponding play-state relaunch"
+  ],
+  "scopeCompliance": "Failed: attempted /tmp/test.js and /tmp/test2.js writes despite explicit current-directory system constraint; later moved testing inside project",
+  "limitations": [
+    "No independent real-browser or visual test",
+    "Canvas rendering mocked; usability grade based on source and event-dispatch checks"
+  ]
+}

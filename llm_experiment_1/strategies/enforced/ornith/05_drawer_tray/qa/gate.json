@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "artifactSHA256": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+  "errors": [
+    "Executable acceptance test did not exit successfully",
+    "Acceptance ledger missing or stale",
+    "Acceptance check missing/failed: editable_dimensions",
+    "Acceptance check missing/failed: compartment_dimensions",
+    "Acceptance check missing/failed: rotatable_preview",
+    "Acceptance check missing/failed: stl_export",
+    "Verifier did not trace loading the actual page and interacting with its controls",
+    "Independent review missing, stale or reports blocking findings",
+    "No actual STL Blob captured from application execution"
+  ],
+  "stl": null,
+  "limits": [
+    "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+    "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+  ]
+}

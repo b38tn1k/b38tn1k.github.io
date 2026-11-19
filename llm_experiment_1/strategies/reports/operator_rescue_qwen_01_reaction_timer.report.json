@@ -1,0 +1,200 @@
+{
+  "score": 85,
+  "grade": "B - assisted product98.8; five trials and retries verified",
+  "summary": "One counted prompt fixes the six-response timer. Independent final-source checks verify exactly five valid responses, exact statistics, replay and false-start retries before and during a run.",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 14,
+    "self_verification": 6,
+    "autonomy": 0
+  },
+  "assistedProductTargetMet": true,
+  "strengths": [
+    "Actual five valid200/225/250/275/300ms responses produce mean250, best200 and worst300, with exactly five summary rows.",
+    "False starts before the first response and after two valid measurements preserve valid progress and still complete after five valid responses.",
+    "Replay resets results and supports a second complete run. Self-contained offline artifact retained."
+  ],
+  "defects": [],
+  "verification": [
+    "qa/operator-qwen-timer.cjs independently passes all three checks on immutable round1 and final/current HTML; SHA256f4438d5595ad7ebeff7ee93086533e8639585ebc62fbfc85f75c05f55a4e1bbc.",
+    "Actual DOM controls, document click callbacks, deterministic scheduled cues and summary DOM are exercised; no app algorithm is replaced.",
+    "Pi authored a72-check suite and reran it successfully. The independent suite additionally checks prescribed elapsed times and exact aggregate statistics."
+  ],
+  "verificationConcerns": [
+    "The model spent substantial time debugging its own timer-drain fixtures and attributed benign pending flash timeouts to app failures. Independent reference checks already passed while that testing continued.",
+    "Requested VERIFY.md was not produced. The final message and authored tests retain the verification record.",
+    "No native browser layout, hit testing, focus or touch-device verification."
+  ],
+  "scopeCompliance": "Native OS read/write isolation active. No successful out-of-project write or reading of other benchmark outputs/reports observed. Pi alone authored app changes and test code.",
+  "workflowNotes": "One persistent native Pi conversation;1of3 prompts used. Finished early at independently verified assisted product target.33.16 model-active minutes; creation cost remains separate.",
+  "humanOrSupervisorSteering": 1,
+  "terminalSnapshot": "strategies/reports/operator-finals/case91/index.html",
+  "title": "Reaction timer",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "operator_rescue",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "**72/72 checks passing on second run too!** \u2705\n\nHere's a summary of the fixes I made:\n\n## HTML Bug Fixes (4 changes)\n\n1. **`recordResult()` \u2014 timer leak**: When `nextBtn` was clicked after recording, the pending flash timeout wasn't cleared. Added `clearTimeout(waitTimeout)/flashTimeout` to `showResultsPhase()` so these timers are cleaned up when transitioning between trials.\n\n2. **`showResults()` \u2014 timer leak**: When all 5 results were collected and the final phase transition happened, any pending timers (flash timeout from the last trial) remained in the queue. Added timer cleanup at the start of `showResults()`.\n\n3. **`fullRestart()` \u2014 timer leak on restart**: Clicking the restart button didn't clear pending timers, causing old flash timers to fire during or after the restart. Added `clearTimeout(waitTimeout)/flashTimeout` to `fullRestart()`.\n\n4. **Test harness** \u2014 timer drain: Updated Test 3's retry loop to use a \"drain all timers\" approach instead of single advances, since multiple timers (wait + flash) can exist simultaneously and animation timers from `showResults()` create additional chains.",
+  "workflowInstructions": "operator-rescue-plan.json; run-operator-rescue.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 33.16,
+  "wallMinutes": 33.16,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "operator_finished",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 172,
+  "parentToolCalls": 172,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 24,
+  "modelUsageReported": {
+    "input": 275726,
+    "output": 77241,
+    "cacheRead": 5820836,
+    "totalTokens": 6173803
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 48951,
+  "parentPeakReportedPromptTokens": 48951,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 275726,
+    "output": 77241,
+    "cacheRead": 5820836,
+    "totalTokens": 6173803
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 20616,
+  "sha256": "f4438d5595ad7ebeff7ee93086533e8639585ebc62fbfc85f75c05f55a4e1bbc",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 17,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 36,
+    "delegations": [],
+    "controller": "Codex operator with one persistent native Pi repair context",
+    "operatorPrompts": 1,
+    "rounds": [
+      {
+        "prompt": 1,
+        "settledUTC": "2026-11-17T20:36:24.582171+00:00",
+        "modelSeconds": 1989.57,
+        "sha256": "f4438d5595ad7ebeff7ee93086533e8639585ebc62fbfc85f75c05f55a4e1bbc",
+        "snapshot": "strategies/reports/operator-rounds/case91/round1"
+      }
+    ],
+    "seed": {
+      "id": "qwen-guide_worker-1",
+      "mode": "guide_worker",
+      "configurationMean": 70.8,
+      "source": "strategies/guide_worker/qwen/01_reaction_timer/index.html",
+      "report": "strategies/reports/guide_worker_qwen_01_reaction_timer.report.json",
+      "sha256": "41c2518cd28d4797a1e39070ce4478ed94c015b9c21bca6b3330c18215d10c3d",
+      "score": 75,
+      "grade": "C+ provisional - Timer and retry work, but runs six trials instead of five",
+      "rubricScores": {
+        "functionality": 28,
+        "artifact_correctness": 22,
+        "usability": 11,
+        "self_verification": 4,
+        "autonomy": 10
+      },
+      "baselineScope": "OS write boundary active. No successful out-of-tree write observed.",
+      "baselineSteering": 0,
+      "baselineMinutes": 7.31,
+      "baselineActiveMinutes": 7.31,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_qwen_01_reaction_timer/index.html"
+    },
+    "repairSettings": {
+      "thinking": "off",
+      "billionContext": false,
+      "compaction": {
+        "enabled": true
+      },
+      "forcedProof": false,
+      "singlePersistentAgent": true,
+      "note": "Copied seed configuration is provenance; repair workflow uses corrected standalone Pi profiles, not the original delegation/extension architecture."
+    },
+    "modelActiveMinutes": 33.16,
+    "operatorReviewMinutes": 0.61,
+    "repairElapsedMinutes": 33.77
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Operator-assisted rescue of a selected existing artifact. Baseline creation cost and new repair cost are separate; normalized product quality is not an autonomous100-point grade."
+  ],
+  "nativeCompaction": {
+    "started": 5,
+    "completed": 5,
+    "aborted": 0,
+    "events": [
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 50931,
+        "estimatedTokensAfter": 22801
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 50458,
+        "estimatedTokensAfter": 23016
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49729,
+        "estimatedTokensAfter": 26708
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49282,
+        "estimatedTokensAfter": 22513
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49846,
+        "estimatedTokensAfter": 22659
+      }
+    ],
+    "reportedUsage": {
+      "input": 94741,
+      "output": 6815,
+      "cacheRead": 0,
+      "totalTokens": 101556
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "supervisorAssisted": true,
+  "assistedProductScore": 98.8
+}

@@ -1,0 +1,275 @@
+{
+  "score": 94,
+  "grade": "A- - core Snake behavior passes; full-board food loop remains",
+  "rubricScores": {
+    "functionality": 38,
+    "artifact_correctness": 25,
+    "usability": 14,
+    "self_verification": 7,
+    "autonomy": 10
+  },
+  "summary": "Core Snake behavior independently passes after the model detects and repairs its own food-growth bug. A completely occupied board still traps food placement in an infinite loop.",
+  "strengths": [
+    "Actual keyboard/start/pause/resume/restart and scheduled animation flow pass, with one RAF chain after repeated rapid pause/resume.",
+    "Food grows length3\u21924 and increments score; fifth food raises level2/speed132ms, best score updates.",
+    "Next-head wall/body collisions trigger immediately; moving into a vacated tail cell is allowed and direct reversal is blocked. Native Canvas2D pixels confirm the head is drawn.",
+    "Single self-contained offline HTML. Model self-tests reproduce its original unconditional-tail-pop bug and verify corrected growth, direction, collisions and speed."
+  ],
+  "defects": [
+    "When all484cells are occupied, placeFood loops forever searching for a free cell. A100ms bounded independent VM probe times out. No explicit win-screen requirement was added; this is a food-generation termination defect at board completion."
+  ],
+  "verification": [
+    "Independent exact final source in VM/DOM/nativeCanvas with actual keyboard/button events and scheduled RAF. Controlled state fixtures exercise existing algorithms without replacement.",
+    "Real food growth/scoring, difficulty/best score, wall/self/tail/reverse behavior, pause/resume/restart, one animation chain and actual green head pixels pass.",
+    "Independent final source SHA2561105960567f6680a18deb62c7d94333e98098ff6f2273ffd47b72e07ea484cb8 matches retained artifact. Full-board placement timeout reproduced separately."
+  ],
+  "verificationConcerns": [
+    "Model logic tests verify core algorithms and catch a real growth bug; they do not test actual scheduled UI handlers, repeated pause/resume or full-board termination. Partial self-verification credit.",
+    "No independent browser layout, hit testing or visual-polish test. Initial independent pixel observation used16ms before a16.667ms RAF and was corrected to18ms before grading; no app change was made for that QA timing correction."
+  ],
+  "scopeCompliance": "All successful product/scratch writes stayed within the isolated project. A first scratch write to/tmp/snake.js was denied; model recovered using its own .scratch directory. No Codex product code, diagnoses or repair guidance supplied.",
+  "workflowNotes": "Fresh solo RTFM Ornith; one exact original kickoff, normal autonomous settlement after4.068wall minutes. Same native context, fixed60minute cap, validated frozen author-informed profile. Model alone authored and repaired the app.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "Single run; author-informed settings are a bundle, not an isolated causal test. Same local Q4 weights and shared32K output ceiling.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM is a fresh solo author-informed settings bundle, not an isolated causal test of reasoning or sampling. Same Q4 weights; common32K local output cap and60min deadline. Actual backend/template evidence is linked separately; this is not a replication of full-precision author benchmarks."
+  ],
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "rtfm",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Done. The deliverable is `index.html` (single file, fully offline, no external dependencies).\n\n## What was built\n\nA complete Snake game with all requested features:\n\n- **Keyboard controls** \u2014 Arrow keys or WASD to steer\n- **Food** \u2014 randomly placed, never spawns on the snake\n- **Scoring** \u2014 +1 per food; best score persisted via `localStorage`\n- **Wall collision** \u2014 game over on hitting the border\n- **Self collision** \u2014 game over on hitting your own body (tail-vacated cell correctly allowed)\n- **Pause/Resume** \u2014 `Space` toggles pause with an overlay\n- **Restart** \u2014 `R` anytime, or the Play/Play-again button\n- **Increasing difficulty** \u2014 level rises every 5 food; step interval shrinks from 140ms toward a 60ms floor\n- Extras: swipe controls for touch, rounded graphics with eyes that follow movement direction, live Score/Best/Level readout\n\n## Verification\n\n1. **Syntax check** \u2014 extracted the `<script>` and ran `node --check` \u2192 OK\n2. **Headless logic simulation** \u2014 drove the exact game algorithms through scenarios:\n   - eating food grows the snake (3\u21926) \u2713\n   - reversing direction is rejected \u2713\n   - valid turns apply \u2713\n   - wall collision detected \u2713\n   - self collision detected \u2713\n   - leveling and speed ramp/floor \u2713\n\nAll passed.\n\n## One bug caught and fixed during testing\n\nThe initial code did `snake.unshift(head)` then always `snake.pop()`, so eating food produced **no net growth**. Fixed so the tail is only removed when not growing.",
+  "workflowInstructions": "rtfm-plan.json; run-rtfm.py; research/rtfm-conformance.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 4.068,
+  "wallMinutes": 4.068,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 17,
+  "parentToolCalls": 17,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 3,
+  "modelUsageReported": {
+    "input": 3960,
+    "output": 11732,
+    "cacheRead": 175406,
+    "totalTokens": 191098
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 15412,
+  "parentPeakReportedPromptTokens": 15412,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 3960,
+    "output": 11732,
+    "cacheRead": 175406,
+    "totalTokens": 191098
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 11053,
+  "sha256": "1105960567f6680a18deb62c7d94333e98098ff6f2273ffd47b72e07ea484cb8",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 0,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 7,
+    "delegations": [],
+    "controller": "Fresh single persistent native Pi; exact original kickoff, author-informed inference recipe",
+    "actualPromptCount": 1,
+    "sharedLimitSeconds": 3600,
+    "authorRecipeSource": "research/rtfm-author-recipes.json",
+    "requestedRecipe": {
+      "model": "ornith-1.5:35b-256k",
+      "recipe": "Official general-task sampling; default reasoning enabled",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "outputBudgetBasis": "Common local benchmark cap; not presented as an Ornith-author universal recommendation. Their benchmark-specific larger budgets are separate.",
+      "preserveThinking": "Verify official template handling; no unsupported preservation promise."
+    },
+    "appliedRuntimeProfile": {
+      "apiModel": "ornith-1.5:35b-rtfm",
+      "baseUrl": "http://127.0.0.1:11437/v1",
+      "port": 11437,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "weights": "/home/b38tn1k/models/ollama/blobs/sha256-aaeb640f98a892980ef54876024293cc8d6987a86523aa1b947ffa9274ef800a",
+      "templateSHA256": "182e77dd83bd8e9ca818b240b82e28f243762cd5dda32e6eef327df7b1cd107e",
+      "unitSHA256": "a498d9e4986fb657b24d882e659e6550806d9e654efec7af919eb16b3876e5f2",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "repeat_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "gpuLayers": "42/42",
+      "role": "fresh solo",
+      "outputBudgetCaveat": "32768 shared local ceiling; not an Ornith universal author recommendation"
+    },
+    "runtimeConformance": "research/rtfm-conformance.json",
+    "productAuthor": "single local model only",
+    "externalProductGuidance": 0
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "humanSteering": false,
+  "modelActiveMinutes": 4.067,
+  "nativeModelCost": {
+    "model": "ornith",
+    "role": "worker",
+    "pid": 49174,
+    "assistantUsage": {
+      "input": 3960,
+      "output": 11732,
+      "cacheRead": 175406,
+      "cacheWrite": 0,
+      "totalTokens": 191098
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 3960,
+      "output": 11732,
+      "cacheRead": 175406,
+      "cacheWrite": 0,
+      "totalTokens": 191098
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 4.067,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1160618.259979916,
+        "end": 1160620.651703458
+      },
+      {
+        "start": 1160620.692999375,
+        "end": 1160692.558301958
+      },
+      {
+        "start": 1160692.625465708,
+        "end": 1160697.830462375
+      },
+      {
+        "start": 1160697.908806583,
+        "end": 1160701.456042708
+      },
+      {
+        "start": 1160701.757671916,
+        "end": 1160704.734096041
+      },
+      {
+        "start": 1160705.007831583,
+        "end": 1160729.195376958
+      },
+      {
+        "start": 1160729.472292958,
+        "end": 1160752.703318416
+      },
+      {
+        "start": 1160752.785675375,
+        "end": 1160754.78869275
+      },
+      {
+        "start": 1160755.035234166,
+        "end": 1160757.983872458
+      },
+      {
+        "start": 1160758.242294333,
+        "end": 1160773.808664125
+      },
+      {
+        "start": 1160773.814289625,
+        "end": 1160773.814736958
+      },
+      {
+        "start": 1160775.904368083,
+        "end": 1160778.628777416
+      },
+      {
+        "start": 1160778.926915458,
+        "end": 1160813.035605666
+      },
+      {
+        "start": 1160813.041630291,
+        "end": 1160813.041889416
+      },
+      {
+        "start": 1160815.149811,
+        "end": 1160828.423092416
+      },
+      {
+        "start": 1160828.5230595,
+        "end": 1160834.733756375
+      },
+      {
+        "start": 1160834.742178375,
+        "end": 1160834.74310575
+      },
+      {
+        "start": 1160836.839752916,
+        "end": 1160840.360336458
+      },
+      {
+        "start": 1160840.639389208,
+        "end": 1160846.11443175
+      },
+      {
+        "start": 1160846.423604625,
+        "end": 1160850.44212875
+      },
+      {
+        "start": 1160850.714745916,
+        "end": 1160860.123932416
+      }
+    ],
+    "exitCode": 0
+  },
+  "rtfmFinalSnapshot": "strategies/reports/rtfm-finals/case107"
+}

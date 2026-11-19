@@ -1,0 +1,69 @@
+{
+  "method": "Exact source, real registered keyboard/overlay/touch handlers and actual scheduled timers. App-supplied reset/state hooks establish controlled food/body fixtures only; movement/collision/render algorithms unchanged. Partial Canvas does not verify path drawing or native browser appearance.",
+  "sha256": "770ec0bf3c57885005a6aa37417c14b1124fff4042de3556f0217969fdbfb9da",
+  "checks": [
+    {
+      "id": "movement_turn_reversal_pause_resume",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "turn": true,
+        "reversalBlocked": true,
+        "pauseResume": true
+      }
+    },
+    {
+      "id": "growth_score_actual_timer_difficulty",
+      "pass": true,
+      "evidence": {
+        "score": 50,
+        "length": 4,
+        "nextActualDelay": 110
+      }
+    },
+    {
+      "id": "wall_death_and_button_retry",
+      "pass": true,
+      "evidence": {
+        "retry": true
+      }
+    },
+    {
+      "id": "restart_active_and_paused",
+      "pass": true,
+      "evidence": {
+        "activeRestart": true,
+        "pausedRestart": true
+      }
+    },
+    {
+      "id": "self_collision",
+      "pass": true,
+      "evidence": {
+        "collision": true
+      }
+    },
+    {
+      "id": "vacating_tail",
+      "pass": false,
+      "error": "Legal non-growing move into departing tail was rejected",
+      "actual": true,
+      "expected": false
+    },
+    {
+      "id": "swipe_control",
+      "pass": true,
+      "evidence": {
+        "swipeUp": true
+      }
+    },
+    {
+      "id": "full_board_final_growth_optional_boundary",
+      "pass": false,
+      "error": "Win state was committed before the final grown snake",
+      "actual": 399,
+      "expected": 400
+    }
+  ],
+  "pass": false
+}

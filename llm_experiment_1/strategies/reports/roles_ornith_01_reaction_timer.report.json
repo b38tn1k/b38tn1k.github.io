@@ -1,0 +1,133 @@
+{
+  "score": 69,
+  "grade": "C provisional - core timer works; shared deadline reached before specialist reviews",
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 24,
+    "usability": 8,
+    "self_verification": 5,
+    "autonomy": 0
+  },
+  "breakdown": {
+    "functionality": 32,
+    "artifact_correctness": 24,
+    "usability": 8,
+    "self_verification": 5,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Actual-source event checks complete five trials at 200, 210, 220, 230 and 240 ms, with correct average/best/median/worst and five result cards.",
+    "Developer eventually repaired false-start retries: the trial is rearmed without incrementing and five valid results are collected. Both Continue and keyboard retry paths were updated.",
+    "Single inline offline HTML; developer ran syntax checks and eventually produced corroborated normal/retry test outcomes."
+  ],
+  "defects": [
+    "Play Again retains the results markup in the stage. mainText/subText references point to detached nodes, so state changes no longer update visible instructions; old results remain on screen.",
+    "The go state remains active during the 450 ms celebration delay. Two Space events 100 ms apart record 200 and 300 ms for the same green cue instead of one measurement.",
+    "The shared one-hour deadline elapsed while the first developer child was still active. Tester and UI reviews never started; the requested specialist workflow did not complete.",
+    "Source uses state-waiting while the red waiting CSS selector is state-ready; the intended waiting color rule does not match the DOM state."
+  ],
+  "verification": [
+    "Independent final-source DOM/event/clock checks in reports/roles_ornith_01_reaction_timer.qa.cjs/.qa.json, using state accessors only and actual UI event handlers.",
+    "Developer-stage snapshot and QA show the earlier false-start bug; final-source checks verify its repair. No supervisor repair hint or implementation was supplied.",
+    "At the 30-minute checkpoint the developer had made 71 tool calls, peak prompt 66,692 tokens, and 64,472 reported output tokens, with no other role started."
+  ],
+  "verificationConcerns": [
+    "Most developer verification time was spent debugging homemade DOM/VM fixtures, including missing APIs, string coercion, clock mismatch and undefined globals. Some failing Node tests were masked by a final successful shell echo.",
+    "Browser rendering and native input remain unverified. The waiting-style mismatch is a source/selector observation, not a screenshot check."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Foreground developer delegation executed on the expected Ornith model. It occupied the shared deadline; no tester or UI delegation completed. Deadline abort and process cleanup took about 16 extra seconds. This distinguishes a working delegation tool from an unfinished role workflow.",
+  "runStatus": "completed_pending_assessment",
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "roles",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "I'll build this reaction-time tester following the role workflow. Let me delegate the implementation to a developer first.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 60.27,
+  "wallMinutes": 60.27,
+  "status": "assessed",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 34,
+  "toolCalls": 119,
+  "parentToolCalls": 4,
+  "childToolCalls": 115,
+  "toolResultsMarkedError": 2,
+  "modelUsageReported": {
+    "input": 108712,
+    "output": 107682,
+    "cacheRead": 6264681,
+    "totalTokens": 6481075
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 105320,
+  "parentPeakReportedPromptTokens": 2932,
+  "childPeakReportedPromptTokens": 105320,
+  "parentModelUsage": {
+    "input": 2944,
+    "output": 845,
+    "cacheRead": 8354,
+    "totalTokens": 12143
+  },
+  "childModelUsage": {
+    "input": 105768,
+    "output": 106837,
+    "cacheRead": 6256327,
+    "totalTokens": 6468932
+  },
+  "artifactBytes": 14275,
+  "sha256": "5dddf0ce5264ebd27366fe09a2423ee20beb82e1978b6a0e78f225a4c9214fa5",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": false,
+    "implementationHandoff": false,
+    "rolesAttempted": {
+      "developer": 1
+    },
+    "rolesCompleted": {},
+    "parentArtifactReads": 0,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 1,
+    "parentWrites": 0,
+    "delegations": [
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 105768,
+          "output": 106837,
+          "cacheRead": 6256327,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 114
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/01_reaction_timer/artifact-pi/subagents/artifacts/f4565880-3256-4735-b4e7-99c7cacf61df_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "f4565880-3256-4735-b4e7-99c7cacf61df",
+        "acceptanceStatus": "rejected"
+      }
+    ]
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

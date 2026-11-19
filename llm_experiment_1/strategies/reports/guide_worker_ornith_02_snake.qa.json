@@ -1,0 +1,7 @@
+{
+  "method": "Exact-source VM/DOM with deterministic timer and state-only instrumentation; no browser",
+  "sha256": "d865fa42dc53f2288ef3b5b42cba50bd43b518915c0ac699132d08a0dbe6685d",
+  "closedScripts": true,
+  "externalResources": [],
+  "error": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/guide_worker/ornith/02_snake/index.html:script0:33\n  const REVERSE = { UP: DOWN, DOWN: UP, LEFT: RIGHT, RIGHT: LEFT };\n                        ^\n\nReferenceError: DOWN is not defined\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/guide_worker/ornith/02_snake/index.html:script0:33:25\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/guide_worker/ornith/02_snake/index.html:script0:376:3\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:30\n    at Array.forEach (<anonymous>)\n    at load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/remaining-core.cjs:7:49\n    at check (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/remaining-core.cjs:2:517)\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/remaining-core.cjs:7:1)"
+}

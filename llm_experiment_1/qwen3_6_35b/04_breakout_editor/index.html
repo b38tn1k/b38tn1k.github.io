@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Breakout + Level Editor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a1a;
+    color: #e0e0f0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #ui-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 10px;
+  }
+
+  .stat-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .stat-box span { color: #ffd700; font-weight: bold; font-size: 16px; }
+
+  button, label.btn {
+    background: linear-gradient(135deg, #2a2a4a, #1e1e3a);
+    color: #c8c8f0;
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  button:hover, label.btn:hover { background: linear-gradient(135deg, #3a3a6a, #2e2e5a); color: #fff; border-color: rgba(255,255,255,0.3); }
+  button:active { transform: scale(0.97); }
+
+  .btn-play { background: linear-gradient(135deg, #1a6b3a, #0f4d28) !important; color: #a8ffb8 !important; border-color: rgba(80,255,100,0.3) !important; }
+  .btn-play:hover { background: linear-gradient(135deg, #2a8b4a, #1f6d38) !important; }
+
+  .btn-edit { background: linear-gradient(135deg, #4a3a1a, #3a2a0a) !important; color: #ffb878 !important; border-color: rgba(255,200,80,0.3) !important; }
+  .btn-edit:hover { background: linear-gradient(135deg, #6a5a2a, #5a4a1a) !important; }
+
+  .btn-danger { background: linear-gradient(135deg, #6b1a1a, #4d0f0f) !important; color: #ffb8b8 !important; border-color: rgba(255,80,80,0.3) !important; }
+  .btn-danger:hover { background: linear-gradient(135deg, #8b2a2a, #6d1f1f) !important; }
+
+  #game-canvas {
+    border-radius: 12px;
+    display: block;
+    max-width: 96vw;
+    max-height: calc(100vh - 70px);
+  }
+
+  #tool-bar {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 10px;
+  }
+
+  .color-swatch {
+    width: 24px; height: 24px; border-radius: 6px; cursor: pointer;
+    border: 2px solid transparent; transition: all 0.15s;
+  }
+  .color-swatch:hover { transform: scale(1.15); }
+  .color-swatch.active { border-color: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.4); }
+
+  #mode-label { font-size: 13px; color: #8888aa; margin-right: 4px; }
+  #hint { font-size: 12px; color: #666688; margin-top: 4px; text-align: center; }
+
+  input[type="file"] { display: none; }
+
+  @media (max-width: 600px) {
+    .stat-box { padding: 4px 10px; font-size: 12px; }
+    .stat-box span { font-size: 14px; }
+    button, label.btn { padding: 5px 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="ui-bar">
+  <div class="stat-box">Score: <span id="score-display">0</span></div>
+  <div class="stat-box">Lives: <span id="lives-display">3</span></div>
+  <div class="stat-box">Bricks: <span id="bricks-display">0</span></div>
+  <button id="btn-edit" class="btn-edit">✎ Editor</button>
+  <button id="btn-play" class="btn-play">▶ Play</button>
+  <button id="btn-restart">↺ Restart</button>
+  <button id="btn-clear-level" class="btn-danger">Clear Grid</button>
+  <button id="btn-save-level">💾 Save JSON</button>
+  <label class="btn" for="file-load">📂 Load JSON</label>
+  <input type="file" id="file-load" accept=".json">
+</div>
+
+<canvas id="game-canvas"></canvas>
+
+<div id="tool-bar" style="display:none;">
+  <span style="font-size:12px;color:#7778aa;">Tool:</span>
+  <button class="tool-btn active" data-tool="brick">🧱 Brick</button>
+  <button class="tool-btn" data-tool="erase">✕ Erase</button>
+  <span style="font-size:12px;color:#7778aa;">Color:</span>
+  <div class="color-swatch active" data-color="#e74c3c"></div>
+  <div class="color-swatch" data-color="#3498db"></div>
+  <div class="color-swatch" data-color="#2ecc71"></div>
+  <div class="color-swatch" data-color="#f39c12"></div>
+  <div class="color-swatch" data-color="#9b59b6"></div>
+  <div class="color-swatch" data-color="#1abc9c"></div>
+  <div class="color-swatch" data-color="#e67e22"></div>
+  <div class="color-swatch" data-color="#ecf0f1"></div>
+</div>
+
+<div id="hint">← → or Mouse / Touch to move paddle. Space = launch ball.</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ─── Constants ──────────────────────────────────────────
+  const GRID_COLS    = 20;
+  const GRID_ROWS    = 14;
+  const CANVAS_W     = 780;
+  const CANVAS_H     = 560;
+  const PADDLE_W     = 90;
+  const PADDLE_H     = 14;
+  const BALL_R       = 8;
+  const BRICK_PAD    = 3;
+  const BRICK_H      = 22;
+  const BRICK_TOP    = 45;
+  const LAUNCH_SPEED = 5;
+  const MAX_LIVES    = 5;
+
+  // ─── DOM refs ───────────────────────────────────────────
+  const canvas   = document.getElementById("game-canvas");
+  const ctx      = canvas.getContext("2d");
+  const scoreEl  = document.getElementById("score-display");
+  const livesEl  = document.getElementById("lives-display");
+  const bricksEl = document.getElementById("bricks-display");
+
+  // ─── State ──────────────────────────────────────────────
+  let mode          = "EDITOR";   // EDITOR | PLAYING | GAME_OVER | WIN
+  let score         = 0;
+  let lives         = MAX_LIVES;
+  let grid          = [];          // 2D: null or { color, hp }
+  let paddle        = { x: 0, y: 0 };
+  let ball          = { x: 0, y: 0, vx: 0, vy: 0, active: false };
+  let currentColor  = "#e74c3c";
+  let brickTool     = "brick";
+  let editorKeys    = {};
+  let keysDown      = {};
+  let animId        = null;
+  let lastTime      = 0;
+  let particles     = [];
+  let messageTimer  = 0;
+  let messageText   = "";
+  let winPaddleX    = CANVAS_W / 2 - PADDLE_W / 2;
+
+  // ─── Init grid ──────────────────────────────────────────
+  function initGrid() {
+    grid = [];
+    for (let r = 0; r < GRID_ROWS; r++) {
+      grid[r] = new Array(GRID_COLS).fill(null);
+    }
+    // Default level – a nice starting pattern
+    const patterns = [
+      { row: 0, cols: [3,4,5,6,7,8,9,10,11,12,13,14], color: "#e74c3c" },
+      { row: 1, cols: [2,3,4,5,6,7,8,9,10,11,12,13,14,15], color: "#e67e22" },
+      { row: 2, cols: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16], color: "#f39c12" },
+      { row: 3, cols: [2,3,4,5,6,7,8,9,10,11,12,13,14,15], color: "#2ecc71" },
+      { row: 4, cols: [4,5,6,7,8,9,10,11,12,13], color: "#3498db" },
+      { row: 5, cols: [5,6,7,8,9,10,11,12], color: "#9b59b6" },
+      { row: 6, cols: [7,8,9,10,11,12], color: "#1abc9c" },
+      { row: 7, cols: [9,10,11], color: "#ecf0f1" },
+    ];
+    for (const p of patterns) {
+      for (const c of p.cols) {
+        grid[p.row][c] = { color: p.color, hp: 1 };
+      }
+    }
+  }
+
+  // ─── Resize canvas proportionally ───────────────────────
+  function resizeCanvas() {
+    const maxW = Math.min(window.innerWidth * 0.96, CANVAS_W);
+    const scale = maxW / CANVAS_W;
+    const h = CANVAS_H * scale;
+    canvas.style.width  = maxW + "px";
+    canvas.style.height = h + "px";
+  }
+
+  // ─── Helpers ────────────────────────────────────────────
+  function brickRect(col, row) {
+    const bw = (CANVAS_W - BRICK_PAD * (GRID_COLS + 1)) / GRID_COLS;
+    return { x: BRICK_PAD + col * (bw + BRICK_PAD), y: BRICK_TOP + row * (BRICK_H + BRICK_PAD), w: bw, h: BRICK_H };
+  }
+
+  function brickPositions() {
+    const bws = [];
+    for (let r = 0; r < GRID_ROWS; r++) {
+      for (let c = 0; c < GRID_COLS; c++) {
+        if (grid[r][c]) {
+          const rc = brickRect(c, r);
+          bws.push(rc);
+        }
+      }
+    }
+    return bws;
+  }
+
+  function countBricks() {
+    let n = 0;
+    for (let r = 0; r < GRID_ROWS; r++)
+      for (let c = 0; c < GRID_COLS; c++)
+        if (grid[r][c]) n++;
+    return n;
+  }
+
+  function showMessage(text, dur) { messageText = text; messageTimer = dur || 2; }
+
+  function addParticles(x, y, color, count) {
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1 + Math.random() * 3;
+      particles.push({ x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, life: 0.4+Math.random()*0.4, color, size: 2+Math.random()*3 });
+    }
+  }
+
+  // ─── Launch / reset ball ────────────────────────────────
+  function positionBall() {
+    ball.x = paddle.x + PADDLE_W / 2;
+    ball.y = paddle.y - BALL_R - 2;
+    ball.active = false;
+    ball.vx = 0;
+    ball.vy = 0;
+  }
+
+  function launchBall() {
+    if (ball.active) return;
+    ball.active = true;
+    const angle = -Math.PI / 4 - Math.random() * Math.PI / 2; // random upward
+    ball.vx = LAUNCH_SPEED * Math.cos(angle);
+    ball.vy = -LAUNCH_SPEED;
+  }
+
+  function initGame() {
+    score = 0;
+    lives = MAX_LIVES;
+    paddle.x = winPaddleX;
+    particles = [];
+    updateUI();
+    startPlaying();
+  }
+
+  function startPlaying() {
+    mode = "PLAYING";
+    document.getElementById("tool-bar").style.display = "none";
+    positionBall();
+    showMessage("Press SPACE or tap to launch!", 2);
+  }
+
+  function goToEditor() {
+    if (animId) cancelAnimationFrame(animId);
+    animId = null;
+    mode = "EDITOR";
+    ball.active = false;
+    particles = [];
+    document.getElementById("tool-bar").style.display = "flex";
+    updateUI();
+    renderEditor();
+  }
+
+  function resetToEditor() {
+    if (animId) cancelAnimationFrame(animId);
+    animId = null;
+    mode = "EDITOR";
+    ball.active = false;
+    particles = [];
+    document.getElementById("tool-bar").style.display = "flex";
+    updateUI();
+    renderEditor();
+  }
+
+  // ─── Game loop ──────────────────────────────────────────
+  function update(dt) {
+    if (mode !== "PLAYING") return;
+
+    // Paddle follow mouse/touch via key or direct position tracking
+    paddle.x += (editorKeys["ArrowLeft"] || editorKeys["a"] ? -300 : 0) * dt;
+    paddle.x += (editorKeys["ArrowRight"] || editorKeys["d"] ? 300 : 0) * dt;
+    if (paddle.x < 0) paddle.x = 0;
+    if (paddle.x + PADDLE_W > CANVAS_W) paddle.x = CANVAS_W - PADDLE_W;
+
+    // Message timer
+    if (messageTimer > 0) {
+      messageTimer -= dt;
+      if (messageTimer <= 0) showMessage("", 0);
+    }
+
+    if (!ball.active) return;
+
+    const speed = LAUNCH_SPEED * 1.08; // slight speed boost on each launch (via angle only, not magnitude here for simplicity)
+
+    ball.x += ball.vx * dt * 60;
+    ball.y += ball.vy * dt * 60;
+
+    // Wall bounce
+    if (ball.x - BALL_R < 0) { ball.x = BALL_R; ball.vx = Math.abs(ball.vx); }
+    if (ball.x + BALL_R > CANVAS_W) { ball.x = CANVAS_W - BALL_R; ball.vx = -Math.abs(ball.vx); }
+    if (ball.y - BALL_R < 0) { ball.y = BALL_R; ball.vy = Math.abs(ball.vy); }
+
+    // Bottom → lose life
+    if (ball.y + BALL_R > CANVAS_H + 20) {
+      lives--;
+      updateUI();
+      if (lives <= 0) {
+        mode = "GAME_OVER";
+        showMessage("Game Over! ↺ Restart", 999);
+        resetToEditor();
+        return;
+      }
+      positionBall();
+      showMessage(`Lose a life! ${lives} left`, 1.5);
+    }
+
+    // Paddle bounce
+    if (ball.vy > 0 && ball.y + BALL_R >= paddle.y && ball.y + BALL_R <= paddle.y + PADDLE_H + 6
+        && ball.x >= paddle.x - 4 && ball.x <= paddle.x + PADDLE_W + 4) {
+      ball.y = paddle.y - BALL_R;
+      const hit = (ball.x - paddle.x) / PADDLE_W; // 0..1
+      const angle = -Math.PI * (0.85 - hit * 0.7); // wider angles at edges
+      const spd = Math.sqrt(ball.vx*ball.vx + ball.vy*ball.vy);
+      ball.vx = spd * Math.cos(angle);
+      ball.vy = -spd * Math.sin(angle) + Math.abs(ball.vy) * 0.05;
+      if (Math.abs(ball.vy) < 1.5) ball.vy = -2;
+      addParticles(ball.x, ball.y, "#ffffff", 5);
+    }
+
+    // Brick collision
+    const bws = brickPositions();
+    let hitBrick = null;
+    for (const bw of bws) {
+      if (ball.x + BALL_R > bw.x && ball.x - BALL_R < bw.x + bw.w && ball.y + BALL_R > bw.y && ball.y - BALL_R < bw.y + bw.h) {
+        hitBrick = bw;
+        break;
+      }
+    }
+
+    if (hitBrick) {
+      // Determine bounce side
+      const overlapL = (ball.x + BALL_R) - hitBrick.x;
+      const overlapR = (hitBrick.x + hitBrick.w) - (ball.x - BALL_R);
+      const overlapT = (ball.y + BALL_R) - hitBrick.y;
+      const overlapB = (hitBrick.y + hitBrick.h) - (ball.y - BALL_R);
+      const minOverlap = Math.min(overlapL, overlapR, overlapT, overlapB);
+
+      if (minOverlap === overlapT || minOverlap === overlapB) ball.vy *= -1;
+      else ball.vx *= -1;
+
+      // Resolve position so ball doesn't get stuck
+      if (minOverlap === overlapT) ball.y = hitBrick.y - BALL_R;
+      else if (minOverlap === overlapB) ball.y = hitBrick.y + hitBrick.h + BALL_R;
+      else if (minOverlap === overlapL) ball.x = hitBrick.x - BALL_R;
+      else ball.x = hitBrick.x + hitBrick.w + BALL_R;
+
+      // Find which brick it is and reduce HP
+      for (let r = 0; r < GRID_ROWS; r++) {
+        const rc = brickRect(r, null).x; // rough – just find the cell
+        for (let c = 0; c < GRID_COLS; c++) {
+          const br = brickRect(c, r);
+          if (br.x === hitBrick.x && br.y === hitBrick.y) {
+            grid[r][c].hp--;
+            if (grid[r][c].hp <= 0) {
+              addParticles(br.x + br.w/2, br.y + br.h/2, grid[r][c].color, 15);
+              grid[r][c] = null;
+              score += 10;
+            } else {
+              addParticles(hitBrick.x + hitBrick.w/2, hitBrick.y + hitBrick.h/2, "#ffffff", 6);
+              score += 5;
+            }
+            updateUI();
+            // Check win
+            if (countBricks() === 0) {
+              mode = "WIN";
+              showMessage("🎉 You Win! 🎉 Press ▶ Play to retry with same layout", 999);
+              resetToEditor();
+            }
+            break;
+          }
+        }
+        if (hitBrick) break; // already handled, but safety
+      }
+
+      // Clamp velocity magnitude for stability
+      const spd = Math.sqrt(ball.vx*ball.vx + ball.vy*ball.vy);
+      const MAX_SPD = 9;
+      if (spd > MAX_SPD) { ball.vx *= MAX_SPD/spd; ball.vy *= MAX_SPD/spd; }
+    }
+
+    // Update particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx * dt * 60;
+      p.y += p.vy * dt * 60;
+      p.vy += 0.08 * dt * 60;
+      p.life -= dt;
+      if (p.life <= 0) particles.splice(i, 1);
+    }
+  }
+
+  // ─── Render ─────────────────────────────────────────────
+  function renderEditor() {
+    const bw = (CANVAS_W - BRICK_PAD * (GRID_COLS + 1)) / GRID_COLS;
+
+    // Background
+    ctx.fillStyle = "#0d0d20";
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+    // Grid lines
+    ctx.strokeStyle = "rgba(255,255,255,0.04)";
+    ctx.lineWidth = 1;
+    for (let c = 1; c < GRID_COLS; c++) {
+      const x = BRICK_PAD + c * (bw + BRICK_PAD);
+      ctx.beginPath(); ctx.moveTo(x, BRICK_TOP); ctx.lineTo(x, BRICK_TOP + GRID_ROWS * (BRICK_H + BRICK_PAD)); ctx.stroke();
+    }
+    for (let r = 1; r < GRID_ROWS; r++) {
+      const y = BRICK_TOP + r * (BRICK_H + BRICK_PAD);
+      ctx.beginPath(); ctx.moveTo(BRICK_PAD, y); ctx.lineTo(BRICK_PAD + GRID_COLS*(bw+BRICK_PAD), y); ctx.stroke();
+    }
+
+    // Bricks
+    for (let r = 0; r < GRID_ROWS; r++) {
+      for (let c = 0; c < GRID_COLS; c++) {
+        const b = grid[r][c];
+        if (!b) continue;
+        const rc = brickRect(c, r);
+        drawBrick(rc.x, rc.y, rc.w, rc.h, b.color, b.hp);
+      }
+    }
+
+    // Highlight current cell with editor tool color (ghost)
+    ctx.fillStyle = currentColor + "33";
+    const ghostX = BRICK_PAD;
+    const ghostY = BRICK_TOP;
+    ctx.fillRect(ghostX - 2, BRICK_TOP - 2, GRID_COLS * (bw + BRICK_PAD) + 4, GRID_ROWS * (BRICK_H + BRICK_PAD) + 4);
+
+    // Mode label
+    drawText("LEVEL EDITOR", CANVAS_W / 2, BRICK_TOP - 16, "rgba(255,200,100,0.5)", "18px sans-serif", "center");
+  }
+
+  function drawBrick(x, y, w, h, color, hp) {
+    // Shadow
+    ctx.fillStyle = "rgba(0,0,0,0.3)";
+    roundRect(ctx, x + 2, y + 2, w, h, 4);
+    ctx.fill();
+
+    // Main
+    const lightness = hp > 1 ? 80 : (color === "#ecf0f1" ? 75 : 65);
+    ctx.fillStyle = color;
+    roundRect(ctx, x, y, w, h, 4);
+    ctx.fill();
+
+    // Shine
+    const grad = ctx.createLinearGradient(x, y, x, y + h);
+    grad.addColorStop(0, "rgba(255,255,255," + (hp > 1 ? 0.3 : 0.15) + ")");
+    grad.addColorStop(0.5, "rgba(255,255,255,0)");
+    ctx.fillStyle = grad;
+    roundRect(ctx, x, y, w, h, 4);
+    ctx.fill();
+
+    // Border
+    ctx.strokeStyle = "rgba(0,0,0,0.25)";
+    ctx.lineWidth = 1;
+    roundRect(ctx, x, y, w, h, 4);
+    ctx.stroke();
+
+    // Multi-hit indicator
+    if (hp > 1 && hp < 5) {
+      drawText("" + hp, x + w/2, y + h/2 + 3, "rgba(255,255,255,0.7)", "bold 12px sans-serif", "center");
+    } else if (hp >= 5) {
+      drawText("★" + hp, x + w/2, y + h/2 + 3, "rgba(255,255,255,0.8)", "bold 10px sans-serif", "center");
+    }
+  }
+
+  function renderGame() {
+    const bw = (CANVAS_W - BRICK_PAD * (GRID_COLS + 1)) / GRID_COLS;
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
+    bg.addColorStop(0, "#0d0d25");
+    bg.addColorStop(1, "#14143a");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+    // Bricks
+    for (let r = 0; r < GRID_ROWS; r++) {
+      for (let c = 0; c < GRID_COLS; c++) {
+        const b = grid[r][c];
+        if (!b) continue;
+        const rc = brickRect(c, r);
+        drawBrick(rc.x, rc.y, rc.w, rc.h, b.color, b.hp);
+      }
+    }
+
+    // Paddle
+    const pGrad = ctx.createLinearGradient(paddle.x, paddle.y, paddle.x, paddle.y + PADDLE_H);
+    pGrad.addColorStop(0, "#ffffff");
+    pGrad.addColorStop(1, "#8899cc");
+    ctx.fillStyle = pGrad;
+    roundRect(ctx, paddle.x, paddle.y, PADDLE_W, PADDLE_H, 7);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+    ctx.lineWidth = 1;
+    roundRect(ctx, paddle.x, paddle.y, PADDLE_W, PADDLE_H, 7);
+    ctx.stroke();
+
+    // Ball
+    if (mode === "PLAYING") {
+      const ballGrad = ctx.createRadialGradient(ball.x - 2, ball.y - 2, 1, ball.x, ball.y, BALL_R);
+      ballGrad.addColorStop(0, "#ffffff");
+      ballGrad.addColorStop(0.6, "#ddeeff");
+      ballGrad.addColorStop(1, "#8899bb");
+      ctx.fillStyle = ballGrad;
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ball glow
+      ctx.shadowColor = "rgba(150,200,255,0.4)";
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // "Tap to launch" hint
+      if (!ball.active) {
+        drawText("TAP / SPACE to launch", CANVAS_W/2, CANVAS_H - 30, "rgba(255,255,255,0.4)", "16px sans-serif", "center");
+      }
+    }
+
+    // Particles
+    for (const p of particles) {
+      ctx.globalAlpha = Math.max(0, p.life * 3);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life * 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Message
+    if (messageText) {
+      drawText(messageText, CANVAS_W/2, CANVAS_H - 60, "rgba(255,255,255,0.7)", "18px sans-serif", "center");
+    }
+
+    // Win overlay text
+    if (mode === "WIN") {
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    }
+    if (mode === "GAME_OVER") {
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    }
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.lineTo(x + w - r, y);
+    c.quadraticCurveTo(x + w, y, x + w, y + r);
+    c.lineTo(x + w, y + h - r);
+    c.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    c.lineTo(x + r, y + h);
+    c.quadraticCurveTo(x, y + h, x, y + h - r);
+    c.lineTo(x, y + r);
+    c.quadraticCurveTo(x, y, x + r, y);
+    c.closePath();
+  }
+
+  function drawText(text, x, y, color, font, align) {
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textAlign = align || "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  }
+
+  function updateUI() {
+    scoreEl.textContent = score;
+    livesEl.textContent = lives;
+    bricksEl.textContent = countBricks();
+  }
+
+  // ─── Main loop ──────────────────────────────────────────
+  function gameLoop(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+    let dt = (timestamp - lastTime) / 1000;
+    lastTime = timestamp;
+    if (dt > 0.1) dt = 0.016;
+
+    update(dt);
+
+    if (mode === "EDITOR") {
+      renderEditor();
+    } else {
+      renderGame();
+    }
+
+    animId = requestAnimationFrame(gameLoop);
+  }
+
+  function startMainLoop() {
+    lastTime = 0;
+    if (!animId) animId = requestAnimationFrame(gameLoop);
+  }
+
+  // ─── Editor mouse/touch interaction ────────────────────
+  let isDrawing = false;
+
+  function getCanvasPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = CANVAS_W / rect.width;
+    const scaleY = CANVAS_H / rect.height;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+  }
+
+  function getCell(e) {
+    const pos = getCanvasPos(e);
+    const bw = (CANVAS_W - BRICK_PAD * (GRID_COLS + 1)) / GRID_COLS;
+    let col = Math.floor((pos.x - BRICK_PAD) / (bw + BRICK_PAD));
+    let row = Math.floor((pos.y - BRICK_TOP) / (BRICK_H + BRICK_PAD));
+    if (col < 0 || col >= GRID_COLS || row < 0 || row >= GRID_ROWS) return null;
+    return { col, row };
+  }
+
+  function applyEditorCell(e) {
+    const cell = getCell(e);
+    if (!cell) return;
+    const { col, row } = cell;
+    if (brickTool === "brick") {
+      if (!grid[row][col]) grid[row][col] = { color: currentColor, hp: 1 };
+    } else {
+      grid[row][col] = null;
+    }
+    updateUI();
+    renderEditor();
+  }
+
+  canvas.addEventListener("mousedown", (e) => { isDrawing = true; applyEditorCell(e); });
+  canvas.addEventListener("mousemove", (e) => { if (isDrawing && mode === "EDITOR") applyEditorCell(e); });
+  window.addEventListener("mouseup", () => { isDrawing = false; });
+
+  canvas.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    isDrawing = true;
+    if (mode === "EDITOR") applyEditorCell(e);
+    else if (mode === "PLAYING" && !ball.active) launchBall();
+  }, { passive: false });
+
+  canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    const pos = getCanvasPos(e);
+    paddle.x = Math.max(0, Math.min(CANVAS_W - PADDLE_W, pos.x - PADDLE_W / 2));
+    if (mode === "EDITOR") applyEditorCell(e);
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", (e) => { e.preventDefault(); isDrawing = false; }, { passive: false });
+
+  // ─── Keyboard input ─────────────────────────────────────
+  document.addEventListener("keydown", (e) => {
+    keysDown[e.key] = true;
+    editorKeys[e.key] = true;
+
+    if ((e.key === " " || e.key === "Enter") && mode === "PLAYING") {
+      e.preventDefault();
+      launchBall();
+    }
+
+    if (mode === "EDITOR" && (e.key === "Delete" || e.key === "Backspace")) {
+      const cell = getCurrentEditorCell();
+      if (cell) { grid[cell.row][cell.col] = null; updateUI(); renderEditor(); }
+    }
+
+    // Arrow/WASD move paddle in editor to select cells
+    if (mode === "EDITOR") {
+      let col = Math.floor((paddle.x + PADDLE_W/2 - BRICK_PAD) / ((CANVAS_W - BRICK_PAD*(GRID_COLS+1))/GRID_COLS + BRICK_PAD));
+      const row = Math.floor((paddle.y + PADDLE_H/2 - BRICK_TOP) / (BRICK_H + BRICK_PAD));
+
+      if (e.key === "ArrowLeft" || e.key === "a") { e.preventDefault(); editorKeys["ArrowLeft"] = true; }
+      if (e.key === "ArrowRight" || e.key === "d") { e.preventDefault(); editorKeys["ArrowRight"] = true; }
+    }
+
+    // Number keys for color selection in editor
+    if (mode === "EDITOR") {
+      const numColorMap = {"1":"#e74c3c","2":"#3498db","3":"#2ecc71","4":"#f39c12","5":"#9b59b6","6":"#1abc9c","7":"#e67e22","8":"#ecf0f1"};
+      if (numColorMap[e.key]) {
+        currentColor = numColorMap[e.key];
+        updateColorSwatches();
+      }
+    }
+  });
+
+  document.addEventListener("keyup", (e) => { keysDown[e.key] = false; editorKeys[e.key] = false; });
+
+  function getCurrentEditorCell() {
+    const bw = (CANVAS_W - BRICK_PAD * (GRID_COLS + 1)) / GRID_COLS;
+    let col = Math.floor((paddle.x + PADDLE_W/2 - BRICK_PAD) / (bw + BRICK_PAD));
+    let row = Math.floor((paddle.y + PADDLE_H/2 - BRICK_TOP) / (BRICK_H + BRICK_PAD));
+    if (col < 0 || col >= GRID_COLS || row < 0 || row >= GRID_ROWS) return null;
+    return { col, row };
+  }
+
+  // ─── Mouse movement for paddle tracking ────────────────
+  let mouseActive = false;
+  canvas.addEventListener("mousemove", (e) => {
+    if (mode === "PLAYING") {
+      const pos = getCanvasPos(e);
+      paddle.x = Math.max(0, Math.min(CANVAS_W - PADDLE_W, pos.x - PADDLE_W / 2));
+      mouseActive = true;
+    }
+  });
+
+  // ─── UI Buttons ────────────────────────────────────────
+  document.getElementById("btn-edit").addEventListener("click", goToEditor);
+
+  document.getElementById("btn-play").addEventListener("click", () => {
+    initGame();
+    startMainLoop();
+  });
+
+  document.getElementById("btn-restart").addEventListener("click", () => {
+    initGame();
+    startMainLoop();
+  });
+
+  document.getElementById("btn-clear-level").addEventListener("click", () => {
+    for (let r = 0; r < GRID_ROWS; r++) grid[r].fill(null);
+    updateUI();
+    renderEditor();
+  });
+
+  // Save JSON
+  document.getElementById("btn-save-level").addEventListener("click", () => {
+    const data = { cols: GRID_COLS, rows: GRID_ROWS, bricks: [] };
+    for (let r = 0; r < GRID_ROWS; r++) {
+      for (let c = 0; c < GRID_COLS; c++) {
+        if (grid[r][c]) data.bricks.push({ c, r, color: grid[r][c].color, hp: grid[r][c].hp });
+      }
+    }
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "breakout-level.json"; a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // Load JSON
+  document.getElementById("file-load").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        for (let r = 0; r < GRID_ROWS; r++) grid[r].fill(null);
+        if (data.bricks) {
+          for (const b of data.bricks) {
+            if (b.r >= 0 && b.r < GRID_ROWS && b.c >= 0 && b.c < GRID_COLS) {
+              grid[b.r][b.c] = { color: b.color || "#e74c3c", hp: b.hp || 1 };
+            }
+          }
+        }
+        updateUI();
+        renderEditor();
+        showMessage("Level loaded! ▶ Play to try it", 2);
+      } catch (err) {
+        showMessage("Error loading file!", 2);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ""; // allow re-loading same file
+  });
+
+  // ─── Tool bar controls ────────────────────────────────
+  document.querySelectorAll(".tool-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      brickTool = btn.dataset.tool;
+    });
+  });
+
+  document.querySelectorAll(".color-swatch").forEach(sw => {
+    sw.addEventListener("click", () => {
+      currentColor = sw.dataset.color;
+      updateColorSwatches();
+    });
+  });
+
+  function updateColorSwatches() {
+    document.querySelectorAll(".color-swatch").forEach(s => s.classList.toggle("active", s.dataset.color === currentColor));
+  }
+
+  // ─── Start up ──────────────────────────────────────────
+  paddle.x = CANVAS_W / 2 - PADDLE_W / 2;
+  paddle.y = CANVAS_H - 45;
+  winPaddleX = CANVAS_W / 2 - PADDLE_W / 2;
+  initGrid();
+  updateUI();
+
+  // Draw initial editor view
+  renderEditor();
+
+  // Start main loop (always on, even in editor)
+  startMainLoop();
+
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+})();
+</script>
+</body>
+</html>

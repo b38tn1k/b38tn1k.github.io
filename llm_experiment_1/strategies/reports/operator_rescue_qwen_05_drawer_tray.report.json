@@ -1,0 +1,236 @@
+{
+  "score": 25,
+  "grade": "F - assisted product30.0; offline packaging repaired, tray geometry still blocked",
+  "summary": "All three counted slots and the shared hour end with inline dependencies and valid syntax, but the app geometry conversion still throws and the actual export component produces only an inverted divider. The alternate valid configuration emits no STL.",
+  "rubricScores": {
+    "functionality": 8,
+    "artifact_correctness": 10,
+    "usability": 6,
+    "self_verification": 1,
+    "autonomy": 0
+  },
+  "assistedProductTargetMet": false,
+  "strengths": [
+    "Three.js r128, matching classic OrbitControls and CSG are embedded in the final single HTML; all inline scripts now parse without external script dependencies.",
+    "The actual embedded OrbitControls implementation changes the camera in a conditional DOM component test with original control settings; GPU rendering remains unverified.",
+    "The actual default export formatter emits finite ASCII STL bytes with twelve nondegenerate facets and declared normals matching triangle winding. These are valid encoded bytes for the wrong inward-oriented shape, not a valid tray."
+  ],
+  "defects": [
+    "Blocking: actual default input/update and preview-geometry conversion throw t.getX is not a function because the position attribute is not a valid Three.js buffer attribute. This is a real app/library API failure, independent of unsupported WebGL in the VM.",
+    "Blocking: the actual default export function emits a176\u00d730\u00d72 inverted divider, twelve facets/2481bytes, signed volume\u221210560, instead of the180\u00d7120\u00d730 tray. There are no compartment openings, floor or full outer walls in that result.",
+    "Blocking:207\u00d7133\u00d736, wall/floor2.5 and4columns\u00d73rows produces an empty CSG result and no export Blob through the actual bound handler.",
+    "Three geometry indices remain out of range: final max38for36vertices, with3invalid indices. The earlier24-invalid-index error was reduced, not repaired.",
+    "Computed measurement tables remain empty when the default update throws and when the alternate configuration is rejected as empty. Required clear dimensions and a usable tray preview are not delivered."
+  ],
+  "verification": [
+    "qa/operator-qwen-tray.cjs ran fresh on the immutable terminal snapshot and current artifact; SHA2561483d3ef9dd022ce152ccbb9497de7c7e7d914493c3e4c4c124ef5f95b01c8c7. Detailed backend/component reports and actual STL bytes are attached.",
+    "Every embedded dependency is the candidate actual delivered library, evaluated in source order. Exact app functions and original DOM input/export listener statements are exercised with the actual HTML DOM; no computational library, renderer or app algorithm is substituted.",
+    "Independent byte analysis checks bounds, winding/normal agreement, reconciled edge topology, clear-opening sections, floor levels and expected union volume. The wrong divider is itself closed/connected, illustrating why watertight edge counts alone cannot establish a correct maker artifact.",
+    "The full VM reaches unsupported WebGL initialization after all scripts parse. That known platform limitation is recorded separately, and is not treated as an app defect; the genuine geometry/API/output errors are reproduced without GPU creation."
+  ],
+  "verificationConcerns": [
+    "Earlier settled messages/VERIFY.md claim watertight/outward/correct geometry without demonstrating the delivered artifact. Independent exact-function/byte tests contradict those claims.",
+    "Round2 spent most effort repairing syntax and debugging its script-block extraction tests while the already-reproduced geometry errors remained. The final slot included native compaction and only partial attribute/index edits before the cap.",
+    "No full browser/GPU rendering, layout, hit-testing or physical-print certification. The Orbit control test establishes camera math/handlers only, not rendered pixels.",
+    "The third response was interrupted by the original elapsed-time deadline; it was not a settled success and there is no fabricated round3 snapshot."
+  ],
+  "scopeCompliance": "OS read/write isolation remained active. Out-of-project /tmp test-write attempts were denied; no successful out-of-project write or cross-project benchmark read observed. Pi alone authored all app changes and dependency assembly. No browser automation used.",
+  "workflowNotes": "Same native Pi process/context across3counted behavior-only feedback prompts. Generation aborted at the original60-minute deadline;60.10elapsed minutes include process cleanup.52.94model-active minutes and7.16model-idle review minutes. Terminal HTML archived independently; baseline creation cost remains separate. No fourth prompt, reset, budget extension or Codex app patch.",
+  "humanOrSupervisorSteering": 3,
+  "terminalSnapshot": "strategies/reports/operator-finals/case95/index.html",
+  "title": "Simple drawer tray generator",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "operator_rescue",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "I need to fix the actual geometry bugs now. Let me first understand why the CSG union is failing by examining what `buildBoxCSG` returns:",
+  "workflowInstructions": "operator-rescue-plan.json; run-operator-rescue.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 52.94,
+  "wallMinutes": 52.94,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 65,
+  "toolCalls": 170,
+  "parentToolCalls": 170,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 25,
+  "modelUsageReported": {
+    "input": 438200,
+    "output": 85588,
+    "cacheRead": 5783479,
+    "totalTokens": 6307267
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 49203,
+  "parentPeakReportedPromptTokens": 49203,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 438200,
+    "output": 85588,
+    "cacheRead": 5783479,
+    "totalTokens": 6307267
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 672821,
+  "sha256": "1483d3ef9dd022ce152ccbb9497de7c7e7d914493c3e4c4c124ef5f95b01c8c7",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 17,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 9,
+    "delegations": [],
+    "controller": "Codex operator with one persistent native Pi repair context",
+    "operatorPrompts": 3,
+    "rounds": [
+      {
+        "prompt": 1,
+        "settledUTC": "2026-11-17T22:01:28.122928+00:00",
+        "modelSeconds": 963.14,
+        "sha256": "12bec6ad796377df5eed2fee9de7160fa01ec82fa15a2cc12b1f592591293005",
+        "snapshot": "strategies/reports/operator-rounds/case95/round1"
+      },
+      {
+        "prompt": 2,
+        "settledUTC": "2026-11-17T22:28:58.524412+00:00",
+        "modelSeconds": 1332.89,
+        "sha256": "5d0faac7551f74ba19af46ea4f3f8c04f738d06ded21c737dc781b22d2467c20",
+        "snapshot": "strategies/reports/operator-rounds/case95/round2"
+      }
+    ],
+    "seed": {
+      "id": "qwen-guide_worker-5",
+      "mode": "guide_worker",
+      "configurationMean": 70.8,
+      "source": "strategies/guide_worker/qwen/05_drawer_tray/index.html",
+      "report": "strategies/reports/guide_worker_qwen_05_drawer_tray.report.json",
+      "sha256": "809990c2a6ea02ed6d791b18f3c857190aeb33486bfd5a0a7850615764e854ed",
+      "score": 44,
+      "grade": "F provisional - Offline dependency failure and malformed STL normals; compartment measurements wrong",
+      "rubricScores": {
+        "functionality": 15,
+        "artifact_correctness": 8,
+        "usability": 8,
+        "self_verification": 3,
+        "autonomy": 10
+      },
+      "baselineScope": "OS write boundary active. No successful out-of-tree write observed.",
+      "baselineSteering": 0,
+      "baselineMinutes": 9.51,
+      "baselineActiveMinutes": 9.51,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_qwen_05_drawer_tray/index.html"
+    },
+    "repairSettings": {
+      "thinking": "off",
+      "billionContext": false,
+      "compaction": {
+        "enabled": true
+      },
+      "forcedProof": false,
+      "singlePersistentAgent": true,
+      "note": "Copied seed configuration is provenance; repair workflow uses corrected standalone Pi profiles, not the original delegation/extension architecture."
+    },
+    "modelActiveMinutes": 52.94,
+    "operatorReviewMinutes": 7.16,
+    "repairElapsedMinutes": 60.1
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Operator-assisted rescue of a selected existing artifact. Baseline creation cost and new repair cost are separate; normalized product quality is not an autonomous100-point grade."
+  ],
+  "nativeCompaction": {
+    "started": 8,
+    "completed": 8,
+    "aborted": 0,
+    "events": [
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49170,
+        "estimatedTokensAfter": 21234
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 50752,
+        "estimatedTokensAfter": 24458
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49242,
+        "estimatedTokensAfter": 23036
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49162,
+        "estimatedTokensAfter": 34779
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49947,
+        "estimatedTokensAfter": 36787
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49798,
+        "estimatedTokensAfter": 23388
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 50023,
+        "estimatedTokensAfter": 37241
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49450,
+        "estimatedTokensAfter": 22950
+      }
+    ],
+    "reportedUsage": {
+      "input": 137264,
+      "output": 59842,
+      "cacheRead": 0,
+      "totalTokens": 197106
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "supervisorAssisted": true,
+  "assistedProductScore": 30.0
+}

@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Breakout + Level Editor</title>
+<style>
+  :root {
+    --bg: #0f1020;
+    --panel: #1b1d38;
+    --accent: #4fd1c5;
+    --accent2: #f6ad55;
+    --text: #e6e8ff;
+    --muted: #9aa0c8;
+    --danger: #fc5185;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  h1 {
+    font-size: 22px;
+    margin: 0 0 4px;
+    letter-spacing: 0.5px;
+  }
+  .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  button, .btn {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid #2f3360;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+  }
+  button:hover, .btn:hover { background: #262a52; }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--accent); color: #06231f; border-color: var(--accent); font-weight: 600; }
+  button.primary:hover { background: #6fe3d7; }
+  button.danger { background: var(--danger); color: #2a0011; border-color: var(--danger); font-weight: 600; }
+  button.active { outline: 2px solid var(--accent2); }
+  .spacer { flex: 1 1 auto; }
+  .mode-badge {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--panel);
+    border: 1px solid #2f3360;
+    color: var(--muted);
+  }
+  .mode-badge.edit { color: var(--accent2); border-color: var(--accent2); }
+  .mode-badge.play { color: var(--accent); border-color: var(--accent); }
+
+  .canvas-holder {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  canvas {
+    background: #07081a;
+    border: 2px solid #2f3360;
+    border-radius: 10px;
+    display: block;
+    touch-action: none;
+    max-width: 100%;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(7,8,26,0.78);
+    border-radius: 10px;
+    text-align: center;
+    padding: 20px;
+  }
+  .overlay.show { display: flex; }
+  .overlay h2 { margin: 0 0 8px; font-size: 28px; }
+  .overlay p { margin: 2px 0; color: var(--muted); }
+  .overlay .cta { margin-top: 14px; }
+
+  .hud {
+    display: flex;
+    gap: 20px;
+    font-size: 15px;
+    margin: 10px 0 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .hud span b { color: var(--accent); }
+  .hud .lives b { color: var(--danger); }
+
+  .editor-bar {
+    display: none;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--panel);
+    border: 1px solid #2f3360;
+    border-radius: 10px;
+  }
+  .editor-bar.show { display: flex; }
+  .palette { display: flex; gap: 6px; align-items: center; }
+  .swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .swatch.selected { border-color: #fff; box-shadow: 0 0 0 2px var(--accent2); }
+  .tool-group { display: flex; gap: 6px; }
+  label.filelabel {
+    background: var(--panel);
+    border: 1px solid #2f3360;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  label.filelabel:hover { background: #262a52; }
+  input[type=file] { display: none; }
+  .hint { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  .section-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  #toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #262a52;
+    border: 1px solid #3a3f7a;
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+    z-index: 50;
+  }
+  #toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Breakout &amp; Level Editor</h1>
+  <div class="subtitle">Draw your own level, then play it. Works fully offline.</div>
+
+  <div class="toolbar">
+    <span class="mode-badge" id="modeBadge">EDIT MODE</span>
+    <button id="btnPlay" class="primary">▶ Play</button>
+    <button id="btnEdit">✎ Edit</button>
+    <span class="spacer"></span>
+    <button id="btnStartPause">Start</button>
+    <button id="btnRestart">↻ Restart</button>
+    <label class="filelabel">💾 Save<input type="file" id="fileInput" accept="application/json,.json"></label>
+    <button id="btnClear">Clear Bricks</button>
+  </div>
+
+  <div class="hud">
+    <span>Score: <b id="score">0</b></span>
+    <span class="lives">Lives: <b id="lives">3</b></span>
+    <span>Level: <b id="levelInfo">custom</b></span>
+  </div>
+
+  <div class="canvas-holder">
+    <canvas id="game" width="720" height="480"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready</h2>
+      <p id="overlayText">Press Start or Space to launch the ball.</p>
+      <button class="cta primary" id="overlayCta">Start</button>
+    </div>
+  </div>
+
+  <div class="editor-bar" id="editorBar">
+    <span class="section-label">Tools</span>
+    <div class="tool-group">
+      <button id="toolPaint" class="active">🎨 Paint</button>
+      <button id="toolErase">🧽 Erase</button>
+    </div>
+
+    <span class="section-label" style="margin-left:8px;">Color</span>
+    <div class="palette" id="palette"></div>
+
+    <span class="spacer"></span>
+    <span class="hint">Edit: left-click/drag to paint, right-click to erase. In Play: arrows/A-D or mouse to move, Space/click to launch. Pause: P or Esc.</span>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Constants ----------
+  var CANVAS_W = 720;
+  var CANVAS_H = 480;
+  var COLS = 20;
+  var ROWS = 10;
+  var CELL_W = CANVAS_W / COLS;
+  var CELL_H = CANVAS_H / ROWS;
+
+  var PADDLE_W = 110;
+  var PADDLE_H = 14;
+  var PADDLE_Y = CANVAS_H - 30;
+  var BALL_R = 8;
+
+  var COLORS = [
+    "#fc5185", "#f6ad55", "#f6e058", "#52e27c",
+    "#4fd1c5", "#5aa9ff", "#a78bfa", "#ffffff"
+  ];
+
+  var POINTS = 10;
+  var MAX_LIVES = 3;
+  var BALL_SPEED = 5.2;
+
+  // ---------- State ----------
+  var MODE = "edit"; // "edit" | "play"
+  var tool = "paint"; // "paint" | "erase"
+  var currentColor = COLORS[0];
+
+  // grid[y][x] = color string or null
+  var grid = [];
+
+  var score = 0;
+  var lives = MAX_LIVES;
+  var running = false;   // ball launched & game running
+  var paused = false;
+  var gameOver = false;
+  var won = false;
+
+  var paddle = { x: (CANVAS_W - PADDLE_W) / 2, y: PADDLE_Y, w: PADDLE_W, h: PADDLE_H };
+  var ball = { x: CANVAS_W / 2, y: PADDLE_Y - 10, vx: 0, vy: 0 };
+
+  var keys = { left: false, right: false };
+  var pointerX = null; // for mouse/touch following
+
+  // ---------- DOM ----------
+  var canvas = document.getElementById("game");
+  var ctx = canvas.getContext("2d");
+  var scoreEl = document.getElementById("score");
+  var livesEl = document.getElementById("lives");
+  var levelInfoEl = document.getElementById("levelInfo");
+  var modeBadge = document.getElementById("modeBadge");
+  var editorBar = document.getElementById("editorBar");
+  var overlay = document.getElementById("overlay");
+  var overlayTitle = document.getElementById("overlayTitle");
+  var overlayText = document.getElementById("overlayText");
+  var overlayCta = document.getElementById("overlayCta");
+  var toastEl = document.getElementById("toast");
+
+  var btnPlay = document.getElementById("btnPlay");
+  var btnEdit = document.getElementById("btnEdit");
+  var btnStartPause = document.getElementById("btnStartPause");
+  var btnRestart = document.getElementById("btnRestart");
+  var btnClear = document.getElementById("btnClear");
+  var fileInput = document.getElementById("fileInput");
+  var toolPaint = document.getElementById("toolPaint");
+  var toolErase = document.getElementById("toolErase");
+  var paletteEl = document.getElementById("palette");
+
+  // ---------- Level helpers ----------
+  function emptyGrid() {
+    var g = [];
+    for (var y = 0; y < ROWS; y++) {
+      g.push(new Array(COLS).fill(null));
+    }
+    return g;
+  }
+
+  function defaultGrid() {
+    var g = emptyGrid();
+    var cols = COLORS.length;
+    for (var r = 0; r < 4; r++) {
+      for (var c = 0; c < COLS; c++) {
+        g[r][c] = COLORS[(r + c) % cols];
+      }
+    }
+    return g;
+  }
+
+  function countBricks() {
+    var n = 0;
+    for (var y = 0; y < ROWS; y++) {
+      for (var x = 0; x < COLS; x++) {
+        if (grid[y][x]) n++;
+      }
+    }
+    return n;
+  }
+
+  function totalBricks() {
+    return ROWS * COLS;
+  }
+
+  // ---------- Canvas sizing (responsive) ----------
+  function resizeCanvas() {
+    var holder = canvas.parentElement;
+    var avail = holder.clientWidth || CANVAS_W;
+    var scale = Math.min(1, avail / CANVAS_W);
+    canvas.style.width = (CANVAS_W * scale) + "px";
+    canvas.style.height = (CANVAS_H * scale) + "px";
+  }
+  window.addEventListener("resize", resizeCanvas);
+
+  // ---------- Rendering ----------
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+    // background grid faint lines
+    ctx.strokeStyle = "rgba(255,255,255,0.04)";
+    ctx.lineWidth = 1;
+    for (var x = 0; x <= COLS; x++) {
+      ctx.beginPath();
+      ctx.moveTo(x * CELL_W, 0);
+      ctx.lineTo(x * CELL_W, CANVAS_H);
+      ctx.stroke();
+    }
+    for (var y = 0; y <= ROWS; y++) {
+      ctx.beginPath();
+      ctx.moveTo(0, y * CELL_H);
+      ctx.lineTo(CANVAS_W, y * CELL_H);
+      ctx.stroke();
+    }
+
+    if (MODE === "edit") {
+      drawEditor();
+    } else {
+      drawPlay();
+    }
+  }
+
+  function drawEditor() {
+    // painted cells
+    for (var y = 0; y < ROWS; y++) {
+      for (var x = 0; x < COLS; x++) {
+        var col = grid[y][x];
+        if (col) {
+          paintCell(x, y, col);
+        }
+      }
+    }
+
+    // hover preview
+    if (hoverX != null && hoverY != null) {
+      var hx = hoverX, hy = hoverY;
+      if (hx >= 0 && hx < COLS && hy >= 0 && hy < ROWS) {
+        ctx.save();
+        if (tool === "erase") {
+          ctx.strokeStyle = "#fc5185";
+          ctx.lineWidth = 2;
+          roundRect(hx * CELL_W + 1, hy * CELL_H + 1, CELL_W - 2, CELL_H - 2, 4);
+          ctx.stroke();
+          ctx.fillStyle = "rgba(252,81,133,0.18)";
+          ctx.fill();
+        } else {
+          ctx.globalAlpha = 0.55;
+          paintCell(hx, hy, currentColor);
+        }
+        ctx.restore();
+      }
+    }
+  }
+
+  function paintCell(cx, cy, color) {
+    var px = cx * CELL_W + 2;
+    var py = cy * CELL_H + 2;
+    var pw = CELL_W - 4;
+    var ph = CELL_H - 4;
+    ctx.fillStyle = color;
+    roundRect(px, py, pw, ph, 4);
+    ctx.fill();
+    // subtle highlight
+    ctx.fillStyle = "rgba(255,255,255,0.18)";
+    roundRect(px, py, pw, ph * 0.4, 4);
+    ctx.fill();
+  }
+
+  function drawPlay() {
+    // bricks
+    for (var y = 0; y < ROWS; y++) {
+      for (var x = 0; x < COLS; x++) {
+        if (grid[y][x]) paintCell(x, y, grid[y][x]);
+      }
+    }
+
+    // paddle
+    ctx.fillStyle = "#e6e8ff";
+    roundRect(paddle.x, paddle.y, paddle.w, paddle.h, 7);
+    ctx.fill();
+
+    // ball
+    ctx.beginPath();
+    ctx.fillStyle = "#f6ad55";
+    ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // ---------- Game logic ----------
+  function resetForPlay() {
+    paddle.x = (CANVAS_W - paddle.w) / 2;
+    ball.x = paddle.x + paddle.w / 2;
+    ball.y = PADDLE_Y - BALL_R - 1;
+    ball.vx = 0;
+    ball.vy = 0;
+    running = false;
+    paused = false;
+    gameOver = false;
+    won = false;
+  }
+
+  function startGame() {
+    score = 0;
+    lives = MAX_LIVES;
+    resetForPlay();
+    updateHUD();
+    hideOverlay();
+  }
+
+  function launchBall() {
+    if (running) return;
+    var angle = (-Math.PI / 2) + (Math.random() * 0.6 - 0.3);
+    ball.vx = Math.cos(angle) * BALL_SPEED;
+    ball.vy = Math.sin(angle) * BALL_SPEED;
+    if (ball.vy > 0) ball.vy = -ball.vy;
+    running = true;
+    paused = false;
+    hideOverlay();
+  }
+
+  function updateHUD() {
+    scoreEl.textContent = score;
+    livesEl.textContent = lives;
+  }
+
+  function loseLife() {
+    lives--;
+    if (lives <= 0) {
+      lives = 0;
+      gameOver = true;
+      running = false;
+      updateHUD();
+      showOverlay("Game Over", "Score: " + score, "Try Again");
+    } else {
+      resetForPlay();
+      updateHUD();
+      showOverlay("Ball Lost", "Score: " + score + " — Lives: " + lives, "Resume");
+    }
+  }
+
+  function checkWin() {
+    if (countBricks() === 0) {
+      won = true;
+      running = false;
+      showOverlay("You Win!", "Final score: " + score, "Play Again");
+    }
+  }
+
+  function circleRectOverlap(bx, by, r, rx, ry, rw, rh) {
+    var nearestX = Math.max(rx, Math.min(bx, rx + rw));
+    var nearestY = Math.max(ry, Math.min(by, ry + rh));
+    var dx = bx - nearestX;
+    var dy = by - nearestY;
+    return (dx * dx + dy * dy) <= r * r;
+  }
+
+  function step() {
+    if (!running || paused) {
+      return;
+    }
+
+    // keyboard paddle movement
+    var speed = 8;
+    if (keys.left) paddle.x -= speed;
+    if (keys.right) paddle.x += speed;
+    if (pointerX != null) {
+      paddle.x = pointerX - paddle.w / 2;
+    }
+    paddle.x = Math.max(0, Math.min(CANVAS_W - paddle.w, paddle.x));
+
+    // move ball
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    // walls
+    if (ball.x - BALL_R < 0) { ball.x = BALL_R; ball.vx = Math.abs(ball.vx); }
+    if (ball.x + BALL_R > CANVAS_W) { ball.x = CANVAS_W - BALL_R; ball.vx = -Math.abs(ball.vx); }
+    if (ball.y - BALL_R < 0) { ball.y = BALL_R; ball.vy = Math.abs(ball.vy); }
+
+    // paddle
+    if (ball.vy > 0 &&
+        circleRectOverlap(ball.x, ball.y, BALL_R, paddle.x, paddle.y, paddle.w, paddle.h)) {
+      ball.y = paddle.y - BALL_R;
+      var hit = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2); // -1..1
+      var angle = hit * (Math.PI / 3); // up to 60deg
+      ball.vx = Math.sin(angle) * BALL_SPEED;
+      ball.vy = -Math.abs(Math.cos(angle) * BALL_SPEED);
+    }
+
+    // bricks
+    for (var y = 0; y < ROWS; y++) {
+      for (var x = 0; x < COLS; x++) {
+        if (grid[y][x]) {
+          var bx = x * CELL_W;
+          var by = y * CELL_H;
+          if (circleRectOverlap(ball.x, ball.y, BALL_R, bx, by, CELL_W, CELL_H)) {
+            grid[y][x] = null;
+            score += POINTS;
+            // reflect based on shallowest penetration
+            var overlapLeft = ball.x + BALL_R - bx;
+            var overlapRight = (bx + CELL_W) - (ball.x - BALL_R);
+            var overlapTop = ball.y + BALL_R - by;
+            var overlapBottom = (by + CELL_H) - (ball.y - BALL_R);
+            var minOverlapX = Math.min(overlapLeft, overlapRight);
+            var minOverlapY = Math.min(overlapTop, overlapBottom);
+            if (minOverlapX < minOverlapY) {
+              ball.vx = -ball.vx;
+            } else {
+              ball.vy = -ball.vy;
+            }
+            checkWin();
+            updateHUD();
+            break;
+          }
+        }
+      }
+      if (gameOver || won) break;
+    }
+
+    // fell off bottom
+    if (ball.y - BALL_R > CANVAS_H) {
+      loseLife();
+    }
+  }
+
+  // ---------- Main loop ----------
+  function loop() {
+    step();
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  // ---------- HUD / overlays ----------
+  function updateModeUI() {
+    if (MODE === "edit") {
+      modeBadge.textContent = "EDIT MODE";
+      modeBadge.className = "mode-badge edit";
+      editorBar.classList.add("show");
+      btnPlay.classList.add("primary");
+      levelInfoEl.textContent = "custom";
+    } else {
+      modeBadge.textContent = "PLAY MODE";
+      modeBadge.className = "mode-badge play";
+      editorBar.classList.remove("show");
+      levelInfoEl.textContent = countBricks() + " bricks";
+    }
+    btnStartPause.textContent = running ? (paused ? "Resume" : "Pause") : "Start";
+  }
+
+  function showOverlay(title, text, cta) {
+    overlayTitle.textContent = title;
+    overlayText.textContent = text;
+    overlayCta.textContent = cta || "OK";
+    overlay.classList.add("show");
+  }
+  function hideOverlay() {
+    overlay.classList.remove("show");
+  }
+
+  // ---------- Mode switching ----------
+  function enterEdit() {
+    MODE = "edit";
+    running = false;
+    paused = false;
+    gameOver = false;
+    won = false;
+    hideOverlay();
+    updateModeUI();
+  }
+
+  function enterPlay() {
+    if (countBricks() === 0) {
+      showToast("Draw some bricks first!");
+      return;
+    }
+    MODE = "play";
+    startGame();
+    updateModeUI();
+    showOverlay("Ready", "Press Start or Space to launch.", "Start");
+    btnStartPause.textContent = "Start";
+  }
+
+  // ---------- Editor input ----------
+  var hoverX = null;
+  var hoverY = null;
+
+  function cellFromEvent(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = CANVAS_W / rect.width;
+    var scaleY = CANVAS_H / rect.height;
+    var clientX, clientY;
+    if (e.touches && e.touches.length) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else if (e.changedTouches && e.changedTouches.length) {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    var px = (clientX - rect.left) * scaleX;
+    var py = (clientY - rect.top) * scaleY;
+    return { cx: Math.floor(px / CELL_W), cy: Math.floor(py / CELL_H), px: px, py: py };
+  }
+
+  function paintAt(cx, cy) {
+    if (cx < 0 || cx >= COLS || cy < 0 || cy >= ROWS) return;
+    if (tool === "paint") {
+      grid[cy][cx] = currentColor;
+    } else if (tool === "erase") {
+      grid[cy][cx] = null;
+    }
+  }
+
+  function onPointerMove(e) {
+    if (MODE !== "edit") return;
+    var info = cellFromEvent(e);
+    hoverX = info.cx;
+    hoverY = info.cy;
+    if (isPointerDown && (paintMouseDown || eraseMouseDown)) {
+      paintAt(info.cx, info.cy);
+    }
+  }
+
+  var isPointerDown = false;
+  var paintMouseDown = false; // left button dragging
+  var eraseMouseDown = false; // right button dragging
+
+  function onDown(e) {
+    if (MODE !== "edit") return;
+    e.preventDefault();
+    var info = cellFromEvent(e);
+    hoverX = info.cx;
+    hoverY = info.cy;
+
+    if (e.button === 2) {
+      // right click -> erase
+      eraseMouseDown = true;
+      isPointerDown = true;
+      paintAt(info.cx, info.cy);
+    } else if (e.button === 1 || e.button === 0) {
+      // middle or left -> paint (with current tool as fallback)
+      paintMouseDown = true;
+      isPointerDown = true;
+      paintAt(info.cx, info.cy);
+    }
+  }
+
+  function onUp(e) {
+    if (e.button === 2) {
+      eraseMouseDown = false;
+    } else if (e.button === 1 || e.button === 0) {
+      paintMouseDown = false;
+    }
+    if (paintMouseDown && eraseMouseDown) return;
+    if (!paintMouseDown && !eraseMouseDown) isPointerDown = false;
+  }
+
+  function contextMenu(e) {
+    if (MODE === "edit") e.preventDefault();
+  }
+
+  // mouse
+  canvas.addEventListener("mousedown", onDown);
+  window.addEventListener("mouseup", onUp);
+  canvas.addEventListener("mousemove", onPointerMove);
+  canvas.addEventListener("contextmenu", contextMenu);
+
+  // touch
+  canvas.addEventListener("touchstart", function (e) {
+    if (MODE !== "edit") {
+      // in play mode, touch controls paddle via pointerX
+      handlePlayTouch(e, "down");
+      return;
+    }
+    e.preventDefault();
+    var info = cellFromEvent(e);
+    hoverX = info.cx; hoverY = info.cy;
+    paintMouseDown = true;
+    isPointerDown = true;
+    paintAt(info.cx, info.cy);
+    tool = "paint"; // touch defaults to paint tool
+    syncTools();
+  }, { passive: false });
+
+  canvas.addEventListener("touchmove", function (e) {
+    if (MODE !== "edit") {
+      handlePlayTouch(e, "move");
+      return;
+    }
+    e.preventDefault();
+    var info = cellFromEvent(e);
+    hoverX = info.cx; hoverY = info.cy;
+    if (paintMouseDown) paintAt(info.cx, info.cy);
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", function (e) {
+    if (MODE !== "edit") {
+      handlePlayTouch(e, "up");
+      return;
+    }
+    paintMouseDown = false;
+    isPointerDown = false;
+    hoverX = null; hoverY = null;
+  });
+
+  function handlePlayTouch(e, phase) {
+    e.preventDefault();
+    if (phase === "down") {
+      if (!running) {
+        // position then launch
+        launchBall();
+      }
+    }
+    var info = cellFromEvent(e);
+    pointerX = info.px;
+    if (phase === "up") pointerX = null;
+  }
+
+  // ---------- Keyboard ----------
+  window.addEventListener("keydown", function (e) {
+    var key = e.key;
+    if (key === "ArrowLeft" || key === "a" || key === "A") { keys.left = true; pointerX = null; }
+    else if (key === "ArrowRight" || key === "d" || key === "D") { keys.right = true; pointerX = null; }
+    else if (key === " ") {
+      e.preventDefault();
+      if (MODE === "play") {
+        if (!running) launchBall();
+      } else {
+        enterPlay();
+      }
+    } else if (key === "p" || key === "P" || key === "Escape") {
+      togglePause();
+    }
+  });
+
+  window.addEventListener("keyup", function (e) {
+    var key = e.key;
+    if (key === "ArrowLeft" || key === "a" || key === "A") keys.left = false;
+    else if (key === "ArrowRight" || key === "d" || key === "D") keys.right = false;
+  });
+
+  // Play mode: click to launch
+  canvas.addEventListener("click", function () {
+    if (MODE === "play" && !running && !gameOver && !won) {
+      launchBall();
+    }
+  });
+
+  function togglePause() {
+    if (MODE !== "play" || !running) return;
+    paused = !paused;
+    btnStartPause.textContent = paused ? "Resume" : "Pause";
+    if (paused) {
+      showOverlay("Paused", "Score: " + score, "Resume");
+    } else {
+      hideOverlay();
+    }
+  }
+
+  // ---------- Buttons ----------
+  btnPlay.addEventListener("click", enterPlay);
+  btnStartPause.addEventListener("click", function () {
+    if (MODE === "edit") {
+      enterPlay();
+      return;
+    }
+    if (gameOver || won) {
+      startGame();
+      updateModeUI();
+      showOverlay("Ready", "Press Start or Space to launch.", "Start");
+      btnStartPause.textContent = "Start";
+      return;
+    }
+    if (!running) {
+      if (MODE === "play") {
+        launchBall();
+        btnStartPause.textContent = "Pause";
+      }
+    } else {
+      togglePause();
+    }
+  });
+  btnRestart.addEventListener("click", function () {
+    if (MODE === "play") {
+      startGame();
+      updateModeUI();
+      showOverlay("Ready", "Press Start or Space to launch.", "Start");
+      btnStartPause.textContent = "Start";
+    } else {
+      enterEdit();
+    }
+  });
+  btnClear.addEventListener("click", function () {
+    grid = emptyGrid();
+    showToast("Level cleared");
+  });
+
+  overlayCta.addEventListener("click", function () {
+    if (MODE === "play") {
+      if (gameOver || won) {
+        startGame();
+        updateModeUI();
+        showOverlay("Ready", "Press Start or Space to launch.", "Start");
+        btnStartPause.textContent = "Start";
+      } else if (!running) {
+        launchBall();
+        btnStartPause.textContent = "Pause";
+      } else if (paused) {
+        togglePause();
+      }
+    } else {
+      enterPlay();
+    }
+    hideOverlay();
+  });
+
+  // ---------- Tools + palette ----------
+  function syncTools() {
+    toolPaint.classList.toggle("active", tool === "paint");
+    toolErase.classList.toggle("active", tool === "erase");
+  }
+  function setTool(t) {
+    tool = t;
+    syncTools();
+  }
+  toolPaint.addEventListener("click", function () { setTool("paint"); });
+  toolErase.addEventListener("click", function () { setTool("erase"); });
+
+  function buildPalette() {
+    paletteEl.innerHTML = "";
+    COLORS.forEach(function (c) {
+      var s = document.createElement("div");
+      s.className = "swatch";
+      s.style.background = c;
+      if (c === currentColor) s.classList.add("selected");
+      s.addEventListener("click", function () {
+        currentColor = c;
+        tool = "paint";
+        var els = paletteEl.querySelectorAll(".swatch");
+        for (var i = 0; i < els.length; i++) els[i].classList.remove("selected");
+        s.classList.add("selected");
+        syncTools();
+      });
+      paletteEl.appendChild(s);
+    });
+  }
+
+  // ---------- Save / Load ----------
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(function () {
+      toastEl.classList.remove("show");
+    }, 1800);
+  }
+
+  function levelToJSON() {
+    return JSON.stringify({
+      version: 1,
+      cols: COLS,
+      rows: ROWS,
+      cells: grid
+    }, null, 2);
+  }
+
+  function validateLevel(obj) {
+    if (!obj || typeof obj !== "object") return "Level must be a JSON object.";
+    if (!Array.isArray(obj.cells)) return "Missing 'cells' array.";
+    if (typeof obj.cols !== "number" || typeof obj.rows !== "number") {
+      return "Missing integer 'cols' and 'rows'.";
+    }
+    var cols = obj.cols, rows = obj.rows;
+    if (!Number.isInteger(cols) || !Number.isInteger(rows) || cols <= 0 || rows <= 0) {
+      return "cols and rows must be positive integers.";
+    }
+    // cells can be given as rows-array of arrays, or flat map
+    var gridData = obj.cells;
+    // normalize: expect rows arrays each of length cols, OR a single flat array length rows*cols
+    if (Array.isArray(gridData[0]) || (Array.isArray(gridData) && gridData.length !== cols * rows)) {
+      if (gridData.length !== rows) return "Expected 'rows' rows in cells.";
+      for (var r = 0; r < gridData.length; r++) {
+        if (!Array.isArray(gridData[r]) || gridData[r].length !== cols) {
+          return "Row " + r + " must have exactly 'cols' entries.";
+        }
+      }
+    } else if (Array.isArray(gridData)) {
+      if (gridData.length !== cols * rows) return "Flat cells must have cols*rows entries.";
+    }
+    return null;
+  }
+
+  function applyGridFromData(cells) {
+    // build new grid
+    var newGrid = [];
+    for (var y = 0; y < ROWS; y++) {
+      newGrid.push(new Array(COLS).fill(null));
+    }
+    for (var r = 0; r < ROWS; r++) {
+      var row;
+      if (Array.isArray(cells[0])) {
+        row = cells[r];
+      } else {
+        row = cells[r * COLS];
+        // pull full row
+        row = [];
+        for (var c = 0; c < COLS; c++) row.push(cells[r * COLS + c]);
+      }
+      for (var x = 0; x < COLS; x++) {
+        var v = row[x];
+        if (v && COLORS.indexOf(v) !== -1) {
+          newGrid[r][x] = v;
+        } else if (v === null || v === undefined) {
+          newGrid[r][x] = null;
+        }
+        // invalid color -> ignored
+      }
+    }
+    return newGrid;
+  }
+
+  function doSave() {
+    var json = levelToJSON();
+    var blob = new Blob([json], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "breakout-level.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    showToast("Level saved");
+  }
+
+  function doLoad(file) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var text = typeof reader.result === "string" ? reader.result : "";
+      var obj;
+      try {
+        obj = JSON.parse(text);
+      } catch (err) {
+        showToast("Invalid JSON: " + err.message);
+        return;
+      }
+      var err = validateLevel(obj);
+      if (err) {
+        showToast("Load failed: " + err);
+        return;
+      }
+      grid = applyGridFromData(obj.cells);
+      showToast("Level loaded (" + countBricks() + " bricks)");
+      if (MODE === "play") {
+        enterEdit();
+      }
+    };
+    reader.onerror = function () {
+      showToast("Could not read file");
+    };
+    reader.readAsText(file);
+  }
+
+  fileInput.addEventListener("change", function () {
+    var file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    doLoad(file);
+    fileInput.value = "";
+  });
+
+  // expose save globally for convenience (not required)
+  window.__saveLevel = doSave;
+
+  // ---------- Boot ----------
+  function init() {
+    grid = defaultGrid();
+    buildPalette();
+    updateModeUI();
+    resizeCanvas();
+    updateHUD();
+    showOverlay("Ready", "Press Start or Space to launch the ball.", "Start");
+    loop();
+  }
+
+  // wire Play/Edit toggling so Edit works from play too
+  btnEdit.addEventListener("click", function () {
+    // from play mode, switch to edit (keep layout)
+    MODE = "edit";
+    running = false; paused = false; gameOver = false; won = false;
+    hideOverlay();
+    updateModeUI();
+    btnStartPause.textContent = "Start";
+  });
+
+  init();
+})();
+</script>
+</body>
+</html>

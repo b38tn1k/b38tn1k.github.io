@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Timer</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a24;
+    --accent: #6c63ff;
+    --accent-glow: rgba(108, 99, 255, 0.35);
+    --green: #2ecc71;
+    --green-glow: rgba(46, 204, 113, 0.3);
+    --red: #e74c3c;
+    --red-glow: rgba(231, 76, 60, 0.3);
+    --yellow: #f1c40f;
+    --yellow-glow: rgba(241, 196, 15, 0.3);
+    --text: #e8e8f0;
+    --text-dim: #8888a0;
+    --radius: 16px;
+  }
+
+  body {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 600px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* Main play area */
+  #play-area {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+  }
+
+  #play-area::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  #play-area.waiting {
+    background: var(--surface);
+    border-color: rgba(108, 99, 255, 0.15);
+  }
+
+  #play-area.waiting::before {
+    background: radial-gradient(ellipse at center, var(--accent-glow), transparent 70%);
+    opacity: 0.6;
+  }
+
+  #play-area.ready {
+    background: var(--green);
+    border-color: var(--green);
+    box-shadow: 0 0 60px var(--green-glow), inset 0 0 60px rgba(255,255,255,0.05);
+  }
+
+  #play-area.too-early {
+    background: var(--red);
+    border-color: var(--red);
+    box-shadow: 0 0 60px var(--red-glow);
+    animation: shake 0.4s ease;
+  }
+
+  #play-area.result {
+    background: var(--surface);
+    border-color: var(--accent);
+    box-shadow: 0 0 40px var(--accent-glow);
+  }
+
+  #play-area.idle {
+    background: var(--surface);
+    border-color: rgba(108, 99, 255, 0.1);
+  }
+
+  #play-area.idle::before {
+    background: radial-gradient(ellipse at center, var(--accent-glow), transparent 70%);
+    opacity: 0.3;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+  }
+
+  .label {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .sublabel {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  .reaction-value {
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .reaction-unit {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .trial-indicator {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .trial-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    opacity: 0.3;
+    transition: all 0.3s ease;
+  }
+
+  .trial-dot.done {
+    opacity: 1;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  .trial-dot.current {
+    opacity: 1;
+    background: var(--yellow);
+    box-shadow: 0 0 8px var(--yellow-glow);
+    animation: pulse-dot 1.5s ease infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
+
+  /* Results panel */
+  #results {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #results.visible {
+    display: flex;
+  }
+
+  .results-title {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid rgba(108, 99, 255, 0.1);
+  }
+
+  .stat-card .stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .stat-card .stat-unit {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .stat-card.best { border-color: rgba(46, 204, 113, 0.3); }
+  .stat-card.best .stat-value { color: var(--green); }
+  .stat-card.worst { border-color: rgba(231, 76, 60, 0.3); }
+  .stat-card.worst .stat-value { color: var(--red); }
+
+  .trials-table {
+    width: 100%;
+    background: var(--surface);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(108, 99, 255, 0.1);
+  }
+
+  .trials-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .trials-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    background: rgba(108, 99, 255, 0.05);
+    border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+  }
+
+  .trials-table td {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .trials-table tr:last-child td { border-bottom: none; }
+
+  .trials-table tr.highlight-best td { color: var(--green); }
+  .trials-table tr.highlight-worst td { color: var(--red); }
+
+  .bar-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mini-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    transition: width 0.6s ease;
+  }
+
+  .mini-bar-fill.fast { background: linear-gradient(90deg, var(--green), #27ae60); }
+  .mini-bar-fill.slow { background: linear-gradient(90deg, var(--red), #c0392b); }
+
+  .btn {
+    padding: 14px 32px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    color: white;
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px var(--accent-glow);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid rgba(108, 99, 255, 0.2);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    background: rgba(108, 99, 255, 0.1);
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  /* Category badge */
+  .category-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  .category-badge.excellent { background: rgba(46, 204, 113, 0.15); color: var(--green); }
+  .category-badge.good { background: rgba(108, 99, 255, 0.15); color: var(--accent); }
+  .category-badge.average { background: rgba(241, 196, 15, 0.15); color: var(--yellow); }
+  .category-badge.slow { background: rgba(231, 76, 60, 0.15); color: var(--red); }
+
+  /* Instructions overlay */
+  #instructions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .instruction-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid rgba(108, 99, 255, 0.08);
+  }
+
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-text {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  .step-text strong { color: var(--text); }
+
+  /* Countdown timer */
+  .countdown {
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    #app { padding: 16px; }
+    .reaction-value { font-size: 3rem; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-card { padding: 12px 8px; }
+    .stat-card .stat-value { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <h1>⚡ Reaction Timer</h1>
+    <p>Test how fast you can react</p>
+  </div>
+
+  <div id="play-area" class="idle">
+    <div id="instructions">
+      <div class="icon">⚡</div>
+      <div class="label">Ready to test?</div>
+      <div class="sublabel">Tap anywhere to start</div>
+      <div class="instruction-steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">Wait for the <strong>screen to turn green</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text"><strong>Tap as fast as you can!</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">Complete <strong>5 trials</strong> for your results</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="results">
+    <div class="results-title">🏆 Results Summary</div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Average</div>
+        <div class="stat-value" id="stat-avg">—</div>
+        <div class="stat-unit">ms</div>
+      </div>
+      <div class="stat-card best">
+        <div class="stat-label">Best</div>
+        <div class="stat-value" id="stat-best">—</div>
+        <div class="stat-unit">ms</div>
+      </div>
+      <div class="stat-card worst">
+        <div class="stat-label">Worst</div>
+        <div class="stat-value" id="stat-worst">—</div>
+        <div class="stat-unit">ms</div>
+      </div>
+    </div>
+
+    <div class="trials-table">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Time</th>
+            <th>Performance</th>
+          </tr>
+        </thead>
+        <tbody id="trials-body"></tbody>
+      </table>
+    </div>
+
+    <div id="overall-badge" style="text-align:center;"></div>
+
+    <div class="btn-group">
+      <button class="btn btn-secondary" onclick="resetGame()">New Game</button>
+      <button class="btn btn-primary" onclick="resetGame()">Play Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── State ──
+  const TOTAL_TRIALS = 5;
+  let currentTrial = 0;
+  let times = [];
+  let phase = 'idle'; // idle | waiting | ready | result | done
+  let timerId = null;
+  let startTime = 0;
+  let falseStart = false;
+
+  // ── DOM refs ──
+  const playArea = document.getElementById('play-area');
+  const instructions = document.getElementById('instructions');
+  const results = document.getElementById('results');
+  const trialsBody = document.getElementById('trials-body');
+
+  // ── Helpers ──
+  function randomWait(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+  }
+
+  function setPhase(newPhase) {
+    phase = newPhase;
+    playArea.className = '';
+    playArea.classList.add(newPhase);
+
+    switch(newPhase) {
+      case 'idle':
+        showInstructions();
+        break;
+      case 'waiting':
+        showWaiting();
+        break;
+      case 'ready':
+        showReady();
+        break;
+      case 'result':
+        showResult();
+        break;
+      case 'done':
+        showResults();
+        break;
+    }
+  }
+
+  function showInstructions() {
+    playArea.innerHTML = `
+      <div id="instructions">
+        <div class="icon">⚡</div>
+        <div class="label">Ready to test?</div>
+        <div class="sublabel">Tap anywhere to start</div>
+        <div class="instruction-steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">Wait for the <strong>screen to turn green</strong></div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text"><strong>Tap as fast as you can!</strong></div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">Complete <strong>5 trials</strong> for your results</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function showWaiting() {
+    const trialNum = currentTrial + 1;
+    playArea.innerHTML = `
+      <div class="icon">⏳</div>
+      <div class="label">Wait for green…</div>
+      <div class="sublabel">Trial ${trialNum} of ${TOTAL_TRIALS}</div>
+      <div class="trial-indicator">${buildDots()}</div>
+    `;
+  }
+
+  function showReady() {
+    playArea.innerHTML = `
+      <div class="icon">👆</div>
+      <div class="label">TAP NOW!</div>
+      <div class="sublabel">Tap as fast as you can!</div>
+      <div class="trial-indicator">${buildDots()}</div>
+    `;
+  }
+
+  function showResult() {
+    const time = times[times.length - 1];
+    let cat = getCategory(time);
+    playArea.innerHTML = `
+      <div class="icon">${cat.icon}</div>
+      <div class="reaction-value">${time}</div>
+      <div class="reaction-unit">milliseconds</div>
+      <div class="category-badge ${cat.cls}">${cat.label}</div>
+      <div class="sublabel" style="margin-top:12px;">Tap to continue</div>
+      <div class="trial-indicator">${buildDots()}</div>
+    `;
+  }
+
+  function getCategory(ms) {
+    if (ms < 200) return { icon: '🔥', label: 'Incredible!', cls: 'excellent' };
+    if (ms < 250) return { icon: '⚡', label: 'Excellent!', cls: 'excellent' };
+    if (ms < 300) return { icon: '✨', label: 'Great!', cls: 'good' };
+    if (ms < 400) return { icon: '👍', label: 'Average', cls: 'average' };
+    return { icon: '🐢', label: 'Slow', cls: 'slow' };
+  }
+
+  function buildDots() {
+    let html = '';
+    for (let i = 0; i < TOTAL_TRIALS; i++) {
+      let cls = '';
+      if (i < currentTrial) cls = 'done';
+      else if (i === currentTrial && phase === 'waiting') cls = 'current';
+      html += `<div class="trial-dot ${cls}"></div>`;
+    }
+    return html;
+  }
+
+  function showResults() {
+    playArea.style.display = 'none';
+    results.classList.add('visible');
+
+    const avg = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+    const best = Math.min(...times);
+    const worst = Math.max(...times);
+
+    document.getElementById('stat-avg').textContent = avg;
+    document.getElementById('stat-best').textContent = best;
+    document.getElementById('stat-worst').textContent = worst;
+
+    // Build trials table
+    let html = '';
+    const maxTime = Math.max(...times);
+    times.forEach((t, i) => {
+      const pct = (t / maxTime) * 100;
+      const isBest = t === best && times.filter(x => x === best).length === 1;
+      const isWorst = t === worst && times.filter(x => x === worst).length === 1;
+      const cat = getCategory(t);
+      let rowClass = '';
+      if (isBest) rowClass = 'highlight-best';
+      if (isWorst) rowClass = 'highlight-worst';
+      let barClass = '';
+      if (t < 250) barClass = 'fast';
+      else if (t > 350) barClass = 'slow';
+      html += `
+        <tr class="${rowClass}">
+          <td>Trial ${i + 1}</td>
+          <td>${t} ms</td>
+          <td>
+            <div class="bar-cell">
+              <div class="mini-bar">
+                <div class="mini-bar-fill ${barClass}" style="width:${pct}%"></div>
+              </div>
+              <span style="font-size:0.8rem;color:var(--text-dim);">${cat.icon}</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+    trialsBody.innerHTML = html;
+
+    // Overall badge
+    const overallCat = getCategory(avg);
+    document.getElementById('overall-badge').innerHTML = `
+      <div class="category-badge ${overallCat.cls}" style="font-size:0.9rem;padding:8px 20px;">
+        ${overallCat.icon} ${overallCat.label} — Average: ${avg} ms
+      </div>
+    `;
+  }
+
+  // ── Core game logic ──
+  function startGame() {
+    currentTrial = 0;
+    times = [];
+    results.classList.remove('visible');
+    playArea.style.display = '';
+    startTrial();
+  }
+
+  function startTrial() {
+    currentTrial++;
+    falseStart = false;
+    setPhase('waiting');
+    const delay = randomWait(1500, 4500);
+    timerId = setTimeout(() => {
+      setPhase('ready');
+      startTime = performance.now();
+    }, delay);
+  }
+
+  function handleClick() {
+    if (phase === 'idle') {
+      startGame();
+      return;
+    }
+
+    if (phase === 'waiting') {
+      // False start!
+      falseStart = true;
+      clearTimeout(timerId);
+      setPhase('too-early');
+      playArea.innerHTML = `
+        <div class="icon">😬</div>
+        <div class="label">Too early!</div>
+        <div class="sublabel">You tapped before the screen changed.</div>
+        <div class="sublabel" style="margin-top:8px;">Tap to retry this trial</div>
+      `;
+      playArea.onclick = () => {
+        playArea.onclick = handleClick;
+        currentTrial--;  // Undo the increment so the same trial replays
+        startTrial();
+      };
+      return;
+    }
+
+    if (phase === 'ready') {
+      const endTime = performance.now();
+      const reactionTime = Math.round(endTime - startTime);
+      times.push(reactionTime);
+
+      if (currentTrial >= TOTAL_TRIALS) {
+        setPhase('done');
+        showResults();
+      } else {
+        setPhase('result');
+        playArea.onclick = () => {
+          playArea.onclick = handleClick;
+          startTrial();
+        };
+      }
+      return;
+    }
+
+    if (phase === 'result') {
+      // handled by inner click handler
+    }
+  }
+
+  // ── Reset ──
+  window.resetGame = function() {
+    clearTimeout(timerId);
+    currentTrial = 0;
+    times = [];
+    phase = 'idle';
+    results.classList.remove('visible');
+    playArea.style.display = '';
+    playArea.onclick = handleClick;
+    setPhase('idle');
+  };
+
+  // ── Init ──
+  playArea.onclick = handleClick;
+  setPhase('idle');
+})();
+</script>
+</body>
+</html>

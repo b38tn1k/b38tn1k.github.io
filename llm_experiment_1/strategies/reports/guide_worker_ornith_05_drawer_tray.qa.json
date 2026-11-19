@@ -1,0 +1,4 @@
+{
+  "method": "Exact-source VM/DOM with deterministic timer and state-only instrumentation; no browser",
+  "missingArtifact": true
+}

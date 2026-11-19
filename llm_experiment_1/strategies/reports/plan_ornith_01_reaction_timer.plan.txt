@@ -1,0 +1,48 @@
+# Reaction-Time Tester — self-contained `index.html`
+
+## Summary
+Build one polished, fully offline `index.html` (inline CSS + JS, zero external/network dependencies) that runs a reaction-time test: random wait → "go" cue → click to measure → repeated 5 times → results summary.
+
+## Behavior
+
+**Game loop (one session = 5 trials):**
+1. **Ready state** — on-screen prompt + "Click to start".
+2. **Waiting state** — screen turns red; a random delay between **1500 ms and 5000 ms** is set. No clicks allowed during wait.
+3. **False start** — if the user clicks before the cue: display "Too early! That was a false start." and offer "Click to retry this trial." *(Default choice: retry that trial with no time penalty; trial still counts once completed.)*
+4. **Go state** — screen turns green; record timestamp.
+5. **Measured state** — on click, compute `responseTime = now - goTimestamp`, show ms, then offer "Click to continue".
+6. After the 5th trial, show the **summary**.
+
+**Results summary:**
+- Table/list of each trial's reaction time.
+- **Average**, **minimum**, and **maximum** reaction times across the 5 trials.
+- A qualitative hint (e.g. <200 ms excellent, <250 ms fast, <350 ms average, else slow).
+- A **"Play again"** button that resets and runs a fresh 5 trials.
+
+## State management
+- JS module state machine: `ready | waiting | go | measured | falseStart | finished`.
+- `startTime`/`goTime` timestamps via `Date.now()` / `performance.now()`.
+- Random wait via `setTimeout`; store the timer id so clicks can be suppressed while pending.
+- Track `currentTrial` (1–5), `results` array, and a `falseStart` boolean.
+
+## UI / styling
+- Full-viewport colored background per state (red during wait, green during go, etc.).
+- Centered, sans-serif, responsive text. Large centered number for measured result.
+- Subtle transitions (`transition: background-color 0.2s`).
+- Keyboard support: Space/Enter behaves like a click so it's playable without a pointer.
+- Accessible labels via ARIA status region; high contrast text.
+- No external fonts, images, or libraries.
+
+## Files
+- Create `index.html` in the current directory. No other source files; everything inline.
+
+## Verification
+- Open the file in a headless browser (e.g. `node`/`chromium` headless or a Playwright/Puppeteer check if available) to confirm no console errors and correct DOM state transitions.
+- Automated smoke test: programmatically drive the sequence (start → go → click) in a headless context and assert the measured reaction time is positive and the summary renders (5 values, correct average/min/max). If no headless browser is available, validate the HTML/JS by static checks (balanced tags, `window.onload` wired, functions reachable) and a JS syntax check (`node --check` on the extracted inline script).
+
+## Assumptions / defaults
+- **False-start handling:** retry the trial with no penalty (default, since the choice prompt was cancelled).
+- Random wait range: **1.5–5 s**.
+- Timing source: `Date.now()` (sufficient; `performance.now` used as a fallback where helpful).
+- 5 trials fixed as specified.
+- Offline-only; no localStorage, no network.

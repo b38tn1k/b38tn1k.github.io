@@ -1,0 +1,45 @@
+{
+  "method": "Independent exact-source VM/DOM actual button/global click handlers and deterministic scheduled green cue; no browser layout/hit testing.",
+  "sha256": "47812fdb2e3bf3d2618bfe60d96b282a5474d708f0804b246c6a5a93a8921992",
+  "checks": [
+    {
+      "id": "exactly_five_real_trials_summary_and_replay",
+      "pass": true,
+      "evidence": {
+        "validTrials": 5,
+        "mean": 250,
+        "replay": true
+      }
+    },
+    {
+      "id": "false_start_retry_preserves_all_five_valid_measurements",
+      "pass": true,
+      "evidence": {
+        "falseStart": true,
+        "validTrials": 5
+      }
+    },
+    {
+      "id": "mid_session_false_start_preserves_prior_valid_responses",
+      "pass": true,
+      "evidence": {
+        "priorValid": 2,
+        "retriedTrial": 3,
+        "finalRows": 5,
+        "mean": 250
+      }
+    }
+  ],
+  "pass": true,
+  "optionalChecks": [
+    {
+      "id": "active_progress_dot_on_first_trial",
+      "blocking": false,
+      "pass": false,
+      "evidence": {
+        "dots": 5,
+        "active": 0
+      }
+    }
+  ]
+}

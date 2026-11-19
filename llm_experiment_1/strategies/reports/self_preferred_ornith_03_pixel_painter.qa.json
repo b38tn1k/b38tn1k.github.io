@@ -1,0 +1,42 @@
+{
+  "method": "Independent final-source VM/DOM/nativeCanvas2D tests. Real handlers, scheduled callbacks, pixels and export bytes. Closure exposure provides existing state/functions for controlled fixtures without replacing app algorithms. No native browser layout, GPU, hit testing or physical-device verification.",
+  "sha256": "f4d3843220bcf93c4d5adbceb6a297071545ef129a7afcb2c5bf9f68c85e52fd",
+  "checks": [
+    {
+      "id": "actual_brush_drag_eraser_touch",
+      "pass": true,
+      "evidence": {
+        "drag": true,
+        "eraser": true,
+        "touchPointer": true
+      }
+    },
+    {
+      "id": "two_stroke_undo_redo_clear_undo",
+      "pass": true,
+      "evidence": {
+        "history": true,
+        "clearUndo": true
+      }
+    },
+    {
+      "id": "resize_preserves_art_and_exports_real_PNG",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          48,
+          24
+        ],
+        "bytes": 122
+      }
+    },
+    {
+      "id": "undo_resize_restores_real_dimensions",
+      "pass": false,
+      "error": "History changes logical state to32x32 but leaves backing canvas48x24",
+      "actual": 48,
+      "expected": 32
+    }
+  ],
+  "pass": false
+}

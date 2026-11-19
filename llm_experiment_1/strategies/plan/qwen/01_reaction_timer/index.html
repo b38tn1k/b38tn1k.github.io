@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Reaction Timer</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-idle: #1a1a2e;
+    --bg-waiting: #16213e;
+    --bg-go: #00c853;
+    --bg-false: #b71c1c;
+    --bg-results: #1a1a2e;
+    --bg-feedback: #0f3460;
+    --text-primary: #e0e0e0;
+    --text-secondary: #9e9e9e;
+    --accent: #4fc3f7;
+    --bar-color: #4fc3f7;
+    --best-color: #00e676;
+    --avg-color: #ffab40;
+    --worst-color: #ff5252;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    touch-action: none;
+    overscroll-behavior: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-idle);
+    color: var(--text-primary);
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color 0.25s ease;
+  }
+
+  #app {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .message {
+    font-size: clamp(2rem, 8vmin, 5rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    line-height: 1.3;
+    transition: opacity 0.2s ease;
+  }
+
+  .sub-message {
+    font-size: clamp(1rem, 3.5vmin, 2rem);
+    color: var(--text-secondary);
+    margin-top: clamp(0.75rem, 3vmin, 1.5rem);
+    text-align: center;
+    opacity: 0.85;
+  }
+
+  /* Idle */
+  #app.state-idle { background: var(--bg-idle); }
+  #app.state-idle .message { color: var(--text-secondary); animation: pulse 2s ease-in-out infinite; }
+
+  /* Waiting */
+  #app.state-waiting { background: var(--bg-waiting); }
+  #app.state-waiting .message { color: var(--accent); animation: pulse 1.5s ease-in-out infinite; }
+
+  /* Go! */
+  #app.state-ready { background: var(--bg-go) !important; transition: background-color 0.05s ease !important; }
+  #app.state-ready .message { color: white; animation: none !important; }
+
+  /* False start */
+  #app.state-false { background: var(--bg-false) !important; transition: background-color 0.05s ease !important; }
+  #app.state-false .message { animation: none !important; }
+  #app.state-false .sub-message { color: rgba(255,255,255,0.7); }
+
+  /* Feedback */
+  #app.state-feedback { background: var(--bg-feedback); transition: background-color 0.3s ease; }
+  #app.state-feedback .message { animation: none !important; }
+
+  /* Results */
+  #app.state-results { background: var(--bg-results); cursor: default; overflow-y: auto; justify-content: flex-start; padding: clamp(1rem, 4vh, 3rem) clamp(1.5rem, 6vw, 4rem); }
+
+  .results-container {
+    width: min(90%, 520px);
+    display: flex; flex-direction: column; align-items: center; gap: clamp(1rem, 3vmin, 1.75rem);
+  }
+
+  .results-title {
+    font-size: clamp(1.6rem, 5vmin, 3rem);
+    font-weight: 700;
+    color: var(--accent);
+    text-align: center;
+  }
+
+  .results-chart {
+    width: 100%;
+    display: flex; align-items: center; gap: clamp(4px, 0.8vmin, 8px);
+  }
+
+  .bar-label {
+    font-size: clamp(0.7rem, 2vmin, 1rem);
+    color: var(--text-secondary);
+    width: clamp(24px, 5vw, 36px);
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1; height: clamp(28px, 5vmin, 40px);
+    background: rgba(255,255,255,0.07);
+    border-radius: 6px; overflow: hidden;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: clamp(6px, 1.2vmin, 10px);
+    font-size: clamp(0.65rem, 1.8vmin, 0.85rem);
+    color: white;
+    font-weight: 600;
+    transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    min-width: fit-content;
+    padding-left: clamp(6px, 1.2vmin, 10px);
+  }
+
+  .results-stats {
+    width: 100%;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: clamp(8px, 2vw, 16px);
+  }
+
+  .stat-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: clamp(0.75rem, 2vmin, 1.2rem);
+    text-align: center;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .stat-label {
+    font-size: clamp(0.6rem, 1.6vmin, 0.8rem);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .stat-value {
+    font-size: clamp(1.2rem, 4vmin, 2.2rem);
+    font-weight: 700;
+  }
+
+  .stat-best .stat-value { color: var(--best-color); }
+  .stat-avg .stat-value { color: var(--avg-color); }
+  .stat-worst .stat-value { color: var(--worst-color); }
+
+  .btn-retry {
+    margin-top: clamp(0.5rem, 2vmin, 1rem);
+    padding: clamp(0.8rem, 2.5vmin, 1.2rem) clamp(2rem, 6vmin, 3.5rem);
+    font-size: clamp(1rem, 3vmin, 1.4rem);
+    font-weight: 600;
+    color: white;
+    background: var(--accent);
+    border: none; border-radius: 50px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    touch-action: manipulation;
+  }
+
+  .btn-retry:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(79, 195, 247, 0.35); }
+  .btn-retry:active { transform: scale(0.97); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+  }
+
+  @keyframes flash-enter {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .flash-enter { animation: flash-enter 0.25s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+
+  /* Scrollbar for results on small screens */
+  #app.state-results::-webkit-scrollbar { width: 6px; }
+  #app.state-results::-webkit-scrollbar-track { background: transparent; }
+  #app.state-results::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="app" class="state-idle">
+  <div id="content"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const APP = document.getElementById('app');
+  const CONTENT = document.getElementById('content');
+  const NUM_TRIALS = 5;
+  const MIN_WAIT = 2000;
+  const MAX_WAIT = 7000;
+
+  // ── State ──────────────────────────────────────────────
+  let state = 'idle';          // idle | waiting | ready | feedback | results
+  let trialTimes = [];
+  let currentTrial = 1;
+  let waitTimer = null;
+  let goTime = 0;
+  let falseStartCount = 0;
+
+  // ── Helpers ────────────────────────────────────────────
+  function setState(s) {
+    state = s;
+    APP.className = 'state-' + s;
+  }
+
+  function clearTimers() {
+    if (waitTimer) { clearTimeout(waitTimer); waitTimer = null; }
+  }
+
+  function randomWait() {
+    return Math.random() * (MAX_WAIT - MIN_WAIT) + MIN_WAIT;
+  }
+
+  // ── Render helpers ────────────────────────────────────
+  function show(contentHTML) {
+    CONTENT.innerHTML = contentHTML;
+  }
+
+  function renderIdle() {
+    setState('idle');
+    show(`
+      <div class="message">Reaction Timer</div>
+      <div class="sub-message">Tap anywhere to start</div>
+    `);
+  }
+
+  function renderWaiting() {
+    setState('waiting');
+    show(`
+      <div class="message flash-enter">Wait…</div>
+      <div class="sub-message">Trial ${currentTrial} of ${NUM_TRIALS}</div>
+    `);
+  }
+
+  function renderGo() {
+    setState('ready');
+    goTime = performance.now();
+    show(`
+      <div class="message flash-enter">GO!</div>
+    `);
+  }
+
+  function renderFeedback(ms) {
+    const rounded = Math.round(ms);
+    setState('feedback');
+    show(`
+      <div class="message flash-enter">${rounded} ms</div>
+      <div class="sub-message">${currentTrial < NUM_TRIALS ? 'Tap to continue' : 'Tap for results'}</div>
+    `);
+  }
+
+  function renderResults() {
+    setState('results');
+
+    const best = Math.min(...trialTimes);
+    const worst = Math.max(...trialTimes);
+    const avg = trialTimes.reduce((a, b) => a + b, 0) / trialTimes.length;
+
+    // Normalize bars to the max value so they share a scale
+    const maxTime = Math.max(worst, 300); // minimum bar for readability
+
+    let chartHTML = '';
+    trialTimes.forEach((t, i) => {
+      const pct = (t / maxTime) * 100;
+      let color;
+      if (t === best) color = 'var(--best-color)';
+      else if (t === worst) color = 'var(--worst-color)';
+      else color = 'var(--bar-color)';
+
+      chartHTML += `
+        <div class="bar-label">${i + 1}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${pct}%;background:${color};">${t} ms</div>
+        </div>
+      `;
+    });
+
+    show(`
+      <div class="results-container">
+        <div class="results-title flash-enter">Results</div>
+
+        <div class="results-chart">
+          ${chartHTML}
+        </div>
+
+        <div class="results-stats">
+          <div class="stat-card stat-best">
+            <span class="stat-label">Best</span>
+            <span class="stat-value">${Math.round(best)} ms</span>
+          </div>
+          <div class="stat-card stat-avg">
+            <span class="stat-label">Average</span>
+            <span class="stat-value">${Math.round(avg)} ms</span>
+          </div>
+          <div class="stat-card stat-worst">
+            <span class="stat-label">Worst</span>
+            <span class="stat-value">${Math.round(worst)} ms</span>
+          </div>
+        </div>
+
+        <button class="btn-retry flash-enter" id="btn-retry">Try Again</button>
+      </div>
+    `);
+
+    // Animate bars after render
+    requestAnimationFrame(() => {
+      const fills = CONTENT.querySelectorAll('.bar-fill');
+      fills.forEach(f => { f.style.width = '0%'; });
+      requestAnimationFrame(() => {
+        trialTimes.forEach((t, i) => {
+          fills[i].style.width = (t / maxTime * 100) + '%';
+        });
+      });
+    });
+
+    document.getElementById('btn-retry').addEventListener('click', resetGame);
+  }
+
+  // ── Event handling ────────────────────────────────────
+  function handleTap(e) {
+    if (e.type === 'touchstart') e.preventDefault();
+
+    switch (state) {
+      case 'idle':
+        startTrial();
+        break;
+
+      case 'waiting':
+        falseStartCount++;
+        clearTimers();
+        setState('false');
+        show(`
+          <div class="message flash-enter">Too early!</div>
+          ${falseStartCount > 0 ? `<div class="sub-message">Tap to retry (${falseStartCount} false start${falseStartCount > 1 ? 's' : ''})</div>` : ''}
+        `);
+        break;
+
+      case 'ready':
+        const rt = performance.now() - goTime;
+        trialTimes.push(rt);
+        if (currentTrial < NUM_TRIALS) {
+          renderFeedback(rt);
+          // Transition to next trial after brief feedback
+          setTimeout(() => {
+            currentTrial++;
+            falseStartCount = 0;
+            startTrial();
+          }, 1200);
+        } else {
+          renderResults();
+        }
+        break;
+
+      case 'feedback':
+        // Already handled by the auto-transition above, but guard against stray taps
+        break;
+
+      case 'results':
+        // Handled by button click listener
+        break;
+    }
+  }
+
+  function startTrial() {
+    falseStartCount = 0;
+    const delay = randomWait();
+    renderWaiting();
+    waitTimer = setTimeout(() => {
+      clearTimers();
+      renderGo();
+    }, delay);
+  }
+
+  function resetGame() {
+    trialTimes = [];
+    currentTrial = 1;
+    falseStartCount = 0;
+    clearTimers();
+    renderIdle();
+  }
+
+  // ── Init ──────────────────────────────────────────────
+  APP.addEventListener('mousedown', handleTap);
+  APP.addEventListener('touchstart', handleTap, { passive: false });
+
+  renderIdle();
+})();
+</script>
+</body>
+</html>

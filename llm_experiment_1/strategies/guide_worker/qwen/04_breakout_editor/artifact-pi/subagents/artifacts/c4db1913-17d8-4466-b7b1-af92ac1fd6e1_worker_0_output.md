@@ -1,0 +1,1 @@
+All checks pass. Here's the acceptance report:

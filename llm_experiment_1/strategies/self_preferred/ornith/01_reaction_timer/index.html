@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Reaction Timer</title>
+<style>
+  :root{
+    --bg:#0f1220; --panel:#191d33; --ink:#eef1ff; --muted:#8b91b7;
+    --accent:#5b8cff; --accent2:#36d39c; --danger:#ff5d73; --warn:#ffb84d;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(1200px 800px at 50% -10%, #1b2145 0%, var(--bg) 60%);
+    color:var(--ink); display:flex; flex-direction:column; min-height:100vh;
+  }
+  header{padding:18px 20px; text-align:center;}
+  header h1{margin:0; font-size:20px; letter-spacing:.5px; font-weight:700;}
+  header p{margin:4px 0 0; color:var(--muted); font-size:13px;}
+  main{flex:1; display:flex; align-items:center; justify-content:center; padding:16px;}
+  .stage{
+    width:min(720px,100%); background:var(--panel); border-radius:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.45); overflow:hidden; position:relative;
+  }
+  .phasebar{display:flex; gap:8px; padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.06);}
+  .dot{flex:1; height:8px; border-radius:8px; background:rgba(255,255,255,.12); transition:background .25s;}
+  .dot.done{background:var(--accent2);}
+  .dot.active{background:var(--accent);}
+  .view{padding:38px 26px; text-align:center; min-height:320px; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .big{font-size:clamp(48px,12vw,96px); font-weight:800; line-height:1; margin:8px 0;}
+  .unit{font-size:20px; color:var(--muted); font-weight:600;}
+  .hint{color:var(--muted); font-size:14px; margin-top:14px;}
+  .label{font-size:14px; text-transform:uppercase; letter-spacing:2px; color:var(--muted);}
+  button.btn{
+    margin-top:22px; border:0; cursor:pointer; font-weight:700; font-size:16px;
+    padding:14px 26px; border-radius:12px; color:#fff; background:linear-gradient(135deg,var(--accent),#7aa2ff);
+    box-shadow:0 8px 24px rgba(91,140,255,.35); transition:transform .1s, opacity .2s;
+  }
+  button.btn:active{transform:translateY(1px) scale(.99);}
+  .rt-wait{background:#2a6bff;}
+  .rt-ready{background:#17b577;}
+  .rt-false{background:var(--danger);}
+  .rt-result{background:var(--warn);}
+  .statgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:100%; margin:6px 0 4px;}
+  .stat{background:rgba(255,255,255,.05); border-radius:14px; padding:14px 10px;}
+  .stat .v{font-size:26px; font-weight:800;}
+  .stat .k{font-size:11px; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-top:4px;}
+  table{width:100%; border-collapse:collapse; margin-top:10px; font-size:14px;}
+  th,td{padding:8px 6px; text-align:center; border-bottom:1px solid rgba(255,255,255,.07);}
+  th{color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:1px;}
+  tr:first-child td{color:var(--accent2);}
+  .muted{color:var(--muted);}
+  .falsebadge{display:inline-block; margin:8px 0; padding:6px 14px; border-radius:999px;
+    background:rgba(255,93,115,.16); color:var(--danger); font-weight:700;}
+  .footer{padding:12px 20px 20px; text-align:center; color:var(--muted); font-size:12px;}
+  .fade{animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+</style>
+</head>
+<body>
+  <header>
+    <h1>Reaction Timer</h1>
+    <p>When the box turns green, tap as fast as you can. 5 trials.</p>
+  </header>
+  <main>
+    <div class="stage">
+      <div class="phasebar" id="phasebar"></div>
+      <div id="view" class="view"></div>
+    </div>
+  </main>
+  <div class="footer">Results stay on this device.</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Pure logic (no DOM, no Date/Timer coupling) ----------
+  function createState(cfg){
+    return {
+      phase:"idle",           // idle | waiting | ready | result | done
+      trialIndex:0,
+      times:[],
+      falseStarts:0,
+      lastIsFalseStart:false,
+      cfg:Object.assign({trials:5, minWait:1000, maxWait:5000}, cfg||{})
+    };
+  }
+
+  function randomWait(cfg){
+    var lo=cfg.minWait, hi=cfg.maxWait;
+    if(hi<lo){hi=lo;}
+    return lo + Math.floor(Math.random()*(hi-lo+1));
+  }
+
+  // Handle a press given current phase. Returns action descriptor.
+  function handleClick(state, nowFn){
+    var now = nowFn();
+    if(state.phase==="idle" || state.phase==="done"){
+      state.phase="waiting";
+      state.waitMs = randomWait(state.cfg);
+      state.waitStart = now;
+      return {type:"start"};
+    }
+    if(state.phase==="waiting"){
+      state.phase="result";
+      state.lastIsFalseStart=true;
+      state.falseStarts++;
+      return {type:"falsestart"};
+    }
+    if(state.phase==="ready"){
+      var rt = now - state.targetShownAt;
+      if(rt<0){ rt=0; }
+      state.times.push(rt);
+      state.lastTime = rt;
+      state.lastIsFalseStart=false;
+      state.phase="result";
+      if(state.trialIndex+1 >= state.cfg.trials){
+        state.phase="done";
+      }else{
+        state.trialIndex++;
+      }
+      return {type:"recorded", rt:rt};
+    }
+    if(state.phase==="result"){
+      state.phase="waiting";
+      state.waitMs = randomWait(state.cfg);
+      state.waitStart = now;
+      return {type:"start"};
+    }
+    return {type:"noop"};
+  }
+
+  function showTarget(state, nowFn){
+    state.phase="ready";
+    state.targetShownAt = nowFn();
+    return state;
+  }
+
+  function summary(state){
+    var t = state.times.slice().sort(function(a,b){return a-b;});
+    var n = t.length;
+    var sum = t.reduce(function(s,x){return s+x;},0);
+    return {
+      sorted:t,
+      count:n,
+      best:n?t[0]:null,
+      worst:n?t[n-1]:null,
+      mean:n?Math.round(sum/n):null,
+      falseStarts:state.falseStarts
+    };
+  }
+
+  // ---------- Browser boundary (DOM/timer/render) ----------
+  var el = {
+    view: document.getElementById("view"),
+    phasebar: document.getElementById("phasebar")
+  };
+  var state = createState();
+  var waitTimeoutId = null;
+
+  function clearWaitTimer(){
+    if(waitTimeoutId!=null){ clearTimeout(waitTimeoutId); waitTimeoutId=null; }
+  }
+
+  function enterWaiting(){
+    clearWaitTimer();
+    state.phase="waiting";
+    state.waitMs = randomWait(state.cfg);
+    state.waitStart = Date.now();
+    var ms = state.waitMs;
+    waitTimeoutId = setTimeout(function(){
+      waitTimeoutId = null;
+      showTarget(state, Date.now);
+      render();
+    }, ms);
+  }
+
+  function buildPhasebar(){
+    var bar = el.phasebar;
+    bar.innerHTML = "";
+    for(var i=0;i<state.cfg.trials;i++){
+      var d = document.createElement("div");
+      d.className = "dot";
+      d.dataset.trial = i;
+      bar.appendChild(d);
+    }
+    updatePhasebar();
+  }
+
+  function updatePhasebar(){
+    var dots = el.phasebar.children;
+    for(var i=0;i<dots.length;i++){
+      var d = dots[i];
+      d.className = "dot";
+      if(i < state.trialIndex) d.classList.add("done");
+      else if(i === state.trialIndex && (state.phase==="waiting"||state.phase==="ready")) d.classList.add("active");
+    }
+  }
+
+  function render(){
+    var v = el.view;
+    v.className = "view fade";
+    void v.offsetWidth; // reflow to restart animation
+    v.innerHTML = "";
+
+    if(state.phase==="idle"){
+      v.appendChild(h("div","label","React when it turns green"));
+      v.appendChild(h("div","big","⚡"));
+      v.appendChild(h("div","hint","Tap the box to begin. Wait for green — then tap instantly."));
+      v.appendChild(btn("Start Test", onPress));
+    } else if(state.phase==="waiting"){
+      v.appendChild(h("div","label","Get ready…"));
+      v.appendChild(h("div","big","●"));
+      v.appendChild(h("div","hint","Wait for green. Do not tap yet."));
+    } else if(state.phase==="ready"){
+      v.appendChild(h("div","label","Tap now!"));
+      v.appendChild(h("div","big","●"));
+      v.appendChild(h("div","hint","Tap as fast as you can."));
+    } else if(state.phase==="result"){
+      if(state.lastIsFalseStart){
+        v.appendChild(h("div","label","False start"));
+        v.appendChild(h("div","big","✕","var(--danger)"));
+        v.appendChild(h("div","falsebadge","You tapped too early — no time recorded"));
+        v.appendChild(h("div","hint","Tap to retry this trial."));
+      }else{
+        v.appendChild(h("div","label","Trial "+(state.trialIndex+1)));
+        v.appendChild(h("div","big", String(state.lastTime)));
+        v.appendChild(h("div","unit","milliseconds"));
+        v.appendChild(h("div","hint","Tap to continue."));
+      }
+    } else if(state.phase==="done"){
+      var s = summary(state);
+      var rows = "";
+      for(var i=0;i<s.sorted.length;i++){
+        var tNum = i+1;
+        var star = (i===0)?" ★":"";
+        rows += "<tr><td>"+tNum+"</td><td>"+s.sorted[i]+"</td><td>"+(star)+"</td></tr>";
+      }
+      v.appendChild(h("div","label","Results"));
+      v.appendChild(h("div","statgrid",""));
+      var sg = v.querySelector(".statgrid");
+      sg.appendChild(statEl("Best", s.best!=null? s.best:"—"));
+      sg.appendChild(statEl("Mean", s.mean!=null? s.mean:"—"));
+      sg.appendChild(statEl("Worst", s.worst!=null? s.worst:"—"));
+      var tbl = document.createElement("table");
+      tbl.innerHTML = "<tr><th>Trial</th><th>Time (ms)</th><th></th></tr>"+rows;
+      v.appendChild(tbl);
+      if(s.falseStarts>0){
+        v.appendChild(h("div","muted", s.falseStarts+" false start"+(s.falseStarts>1?"s":"")+" during the session."));
+      }
+      v.appendChild(btn("Play Again", resetGame));
+    }
+    updatePhasebar();
+  }
+
+  function statEl(v,k){var d=document.createElement("div"); d.className="stat";
+    d.appendChild(h("div","v",String(v))); d.appendChild(h("div","k",k)); return d;}
+  function h(tag,cls,txt,color){var e=document.createElement(tag); if(cls)e.className=cls;
+    e.textContent=txt; if(color)e.style.color=color; return e;}
+  function btn(label,fn){var b=document.createElement("button"); b.className="btn";
+    b.textContent=label; b.addEventListener("click", fn); return b;}
+
+  function onPress(){
+    handleClick(state, Date.now);
+    render();
+  }
+
+  function resetGame(){
+    clearWaitTimer();
+    state = createState();
+    buildPhasebar();
+    render();
+  }
+
+  function boot(){
+    buildPhasebar();
+    render();
+    el.view.addEventListener("pointerdown", onPress);
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded", boot);
+  }else{
+    boot();
+  }
+
+  // Test bridge (unused by the product runtime; enables headless checks).
+  if(typeof window!=="undefined"){
+    window.__reactionTimer = {
+      state: state,
+      summary: summary,
+      handleClick: handleClick,
+      createState: createState,
+      randomWait: randomWait,
+      showTarget: showTarget,
+      resetGame: resetGame
+    };
+  }
+})();
+</script>
+</body>
+</html>

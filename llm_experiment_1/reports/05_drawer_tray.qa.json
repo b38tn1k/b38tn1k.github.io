@@ -1,0 +1,46 @@
+{
+  "method": "Exact delivered script in Node VM; standard-method Canvas/DOM mocks, no actual browser or visual test",
+  "sha256": "67553b01d21a6a441958194eca9d39042fde9d18c15e193dfb6256b51c5a8635",
+  "syntaxValid": true,
+  "startup": "pass",
+  "dimensionReadoutHTML": "",
+  "defaults": {
+    "length": 180,
+    "width": 120,
+    "height": 30,
+    "cols": 3,
+    "rows": 2,
+    "wall": 2.5,
+    "floor": 2
+  },
+  "triangles": 96,
+  "finiteVertices": true,
+  "bounds": [
+    [
+      0,
+      180
+    ],
+    [
+      0,
+      120
+    ],
+    [
+      0,
+      30
+    ]
+  ],
+  "normalWindingDisagreements": 32,
+  "asciiHeader": "tray.stl",
+  "asciiTrailer": "endfacet",
+  "positiveVolumeOverlappingBoxPairs": 2,
+  "reportedCompartmentSize": [
+    56.666666666666664,
+    56.25,
+    28
+  ],
+  "actualXClearances": [
+    56.666666666666664,
+    54.166666666666664,
+    59.16666666666667
+  ]
+}

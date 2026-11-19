@@ -1,0 +1,109 @@
+{
+  "score": 87,
+  "grade": "B+ provisional - core Snake works; live-game restart unavailable",
+  "rubricScores": {
+    "functionality": 38,
+    "artifact_correctness": 25,
+    "usability": 12,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "breakdown": {
+    "functionality": 38,
+    "artifact_correctness": 25,
+    "usability": 12,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Actual extracted source passes start/movement and keyboard reversal prevention checks.",
+    "Pause freezes the game, resume advances it, and blur auto-pauses.",
+    "Controlled fixtures exercise the actual step function: wall and self collisions end the game; moving into a vacating tail is allowed.",
+    "Eating grows length to four, adds 10 points and increases difficulty from 150 to 144 ms; new food is not on the body.",
+    "Restart after death resets the game. One offline HTML file, no external resources."
+  ],
+  "defects": [
+    "R does nothing while a game is running or paused; it only restarts after game over or while stopped. The final feature summary does not state this restriction."
+  ],
+  "verification": [
+    "Independent exact-source VM, DOM events, controlled RAF and closure-state fixtures in reports/plan_ornith_02_snake.qa.cjs/.qa.json.",
+    "Final SHA-256 c6e2a564de79063abbd6e9b998d2c2f62a5e38a82bc9a3b09995e181e46c3c89.",
+    "Pi ran syntax and external-reference checks only, and honestly disclosed that no live browser play session was run."
+  ],
+  "verificationConcerns": [
+    "No behavioral self-test by Pi; functional confidence comes from the supervisor's independent checks.",
+    "Canvas rendering and browser/keyboard behavior remain visually unverified."
+  ],
+  "scopeCompliance": "An attempted /tmp/snake_check.js write was blocked by the OS guard. Pi retried with a local temporary file without steering; no successful out-of-tree write observed.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Structured planning and mechanical /plan implement handoff succeeded. No questionnaire answer or design advice supplied.",
+  "runStatus": "completed_pending_assessment",
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "plan",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Done. Single self-contained `index.html` is built and verified.\n\n**Verification performed**\n- `node --check` on the extracted `<script>` \u2192 **SYNTAX_OK**\n- No external/network references (no `<script src>`, `<link>`, CDN, `http(s)://`, `@import`) \u2192 fully offline\n- Temp check file cleaned up; no stray files left\n\n**Delivered: `index.html` (11.6 KB, all HTML/CSS/JS inline)**\n\nFeatures implemented:\n- **Keyboard controls** \u2014 Arrow keys + WASD, buffered via input lock to prevent 180\u00b0 reversals\n- **Food** \u2014 spawns only on empty cells; board-full win state\n- **Scoring** \u2014 +10/food; persistent best score in `localStorage` (`snake:best`)\n- **Collisions** \u2014 wall hit and self-collision (with legal tail-vacate chase), both end the run\n- **Pause** \u2014 `Space`/`P`, plus auto-pause on window blur; resume button\n- **Restart** \u2014 `R` or `Enter`, or Play button; full state reset\n- **Increasing difficulty** \u2014 tick interval drops 6 ms/food (150 ms \u2192 60 ms floor) via a RAF time-accumulator; level shown in the HUD\n\nTo play, just open `index.html` in a browser (double-click or drag into a browser). No server needed.\n\nOne note on verification: the harness has no browser automation available, so I confirmed JS syntax and static structure but did not run a live in-browser play session. That final manual click-to-play is the one step left for you.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 3.05,
+  "wallMinutes": 3.05,
+  "status": "assessed",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 11,
+  "parentToolCalls": 11,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 4,
+  "modelUsageReported": {
+    "input": 9804,
+    "output": 7850,
+    "cacheRead": 73414,
+    "totalTokens": 91068
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 11025,
+  "parentPeakReportedPromptTokens": 11025,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 9804,
+    "output": 7850,
+    "cacheRead": 73414,
+    "totalTokens": 91068
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 11661,
+  "sha256": "c6e2a564de79063abbd6e9b998d2c2f62a5e38a82bc9a3b09995e181e46c3c89",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 1,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 1,
+    "structuredPlanComplete": true,
+    "implementationHandoff": true,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 0,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": []
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

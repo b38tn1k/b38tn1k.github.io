@@ -1,0 +1,12 @@
+{
+  "role": "repair",
+  "number": 4,
+  "minutes": 10.1,
+  "reason": "stage_time_limit",
+  "exitCode": -9,
+  "artifactBefore": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+  "artifactAfter": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+  "prompt": "enforced/ornith/03_pixel_painter/runtime/04-repair/prompt.txt",
+  "events": "enforced/ornith/03_pixel_painter/runtime/04-repair/events.jsonl",
+  "stderr": "enforced/ornith/03_pixel_painter/runtime/04-repair/stderr.log"
+}

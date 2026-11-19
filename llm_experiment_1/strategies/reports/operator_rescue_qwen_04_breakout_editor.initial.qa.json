@@ -1,0 +1,37 @@
+{
+  "method": "Independent exact-source DOM/nativeCanvas real controls, scheduler, file-loader events and parsed downloaded JSON. State fixtures supply inputs only; algorithms unchanged. No browser layout/hit testing.",
+  "sha256": "adfb1c8e580f204a93c5c5549c6e7eafb47bc1f16c69b15ca09bc4725f81570c",
+  "checks": [
+    {
+      "id": "play_then_place_returns_to_editor_and_paints",
+      "pass": false,
+      "error": "'playing' == 'editor'",
+      "actual": "playing",
+      "expected": "editor"
+    },
+    {
+      "id": "short_JSON_replaces_old_cells_instead_of_merging",
+      "pass": false,
+      "error": "210 == 1",
+      "actual": 210,
+      "expected": 1
+    },
+    {
+      "id": "real_JSON_download_and_file_roundtrip",
+      "pass": true,
+      "evidence": {
+        "roundtrip": true
+      }
+    },
+    {
+      "id": "actual_keyboard_mouse_launch_and_three_lives",
+      "pass": true,
+      "evidence": {
+        "controls": true,
+        "lives": 3,
+        "restart": true
+      }
+    }
+  ],
+  "pass": false
+}

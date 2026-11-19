@@ -1,0 +1,245 @@
+{
+  "score": 36,
+  "grade": "F provisional - offline assets repaired, exported tray geometry remains broken",
+  "rubricScores": {
+    "functionality": 19,
+    "artifact_correctness": 4,
+    "usability": 11,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Pi replaced two CDN script dependencies with inline Three.js and OrbitControls, making the final artifact self-contained.",
+    "Actual ASCII and binary export controls produce downloadable Blob bytes. Dimension input listeners now update exported width from 180 to 200 mm."
+  ],
+  "defects": [
+    "Default ASCII export measures 180 x 30 x 144 mm instead of 180 x 30 x 120 in its X/Y/Z orientation. Back/front wall box dimensions swap height and depth.",
+    "ASCII top/bottom triangles repeat depth-facing geometry rather than closing the height faces: 60 boundary/nonmanifold edges and 48 normal disagreements.",
+    "Binary export omits the normal record on each second triangle, misaligning the file: 55 degenerate triangles and 53 missing normals in the captured 96-triangle export.",
+    "Compartment table clear height is 24 mm at a 30 mm height and 3 mm floor; actual intended cavity height is 27 mm. Divider positions also do not match the claimed equal cell widths."
+  ],
+  "verification": [
+    "Actual final-source handlers and exported Blob bytes are recorded in reports/enforced_qwen_05_drawer_tray.qa.json with matching SHA-256.",
+    "Initial snapshot and exported STL diagnostics retained separately. Repair removes network dependencies and adds live input updates but does not repair STL geometry."
+  ],
+  "verificationConcerns": [
+    "Bundled Three.js cannot initialize in the partial WebGL shim because getParameter is missing. This environment limitation is not independently counted as an application startup bug; browser rendering/rotation is unverified.",
+    "The input handler updates state before hitting the missing preview control in the shim; the changed exported width is evidence of state update, not full successful rendering.",
+    "STL scalar volume integrals are not interpreted as physical material volumes for these broken surfaces. No slicer or physical print validation."
+  ],
+  "scopeCompliance": "Pi alone wrote and repaired the application; Codex independently inspected source and captured exports. No application-specific hints or supervisor application changes.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Fresh staged build/test/review and two repair cycles completed; final gate failed. Product defects independently verified; missing WebGL mock APIs distinguished from application faults.",
+  "title": "Simple drawer tray generator",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Now I need to understand the actual bugs. The test is failing with specific errors. Let me do a quick diagnosis of each failure by running targeted diagnostics:",
+  "workflowInstructions": "run-suite.py and config/qwen/agents",
+  "workflowProtocolRevision": 5,
+  "elapsedMinutes": 60.1,
+  "wallMinutes": 60.1,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": 1,
+  "promptWords": 65,
+  "toolCalls": 484,
+  "parentToolCalls": 0,
+  "childToolCalls": 484,
+  "toolResultsMarkedError": 55,
+  "modelUsageReported": {
+    "input": 446600,
+    "output": 137396,
+    "cacheRead": 12082515,
+    "totalTokens": 12666511
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 49157,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 49157,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 446600,
+    "output": 137396,
+    "cacheRead": 12082515,
+    "totalTokens": 12666511
+  },
+  "artifactBytes": 649843,
+  "sha256": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 3,
+      "review": 3,
+      "repair": 2
+    },
+    "rolesCompleted": {
+      "build": 1
+    },
+    "parentArtifactReads": 23,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 8,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 8.86,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": null,
+        "artifactAfter": "812b6f88141e3f5d1b69a42eb070c5b682554afae38af1691067e0bcf83e1861",
+        "prompt": "enforced/qwen/05_drawer_tray/runtime/01-build/prompt.txt",
+        "events": "enforced/qwen/05_drawer_tray/runtime/01-build/events.jsonl",
+        "stderr": "enforced/qwen/05_drawer_tray/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 8.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "812b6f88141e3f5d1b69a42eb070c5b682554afae38af1691067e0bcf83e1861",
+        "artifactAfter": "812b6f88141e3f5d1b69a42eb070c5b682554afae38af1691067e0bcf83e1861",
+        "prompt": "enforced/qwen/05_drawer_tray/runtime/02-test/prompt.txt",
+        "events": "enforced/qwen/05_drawer_tray/runtime/02-test/events.jsonl",
+        "stderr": "enforced/qwen/05_drawer_tray/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 5.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "812b6f88141e3f5d1b69a42eb070c5b682554afae38af1691067e0bcf83e1861",
+        "artifactAfter": "812b6f88141e3f5d1b69a42eb070c5b682554afae38af1691067e0bcf83e1861",
+        "prompt": "enforced/qwen/05_drawer_tray/runtime/03-review/prompt.txt",
+        "events": "enforced/qwen/05_drawer_tray/runtime/03-review/events.jsonl",
+        "stderr": "enforced/qwen/05_drawer_tray/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "812b6f88141e3f5d1b69a42eb070c5b682554afae38af1691067e0bcf83e1861",
+        "artifactAfter": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "prompt": "enforced/qwen/05_drawer_tray/runtime/04-repair/prompt.txt",
+        "events": "enforced/qwen/05_drawer_tray/runtime/04-repair/events.jsonl",
+        "stderr": "enforced/qwen/05_drawer_tray/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 5,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "artifactAfter": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "prompt": "enforced/qwen/05_drawer_tray/runtime/05-test/prompt.txt",
+        "events": "enforced/qwen/05_drawer_tray/runtime/05-test/events.jsonl",
+        "stderr": "enforced/qwen/05_drawer_tray/runtime/05-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 6,
+        "minutes": 4.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "artifactAfter": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "prompt": "enforced/qwen/05_drawer_tray/runtime/06-review/prompt.txt",
+        "events": "enforced/qwen/05_drawer_tray/runtime/06-review/events.jsonl",
+        "stderr": "enforced/qwen/05_drawer_tray/runtime/06-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 7,
+        "minutes": 8.7,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "artifactAfter": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "prompt": "enforced/qwen/05_drawer_tray/runtime/07-repair/prompt.txt",
+        "events": "enforced/qwen/05_drawer_tray/runtime/07-repair/events.jsonl",
+        "stderr": "enforced/qwen/05_drawer_tray/runtime/07-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 8,
+        "minutes": 5.0,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "artifactAfter": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "prompt": "enforced/qwen/05_drawer_tray/runtime/08-test/prompt.txt",
+        "events": "enforced/qwen/05_drawer_tray/runtime/08-test/events.jsonl",
+        "stderr": "enforced/qwen/05_drawer_tray/runtime/08-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 9,
+        "minutes": 3.99,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "artifactAfter": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+        "prompt": "enforced/qwen/05_drawer_tray/runtime/09-review/prompt.txt",
+        "events": "enforced/qwen/05_drawer_tray/runtime/09-review/events.jsonl",
+        "stderr": "enforced/qwen/05_drawer_tray/runtime/09-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+      "errors": [
+        "Trusted syntax/offline/startup preflight failed or is stale",
+        "Executable acceptance test did not exit successfully",
+        "Acceptance check missing/failed: editable_dimensions",
+        "Acceptance check missing/failed: compartment_dimensions",
+        "Acceptance check missing/failed: rotatable_preview",
+        "Acceptance check missing/failed: stl_export",
+        "Acceptance ledger contains a failed check; every recorded check must pass",
+        "Independent review missing, stale or reports blocking findings",
+        "Independent reviewer did not attest that tests execute application behavior",
+        "No actual STL Blob captured from application execution"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": false
+}

@@ -1,0 +1,56 @@
+{
+  "authorizedUTC": "2026-11-17T14:17:15.215763+00:00",
+  "status": "completed_assessed_report_verified",
+  "approach": "Option2: copy all five projects from the highest-mean eligible configuration per model, then supervisor-directed repair.",
+  "startCondition": "All ten self_preferred runs terminal and independently assessed; release the inference-controller lock first.",
+  "selection": {
+    "unit": "One complete five-task configuration per model, not best-per-task cherry-picking.",
+    "rule": "Highest mean across five independently assessed, current-source main comparison outputs; exclude calibrations, prior rescue and configurations with read-scope failures. Include the model-preferred cohort once assessed. Tie-break lower total run time, then mode key.",
+    "freeze": "Record selected configuration, five source paths, hashes, baseline reports and scores before any copying or repair."
+  },
+  "attempts": 10,
+  "maxOperatorPromptsPerProject": 3,
+  "sessionPolicy": "Copy artifacts into fresh isolated project directories. Start a fresh repair session from those files; retain the same Pi session across all three operator prompts. Do not replay the full original conversation. Operator rescue is a changed workflow, not a rerun of the seed configuration.",
+  "budgetSeconds": 3600,
+  "feedbackPolicy": "Codex independently tests the copied/current artifact and supplies concise reproduced failures and expected behavior, no application code, pseudocode, patches or implementation snippets. First repair request counts as prompt1; no free orientation/diagnosis prompt. Re-evaluate between revisions. Pi alone implements all changes and its tests.",
+  "stopCondition": "At most3 prompts or the shared repair deadline, stopping earlier if verified A-quality product criteria are met. No extra attempts after the cap.",
+  "target": "A-quality product: functionality+artifact_correctness+usability normalized from80 to100 is at least90, no known blocking defect in an original required behavior/output. This assisted product metric is separate from the original100-point autonomy-inclusive score.",
+  "grading": "Preserve the original rubric and baseline scores; supervisor help means no autonomy credit in the rescue score. Report assisted product score separately, before/after differences, prompts used, additional tokens/run time and known limits. Do not present an assisted A-quality product as an autonomous A run.",
+  "evidence": [
+    "Immutable seed copies and source hashes",
+    "Exact operator prompts and native Pi events",
+    "Independent before/after checks and rubric breakdowns",
+    "Original creation cost and incremental repair cost separately"
+  ],
+  "browserPolicy": "Existing saved browser denial remains honored; no workaround. Runtime/browser limitations stay explicit.",
+  "implementation": {
+    "seedFreeze": "prepare-operator-rescue.py",
+    "controller": "run-operator-rescue.py",
+    "commands": "operator-command.py",
+    "conformance": "research/operator-controller-smoke.json",
+    "repairSettings": "Corrected standalone Pi profiles; thinking off, native compaction on, billion/forced proof off. Winning cohort identifies copied seed; original delegation architecture is not replayed.",
+    "timing": "60-minute elapsed repair cap from first counted prompt includes operator review. Model-active run time is reported separately."
+  },
+  "updatedUTC": "2026-11-17T22:47:56.119421+00:00",
+  "activeCase": null,
+  "seedsFrozen": "research/operator-rescue-seeds.json",
+  "assessed": 10,
+  "policyAmendments": [
+    {
+      "recordedUTC": "2026-11-17T22:31:37.321572+00:00",
+      "authorization": "User, relayed by parent: flag sustained detours early; any task-specific interrupt/redirect consumes one of three slots in the same context/shared deadline. No uncounted steering or budget restart.",
+      "limitation": "This cohort controller only accepted feedback after settled responses. The unchanged case90 HTML and accumulating prototypes were detectable before the deadline; the watcher should have flagged that pattern earlier. The policy delayed an opportunity for a counted redirect.",
+      "counterfactual": "No evidence that an earlier intervention would have succeeded. Original trial, prompt counts, scores and history are not relabeled.",
+      "currentApplication": "Case95 response2 was flagged as a sustained helper detour. It settled before any mid-response interrupt; canonical counted feedback3 now redirects to reproduced actual geometry/export failures. Same process/deadline.",
+      "futureBoundary": "Future operator controllers should support audited/count-limited active redirects. This amendment does not authorize steering in the preregistered twenty one-kickoff blind reviews, and no extra repair cohort is authorized."
+    }
+  ],
+  "completedUTC": "2026-11-17T22:52:48.041398+00:00",
+  "reportValidation": {
+    "assessed": 115,
+    "pass": true,
+    "ui": "runtime/operator-final-ui.log",
+    "source": "runtime/operator-final-integrity.log"
+  },
+  "results": "operator-rescue-results.json"
+}

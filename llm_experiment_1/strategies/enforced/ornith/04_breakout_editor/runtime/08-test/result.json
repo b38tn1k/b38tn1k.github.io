@@ -1,0 +1,12 @@
+{
+  "role": "test",
+  "number": 8,
+  "minutes": 6.1,
+  "reason": "stage_time_limit",
+  "exitCode": -9,
+  "artifactBefore": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+  "artifactAfter": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+  "prompt": "enforced/ornith/04_breakout_editor/runtime/08-test/prompt.txt",
+  "events": "enforced/ornith/04_breakout_editor/runtime/08-test/events.jsonl",
+  "stderr": "enforced/ornith/04_breakout_editor/runtime/08-test/stderr.log"
+}

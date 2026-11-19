@@ -1,0 +1,106 @@
+{
+  "status": "completed_with_critical_defects",
+  "grade": "C- - game core improved; save/load and flow broken",
+  "score": 64,
+  "rubricScores": {
+    "functionality": 26,
+    "artifact_correctness": 18,
+    "usability": 8,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "verified": [
+    "Exact-source VM startup, keyboard paddle movement, upward paddle bounce, brick damage below first row",
+    "Captured actual save data and passed it to actual loader"
+  ],
+  "criticalDefects": [
+    "Save produces arrays[key,color] while loader expects numeric coordinates and ent[2] color; loading own save silently removes all bricks",
+    "No working restart control during a running game; Play ignores running play state",
+    "Initial overlay Play button has no click handler"
+  ],
+  "additionalDefects": [
+    "Mouse movement never moves paddle despite UI claim; keyboard and touch paths exist",
+    "Game Over Editor overlay callback does not hide overlay",
+    "Clearing all bricks starts another level without rebuilding bricks or ending game"
+  ],
+  "verificationConcerns": [
+    "Agent's checks did not exercise its actual JSON round trip"
+  ],
+  "scopeCompliance": "No out-of-directory file writes found on initial log review",
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "elapsedMinutes": 4.6,
+  "wallMinutes": 4.74,
+  "promptWords": 47,
+  "toolCalls": 10,
+  "toolResultsMarkedError": 2,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "modelUsageReported": {
+    "input": 20946,
+    "output": 12407,
+    "cacheRead": 183429,
+    "totalTokens": 216782
+  },
+  "peakReportedPromptTokens": 20906,
+  "assistantTextContainingToolCallMarkup": 0,
+  "artifactBytes": 27205,
+  "sha256": "8dfd279dd8b0965bb49d7df2217bb99e3027b76503be0154d72a141968acd883",
+  "billionContext": {
+    "loadedConfirmed": true,
+    "sessionId": "01a1dbb0-6a02-73fe-b4b5-d9733e97d5dc",
+    "extensionVersion": "0.1.213",
+    "stats": {
+      "requests": 11,
+      "tokensSaved": 0,
+      "inputTokens": 204375,
+      "cachedTokens": 183429,
+      "outputTokens": 12407,
+      "cacheSamples": 11,
+      "lastInputTokens": 20906,
+      "compressCreditTokens": 0,
+      "contextTokens": 20906,
+      "retrieveCalls": 0,
+      "retrieveHits": 0,
+      "retrieveMisses": 0,
+      "retrieveDropped": 0,
+      "retrieveDelivered": 0,
+      "storedBytes": 0,
+      "storeBytesSaved": 0,
+      "rangeRestores": 0,
+      "contextTokensSource": "usage",
+      "localInputEstimate": 48753,
+      "contextEstimateTokens": 20765,
+      "contextEstimateCalibrated": true,
+      "lastUsageGradeTokens": 20906,
+      "lastUsagePayloadUpper": 48753,
+      "lastInputTokensSource": "usage",
+      "lastInputTokensOrigin": "http://127.0.0.1:11435",
+      "calibrationRing": {
+        "origin": "http://127.0.0.1:11435",
+        "model": "ornith-1.5:35b-256k",
+        "values": [
+          1.1143074250976988,
+          1.1179329337437227,
+          1.1216868762742784
+        ]
+      },
+      "calibratedEstimate": 1.1179757450385666,
+      "calibratedEstimateOrigin": "http://127.0.0.1:11435",
+      "calibratedEstimateModel": "ornith-1.5:35b-256k"
+    },
+    "compressionStats": {
+      "tokensCompressed": 0,
+      "compressionCount": 0,
+      "absorbedTokens": 0,
+      "storedCount": 0,
+      "retrievalCount": 0
+    },
+    "blocks": 0
+  },
+  "limitations": [
+    "No independent real-browser/visual testing; prior browser-origin denial honored.",
+    "Single run per task; differences do not isolate extension effect from sampling variability."
+  ]
+}

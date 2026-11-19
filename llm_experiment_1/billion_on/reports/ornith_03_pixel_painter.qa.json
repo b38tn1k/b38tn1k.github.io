@@ -1,0 +1,52 @@
+{
+  "method": "Exact-source VM with ImageData size validation and minimal Canvas model; no browser/PNG encoding",
+  "click": [
+    255,
+    0,
+    0,
+    255
+  ],
+  "diagonalCorner": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "undo2": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "redo2": [
+    255,
+    0,
+    0,
+    255
+  ],
+  "undoAfterRedo": [
+    255,
+    0,
+    0,
+    255
+  ],
+  "eraser": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "clear": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "resize": {
+    "cols": 8,
+    "rows": 10,
+    "undos": 4,
+    "redos": 0
+  },
+  "undoResizeError": "IndexSizeError: ImageData length does not match dimensions"
+}

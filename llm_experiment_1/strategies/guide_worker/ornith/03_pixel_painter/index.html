@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pixel Painter</title>
+<style>
+  :root {
+    --bg: #1a1a1d;
+    --panel: #26262b;
+    --panel-2: #2f2f36;
+    --border: #45454e;
+    --text: #f4f4f5;
+    --muted: #a8a8b0;
+    --accent: #4cc9f0;
+    --accent-dark: #2b9db8;
+    --danger: #f05459;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .app {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 4px 0 12px;
+    letter-spacing: 0.5px;
+  }
+  h1 span { color: var(--accent); }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    padding-right: 12px;
+    border-right: 1px solid var(--border);
+  }
+  .group:last-child { border-right: none; }
+
+  .group-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    width: 100%;
+    margin-bottom: 2px;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s, transform 0.05s;
+  }
+  button:hover { background: #3a3a42; }
+  button:active { transform: translateY(1px); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  button.tool.active {
+    background: var(--accent-dark);
+    border-color: var(--accent);
+    color: #06121a;
+  }
+  button.danger:hover { border-color: var(--danger); color: #ffd7d8; }
+
+  .swatch-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .current-color {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    background: #000000;
+    cursor: pointer;
+    flex: none;
+  }
+
+  .color-picker-wrap {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+    cursor: pointer;
+  }
+  .color-picker-wrap input[type="color"] {
+    position: absolute;
+    inset: -10px;
+    width: 60px;
+    height: 60px;
+    border: none;
+    cursor: pointer;
+    background: none;
+  }
+
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+    width: 240px;
+  }
+  .palette button {
+    padding: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 5px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background-clip: content-box;
+    background-color: #000;
+    cursor: pointer;
+    transition: transform 0.08s;
+  }
+  .palette button:hover { transform: scale(1.15); }
+  .palette button.active {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .size-inputs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .size-inputs input[type="number"] {
+    width: 58px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 6px;
+  }
+  .size-inputs span { color: var(--muted); font-size: 13px; }
+
+  .canvas-wrap {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .stage {
+    position: relative;
+    line-height: 0;
+  }
+
+  #displayCanvas, #gridOverlay {
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    border-radius: 4px;
+    touch-action: none;
+  }
+  #gridOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+
+  .hint {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .palette { width: 100%; }
+    .group { border-right: none; width: 100%; padding-right: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Pixel <span>Painter</span></h1>
+
+  <div class="toolbar">
+    <div class="group" id="toolGroup">
+      <div class="group-label">Tools</div>
+      <button id="toolBrush" class="tool active">🖌 Brush</button>
+      <button id="toolEraser" class="tool">🧽 Eraser</button>
+    </div>
+
+    <div class="group" id="colorGroup">
+      <div class="group-label">Color</div>
+      <div class="swatch-row">
+        <div id="currentSwatch" class="current-color" title="Click to pick color"></div>
+        <div class="color-picker-wrap" title="Pick custom color">
+          <input type="color" id="colorPicker" value="#000000">
+        </div>
+        <div id="palette" class="palette"></div>
+      </div>
+    </div>
+
+    <div class="group" id="canvasGroup">
+      <div class="group-label">Canvas Size (px)</div>
+      <div class="size-inputs">
+        <input type="number" id="widthInput" min="1" max="512" value="16">
+        <span>x</span>
+        <input type="number" id="heightInput" min="1" max="512" value="16">
+        <button id="applySize">Apply</button>
+      </div>
+    </div>
+
+    <div class="group" id="historyGroup">
+      <div class="group-label">History</div>
+      <button id="undoBtn">↶ Undo</button>
+      <button id="redoBtn">↷ Redo</button>
+      <button id="clearBtn" class="danger">🗑 Clear</button>
+    </div>
+
+    <div class="group" id="exportGroup">
+      <div class="group-label">Export</div>
+      <button id="exportBtn">⬇ Export PNG</button>
+    </div>
+  </div>
+
+  <div class="canvas-wrap">
+    <div class="stage" id="stage">
+      <canvas id="displayCanvas"></canvas>
+      <canvas id="gridOverlay"></canvas>
+    </div>
+  </div>
+
+  <div class="hint">
+    Click or drag to paint. Use the brush to draw and the eraser to remove pixels. Everything runs offline in your browser.
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- Config ----
+  var GRID_W = 16;
+  var GRID_H = 16;
+  var DISPLAY_SCALE = 24; // pixels per cell on screen
+  var MAX_HISTORY = 60;
+
+  // ---- Preset palette ----
+  var PALETTE = [
+    "#000000", "#1d2b53", "#7e2571", "#008751",
+    "#ab5236", "#ff5f8f", "#ff5c00", "#ffd600",
+    "#8ce000", "#00e23f", "#00e5ff", "#0f5fff",
+    "#ffffff", "#9aa0a6", "#8a6d3b", "#4a2f1a"
+  ];
+
+  // ---- DOM ----
+  var displayCanvas = document.getElementById("displayCanvas");
+  var gridOverlay = document.getElementById("gridOverlay");
+  var stage = document.getElementById("stage");
+  var ctx = displayCanvas.getContext("2d");
+  var gridCtx = gridOverlay.getContext("2d");
+
+  var widthInput = document.getElementById("widthInput");
+  var heightInput = document.getElementById("heightInput");
+  var applySizeBtn = document.getElementById("applySize");
+  var toolBrush = document.getElementById("toolBrush");
+  var toolEraser = document.getElementById("toolEraser");
+  var currentSwatch = document.getElementById("currentSwatch");
+  var colorPicker = document.getElementById("colorPicker");
+  var paletteEl = document.getElementById("palette");
+  var undoBtn = document.getElementById("undoBtn");
+  var redoBtn = document.getElementById("redoBtn");
+  var clearBtn = document.getElementById("clearBtn");
+  var exportBtn = document.getElementById("exportBtn");
+
+  // ---- Pixel buffer (offscreen) ----
+  var buffer = document.createElement("canvas");
+  var bufferCtx = buffer.getContext("2d");
+
+  // ---- State ----
+  var currentColor = "#000000";
+  var tool = "brush"; // "brush" | "eraser"
+  var isDrawing = false;
+  var lastCell = null;
+  var history = [];
+  var historyIndex = -1;
+
+  function makeRGBA(hex, alpha) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    return [r, g, b, alpha];
+  }
+
+  function currentPixelRGBA() {
+    if (tool === "eraser") return makeRGBA("#000000", 0);
+    return makeRGBA(currentColor, 255);
+  }
+
+  function resizeBuffer(w, h) {
+    GRID_W = w;
+    GRID_H = h;
+    buffer.width = w;
+    buffer.height = h;
+    // Fill transparent
+    var img = bufferCtx.createImageData(w, h);
+    for (var i = 3; i < img.data.length; i += 4) img.data[i] = 0;
+    bufferCtx.putImageData(img, 0, 0);
+  }
+
+  function renderScaled() {
+    displayCanvas.width = GRID_W;
+    displayCanvas.height = GRID_H;
+    displayCanvas.style.width = (GRID_W * DISPLAY_SCALE) + "px";
+    displayCanvas.style.height = (GRID_H * DISPLAY_SCALE) + "px";
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0, 0, GRID_W, GRID_H);
+    ctx.drawImage(buffer, 0, 0, GRID_W, GRID_H);
+    renderGrid();
+  }
+
+  function renderGrid() {
+    gridOverlay.width = GRID_W * DISPLAY_SCALE;
+    gridOverlay.height = GRID_H * DISPLAY_SCALE;
+    gridOverlay.style.width = gridOverlay.width + "px";
+    gridOverlay.style.height = gridOverlay.height + "px";
+    gridCtx.clearRect(0, 0, gridOverlay.width, gridOverlay.height);
+    gridCtx.strokeStyle = "rgba(255,255,255,0.10)";
+    gridCtx.lineWidth = 1;
+    gridCtx.beginPath();
+    for (var x = 1; x < GRID_W; x++) {
+      gridCtx.moveTo(x * DISPLAY_SCALE + 0.5, 0);
+      gridCtx.lineTo(x * DISPLAY_SCALE + 0.5, GRID_H * DISPLAY_SCALE);
+    }
+    for (var y = 1; y < GRID_H; y++) {
+      gridCtx.moveTo(0, y * DISPLAY_SCALE + 0.5);
+      gridCtx.lineTo(GRID_W * DISPLAY_SCALE, y * DISPLAY_SCALE + 0.5);
+    }
+    gridCtx.stroke();
+    // border
+    gridCtx.strokeStyle = "rgba(0,0,0,0.5)";
+    gridCtx.strokeRect(0.5, 0.5, GRID_W * DISPLAY_SCALE - 1, GRID_H * DISPLAY_SCALE - 1);
+  }
+
+  // ---- History ----
+  function pushSnapshot() {
+    // Drop any redo entries beyond current index
+    if (historyIndex < history.length - 1) {
+      history = history.slice(0, historyIndex + 1);
+    }
+    var snap = bufferCtx.createImageData(GRID_W, GRID_H);
+    snap.data.set(bufferCtx.getImageData(0, 0, GRID_W, GRID_H).data);
+    history.push(snap);
+    if (history.length > MAX_HISTORY) {
+      history.shift();
+    }
+    historyIndex = history.length - 1;
+    updateHistoryButtons();
+  }
+
+  function restoreSnapshot(snap) {
+    // Resize buffer if the snapshot has different dimensions
+    if (snap.width !== GRID_W || snap.height !== GRID_H) {
+      resizeBuffer(snap.width, snap.height);
+      widthInput.value = snap.width;
+      heightInput.value = snap.height;
+    }
+    bufferCtx.putImageData(snap, 0, 0);
+    renderScaled();
+  }
+
+  function undo() {
+    if (historyIndex > 0) {
+      historyIndex--;
+      restoreSnapshot(history[historyIndex]);
+      updateHistoryButtons();
+    }
+  }
+
+  function redo() {
+    if (historyIndex < history.length - 1) {
+      historyIndex++;
+      restoreSnapshot(history[historyIndex]);
+      updateHistoryButtons();
+    }
+  }
+
+  function updateHistoryButtons() {
+    undoBtn.disabled = historyIndex <= 0;
+    redoBtn.disabled = historyIndex >= history.length - 1;
+  }
+
+  // ---- Drawing ----
+  function cellFromEvent(e) {
+    var rect = displayCanvas.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width * GRID_W;
+    var y = (e.clientY - rect.top) / rect.height * GRID_H;
+    var cx = Math.floor(x);
+    var cy = Math.floor(y);
+    if (cx < 0 || cy < 0 || cx >= GRID_W || cy >= GRID_H) return null;
+    return { x: cx, y: cy };
+  }
+
+  function setPixel(cx, cy) {
+    var rgb = currentPixelRGBA();
+    bufferCtx.globalCompositeOperation = "source-over";
+    if (rgb[3] === 0) {
+      bufferCtx.globalCompositeOperation = "destination-out";
+    }
+    bufferCtx.fillStyle = "rgba(0,0,0,1)";
+    bufferCtx.fillRect(cx, cy, 1, 1);
+    bufferCtx.globalCompositeOperation = "source-over";
+  }
+
+  function drawLine(c0, c1) {
+    var dx = Math.abs(c1.x - c0.x);
+    var dy = Math.abs(c1.y - c0.y);
+    var sx = c0.x < c1.x ? 1 : -1;
+    var sy = c0.y < c1.y ? 1 : -1;
+    var err = dx - dy;
+    var cur = { x: c0.x, y: c0.y };
+    while (true) {
+      setPixel(cur.x, cur.y);
+      if (cur.x === c1.x && cur.y === c1.y) break;
+      var e2 = 2 * err;
+      if (e2 > -dx) { err -= dy; cur.x += sx; }
+      if (e2 < dy) { err += dx; cur.y += sy; }
+    }
+  }
+
+  function pointerDown(e) {
+    e.preventDefault();
+    stage.setPointerCapture(e.pointerId);
+    isDrawing = true;
+    var cell = cellFromEvent(e);
+    if (cell) {
+      pushSnapshot();
+      setPixel(cell.x, cell.y);
+      lastCell = cell;
+      renderScaled();
+    }
+  }
+
+  function pointerMove(e) {
+    if (!isDrawing) return;
+    e.preventDefault();
+    var cell = cellFromEvent(e);
+    if (cell) {
+      if (lastCell && (cell.x !== lastCell.x || cell.y !== lastCell.y)) {
+        drawLine(lastCell, cell);
+      } else {
+        setPixel(cell.x, cell.y);
+      }
+      lastCell = cell;
+      renderScaled();
+    }
+  }
+
+  function pointerUp(e) {
+    if (!isDrawing) return;
+    isDrawing = false;
+    lastCell = null;
+    try { stage.releasePointerCapture(e.pointerId); } catch (err) {}
+  }
+
+  function resetHistory() {
+    history = [];
+    historyIndex = -1;
+    pushSnapshot();
+    updateHistoryButtons();
+  }
+
+  // ---- UI building ----
+  function buildPalette() {
+    paletteEl.innerHTML = "";
+    PALETTE.forEach(function (hex) {
+      var btn = document.createElement("button");
+      btn.style.backgroundColor = hex;
+      btn.title = hex;
+      btn.addEventListener("click", function () {
+        setCurrentColor(hex);
+      });
+      paletteEl.appendChild(btn);
+    });
+  }
+
+  function setCurrentColor(hex) {
+    currentColor = hex;
+    currentSwatch.style.backgroundColor = hex;
+    colorPicker.value = hex;
+    // clear active states
+    [].forEach.call(paletteEl.children, function (c) { c.classList.remove("active"); });
+    // mark palette match if it's a preset
+    PALETTE.forEach(function (h, idx) {
+      if (h.toLowerCase() === hex.toLowerCase()) {
+        paletteEl.children[idx].classList.add("active");
+      }
+    });
+    if (tool === "eraser") setTool("brush");
+  }
+
+  function setTool(t) {
+    tool = t;
+    toolBrush.classList.toggle("active", t === "brush");
+    toolEraser.classList.toggle("active", t === "eraser");
+    if (t === "eraser") {
+      colorPicker.disabled = true;
+      [].forEach.call(paletteEl.children, function (c) { c.style.opacity = "0.35"; });
+      currentSwatch.style.opacity = "0.5";
+    } else {
+      colorPicker.disabled = false;
+      [].forEach.call(paletteEl.children, function (c) { c.style.opacity = "1"; });
+      currentSwatch.style.opacity = "1";
+    }
+  }
+
+  function applyCanvasSize() {
+    var w = parseInt(widthInput.value, 10);
+    var h = parseInt(heightInput.value, 10);
+    if (isNaN(w) || isNaN(h) || w < 1 || h < 1) return;
+    w = Math.min(w, 512);
+    h = Math.min(h, 512);
+    if (w === GRID_W && h === GRID_H) return;
+
+    var msg = "Change canvas size from " + GRID_W + "x" + GRID_H +
+      " to " + w + "x" + h +
+      "\n\nThis clears the current artwork. Continue?";
+    if (window.confirm(msg)) {
+      resizeBuffer(w, h);
+      renderScaled();
+      resetHistory();
+    }
+    // On cancel, keep original dimensions
+  }
+
+  function clearCanvas() {
+    if (window.confirm("Clear the entire canvas?")) {
+      var img = bufferCtx.createImageData(GRID_W, GRID_H);
+      for (var i = 3; i < img.data.length; i += 4) img.data[i] = 0;
+      bufferCtx.putImageData(img, 0, 0);
+      renderScaled();
+      pushSnapshot();
+    }
+  }
+
+  function exportPNG() {
+    var offscreen = document.createElement("canvas");
+    offscreen.width = GRID_W;
+    offscreen.height = GRID_H;
+    var octx = offscreen.getContext("2d");
+    octx.drawImage(buffer, 0, 0, GRID_W, GRID_H);
+    try {
+      var dataURL = offscreen.toDataURL("image/png");
+      var a = document.createElement("a");
+      a.href = dataURL;
+      a.download = "pixel-art.png";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (err) {
+      alert("Export failed: " + err.message);
+    }
+  }
+
+  // ---- Wire up events ----
+  toolBrush.addEventListener("click", function () { setTool("brush"); });
+  toolEraser.addEventListener("click", function () { setTool("eraser"); });
+  currentSwatch.addEventListener("click", function () { colorPicker.click(); });
+  colorPicker.addEventListener("input", function () { setCurrentColor(colorPicker.value); });
+  applySizeBtn.addEventListener("click", applyCanvasSize);
+  undoBtn.addEventListener("click", undo);
+  redoBtn.addEventListener("click", redo);
+  clearBtn.addEventListener("click", clearCanvas);
+  exportBtn.addEventListener("click", exportPNG);
+
+  displayCanvas.addEventListener("pointerdown", pointerDown);
+  displayCanvas.addEventListener("pointermove", pointerMove);
+  displayCanvas.addEventListener("pointerup", pointerUp);
+  displayCanvas.addEventListener("pointercancel", pointerUp);
+  displayCanvas.addEventListener("pointerleave", function () {
+    if (isDrawing) { pointerUp({ pointerId: -1 }); }
+  });
+
+  // Prevent context menu on long-press (touch)
+  displayCanvas.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+
+  // Keyboard shortcuts
+  document.addEventListener("keydown", function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+      e.preventDefault();
+      if (e.shiftKey) { redo(); } else { undo(); }
+    } else if ((e.ctrlKey || e.metaKey) && e.key === "y") {
+      e.preventDefault();
+      redo();
+    } else if (e.key === "b") { setTool("brush"); }
+    else if (e.key === "e") { setTool("eraser"); }
+  });
+
+  // ---- Init ----
+  buildPalette();
+  setCurrentColor("#000000");
+  setTool("brush");
+  resizeBuffer(GRID_W, GRID_H);
+  renderScaled();
+  resetHistory();
+})();
+</script>
+</body>
+</html>

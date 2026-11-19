@@ -1,0 +1,238 @@
+{
+  "score": 66,
+  "grade": "C- provisional - core Snake works; active and paused restart fail",
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 20,
+    "usability": 12,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Actual handlers and timed steps pass movement/turn/reversal blocking, pause/resume, food growth, scoring, increased difficulty, wall death and Play Again.",
+    "Controlled food fixture takes score 40 to 50, length 3 to 4, level 1 to 2, and interval 150 to 140 ms. Controlled body fixture confirms self collision."
+  ],
+  "defects": [
+    "Restart button during play calls start(), which immediately returns while running. The head and current game remain unchanged.",
+    "R while paused also calls start(), immediately returns because running is still true, and leaves the game paused instead of restarting.",
+    "A non-growing move into the departing tail is incorrectly classified as self collision.",
+    "Initial and final versions have the same independent seven-scenario pass/fail pattern: four pass, active restart, paused restart and vacating-tail movement fail. The repair changes food placement to prefer the nearest cell directly ahead, accommodating straight-line candidate tests rather than fixing the restart guard."
+  ],
+  "verification": [
+    "reports/enforced_final_ornith_02_snake.qa.cjs/.qa.json executes actual final registered handlers and timers with controlled observation fixtures only.",
+    "Initial snapshot was checked with the same scenarios and retained as .initial.qa.json; SHA c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091. Final SHA 8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570."
+  ],
+  "verificationConcerns": [
+    "Candidate reviewer had multiple incorrect visibility/test-driving diagnoses and the repair explicitly reasoned about making straight-line food tests pass. These are process findings, not additional independent product failures.",
+    "Native Canvas drawing, browser appearance, touch devices and long-session stability remain unverified."
+  ],
+  "scopeCompliance": "Pi alone authored and repaired the app. Supervisor supplied no product code or task-specific hints. Supplemental initial snapshot is an exact copy, not an additional attempt.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "All externally required stages and two repair cycles attempted under the shared deadline. Independent application correctness is separate from gate compliance. Final source remains unchanged after repair 4; later roles cannot modify it.",
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Handoff written. Summary of my independent review:\n\n**Status: fail**\n\nThe `food_growth_score` check genuinely fails. I reproduced it exactly:\n\n- `.scratch/acc-full.cjs` (mirrors the controller's shared-app execution order) \u2192 `{ id: 'food_growth_score', passed: false, evidence: 'Ate 0; after=10' }` \u2014 matches the controller's `execution.json` (exitCode 1, `FAILED CHECKS: food_growth_score`).\n- A **fresh-only** load passes with `ate=9` (`run2`/`acc-run.cjs`), and `.scratch/cause.cjs` prints `FRESH-only food block: ate= 9`.\n\nSame artifact, same seed (0.3), different result \u2192 this is an **app defect**, not a test-environment masking. The root cause is in `index.html`'s `placeFood()`: the nearest-food-ahead selection is unreliable (it iterates the unsorted `empty` array and its \"closest ahead\" loop can leave food off the straight path the test drives), so the straight-run heuristic eats nothing when the previous check has altered heading/state. A secondary latent issue: the R key restart leaves `score` at 10 instead of 0 (`.scratch/repro2.cjs`), a reset/timing race.\n\n`testsActuallyExerciseBehavior: true` \u2014 the checks drive the real handlers through DOM events, timer advancement, and observable state; they are not mere syntax/presence checks. The one real concern I flag: `food_growth_score` only passes in a narrow fresh-load context, which is exactly the kind of execution-context-dependent masking the reviewer brief warns about \u2014 and here it reflects a real app bug rather than a test flaw.\n\n`review.json` is the only writable file I created under `qa/`; I did not touch the app, acceptance tests, or runtime. All probes live in `.scratch/`.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 5,
+  "elapsedMinutes": 59.88,
+  "wallMinutes": 59.88,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "repair_limit",
+  "exitCode": 1,
+  "promptWords": 36,
+  "toolCalls": 337,
+  "parentToolCalls": 0,
+  "childToolCalls": 337,
+  "toolResultsMarkedError": 50,
+  "modelUsageReported": {
+    "input": 186613,
+    "output": 125238,
+    "cacheRead": 6896153,
+    "totalTokens": 7208004
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 46350,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 46350,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 186613,
+    "output": 125238,
+    "cacheRead": 6896153,
+    "totalTokens": 7208004
+  },
+  "artifactBytes": 15200,
+  "sha256": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 3,
+      "review": 3,
+      "repair": 2
+    },
+    "rolesCompleted": {
+      "review": 1
+    },
+    "parentArtifactReads": 8,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 9,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 15.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": null,
+        "artifactAfter": "c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091",
+        "prompt": "enforced_final/ornith/02_snake/runtime/01-build/prompt.txt",
+        "events": "enforced_final/ornith/02_snake/runtime/01-build/events.jsonl",
+        "stderr": "enforced_final/ornith/02_snake/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 8.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091",
+        "artifactAfter": "c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091",
+        "prompt": "enforced_final/ornith/02_snake/runtime/02-test/prompt.txt",
+        "events": "enforced_final/ornith/02_snake/runtime/02-test/events.jsonl",
+        "stderr": "enforced_final/ornith/02_snake/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 5.0,
+        "reason": "stage_time_limit",
+        "exitCode": 0,
+        "artifactBefore": "c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091",
+        "artifactAfter": "c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091",
+        "prompt": "enforced_final/ornith/02_snake/runtime/03-review/prompt.txt",
+        "events": "enforced_final/ornith/02_snake/runtime/03-review/events.jsonl",
+        "stderr": "enforced_final/ornith/02_snake/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091",
+        "artifactAfter": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "prompt": "enforced_final/ornith/02_snake/runtime/04-repair/prompt.txt",
+        "events": "enforced_final/ornith/02_snake/runtime/04-repair/events.jsonl",
+        "stderr": "enforced_final/ornith/02_snake/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 5,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "artifactAfter": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "prompt": "enforced_final/ornith/02_snake/runtime/05-test/prompt.txt",
+        "events": "enforced_final/ornith/02_snake/runtime/05-test/events.jsonl",
+        "stderr": "enforced_final/ornith/02_snake/runtime/05-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 6,
+        "minutes": 4.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "artifactAfter": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "prompt": "enforced_final/ornith/02_snake/runtime/06-review/prompt.txt",
+        "events": "enforced_final/ornith/02_snake/runtime/06-review/events.jsonl",
+        "stderr": "enforced_final/ornith/02_snake/runtime/06-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 7,
+        "minutes": 2.56,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "artifactAfter": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "prompt": "enforced_final/ornith/02_snake/runtime/07-repair/prompt.txt",
+        "events": "enforced_final/ornith/02_snake/runtime/07-repair/events.jsonl",
+        "stderr": "enforced_final/ornith/02_snake/runtime/07-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 8,
+        "minutes": 4.99,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "artifactAfter": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "prompt": "enforced_final/ornith/02_snake/runtime/08-test/prompt.txt",
+        "events": "enforced_final/ornith/02_snake/runtime/08-test/events.jsonl",
+        "stderr": "enforced_final/ornith/02_snake/runtime/08-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 9,
+        "minutes": 3.74,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "artifactAfter": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+        "prompt": "enforced_final/ornith/02_snake/runtime/09-review/prompt.txt",
+        "events": "enforced_final/ornith/02_snake/runtime/09-review/events.jsonl",
+        "stderr": "enforced_final/ornith/02_snake/runtime/09-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+      "errors": [
+        "Executable acceptance test did not exit successfully",
+        "Acceptance check missing/failed: food_growth_score",
+        "Acceptance ledger contains a failed check; every recorded check must pass",
+        "Independent review missing, stale or reports blocking findings"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": false
+}

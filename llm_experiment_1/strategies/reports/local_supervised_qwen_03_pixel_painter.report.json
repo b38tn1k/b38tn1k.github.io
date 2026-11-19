@@ -1,0 +1,740 @@
+{
+  "sha256": "a70b91eb7df63ed68b712a38e8a698be6f4f3319b1c677eb5250f43717345549",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 14,
+    "self_verification": 6,
+    "autonomy": 10
+  },
+  "blockingRequiredDefect": false,
+  "score": 95,
+  "grade": "A - Undo/Redo repaired; product98.8, verified early stop",
+  "summary": "History repair passes actual nativeCanvas Undo/Redo/Clear-Undo and branch tests; palette, brush/eraser, touch history and decoded48x24PNG export pass.",
+  "strengths": [
+    "Actual brush, eraser and clear alter nativeCanvas pixels correctly.",
+    "Two-stroke Undo/Redo, Clear-Undo and Undo-then-new-stroke history branching preserve the expected pixels.",
+    "Mouse/touch stroke history and palette controls work; actual downloadedPNG decodes to48x24 with the expected lower-right green pixel.",
+    "Supervisor corrects its initial all-clear by inspecting actual history behavior and source; worker makes the small history-index repair."
+  ],
+  "defects": [
+    "Minor nonblocking accessibility: history controls use opacity rather than a semantic disabled state at history bounds."
+  ],
+  "verification": [
+    "Independent source-hashed VM/DOM/nativeCanvas actual controls and correctly scaled event coordinates; pixels observed after each operation, no algorithm replacements.",
+    "Real encodedPNG signature/dimensions, anchor download bytes, independent nativePNGdecode and actual pixel value checked.",
+    "Worker change is confined to saveHistory index advancement and explanatory comments."
+  ],
+  "verificationConcerns": [
+    "Local supervisor DOM/canvas stubs initially produced an all-clear. It later identifies the real history-index defect through actual handler/status behavior and algorithm tracing; model verification does not establish actualPNG bytes or full pixel correctness.",
+    "Browser layout/hit testing, native touch hardware and visual polish remain outside independent verification."
+  ],
+  "scopeCompliance": "Only local worker authored product edits in its own copied app. Supervisor used read-only snapshots and its own scratch; Codex supplied no app diagnosis, code or repair guidance.",
+  "workflowNotes": "One counted local feedback; independent A-product stop after19.878pair wall minutes and22.915summed model active minutes. Same native worker/supervisor contexts and original deadline; no human app steering. Joint autonomy eligible10.",
+  "humanOrSupervisorSteering": 0,
+  "title": "Pixel painter",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "local_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Here's a summary of the fix:\n\n**Defect:** In `saveHistory()`, after `history.push(imageData)` the `historyIndex` was never advanced to point at the newly saved frame. Since the initial `historyIndex = -1` and no increment occurred, subsequent calls left `historyIndex` frozen at `0`. This made undo a NO-OP (because `undo()` checks `if (historyIndex <= 0)` and `historyIndex` stayed at `0`) and caused the status bar to report wrong counts (`1/2`, `1/2` instead of `1/1`, `2/2`).\n\n**Fix:** Added `historyIndex = history.length;` immediately before `history.push(imageData)`. This sets the index to point at the new last element (since `push` appends at position `length`, and after the push, that element is at index `length - 1`... wait \u2014 let me double-check one more time).\n\nActually, re-examining: `historyIndex = history.length` is set *before* the push. If `history.length` was 2 (indices 0,1), then `historyIndex = 2`, and after `push()` the array has 3 elements at indices 0, 1, **2** \u2014 which matches! \u2705\n\nAfter any trimming by the `shift()` loop, the index is adjusted down accordingly. The fallback branch handles edge cases where the index might still land on an invalid position.",
+  "workflowInstructions": "local-supervised-rescue-plan.json; run-local-supervised.py",
+  "workflowProtocolRevision": 3,
+  "elapsedMinutes": 19.878,
+  "wallMinutes": 19.878,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "independently_verified_A_product",
+  "exitCode": 0,
+  "promptWords": 40,
+  "toolCalls": 106,
+  "parentToolCalls": 23,
+  "childToolCalls": 83,
+  "toolResultsMarkedError": 17,
+  "modelUsageReported": {
+    "input": 44801,
+    "output": 36164,
+    "cacheRead": 3233149,
+    "totalTokens": 3314114
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 65086,
+  "parentPeakReportedPromptTokens": 10972,
+  "childPeakReportedPromptTokens": 65086,
+  "parentModelUsage": {
+    "input": 11064,
+    "output": 3960,
+    "cacheRead": 126451,
+    "totalTokens": 141475
+  },
+  "childModelUsage": {
+    "input": 33737,
+    "output": 32204,
+    "cacheRead": 3106698,
+    "totalTokens": 3172639
+  },
+  "artifactBytes": 35411,
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 6,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "qwen3.6:35b-a3b",
+    "supervisorModel": "ornith-1.5:35b-256k",
+    "feedbackCount": 1,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "feedback1-1795004093-343",
+        "message": "DEFECT: undo/redo history index never advances after saving a new state (undo is effectively broken).\n\nEVIDENCE (behavioral, run in a Node vm against the shipped artifact .observed/current/index.html, hash verified 2fc29e49...04705d7):\n- Page loads with no runtime errors; palette, canvas, and all toolbar handlers wire up.\n- Simulate a single action (btn \"Clear\" runs clearCanvas(true) + saveHistory()).\n- After the 1st action the status bar shows \"History: 1/2\" instead of 1/1.\n- After the 2nd action it still shows \"History: 1/2\" instead of 2/3.\n- Pressing Undo leaves the status unchanged (\"History: 1/2\") -> Undo is a NO-OP.\n- Redo then jumps to \"History: 2/2\".\n\nROOT CAUSE (in saveHistory(), index ~line 873 of index.html):\n  history.push(imageData);\n  while (history.length > MAX_HISTORY) { history.shift(); ... }\n  if (!history[historyIndex]) { historyIndex = history.length > 0 ? history.length - 1 : -1; }\nThe push grows the array but historyIndex is NEVER incremented to point at the newly saved frame. history[oldIndex] still exists, so the correction branch never fires. Only the very first saveHistory (starting historyIndex=-1) lands correctly via the fallback. From the 2nd action on, the index is frozen.\n\nEXPECTED OUTCOME:\n- historyIndex must be set to history.length - 1 immediately after push (the new frame IS the current state).\n- After any single action the counter should be 1/1 (first) then 2/2 (second), etc.\n- Undo must revert the just-performed action; it must NOT be a no-op after an action.\n- Redo must be disabled at the top of history; undo disabled only at the oldest frame.\n\nWHY THIS MATTERS: undo/redo is a required feature of the brief and is currently broken for the normal case (draw an action, then undo does nothing). The status counter is also wrong.\n\nNOTE (preserve good behavior): brush/eraser stroke rendering, Bresenham line drawing, coordinate scaling under zoom, touch handlers, and PNG export (dataURL generation + anchor click) all behave correctly and should NOT be changed. This is the one functional defect found so far.\n",
+        "reason": "Verified via Node-vm simulation against hash-verified artifact: saveHistory() never increments historyIndex after push, making Undo a no-op and the history counter wrong. Requires a fix to the undo/redo stack.",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T12:14:53.855888+00:00",
+        "acceptedUTC": "2026-11-18T12:14:53.855903+00:00",
+        "elapsedSeconds": 970.504,
+        "workerPID": 57581,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T12:14:53.880050+00:00",
+        "deliveredElapsedSeconds": 970.504
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-18T12:17:56.158783+00:00",
+        "sha256": "a70b91eb7df63ed68b712a38e8a698be6f4f3319b1c677eb5250f43717345549",
+        "snapshot": "strategies/reports/local-supervised-rounds/case103/feedback1"
+      }
+    ],
+    "supervisorWakeups": [
+      {
+        "at": "2026-11-18T12:16:20.935830+00:00",
+        "elapsedSeconds": 1057.58,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T12:18:14.505526+00:00",
+        "elapsedSeconds": 1171.15,
+        "source": "worker_progress_or_clock_metadata"
+      }
+    ],
+    "supervisorYields": [],
+    "supervisorStopRequest": null,
+    "independentGradeGates": [
+      {
+        "at": "2026-11-18T12:18:35.928844+00:00",
+        "sha256": "a70b91eb7df63ed68b712a38e8a698be6f4f3319b1c677eb5250f43717345549",
+        "productScore": 98.75,
+        "blockingRequiredDefect": false,
+        "qa": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/reports/local_supervised_qwen_03_pixel_painter.round1.qa.json",
+        "assessment": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/runtime/local-supervised-case103-round1-product-assessment.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "id": "qwen-guide_worker-3",
+      "mode": "guide_worker",
+      "configurationMean": 70.8,
+      "source": "strategies/guide_worker/qwen/03_pixel_painter/index.html",
+      "report": "strategies/reports/guide_worker_qwen_03_pixel_painter.report.json",
+      "sha256": "2fc29e49c54349c33be2f0b95f401deaae31ddfc9dd4ed90308e98d3e04705d7",
+      "score": 69,
+      "grade": "C- provisional - Painting and export dispatch work; undo history never advances",
+      "rubricScores": {
+        "functionality": 27,
+        "artifact_correctness": 19,
+        "usability": 10,
+        "self_verification": 3,
+        "autonomy": 10
+      },
+      "baselineScope": "OS write boundary active. No successful out-of-tree write observed.",
+      "baselineSteering": 0,
+      "baselineMinutes": 7.73,
+      "baselineActiveMinutes": 7.73,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_qwen_03_pixel_painter/index.html"
+    },
+    "sharedLimitSeconds": 7200
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Local supervisor/worker rescue of the exact original operator pre-seed with a120-minute shared wall. Codex independently validates outputs but supplies no repair diagnoses/code; product quality is separately normalized from80points. Pair wall and summed concurrent model activity differ. Superseded review-only work and prior human-rescue costs are separate."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 1,
+  "localModelCosts": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 57581,
+      "assistantUsage": {
+        "input": 11064,
+        "output": 3960,
+        "cacheRead": 126451,
+        "cacheWrite": 0,
+        "totalTokens": 141475
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 11064,
+        "output": 3960,
+        "cacheRead": 126451,
+        "cacheWrite": 0,
+        "totalTokens": 141475
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 3.038,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1152719.13785675,
+          "end": 1152723.5669825
+        },
+        {
+          "start": 1152726.471896458,
+          "end": 1152726.477637333
+        },
+        {
+          "start": 1152729.305189083,
+          "end": 1152729.404811
+        },
+        {
+          "start": 1152732.19096425,
+          "end": 1152732.288152041
+        },
+        {
+          "start": 1152734.227009041,
+          "end": 1152734.229221041
+        },
+        {
+          "start": 1152736.589247291,
+          "end": 1152736.595913458
+        },
+        {
+          "start": 1152737.392181083,
+          "end": 1152737.397840166
+        },
+        {
+          "start": 1152738.023401458,
+          "end": 1152740.760189166
+        },
+        {
+          "start": 1152743.429037666,
+          "end": 1152743.434002416
+        },
+        {
+          "start": 1152744.516605416,
+          "end": 1152757.144236166
+        },
+        {
+          "start": 1152758.6156215,
+          "end": 1152761.751128333
+        },
+        {
+          "start": 1152763.239394375,
+          "end": 1152767.162275125
+        },
+        {
+          "start": 1152769.9749155,
+          "end": 1152769.98276625
+        },
+        {
+          "start": 1152772.176121875,
+          "end": 1152772.259617625
+        },
+        {
+          "start": 1152773.940696,
+          "end": 1152817.99834475
+        },
+        {
+          "start": 1152842.677516416,
+          "end": 1152842.684206083
+        },
+        {
+          "start": 1152844.677532583,
+          "end": 1152850.578897166
+        },
+        {
+          "start": 1152854.044399541,
+          "end": 1152854.055496166
+        },
+        {
+          "start": 1152857.839422958,
+          "end": 1152857.840331166
+        },
+        {
+          "start": 1152858.956787166,
+          "end": 1152861.616026041
+        },
+        {
+          "start": 1152863.135569458,
+          "end": 1152863.144680125
+        },
+        {
+          "start": 1152864.13848875,
+          "end": 1152867.912664208
+        },
+        {
+          "start": 1152869.311678625,
+          "end": 1152872.060740166
+        },
+        {
+          "start": 1152873.214279916,
+          "end": 1152887.7467515
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 57582,
+      "assistantUsage": {
+        "input": 33737,
+        "output": 32204,
+        "cacheRead": 3106698,
+        "cacheWrite": 0,
+        "totalTokens": 3172639
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 33737,
+        "output": 32204,
+        "cacheRead": 3106698,
+        "cacheWrite": 0,
+        "totalTokens": 3172639
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 19.877,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1151739.267618125,
+          "end": 1151740.493701125
+        },
+        {
+          "start": 1151741.536426583,
+          "end": 1151741.542606541
+        },
+        {
+          "start": 1151749.288920416,
+          "end": 1151750.622551333
+        },
+        {
+          "start": 1151751.527865791,
+          "end": 1151754.443014083
+        },
+        {
+          "start": 1151755.058689041,
+          "end": 1151757.427448166
+        },
+        {
+          "start": 1151758.196648583,
+          "end": 1151766.185888958
+        },
+        {
+          "start": 1151766.913551291,
+          "end": 1151799.060916083
+        },
+        {
+          "start": 1151889.684141833,
+          "end": 1151891.545467583
+        },
+        {
+          "start": 1151892.438799,
+          "end": 1151906.489756666
+        },
+        {
+          "start": 1151908.122822541,
+          "end": 1151908.126148666
+        },
+        {
+          "start": 1151909.431014125,
+          "end": 1151911.239065208
+        },
+        {
+          "start": 1151912.141526333,
+          "end": 1151959.878763208
+        },
+        {
+          "start": 1151961.465555666,
+          "end": 1151961.475373375
+        },
+        {
+          "start": 1151962.48746125,
+          "end": 1151984.099791041
+        },
+        {
+          "start": 1151985.681621333,
+          "end": 1151985.68931775
+        },
+        {
+          "start": 1151986.757672291,
+          "end": 1151990.856199583
+        },
+        {
+          "start": 1151992.458145458,
+          "end": 1151992.466502166
+        },
+        {
+          "start": 1151996.62313675,
+          "end": 1151996.629601333
+        },
+        {
+          "start": 1151998.262768916,
+          "end": 1151998.268857916
+        },
+        {
+          "start": 1151999.358352333,
+          "end": 1152002.145116791
+        },
+        {
+          "start": 1152003.858404125,
+          "end": 1152003.859377416
+        },
+        {
+          "start": 1152005.995636083,
+          "end": 1152006.000047333
+        },
+        {
+          "start": 1152006.829955458,
+          "end": 1152008.465057166
+        },
+        {
+          "start": 1152009.255751708,
+          "end": 1152011.342407333
+        },
+        {
+          "start": 1152012.152536458,
+          "end": 1152017.476500166
+        },
+        {
+          "start": 1152019.229203291,
+          "end": 1152019.236100791
+        },
+        {
+          "start": 1152020.1822575,
+          "end": 1152069.793698083
+        },
+        {
+          "start": 1152071.709491958,
+          "end": 1152071.71729975
+        },
+        {
+          "start": 1152072.777450833,
+          "end": 1152074.542675708
+        },
+        {
+          "start": 1152075.599946666,
+          "end": 1152080.975838458
+        },
+        {
+          "start": 1152082.952947083,
+          "end": 1152082.955319416
+        },
+        {
+          "start": 1152083.948671833,
+          "end": 1152108.045700916
+        },
+        {
+          "start": 1152110.009947583,
+          "end": 1152110.014772125
+        },
+        {
+          "start": 1152111.016908958,
+          "end": 1152116.487083583
+        },
+        {
+          "start": 1152121.4121195,
+          "end": 1152121.418446
+        },
+        {
+          "start": 1152123.45833125,
+          "end": 1152123.463445208
+        },
+        {
+          "start": 1152124.490085916,
+          "end": 1152143.426229541
+        },
+        {
+          "start": 1152146.377005125,
+          "end": 1152146.384838166
+        },
+        {
+          "start": 1152147.425531375,
+          "end": 1152172.568570041
+        },
+        {
+          "start": 1152173.638373416,
+          "end": 1152177.99591075
+        },
+        {
+          "start": 1152180.675546708,
+          "end": 1152180.6832755
+        },
+        {
+          "start": 1152181.628857791,
+          "end": 1152218.192069
+        },
+        {
+          "start": 1152220.237240458,
+          "end": 1152220.246002291
+        },
+        {
+          "start": 1152221.480108041,
+          "end": 1152252.500611666
+        },
+        {
+          "start": 1152253.414303166,
+          "end": 1152262.635848375
+        },
+        {
+          "start": 1152263.689483166,
+          "end": 1152272.625108333
+        },
+        {
+          "start": 1152273.590348875,
+          "end": 1152302.079087666
+        },
+        {
+          "start": 1152304.203487416,
+          "end": 1152304.214919208
+        },
+        {
+          "start": 1152305.314133125,
+          "end": 1152344.100757958
+        },
+        {
+          "start": 1152345.296609291,
+          "end": 1152393.845128416
+        },
+        {
+          "start": 1152395.043876291,
+          "end": 1152430.780740791
+        },
+        {
+          "start": 1152432.000231041,
+          "end": 1152463.95264025
+        },
+        {
+          "start": 1152465.022020916,
+          "end": 1152480.999089041
+        },
+        {
+          "start": 1152482.695569458,
+          "end": 1152552.0627875
+        },
+        {
+          "start": 1152554.329962625,
+          "end": 1152554.342033458
+        },
+        {
+          "start": 1152555.699135666,
+          "end": 1152574.028747625
+        },
+        {
+          "start": 1152577.78993375,
+          "end": 1152577.792570791
+        },
+        {
+          "start": 1152665.859269208,
+          "end": 1152665.86483675
+        },
+        {
+          "start": 1152668.98233225,
+          "end": 1152668.986718666
+        },
+        {
+          "start": 1152672.844211583,
+          "end": 1152672.853513041
+        },
+        {
+          "start": 1152673.971266791,
+          "end": 1152676.598716208
+        },
+        {
+          "start": 1152678.200813791,
+          "end": 1152681.176728791
+        },
+        {
+          "start": 1152683.300474875,
+          "end": 1152701.795299916
+        },
+        {
+          "start": 1152702.544583791,
+          "end": 1152706.599595333
+        },
+        {
+          "start": 1152707.751874583,
+          "end": 1152711.161230291
+        },
+        {
+          "start": 1152712.448020833,
+          "end": 1152714.866637916
+        },
+        {
+          "start": 1152717.110013708,
+          "end": 1152736.692759916
+        },
+        {
+          "start": 1152738.866719125,
+          "end": 1152755.699309958
+        },
+        {
+          "start": 1152764.949423875,
+          "end": 1152776.126711125
+        },
+        {
+          "start": 1152777.295300708,
+          "end": 1152793.218053958
+        },
+        {
+          "start": 1152796.161312458,
+          "end": 1152796.168441
+        },
+        {
+          "start": 1152797.788709458,
+          "end": 1152805.250789333
+        },
+        {
+          "start": 1152813.670173875,
+          "end": 1152813.677567041
+        },
+        {
+          "start": 1152815.121057166,
+          "end": 1152829.534808041
+        },
+        {
+          "start": 1152836.200316625,
+          "end": 1152836.207429958
+        },
+        {
+          "start": 1152837.813528833,
+          "end": 1152844.778082708
+        },
+        {
+          "start": 1152846.660570416,
+          "end": 1152862.124514416
+        },
+        {
+          "start": 1152863.465690875,
+          "end": 1152877.867480791
+        },
+        {
+          "start": 1152879.17818775,
+          "end": 1152888.126143208
+        },
+        {
+          "start": 1152889.567875,
+          "end": 1152898.206662291
+        },
+        {
+          "start": 1152899.237099458,
+          "end": 1152906.162952541
+        },
+        {
+          "start": 1152909.291284375,
+          "end": 1152909.305075916
+        },
+        {
+          "start": 1152910.622510166,
+          "end": 1152918.413884541
+        },
+        {
+          "start": 1152919.689064333,
+          "end": 1152926.674613333
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 19.878,
+  "summedModelActiveMinutes": 22.915,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 33737,
+      "output": 32204,
+      "cacheRead": 3106698,
+      "totalTokens": 3172639
+    },
+    "qwen": {
+      "input": 11064,
+      "output": 3960,
+      "cacheRead": 126451,
+      "totalTokens": 141475
+    }
+  },
+  "modelWallMinutes": {
+    "qwen": 3.038,
+    "ornith": 19.877
+  },
+  "localProductScore": 98.8,
+  "localProductTargetMet": true,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "role": "build",
+  "number": 1,
+  "minutes": 5.06,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": null,
+  "artifactAfter": "80fdd774d20bd523095d4bfcbdd61c2eb265d7b11034b99f63357b17934fa133",
+  "prompt": "enforced/qwen/03_pixel_painter/runtime/01-build/prompt.txt",
+  "events": "enforced/qwen/03_pixel_painter/runtime/01-build/events.jsonl",
+  "stderr": "enforced/qwen/03_pixel_painter/runtime/01-build/stderr.log"
+}

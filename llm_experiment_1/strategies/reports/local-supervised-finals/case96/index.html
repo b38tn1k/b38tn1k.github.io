@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Timer</title>
+<style>
+  :root {
+    --bg: #0f1220;
+    --fg: #eef1f8;
+    --muted: #8b93a7;
+    --accent: #5ad1ff;
+    --ready: #ffd166;
+    --go: #06d6a0;
+    --fail: #ef476f;
+    --card: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.09);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(1200px 800px at 70% -10%, #1a2036 0%, var(--bg) 55%);
+    color: var(--fg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 24px;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+  h1 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 22px; }
+  .stage {
+    position: relative;
+    width: min(720px, 94vw);
+    aspect-ratio: 16 / 10;
+    border-radius: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    cursor: pointer;
+    transition: background 0.18s ease, box-shadow 0.2s ease, transform 0.1s ease;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+    background: var(--card);
+    touch-action: manipulation;
+  }
+  .state-waiting { background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); }
+  .state-ready   { background: linear-gradient(180deg, rgba(255,209,102,0.16), rgba(255,209,102,0.06)); }
+  .state-go      { background: linear-gradient(180deg, rgba(6,214,160,0.22), rgba(6,214,160,0.08)); }
+  .state-result  { background: linear-gradient(180deg, rgba(90,209,255,0.14), rgba(90,209,255,0.04)); }
+  .state-fail    { background: linear-gradient(180deg, rgba(239,71,111,0.20), rgba(239,71,111,0.06)); }
+  .prompt {
+    font-size: clamp(1.2rem, 4vw, 2.1rem);
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  .hint { color: var(--muted); font-size: 0.95rem; margin-top: 10px; }
+  .big-ms { font-size: clamp(3.5rem, 16vw, 8rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .label { color: var(--muted); font-size: 0.9rem; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.12em; }
+  .round-badge {
+    position: absolute;
+    top: 16px; left: 20px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .prompt-ready { color: var(--ready); }
+  .prompt-go    { color: var(--go); }
+  .prompt-fail  { color: var(--fail); }
+  .actions { margin-top: 22px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  button.ui {
+    font: inherit;
+    font-weight: 600;
+    color: var(--fg);
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--border);
+    padding: 11px 22px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.08s ease;
+  }
+  button.ui:hover { background: rgba(255,255,255,0.13); }
+  button.ui:active { transform: translateY(1px); }
+  button.ui.primary { background: var(--accent); color: #06222c; border-color: transparent; }
+  button.ui.primary:hover { filter: brightness(1.05); }
+  .results {
+    width: min(720px, 94vw);
+    margin-top: 22px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px 20px;
+    box-shadow: 0 16px 44px rgba(0,0,0,0.3);
+  }
+  .results h2 { font-size: 1rem; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .stats { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 14px; }
+  .stat { flex: 1 1 120px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .stat .val { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+  .stat .key { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+  .trials { display: grid; gap: 8px; }
+  .trial {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 12px;
+  }
+  .trial .num { color: var(--muted); font-weight: 700; font-size: 0.85rem; }
+  .trial .ms { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .trial .bar-cell { display: flex; align-items: center; gap: 10px; }
+  .bar { height: 8px; border-radius: 6px; background: linear-gradient(90deg, var(--go), var(--accent)); flex: 1; max-width: 220px; }
+  .trial.outlier .ms { color: var(--fail); }
+  .outlier-tag { color: var(--fail); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .hidden { display: none !important; }
+  footer { margin-top: 18px; color: var(--muted); font-size: 0.8rem; }
+  kbd {
+    background: rgba(255,255,255,0.1); border: 1px solid var(--border);
+    border-radius: 5px; padding: 1px 6px; font-size: 0.8rem; font-family: inherit;
+  }
+</style>
+</head>
+<body>
+  <h1>⚡ Reaction Timer</h1>
+  <p class="subtitle">Wait for green, then click or press <kbd>Space</kbd> as fast as you can. 5 trials.</p>
+
+  <div id="stage" class="state-waiting" tabindex="0" role="button" aria-live="polite">
+    <div class="round-badge" id="roundBadge">Ready</div>
+    <div class="prompt" id="prompt">Tap anywhere to start</div>
+    <div class="hint" id="hint">You can tap or press Space at any time.</div>
+  </div>
+
+  <div class="actions" id="startRow">
+    <button class="ui primary" id="startBtn">Start Test</button>
+  </div>
+
+  <div class="results hidden" id="results">
+    <h2>Results</h2>
+    <div class="stats">
+      <div class="stat"><div class="val" id="statAvg">–</div><div class="key">Average</div></div>
+      <div class="stat"><div class="val" id="statBest">–</div><div class="key">Best</div></div>
+      <div class="stat"><div class="val" id="statWorst">–</div><div class="key">Worst</div></div>
+      <div class="stat"><div class="val" id="statStdev">–</div><div class="key">Consistency</div></div>
+    </div>
+    <div class="trials" id="trialsList"></div>
+  </div>
+
+  <footer>Reaction time reflects alertness — caffeine, fatigue, and distraction all matter.</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  const TOTAL_TRIALS = 5;
+  const MIN_WAIT = 1000;   // ms
+  const MAX_WAIT = 4000;   // ms
+  const MAX_FALSE_START = 250; // ms below this counts as a false start
+
+  // States: idle, waiting (green), go, result, fail(false start)
+  var state = "idle";
+  var greenAt = 0;         // performance.now() when green appeared
+  var timer = null;        // scheduled transition handle
+  var startTime = 0;       // performance.now() when user clicked after green
+  var results = [];        // array of {ms, invalid}
+  var currentRound = 0;
+
+  var stage = document.getElementById("stage");
+  var promptEl = document.getElementById("prompt");
+  var hintEl = document.getElementById("hint");
+  var roundBadge = document.getElementById("roundBadge");
+  var startRow = document.getElementById("startRow");
+  var resultsPanel = document.getElementById("results");
+  var trialsList = document.getElementById("trialsList");
+
+  var stateClass = {
+    idle: "state-waiting",
+    waiting: "state-ready",
+    go: "state-go",
+    result: "state-result",
+    fail: "state-fail"
+  };
+
+  function setState(s) {
+    state = s;
+    stage.className = "stage " + (stateClass[s] || "state-waiting");
+  }
+
+  function fmt(n) {
+    return Math.round(n) + " ms";
+  }
+
+  function scheduleNext() {
+    clearTimeout(timer);
+    var wait = MIN_WAIT + Math.random() * (MAX_WAIT - MIN_WAIT);
+    timer = setTimeout(goGreen, wait);
+  }
+
+  function startGame() {
+    results = [];
+    currentRound = 0;
+    resultsPanel.classList.add("hidden");
+    trialsList.innerHTML = "";
+    startRow.classList.add("hidden");
+    currentRound = 1;
+    roundBadge.textContent = "Trial 1";
+    setState("waiting");
+    promptEl.textContent = "Wait for green…";
+    promptEl.className = "prompt prompt-ready";
+    hintEl.textContent = "Don't click until it turns green.";
+    scheduleNext();
+  }
+
+  function goGreen() {
+    if (state !== "waiting") return;
+    setState("go");
+    greenAt = performance.now();
+    promptEl.textContent = "CLICK NOW!";
+    promptEl.className = "prompt prompt-go";
+    hintEl.textContent = "";
+  }
+
+  function recordReaction() {
+    var rt = performance.now() - greenAt;
+    results.push({ ms: rt, invalid: false });
+    currentRound++;
+    showRoundResult(rt, false);
+  }
+
+  function recordFalseStart() {
+    results.push({ ms: null, invalid: true });
+    currentRound++;
+    showRoundResult(null, true);
+  }
+
+  function showRoundResult(rt, isFalseStart) {
+    if (isFalseStart) {
+      setState("fail");
+      promptEl.textContent = "Too early! False start.";
+      promptEl.className = "prompt prompt-fail";
+      hintEl.textContent = "Click or press Space to retry this trial.";
+    } else {
+      setState("result");
+      promptEl.textContent = fmt(rt);
+      promptEl.className = "prompt";
+      hintEl.textContent = "Click or press Space to continue.";
+    }
+    roundBadge.textContent = "Trial " + Math.min(currentRound, TOTAL_TRIALS);
+    // clear any lingering timer
+    clearTimeout(timer);
+  }
+
+  function handlePress() {
+    if (state === "idle") {
+      startGame();
+      return;
+    }
+    if (state === "waiting") {
+      // clicked before green
+      clearTimeout(timer);
+      recordFalseStart();
+      return;
+    }
+    if (state === "go") {
+      recordReaction();
+      return;
+    }
+    if (state === "result" || state === "fail") {
+      // Trial is complete; advance (or finish after all trials).
+      if (results.length >= TOTAL_TRIALS) {
+        finish();
+      } else {
+        roundBadge.textContent = "Trial " + (currentRound + 1);
+        setState("waiting");
+        promptEl.textContent = "Wait for green…";
+        promptEl.className = "prompt prompt-ready";
+        hintEl.textContent = "Get ready for the next one.";
+        scheduleNext();
+      }
+      return;
+    }
+  }
+
+  function finish() {
+    setState("idle");
+    var valid = results.filter(function (r) { return !r.invalid; }).map(function (r) { return r.ms; });
+    if (valid.length === 0) {
+      // all false starts — show message
+      promptEl.textContent = "You false-started on every trial.";
+      promptEl.className = "prompt prompt-fail";
+      hintEl.textContent = "Reset to try again.";
+      showSummary([], true);
+      startRow.classList.remove("hidden");
+      return;
+    }
+    promptEl.textContent = "Test complete!";
+    promptEl.className = "prompt";
+    hintEl.textContent = "See your breakdown below.";
+    showSummary(valid, false);
+    startRow.classList.remove("hidden");
+    var rb = document.getElementById("restartBtn");
+    if (rb) rb.classList.remove("hidden");
+  }
+
+  function avg(arr) {
+    return arr.reduce(function (a, b) { return a + b; }, 0) / arr.length;
+  }
+
+  function showSummary(valid, allFalse) {
+    resultsPanel.classList.remove("hidden");
+
+    if (allFalse) {
+      document.getElementById("statAvg").textContent = "–";
+      document.getElementById("statBest").textContent = "–";
+      document.getElementById("statWorst").textContent = "–";
+      document.getElementById("statStdev").textContent = "–";
+    } else {
+      var best = Math.min.apply(null, valid);
+      var worst = Math.max.apply(null, valid);
+      var mean = avg(valid);
+      var stdev = Math.sqrt(valid.reduce(function (s, x) { return s + (x - mean) * (x - mean); }, 0) / valid.length);
+
+      document.getElementById("statAvg").textContent = fmt(mean);
+      document.getElementById("statBest").textContent = fmt(best);
+      document.getElementById("statWorst").textContent = fmt(worst);
+      document.getElementById("statStdev").textContent = fmt(stdev);
+    }
+
+    // Build trial rows, including false starts
+    var html = "";
+    results.forEach(function (r, i) {
+      if (r.invalid) {
+        html += '<div class="trial outlier"><span class="num">' + (i + 1) +
+          '</span><div class="bar-cell"><span class="outlier-tag">False start</span>' +
+          '<span class="bar" style="opacity:0.2"></span></div><span class="ms">—</span></div>';
+      } else {
+        var pct = Math.min(100, (r.ms / 500) * 100); // 500ms = full bar
+        html += '<div class="trial"><span class="num">' + (i + 1) +
+          '</span><div class="bar-cell"><span class="bar" style="width:' + pct + 'px"></span></div>' +
+          '<span class="ms">' + fmt(r.ms) + '</span></div>';
+      }
+    });
+    trialsList.innerHTML = html;
+  }
+
+  // Restart button (shown after finish)
+  function ensureRestartButton() {
+    var existing = document.getElementById("restartBtn");
+    if (existing) return;
+    var btn = document.createElement("button");
+    btn.className = "ui";
+    btn.id = "restartBtn";
+    btn.textContent = "Test Again";
+    btn.addEventListener("click", function () {
+      btn.classList.add("hidden");
+      startGame();
+    });
+    startRow.appendChild(btn);
+  }
+
+  // Wire up start button
+  document.getElementById("startBtn").addEventListener("click", function () {
+    ensureRestartButton();
+    startGame();
+  });
+
+  // Click / tap on stage
+  stage.addEventListener("pointerdown", function (e) {
+    e.preventDefault();
+    handlePress();
+  });
+
+  // Keyboard
+  window.addEventListener("keydown", function (e) {
+    if (e.code === "Space" || e.key === " ") {
+      e.preventDefault();
+      handlePress();
+    }
+  });
+
+  // Keep focus for keyboard; click stage to focus it
+  stage.addEventListener("click", function () { stage.focus(); });
+})();
+</script>
+</body>
+</html>

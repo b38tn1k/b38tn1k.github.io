@@ -1,0 +1,246 @@
+{
+  "score": 32,
+  "grade": "F provisional - dimensions/table respond; STL is malformed and mesh geometry is unusable",
+  "rubricScores": {
+    "functionality": 18,
+    "artifact_correctness": 2,
+    "usability": 10,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Dimension controls and six compartment labels respond; changing length 180 to 200 updates cell dimensions. Dragging changes rotation state under a partial WebGL fixture.",
+    "The final artifact is inline/offline and parses after the second repair fixed the earlier syntax error."
+  ],
+  "defects": [
+    "The captured STL uses normal followed by facet outer loop instead of facet normal followed by outer loop. No correctly anchored facet-normal records exist. Export indexes vertex coordinates incorrectly, producing undefined coordinates, degenerate facets and an incorrect 120 mm Z bound for a 30 mm-high tray.",
+    "The permissive triangle analyzer still recovers diagnostic fragments: 36 non-finite triangles, 6 degenerate triangles, 74 boundary/nonmanifold edges and 9 winding inconsistencies. These fragments are not a valid printable mesh.",
+    "boxFaces emits only the first triangle of each face, omitting half of every box surface. Shared/internal faces are not actually culled despite the implementation comments claiming a watertight union.",
+    "Default internal dividers use gap=0 as their physical thickness, producing zero-thickness divider volumes. Outer side slabs also omit the corner regions above the floor.",
+    "The run consumed 59.07 minutes; build and both repairs reached their stage limits, and executable acceptance evidence never passed."
+  ],
+  "verification": [
+    "Independent exact-source input/drag/export checks in reports/enforced_ornith_05_drawer_tray.qa.cjs/.qa.json capture the actual exported Blob bytes, saved as .export.stl. No application algorithms were replaced.",
+    "Final source SHA-256: 358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d."
+  ],
+  "verificationConcerns": [
+    "The shared WebGL stub lacks uniform3fv, getParameter, polygonOffset and drawElements. The independent fixture supplies these standard API stubs only to inspect controls/export. Native graphics rendering is unverified; do not count missing mock methods as product defects.",
+    "The protected preflight reports startup pass when run() catches a rendering error and writes it into the UI. That is a supervisor-verifier blind spot; a preflight pass does not prove successful rendering or a usable app.",
+    "Actual GPU buffer validity, slicer repair, self-intersections and physical printability were not tested. The STL syntax and geometry defects are independently observable regardless of rendering."
+  ],
+  "scopeCompliance": "All application implementation/repairs came from Pi. Supervisor only configured the harness and independently evaluated the final artifact; no app-specific repair hints.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "All mandatory stages ran, but the final gate failed. Test-platform limitations and the preflight's swallowed-error blind spot confound time attribution. Independent grade is based on final actual product behavior/export, with the rendering adapter explicitly disclosed.",
+  "title": "Simple drawer tray generator",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "## Review complete \u2014 handoff\n\n**Status: FAIL** \u2014 `qa/review.json` written (`{artifactSHA256: 358b4e6a\u2026, pass:false, testsActuallyExerciseBehavior:true}` with 4 blocking findings and 4 residual risks).\n\n### What's wrong (with evidence)\n\nThe preview **never renders**, and the test suite both masks this and then aborts:\n\n1. **Dead renderer (index.html lines 503\u2013505).** `drawMesh()` calls `gl.uniform3fv()`, `gl.getParameter()`, and `gl.polygonOffset()` unconditionally. The QA WebGL stub (`runtime.cjs` `fakeGL`) implements `uniform3f`/`uniformMatrix4fv` but **not** those three, so they throw. The app's own `GL` guard object only guards init-time calls \u2014 the per-frame hot path in `drawMesh` is unguarded.\n\n2. **Failure is swallowed as a validation error (index.html `run()`).** The startup `run()` \u2192 `draw()` throws; `run()`'s try/catch catches it and paints it into the error banner as `\"Invalid input: gl.uniform3fv is not a function\"`. Probe `.scratch/probe2.cjs` confirms: after load, `error.textContent === \"Invalid input: gl.uniform3fv \u2026\"` while `s-each` still shows `\"87.0 \u00d7 38.0 mm\"` \u2014 the stats were written *before* the failing draw.\n\n3. **False-positive then crash (qa/acceptance.cjs).** `glOk` is asserted as `error !== 'WebGL not supported\u2026'`, so the poison-pilled `\"Invalid input\u2026\" \u2026` passes it. Then `fire('wire-toggle')` \u2192 `draw()` throws uncaught \u2192 Node aborts (exit 1, `qa/execution.json`). Every test after `testRotatablePreview` \u2014 including the required STL export \u2014 **never runs**.\n\n4. **Value tests pass without exercising behavior.** `compartment_dimensions`/`editable_dimensions` pass on the pre-thrown stats, proving nothing about the renderer or the printable-STL deliverable the brief requires.\n\n### Fix direction (for a repair agent)\nGuard the three stub-undefined GL methods in `drawMesh` with the existing `GL.*` guards, and stop `run()` from swallowing a `draw()` throw into the user-facing validation banner (separate validation errors from render errors). No other app changes needed; behavior in a real browser is unchanged (guards are always true there).\n\n**No app edits made in this role** (index.html is read-only; `qa/` is the only writable area). The runtime remains a source-only VM \u2014 GPU rasterization and true STL printability stay unverified regardless.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 5,
+  "elapsedMinutes": 59.07,
+  "wallMinutes": 59.07,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "repair_limit",
+  "exitCode": 1,
+  "promptWords": 65,
+  "toolCalls": 369,
+  "parentToolCalls": 0,
+  "childToolCalls": 369,
+  "toolResultsMarkedError": 43,
+  "modelUsageReported": {
+    "input": 266451,
+    "output": 122329,
+    "cacheRead": 9611477,
+    "totalTokens": 10000257
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 54914,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 54914,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 266451,
+    "output": 122329,
+    "cacheRead": 9611477,
+    "totalTokens": 10000257
+  },
+  "artifactBytes": 29159,
+  "sha256": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 3,
+      "review": 3,
+      "repair": 2
+    },
+    "rolesCompleted": {
+      "test": 2,
+      "review": 2
+    },
+    "parentArtifactReads": 35,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 7,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 15.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": null,
+        "artifactAfter": "bfe2fa63636d1c8c6cdb30ff1cbfe31aadf11c6ff2937032b38ee85c6377ac4a",
+        "prompt": "enforced/ornith/05_drawer_tray/runtime/01-build/prompt.txt",
+        "events": "enforced/ornith/05_drawer_tray/runtime/01-build/events.jsonl",
+        "stderr": "enforced/ornith/05_drawer_tray/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 6.15,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "bfe2fa63636d1c8c6cdb30ff1cbfe31aadf11c6ff2937032b38ee85c6377ac4a",
+        "artifactAfter": "bfe2fa63636d1c8c6cdb30ff1cbfe31aadf11c6ff2937032b38ee85c6377ac4a",
+        "prompt": "enforced/ornith/05_drawer_tray/runtime/02-test/prompt.txt",
+        "events": "enforced/ornith/05_drawer_tray/runtime/02-test/events.jsonl",
+        "stderr": "enforced/ornith/05_drawer_tray/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 5.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "bfe2fa63636d1c8c6cdb30ff1cbfe31aadf11c6ff2937032b38ee85c6377ac4a",
+        "artifactAfter": "bfe2fa63636d1c8c6cdb30ff1cbfe31aadf11c6ff2937032b38ee85c6377ac4a",
+        "prompt": "enforced/ornith/05_drawer_tray/runtime/03-review/prompt.txt",
+        "events": "enforced/ornith/05_drawer_tray/runtime/03-review/events.jsonl",
+        "stderr": "enforced/ornith/05_drawer_tray/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "bfe2fa63636d1c8c6cdb30ff1cbfe31aadf11c6ff2937032b38ee85c6377ac4a",
+        "artifactAfter": "a69709bd7e6ad17530ca5b78bb76cd99415f2cf83a36c341b0a5abc9c753aa11",
+        "prompt": "enforced/ornith/05_drawer_tray/runtime/04-repair/prompt.txt",
+        "events": "enforced/ornith/05_drawer_tray/runtime/04-repair/events.jsonl",
+        "stderr": "enforced/ornith/05_drawer_tray/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 5,
+        "minutes": 4.98,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "a69709bd7e6ad17530ca5b78bb76cd99415f2cf83a36c341b0a5abc9c753aa11",
+        "artifactAfter": "a69709bd7e6ad17530ca5b78bb76cd99415f2cf83a36c341b0a5abc9c753aa11",
+        "prompt": "enforced/ornith/05_drawer_tray/runtime/05-test/prompt.txt",
+        "events": "enforced/ornith/05_drawer_tray/runtime/05-test/events.jsonl",
+        "stderr": "enforced/ornith/05_drawer_tray/runtime/05-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 6,
+        "minutes": 1.49,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "a69709bd7e6ad17530ca5b78bb76cd99415f2cf83a36c341b0a5abc9c753aa11",
+        "artifactAfter": "a69709bd7e6ad17530ca5b78bb76cd99415f2cf83a36c341b0a5abc9c753aa11",
+        "prompt": "enforced/ornith/05_drawer_tray/runtime/06-review/prompt.txt",
+        "events": "enforced/ornith/05_drawer_tray/runtime/06-review/events.jsonl",
+        "stderr": "enforced/ornith/05_drawer_tray/runtime/06-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 7,
+        "minutes": 8.17,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "a69709bd7e6ad17530ca5b78bb76cd99415f2cf83a36c341b0a5abc9c753aa11",
+        "artifactAfter": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+        "prompt": "enforced/ornith/05_drawer_tray/runtime/07-repair/prompt.txt",
+        "events": "enforced/ornith/05_drawer_tray/runtime/07-repair/events.jsonl",
+        "stderr": "enforced/ornith/05_drawer_tray/runtime/07-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 8,
+        "minutes": 5.0,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+        "artifactAfter": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+        "prompt": "enforced/ornith/05_drawer_tray/runtime/08-test/prompt.txt",
+        "events": "enforced/ornith/05_drawer_tray/runtime/08-test/events.jsonl",
+        "stderr": "enforced/ornith/05_drawer_tray/runtime/08-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 9,
+        "minutes": 2.96,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+        "artifactAfter": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+        "prompt": "enforced/ornith/05_drawer_tray/runtime/09-review/prompt.txt",
+        "events": "enforced/ornith/05_drawer_tray/runtime/09-review/events.jsonl",
+        "stderr": "enforced/ornith/05_drawer_tray/runtime/09-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+      "errors": [
+        "Executable acceptance test did not exit successfully",
+        "Acceptance ledger missing or stale",
+        "Acceptance check missing/failed: editable_dimensions",
+        "Acceptance check missing/failed: compartment_dimensions",
+        "Acceptance check missing/failed: rotatable_preview",
+        "Acceptance check missing/failed: stl_export",
+        "Verifier did not trace loading the actual page and interacting with its controls",
+        "Independent review missing, stale or reports blocking findings",
+        "No actual STL Blob captured from application execution"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": false
+}

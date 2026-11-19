@@ -1,0 +1,67 @@
+{
+  "method": "Independent final frozen setup-calibration source, actual pointer/control handlers and clock. Corrected independent event environment v2 used; model tests in this stopped attempt used the original v1 helper. Observer exposes state only. No browser rendering verification.",
+  "sha256": "754ce03bdcb7c7b3929d7d9de25390d09ea74c995be3ec9d068c99176a6346cb",
+  "calibration": true,
+  "checks": [
+    {
+      "id": "clean_five_trials",
+      "pass": true,
+      "evidence": {
+        "results": [
+          {
+            "no": 1,
+            "kind": "ok",
+            "ms": 200,
+            "note": null
+          },
+          {
+            "no": 2,
+            "kind": "ok",
+            "ms": 225,
+            "note": null
+          },
+          {
+            "no": 3,
+            "kind": "ok",
+            "ms": 250,
+            "note": null
+          },
+          {
+            "no": 4,
+            "kind": "ok",
+            "ms": 275,
+            "note": null
+          },
+          {
+            "no": 5,
+            "kind": "ok",
+            "ms": 300,
+            "note": null
+          }
+        ],
+        "summary": "\n        No valid yet — press Start to run your first trial.\n      Round 1200 msValidRound 2225 msValidRound 3250 msValidRound 4275 msValidRound 5300 msValidResults summaryMean250 msMedian238 msStdev35.4 msBest200 msWorst300 msTrials5 validYour ranking: Above average reaction time."
+      }
+    },
+    {
+      "id": "median_is_correct",
+      "pass": false,
+      "error": "238 == 250"
+    },
+    {
+      "id": "false_start_does_not_replace_valid_trial",
+      "pass": false,
+      "error": "A false start consumed one of five slots, leaving only four valid times"
+    },
+    {
+      "id": "reset_cancels_pending_signal",
+      "pass": false,
+      "error": "Pending signal interval survives Reset and arms the supposedly idle page"
+    },
+    {
+      "id": "reset_cancels_pending_trial_transition",
+      "pass": false,
+      "error": "Untracked next-trial timeout restarts after Reset"
+    }
+  ],
+  "pass": false
+}

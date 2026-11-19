@@ -1,0 +1,105 @@
+{
+  "artifactSHA256": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+  "checks": [
+    {
+      "id": "start",
+      "passed": true,
+      "evidence": "stage element #stage present (class=\"ready\")"
+    },
+    {
+      "id": "random_wait",
+      "passed": true,
+      "evidence": "stage glyph #glyph present to render the WAITING state (id=\"glyph\")"
+    },
+    {
+      "id": "false_start_retry",
+      "passed": true,
+      "evidence": "restart control #btn-restart and trial counter #stat-trial present (id=\"btn-restart\")"
+    },
+    {
+      "id": "five_valid_trials",
+      "passed": true,
+      "evidence": "sidebar trials container #trials present (trial rows: 5)"
+    },
+    {
+      "id": "summary",
+      "passed": true,
+      "evidence": "results summary stats present (#stat-current, #stat-best, #stat-avg)"
+    },
+    {
+      "id": "start",
+      "passed": true,
+      "evidence": "app boots to READY (\"Ready\") with trial counter \"0 / 5\", stage class=\"ready\""
+    },
+    {
+      "id": "random_wait",
+      "passed": true,
+      "evidence": "after starting, stage enters WAITING (class=\"waiting\") after waitingms"
+    },
+    {
+      "id": "random_wait",
+      "passed": true,
+      "evidence": "after the random wait the stage flips to CLICK (class=\"click\")"
+    },
+    {
+      "id": "five_valid_trials",
+      "passed": false,
+      "evidence": "after 5 valid trials stage shows DONE summary (class=\"ready\")"
+    },
+    {
+      "id": "summary",
+      "passed": false,
+      "evidence": "summary shows Done heading. Snippet: \"Ready Focus. The square will turn green after a random delay. Space / Click\""
+    },
+    {
+      "id": "five_valid_trials",
+      "passed": false,
+      "evidence": "trial counter reads \"0 / 5\" (expected \"5 / 5\")"
+    },
+    {
+      "id": "summary",
+      "passed": false,
+      "evidence": "average stat is a real number: – ms"
+    },
+    {
+      "id": "summary",
+      "passed": false,
+      "evidence": "best stat is a real number: – ms"
+    },
+    {
+      "id": "summary",
+      "passed": false,
+      "evidence": "best matches min of recorded trials (150 ms vs recorded –)"
+    },
+    {
+      "id": "summary",
+      "passed": false,
+      "evidence": "avg matches mean of recorded trials (220 ms vs recorded –)"
+    },
+    {
+      "id": "false_start_retry",
+      "passed": true,
+      "evidence": "click during WAITING -> false start, stage class=\"error\", pill=\"False start\""
+    },
+    {
+      "id": "false_start_retry",
+      "passed": true,
+      "evidence": "after false-start cooldown the app proceeds to the next trial WAITING (class=\"waiting\")"
+    },
+    {
+      "id": "summary",
+      "passed": true,
+      "evidence": "sidebar trial rows persist across restart (5 -> 5 rows)"
+    },
+    {
+      "id": "summary",
+      "passed": true,
+      "evidence": "Restart resets to READY, trial counter \"0 / 5\" (expected \"0 / 5\")"
+    },
+    {
+      "id": "random_wait",
+      "passed": true,
+      "evidence": "runtime note: Math.random seeded to 0.9 (deterministic) => fixed wait 3700ms; a real browser yields a random delay in [1000,4000]"
+    }
+  ]
+}

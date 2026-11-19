@@ -1,0 +1,59 @@
+{
+  "method": "Exact final source in Node VM/DOM/native Canvas2D. Closure instrumentation exposes existing state/functions only for controlled fixtures; no application algorithm replaced. Actual input handlers used for interaction checks. Not browser layout, GPU or default actions.",
+  "sha256": "03eddba6916d25241e9df6a3e11665db1683fadc4144c8eda1745fd26c47a938",
+  "checks": [
+    {
+      "id": "start_move_keyboard_pause_resume",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pauseResume": true
+      }
+    },
+    {
+      "id": "growth_scoring_and_actual_speed_increase",
+      "pass": true,
+      "evidence": {
+        "score": 5,
+        "level": 2,
+        "delays": [
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      }
+    },
+    {
+      "id": "wall_collision_and_restart",
+      "pass": true,
+      "evidence": {
+        "wall": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "body_collision_ends_game",
+      "pass": true,
+      "evidence": {
+        "selfCollision": true
+      }
+    },
+    {
+      "id": "departing_tail_legal",
+      "pass": false,
+      "error": "Moving into departing tail wrongly kills snake",
+      "actual": "gameover",
+      "expected": "running"
+    },
+    {
+      "id": "pause_button_actually_pauses",
+      "pass": false,
+      "error": "Two independent if branches pause then immediately resume",
+      "actual": "running",
+      "expected": "paused"
+    }
+  ],
+  "pass": false
+}

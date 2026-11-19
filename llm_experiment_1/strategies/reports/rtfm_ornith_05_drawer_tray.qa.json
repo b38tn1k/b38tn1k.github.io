@@ -1,0 +1,428 @@
+{
+  "method": "Independent exact-source VM/DOM actual input/export/drag/zoom handlers and real downloaded binary STL bytes. Generic alert recorder only; no app algorithms replaced. STL topology reconciles collinear edge subdivisions; clear openings measured from actual exported planes, without imposing equal compartment widths. No GPU/browser layout/hit testing or physical-print certification.",
+  "sha256": "a682f3f1ed88bbfc7688137e74762affdd6a3c4a5b2a0a122457773f64ebb1d7",
+  "checks": [
+    {
+      "id": "single_file_offline_and_inline_syntax",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    },
+    {
+      "id": "default_outer_dimensions_grid_and_actual_drag_zoom_handlers",
+      "pass": true,
+      "evidence": {
+        "defaults": [
+          180,
+          120,
+          30,
+          3,
+          2
+        ],
+        "rotationStateChanges": true,
+        "zoomStateChanges": true,
+        "actualGPUPreviewUnverified": true
+      }
+    },
+    {
+      "id": "default_actual_export_button_binary_STL_and_outer_bounds",
+      "pass": true,
+      "evidence": {
+        "bytes": 4884,
+        "triangles": 96,
+        "bounds": [
+          180,
+          120,
+          30
+        ],
+        "download": true
+      }
+    },
+    {
+      "id": "default_outward_consistent_single_closed_boundary",
+      "pass": false,
+      "error": "Actual STL winding points inward (negative signed volume)",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "default_clearance_readouts_match_actual_exported_openings",
+      "pass": false,
+      "error": "Displayed clear width does not match exported compartment openings",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "default_wall_floor_thickness_and_union_volume",
+      "pass": false,
+      "error": "STL box-shell volume includes overlaps/internal surfaces rather than the tray union volume",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "alternate_actual_export_button_binary_STL_and_outer_bounds",
+      "pass": true,
+      "evidence": {
+        "bytes": 6084,
+        "triangles": 120,
+        "bounds": [
+          200,
+          100,
+          40
+        ],
+        "download": true
+      }
+    },
+    {
+      "id": "alternate_outward_consistent_single_closed_boundary",
+      "pass": false,
+      "error": "Actual STL winding points inward (negative signed volume)",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "alternate_clearance_readouts_match_actual_exported_openings",
+      "pass": false,
+      "error": "Displayed clear width does not match exported compartment openings",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "alternate_wall_floor_thickness_and_union_volume",
+      "pass": false,
+      "error": "STL box-shell volume includes overlaps/internal surfaces rather than the tray union volume",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "reject_floor_equal_height_instead_of_degenerate_export",
+      "pass": false,
+      "error": "Floor equal to height exports zero-height wall geometry",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "reject_wall_thicker_than_depth_allows",
+      "pass": false,
+      "error": "Depth cannot contain both outer walls but export proceeds",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "actual_WebGL_rendering_and_browser_startup",
+      "pass": false,
+      "environmentLimit": true,
+      "evidence": "Native VM has no GPU/WebGL. Real parameter/export/drag handlers and mesh bytes checked; no fake renderer substituted."
+    }
+  ],
+  "cases": [
+    {
+      "label": "default",
+      "inputs": {
+        "width": 180,
+        "depth": 120,
+        "height": 30,
+        "cols": 3,
+        "rows": 2,
+        "wall": 2.5,
+        "floor": 2.5
+      },
+      "readouts": {
+        "width": 55,
+        "depth": 53.75,
+        "height": 27.5,
+        "count": 6
+      },
+      "mesh": {
+        "format": "binary",
+        "vertexMatchTolerance": 0.0001,
+        "verticalXPlanes": [
+          0,
+          2.5,
+          58.75,
+          61.25,
+          118.75,
+          121.25,
+          177.5,
+          180
+        ],
+        "verticalYPlanes": [
+          0,
+          2.5,
+          58.75,
+          61.25,
+          117.5,
+          120
+        ],
+        "zLevels": [
+          0,
+          2.5,
+          30
+        ],
+        "bytes": 4884,
+        "triangles": 96,
+        "uniqueVertices": 52,
+        "bounds": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            180,
+            120,
+            30
+          ],
+          "dimensions": [
+            180,
+            120,
+            30
+          ]
+        },
+        "signedVolume": -124125,
+        "absoluteVolume": 124125,
+        "surfaceArea": 106862.5,
+        "degenerateTriangles": 0,
+        "nonFiniteTriangles": 0,
+        "normalDisagreements": 0,
+        "missingNormals": 0,
+        "boundaryOrNonmanifoldEdges": 8,
+        "inconsistentWindingEdges": 0,
+        "components": 4,
+        "watertightByMatchingEdges": false
+      },
+      "reconciled": {
+        "analysisBudgetExceeded": false,
+        "tolerance": 0.0001,
+        "triangles": 96,
+        "vertices": 52,
+        "edgesAfterCollinearSplitting": 148,
+        "originalEdgesWithInteriorVertices": 24,
+        "skippedEdges": 0,
+        "boundaryOrNonmanifoldEdges": 42,
+        "inconsistentWindingEdges": 0,
+        "nonmanifoldVertexFans": 0,
+        "faceComponents": 1,
+        "closedConnectedBoundary": false,
+        "limits": "Matches collinear edge subdivisions and local face connectivity; not a general triangle-intersection test or physical-print certification."
+      },
+      "sections": {
+        "axes": {
+          "widthAxis": 0,
+          "depthAxis": 1,
+          "heightAxis": 2
+        },
+        "tolerance": 0.0001,
+        "widthPlanes": [
+          0,
+          2.5,
+          58.75,
+          61.25,
+          118.75,
+          121.25,
+          177.5,
+          180
+        ],
+        "depthPlanes": [
+          0,
+          2.5,
+          58.75,
+          61.25,
+          117.5,
+          120
+        ],
+        "heightLevels": [
+          0,
+          2.5,
+          30
+        ],
+        "width": {
+          "clear": [
+            56.25,
+            57.5,
+            56.25
+          ],
+          "walls": [
+            2.5,
+            2.5,
+            2.5,
+            2.5
+          ]
+        },
+        "depth": {
+          "clear": [
+            56.25,
+            56.25
+          ],
+          "walls": [
+            2.5,
+            2.5,
+            2.5
+          ]
+        },
+        "limits": "Axis-aligned rectilinear tray surfaces only; measures clear openings/wall faces, not a general solid-intersection or physical-print test."
+      }
+    },
+    {
+      "label": "alternate",
+      "inputs": {
+        "width": 200,
+        "depth": 100,
+        "height": 40,
+        "cols": 4,
+        "rows": 3,
+        "wall": 2.4,
+        "floor": 1.8
+      },
+      "readouts": {
+        "width": 45.8,
+        "depth": 28.53,
+        "height": 38.2,
+        "count": 12
+      },
+      "mesh": {
+        "format": "binary",
+        "vertexMatchTolerance": 0.0001,
+        "verticalXPlanes": [
+          0,
+          2.4,
+          48.8,
+          51.2,
+          98.8,
+          101.2,
+          148.8,
+          151.2,
+          197.6,
+          200
+        ],
+        "verticalYPlanes": [
+          0,
+          2.4,
+          32.1333,
+          34.5333,
+          65.4667,
+          67.8667,
+          97.6,
+          100
+        ],
+        "zLevels": [
+          0,
+          1.8,
+          40
+        ],
+        "bytes": 6084,
+        "triangles": 120,
+        "uniqueVertices": 68,
+        "bounds": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            200,
+            100,
+            40
+          ],
+          "dimensions": [
+            200,
+            100,
+            40
+          ]
+        },
+        "signedVolume": -155183.94199943542,
+        "absoluteVolume": 155183.94199943542,
+        "surfaceArea": 148290.23589340213,
+        "degenerateTriangles": 0,
+        "nonFiniteTriangles": 0,
+        "normalDisagreements": 0,
+        "missingNormals": 0,
+        "boundaryOrNonmanifoldEdges": 8,
+        "inconsistentWindingEdges": 0,
+        "components": 6,
+        "watertightByMatchingEdges": false
+      },
+      "reconciled": {
+        "analysisBudgetExceeded": false,
+        "tolerance": 0.0001,
+        "triangles": 120,
+        "vertices": 68,
+        "edgesAfterCollinearSplitting": 192,
+        "originalEdgesWithInteriorVertices": 24,
+        "skippedEdges": 0,
+        "boundaryOrNonmanifoldEdges": 54,
+        "inconsistentWindingEdges": 0,
+        "nonmanifoldVertexFans": 0,
+        "faceComponents": 1,
+        "closedConnectedBoundary": false,
+        "limits": "Matches collinear edge subdivisions and local face connectivity; not a general triangle-intersection test or physical-print certification."
+      },
+      "sections": {
+        "axes": {
+          "widthAxis": 0,
+          "depthAxis": 1,
+          "heightAxis": 2
+        },
+        "tolerance": 0.0001,
+        "widthPlanes": [
+          0,
+          2.4,
+          48.800000000000004,
+          51.2,
+          98.80000000000001,
+          101.2,
+          148.8,
+          151.20000000000002,
+          197.60000000000002,
+          200
+        ],
+        "depthPlanes": [
+          0,
+          2.4,
+          32.1333,
+          34.533300000000004,
+          65.4667,
+          67.86670000000001,
+          97.60000000000001,
+          100
+        ],
+        "heightLevels": [
+          0,
+          1.8,
+          40
+        ],
+        "width": {
+          "clear": [
+            46.400000000000006,
+            47.60000000000001,
+            47.60000000000001,
+            46.400000000000006
+          ],
+          "walls": [
+            2.4,
+            2.3999999999999986,
+            2.3999999999999915,
+            2.4000000000000057,
+            2.3999999999999773
+          ]
+        },
+        "depth": {
+          "clear": [
+            29.7333,
+            30.9334,
+            29.7333
+          ],
+          "walls": [
+            2.4,
+            2.4000000000000057,
+            2.4000000000000057,
+            2.3999999999999915
+          ]
+        },
+        "limits": "Axis-aligned rectilinear tray surfaces only; measures clear openings/wall faces, not a general solid-intersection or physical-print test."
+      }
+    }
+  ],
+  "pass": false
+}

@@ -1,0 +1,87 @@
+{
+  "method": "Exact source and real UI handlers in Node VM/DOM with pinned Skia Canvas2D 1.1.1. Actual raster pixels and locally encoded PNG bytes; inline PNG Image loads are asynchronous. No browser/layout/GPU/navigation. The scored Pi helper is unchanged; this is independent verification only.",
+  "sha256": "883659a828c2c33161e3364c40e37004f9185ed93d40c3f688e0feba784c60e8",
+  "checks": [
+    {
+      "id": "brush_drag_palette_eraser",
+      "pass": true,
+      "evidence": {
+        "dragPixel": [
+          255,
+          0,
+          0,
+          255
+        ],
+        "eraserClears": true,
+        "neighborRetained": true
+      }
+    },
+    {
+      "id": "border_pixel",
+      "pass": false,
+      "error": "Top-left pixel should be paintable",
+      "actual": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "two_step_undo_redo_actual_pixels",
+      "pass": true,
+      "evidence": {
+        "undo": 2,
+        "redo": 2,
+        "imageDiagnostics": []
+      }
+    },
+    {
+      "id": "clear_and_undo",
+      "pass": true,
+      "evidence": {
+        "clear": true,
+        "undoClear": true
+      }
+    },
+    {
+      "id": "resize_preserves_pixels_and_png_bytes",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          48,
+          24
+        ],
+        "pixelsPreserved": true,
+        "farCorner": true,
+        "pngBytes": 122,
+        "download": "pixel-painting-48x24.png",
+        "file": "proof_ornith_03_pixel_painter.export.png"
+      }
+    },
+    {
+      "id": "undo_after_shrinking_does_not_throw",
+      "pass": false,
+      "error": "offset is out of bounds"
+    },
+    {
+      "id": "touch_point",
+      "pass": true,
+      "evidence": {
+        "pixel": [
+          0,
+          255,
+          0,
+          255
+        ]
+      }
+    }
+  ],
+  "pass": false
+}

@@ -1,0 +1,151 @@
+{
+  "method": "Exact-source VM, actual mouse/touch/tool/history events and pixel-buffer Canvas model; CSS inspected for missing canvas scale; no browser/PNG encoder",
+  "startup": "pass",
+  "defaultDimensions": {
+    "logical": [
+      48,
+      48
+    ],
+    "canvasAttributes": [
+      48,
+      48
+    ],
+    "declaredScale": 12,
+    "canvasInlineWidth": "",
+    "containerWidth": "576px"
+  },
+  "normalClick": {
+    "expectedIntrinsicPixel": [
+      25,
+      37
+    ],
+    "atPointer": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "paintedElsewhere": [
+      0,
+      0,
+      0,
+      255
+    ]
+  },
+  "controlledStroke": {
+    "first": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "end": [
+      0,
+      0,
+      0,
+      255
+    ]
+  },
+  "undoStroke": {
+    "first": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "end": [
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  "redoStroke": {
+    "first": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "end": [
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  "eraserPixel": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "exportCalls": [
+    {
+      "kind": "canvasDataURL",
+      "width": 48,
+      "height": 48
+    },
+    {
+      "kind": "anchor",
+      "download": "pixel-art.png",
+      "href": "data:image/png;base64,QA_NOT_REAL_PNG"
+    }
+  ],
+  "touchPaint": [
+    255,
+    0,
+    77,
+    255
+  ],
+  "resize": {
+    "state": {
+      "logicalW": 54,
+      "logicalH": 54,
+      "displayScale": 10,
+      "historyIndex": 1,
+      "historyLength": 2
+    },
+    "centeredPixel": [
+      255,
+      0,
+      77,
+      255
+    ]
+  },
+  "undoAfterResize": {
+    "logicalW": 54,
+    "logicalH": 54,
+    "displayScale": 10,
+    "historyIndex": 0,
+    "historyLength": 2
+  },
+  "redoAfterResize": {
+    "state": {
+      "logicalW": 54,
+      "logicalH": 54,
+      "displayScale": 10,
+      "historyIndex": 1,
+      "historyLength": 2
+    },
+    "oldPosition": [
+      255,
+      0,
+      77,
+      255
+    ],
+    "centeredPosition": [
+      255,
+      255,
+      255,
+      255
+    ]
+  },
+  "clearPixel": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "sha256": "b84069f372ec1a21e611a4250a4b26840c05b8764de80432e79ebda2e4ef070e"
+}

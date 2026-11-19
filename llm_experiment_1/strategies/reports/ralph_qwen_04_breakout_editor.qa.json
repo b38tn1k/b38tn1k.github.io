@@ -1,0 +1,37 @@
+{
+  "method": "Exact frozen source with real editor, keyboard, mouse/touch, JSON and restart controls in Node VM/DOM/nativeCanvas. Controlled ball fixtures expose existing functions/state only; no app algorithm replaced. Browser layout/hit testing/GPU/default actions remain unverified.",
+  "sha256": "d186a0fc499091c47bcc658d2e8b9510f8bec3e15a260c16c04c09b2df21992d",
+  "checks": [
+    {
+      "id": "editor_draw_erase_touch",
+      "pass": true,
+      "evidence": {
+        "draw": true,
+        "erase": true,
+        "touch": true
+      }
+    },
+    {
+      "id": "actual_save_JSON_and_file_load",
+      "pass": true,
+      "evidence": {
+        "fileRoundtrip": true
+      }
+    },
+    {
+      "id": "keyboard_mouse_paddle_controls",
+      "pass": false,
+      "error": "Mouse handlers never assign paddleTargetX",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "collision_win_and_restart_restore",
+      "pass": false,
+      "error": "Restart leaves destroyed grid empty",
+      "actual": 0,
+      "expected": 1
+    }
+  ],
+  "pass": false
+}

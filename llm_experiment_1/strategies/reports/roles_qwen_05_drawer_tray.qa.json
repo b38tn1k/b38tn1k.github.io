@@ -1,0 +1,175 @@
+{
+  "sha256": "3919afd79cdc21d56e6ee620546c25e92262221adba3c95f5ee581f1f5caca8e",
+  "method": "Exact AST-extracted geometry/export functions, real pinned Three.js geometry classes; no browser, CDN loading or WebGL verification",
+  "externalResources": [
+    "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+  ],
+  "meshParts": [
+    {
+      "size": [
+        180,
+        2,
+        120
+      ],
+      "position": [
+        0,
+        -14,
+        0
+      ]
+    },
+    {
+      "size": [
+        2,
+        30,
+        120
+      ],
+      "position": [
+        -89,
+        0,
+        0
+      ]
+    },
+    {
+      "size": [
+        2,
+        30,
+        120
+      ],
+      "position": [
+        89,
+        0,
+        0
+      ]
+    },
+    {
+      "size": [
+        180,
+        30,
+        2
+      ],
+      "position": [
+        0,
+        0,
+        -59
+      ]
+    },
+    {
+      "size": [
+        180,
+        30,
+        2
+      ],
+      "position": [
+        0,
+        0,
+        59
+      ]
+    },
+    {
+      "size": [
+        2,
+        30,
+        116
+      ],
+      "position": [
+        -30.666666666666664,
+        0,
+        0
+      ]
+    },
+    {
+      "size": [
+        2,
+        30,
+        116
+      ],
+      "position": [
+        28.66666666666667,
+        0,
+        0
+      ]
+    },
+    {
+      "size": [
+        176,
+        30,
+        2
+      ],
+      "position": [
+        0,
+        0,
+        -1
+      ]
+    }
+  ],
+  "nominalCompartment": [
+    57.333333333333336,
+    57,
+    28
+  ],
+  "actualColumnClearWidths": [
+    56.333333333333336,
+    57.333333333333336,
+    58.333333333333336
+  ],
+  "columnPlacementNote": "Divider positions use opening edge as box center; first/last openings differ by wall thickness.",
+  "export": {
+    "format": "binary",
+    "vertexMatchTolerance": 0.0001,
+    "verticalXPlanes": [
+      -90,
+      -88,
+      -31.6667,
+      -29.6667,
+      27.6667,
+      29.6667,
+      88,
+      90
+    ],
+    "verticalYPlanes": [
+      -15,
+      -13,
+      15
+    ],
+    "zLevels": [
+      -60,
+      -58,
+      -2,
+      0,
+      58,
+      60
+    ],
+    "bytes": 4884,
+    "triangles": 96,
+    "uniqueVertices": 52,
+    "bounds": {
+      "min": [
+        -90,
+        -15,
+        -60
+      ],
+      "max": [
+        90,
+        15,
+        60
+      ],
+      "dimensions": [
+        180,
+        30,
+        120
+      ]
+    },
+    "signedVolume": 103680,
+    "absoluteVolume": 103680,
+    "surfaceArea": 109752,
+    "degenerateTriangles": 0,
+    "nonFiniteTriangles": 0,
+    "normalDisagreements": 0,
+    "missingNormals": 0,
+    "boundaryOrNonmanifoldEdges": 8,
+    "inconsistentWindingEdges": 0,
+    "components": 4,
+    "watertightByMatchingEdges": false
+  },
+  "intersectionNote": "Independent closed box shells overlap floor/walls/dividers; no Boolean union, interior faces retained. Edge pairing alone does not certify their union."
+}

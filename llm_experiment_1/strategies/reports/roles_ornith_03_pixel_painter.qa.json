@@ -1,0 +1,17 @@
+{
+  "method": "Actual-source startup with standard ImageData shape (object.data is the typed array); no browser or corrective API polyfills",
+  "sha256": "ef79bb393962b1669f7b32033ee79d75f770c2f2b1b71659a01c235fa3f70c13",
+  "scriptSyntaxValid": true,
+  "externalURLs": [],
+  "sourceFindings": {
+    "renderUsesImageDataSet": true,
+    "exportRepeatsImageDataSet": true
+  },
+  "startup": "fail",
+  "error": "imgData.set is not a function",
+  "stack": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/03_pixel_painter/index.html:script0:97\n    imgData.set(pixelData);\n            ^\n\nTypeError: imgData.set is not a function\n    at render (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/03_pixel_painter/index.html:script0:97:13)\n    at applySize (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/03_pixel_painter/index.html:script0:77:5)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/03_pixel_painter/index.html:script0:389:3\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/03_pixel_painter/index.html:script0:392:3\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:30\n    at Array.forEach (<anonymous>)\n    at load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:10)\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/reports/roles_ornith_03_pixel_painter.qa.cjs:4:5)",
+  "limitations": [
+    "ImageData exposes its pixel buffer through .data; the object itself has no .set method. Startup fails in render() before later drawing operations.",
+    "No brush/export success is claimed, and no app code was changed to bypass this failure. Browser layout and rendering remain unverified."
+  ]
+}

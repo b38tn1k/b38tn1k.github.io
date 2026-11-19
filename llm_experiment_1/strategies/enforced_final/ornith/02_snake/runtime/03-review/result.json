@@ -1,0 +1,12 @@
+{
+  "role": "review",
+  "number": 3,
+  "minutes": 5.0,
+  "reason": "stage_time_limit",
+  "exitCode": 0,
+  "artifactBefore": "c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091",
+  "artifactAfter": "c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091",
+  "prompt": "enforced_final/ornith/02_snake/runtime/03-review/prompt.txt",
+  "events": "enforced_final/ornith/02_snake/runtime/03-review/events.jsonl",
+  "stderr": "enforced_final/ornith/02_snake/runtime/03-review/stderr.log"
+}

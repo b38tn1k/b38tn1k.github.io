@@ -1,0 +1,14 @@
+This is an operator-assisted repair of the existing index.html in this project. Preserve the working features and keep the final app one self-contained offline HTML file. You implement all code and tests. This is feedback 1 of at most3; the same conversation will continue if another revision is needed.
+
+Original brief:
+Build a polished reaction-time tester with a random wait, false-start detection, five trials, and a results summary. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+Operator feedback:
+- Trial badges skip from Trial 1 to Trial 3. Progress must accurately label all five trials.
+- The early-tap UI promises a retry, but consumes a trial. A false start must allow retry without losing one of the five valid measurements.
+- A session containing only false starts can show NaN/Infinity/-Infinity. Handle an empty measurement set clearly, and keep statistics finite and accurate.
+
+Repair these failures, then verify the full flow through the real controls: start, early tap/retry, five valid measured responses, summary and replay. Controlled responses of 200/225/250/275/300ms should produce a 250ms mean. Check actual state transitions and rendered results, not source patterns alone. Record the checks and any remaining failures in VERIFY.md. Stop when the required behavior works; do not add unrelated features.
+
+Generic local tools: read the runtime API/limits at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/preferred-harness/README.md. Native Canvas2D/DOM/clock helper: /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/native-runtime.cjs. Use bounded Bash timeout 90. Work only in this project. Browser automation is unavailable; do not launch browsers, headless Chromium, Playwright or Puppeteer. Unsupported adapter behavior is an environment limit, not an app defect. The repair budget is 60 minutes across all prompts and tests. No external reviewer or forced proof loop is active.
+

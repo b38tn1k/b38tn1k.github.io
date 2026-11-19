@@ -1,0 +1,12 @@
+{
+  "role": "test",
+  "number": 5,
+  "minutes": 5.91,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": "510536912ec5e4ee820b7ec64d334415f9619f7a5a899fc8177483b841f58521",
+  "artifactAfter": "510536912ec5e4ee820b7ec64d334415f9619f7a5a899fc8177483b841f58521",
+  "prompt": "enforced/qwen/01_reaction_timer/runtime/05-test/prompt.txt",
+  "events": "enforced/qwen/01_reaction_timer/runtime/05-test/events.jsonl",
+  "stderr": "enforced/qwen/01_reaction_timer/runtime/05-test/stderr.log"
+}

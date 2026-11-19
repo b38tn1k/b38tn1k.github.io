@@ -1,0 +1,1 @@
+I'll start by exploring the current directory to understand the project context.

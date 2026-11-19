@@ -1,0 +1,220 @@
+{
+  "method": "Actual-source DOM/export diagnostics; no external scripts fetched. Independent environment adapter supplies the standard checked boolean for checkbox inputs only. Actual exported Blob bytes are analyzed. No application algorithms replaced; native rendering and slicer/physical print behavior unverified.",
+  "sha256": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+  "artifact": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/enforced/qwen/05_drawer_tray/index.html",
+  "externalScripts": [],
+  "startup": {
+    "consoleErrors": [
+      [
+        "TypeError: t.getParameter is not a function"
+      ]
+    ],
+    "status": "Error: t.getParameter is not a function"
+  },
+  "asciiDefault": {
+    "bytes": 16371,
+    "file": "enforced_qwen_05_drawer_tray.ascii.stl",
+    "analysis": {
+      "format": "ascii",
+      "vertexMatchTolerance": 0.0001,
+      "verticalXPlanes": [
+        0,
+        3,
+        62,
+        65,
+        121,
+        124,
+        177,
+        180
+      ],
+      "verticalYPlanes": [],
+      "zLevels": [
+        -12,
+        0,
+        15,
+        61.5,
+        64.5,
+        105,
+        120,
+        132
+      ],
+      "bytes": 16371,
+      "triangles": 96,
+      "uniqueVertices": 60,
+      "bounds": {
+        "min": [
+          0,
+          0,
+          -12
+        ],
+        "max": [
+          180,
+          30,
+          132
+        ],
+        "dimensions": [
+          180,
+          30,
+          144
+        ]
+      },
+      "signedVolume": 370944,
+      "absoluteVolume": 370944,
+      "surfaceArea": 53550,
+      "degenerateTriangles": 0,
+      "nonFiniteTriangles": 0,
+      "normalDisagreements": 48,
+      "missingNormals": 0,
+      "boundaryOrNonmanifoldEdges": 60,
+      "inconsistentWindingEdges": 16,
+      "components": 6,
+      "watertightByMatchingEdges": false
+    }
+  },
+  "binaryDefault": {
+    "bytes": 4884,
+    "file": "enforced_qwen_05_drawer_tray.binary.stl",
+    "analysis": {
+      "format": "binary",
+      "vertexMatchTolerance": 0.0001,
+      "verticalXPlanes": [
+        0,
+        3,
+        30,
+        120,
+        177,
+        180
+      ],
+      "verticalYPlanes": [
+        0
+      ],
+      "zLevels": [
+        -12,
+        -1,
+        0,
+        3,
+        15,
+        30,
+        61.5,
+        105,
+        120,
+        121,
+        124,
+        132,
+        177,
+        180
+      ],
+      "bytes": 4884,
+      "triangles": 96,
+      "uniqueVertices": 77,
+      "bounds": {
+        "min": [
+          -1,
+          -12,
+          -12
+        ],
+        "max": [
+          180,
+          120,
+          180
+        ],
+        "dimensions": [
+          181,
+          132,
+          192
+        ]
+      },
+      "signedVolume": -58405,
+      "absoluteVolume": 58405,
+      "surfaceArea": 98706.55539874778,
+      "degenerateTriangles": 55,
+      "nonFiniteTriangles": 0,
+      "normalDisagreements": 8,
+      "missingNormals": 53,
+      "boundaryOrNonmanifoldEdges": 106,
+      "inconsistentWindingEdges": 0,
+      "components": 2,
+      "watertightByMatchingEdges": false
+    }
+  },
+  "dimensionEdit": {
+    "input": "200",
+    "error": "Cannot read properties of undefined (reading 'target')"
+  },
+  "asciiAfterDimensionEdit": {
+    "bytes": 16371,
+    "file": "enforced_qwen_05_drawer_tray.resized.stl",
+    "analysis": {
+      "format": "ascii",
+      "vertexMatchTolerance": 0.0001,
+      "verticalXPlanes": [
+        0,
+        3,
+        68.6667,
+        71.6667,
+        134.3333,
+        137.3333,
+        197,
+        200
+      ],
+      "verticalYPlanes": [],
+      "zLevels": [
+        -12,
+        0,
+        15,
+        61.5,
+        64.5,
+        105,
+        120,
+        132
+      ],
+      "bytes": 16371,
+      "triangles": 96,
+      "uniqueVertices": 60,
+      "bounds": {
+        "min": [
+          0,
+          0,
+          -12
+        ],
+        "max": [
+          200,
+          30,
+          132
+        ],
+        "dimensions": [
+          200,
+          30,
+          144
+        ]
+      },
+      "signedVolume": 408864,
+      "absoluteVolume": 408864,
+      "surfaceArea": 56430,
+      "degenerateTriangles": 0,
+      "nonFiniteTriangles": 0,
+      "normalDisagreements": 48,
+      "missingNormals": 0,
+      "boundaryOrNonmanifoldEdges": 60,
+      "inconsistentWindingEdges": 16,
+      "components": 6,
+      "watertightByMatchingEdges": false
+    }
+  },
+  "parameters": {
+    "oW": 200,
+    "oD": 120,
+    "oH": 30,
+    "cN": 3,
+    "rN": 2,
+    "wT": 3,
+    "fT": 3,
+    "sf": true
+  },
+  "compartmentTableDiagnostic": {
+    "text": "R1C162.7 × 55.524.083.47R1C262.7 × 55.524.083.47R1C362.7 × 55.524.083.47R2C162.7 × 55.524.083.47R2C262.7 × 55.524.083.47R2C362.7 × 55.524.083.47",
+    "rowCount": 6,
+    "expectedClearHeight": 27,
+    "note": "Direct table-function diagnostic only; it does not establish successful UI initialization or rendering."
+  }
+}

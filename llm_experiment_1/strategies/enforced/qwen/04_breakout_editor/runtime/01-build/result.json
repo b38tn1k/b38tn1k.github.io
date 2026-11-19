@@ -1,0 +1,12 @@
+{
+  "role": "build",
+  "number": 1,
+  "minutes": 3.34,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": null,
+  "artifactAfter": "525f672fa77236bfadc03c4c3ac029918412fa9a73890273f8de65eb693bfe4b",
+  "prompt": "enforced/qwen/04_breakout_editor/runtime/01-build/prompt.txt",
+  "events": "enforced/qwen/04_breakout_editor/runtime/01-build/events.jsonl",
+  "stderr": "enforced/qwen/04_breakout_editor/runtime/01-build/stderr.log"
+}

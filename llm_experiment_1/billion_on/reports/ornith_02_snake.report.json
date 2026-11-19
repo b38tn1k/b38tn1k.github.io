@@ -1,0 +1,100 @@
+{
+  "status": "completed",
+  "grade": "B+ provisional - core game passes; runtime self-test absent",
+  "score": 89,
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 12,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "verified": [
+    "Exact-source VM: growth/score, pause, reversal prevention, difficulty, wall/self collisions, restart, legal tail move, full-board win",
+    "No external runtime resources"
+  ],
+  "concerns": [
+    "Independent keyboard/browser visual play not observed",
+    "Pausing does not cancel pending animation frame; immediate pause/resume can leave duplicate render chains"
+  ],
+  "scopeCompliance": "No out-of-directory file writes found on initial log review",
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "elapsedMinutes": 1.6,
+  "wallMinutes": 1.78,
+  "promptWords": 36,
+  "toolCalls": 4,
+  "toolResultsMarkedError": 0,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "modelUsageReported": {
+    "input": 13054,
+    "output": 4687,
+    "cacheRead": 42433,
+    "totalTokens": 60174
+  },
+  "peakReportedPromptTokens": 13038,
+  "assistantTextContainingToolCallMarkup": 0,
+  "artifactBytes": 11107,
+  "sha256": "35bccceeff0315cd722b73e91911b90b7b21854994fff62ec5e562394cb722ec",
+  "billionContext": {
+    "loadedConfirmed": true,
+    "sessionId": "01a1dbac-8d32-71a5-a67b-d5f60606fe0a",
+    "extensionVersion": "0.1.213",
+    "stats": {
+      "requests": 5,
+      "tokensSaved": 0,
+      "inputTokens": 55487,
+      "cachedTokens": 42433,
+      "outputTokens": 4687,
+      "cacheSamples": 5,
+      "lastInputTokens": 13038,
+      "compressCreditTokens": 0,
+      "contextTokens": 13038,
+      "retrieveCalls": 0,
+      "retrieveHits": 0,
+      "retrieveMisses": 0,
+      "retrieveDropped": 0,
+      "retrieveDelivered": 0,
+      "storedBytes": 0,
+      "storeBytesSaved": 0,
+      "rangeRestores": 0,
+      "contextTokensSource": "usage",
+      "localInputEstimate": 22536,
+      "contextEstimateTokens": 12580,
+      "contextEstimateCalibrated": true,
+      "lastUsageGradeTokens": 13038,
+      "lastUsagePayloadUpper": 22536,
+      "lastInputTokensSource": "usage",
+      "lastInputTokensOrigin": "http://127.0.0.1:11435",
+      "calibrationRing": {
+        "origin": "http://127.0.0.1:11435",
+        "model": "ornith-1.5:35b-256k",
+        "values": [
+          1.0673386413687955,
+          1.0730398322851153,
+          1.079751552795031
+        ]
+      },
+      "calibratedEstimate": 1.0733766754829805,
+      "calibratedEstimateOrigin": "http://127.0.0.1:11435",
+      "calibratedEstimateModel": "ornith-1.5:35b-256k"
+    },
+    "compressionStats": {
+      "tokensCompressed": 0,
+      "compressionCount": 0,
+      "absorbedTokens": 0,
+      "storedCount": 0,
+      "retrievalCount": 0
+    },
+    "blocks": 0
+  },
+  "limitations": [
+    "No independent real-browser/visual testing; prior browser-origin denial honored.",
+    "Single run per task; differences do not isolate extension effect from sampling variability."
+  ],
+  "verificationConcerns": [
+    "Agent ran syntax and markup checks only; runtime behavior independently checked by supervisor"
+  ]
+}

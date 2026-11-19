@@ -1,0 +1,206 @@
+{
+  "rubricScores": {
+    "functionality": 35,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 4,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Keyboard movement, food growth, score/speed increase, pause/resume, wall/self collision and R restart passed runtime fixtures.",
+    "Tester feedback led to correction of a doubled game speed; UI feedback led to a HUD width adjustment."
+  ],
+  "defects": [
+    "Collision checks include the tail cell even when it would vacate on a non-eating move, causing a false game over.",
+    "Food placement stops after 500 random attempts and can return an occupied cell. Full-board victory is not handled."
+  ],
+  "verificationConcerns": [
+    "Specialist reviews were largely static. Successful review execution is reported separately from plugin acceptance-report formatting."
+  ],
+  "score": 84,
+  "grade": "B provisional - Playable Snake with working controls; tail and food-placement edge cases remain",
+  "breakdown": {
+    "functionality": 35,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 4,
+    "autonomy": 10
+  },
+  "verification": [
+    "Independent final-source checks in reports/roles_qwen_02_snake.qa.json; executable verifier in qa/remaining-*.cjs or the case-specific QA script.",
+    "Final artifact hash checked before assessment; no benchmark application code changed by supervisor."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed.",
+  "workflowNotes": "Role completion is audited from final child metadata as well as foreground tool results; asynchronous chain children are included. Application correctness, workflow adherence and autonomy are separate measures.",
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "roles",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All fixes confirmed. Here's the complete delivery report:\n\n---\n\n## \ud83d\udc0d Snake Game \u2014 Delivery Report\n\n### File\n**`index.html`** \u2014 ~715 lines, ~21KB, fully standalone single-file game (zero external dependencies)\n\n### Feature Checklist (all 15 requirements met \u2705)\n\n| # | Requirement | Status |\n|---|-------------|--------|\n| 1 | Canvas-based rendering with smooth visuals | \u2705 Gradient snake body, glowing pulsing food, subtle grid background |\n| 2 | Keyboard controls (Arrow keys + WASD) | \u2705 Both sets work; prevents reversing into self |\n| 3 | Food system with score | \u2705 Random placement avoiding snake body (500-attempt safeguard), live score counter |\n| 4 | Wall collision \u2192 game over | \u2705 Checks boundaries `x < 0 || x >= GRID_COUNT || y < 0 || y >= GRID_COUNT` |\n| 5 | Self-collision detection | \u2705 Checks every segment against new head position |\n| 6 | Pause/Resume (Space key) | \u2705 Visual overlay with pause icon + \"Press Space to Resume\" |\n| 7 | Restart (R key, any state) | \u2705 Resets from idle, playing, paused, or game-over states |\n| 8 | Increasing difficulty | \u2705 Speed increases every 5 points across 8 levels (130ms \u2192 55ms tick interval), with visible speed bar indicator that transitions green \u2192 amber \u2192 red |\n| 9 | Game over screen | \u2705 Final score, \"New High Score\" flash animation, blinking restart prompt |\n| 10 | High score via localStorage | \u2705 Persists across sessions with graceful try/catch error handling |\n| 11 | Standalone (no CDN/dependencies) | \u2705 Zero external resources |\n| 12 | Responsive centered canvas, dark theme | \u2705 Flexbox-centered, `min-height: 100vh` viewport |\n| 13 | Live score + high score HUD | \u2705 Always-visible above canvas with tabular-nums font |\n| 14 | Distinct snake head | \u2705 Green glow, animated eyes (pupils follow direction), flickering forked tongue |\n| 15 | Semantic colors & grid lines | \u2705 Green gradient body segments, red pulsing food with specular highlight, green wall borders with inner edge highlight, subtle white grid overlay |\n\n### Bugs Found & Fixed\n\n| Bug | Severity | Fix Applied |\n|-----|----------|-------------|\n| **Double speed**: `setTimeout(tick, tickInterval / 2)` made game run at 2\u00d7 intended speed | Critical | Removed `/ 2` \u2014 now uses `tickInterval` directly |\n| **Redundant body color logic**: 10 lines of dead/unreachable code (`ci`, `nextCi`, `f`) in snake rendering | Minor | Replaced with clean 3-line `Math.min(Math.floor(t2 * BODY_COLORS.length), ...)` index calculation |\n| **HUD width mismatch**: `#hud { width: 602px }` vs canvas `600px` created 1px overflow gap | Visual | Fixed to `width: 600px` with tighter `padding: 0 2px` |\n\n### How to Test\nOpen `index.html` in any modern browser. Play with arrow keys or WASD, pause with Space, restart with R at any time. Eat food to increase score and speed (watch the speed bars climb). The high score persists across page reloads via `localStorage`.",
+  "workflowInstructions": "run-suite.py and config/qwen/agents",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 13.75,
+  "wallMinutes": 13.75,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 40,
+  "parentToolCalls": 14,
+  "childToolCalls": 26,
+  "toolResultsMarkedError": 5,
+  "modelUsageReported": {
+    "input": 81212,
+    "output": 43040,
+    "cacheRead": 502194,
+    "totalTokens": 626446
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 30369,
+  "parentPeakReportedPromptTokens": 20407,
+  "childPeakReportedPromptTokens": 30369,
+  "parentModelUsage": {
+    "input": 30905,
+    "output": 6161,
+    "cacheRead": 143242,
+    "totalTokens": 180308
+  },
+  "childModelUsage": {
+    "input": 50307,
+    "output": 36879,
+    "cacheRead": 358952,
+    "totalTokens": 446138
+  },
+  "artifactBytes": 21789,
+  "sha256": "f98ae0bb6daa20c277b4317b4bb63bc4dda9d0fb2a94d711041ce3bfac204331",
+  "implementationChangesBySupervisor": 0,
+  "humanOrSupervisorSteering": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": false,
+    "implementationHandoff": false,
+    "rolesAttempted": {
+      "developer": 3,
+      "tester": 1,
+      "ui": 1
+    },
+    "rolesCompleted": {
+      "developer": 3,
+      "ui": 1,
+      "tester": 1
+    },
+    "parentArtifactReads": 3,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b"
+    ],
+    "delegationCalls": 6,
+    "parentWrites": 0,
+    "delegations": [
+      {
+        "agent": "developer",
+        "model": "songbird/qwen3.6:35b-a3b:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 10600,
+          "output": 897,
+          "cacheRead": 23857,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 4
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/qwen/02_snake/artifact-pi/subagents/artifacts/761d116b-40b7-474a-aa56-025827f49e21_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "761d116b-40b7-474a-aa56-025827f49e21",
+        "acceptanceStatus": "attested"
+      },
+      {
+        "agent": "ui",
+        "model": "songbird/qwen3.6:35b-a3b:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 9659,
+          "output": 3322,
+          "cacheRead": 2415,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 2
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/qwen/02_snake/artifact-pi/subagents/artifacts/8352400c-8e1a-47e7-90f4-393e22d95d18_ui_0_transcript.jsonl.gz"
+        },
+        "runId": "8352400c-8e1a-47e7-90f4-393e22d95d18",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/qwen3.6:35b-a3b:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 10581,
+          "output": 2164,
+          "cacheRead": 49492,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 6
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/qwen/02_snake/artifact-pi/subagents/artifacts/9429cb05-fe1b-4aa6-90e2-f0ee85bbbf8e_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "9429cb05-fe1b-4aa6-90e2-f0ee85bbbf8e",
+        "acceptanceStatus": "attested"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/qwen3.6:35b-a3b:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 3720,
+          "output": 10982,
+          "cacheRead": 108776,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 10
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/qwen/02_snake/artifact-pi/subagents/artifacts/9830521e-ae0a-40d8-9ea5-59999ca7302a_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "9830521e-ae0a-40d8-9ea5-59999ca7302a",
+        "acceptanceStatus": "attested"
+      },
+      {
+        "agent": "tester",
+        "model": "songbird/qwen3.6:35b-a3b:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 15747,
+          "output": 19514,
+          "cacheRead": 174412,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 9
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/qwen/02_snake/artifact-pi/subagents/artifacts/f8cf3f3e-5f3c-4841-8214-73a169c62b78_tester_0_transcript.jsonl.gz"
+        },
+        "runId": "f8cf3f3e-5f3c-4841-8214-73a169c62b78",
+        "acceptanceStatus": "attested"
+      }
+    ]
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

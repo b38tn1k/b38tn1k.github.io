@@ -1,0 +1,42 @@
+{
+  "method": "Exact source, real registered handlers and deterministic timer sequences. No application algorithms changed. No browser rendering or physical input timing verification.",
+  "sha256": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+  "checks": [
+    {
+      "id": "five_trials_summary_restart",
+      "pass": true,
+      "evidence": {
+        "stats": [
+          "250ms",
+          "200ms",
+          "300ms",
+          "35ms"
+        ],
+        "waits": [
+          1999.9033599160612,
+          1621.527787297964,
+          2208.9513167738914,
+          2460.5066496878862,
+          1749.434307217598
+        ],
+        "restart": true
+      }
+    },
+    {
+      "id": "false_start_stays_false_until_retry",
+      "pass": false,
+      "error": "'stage go' == 'stage false'"
+    },
+    {
+      "id": "retry_has_one_fresh_timer",
+      "pass": false,
+      "error": "Retry must cancel the abandoned wait"
+    },
+    {
+      "id": "false_start_preserves_valid_trial",
+      "pass": false,
+      "error": "'215ms' == '240ms'"
+    }
+  ],
+  "pass": false
+}

@@ -1,0 +1,38 @@
+{
+  "method": "Exact-source VM with no-op Canvas and real binary buffer serialization; no browser/slicer",
+  "startup": "pass",
+  "uiWall": "2.4",
+  "effectiveWall": 2,
+  "claimedCell": [
+    57.333333333333336,
+    57,
+    28
+  ],
+  "actualXClearances": [
+    56.333333333333336,
+    55.333333333333336,
+    60.33333333333333
+  ],
+  "binarySTL": {
+    "triangles": 96,
+    "bytes": 4884,
+    "expectedBytes": 4884,
+    "countField": 96
+  },
+  "finite": true,
+  "positiveVolumeOverlapPairs": 13,
+  "outerBounds": [
+    [
+      0,
+      180
+    ],
+    [
+      0,
+      120
+    ],
+    [
+      0,
+      30
+    ]
+  ]
+}

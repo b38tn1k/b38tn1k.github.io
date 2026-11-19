@@ -1,0 +1,86 @@
+{
+  "method": "Independent exact-source VM/DOM scheduler and actual pointer/keyboard events. Read-only closure state exposed; no algorithm replacement. No browser layout/hit testing or visual-polish claim.",
+  "sha256": "fedd2d7bc1272ec4c8b7252f49f392ce0fc68e944697f362d0728a5164f5cec5",
+  "checks": [
+    {
+      "id": "five_actual_responses_summary_and_replay",
+      "pass": true,
+      "evidence": {
+        "values": [
+          "250ms",
+          "200ms",
+          "100ms"
+        ],
+        "rows": 5,
+        "completedDots": 4,
+        "replay": true,
+        "randomWaitsMS": [
+          2149.8695358866826,
+          1639.0625128522515,
+          2432.0842776447535,
+          2771.6839770786464,
+          1811.7363147437572
+        ],
+        "allWaitsIn800To3500": true
+      }
+    },
+    {
+      "id": "false_start_rejected_and_delayed_feedback",
+      "pass": true,
+      "evidence": {
+        "phase": "false",
+        "immediateTitle": "Wait for it…",
+        "immediate": "🟢 Wait for it… Don't click until it turns green. A false start will cost you this trial. Hold back — wait for green!",
+        "delayed": "⚠️ False start! —ms Press Space to continue",
+        "immediateTitleExplainsFalseStart": false
+      }
+    },
+    {
+      "id": "all_false_starts_summary_remains_finite_and_honest",
+      "pass": true,
+      "evidence": {
+        "falseStarts": 5,
+        "values": [
+          "—ms",
+          "—ms",
+          "—ms"
+        ],
+        "screens": [
+          "🟢 Wait for it… Don't click until it turns green. A false start will cost you this trial. Hold back — wait for green!",
+          "🟢 Wait for it… Don't click until it turns green. A false start will cost you this trial. Hold back — wait for green!",
+          "🟢 Wait for it… Don't click until it turns green. A false start will cost you this trial. Hold back — wait for green!",
+          "🟢 Wait for it… Don't click until it turns green. A false start will cost you this trial. Hold back — wait for green!",
+          "🟢 Wait for it… Don't click until it turns green. A false start will cost you this trial. Hold back — wait for green!"
+        ]
+      }
+    },
+    {
+      "id": "mixed_valid_and_false_samples_average_uses_valid_only",
+      "pass": true,
+      "evidence": {
+        "values": [
+          "250ms",
+          "200ms",
+          "100ms"
+        ],
+        "valid": 3,
+        "falseStarts": 2
+      }
+    },
+    {
+      "id": "space_keyboard_actual_flow",
+      "pass": true,
+      "evidence": {
+        "ms": 250
+      }
+    },
+    {
+      "id": "self_contained_offline_source",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "pass": true
+}

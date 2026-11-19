@@ -1,0 +1,26 @@
+{
+  "passed": false,
+  "artifactSHA256": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+  "checks": [
+    {
+      "id": "editable_dimensions",
+      "passed": false,
+      "evidence": "Exception: Cannot read properties of undefined (reading 'target')"
+    },
+    {
+      "id": "compartment_dimensions",
+      "passed": false,
+      "evidence": "Exception: Cannot read properties of undefined (reading 'target')"
+    },
+    {
+      "id": "rotatable_preview",
+      "passed": false,
+      "evidence": "Exception: window is not defined"
+    },
+    {
+      "id": "stl_export",
+      "passed": false,
+      "evidence": "Exception: window is not defined"
+    }
+  ]
+}

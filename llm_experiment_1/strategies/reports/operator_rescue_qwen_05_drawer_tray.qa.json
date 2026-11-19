@@ -1,0 +1,395 @@
+{
+  "method": "Independent exact syntax/dependency checks plus unchanged app geometry, update/export functions and original DOM input/export listener statements, actual embedded computational libraries and actual STL Blob bytes. Full WebGL startup/rendering/layout are unsupported and explicitly unverified; no fake renderer or app algorithm used.",
+  "sha256": "1483d3ef9dd022ce152ccbb9497de7c7e7d914493c3e4c4c124ef5f95b01c8c7",
+  "startup": {
+    "loaded": false,
+    "unsupportedWebGL": true,
+    "error": "pect+r,n.elements[0]=2*e.near/(o-a),n.elements[8]=(o+a)/(o-a),this.cameraL.projectionMatrix.copy(n),a=-s*e.aspect-r,o=s*e.aspect-r,n.elements[0]=2*e.near/(o-a),n.elements[8]=(o+a)/(o-a),this.cameraR.projectionMatrix.copy(n)}this.cameraL.matrixWorld.copy(t.matrixWorld).multiply(wc),this.cameraR.matrixWorld.copy(t.matrixWorld).multiply(_c)}},t.StreamCopyUsage=35042,t.StreamDrawUsage=35040,t.StreamReadUsage=35041,t.StringKeyframeTrack=tl,t.SubtractEquation=101,t.SubtractiveBlending=3,t.TOUCH={ROTATE:0,PAN:1,DOLLY_PAN:2,DOLLY_ROTATE:3},t.TangentSpaceNormalMap=0,t.TetrahedronBufferGeometry=To,t.TetrahedronGeometry=To,t.TextBufferGeometry=Eo,t.TextGeometry=Eo,t.Texture=bt,t.TextureLoader=pl,t.TorusBufferGeometry=Ao,t.TorusGeometry=Ao,t.TorusKnotBufferGeometry=Lo,t.TorusKnotGeometry=Lo,t.Triangle=je,t.TriangleFanDrawMode=2,t.TriangleStripDrawMode=1,t.TrianglesDrawMode=0,t.TubeBufferGeometry=Ro,t.TubeGeometry=Ro,t.UVMapping=i,t.Uint16Attribute=function(t,e){return console.warn(\"THREE.Uint16Attribute has been removed. Use new THREE.Uint16BufferAttribute() instead.\"),new hn(t,e)},t.Uint16BufferAttribute=hn,t.Uint32Attribute=function(t,e){return console.warn(\"THREE.Uint32Attribute has been removed. Use new THREE.Uint32BufferAttribute() instead.\"),new dn(t,e)},t.Uint32BufferAttribute=dn,t.Uint8Attribute=function(t,e){return console.warn(\"THREE.Uint8Attribute has been removed. Use new THREE.Uint8BufferAttribute() instead.\"),new on(t,e)},t.Uint8BufferAttribute=on,t.Uint8ClampedAttribute=function(t,e){return console.warn(\"THREE.Uint8ClampedAttribute has been removed. Use new THREE.Uint8ClampedBufferAttribute() instead.\"),new ln(t,e)},t.Uint8ClampedBufferAttribute=ln,t.Uniform=Zc,t.UniformsLib=ui,t.UniformsUtils=Zn,t.UnsignedByteType=x,t.UnsignedInt248Type=S,t.UnsignedIntType=w,t.UnsignedShort4444Type=1017,t.UnsignedShort5551Type=1018,t.UnsignedShort565Type=1019,t.UnsignedShortType=_,t.VSMShadowMap=3,t.Vector2=vt,t.Vector3=Lt,t.Vector4=St,t.VectorKeyframeTrack=el,t.Vertex=function(t,e,n){return console.warn(\"THREE.Vertex has been removed. Use THREE.Vector3 instead.\"),new Lt(t,e,n)},t.VertexColors=2,t.VideoTexture=Aa,t.WebGL1Renderer=bs,t.WebGLCubeRenderTarget=ni,t.WebGLMultisampleRenderTarget=Et,t.WebGLRenderTarget=Tt,t.WebGLRenderTargetCube=function(t,e,n){return console.warn(\"THREE.WebGLRenderTargetCube( width, height, options ) is now WebGLCubeRenderTarget( size, options ).\"),new ni(t,n)},t.WebGLRenderer=ws,t.WebGLUtils=ms,t.WireframeGeometry=Co,t.WireframeHelper=function(t,e){return console.warn(\"THREE.WireframeHelper has been removed. Use THREE.WireframeGeometry instead.\"),new ya(new Co(t.geometry),new ca({color:void 0!==e?e:16777215}))},t.WrapAroundEnding=W,t.XHRLoader=function(t){return console.warn(\"THREE.XHRLoader has been renamed to THREE.FileLoader.\"),new cl(t)},t.ZeroCurvatureEnding=k,t.ZeroFactor=200,t.ZeroSlopeEnding=V,t.ZeroStencilOp=0,t.sRGBEncoding=Y,Object.defineProperty(t,\"__esModule\",{value:!0})}));\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            \n\nError: Error creating WebGL context.\n    at new ws (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/operator_rescue/qwen/05_drawer_tray/index.html:script0:6:337663)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/operator_rescue/qwen/05_drawer_tray/index.html:script3:17:18\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/operator_rescue/qwen/05_drawer_tray/index.html:script3:433:3\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:30\n    at Array.forEach (<anonymous>)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:10)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/enforced-harness/runtime.cjs:17:14)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/proof-harness/runtime.cjs:6:15)",
+    "stackTruncated": true
+  },
+  "checks": [
+    {
+      "id": "single_file_has_no_external_script_dependencies",
+      "pass": true,
+      "evidence": {
+        "dependencies": []
+      }
+    },
+    {
+      "id": "all_inline_scripts_parse_without_execution",
+      "pass": true,
+      "evidence": {
+        "syntaxErrors": []
+      }
+    },
+    {
+      "id": "exact_source_offline_VM_startup",
+      "pass": false,
+      "environmentLimit": true,
+      "error": "Error creating WebGL context."
+    },
+    {
+      "id": "default_actual_preview_geometry_valid",
+      "pass": false,
+      "evidence": {
+        "present": false
+      },
+      "error": "t.getX is not a function"
+    },
+    {
+      "id": "default_real_STL_full_outer_dimensions",
+      "pass": false,
+      "evidence": {
+        "actual": [
+          2,
+          30,
+          176
+        ],
+        "expected": [
+          30,
+          120,
+          180
+        ]
+      }
+    },
+    {
+      "id": "default_real_STL_outward_normals_and_closed_boundary",
+      "pass": false,
+      "evidence": {
+        "signedVolume": -10560,
+        "normalDisagreements": 0,
+        "nonFinite": 0,
+        "degenerate": 0,
+        "reconciled": {
+          "analysisBudgetExceeded": false,
+          "tolerance": 0.0001,
+          "triangles": 12,
+          "vertices": 8,
+          "edgesAfterCollinearSplitting": 18,
+          "originalEdgesWithInteriorVertices": 0,
+          "skippedEdges": 0,
+          "boundaryOrNonmanifoldEdges": 0,
+          "inconsistentWindingEdges": 0,
+          "nonmanifoldVertexFans": 0,
+          "faceComponents": 1,
+          "closedConnectedBoundary": true,
+          "limits": "Matches collinear edge subdivisions and local face connectivity; not a general triangle-intersection test or physical-print certification."
+        }
+      }
+    },
+    {
+      "id": "default_real_STL_compartment_walls_floor_and_volume",
+      "pass": false,
+      "evidence": {
+        "sections": {
+          "axes": {
+            "widthAxis": 0,
+            "depthAxis": 2,
+            "heightAxis": 1
+          },
+          "tolerance": 0.0001,
+          "widthPlanes": [
+            -88,
+            88
+          ],
+          "depthPlanes": [
+            -1,
+            1
+          ],
+          "heightLevels": [
+            -15,
+            15
+          ],
+          "width": {
+            "clear": [],
+            "walls": [
+              176
+            ]
+          },
+          "depth": {
+            "clear": [],
+            "walls": [
+              2
+            ]
+          },
+          "limits": "Axis-aligned rectilinear tray surfaces only; measures clear openings/wall faces, not a general solid-intersection or physical-print test."
+        },
+        "expectedClear": [
+          57.333333333333336,
+          57
+        ],
+        "actualVolume": 10560,
+        "expectedVolume": 98976
+      }
+    },
+    {
+      "id": "default_actual_input_and_bound_export_handlers",
+      "pass": false,
+      "evidence": {},
+      "error": ",t.WireframeGeometry=Co,t.WireframeHelper=function(t,e){return console.warn(\"THREE.WireframeHelper has been removed. Use THREE.WireframeGeometry instead.\"),new ya(new Co(t.geometry),new ca({color:void 0!==e?e:16777215}))},t.WrapAroundEnding=W,t.XHRLoader=function(t){return console.warn(\"THREE.XHRLoader has been renamed to THREE.FileLoader.\"),new cl(t)},t.ZeroCurvatureEnding=k,t.ZeroFactor=200,t.ZeroSlopeEnding=V,t.ZeroStencilOp=0,t.sRGBEncoding=Y,Object.defineProperty(t,\"__esModule\",{value:!0})}));\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            \n\nTypeError: t.getX is not a function\n    at Lt.fromBufferAttribute (evalmachine.<anonymous>:6:34716)\n    at En.computeVertexNormals (evalmachine.<anonymous>:6:100948)\n    at csgToBufferGeometry (evalmachine.<anonymous>:155:9)\n    at HTMLInputElement.updateTray (evalmachine.<anonymous>:266:17)\n    at dispatch (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/node_modules/linkedom/cjs/interface/event-target.js:8:14)\n    at GlobalEvent.invokeListeners (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/node_modules/linkedom/cjs/interface/event-target.js:29:11)\n    at Array.some (<anonymous>)\n    at HTMLInputElement.dispatchEvent (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/node_modules/linkedom/cjs/interface/event-target.js:81:17)\n    at ctx.__qaDispatch (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:10:166)\n    at evalmachine.<anonymous>:1:1"
+    },
+    {
+      "id": "alternate_actual_preview_geometry_valid",
+      "pass": false,
+      "evidence": {
+        "present": false
+      },
+      "error": "Error: Actual export function emitted no Blob\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:10:1677"
+    },
+    {
+      "id": "alternate_real_STL_export_available",
+      "pass": false,
+      "error": "Error: Actual export function emitted no Blob\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:10:1677"
+    },
+    {
+      "id": "alternate_actual_input_and_bound_export_handlers",
+      "pass": false,
+      "evidence": {
+        "computedRows": [],
+        "warning": "⚠ CSG union returned empty result."
+      },
+      "error": "Error: Actual bound export handler emitted no Blob\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:11:770\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:13:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    },
+    {
+      "id": "alternate_computed_clearance_readouts_match_required_openings",
+      "pass": false,
+      "evidence": {
+        "expected": [
+          48.625,
+          41
+        ]
+      }
+    },
+    {
+      "id": "actual_Orbit_callback_changes_camera",
+      "pass": true,
+      "evidence": {
+        "before": [
+          200,
+          250,
+          300
+        ],
+        "after": [
+          -32.39106143599588,
+          360.74871217317633,
+          247.61095655169282
+        ],
+        "changed": true,
+        "renderingVerified": false
+      },
+      "environmentLimit": false
+    }
+  ],
+  "diagnostics": {
+    "backend": {
+      "sha256": "1483d3ef9dd022ce152ccbb9497de7c7e7d914493c3e4c4c124ef5f95b01c8c7",
+      "method": "Conditional exact AST-extracted app geometry/export functions with the actual embedded dependency scripts evaluated in original order. No computational dependency or app algorithm substituted. DOM download/status transport is a fixture; no full offline startup/UI wiring/GPU rendering credit.",
+      "threeRevision": "128",
+      "actualEmbeddedCSG": true,
+      "cases": [
+        {
+          "label": "default",
+          "inputs": {
+            "L": 180,
+            "W": 120,
+            "H": 30,
+            "wall": 2,
+            "floor": 2,
+            "rows": 2,
+            "cols": 3
+          },
+          "geometryArrayDiagnostics": {
+            "polygons": 12,
+            "vertices": 36,
+            "indices": 36,
+            "maxIndex": 38,
+            "outOfRange": 3
+          },
+          "previewGeometryError": "t.getX is not a function",
+          "previewGeometryDiagnostics": {
+            "present": false
+          },
+          "export": {
+            "format": "ascii",
+            "vertexMatchTolerance": 0.0001,
+            "verticalXPlanes": [
+              -88,
+              88
+            ],
+            "verticalYPlanes": [
+              -15,
+              15
+            ],
+            "zLevels": [
+              -1,
+              1
+            ],
+            "bytes": 2481,
+            "triangles": 12,
+            "uniqueVertices": 8,
+            "bounds": {
+              "min": [
+                -88,
+                -15,
+                -1
+              ],
+              "max": [
+                88,
+                15,
+                1
+              ],
+              "dimensions": [
+                176,
+                30,
+                2
+              ]
+            },
+            "signedVolume": -10560,
+            "absoluteVolume": 10560,
+            "surfaceArea": 11384,
+            "degenerateTriangles": 0,
+            "nonFiniteTriangles": 0,
+            "normalDisagreements": 0,
+            "missingNormals": 0,
+            "boundaryOrNonmanifoldEdges": 0,
+            "inconsistentWindingEdges": 0,
+            "components": 1,
+            "watertightByMatchingEdges": true,
+            "reconciled": {
+              "analysisBudgetExceeded": false,
+              "tolerance": 0.0001,
+              "triangles": 12,
+              "vertices": 8,
+              "edgesAfterCollinearSplitting": 18,
+              "originalEdgesWithInteriorVertices": 0,
+              "skippedEdges": 0,
+              "boundaryOrNonmanifoldEdges": 0,
+              "inconsistentWindingEdges": 0,
+              "nonmanifoldVertexFans": 0,
+              "faceComponents": 1,
+              "closedConnectedBoundary": true,
+              "limits": "Matches collinear edge subdivisions and local face connectivity; not a general triangle-intersection test or physical-print certification."
+            },
+            "sections": {
+              "axes": {
+                "widthAxis": 0,
+                "depthAxis": 2,
+                "heightAxis": 1
+              },
+              "tolerance": 0.0001,
+              "widthPlanes": [
+                -88,
+                88
+              ],
+              "depthPlanes": [
+                -1,
+                1
+              ],
+              "heightLevels": [
+                -15,
+                15
+              ],
+              "width": {
+                "clear": [],
+                "walls": [
+                  176
+                ]
+              },
+              "depth": {
+                "clear": [],
+                "walls": [
+                  2
+                ]
+              },
+              "limits": "Axis-aligned rectilinear tray surfaces only; measures clear openings/wall faces, not a general solid-intersection or physical-print test."
+            },
+            "expectedEqualClear": [
+              57.333333333333336,
+              57
+            ],
+            "expectedUnionVolume": 98976
+          }
+        },
+        {
+          "label": "alternate",
+          "inputs": {
+            "L": 207,
+            "W": 133,
+            "H": 36,
+            "wall": 2.5,
+            "floor": 2.5,
+            "rows": 3,
+            "cols": 4
+          },
+          "geometryArrayDiagnostics": {
+            "polygons": 0,
+            "vertices": 0,
+            "indices": 0,
+            "maxIndex": null,
+            "outOfRange": 0
+          },
+          "previewGeometryDiagnostics": {
+            "present": false
+          },
+          "error": "Error: Actual export function emitted no Blob\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:10:1677"
+        }
+      ]
+    },
+    "components": {
+      "sha256": "1483d3ef9dd022ce152ccbb9497de7c7e7d914493c3e4c4c124ef5f95b01c8c7",
+      "method": "Conditional exact app geometry/update/export functions and original input/export listener statements, actual HTML DOM and actual embedded Three/Orbit/CSG. Only GPU renderer creation is not executed: no renderer or app algorithm substituted. Real Orbit controls use a DOM canvas with generic dimension/pointer-capture metadata. GPU rendering/full startup/layout remain unverified.",
+      "cases": [
+        {
+          "label": "default",
+          "inputs": {
+            "L": 180,
+            "W": 120,
+            "H": 30,
+            "wall": 2,
+            "floor": 2,
+            "rows": 2,
+            "cols": 3
+          },
+          "error": ",t.WireframeGeometry=Co,t.WireframeHelper=function(t,e){return console.warn(\"THREE.WireframeHelper has been removed. Use THREE.WireframeGeometry instead.\"),new ya(new Co(t.geometry),new ca({color:void 0!==e?e:16777215}))},t.WrapAroundEnding=W,t.XHRLoader=function(t){return console.warn(\"THREE.XHRLoader has been renamed to THREE.FileLoader.\"),new cl(t)},t.ZeroCurvatureEnding=k,t.ZeroFactor=200,t.ZeroSlopeEnding=V,t.ZeroStencilOp=0,t.sRGBEncoding=Y,Object.defineProperty(t,\"__esModule\",{value:!0})}));\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            \n\nTypeError: t.getX is not a function\n    at Lt.fromBufferAttribute (evalmachine.<anonymous>:6:34716)\n    at En.computeVertexNormals (evalmachine.<anonymous>:6:100948)\n    at csgToBufferGeometry (evalmachine.<anonymous>:155:9)\n    at HTMLInputElement.updateTray (evalmachine.<anonymous>:266:17)\n    at dispatch (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/node_modules/linkedom/cjs/interface/event-target.js:8:14)\n    at GlobalEvent.invokeListeners (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/node_modules/linkedom/cjs/interface/event-target.js:29:11)\n    at Array.some (<anonymous>)\n    at HTMLInputElement.dispatchEvent (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/node_modules/linkedom/cjs/interface/event-target.js:81:17)\n    at ctx.__qaDispatch (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:10:166)\n    at evalmachine.<anonymous>:1:1"
+        },
+        {
+          "label": "alternate",
+          "inputs": {
+            "L": 207,
+            "W": 133,
+            "H": 36,
+            "wall": 2.5,
+            "floor": 2.5,
+            "rows": 3,
+            "cols": 4
+          },
+          "computedRows": [],
+          "geometryRows": [],
+          "warning": "⚠ CSG union returned empty result.",
+          "error": "Error: Actual bound export handler emitted no Blob\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:11:770\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:13:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+        }
+      ],
+      "originalControlConfigurations": 1,
+      "originalListenerStatements": 2,
+      "rotationControl": {
+        "before": [
+          200,
+          250,
+          300
+        ],
+        "after": [
+          -32.39106143599588,
+          360.74871217317633,
+          247.61095655169282
+        ],
+        "changed": true,
+        "renderingVerified": false
+      }
+    }
+  },
+  "pass": false,
+  "verificationConcerns": [
+    "No GPU/browser visual, layout, hit-testing or physical-print certification.",
+    "Component harness skips renderer creation; it does not prove full-browser startup, but real component exceptions/output defects are independently observable."
+  ]
+}

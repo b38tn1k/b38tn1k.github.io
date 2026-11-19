@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Tray Maker</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #242836; --border: #2e3348;
+    --text: #e2e4ed; --text2: #8b8fa8; --accent: #6c8cff; --accent2: #4a6ae0;
+    --green: #4ade80; --orange: #fb923c; --red: #f87171;
+  }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  
+  /* Layout */
+  .app { display: grid; grid-template-columns: 340px 1fr; height: 100vh; overflow: hidden; }
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .main { display: flex; flex-direction: column; overflow: hidden; }
+  .viewport { flex: 1; position: relative; background: var(--bg); overflow: hidden; }
+  .bottom-bar { background: var(--surface); border-top: 1px solid var(--border); padding: 10px 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  /* Header */
+  .logo { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .logo svg { width: 28px; height: 28px; }
+  .logo h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .logo span { font-size: 11px; color: var(--text2); font-weight: 400; }
+
+  /* Sections */
+  .section { background: var(--surface2); border-radius: 10px; padding: 14px; border: 1px solid var(--border); }
+  .section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text2); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .section-title::before { content: ''; width: 3px; height: 12px; background: var(--accent); border-radius: 2px; }
+
+  /* Form controls */
+  .field { margin-bottom: 10px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .field label .val { color: var(--accent); font-weight: 600; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+  input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; background: var(--border); border-radius: 3px; outline: none; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 2px solid var(--surface); }
+  input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; background: var(--accent); border-radius: 50%; cursor: pointer; border: 2px solid var(--surface); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  /* Compartment info */
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .comp-card { background: var(--bg); border-radius: 6px; padding: 8px 10px; border: 1px solid var(--border); }
+  .comp-card .label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+  .comp-card .value { font-size: 15px; font-weight: 700; color: var(--green); font-family: 'SF Mono', 'Fira Code', monospace; }
+  .comp-card .unit { font-size: 10px; color: var(--text2); margin-left: 2px; }
+  .comp-card.full { grid-column: 1 / -1; }
+
+  /* 3D Viewport */
+  .viewport-header { position: absolute; top: 16px; left: 16px; z-index: 10; display: flex; gap: 8px; }
+  .vp-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.15s; }
+  .vp-btn:hover { background: var(--surface2); color: var(--text); border-color: var(--accent); }
+  .vp-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .vp-info { position: absolute; bottom: 16px; left: 16px; z-index: 10; font-size: 11px; color: var(--text2); background: rgba(15,17,23,0.8); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); }
+
+  /* 3D Canvas Container */
+  #canvas3d { width: 100%; height: 100%; display: block; cursor: grab; }
+  #canvas3d:active { cursor: grabbing; }
+
+  /* Bottom bar */
+  .bottom-bar .info { font-size: 12px; color: var(--text2); margin-right: auto; }
+  .bottom-bar .info strong { color: var(--text); }
+  .btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-secondary { background: var(--surface2); color: var(--text); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-green { background: var(--green); color: #000; border-color: var(--green); }
+  .btn-green:hover { opacity: 0.85; }
+
+  /* Color picker row */
+  .color-row { display: flex; gap: 6px; align-items: center; }
+  .color-swatch { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--border); cursor: pointer; transition: transform 0.1s; }
+  .color-swatch:hover { transform: scale(1.15); }
+  .color-swatch.active { border-color: var(--text); transform: scale(1.15); }
+  input[type="color"] { -webkit-appearance: none; width: 32px; height: 24px; border: none; background: none; cursor: pointer; }
+  input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+  input[type="color"]::-webkit-color-swatch { border: 1px solid var(--border); border-radius: 4px; }
+
+  /* Presets */
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; }
+  .preset-btn { background: var(--bg); border: 1px solid var(--border); color: var(--text2); padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.15s; }
+  .preset-btn:hover { border-color: var(--accent); color: var(--text); }
+
+  /* Scrollbar */
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    .sidebar { max-height: 45vh; border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="logo">
+      <svg viewBox="0 0 28 28" fill="none">
+        <rect x="2" y="2" width="24" height="24" rx="4" stroke="#6c8cff" stroke-width="2"/>
+        <line x1="2" y1="10" x2="26" y2="10" stroke="#6c8cff" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="10" y1="10" x2="10" y2="26" stroke="#6c8cff" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="18" y1="10" x2="18" y2="26" stroke="#6c8cff" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div><h1>Tray Maker</h1><span>Drawer organizer designer</span></div>
+    </div>
+
+    <!-- Presets -->
+    <div class="section">
+      <div class="section-title">Presets</div>
+      <div class="presets">
+        <button class="preset-btn" onclick="applyPreset(180,120,30,3,2)">Small 180×120</button>
+        <button class="preset-btn" onclick="applyPreset(280,200,30,4,3)">Medium 280×200</button>
+        <button class="preset-btn" onclick="applyPreset(380,260,35,5,3)">Large 380×260</button>
+        <button class="preset-btn" onclick="applyPreset(300,150,30,4,2)">Wide 300×150</button>
+        <button class="preset-btn" onclick="applyPreset(150,250,30,2,3)">Tall 150×250</button>
+      </div>
+    </div>
+
+    <!-- Outer Dimensions -->
+    <div class="section">
+      <div class="section-title">Outer Dimensions (mm)</div>
+      <div class="field">
+        <label>Width (X) <span class="val" id="v-width">180</span></label>
+        <input type="range" id="width" min="80" max="600" step="1" value="180" oninput="update()">
+      </div>
+      <div class="field">
+        <label>Depth (Y) <span class="val" id="v-depth">120</span></label>
+        <input type="range" id="depth" min="60" max="400" step="1" value="120" oninput="update()">
+      </div>
+      <div class="field">
+        <label>Height (Z) <span class="val" id="v-height">30</span></label>
+        <input type="range" id="height" min="10" max="100" step="1" value="30" oninput="update()">
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="section">
+      <div class="section-title">Grid Layout</div>
+      <div class="row">
+        <div class="field">
+          <label>Columns <span class="val" id="v-cols">3</span></label>
+          <input type="range" id="cols" min="1" max="12" step="1" value="3" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Rows <span class="val" id="v-rows">2</span></label>
+          <input type="range" id="rows" min="1" max="12" step="1" value="2" oninput="update()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Wall & Floor -->
+    <div class="section">
+      <div class="section-title">Wall & Floor Thickness (mm)</div>
+      <div class="row">
+        <div class="field">
+          <label>Wall <span class="val" id="v-wall">2.0</span></label>
+          <input type="range" id="wall" min="1" max="6" step="0.25" value="2" oninput="update()">
+        </div>
+        <div class="field">
+          <label>Floor <span class="val" id="v-floor">1.5</span></label>
+          <input type="range" id="floor" min="0.5" max="5" step="0.25" value="1.5" oninput="update()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Compartment Dimensions -->
+    <div class="section">
+      <div class="section-title">Compartment Dimensions</div>
+      <div class="comp-grid">
+        <div class="comp-card">
+          <div class="label">Width</div>
+          <div class="value"><span id="c-width">56.0</span><span class="unit">mm</span></div>
+        </div>
+        <div class="comp-card">
+          <div class="label">Depth</div>
+          <div class="value"><span id="c-depth">50.0</span><span class="unit">mm</span></div>
+        </div>
+        <div class="comp-card">
+          <div class="label">Height</div>
+          <div class="value"><span id="c-height">28.5</span><span class="unit">mm</span></div>
+        </div>
+        <div class="comp-card">
+          <div class="label">Area</div>
+          <div class="value"><span id="c-area">2800</span><span class="unit">mm²</span></div>
+        </div>
+        <div class="comp-card full">
+          <div class="label">Total Compartments</div>
+          <div class="value"><span id="c-total">6</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appearance -->
+    <div class="section">
+      <div class="section-title">Appearance</div>
+      <div class="field">
+        <label>Color</label>
+        <div class="color-row">
+          <div class="color-swatch active" style="background:#6c8cff" onclick="setColor('#6c8cff',this)"></div>
+          <div class="color-swatch" style="background:#4ade80" onclick="setColor('#4ade80',this)"></div>
+          <div class="color-swatch" style="background:#fb923c" onclick="setColor('#fb923c',this)"></div>
+          <div class="color-swatch" style="background:#f87171" onclick="setColor('#f87171',this)"></div>
+          <div class="color-swatch" style="background:#e2e4ed" onclick="setColor('#e2e4ed',this)"></div>
+          <div class="color-swatch" style="background:#a78bfa" onclick="setColor('#a78bfa',this)"></div>
+          <input type="color" id="customColor" value="#6c8cff" onchange="setColor(this.value,null)" title="Custom color">
+        </div>
+      </div>
+      <div class="field">
+        <label>Wall Style</label>
+        <select id="wallStyle" onchange="update()" style="width:100%;padding:6px 8px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;">
+          <option value="solid">Solid Walls</option>
+          <option value="rounded">Rounded Corners</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Viewport -->
+  <div class="main">
+    <div class="viewport">
+      <div class="viewport-header">
+        <button class="vp-btn" onclick="resetCamera()" title="Reset view">⟲ Reset</button>
+        <button class="vp-btn" id="btn-wireframe" onclick="toggleWireframe()">◇ Wireframe</button>
+        <button class="vp-btn" id="btn-xray" onclick="toggleXray()">◉ X-Ray</button>
+        <button class="vp-btn" id="btn-top" onclick="setView('top')">▤ Top</button>
+        <button class="vp-btn" id="btn-front" onclick="setView('front')">▥ Front</button>
+        <button class="vp-btn" id="btn-side" onclick="setView('side')">▧ Side</button>
+      </div>
+      <div class="vp-info" id="vp-info">LMB: Rotate &nbsp;|&nbsp; RMB: Pan &nbsp;|&nbsp; Scroll: Zoom</div>
+      <canvas id="canvas3d"></canvas>
+    </div>
+    <div class="bottom-bar">
+      <div class="info">
+        <strong id="info-vol">0</strong> cm³ volume &nbsp;·&nbsp;
+        <strong id="info-est">0</strong> g est. weight (PLA)
+      </div>
+      <button class="btn btn-secondary" onclick="exportSTL('ascii')">↓ ASCII STL</button>
+      <button class="btn btn-green" onclick="exportSTL('binary')">↓ Binary STL (Recommended)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  PARAMETER STATE
+// ============================================================
+const state = {
+  width: 180, depth: 120, height: 30,
+  cols: 3, rows: 2,
+  wall: 2, floor: 1.5,
+  color: '#6c8cff',
+  wireframe: false, xray: false,
+  rotX: -35, rotY: 45, zoom: 1.8
+};
+
+// ============================================================
+//  GEOMETRY ENGINE
+// ============================================================
+function getParams() {
+  return {
+    W: +document.getElementById('width').value,
+    D: +document.getElementById('depth').value,
+    H: +document.getElementById('height').value,
+    cols: +document.getElementById('cols').value,
+    rows: +document.getElementById('rows').value,
+    wall: +document.getElementById('wall').value,
+    floor: +document.getElementById('floor').value
+  };
+}
+
+function getCompartmentInfo(p) {
+  const innerW = p.W - 2 * p.wall;
+  const innerD = p.D - 2 * p.wall;
+  const innerH = p.H - p.floor;
+  const cellW = (innerW - (p.cols - 1) * p.wall) / p.cols;
+  const cellD = (innerD - (p.rows - 1) * p.wall) / p.rows;
+  return {
+    innerW, innerD, innerH,
+    cellW, cellD,
+    area: cellW * cellD,
+    total: p.cols * p.rows
+  };
+}
+
+function update() {
+  const p = getParams();
+  const c = getCompartmentInfo(p);
+
+  // Update value displays
+  document.getElementById('v-width').textContent = p.W;
+  document.getElementById('v-depth').textContent = p.D;
+  document.getElementById('v-height').textContent = p.H;
+  document.getElementById('v-cols').textContent = p.cols;
+  document.getElementById('v-rows').textContent = p.rows;
+  document.getElementById('v-wall').textContent = p.wall.toFixed(2);
+  document.getElementById('v-floor').textContent = p.floor.toFixed(2);
+
+  document.getElementById('c-width').textContent = c.cellW.toFixed(1);
+  document.getElementById('c-depth').textContent = c.cellD.toFixed(1);
+  document.getElementById('c-height').textContent = c.innerH.toFixed(1);
+  document.getElementById('c-area').textContent = Math.round(c.area);
+  document.getElementById('c-total').textContent = c.total;
+
+  // Estimate volume & weight (PLA ~1.24 g/cm³)
+  const outerVol = p.W * p.D * p.H;
+  const innerVol = c.innerW * c.innerD * c.innerH;
+  const matVol = outerVol - innerVol;
+  const estWeight = (matVol / 1000) * 1.24;
+  document.getElementById('info-vol').textContent = (matVol / 1000).toFixed(1);
+  document.getElementById('info-est').textContent = estWeight.toFixed(0);
+
+  render3D();
+}
+
+// ============================================================
+//  STL GENERATION
+// ============================================================
+function generateSTL() {
+  const p = getParams();
+  const c = getCompartmentInfo(p);
+  const triangles = [];
+
+  function addBox(x, y, z, w, h, d) {
+    const hw = w/2, hd = d/2, hh = h/2;
+    const cx = x + hw, cy = y + hh, cz = z + hd;
+    // 6 faces × 2 triangles = 12 triangles per box
+    // Front (z+)
+    triangles.push([cx-hw, cy-hh, cz+hd, cx+hw, cy-hh, cz+hd, cx-hw, cy+hh, cz+hd]);
+    triangles.push([cx+hw, cy-hh, cz+hd, cx+hw, cy+hh, cz+hd, cx-hw, cy+hh, cz+hd]);
+    // Back (z-)
+    triangles.push([cx+hw, cy-hh, cz-hd, cx-hw, cy-hh, cz-hd, cx+hw, cy+hh, cz-hd]);
+    triangles.push([cx-hw, cy-hh, cz-hd, cx-hw, cy+hh, cz-hd, cx+hw, cy+hh, cz-hd]);
+    // Right (x+)
+    triangles.push([cx+hw, cy-hh, cz+hd, cx+hw, cy-hh, cz-hd, cx+hw, cy+hh, cz+hd]);
+    triangles.push([cx+hw, cy-hh, cz-hd, cx+hw, cy+hh, cz-hd, cx+hw, cy+hh, cz+hd]);
+    // Left (x-)
+    triangles.push([cx-hw, cy-hh, cz-hd, cx-hw, cy-hh, cz+hd, cx-hw, cy+hh, cz-hd]);
+    triangles.push([cx-hw, cy-hh, cz+hd, cx-hw, cy+hh, cz+hd, cx-hw, cy+hh, cz-hd]);
+    // Top (y+)
+    triangles.push([cx-hw, cy+hh, cz-hd, cx+hw, cy+hh, cz-hd, cx-hw, cy+hh, cz+hd]);
+    triangles.push([cx+hw, cy+hh, cz-hd, cx+hw, cy+hh, cz+hd, cx-hw, cy+hh, cz+hd]);
+    // Bottom (y-)
+    triangles.push([cx+hw, cy-hh, cz+hd, cx-hw, cy-hh, cz+hd, cx+hw, cy-hh, cz-hd]);
+    triangles.push([cx-hw, cy-hh, cz+hd, cx-hw, cy-hh, cz-hd, cx+hw, cy-hh, cz-hd]);
+  }
+
+  // Floor
+  addBox(p.wall, p.wall, 0, p.W - 2*p.wall, p.floor, p.D - 2*p.wall);
+
+  // Outer walls
+  addBox(0, p.floor/2 + p.H/2 - p.H/2 + p.floor/2, 0, p.wall, p.H - p.floor, p.D); // left
+  addBox(p.W - p.wall, p.floor/2 + p.H/2 - p.H/2 + p.floor/2, 0, p.wall, p.H - p.floor, p.D); // right
+  addBox(p.wall, p.floor/2 + p.H/2 - p.H/2 + p.floor/2, 0, p.W - 2*p.wall, p.H - p.floor, p.wall); // front
+  addBox(p.wall, p.floor/2 + p.H/2 - p.H/2 + p.floor/2, p.D - p.wall, p.W - 2*p.wall, p.H - p.floor, p.wall); // back
+
+  // Vertical dividers (along X, separating columns)
+  for (let i = 1; i < p.cols; i++) {
+    const xPos = p.wall + i * (c.cellW + p.wall);
+    addBox(xPos - p.wall/2, p.floor/2 + p.H/2 - p.H/2 + p.floor/2, 0, p.wall, p.H - p.floor, p.D - 2*p.wall);
+  }
+
+  // Horizontal dividers (along Y, separating rows)
+  for (let j = 1; j < p.rows; j++) {
+    const yPos = p.wall + j * (c.cellD + p.wall);
+    addBox(p.wall, p.floor/2 + p.H/2 - p.H/2 + p.floor/2, yPos - p.wall/2, p.W - 2*p.wall, p.H - p.floor, p.wall);
+  }
+
+  return triangles;
+}
+
+function exportSTL(format) {
+  const triangles = generateSTL();
+  let content, filename;
+
+  if (format === 'ascii') {
+    let s = 'solid drawer_tray\n';
+    for (const t of triangles) {
+      // Simple normal approximation (flat face)
+      const nx = 0, ny = 0, nz = 1;
+      s += `  facet normal ${nx} ${ny} ${nz}\n`;
+      s += `    outer loop\n`;
+      for (const v of t) {
+        s += `      vertex ${v.toFixed(4)} 0.0 0.0\n`.replace('0.0', '0.0');
+      }
+      // Recalculate with actual positions
+      s = s.slice(0, -1); // remove trailing newline from last line
+      // Actually let me redo this properly
+    }
+    // Let me redo the ASCII properly
+    s = 'solid drawer_tray\n';
+    for (const t of triangles) {
+      const ax = t[3]-t[0], ay = t[4]-t[1], az = t[5]-t[2];
+      const bx = t[6]-t[0], by = t[7]-t[1], bz = t[8]-t[2];
+      let nx = ay*bz - az*by, ny = az*bx - ax*bz, nz = ax*by - ay*bx;
+      const len = Math.sqrt(nx*nx + ny*ny + nz*nz) || 1;
+      nx /= len; ny /= len; nz /= len;
+      s += `  facet normal ${nx.toFixed(6)} ${ny.toFixed(6)} ${nz.toFixed(6)}\n`;
+      s += `    outer loop\n`;
+      s += `      vertex ${t[0].toFixed(4)} ${t[1].toFixed(4)} ${t[2].toFixed(4)}\n`;
+      s += `      vertex ${t[3].toFixed(4)} ${t[4].toFixed(4)} ${t[5].toFixed(4)}\n`;
+      s += `      vertex ${t[6].toFixed(4)} ${t[7].toFixed(4)} ${t[8].toFixed(4)}\n`;
+      s += `    endloop\n`;
+      s += `  endfacet\n`;
+    }
+    s += 'endsolid drawer_tray\n';
+    content = s;
+    filename = 'drawer_tray_ascii.stl';
+  } else {
+    // Binary STL
+    const buf = new ArrayBuffer(84 + triangles.length * 12);
+    const view = new DataView(buf);
+    const dv = new Uint8Array(buf);
+    // Header (80 bytes)
+    const header = 'binary STL generated by Tray Maker';
+    for (let i = 0; i < 80; i++) view.setUint8(i, i < header.length ? header.charCodeAt(i) : 0);
+    view.setUint32(80, triangles.length, true);
+    let offset = 84;
+    for (const t of triangles) {
+      const ax = t[3]-t[0], ay = t[4]-t[1], az = t[5]-t[2];
+      const bx = t[6]-t[0], by = t[7]-t[1], bz = t[8]-t[2];
+      let nx = ay*bz - az*by, ny = az*bx - ax*bz, nz = ax*by - ay*bx;
+      const len = Math.sqrt(nx*nx + ny*ny + nz*nz) || 1;
+      nx /= len; ny /= len; nz /= len;
+      view.setFloat32(offset, nx, true); offset += 4;
+      view.setFloat32(offset, ny, true); offset += 4;
+      view.setFloat32(offset, nz, true); offset += 4;
+      for (let i = 0; i < 9; i++) { view.setFloat32(offset, t[i], true); offset += 4; }
+      view.setUint16(offset, 0, true); offset += 2;
+    }
+    content = null;
+    filename = 'drawer_tray.stl';
+    const blob = new Blob([buf], { type: 'application/octet-stream' });
+    downloadBlob(blob, filename);
+    return;
+  }
+  const blob = new Blob([content], { type: 'text/plain' });
+  downloadBlob(blob, filename);
+}
+
+function downloadBlob(blob, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+// ============================================================
+//  3D RENDERING (Custom lightweight WebGL engine)
+// ============================================================
+const canvas = document.getElementById('canvas3d');
+const gl = canvas.getContext('webgl', { antialias: true, alpha: false });
+let program, boxProgram, lineProgram;
+let projMatrix, viewMatrix;
+
+// Matrix utilities
+function mat4Perspective(fov, aspect, near, far) {
+  const f = 1 / Math.tan(fov / 2);
+  const nf = 1 / (near - far);
+  return new Float32Array([
+    f/aspect, 0, 0, 0,
+    0, f, 0, 0,
+    0, 0, (far+near)*nf, -1,
+    0, 0, 2*far*near*nf, 0
+  ]);
+}
+
+function mat4LookAt(eye, center, up) {
+  const zx = eye[0]-center[0], zy = eye[1]-center[1], zz = eye[2]-center[2];
+  let len = Math.sqrt(zx*zx+zy*zy+zz*zz);
+  const z0=zx/len, z1=zy/len, z2=zz/len;
+  const xx = up[1]*z2-up[2]*z1, xy = up[2]*z0-up[0]*z2, xz = up[0]*z1-up[1]*z0;
+  len = Math.sqrt(xx*xx+xy*xy+xz*xz);
+  const x0=xx/len, x1=xy/len, x2=xz/len;
+  const y0 = z1*x2-z2*x1, y1 = z2*x0-z0*x2, y2 = z0*x1-z1*x0;
+  return new Float32Array([
+    x0,y0,z0,0, x1,y1,z1,0, x2,y2,z2,0,
+    -(x0*eye[0]+x1*eye[1]+x2*eye[2]),
+    -(y0*eye[0]+y1*eye[1]+y2*eye[2]),
+    -(z0*eye[0]+z1*eye[1]+z2*eye[2]),1
+  ]);
+}
+
+function mat4Multiply(a, b) {
+  const r = new Float32Array(16);
+  for (let i = 0; i < 4; i++)
+    for (let j = 0; j < 4; j++) {
+      r[j*4+i] = 0;
+      for (let k = 0; k < 4; k++) r[j*4+i] += a[k*4+i] * b[j*4+k];
+    }
+  return r;
+}
+
+function mat4Translate(x,y,z) {
+  return new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, x,y,z,1]);
+}
+
+function mat4Scale(x,y,z) {
+  return new Float32Array([x,0,0,0, 0,y,0,0, 0,0,z,0, 0,0,0,1]);
+}
+
+function mat4RotateX(a) {
+  const c=Math.cos(a),s=Math.sin(a);
+  return new Float32Array([1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]);
+}
+
+function mat4RotateY(a) {
+  const c=Math.cos(a),s=Math.sin(a);
+  return new Float32Array([c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1]);
+}
+
+function hexToRGB(hex) {
+  const r = parseInt(hex.slice(1,3),16)/255;
+  const g = parseInt(hex.slice(3,5),16)/255;
+  const b = parseInt(hex.slice(5,7),16)/255;
+  return [r,g,b];
+}
+
+// Shaders
+const VS = `
+  attribute vec3 aPos;
+  attribute vec3 aNorm;
+  uniform mat4 uMVP;
+  uniform mat4 uModel;
+  varying vec3 vNorm;
+  varying vec3 vWorldPos;
+  void main() {
+    gl_Position = uMVP * vec4(aPos, 1.0);
+    vNorm = mat3(uModel) * aNorm;
+    vWorldPos = (uModel * vec4(aPos, 1.0)).xyz;
+  }
+`;
+
+const FS = `
+  precision mediump float;
+  varying vec3 vNorm;
+  varying vec3 vWorldPos;
+  uniform vec3 uColor;
+  uniform float uOpacity;
+  uniform int uWireframe;
+  void main() {
+    vec3 N = normalize(vNorm);
+    vec3 L1 = normalize(vec3(1.0, 2.0, 3.0));
+    vec3 L2 = normalize(vec3(-2.0, 1.0, -1.0));
+    vec3 L3 = normalize(vec3(0.0, -1.0, 2.0));
+    float diff = max(dot(N, L1), 0.0) * 0.6 +
+                 max(dot(N, L2), 0.0) * 0.3 +
+                 max(dot(N, L3), 0.0) * 0.1;
+    float amb = 0.25;
+    float fog = smoothstep(2.0, 8.0, length(vWorldPos));
+    vec3 col = uColor * (amb + diff * (1.0 - amb));
+    col = mix(col, vec3(0.06, 0.07, 0.10), fog * 0.5);
+    gl_FragColor = vec4(col, uOpacity);
+  }
+`;
+
+const VSL = `
+  attribute vec3 aPos;
+  uniform mat4 uMVP;
+  void main() { gl_Position = uMVP * vec4(aPos, 1.0); }
+`;
+
+const FSL = `
+  precision mediump float;
+  uniform vec3 uColor;
+  void main() { gl_FragColor = vec4(uColor, 0.5); }
+`;
+
+function compileShader(src, type) {
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+    console.error(gl.getShaderInfoLog(s));
+  }
+  return s;
+}
+
+function createProgram(vs, fs) {
+  const p = gl.createProgram();
+  gl.attachShader(p, compileShader(vs, gl.VERTEX_SHADER));
+  gl.attachShader(p, compileShader(fs, gl.FRAGMENT_SHADER));
+  gl.linkProgram(p);
+  return p;
+}
+
+function initGL() {
+  if (!gl) { alert('WebGL not supported'); return false; }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  boxProgram = createProgram(VS, FS);
+  lineProgram = createProgram(VSL, FSL);
+
+  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.CULL_FACE);
+  gl.cullFace(gl.BACK);
+  gl.clearColor(0.06, 0.07, 0.10, 1);
+
+  setupMouse();
+  return true;
+}
+
+function resizeCanvas() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  gl.viewport(0, 0, canvas.width, canvas.height);
+}
+
+function createBoxBuffers(w, h, d) {
+  const hw = w/2, hh = h/2, hd = d/2;
+  const verts = [
+    // Front
+    -hw,-hh, hd,  hw,-hh, hd,  hw, hh, hd, -hw,-hh, hd,  hw, hh, hd, -hw, hh, hd,
+    // Back
+     hw,-hh,-hd, -hw,-hh,-hd, -hw, hh,-hd,  hw,-hh,-hd, -hw, hh,-hd,  hw, hh,-hd,
+    // Right
+     hw,-hh, hd,  hw,-hh,-hd,  hw, hh,-hd,  hw,-hh, hd,  hw, hh,-hd,  hw, hh, hd,
+    // Left
+    -hw,-hh,-hd, -hw,-hh, hd, -hw, hh, hd, -hw,-hh,-hd, -hw, hh, hd, -hw, hh,-hd,
+    // Top
+    -hw, hh, hd,  hw, hh, hd,  hw, hh,-hd, -hw, hh, hd,  hw, hh,-hd, -hw, hh,-hd,
+    // Bottom
+    -hw,-hh,-hd,  hw,-hh,-hd,  hw,-hh, hd, -hw,-hh,-hd,  hw,-hh, hd, -hw,-hh, hd,
+  ];
+  const norms = [
+    0,0,1, 0,0,1, 0,0,1, 0,0,1, 0,0,1, 0,0,1,
+    0,0,-1, 0,0,-1, 0,0,-1, 0,0,-1, 0,0,-1, 0,0,-1,
+    1,0,0, 1,0,0, 1,0,0, 1,0,0, 1,0,0, 1,0,0,
+    -1,0,0, -1,0,0, -1,0,0, -1,0,0, -1,0,0, -1,0,0,
+    0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0, 0,1,0,
+    0,-1,0, 0,-1,0, 0,-1,0, 0,-1,0, 0,-1,0, 0,-1,0,
+  ];
+  // Edges for wireframe
+  const edges = [
+    -hw,-hh,-hd, hw,-hh,-hd, hw,-hh,-hd, hw,-hh,hd, hw,-hh,hd, -hw,-hh,hd, -hw,-hh,hd, -hw,-hh,-hd,
+    -hw,hh,-hd, hw,hh,-hd, hw,hh,-hd, hw,hh,hd, hw,hh,hd, -hw,hh,hd, -hw,hh,hd, -hw,hh,-hd,
+    -hw,-hh,-hd, -hw,hh,-hd, hw,-hh,-hd, hw,hh,-hd, hw,-hh,hd, hw,hh,hd, -hw,-hh,hd, -hw,hh,hd,
+  ];
+
+  const vbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+  const nbo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, nbo);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(norms), gl.STATIC_DRAW);
+  const ebo = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, ebo);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(edges), gl.STATIC_DRAW);
+  return { vbo, nbo, ebo, count: 36, edgeCount: 24 };
+}
+
+function render3D() {
+  if (!gl) return;
+  const p = getParams();
+  const c = getCompartmentInfo(p);
+
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  const aspect = canvas.width / canvas.height;
+  const fov = Math.PI / 4;
+  const camDist = Math.max(p.W, p.D, p.H) * 1.2 / state.zoom;
+
+  projMatrix = mat4Perspective(fov, aspect, 0.1, 1000);
+  const eye = [
+    camDist * Math.sin(state.rotY * Math.PI/180) * Math.cos(state.rotX * Math.PI/180),
+    camDist * Math.sin(state.rotX * Math.PI/180),
+    camDist * Math.cos(state.rotY * Math.PI/180) * Math.cos(state.rotX * Math.PI/180)
+  ];
+  const center = [p.W/2, p.H/2, p.D/2];
+  viewMatrix = mat4LookAt(eye, center, [0, 1, 0]);
+  const mvp = mat4Multiply(projMatrix, viewMatrix);
+
+  const [cr, cg, cb] = hexToRGB(state.color);
+
+  // Draw boxes
+  const boxes = [];
+
+  // Floor
+  boxes.push({ pos: [p.wall, p.floor/2, p.wall], size: [p.W-2*p.wall, p.floor, p.D-2*p.wall] });
+
+  // Outer walls
+  boxes.push({ pos: [p.wall/2, p.H/2, p.D/2], size: [p.wall, p.H-p.floor, p.D] }); // left
+  boxes.push({ pos: [p.W-p.wall/2, p.H/2, p.D/2], size: [p.wall, p.H-p.floor, p.D] }); // right
+  boxes.push({ pos: [p.W/2, p.H/2, p.wall], size: [p.W-2*p.wall, p.H-p.floor, p.wall] }); // front
+  boxes.push({ pos: [p.W/2, p.H/2, p.D-p.wall], size: [p.W-2*p.wall, p.H-p.floor, p.wall] }); // back
+
+  // Vertical dividers
+  for (let i = 1; i < p.cols; i++) {
+    const xPos = p.wall + i * (c.cellW + p.wall) - p.wall/2;
+    boxes.push({ pos: [xPos, p.H/2, p.D/2], size: [p.wall, p.H-p.floor, p.D-2*p.wall] });
+  }
+
+  // Horizontal dividers
+  for (let j = 1; j < p.rows; j++) {
+    const yPos = p.wall + j * (c.cellD + p.wall) - p.wall/2;
+    boxes.push({ pos: [p.W/2, p.H/2, yPos], size: [p.W-2*p.wall, p.H-p.floor, p.wall] });
+  }
+
+  gl.useProgram(boxProgram);
+  const uMVP = gl.getUniformLocation(boxProgram, 'uMVP');
+  const uModel = gl.getUniformLocation(boxProgram, 'uModel');
+  const uColor = gl.getUniformLocation(boxProgram, 'uColor');
+  const uOpacity = gl.getUniformLocation(boxProgram, 'uOpacity');
+
+  gl.uniformMatrix4fv(uMVP, false, mvp);
+  gl.uniform3f(uColor, cr, cg, cb);
+  gl.uniform1f(uOpacity, state.xray ? 0.35 : 1.0);
+
+  for (const box of boxes) {
+    const buf = createBoxBuffers(box.size[0], box.size[1], box.size[2]);
+    const model = mat4Multiply(
+      mat4Translate(box.pos[0], box.pos[1], box.pos[2]),
+      mat4Scale(box.size[0], box.size[1], box.size[2])
+    );
+    gl.uniformMatrix4fv(uModel, false, model);
+
+    const aPos = gl.getAttribLocation(boxProgram, 'aPos');
+    const aNorm = gl.getAttribLocation(boxProgram, 'aNorm');
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf.vbo);
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf.nbo);
+    gl.enableVertexAttribArray(aNorm);
+    gl.vertexAttribPointer(aNorm, 3, gl.FLOAT, false, 0, 0);
+
+    if (state.wireframe) {
+      gl.enable(gl.POLYGON_OFFSET_FILL);
+      gl.polygonOffset(1, 1);
+      gl.drawArrays(gl.TRIANGLES, 0, buf.count);
+      gl.disable(gl.POLYGON_OFFSET_FILL);
+
+      // Draw edges
+      gl.useProgram(lineProgram);
+      const lMVP = gl.getUniformLocation(lineProgram, 'uMVP');
+      gl.uniformMatrix4fv(lMVP, false, mvp);
+      const lColor = gl.getUniformLocation(lineProgram, 'uColor');
+      gl.uniform3f(lColor, cr * 0.5, cg * 0.5, cb * 0.5);
+      const laPos = gl.getAttribLocation(lineProgram, 'aPos');
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf.ebo);
+      gl.enableVertexAttribArray(laPos);
+      gl.vertexAttribPointer(laPos, 3, gl.FLOAT, false, 0, 0);
+      gl.lineWidth(1.5);
+      gl.drawArrays(gl.LINES, 0, buf.edgeCount);
+      gl.useProgram(boxProgram);
+    } else {
+      gl.drawArrays(gl.TRIANGLES, 0, buf.count);
+    }
+  }
+
+  // Draw grid helper
+  drawGrid(p);
+}
+
+function drawGrid(p) {
+  const gridSize = Math.ceil(Math.max(p.W, p.D));
+  const half = gridSize / 2;
+  const step = 20;
+  const lineVerts = [];
+
+  for (let i = -half; i <= half; i += step) {
+    lineVerts.push(i, 0, -half, i, 0, half);
+    lineVerts.push(-half, 0, i, half, 0, i);
+  }
+
+  if (lineVerts.length === 0) return;
+
+  gl.useProgram(lineProgram);
+  const lMVP = gl.getUniformLocation(lineProgram, 'uMVP');
+  gl.uniformMatrix4fv(lMVP, false, projMatrix);
+
+  const lColor = gl.getUniformLocation(lineProgram, 'uColor');
+  gl.uniform3f(lColor, 0.15, 0.17, 0.22);
+
+  const laPos = gl.getAttribLocation(lineProgram, 'aPos');
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lineVerts), gl.DYNAMIC_DRAW);
+  gl.enableVertexAttribArray(laPos);
+  gl.vertexAttribPointer(laPos, 3, gl.FLOAT, false, 0, 0);
+  gl.drawArrays(gl.LINES, 0, lineVerts.length / 3);
+  gl.deleteBuffer(buf);
+}
+
+// ============================================================
+//  MOUSE INTERACTION
+// ============================================================
+function setupMouse() {
+  let dragging = false, panning = false, lastX, lastY;
+  let lastPanX, lastPanY;
+
+  canvas.addEventListener('mousedown', e => {
+    if (e.button === 0) { dragging = true; }
+    else if (e.button === 2) { panning = true; }
+    lastX = e.clientX; lastY = e.clientY;
+    lastPanX = e.clientX; lastPanY = e.clientY;
+    e.preventDefault();
+  });
+
+  canvas.addEventListener('mousemove', e => {
+    if (dragging) {
+      state.rotY += (e.clientX - lastX) * 0.5;
+      state.rotX += (e.clientY - lastY) * 0.5;
+      state.rotX = Math.max(-89, Math.min(89, state.rotX));
+      lastX = e.clientX; lastY = e.clientY;
+      render3D();
+    }
+    if (panning) {
+      state.panX = (state.panX || 0) + (e.clientX - lastPanX) * 0.005;
+      state.panY = (state.panY || 0) + (e.clientY - lastPanY) * 0.005;
+      lastPanX = e.clientX; lastPanY = e.clientY;
+      render3D();
+    }
+  });
+
+  canvas.addEventListener('mouseup', () => { dragging = false; panning = false; });
+  canvas.addEventListener('mouseleave', () => { dragging = false; panning = false; });
+
+  canvas.addEventListener('wheel', e => {
+    state.zoom *= e.deltaY > 0 ? 0.92 : 1.08;
+    state.zoom = Math.max(0.2, Math.min(10, state.zoom));
+    e.preventDefault();
+  }, { passive: false });
+
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Touch support
+  let touchStart = null, touchDist = null;
+  canvas.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      dragging = true;
+      lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+    }
+    if (e.touches.length === 2) {
+      dragging = false;
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      touchDist = Math.sqrt(dx*dx + dy*dy);
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', e => {
+    if (e.touches.length === 1 && dragging) {
+      state.rotY += (e.touches[0].clientX - lastX) * 0.5;
+      state.rotX += (e.touches[0].clientY - lastY) * 0.5;
+      state.rotX = Math.max(-89, Math.min(89, state.rotX));
+      lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+      render3D();
+    }
+    if (e.touches.length === 2 && touchDist) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const newDist = Math.sqrt(dx*dx + dy*dy);
+      state.zoom *= newDist / touchDist;
+      state.zoom = Math.max(0.2, Math.min(10, state.zoom));
+      touchDist = newDist;
+      render3D();
+    }
+    e.preventDefault();
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', () => { dragging = false; touchDist = null; });
+}
+
+// ============================================================
+//  UI CONTROLS
+// ============================================================
+function setColor(hex, el) {
+  state.color = hex;
+  document.getElementById('customColor').value = hex;
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+  if (el) el.classList.add('active');
+  render3D();
+}
+
+function toggleWireframe() {
+  state.wireframe = !state.wireframe;
+  document.getElementById('btn-wireframe').classList.toggle('active', state.wireframe);
+  render3D();
+}
+
+function toggleXray() {
+  state.xray = !state.xray;
+  document.getElementById('btn-xray').classList.toggle('active', state.xray);
+  render3D();
+}
+
+function setView(view) {
+  document.querySelectorAll('.vp-btn').forEach(b => b.classList.remove('active'));
+  if (view === 'top') { state.rotX = -90; state.rotY = 0; }
+  if (view === 'front') { state.rotX = 0; state.rotY = 0; }
+  if (view === 'side') { state.rotX = 0; state.rotY = 90; }
+  document.getElementById('btn-' + view)?.classList.add('active');
+  render3D();
+}
+
+function resetCamera() {
+  state.rotX = -35; state.rotY = 45; state.zoom = 1.8;
+  state.panX = 0; state.panY = 0;
+  document.querySelectorAll('.vp-btn').forEach(b => b.classList.remove('active'));
+  render3D();
+}
+
+function applyPreset(w, d, h, cols, rows) {
+  document.getElementById('width').value = w;
+  document.getElementById('depth').value = d;
+  document.getElementById('height').value = h;
+  document.getElementById('cols').value = cols;
+  document.getElementById('rows').value = rows;
+  update();
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+if (initGL()) {
+  update();
+} else {
+  document.querySelector('.viewport').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#f87171;font-size:18px;">WebGL is not supported in your browser. Please use a modern browser.</div>';
+}
+</script>
+</body>
+</html>

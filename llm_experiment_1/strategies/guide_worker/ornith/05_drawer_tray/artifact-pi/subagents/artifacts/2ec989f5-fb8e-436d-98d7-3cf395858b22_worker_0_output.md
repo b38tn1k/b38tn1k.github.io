@@ -1,0 +1,1 @@
+I'll start by inspecting the current project state before writing anything.

@@ -1,0 +1,19 @@
+{
+  "method": "Exact final source, real start/stage/reset handlers and scheduled cue callbacks with known200/225/250/275/300ms responses. Independent Node VM/DOM/nativeCanvas only; no browser layout or injected app timing hooks.",
+  "sha256": "af69090169c422f2caa8cbace7c2cd1826ce5389936b81cfdf49fe90f3393d56",
+  "checks": [
+    {
+      "id": "normal_five_trial_flow_and_known_mean",
+      "pass": false,
+      "error": "_getFakeTime is not defined"
+    },
+    {
+      "id": "pre_cue_false_start_detected",
+      "pass": true,
+      "evidence": {
+        "detected": true
+      }
+    }
+  ],
+  "pass": false
+}

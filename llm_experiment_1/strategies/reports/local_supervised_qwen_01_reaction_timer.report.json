@@ -1,0 +1,652 @@
+{
+  "sha256": "47812fdb2e3bf3d2618bfe60d96b282a5474d708f0804b246c6a5a93a8921992",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 14,
+    "self_verification": 7,
+    "autonomy": 10
+  },
+  "blockingRequiredDefect": false,
+  "score": 96,
+  "grade": "A - five-trial completion repaired; product98.8, verified early stop",
+  "summary": "Exactly five measured responses now produce the correct summary; complete replay and early/mid-session false-start retries pass actual-handler checks. Minor active-dot indexing remains nonblocking.",
+  "strengths": [
+    "Exactly five valid real-handler responses200/225/250/275/300ms produce mean250,best200,worst300 and five result rows.",
+    "Replay resets cleanly; false starts before the first response and after two responses retain all five valid measurements.",
+    "Self-contained offline artifact preserved; local supervisor reproduced the off-by-one before sending a counted repair request, worker made the small repair."
+  ],
+  "defects": [
+    "Minor nonblocking active-dot indexing: five progress dots exist but none is active during the first trial; completed dots still reflect stored results."
+  ],
+  "verification": [
+    "Independent source-hashed VM/DOM actual button/global click handlers, deterministic performance clock and actual scheduled random green cues. Algorithms unchanged.",
+    "Actual full flow repeated after restart; early and mid-session false-start paths checked with five valid recorded responses.",
+    "Independent first-trial control observation confirms five dots but zero active dots."
+  ],
+  "verificationConcerns": [
+    "Worker self-verification mainly traces the count and checks file structure; supervisor executes its own DOM/timer simulation and spends substantial time correcting that helper. Joint self-verification earns partial credit.",
+    "No browser layout/hit testing, physical-device latency or visual polish assessment by browser."
+  ],
+  "scopeCompliance": "Worker product edits stayed in its copy; supervisor used read-only consistent snapshots and its private scratch. No Codex task diagnosis, product code or repair guidance supplied.",
+  "workflowNotes": "One counted local feedback; early independent A-product stop after15.365pair wall minutes and16.691summed model active minutes. Continuous worker/supervisor native contexts; no deadline reset or human app steer. Joint autonomy eligible10.",
+  "humanOrSupervisorSteering": 0,
+  "title": "Reaction timer",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "local_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The file is a single self-contained `index.html` with:\n- Valid HTML structure (starts with `<!DOCTYPE html>`, ends with `</html>`)\n- The one-line fix: changed `if (trial < TOTAL_TRIALS)` \u2192 `if (results.length < TOTAL_TRIALS)` in `recordResult()`\n\nThis is the minimal, correct fix for the off-by-one defect. Here's a summary of what was done and why:\n\n---\n\n### Fix Applied\n\n**Line ~552** in `recordResult()`:\n\n```diff\n-    if (trial < TOTAL_TRIALS) {\n+    if (results.length < TOTAL_TRIALS) {\n```\n\n### Root Cause\n\n`trial` starts at 0 and is only incremented **after** clicking \"Next Trial \u2192\" (in `nextBtn` handler). But the decision to show \"Next Trial\" vs results happens in `recordResult()`, *before* the Next button is clicked. This meant:\n\n| Completed Trial | trial value | old check `trial < 5` | Result |\n|-----------------|-------------|----------------------|--------|\n| 1st             | 0           | true                 | Show \"Next Trial\" \u2713 |\n| 2nd             | 1           | true                 | Show \"Next Trial\" \u2713 |\n| 3rd             | 2           | true                 | Show \"Next Trial\" \u2713 |\n| 4th             | 3           | true                 | Show \"Next Trial\" \u2713 |\n| **5th**         | 4           | **true (BUG!)**      | Show \"Next Trial\" \u2192 requires 6th trial |\n\n### The Fix\n\nUsing `results.length` instead of `trial` counts completed trials correctly since `results.push(rt)` happens in `recordResult()`:\n\n| Completed Trial | results.length | new check `length < 5` | Result |\n|-----------------|---------------|-----------------------|--------|\n| 1st             | 1             | true                  | Show \"Next Trial\" \u2713 |\n| 2nd             | 2             | true                  | Show \"Next Trial\" \u2713 |\n| 3rd             | 3             | true                  | Show \"Next Trial\" \u2713 |\n| 4th             | 4             | true                  | Show \"Next Trial\" \u2713 |\n| **5th**         | **5**         | **false**             | **Show Results \u2713** |\n\n### Verified behaviors preserved (unchanged)\n- False-start detection (`handleFalseStart`) \u2014 state-early red background, \"Too early!\" text\n- Random wait 2000\u20135000ms\n- Color-coded RT (blazing/great/decent/slow)\n- Best/worst/average summary in results panel\n- 5-dot progress indicators with active/completed states\n- Bar chart with animated bars\n- Restart button hides results and resets to \"Start Test\"",
+  "workflowInstructions": "local-supervised-rescue-plan.json; run-local-supervised.py",
+  "workflowProtocolRevision": 3,
+  "elapsedMinutes": 15.365,
+  "wallMinutes": 15.365,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "independently_verified_A_product",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 89,
+  "parentToolCalls": 12,
+  "childToolCalls": 77,
+  "toolResultsMarkedError": 6,
+  "modelUsageReported": {
+    "input": 38950,
+    "output": 32459,
+    "cacheRead": 2598689,
+    "totalTokens": 2670098
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 55045,
+  "parentPeakReportedPromptTokens": 12306,
+  "childPeakReportedPromptTokens": 55045,
+  "parentModelUsage": {
+    "input": 12354,
+    "output": 2204,
+    "cacheRead": 79088,
+    "totalTokens": 93646
+  },
+  "childModelUsage": {
+    "input": 26596,
+    "output": 30255,
+    "cacheRead": 2519601,
+    "totalTokens": 2576452
+  },
+  "artifactBytes": 19290,
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 4,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "qwen3.6:35b-a3b",
+    "supervisorModel": "ornith-1.5:35b-256k",
+    "feedbackCount": 1,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "fb-1-ornith-6trials",
+        "message": "DEFECT: reaction timer runs 6 trials instead of 5 before showing results.\n\nEvidence (I executed the app's real IIFE logic in a DOM/timer simulation and\nobserved actual state transitions):\n\n- Play the normal flow: Start Test -> tap when green -> Next Trial -> tap, repeat.\n- recordResult() checks `if (trial < TOTAL_TRIALS)` to decide \"show Next Trial\"\n  vs \"show results\". `trial` starts at 0 and is incremented only in the\n  nextBtn handler (trial++), i.e. once per Next click.\n- After the 5th tap the value of `trial` is still 4 (only 4 Next clicks happened\n  before that tap), so `4 < 5` is true and the app shows \"Next Trial ->\" instead\n  of the results panel.\n- A 6th trial is required for `trial` to reach 5 and results finally appear.\n- Measured: results panel became visible only after the 6th tap (trials 1-5 all\n  showed \"Next Trial ->\"). Also confirmed the false-start path still works\n  (clicks during the wait -> state-early / \"Too early!\" text), restart hides the\n  results panel and shows \"Start Test\".\n\nExpected outcome per the brief (\"five trials, and a results summary\"):\nAfter exactly 5 completed (non false-start) trials the results summary should\nappear. The user should be able to finish with exactly 5 trials.\n\nRelevant code: current/index.html line 550 `if (trial < TOTAL_TRIALS)` combined\nwith `let trial = 0;` (line 468) and `trial++;` in the nextBtn handler (line 678).\nThe `trial` counter is incremented AFTER the trial via Next rather than counted\nper completed trial, so the \"< TOTAL_TRIALS\" test fires one trial too late.\n\nDo NOT change the verified-good behaviors: false-start detection/state-early,\nrandom wait 2000-5000ms, color-coded RT, best/worst/avg summary, 5-dot progress,\nbar chart, restart.\n",
+        "reason": "Executed the app's real logic in a DOM/timer harness: the normal flow runs 6 trials before the results summary appears instead of exactly 5. The trial counter is incremented on Next instead of per completed trial, so `if (trial < TOTAL_TRIALS)` in recordResult fires one trial too late. Verified false-start, restart, random-wait paths are good. This is the required first repair request.",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T09:55:31.307954+00:00",
+        "acceptedUTC": "2026-11-18T09:55:31.307967+00:00",
+        "elapsedSeconds": 793.25,
+        "workerPID": 7397,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T09:55:31.336510+00:00",
+        "deliveredElapsedSeconds": 793.25
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-18T09:56:50.954475+00:00",
+        "sha256": "47812fdb2e3bf3d2618bfe60d96b282a5474d708f0804b246c6a5a93a8921992",
+        "snapshot": "strategies/reports/local-supervised-rounds/case101/feedback1"
+      }
+    ],
+    "supervisorWakeups": [],
+    "supervisorYields": [],
+    "supervisorStopRequest": null,
+    "independentGradeGates": [
+      {
+        "at": "2026-11-18T09:57:35.898209+00:00",
+        "sha256": "47812fdb2e3bf3d2618bfe60d96b282a5474d708f0804b246c6a5a93a8921992",
+        "productScore": 98.75,
+        "blockingRequiredDefect": false,
+        "qa": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/reports/local_supervised_qwen_01_reaction_timer.round1.qa.json",
+        "assessment": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/runtime/local-supervised-case101-round1-product-assessment.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "id": "qwen-guide_worker-1",
+      "mode": "guide_worker",
+      "configurationMean": 70.8,
+      "source": "strategies/guide_worker/qwen/01_reaction_timer/index.html",
+      "report": "strategies/reports/guide_worker_qwen_01_reaction_timer.report.json",
+      "sha256": "41c2518cd28d4797a1e39070ce4478ed94c015b9c21bca6b3330c18215d10c3d",
+      "score": 75,
+      "grade": "C+ provisional - Timer and retry work, but runs six trials instead of five",
+      "rubricScores": {
+        "functionality": 28,
+        "artifact_correctness": 22,
+        "usability": 11,
+        "self_verification": 4,
+        "autonomy": 10
+      },
+      "baselineScope": "OS write boundary active. No successful out-of-tree write observed.",
+      "baselineSteering": 0,
+      "baselineMinutes": 7.31,
+      "baselineActiveMinutes": 7.31,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_qwen_01_reaction_timer/index.html"
+    },
+    "sharedLimitSeconds": 7200
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Local supervisor/worker rescue of the exact original operator pre-seed with a120-minute shared wall. Codex independently validates outputs but supplies no repair diagnoses/code; product quality is separately normalized from80points. Pair wall and summed concurrent model activity differ. Superseded review-only work and prior human-rescue costs are separate."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 1,
+  "localModelCosts": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 7397,
+      "assistantUsage": {
+        "input": 12354,
+        "output": 2204,
+        "cacheRead": 79088,
+        "cacheWrite": 0,
+        "totalTokens": 93646
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 12354,
+        "output": 2204,
+        "cacheRead": 79088,
+        "cacheWrite": 0,
+        "totalTokens": 93646
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 1.327,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1144358.094376791,
+          "end": 1144358.097620208
+        },
+        {
+          "start": 1144360.678339166,
+          "end": 1144360.686200833
+        },
+        {
+          "start": 1144363.639049,
+          "end": 1144363.643704
+        },
+        {
+          "start": 1144366.076003125,
+          "end": 1144366.084380416
+        },
+        {
+          "start": 1144368.413286916,
+          "end": 1144368.4219615
+        },
+        {
+          "start": 1144370.200777416,
+          "end": 1144370.282556958
+        },
+        {
+          "start": 1144379.294758666,
+          "end": 1144390.380905708
+        },
+        {
+          "start": 1144391.2248875,
+          "end": 1144392.409705291
+        },
+        {
+          "start": 1144394.246640458,
+          "end": 1144394.262796041
+        },
+        {
+          "start": 1144395.063725291,
+          "end": 1144399.893022333
+        },
+        {
+          "start": 1144407.149570958,
+          "end": 1144407.160388125
+        },
+        {
+          "start": 1144408.525994708,
+          "end": 1144411.358541916
+        },
+        {
+          "start": 1144412.155621916,
+          "end": 1144422.938145208
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 7398,
+      "assistantUsage": {
+        "input": 26596,
+        "output": 30255,
+        "cacheRead": 2519601,
+        "cacheWrite": 0,
+        "totalTokens": 2576452
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 26596,
+        "output": 30255,
+        "cacheRead": 2519601,
+        "cacheWrite": 0,
+        "totalTokens": 2576452
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 15.364,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1143554.173539541,
+          "end": 1143555.675508791
+        },
+        {
+          "start": 1143557.697449041,
+          "end": 1143557.6983895
+        },
+        {
+          "start": 1143558.832316833,
+          "end": 1143558.833039041
+        },
+        {
+          "start": 1143563.89099525,
+          "end": 1143566.329806916
+        },
+        {
+          "start": 1143567.19114825,
+          "end": 1143574.012509833
+        },
+        {
+          "start": 1143574.831861625,
+          "end": 1143581.157223666
+        },
+        {
+          "start": 1143581.9842625,
+          "end": 1143599.660638458
+        },
+        {
+          "start": 1143612.418736291,
+          "end": 1143612.432401
+        },
+        {
+          "start": 1143613.772194625,
+          "end": 1143613.778779083
+        },
+        {
+          "start": 1143614.768665,
+          "end": 1143619.590709166
+        },
+        {
+          "start": 1143633.397250875,
+          "end": 1143633.401769083
+        },
+        {
+          "start": 1143633.760780625,
+          "end": 1143661.218890208
+        },
+        {
+          "start": 1143663.742330125,
+          "end": 1143663.757097541
+        },
+        {
+          "start": 1143664.842441041,
+          "end": 1143682.769949125
+        },
+        {
+          "start": 1143685.497235083,
+          "end": 1143685.500052
+        },
+        {
+          "start": 1143686.361854083,
+          "end": 1143703.034492125
+        },
+        {
+          "start": 1143703.749032458,
+          "end": 1143748.714390166
+        },
+        {
+          "start": 1143750.327043458,
+          "end": 1143750.346064458
+        },
+        {
+          "start": 1143751.576097833,
+          "end": 1143764.045597875
+        },
+        {
+          "start": 1143766.81921525,
+          "end": 1143766.822169208
+        },
+        {
+          "start": 1143767.917049625,
+          "end": 1143770.021138375
+        },
+        {
+          "start": 1143771.637654666,
+          "end": 1143771.6550525
+        },
+        {
+          "start": 1143772.875979583,
+          "end": 1143794.208765583
+        },
+        {
+          "start": 1143795.859576833,
+          "end": 1143795.878555791
+        },
+        {
+          "start": 1143797.143610375,
+          "end": 1143817.324809
+        },
+        {
+          "start": 1143819.059861916,
+          "end": 1143819.0772955
+        },
+        {
+          "start": 1143820.375086666,
+          "end": 1143826.106386333
+        },
+        {
+          "start": 1143830.603787875,
+          "end": 1143830.620185666
+        },
+        {
+          "start": 1143832.148420375,
+          "end": 1143846.517082458
+        },
+        {
+          "start": 1143850.007243083,
+          "end": 1143850.011668708
+        },
+        {
+          "start": 1143852.817151416,
+          "end": 1143852.82067675
+        },
+        {
+          "start": 1143853.772209916,
+          "end": 1143892.005439833
+        },
+        {
+          "start": 1143892.991159416,
+          "end": 1143914.612303458
+        },
+        {
+          "start": 1143915.854129125,
+          "end": 1143942.492767208
+        },
+        {
+          "start": 1143943.395049541,
+          "end": 1143957.236047375
+        },
+        {
+          "start": 1143958.65836475,
+          "end": 1143967.860566708
+        },
+        {
+          "start": 1143968.694264833,
+          "end": 1143983.081104375
+        },
+        {
+          "start": 1143984.063177041,
+          "end": 1144007.319814291
+        },
+        {
+          "start": 1144029.105593041,
+          "end": 1144029.114540125
+        },
+        {
+          "start": 1144031.011790875,
+          "end": 1144031.018444166
+        },
+        {
+          "start": 1144032.161763916,
+          "end": 1144045.22165
+        },
+        {
+          "start": 1144048.74405975,
+          "end": 1144048.749778916
+        },
+        {
+          "start": 1144049.721220208,
+          "end": 1144071.986741458
+        },
+        {
+          "start": 1144073.011796458,
+          "end": 1144089.311654291
+        },
+        {
+          "start": 1144090.318840583,
+          "end": 1144110.918929875
+        },
+        {
+          "start": 1144111.957636083,
+          "end": 1144129.831843791
+        },
+        {
+          "start": 1144131.810881625,
+          "end": 1144131.816753208
+        },
+        {
+          "start": 1144132.917133291,
+          "end": 1144159.023405958
+        },
+        {
+          "start": 1144160.076976708,
+          "end": 1144178.46893975
+        },
+        {
+          "start": 1144179.977637833,
+          "end": 1144199.286122416
+        },
+        {
+          "start": 1144200.359549833,
+          "end": 1144209.022714583
+        },
+        {
+          "start": 1144211.25977375,
+          "end": 1144211.262642291
+        },
+        {
+          "start": 1144212.276866166,
+          "end": 1144215.977336541
+        },
+        {
+          "start": 1144218.273761833,
+          "end": 1144218.276706166
+        },
+        {
+          "start": 1144219.281962541,
+          "end": 1144225.710773208
+        },
+        {
+          "start": 1144227.805340416,
+          "end": 1144227.81873175
+        },
+        {
+          "start": 1144228.9701835,
+          "end": 1144233.889697166
+        },
+        {
+          "start": 1144234.53064725,
+          "end": 1144240.572302666
+        },
+        {
+          "start": 1144241.883949875,
+          "end": 1144263.414313041
+        },
+        {
+          "start": 1144264.861949375,
+          "end": 1144272.190212166
+        },
+        {
+          "start": 1144274.338386291,
+          "end": 1144274.348904333
+        },
+        {
+          "start": 1144275.809608708,
+          "end": 1144299.721615875
+        },
+        {
+          "start": 1144301.128557583,
+          "end": 1144309.191055166
+        },
+        {
+          "start": 1144310.276635041,
+          "end": 1144318.484176583
+        },
+        {
+          "start": 1144319.491432291,
+          "end": 1144335.37403875
+        },
+        {
+          "start": 1144335.996973791,
+          "end": 1144337.312868583
+        },
+        {
+          "start": 1144338.369007375,
+          "end": 1144344.394536
+        },
+        {
+          "start": 1144348.660430208,
+          "end": 1144348.664199291
+        },
+        {
+          "start": 1144350.090658208,
+          "end": 1144356.036662708
+        },
+        {
+          "start": 1144357.501430125,
+          "end": 1144363.647277625
+        },
+        {
+          "start": 1144365.331479666,
+          "end": 1144380.679227333
+        },
+        {
+          "start": 1144402.489200458,
+          "end": 1144409.506376708
+        },
+        {
+          "start": 1144441.068186458,
+          "end": 1144446.702377583
+        },
+        {
+          "start": 1144448.209075083,
+          "end": 1144453.193261
+        },
+        {
+          "start": 1144458.44864975,
+          "end": 1144458.455657416
+        },
+        {
+          "start": 1144459.72289425,
+          "end": 1144465.931086708
+        }
+      ],
+      "exitCode": -9
+    }
+  },
+  "pairWallMinutes": 15.365,
+  "summedModelActiveMinutes": 16.691,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 26596,
+      "output": 30255,
+      "cacheRead": 2519601,
+      "totalTokens": 2576452
+    },
+    "qwen": {
+      "input": 12354,
+      "output": 2204,
+      "cacheRead": 79088,
+      "totalTokens": 93646
+    }
+  },
+  "modelWallMinutes": {
+    "qwen": 1.327,
+    "ornith": 15.364
+  },
+  "localProductScore": 98.8,
+  "localProductTargetMet": true,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  }
+}

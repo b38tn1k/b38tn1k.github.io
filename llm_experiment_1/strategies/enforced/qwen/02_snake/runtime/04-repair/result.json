@@ -1,0 +1,12 @@
+{
+  "role": "repair",
+  "number": 4,
+  "minutes": 10.11,
+  "reason": "stage_time_limit",
+  "exitCode": -9,
+  "artifactBefore": "dd6ebe45d53c145e501feb221adb7a4b1b590cfd87673d2e83bed55ff574cfc7",
+  "artifactAfter": "779ec6df67848d6009c0f9e0f79d719da8f760c65cfed1924891c43d665e9ce0",
+  "prompt": "enforced/qwen/02_snake/runtime/04-repair/prompt.txt",
+  "events": "enforced/qwen/02_snake/runtime/04-repair/events.jsonl",
+  "stderr": "enforced/qwen/02_snake/runtime/04-repair/stderr.log"
+}

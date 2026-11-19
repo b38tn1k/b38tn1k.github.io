@@ -1,0 +1,20 @@
+{
+  "method": "Exact final source VM/DOM/nativeCanvas. Case63 uses exact extracted geometry functions, without GPU setup; WebGL rendering is unverified and unavailable context is not graded as app defect. Other checks invoke actual UI/export handlers. No app algorithm repaired.",
+  "sha256": "91a034db38ae0f423e7f749b3c82ceb6b93dfb46733b5568b57bed0bdca87feb",
+  "checks": [
+    {
+      "id": "defaults_and_live_dimensions_rotation",
+      "pass": true,
+      "evidence": {
+        "width": 200,
+        "ry": 45
+      }
+    },
+    {
+      "id": "actual_ascii_STL_has_three_vertices_per_facet",
+      "pass": false,
+      "error": "Every facet contains only two vertex records"
+    }
+  ],
+  "pass": false
+}

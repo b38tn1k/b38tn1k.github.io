@@ -1,0 +1,49 @@
+{
+  "method": "Independent exact-source Node VM/DOM and native Canvas2D checks of actual controls/timers/download bytes. Explicit fixtures observe private game state without replacing algorithms. No browser layout, GPU, focus/default action or physical print verification.",
+  "sha256": "afc057a3ec0d953df6d5b47b18289407d1533fc2cad4cf279184e93f6e060e74",
+  "checks": [
+    {
+      "id": "brush_border_eraser_and_touch",
+      "pass": true,
+      "evidence": {
+        "border": true,
+        "eraser": true,
+        "touch": true
+      }
+    },
+    {
+      "id": "single_stroke_undo_redo",
+      "pass": true,
+      "evidence": {
+        "undo": true,
+        "redo": true
+      }
+    },
+    {
+      "id": "two_stroke_undo_redo",
+      "pass": true,
+      "evidence": {
+        "undo": 2
+      }
+    },
+    {
+      "id": "clear_leaves_blank_canvas",
+      "pass": false,
+      "error": "Clear fills the whole canvas using the last paint color",
+      "actual": 255,
+      "expected": 0
+    },
+    {
+      "id": "resize_and_valid_png_bytes",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          32,
+          24
+        ],
+        "bytes": 113
+      }
+    }
+  ],
+  "pass": false
+}

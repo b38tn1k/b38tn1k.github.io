@@ -1,0 +1,39 @@
+{
+  "method": "Independent exact final/stopped source and actual registered handlers/virtual timers. Setup calibration snapshot, not a main comparison. No browser verification.",
+  "sha256": "e0413ddb2ac647b7105f341cef799f578702c318230259eda4df6717d0da8a57",
+  "checks": [
+    {
+      "id": "five_trials_summary",
+      "pass": true,
+      "evidence": {
+        "valid": 5,
+        "mean": 250,
+        "best": 200,
+        "worst": 300
+      }
+    },
+    {
+      "id": "false_start_same_trial_retry",
+      "pass": true,
+      "evidence": {
+        "valid": 5,
+        "mean": 240
+      }
+    },
+    {
+      "id": "restart_cancels_pending_cue",
+      "pass": true,
+      "evidence": {
+        "reset": true
+      }
+    },
+    {
+      "id": "advertised_space_control",
+      "pass": false,
+      "error": "Keyboard handler sets justHandled before calling handlePress, so the press is ignored",
+      "actual": "Idle",
+      "expected": "Get ready…"
+    }
+  ],
+  "pass": false
+}

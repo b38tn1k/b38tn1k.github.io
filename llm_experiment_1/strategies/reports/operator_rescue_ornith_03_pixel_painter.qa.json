@@ -1,0 +1,81 @@
+{
+  "method": "Independent exact-source DOM/nativeCanvas pixels and real PNG bytes. Native ImageData constructor supplied as generic standards environment support. Actual controls with canvas coordinate scaling; no app algorithms replaced. No browser layout/hit testing.",
+  "optionalChecks": [
+    {
+      "id": "advertised_right_click_drag_erases",
+      "pass": false,
+      "blocking": false,
+      "evidence": {
+        "advertised": true,
+        "pixel": [
+          255,
+          0,
+          0,
+          255
+        ]
+      }
+    }
+  ],
+  "sha256": "c38d5d4d8101b1e2cb23906760aeec5f490cc7f74cd6c7c4ac1ed0af5c9898e2",
+  "checks": [
+    {
+      "id": "brush_eraser_multistep_history_and_clear_undo",
+      "pass": true,
+      "evidence": {
+        "history": true,
+        "clearUndo": true
+      }
+    },
+    {
+      "id": "resize_preserves_2D_coordinates_and_undo_redo_dimensions",
+      "pass": true,
+      "evidence": {
+        "dimensions": true,
+        "coordinates": true
+      }
+    },
+    {
+      "id": "resize_undo_does_not_throw_even_without_drawn_pixels",
+      "pass": true,
+      "evidence": {
+        "undo": true
+      }
+    },
+    {
+      "id": "successive_non_square_resize_preserves_strides_and_history",
+      "pass": true,
+      "evidence": {
+        "nonSquare": true,
+        "cropAndRestore": true
+      }
+    },
+    {
+      "id": "real_PNG_export_dimensions_and_pixel",
+      "pass": true,
+      "evidence": {
+        "bytes": 122,
+        "dimensions": [
+          48,
+          24
+        ]
+      }
+    },
+    {
+      "id": "decoded_PNG_retains_exact_pixel",
+      "pass": true,
+      "evidence": {
+        "pixel": [
+          0,
+          255,
+          0,
+          255
+        ],
+        "dimensions": [
+          48,
+          24
+        ]
+      }
+    }
+  ],
+  "pass": true
+}

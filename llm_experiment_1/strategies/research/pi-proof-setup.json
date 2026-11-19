@@ -1,0 +1,50 @@
+{
+  "preparedUTC": "2026-11-16T04:49:15.444490+00:00",
+  "extension": {
+    "name": "pi-proof",
+    "version": "1.1.0",
+    "commit": "5c7334eb1f3ff0030bdc42f29702651936382190",
+    "source": "https://github.com/dawson-design/pi-proof",
+    "installation": "Pinned local checkout; explicitly loaded only in benchmark sessions. Normal Pi settings unchanged.",
+    "upstreamTests": {
+      "files": 8,
+      "tests": 134,
+      "passed": true
+    }
+  },
+  "protocol": {
+    "briefsUnchanged": true,
+    "applicationsAuthoredBy": "Pi only",
+    "workflow": "One fresh Pi RPC session per attempt; proof_start/test-first/implementation/proof_done; no external role chain",
+    "models": [
+      "ornith-1.5:35b-256k",
+      "qwen3.6:35b-a3b"
+    ],
+    "thinking": "off, verified provider mapping none; same corrected provider files as clean enforced cohort",
+    "billionContext": false,
+    "sharedLimitMinutes": 60,
+    "newAssistance": "Test-runner package.json only, bounded TAP runner and partial environment helper. No product source, expected outcomes or behavioral tests supplied. Common workflow instructions are additional assistance.",
+    "helpers": "All ten scored attempts use runtime-v2.cjs, with checkbox boolean and pointerdown/mousedown/pointerup/mouseup/click activation. Underlying seeded partial DOM/Canvas unchanged. Browser layout/default actions/GPU/PNG/path rendering unverified.",
+    "browser": "Unavailable; existing browser denial honored.",
+    "comparisonLimit": "Workflow and helper access differ from older cohorts. Descriptive single trials, not a pure extension-only causal ablation.",
+    "order": "Ornith five increasing-complexity prompts, then Qwen five, sequential on the single inference slot."
+  },
+  "installedPiSmoke": "research/pi-proof-smoke.json",
+  "helperSmoke": "research/pi-proof-helper-smoke.json",
+  "files": {
+    "packages/pi-proof/src/index.ts": "da4878b4ae863136269eba412f68ff1be2e041b7907164f49246cd8787418d8a",
+    "proof-harness/runtime.cjs": "0e09c405ab082b7360be12e102d61d0da68e7790560755fcd9b21fa6b47dab20",
+    "proof-harness/run-tests.cjs": "4e9fb7358a98992575cff856d035179a46746698010ce8fe1a7afc802ed29e7c",
+    "run-proof.py": "bcb48ba166e8fc5c3dab9ec201172fff5499f60c1be9cd8cc8c8dfb717859239",
+    "proof-harness/runtime-v2.cjs": "1c44816c1bc1220c75a8c10c9b760d0aef367e405c7770c12f5e6e77910bdf52"
+  },
+  "installedPiRPCSmoke": "research/pi-proof-rpc-smoke.json",
+  "runnerSmoke": "research/pi-proof-runner-smoke.json",
+  "calibration": {
+    "case": 43,
+    "reason": "Primary click helper v1 omitted pointerdown/pointerup, so a pointer-driven app was not activated by tests. Supervisor stopped attempt, retained artifact/transcript/costs and excluded it from means. A fresh timer repeat and all other scored attempts use v2.",
+    "originalRuntime": "proof-harness/runtime.cjs",
+    "correctedRuntime": "proof-harness/runtime-v2.cjs",
+    "conformance": "research/pi-proof-pointer-smoke.json"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "passed": false,
+  "artifactSHA256": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+  "errors": [
+    "Executable acceptance test did not exit successfully",
+    "Acceptance check missing/failed: editor_draw_erase",
+    "Acceptance check missing/failed: play_controls",
+    "Acceptance check missing/failed: brick_score",
+    "Acceptance check missing/failed: lives_game_over",
+    "Acceptance check missing/failed: restart_layout",
+    "Acceptance check missing/failed: json_roundtrip",
+    "Acceptance ledger contains a failed check; every recorded check must pass",
+    "Verifier did not exercise timed application execution",
+    "Independent review missing, stale or reports blocking findings"
+  ],
+  "stl": null,
+  "limits": [
+    "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+    "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+  ]
+}

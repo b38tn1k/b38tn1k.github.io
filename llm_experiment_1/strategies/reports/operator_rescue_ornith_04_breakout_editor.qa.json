@@ -1,0 +1,89 @@
+{
+  "method": "Independent exact-source DOM/nativeCanvas handlers, scheduled callbacks, downloaded JSON parsed and round-tripped through existing loader. Closure exposure only for fixture setup, not algorithm replacement. No browser hit testing/layout.",
+  "sha256": "5cae12c246ad1f5caf6aeba1f6ca7a3b07ddd9fa6d16de392075c7119bbff1b0",
+  "checks": [
+    {
+      "id": "actual_editor_draw_and_erase",
+      "pass": true,
+      "evidence": {
+        "draw": true,
+        "erase": true
+      }
+    },
+    {
+      "id": "overlay_Play_starts_game",
+      "pass": true,
+      "evidence": {
+        "play": true
+      }
+    },
+    {
+      "id": "actual_save_download_roundtrip_retains_bricks_and_colors",
+      "pass": true,
+      "evidence": {
+        "bricks": 22,
+        "bytes": 791
+      }
+    },
+    {
+      "id": "actual_play_mouse_keyboard_restart",
+      "pass": true,
+      "evidence": {
+        "keyboard": true,
+        "mouse": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "editor_mode_closes_blocking_overlay",
+      "pass": true,
+      "evidence": {
+        "editorAccessible": true
+      }
+    },
+    {
+      "id": "last_brick_results_in_win_or_rebuilt_level",
+      "pass": true,
+      "evidence": {
+        "score": 10,
+        "bricks": 0,
+        "running": false
+      }
+    },
+    {
+      "id": "actual_return_to_editor_during_play",
+      "pass": false,
+      "error": "Returning to editor loses the custom design",
+      "actual": "[[\"4,1\",\"#4dd0e1\"],[\"4,3\",\"#4dd0e1\"],[\"4,5\",\"#4dd0e1\"],[\"4,7\",\"#4dd0e1\"],[\"4,9\",\"#4dd0e1\"],[\"5,0\",\"#4dd0e1\"],[\"5,2\",\"#4dd0e1\"],[\"5,4\",\"#4dd0e1\"],[\"5,6\",\"#4dd0e1\"],[\"5,8\",\"#4dd0e1\"],[\"6,1\",\"#4dd0e1\"],[\"6,3\",\"#4dd0e1\"],[\"6,5\",\"#4dd0e1\"],[\"6,7\",\"#4dd0e1\"],[\"6,9\",\"#4dd0e1\"],[\"7,0\",\"#4dd0e1\"],[\"7,2\",\"#4dd0e1\"],[\"7,4\",\"#4dd0e1\"],[\"7,6\",\"#4dd0e1\"],[\"7,8\",\"#4dd0e1\"]]",
+      "expected": "[[\"4,0\",\"#ff0000\"],[\"4,1\",\"#4dd0e1\"],[\"4,3\",\"#4dd0e1\"],[\"4,5\",\"#4dd0e1\"],[\"4,7\",\"#4dd0e1\"],[\"4,9\",\"#4dd0e1\"],[\"5,0\",\"#4dd0e1\"],[\"5,2\",\"#4dd0e1\"],[\"5,4\",\"#4dd0e1\"],[\"5,6\",\"#4dd0e1\"],[\"5,8\",\"#4dd0e1\"],[\"6,1\",\"#4dd0e1\"],[\"6,3\",\"#4dd0e1\"],[\"6,5\",\"#4dd0e1\"],[\"6,7\",\"#4dd0e1\"],[\"6,9\",\"#4dd0e1\"],[\"7,0\",\"#4dd0e1\"],[\"7,2\",\"#4dd0e1\"],[\"7,4\",\"#4dd0e1\"],[\"7,6\",\"#4dd0e1\"],[\"7,8\",\"#4dd0e1\"]]"
+    },
+    {
+      "id": "edited_level_survives_restart_and_return_to_editor",
+      "pass": false,
+      "error": "Restart loses part of the edited design in cycle 1",
+      "actual": "[[\"4,1\",\"#4dd0e1\"]]",
+      "expected": "[[\"4,0\",\"#ff0000\"],[\"4,1\",\"#4dd0e1\"],[\"4,3\",\"#4dd0e1\"],[\"4,5\",\"#4dd0e1\"],[\"4,7\",\"#4dd0e1\"],[\"4,9\",\"#4dd0e1\"],[\"5,0\",\"#4dd0e1\"],[\"5,2\",\"#4dd0e1\"],[\"5,4\",\"#4dd0e1\"],[\"5,6\",\"#4dd0e1\"],[\"5,8\",\"#4dd0e1\"],[\"6,1\",\"#4dd0e1\"],[\"6,3\",\"#4dd0e1\"],[\"6,5\",\"#4dd0e1\"],[\"6,7\",\"#4dd0e1\"],[\"6,9\",\"#4dd0e1\"],[\"7,0\",\"#4dd0e1\"],[\"7,2\",\"#4dd0e1\"],[\"7,4\",\"#4dd0e1\"],[\"7,6\",\"#4dd0e1\"],[\"7,8\",\"#4dd0e1\"]]"
+    },
+    {
+      "id": "win_replay_restores_level_and_three_misses_end_game",
+      "pass": true,
+      "evidence": {
+        "replay": true,
+        "threeMisses": true
+      }
+    },
+    {
+      "id": "three_misses_end_game_and_update_lives",
+      "pass": true,
+      "evidence": {
+        "lives": [
+          2,
+          1,
+          0
+        ],
+        "gameOver": true
+      }
+    }
+  ],
+  "pass": false
+}

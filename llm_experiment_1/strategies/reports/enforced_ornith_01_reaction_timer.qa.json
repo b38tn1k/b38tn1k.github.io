@@ -1,0 +1,224 @@
+{
+  "method": "Independent final-source DOM events and exact next-timer advancement; state exposure only, no app algorithm changes; no browser",
+  "sha256": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+  "startup": "pass",
+  "normal": [
+    {
+      "state": {
+        "stage": "RESULT",
+        "trial": 1,
+        "times": [
+          200
+        ],
+        "falseStart": false,
+        "timeout": 2,
+        "startedAt": 3700,
+        "pendingMs": 200
+      },
+      "mainDisplay": "Your reaction200msSnappy"
+    },
+    {
+      "state": {
+        "stage": "RESULT",
+        "trial": 2,
+        "times": [
+          200,
+          210
+        ],
+        "falseStart": false,
+        "timeout": 4,
+        "startedAt": 9100,
+        "pendingMs": 210
+      },
+      "mainDisplay": "Your reaction210msSnappy"
+    },
+    {
+      "state": {
+        "stage": "RESULT",
+        "trial": 3,
+        "times": [
+          200,
+          210,
+          220
+        ],
+        "falseStart": false,
+        "timeout": 6,
+        "startedAt": 14510,
+        "pendingMs": 220
+      },
+      "mainDisplay": "Your reaction220msSnappy"
+    },
+    {
+      "state": {
+        "stage": "RESULT",
+        "trial": 4,
+        "times": [
+          200,
+          210,
+          220,
+          230
+        ],
+        "falseStart": false,
+        "timeout": 8,
+        "startedAt": 19930,
+        "pendingMs": 230
+      },
+      "mainDisplay": "Your reaction230msSnappy"
+    },
+    {
+      "state": {
+        "stage": "RESULT_ALL",
+        "trial": 5,
+        "times": [
+          200,
+          210,
+          220,
+          230,
+          240
+        ],
+        "falseStart": false,
+        "timeout": 9,
+        "startedAt": 25360,
+        "pendingMs": 240
+      },
+      "mainDisplay": "Done220ms avgBest: 200 msTrial 1200 msTrial 2210 msTrial 3220 msTrial 4230 msTrial 5240 ms"
+    }
+  ],
+  "normalSummary": {
+    "state": {
+      "stage": "RESULT_ALL",
+      "trial": 5,
+      "times": [
+        200,
+        210,
+        220,
+        230,
+        240
+      ],
+      "falseStart": false,
+      "timeout": 9,
+      "startedAt": 25360,
+      "pendingMs": 240
+    },
+    "text": "Done220ms avgBest: 200 msTrial 1200 msTrial 2210 msTrial 3220 msTrial 4230 msTrial 5240 ms",
+    "average": "220ms",
+    "best": "200ms"
+  },
+  "restart": {
+    "stage": "READY",
+    "trial": 0,
+    "times": [],
+    "falseStart": false,
+    "timeout": 9,
+    "startedAt": 25360,
+    "pendingMs": 240
+  },
+  "falseStartWarning": {
+    "stage": "ERROR",
+    "trial": 1,
+    "times": [],
+    "falseStart": true,
+    "timeout": 1,
+    "startedAt": 0
+  },
+  "afterFalseStartRetry": {
+    "stage": "WAITING",
+    "trial": 2,
+    "times": [],
+    "falseStart": false,
+    "timeout": 3,
+    "startedAt": 0
+  },
+  "validAfterFalse": [
+    {
+      "stage": "RESULT",
+      "trial": 2,
+      "times": [
+        null,
+        200
+      ],
+      "falseStart": false,
+      "timeout": 4,
+      "startedAt": 4700,
+      "pendingMs": 200
+    },
+    {
+      "stage": "RESULT",
+      "trial": 3,
+      "times": [
+        null,
+        200,
+        210
+      ],
+      "falseStart": false,
+      "timeout": 6,
+      "startedAt": 10100,
+      "pendingMs": 210
+    },
+    {
+      "stage": "RESULT",
+      "trial": 4,
+      "times": [
+        null,
+        200,
+        210,
+        220
+      ],
+      "falseStart": false,
+      "timeout": 8,
+      "startedAt": 15510,
+      "pendingMs": 220
+    },
+    {
+      "stage": "RESULT_ALL",
+      "trial": 5,
+      "times": [
+        null,
+        200,
+        210,
+        220,
+        230
+      ],
+      "falseStart": false,
+      "timeout": 9,
+      "startedAt": 20930,
+      "pendingMs": 230
+    }
+  ],
+  "falseStartSummary": {
+    "validReactionCount": 4,
+    "state": {
+      "stage": "RESULT_ALL",
+      "trial": 5,
+      "times": [
+        null,
+        200,
+        210,
+        220,
+        230
+      ],
+      "falseStart": false,
+      "timeout": 9,
+      "startedAt": 20930,
+      "pendingMs": 230
+    },
+    "mainDisplay": "DoneNaNms avgBest: NaN msTrial 1–Trial 2200 msTrial 3210 msTrial 4220 msTrial 5230 ms",
+    "sidebarAverage": "215ms"
+  },
+  "keyboard": {
+    "stage": "RESULT",
+    "trial": 1,
+    "times": [
+      250
+    ],
+    "falseStart": false,
+    "timeout": 2,
+    "startedAt": 3700,
+    "pendingMs": 250
+  },
+  "seededWaits": [
+    1300,
+    3400
+  ],
+  "offline": true
+}

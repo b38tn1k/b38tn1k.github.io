@@ -1,0 +1,44 @@
+{
+  "method": "Exact frozen source with real editor, keyboard, mouse/touch, JSON and restart controls in Node VM/DOM/nativeCanvas. Controlled ball fixtures expose existing functions/state only; no app algorithm replaced. Browser layout/hit testing/GPU/default actions remain unverified.",
+  "sha256": "2e72695cd3b2db404e44e974c2c39309facae33dfce92260a839e0a30c8590e6",
+  "checks": [
+    {
+      "id": "editor_draw_erase_and_JSON_roundtrip",
+      "pass": true,
+      "evidence": {
+        "draw": true,
+        "erase": true,
+        "json": true
+      }
+    },
+    {
+      "id": "keyboard_mouse_paddle_launch",
+      "pass": true,
+      "evidence": {
+        "keyboard": true,
+        "mouse": true,
+        "launch": true
+      }
+    },
+    {
+      "id": "touch_outside_editor_is_safe",
+      "pass": false,
+      "error": "Cannot set properties of undefined (setting '-1')"
+    },
+    {
+      "id": "touch_hold_erase_works",
+      "pass": false,
+      "error": "Long-press timeout is empty; advertised touch eraser never erases",
+      "actual": 0,
+      "expected": -1
+    },
+    {
+      "id": "brick_score_win_and_play_restores_level",
+      "pass": false,
+      "error": "Play resets counters but lost layout remains empty",
+      "actual": -1,
+      "expected": 0
+    }
+  ],
+  "pass": false
+}

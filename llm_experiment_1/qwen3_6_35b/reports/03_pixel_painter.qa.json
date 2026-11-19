@@ -1,0 +1,53 @@
+{
+  "method": "Exact-source VM using small pixel-buffer Canvas model; no browser or PNG encoding test",
+  "startup": "pass",
+  "clickPixel": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "dragRectangleCorner": [
+    255,
+    0,
+    0,
+    255
+  ],
+  "undoOnce": [
+    255,
+    0,
+    0,
+    255
+  ],
+  "undoTwice": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "redoTwice": [
+    0,
+    0,
+    255,
+    255
+  ],
+  "undoAfterRedos": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "resize": {
+    "canvasW": 8,
+    "canvasH": 10,
+    "zoom": 56,
+    "undos": 5,
+    "redos": 0
+  },
+  "eraserPixel": [
+    255,
+    255,
+    255,
+    255
+  ]
+}

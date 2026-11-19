@@ -1,0 +1,1 @@
+All checks pass. The file is written, syntactically valid, and the core pixel logic (RGBA painting, erasing to alpha=0, coordinate clamping, bounds) is verified.

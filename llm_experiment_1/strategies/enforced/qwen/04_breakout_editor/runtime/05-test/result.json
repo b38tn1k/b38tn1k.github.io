@@ -1,0 +1,12 @@
+{
+  "role": "test",
+  "number": 5,
+  "minutes": 6.1,
+  "reason": "stage_time_limit",
+  "exitCode": -9,
+  "artifactBefore": "cbc44a0b1feb21f696ec4121faa2fc1695bc3055b460a80126fdc97d5ebc6469",
+  "artifactAfter": "cbc44a0b1feb21f696ec4121faa2fc1695bc3055b460a80126fdc97d5ebc6469",
+  "prompt": "enforced/qwen/04_breakout_editor/runtime/05-test/prompt.txt",
+  "events": "enforced/qwen/04_breakout_editor/runtime/05-test/events.jsonl",
+  "stderr": "enforced/qwen/04_breakout_editor/runtime/05-test/stderr.log"
+}

@@ -1,0 +1,42 @@
+{
+  "method": "Independent exact-source DOM/nativeCanvas handlers, scheduled callbacks, downloaded JSON parsed and round-tripped through existing loader. Closure exposure only for fixture setup, not algorithm replacement. No browser hit testing/layout.",
+  "sha256": "8dfd279dd8b0965bb49d7df2217bb99e3027b76503be0154d72a141968acd883",
+  "checks": [
+    {
+      "id": "overlay_Play_starts_game",
+      "pass": false,
+      "error": "'edit' == 'play'",
+      "actual": "edit",
+      "expected": "play"
+    },
+    {
+      "id": "actual_save_download_roundtrip_retains_bricks_and_colors",
+      "pass": false,
+      "error": "'[]' == '[[\"4,1\",\"#4dd0e1\"],[\"4,3\",\"#4dd0e1\"],[\"4,5\",\"#4dd0e1\"],[\"4,7\",\"#4dd0e1\"],[\"4,9\",\"#4dd0e1\"],[\"5,0\",\"#4dd0e1\"],[\"5,2\",\"#4dd0e1\"],[\"5,4\",\"#4dd0e1\"],[\"5,6\",\"#4dd0e1\"],[\"5,8\",\"#4dd0e1\"],[\"6,1\",\"#4dd0e1\"],[\"6,3\",\"#4dd0e1\"],[\"6,5\",\"#4dd0e1\"],[\"6,7\",\"#4dd0e1\"],[\"6,9\",\"#4dd0e1\"],[\"7,0\",\"#4dd0e1\"],[\"7,2\",\"#4dd0e1\"],[\"7,4\",\"#4dd0e1\"],[\"7,6\",\"#4dd0e1\"],[\"7,8\",\"#4dd0e1\"]]'",
+      "actual": "[]",
+      "expected": "[[\"4,1\",\"#4dd0e1\"],[\"4,3\",\"#4dd0e1\"],[\"4,5\",\"#4dd0e1\"],[\"4,7\",\"#4dd0e1\"],[\"4,9\",\"#4dd0e1\"],[\"5,0\",\"#4dd0e1\"],[\"5,2\",\"#4dd0e1\"],[\"5,4\",\"#4dd0e1\"],[\"5,6\",\"#4dd0e1\"],[\"5,8\",\"#4dd0e1\"],[\"6,1\",\"#4dd0e1\"],[\"6,3\",\"#4dd0e1\"],[\"6,5\",\"#4dd0e1\"],[\"6,7\",\"#4dd0e1\"],[\"6,9\",\"#4dd0e1\"],[\"7,0\",\"#4dd0e1\"],[\"7,2\",\"#4dd0e1\"],[\"7,4\",\"#4dd0e1\"],[\"7,6\",\"#4dd0e1\"],[\"7,8\",\"#4dd0e1\"]]"
+    },
+    {
+      "id": "actual_play_mouse_keyboard_restart",
+      "pass": false,
+      "error": "Mouse motion does not move paddle",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "editor_mode_closes_blocking_overlay",
+      "pass": false,
+      "error": "Initial overlay remains over editor",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "last_brick_results_in_win_or_rebuilt_level",
+      "pass": false,
+      "error": "No win or rebuilt level after final brick",
+      "actual": false,
+      "expected": true
+    }
+  ],
+  "pass": false
+}

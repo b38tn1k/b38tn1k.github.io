@@ -1,0 +1,104 @@
+{
+  "status": "completed_with_critical_defects",
+  "grade": "D - timing fixed; false-start and restart flow broken",
+  "score": 58,
+  "rubricScores": {
+    "functionality": 25,
+    "artifact_correctness": 18,
+    "usability": 4,
+    "self_verification": 1,
+    "autonomy": 10
+  },
+  "verified": [
+    "Exact-source controlled-clock VM: five valid responses produce220ms average,200ms best,240ms worst",
+    "Initial script startup and early tap detection"
+  ],
+  "criticalDefects": [
+    "False-start state hides playContent, including newly created Continue button; keyboard handler sees existing button and does nothing",
+    "Restart after results leaves playContent display:none, hiding Start Test control"
+  ],
+  "additionalDefects": [
+    "First badge readsTrial2/5 because startTrial increments trial before setState adds1",
+    "Retrying a false start increments trial and can reduce successful trial count"
+  ],
+  "verificationConcerns": [
+    "No actual runtime interaction tests recorded"
+  ],
+  "scopeCompliance": "Filesystem boundary applied from process start; no confirmed out-of-directory writes",
+  "title": "Reaction timer",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "elapsedMinutes": 2.0,
+  "wallMinutes": 2.15,
+  "promptWords": 34,
+  "toolCalls": 5,
+  "toolResultsMarkedError": 0,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "modelUsageReported": {
+    "input": 15248,
+    "output": 6837,
+    "cacheRead": 60473,
+    "totalTokens": 82558
+  },
+  "peakReportedPromptTokens": 15228,
+  "assistantTextContainingToolCallMarkup": 0,
+  "artifactBytes": 16959,
+  "sha256": "231a167e8ac656ac7b712caf2018ca5c8e054e4d97132b80c68fd852183f4c64",
+  "billionContext": {
+    "loadedConfirmed": true,
+    "sessionId": "01a1dbc3-8d75-716f-aad2-c4841208377a",
+    "extensionVersion": "0.1.213",
+    "stats": {
+      "requests": 6,
+      "tokensSaved": 0,
+      "inputTokens": 75721,
+      "cachedTokens": 60473,
+      "outputTokens": 6837,
+      "cacheSamples": 6,
+      "lastInputTokens": 15228,
+      "compressCreditTokens": 0,
+      "contextTokens": 15228,
+      "retrieveCalls": 0,
+      "retrieveHits": 0,
+      "retrieveMisses": 0,
+      "retrieveDropped": 0,
+      "retrieveDelivered": 0,
+      "storedBytes": 0,
+      "storeBytesSaved": 0,
+      "rangeRestores": 0,
+      "contextTokensSource": "usage",
+      "localInputEstimate": 30236,
+      "contextEstimateTokens": 15103,
+      "contextEstimateCalibrated": true,
+      "lastUsageGradeTokens": 15228,
+      "lastUsagePayloadUpper": 30236,
+      "lastInputTokensSource": "usage",
+      "lastInputTokensOrigin": "http://127.0.0.1:11435",
+      "calibrationRing": {
+        "origin": "http://127.0.0.1:11435",
+        "model": "qwen3.6:35b-a3b",
+        "values": [
+          1.078777894263891,
+          1.0809303690659622,
+          1.0874812540169965
+        ]
+      },
+      "calibratedEstimate": 1.082396505782283,
+      "calibratedEstimateOrigin": "http://127.0.0.1:11435",
+      "calibratedEstimateModel": "qwen3.6:35b-a3b"
+    },
+    "compressionStats": {
+      "tokensCompressed": 0,
+      "compressionCount": 0,
+      "absorbedTokens": 0,
+      "storedCount": 0,
+      "retrievalCount": 0
+    },
+    "blocks": 0
+  },
+  "limitations": [
+    "No independent real-browser/visual testing; prior browser-origin denial honored.",
+    "Single run per task; differences do not isolate extension effect from sampling variability."
+  ]
+}

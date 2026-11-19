@@ -1,0 +1,273 @@
+{
+  "method": "Exact source startup, actual field/drag/download handlers with independent Node Canvas2D adapter; saved STL bytes checked for bounds, matching edges, winding, connectedness and analytic tray volume. No browser, slicer or physical print verification.",
+  "sha256": "10ad3c219ddd1da8b84e87a63aa89ef291b784b10d03251fa7a0e786cfb084f8",
+  "sourceUnchangedDuringChecks": true,
+  "checks": [
+    {
+      "id": "exact_source_startup",
+      "pass": true,
+      "evidence": {
+        "params": {
+          "L": 180,
+          "W": 120,
+          "H": 30,
+          "C": 2,
+          "R": 3,
+          "tw": 2,
+          "th": 3
+        },
+        "compartments": 6
+      }
+    },
+    {
+      "id": "default_dimensions_and_compartment_depth",
+      "pass": false,
+      "error": "Open tray compartment depth should be outer height minus floor thickness",
+      "actual": 25,
+      "expected": 27
+    },
+    {
+      "id": "input_updates_compartment_dimensions",
+      "pass": true,
+      "evidence": {
+        "params": {
+          "L": 240,
+          "W": 120,
+          "H": 30,
+          "C": 4,
+          "R": 2,
+          "tw": 2,
+          "th": 3
+        },
+        "dimensions": "Comp 1\n          57.5 × 57\n          depth 25 mm • 8 totalComp 2\n          57.5 × 57\n          depth 25 mm • 8 totalComp 3\n          57.5 × 57\n          depth 25 mm • 8 totalComp 4\n          57.5 × 57\n          depth 25 mm • 8 totalComp 5\n          57.5 × 57\n          depth 25 mm • 8 totalComp 6\n          57.5 × 57\n          depth 25 mm • 8 totalComp 7\n          57.5 × 57\n          depth 25 mm • 8 totalComp 8\n          57.5 × 57\n          depth 25 mm • 8 total"
+      }
+    },
+    {
+      "id": "actual_drag_changes_preview",
+      "pass": true,
+      "evidence": {
+        "changedNativeCanvasPixels": true,
+        "note": "Canvas2D projection only; no browser layout/rendering claim."
+      }
+    },
+    {
+      "id": "default_button_export_geometry",
+      "pass": false,
+      "error": "STL outer dimension 0 is 92.41667, expected 180",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "resized_button_export_geometry",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  181.54,\n  82.17,\n  37.38\n]\n\nshould loosely deep-equal\n\n[\n  240,\n  160,\n  40\n]",
+      "actual": [
+        181.54,
+        82.17,
+        37.38
+      ],
+      "expected": [
+        240,
+        160,
+        40
+      ]
+    }
+  ],
+  "exportsObserved": [
+    {
+      "scenario": "default",
+      "params": {
+        "L": 180,
+        "W": 120,
+        "H": 30,
+        "C": 2,
+        "R": 3,
+        "tw": 2,
+        "th": 3
+      },
+      "mesh": {
+        "format": "ascii",
+        "vertexMatchTolerance": 0.0001,
+        "verticalXPlanes": [],
+        "verticalYPlanes": [],
+        "zLevels": [
+          0,
+          2.0833,
+          4.1667,
+          6.25,
+          8.3333,
+          10.4167,
+          12.5,
+          14.5833,
+          16.6667,
+          18.75,
+          20.8333,
+          22.9167,
+          25,
+          27.0833
+        ],
+        "bytes": 1060633,
+        "triangles": 5616,
+        "uniqueVertices": 5610,
+        "bounds": {
+          "min": [
+            0.75,
+            0.75,
+            0
+          ],
+          "max": [
+            93.16667,
+            82.83333,
+            27.08333
+          ],
+          "dimensions": [
+            92.41667,
+            82.08333,
+            27.08333
+          ]
+        },
+        "signedVolume": -297.91671839482296,
+        "absoluteVolume": 297.91671839482296,
+        "surfaceArea": 684.5767656479259,
+        "degenerateTriangles": 0,
+        "nonFiniteTriangles": 0,
+        "normalDisagreements": 0,
+        "missingNormals": 0,
+        "boundaryOrNonmanifoldEdges": 15984,
+        "inconsistentWindingEdges": 432,
+        "components": 6,
+        "watertightByMatchingEdges": false
+      },
+      "expectedVolume": 121824
+    },
+    {
+      "scenario": "resized",
+      "params": {
+        "L": 240,
+        "W": 160,
+        "H": 40,
+        "C": 4,
+        "R": 2,
+        "tw": 2.5,
+        "th": 3
+      },
+      "mesh": {
+        "format": "ascii",
+        "vertexMatchTolerance": 0.0001,
+        "verticalXPlanes": [],
+        "verticalYPlanes": [],
+        "zLevels": [
+          0,
+          2.875,
+          5.75,
+          8.625,
+          11.5,
+          14.375,
+          17.25,
+          20.125,
+          23,
+          25.875,
+          28.75,
+          31.625,
+          34.5,
+          37.375
+        ],
+        "bytes": 1414009,
+        "triangles": 7488,
+        "uniqueVertices": 7480,
+        "bounds": {
+          "min": [
+            1.25,
+            1.25,
+            0
+          ],
+          "max": [
+            182.7917,
+            83.41667,
+            37.375
+          ],
+          "dimensions": [
+            181.5417,
+            82.16667,
+            37.375
+          ]
+        },
+        "signedVolume": -548.1697182425401,
+        "absoluteVolume": 548.1697182425401,
+        "surfaceArea": 1241.3466904274355,
+        "degenerateTriangles": 0,
+        "nonFiniteTriangles": 0,
+        "normalDisagreements": 0,
+        "missingNormals": 0,
+        "boundaryOrNonmanifoldEdges": 21312,
+        "inconsistentWindingEdges": 576,
+        "components": 8,
+        "watertightByMatchingEdges": false
+      },
+      "expectedVolume": 252331.25
+    }
+  ],
+  "engineDiagnostic": {
+    "isolatedOnly": true,
+    "derived": {
+      "outerLength": 180,
+      "outerWidth": 120,
+      "outerHeight": 30,
+      "rowCount": 3,
+      "colCount": 2,
+      "wallThickness": 2,
+      "floorThickness": 3,
+      "interiorLength": 176,
+      "interiorWidth": 116,
+      "interiorHeight": 27,
+      "compartmentLength": 87,
+      "compartmentWidth": 37.333333333333336,
+      "compartmentDepth": 25,
+      "compartmentCount": 6,
+      "valid": true
+    },
+    "exportResult": {
+      "format": "ascii",
+      "vertexMatchTolerance": 0.0001,
+      "verticalXPlanes": [],
+      "verticalYPlanes": [],
+      "zLevels": [
+        0,
+        25,
+        50
+      ],
+      "bytes": 13631,
+      "triangles": 72,
+      "uniqueVertices": 120,
+      "bounds": {
+        "min": [
+          -2,
+          -2,
+          0
+        ],
+        "max": [
+          95,
+          84.66667,
+          50
+        ],
+        "dimensions": [
+          97,
+          86.66667,
+          50
+        ]
+      },
+      "signedVolume": -550.0000000000082,
+      "absoluteVolume": 550.0000000000082,
+      "surfaceArea": 1263.8338755825077,
+      "degenerateTriangles": 0,
+      "nonFiniteTriangles": 0,
+      "normalDisagreements": 0,
+      "missingNormals": 0,
+      "boundaryOrNonmanifoldEdges": 204,
+      "inconsistentWindingEdges": 6,
+      "components": 6,
+      "watertightByMatchingEdges": false
+    }
+  },
+  "pass": false
+}

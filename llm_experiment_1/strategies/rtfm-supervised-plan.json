@@ -1,0 +1,61 @@
+{
+  "authorizedUTC": "2026-11-18T14:42:54.075810+00:00",
+  "name": "RTFM supervised",
+  "strategy": "rtfm_supervised",
+  "status": "complete",
+  "startCondition": "All10 RTFM solo apps independently graded, report/usage refreshed, exact sources frozen, dual author-profile/controller/isolation conformance passes.",
+  "attempts": 10,
+  "configurations": [
+    {
+      "worker": "ornith",
+      "supervisor": "qwen",
+      "column": "RTFM (Qwen supervised)",
+      "projects": 5
+    },
+    {
+      "worker": "qwen",
+      "supervisor": "ornith",
+      "column": "RTFM (Ornith supervised)",
+      "projects": 5
+    }
+  ],
+  "seedSelection": "Copy allfive finalRTFMsolo apps perworker; no best-per-task selection or replacement. FreezeHTMLhashes,baselineQA/grades/costs before repairs. Preserve originals.",
+  "profiles": "Bothrolesuseverifiedresearch/rtfm-author-recipes.json plus actualRTFMbackend/template/history/sampler conformance. Document authorguidancevsdeploymentchoices.",
+  "budgetSeconds": 7200,
+  "budgetStart": "Firstsupervisorinspection, includesbothactors/testing/independentgradewaits; noreset.",
+  "maxFeedback": 3,
+  "firstFeedbackCounts": true,
+  "interruptions": "Supervisorcanabortworker,waitforconfirmedidle,resumethesamenativeconversationwithcountedfeedback. NoCodexdiagnoses,code,pseudocodeorapprepairprompts.",
+  "stopPolicy": "Independentlyverifiednormalizedproduct\u226590/no knownrequiredblocker; or3feedbacksusedandworkersettled; ororiginalwallcap. Supervisorall-clearaloneisnotindependentacceptance.",
+  "alreadySuccessfulSeeds": "Independentlyverifyseedfirst. An already-A seedmaystopwithoutrepair/feedback; discloseunchangedbaselineAandzeroincrementalgain, notarescuesuccessimprovement.",
+  "contexts": "SeparatepersistentlocalPi supervisor/workercontexts perproject, bothmodelsconcurrentonsongbird; workeralonewritesapp,supervisorreadsonlyconsistentapp/progresssnapshotsandscratchtests; earlierresults/gold/otherprojectsprivate.",
+  "grading": "Sameoriginal100ptrubricandproducttargetaslocalsupervision. Jointautonomyeligiblewithnohumancontentsteering; timeoutautonomy0peroriginalrules. Codexindependentlytestsactualartifacts,doesnotsteerproduct.",
+  "report": "Appendoneconfigurationcolumntoeach existingmodelmatrix withmodeldependentlabels, noextragradetables. Refreshgrades/checkpoints/tokens/runtimeaseachlands.",
+  "cost": "RTFMsolo creationcost separatefromnewrepairpaircost; recordbothmodeltokens/summedactivityandpairwall, baseline-to-finalproductdelta, unchanged/regressedoutputs.",
+  "scope": "OnlyPi config, vibes experimentworkspace, Songbirdserver config. Website remainsread-only; no publication.",
+  "updatedUTC": "2026-11-19T01:56:31.930979+00:00",
+  "assessed": 10,
+  "activeCase": null,
+  "results": "rtfm-supervised-results.json",
+  "infrastructureProtocolRevisions": [
+    {
+      "revision": 2,
+      "effectiveCases": [
+        117,
+        125
+      ],
+      "verifiedUTC": "2026-11-18T16:49:23.870454+00:00",
+      "change": "Explicit persistent mechanical fence rejection and fresh-ID retry instruction. No product guidance, actor context, role tool scope, feedback ceiling or deadline changes.",
+      "conformance": "research/rtfm-supervised-controller-v2-smoke.json",
+      "precedingCaseRecovery": "runtime/rtfm-supervised-case116.infrastructure-metadata.json"
+    },
+    {
+      "revision": 3,
+      "recordedUTC": "2026-11-18T18:27:50.495395+00:00",
+      "change": "External power interruption: durable CLI holds, preserved invalid attempt costs/artifacts, explicit user-authorized fresh117attempt2 from original seed after real recovery checks. Same role kickoffs/author profiles/7200wall/threeworkerprompts; completed116notrerun.",
+      "evidence": "research/rtfm-supervised-case117-rerun.json",
+      "readiness": "research/songbird-power-recovery-readiness.json",
+      "fixtureReportingCorrection": "research/songbird-power-recovery-fixture-correction.json"
+    }
+  ]
+}

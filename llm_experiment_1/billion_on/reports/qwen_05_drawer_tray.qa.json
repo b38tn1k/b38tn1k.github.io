@@ -1,0 +1,29 @@
+{
+  "method": "Exact delivered full script in Node VM with mocked WebGL API/shader success; verifies JS startup, geometry and export bytes, not actual GPU rendering/browser",
+  "sha256": "b67a52a4da1c76fadff8dd02bf56817d40fdb9f354736c0138ae0f9951296038",
+  "externalHTTP": false,
+  "syntax": "pass",
+  "startupError": {
+    "name": "TypeError",
+    "message": "Cannot read properties of undefined (reading '0')",
+    "stack": [
+      "evalmachine.<anonymous>:117",
+      "        pBuf.push(v[0]+cx,v[1]+cy,v[2]+cz);",
+      "                   ^",
+      "",
+      "TypeError: Cannot read properties of undefined (reading '0')",
+      "    at addBoxToGL (evalmachine.<anonymous>:117:20)",
+      "    at buildTray (evalmachine.<anonymous>:148:3)"
+    ]
+  },
+  "drawCalls": 0,
+  "nonFiniteMatrices": 0,
+  "binaryError": {
+    "name": "TypeError",
+    "message": "Cannot read properties of undefined (reading '0')"
+  },
+  "asciiError": {
+    "name": "TypeError",
+    "message": "Cannot read properties of undefined (reading '0')"
+  }
+}

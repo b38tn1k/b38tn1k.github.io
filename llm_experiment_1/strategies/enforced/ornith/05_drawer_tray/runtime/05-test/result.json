@@ -1,0 +1,12 @@
+{
+  "role": "test",
+  "number": 5,
+  "minutes": 4.98,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": "a69709bd7e6ad17530ca5b78bb76cd99415f2cf83a36c341b0a5abc9c753aa11",
+  "artifactAfter": "a69709bd7e6ad17530ca5b78bb76cd99415f2cf83a36c341b0a5abc9c753aa11",
+  "prompt": "enforced/ornith/05_drawer_tray/runtime/05-test/prompt.txt",
+  "events": "enforced/ornith/05_drawer_tray/runtime/05-test/events.jsonl",
+  "stderr": "enforced/ornith/05_drawer_tray/runtime/05-test/stderr.log"
+}

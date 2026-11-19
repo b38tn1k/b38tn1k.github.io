@@ -1,0 +1,184 @@
+{
+  "geometryDiagnostics": [
+    {
+      "format": "binary",
+      "vertexMatchTolerance": 0.0001,
+      "verticalXPlanes": [
+        0,
+        2,
+        58.3333,
+        60.3333,
+        115.6667,
+        117.6667,
+        178,
+        180
+      ],
+      "verticalYPlanes": [
+        0,
+        2,
+        58,
+        60,
+        118,
+        120
+      ],
+      "zLevels": [
+        0,
+        2,
+        30
+      ],
+      "bytes": 4884,
+      "triangles": 96,
+      "uniqueVertices": 52,
+      "bounds": {
+        "min": [
+          0,
+          0,
+          0
+        ],
+        "max": [
+          180,
+          120,
+          30
+        ],
+        "dimensions": [
+          180,
+          120,
+          30
+        ]
+      },
+      "signedVolume": 103680,
+      "absoluteVolume": 103680,
+      "surfaceArea": 109752,
+      "degenerateTriangles": 0,
+      "nonFiniteTriangles": 0,
+      "normalDisagreements": 0,
+      "missingNormals": 0,
+      "boundaryOrNonmanifoldEdges": 8,
+      "inconsistentWindingEdges": 0,
+      "components": 4,
+      "watertightByMatchingEdges": false,
+      "reconciledTopology": {
+        "analysisBudgetExceeded": false,
+        "tolerance": 0.0001,
+        "triangles": 96,
+        "vertices": 52,
+        "edgesAfterCollinearSplitting": 148,
+        "originalEdgesWithInteriorVertices": 56,
+        "skippedEdges": 0,
+        "boundaryOrNonmanifoldEdges": 40,
+        "inconsistentWindingEdges": 0,
+        "nonmanifoldVertexFans": 0,
+        "faceComponents": 1,
+        "closedConnectedBoundary": false,
+        "limits": "Matches collinear edge subdivisions and local face connectivity; not a general triangle-intersection test or physical-print certification."
+      },
+      "exportedSections": {
+        "axes": {
+          "widthAxis": 0,
+          "depthAxis": 1,
+          "heightAxis": 2
+        },
+        "tolerance": 0.0001,
+        "widthPlanes": [
+          0,
+          2,
+          58.3333,
+          60.3333,
+          115.6667,
+          117.6667,
+          178,
+          180
+        ],
+        "depthPlanes": [
+          0,
+          2,
+          58,
+          60,
+          118,
+          120
+        ],
+        "heightLevels": [
+          0,
+          2,
+          30
+        ],
+        "width": {
+          "clear": [
+            56.3333,
+            55.333400000000005,
+            60.333299999999994
+          ],
+          "walls": [
+            2,
+            2,
+            2,
+            2
+          ]
+        },
+        "depth": {
+          "clear": [
+            56,
+            58
+          ],
+          "walls": [
+            2,
+            2,
+            2
+          ]
+        },
+        "limits": "Axis-aligned rectilinear tray surfaces only; measures clear openings/wall faces, not a general solid-intersection or physical-print test."
+      },
+      "expectedUnionVolume": 117281.25,
+      "inputs": {
+        "W": 180,
+        "D": 120,
+        "H": 30,
+        "C": 3,
+        "R": 2,
+        "wall": 2.5,
+        "floor": 2.25
+      }
+    }
+  ],
+  "method": "Independent actual controls and downloaded STL bytes, bounds, normals/winding, matched edges reconciled for collinear subdivisions, face connectivity and analytical tray-union volume. Exact-source VM/nativeCanvas no browser/GPU/physical print certification. Internal model read only for reported dimensions; STL checked independently.",
+  "sha256": "dc64030bd81c24da3279800f3b3304d0d36f921d243059f8190b758f9dc01356",
+  "checks": [
+    {
+      "id": "fractional_wall_is_honored_in_real_UI_and_clearances",
+      "pass": false,
+      "error": "2 == 2.5",
+      "actual": 2,
+      "expected": 2.5
+    },
+    {
+      "id": "changed_grid_label_matches_controls",
+      "pass": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(/4\\s*[×x]\\s*3/.test(a.document.querySelector('#compTable tbody').textContent))\n",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "manual_drag_rotates_real_canvas_pixels",
+      "pass": true,
+      "evidence": {
+        "manualRotation": true,
+        "renderedPixelsChanged": true
+      }
+    },
+    {
+      "id": "auto_rotation_actually_schedules_and_changes_preview",
+      "pass": false,
+      "error": "Auto-rotate has no scheduled callback",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "real_download_STL_bounds_normals_topology_and_union_volume",
+      "pass": false,
+      "error": "Boundary remains open/nonmanifold or disconnected after reconciling collinear edge subdivisions",
+      "actual": false,
+      "expected": true
+    }
+  ],
+  "pass": false
+}

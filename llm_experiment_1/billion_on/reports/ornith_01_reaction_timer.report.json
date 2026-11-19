@@ -1,0 +1,103 @@
+{
+  "status": "completed_with_defects",
+  "grade": "B - normal timing works; false-start and label defects",
+  "score": 80,
+  "rubricScores": {
+    "functionality": 35,
+    "artifact_correctness": 24,
+    "usability": 9,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "verified": [
+    "Exact-source controlled clock:200/210/220/230/240ms gives220ms average,200ms best,240ms worst",
+    "Per-trial reaction display",
+    "Early press detection"
+  ],
+  "defects": [
+    "Next trial badge skips fromTrial1 toTrial3",
+    "False-start UI promises retry but consumes a trial",
+    "All-false-start summary displaysNaN/Infinity/-Infinity"
+  ],
+  "verificationConcerns": [
+    "Agent claimed less-than250ms responses count as false starts, but actual code accepts them",
+    "Primarily syntax and function-presence checks"
+  ],
+  "scopeCompliance": "No out-of-directory writes found on initial log review",
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "elapsedMinutes": 2.9,
+  "wallMinutes": 3.06,
+  "promptWords": 34,
+  "toolCalls": 6,
+  "toolResultsMarkedError": 0,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "modelUsageReported": {
+    "input": 15601,
+    "output": 7758,
+    "cacheRead": 80031,
+    "totalTokens": 103390
+  },
+  "peakReportedPromptTokens": 15577,
+  "assistantTextContainingToolCallMarkup": 0,
+  "artifactBytes": 13711,
+  "sha256": "10bc4a646bf3d65bae0a8fffdce5ec2867b854e5cd745a6bd80a99e81df0b066",
+  "billionContext": {
+    "loadedConfirmed": true,
+    "sessionId": "01a1dba8-fc76-7711-b012-72be969e63ea",
+    "extensionVersion": "0.1.213",
+    "stats": {
+      "requests": 7,
+      "tokensSaved": 0,
+      "inputTokens": 95632,
+      "cachedTokens": 80031,
+      "outputTokens": 7758,
+      "cacheSamples": 7,
+      "lastInputTokens": 15577,
+      "compressCreditTokens": 0,
+      "contextTokens": 15577,
+      "retrieveCalls": 0,
+      "retrieveHits": 0,
+      "retrieveMisses": 0,
+      "retrieveDropped": 0,
+      "retrieveDelivered": 0,
+      "storedBytes": 0,
+      "storeBytesSaved": 0,
+      "rangeRestores": 0,
+      "contextTokensSource": "usage",
+      "localInputEstimate": 31018,
+      "contextEstimateTokens": 15461,
+      "contextEstimateCalibrated": true,
+      "lastUsageGradeTokens": 15577,
+      "lastUsagePayloadUpper": 31018,
+      "lastInputTokensSource": "usage",
+      "lastInputTokensOrigin": "http://127.0.0.1:11435",
+      "calibrationRing": {
+        "origin": "http://127.0.0.1:11435",
+        "model": "ornith-1.5:35b-256k",
+        "values": [
+          1.0898463348283214,
+          1.0921940478727183,
+          1.097203634570684
+        ]
+      },
+      "calibratedEstimate": 1.0930813390905745,
+      "calibratedEstimateOrigin": "http://127.0.0.1:11435",
+      "calibratedEstimateModel": "ornith-1.5:35b-256k"
+    },
+    "compressionStats": {
+      "tokensCompressed": 0,
+      "compressionCount": 0,
+      "absorbedTokens": 0,
+      "storedCount": 0,
+      "retrievalCount": 0
+    },
+    "blocks": 0
+  },
+  "limitations": [
+    "No independent real-browser/visual testing; prior browser-origin denial honored.",
+    "Single run per task; differences do not isolate extension effect from sampling variability."
+  ]
+}

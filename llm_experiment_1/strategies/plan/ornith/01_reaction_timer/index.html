@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Time Tester</title>
+<style>
+  :root {
+    --ready-bg: #1f2a44;
+    --waiting-bg: #c0392b;
+    --go-bg: #27ae60;
+    --measured-bg: #1f2a44;
+    --false-bg: #c0392b;
+    --finished-bg: #1f2a44;
+    --text: #ffffff;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    overflow: hidden;
+    transition: background-color 0.25s ease;
+    color: var(--text);
+    background-color: var(--ready-bg);
+  }
+
+  #stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    outline: none;
+  }
+
+  #stage:focus {
+    outline: none;
+  }
+
+  .title {
+    font-size: clamp(28px, 6vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0 0 12px 0;
+    line-height: 1.1;
+  }
+
+  .hint {
+    font-size: clamp(16px, 2.6vw, 22px);
+    opacity: 0.85;
+    margin: 6px 0;
+    line-height: 1.5;
+  }
+
+  .big {
+    font-size: clamp(72px, 22vw, 180px);
+    font-weight: 800;
+    line-height: 1;
+    margin: 10px 0;
+  }
+
+  .unit {
+    font-size: clamp(22px, 4vw, 34px);
+    opacity: 0.85;
+    font-weight: 500;
+  }
+
+  .badge {
+    font-size: clamp(14px, 2.4vw, 20px);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.75;
+    margin-bottom: 18px;
+  }
+
+  .prompt {
+    margin-top: 36px;
+    font-size: clamp(15px, 2.4vw, 20px);
+    opacity: 0.6;
+    border: 1px dashed currentColor;
+    border-radius: 10px;
+    padding: 10px 18px;
+  }
+
+  #summary {
+    display: none;
+    width: min(640px, 92vw);
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 24px 0;
+  }
+
+  .stat {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 18px 12px;
+  }
+
+  .stat .value {
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 800;
+  }
+
+  .stat .label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.75;
+    margin-top: 4px;
+  }
+
+  .grade {
+    font-size: clamp(20px, 3.6vw, 28px);
+    font-weight: 700;
+    margin: 4px 0;
+  }
+
+  .grade small {
+    display: block;
+    font-weight: 400;
+    opacity: 0.75;
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  }
+
+  td {
+    padding: 8px 10px;
+    font-size: 15px;
+  }
+
+  tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .trial-name {
+    opacity: 0.8;
+  }
+
+  .trial-time {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+
+  .btn {
+    display: inline-block;
+    margin-top: 26px;
+    background: #ffffff;
+    color: #1f2a44;
+    font-size: clamp(16px, 2.6vw, 20px);
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 30px;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.15s ease;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(1px); }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+</head>
+<body>
+  <div id="status" class="sr-only" role="status" aria-live="polite"></div>
+
+  <div id="stage" tabindex="0" aria-label="Reaction time test area. Click or press Space to act.">
+    <!-- Ready -->
+    <div id="readyView">
+      <div class="badge">5 Trials</div>
+      <div class="title">Reaction Time Tester</div>
+      <div class="hint">When the screen turns <strong>green</strong>, click (or press Space) as fast as you can.</div>
+      <div class="hint">Clicking during the red wait counts as a false start.</div>
+      <div class="prompt">Click anywhere to start</div>
+    </div>
+
+    <!-- Waiting (red) -->
+    <div id="waitingView" style="display:none;">
+      <div class="title">Wait for it…</div>
+      <div class="hint">Stay focused. Click only when it turns green.</div>
+    </div>
+
+    <!-- Go (green) -->
+    <div id="goView" style="display:none;">
+      <div class="title">GO!</div>
+      <div class="hint">Click now!</div>
+    </div>
+
+    <!-- False start -->
+    <div id="falseView" style="display:none;">
+      <div class="title">Too Early!</div>
+      <div class="hint">That was a false start.</div>
+      <div class="prompt">Click to try this trial again</div>
+    </div>
+
+    <!-- Measured -->
+    <div id="measuredView" style="display:none;">
+      <div class="badge">Reaction Time</div>
+      <div class="big" id="measuredNum">0</div>
+      <div class="unit">milliseconds</div>
+      <div class="prompt">Click to continue</div>
+    </div>
+
+    <!-- Summary -->
+    <div id="summary">
+      <div class="title">Results</div>
+      <div class="grade" id="grade">—<small id="gradeHint"></small></div>
+      <div class="stat-grid">
+        <div class="stat"><div class="value" id="avgTime">—</div><div class="label">Average</div></div>
+        <div class="stat"><div class="value" id="minTime">—</div><div class="label">Fastest</div></div>
+        <div class="stat"><div class="value" id="maxTime">—</div><div class="label">Slowest</div></div>
+      </div>
+      <table id="table"><tbody></tbody></table>
+      <div style="text-align:center"><button class="btn" id="playAgain">Play Again</button></div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  var TOTAL_TRIALS = 5;
+  var WAIT_MIN = 1500;
+  var WAIT_MAX = 5000;
+
+  var STAGES = {
+    READY: "ready",
+    WAITING: "waiting",
+    GO: "go",
+    FALSE: "false",
+    MEASURED: "measured",
+    FINISHED: "finished"
+  };
+
+  var current = STAGES.READY;
+  var currentTrial = 0;
+  var results = [];
+  var goTime = 0;
+  var waitTimer = null;
+
+  var stage = document.getElementById("stage");
+  var status = document.getElementById("status");
+
+  var readyView = document.getElementById("readyView");
+  var waitingView = document.getElementById("waitingView");
+  var goView = document.getElementById("goView");
+  var falseView = document.getElementById("falseView");
+  var measuredView = document.getElementById("measuredView");
+  var summary = document.getElementById("summary");
+  var measuredNum = document.getElementById("measuredNum");
+
+  var avgTime = document.getElementById("avgTime");
+  var minTime = document.getElementById("minTime");
+  var maxTime = document.getElementById("maxTime");
+  var grade = document.getElementById("grade");
+  var gradeHint = document.getElementById("gradeHint");
+  var tableBody = document.querySelector("#table tbody");
+  var playAgain = document.getElementById("playAgain");
+
+  var VIEW_MAP = {
+    ready: readyView,
+    waiting: waitingView,
+    go: goView,
+    false: falseView,
+    measured: measuredView
+  };
+
+  function setBg(color) {
+    document.body.style.backgroundColor = color;
+  }
+
+  function announce(text) {
+    status.textContent = text;
+  }
+
+  function showView(state) {
+    Object.keys(VIEW_MAP).forEach(function (key) {
+      VIEW_MAP[key].style.display = "none";
+    });
+    summary.style.display = "none";
+    if (VIEW_MAP[state]) {
+      VIEW_MAP[state].style.display = "";
+    } else {
+      summary.style.display = "block";
+    }
+  }
+
+  function randomWait() {
+    return Math.floor(Math.random() * (WAIT_MAX - WAIT_MIN + 1)) + WAIT_MIN;
+  }
+
+  function goTo(state) {
+    current = state;
+    showView(state);
+  }
+
+  function startTimer() {
+    clearTimer();
+    current = STAGES.WAITING;
+    currentTrial += 1;
+    var delay = randomWait();
+    setBg(getComputedStyle(document.documentElement).getPropertyValue("--waiting-bg") || "#c0392b");
+    announce("Trial " + currentTrial + " of " + TOTAL_TRIALS + ". Wait for the green light.");
+    waitTimer = setTimeout(function () {
+      startGo();
+    }, delay);
+  }
+
+  function clearTimer() {
+    if (waitTimer) {
+      clearTimeout(waitTimer);
+      waitTimer = null;
+    }
+  }
+
+  function startGo() {
+    setBg(getComputedStyle(document.documentElement).getPropertyValue("--go-bg") || "#27ae60");
+    announce("Go!");
+    current = STAGES.GO;
+    showView(STAGES.GO);
+    goTime = now();
+  }
+
+  function now() {
+    if (typeof performance !== "undefined" && performance.now) {
+      return performance.now();
+    }
+    return Date.now();
+  }
+
+  function recordHit() {
+    var response = now() - goTime;
+    var rounded = Math.round(response);
+    results.push(rounded);
+    measuredNum.textContent = rounded;
+    setBg(getComputedStyle(document.documentElement).getPropertyValue("--measured-bg") || "#1f2a44");
+    announce("You reacted in " + rounded + " milliseconds.");
+    current = STAGES.MEASURED;
+    showView(STAGES.MEASURED);
+  }
+
+  function showSummary() {
+    setBg(getComputedStyle(document.documentElement).getPropertyValue("--finished-bg") || "#1f2a44");
+    var avg = Math.round(results.reduce(function (a, b) { return a + b; }, 0) / results.length);
+    var min = Math.min.apply(null, results);
+    var max = Math.max.apply(null, results);
+
+    avgTime.textContent = avg + " ms";
+    minTime.textContent = min + " ms";
+    maxTime.textContent = max + " ms";
+
+    var hint = "";
+    if (avg < 200) hint = "You have lightning-fast reflexes.";
+    else if (avg < 250) hint = "Faster than most people.";
+    else if (avg < 350) hint = "A solid average response.";
+    else hint = "Keep practising to sharpen your reflexes.";
+
+    grade.textContent = "≈ " + avg + " ms";
+    gradeHint.textContent = hint;
+
+    tableBody.innerHTML = "";
+    results.forEach(function (rt, i) {
+      var tr = document.createElement("tr");
+      var n = document.createElement("td");
+      n.textContent = "Trial " + (i + 1);
+      n.className = "trial-name";
+      var t = document.createElement("td");
+      t.textContent = rt + " ms";
+      t.className = "trial-time";
+      tr.appendChild(n);
+      tr.appendChild(t);
+      tableBody.appendChild(tr);
+    });
+
+    showView(STAGES.FINISHED);
+    announce("Results. Average " + avg + " milliseconds, fastest " + min + ", slowest " + max + ".");
+  }
+
+  function reset() {
+    clearTimer();
+    current = STAGES.READY;
+    currentTrial = 0;
+    results = [];
+    goTime = 0;
+    showView(STAGES.READY);
+    setBg(getComputedStyle(document.documentElement).getPropertyValue("--ready-bg") || "#1f2a44");
+    announce("Ready. Click to start.");
+  }
+
+  function handleActivation() {
+    switch (current) {
+      case STAGES.READY:
+        startTimer();
+        break;
+      case STAGES.WAITING:
+        // false start
+        clearTimer();
+        setBg(getComputedStyle(document.documentElement).getPropertyValue("--false-bg") || "#c0392b");
+        announce("Too early, false start.");
+        showView(STAGES.FALSE);
+        current = STAGES.FALSE;
+        break;
+      case STAGES.GO:
+        recordHit();
+        break;
+      case STAGES.FALSE:
+        startTimer();
+        break;
+      case STAGES.MEASURED:
+        if (currentTrial >= TOTAL_TRIALS) {
+          showSummary();
+        } else {
+          startTimer();
+        }
+        break;
+      case STAGES.FINISHED:
+        reset();
+        break;
+    }
+  }
+
+  stage.addEventListener("click", handleActivation);
+  stage.addEventListener("keydown", function (e) {
+    if (e.key === " " || e.key === "Enter" || e.code === "Space") {
+      e.preventDefault();
+      handleActivation();
+    }
+  });
+  playAgain.addEventListener("click", function (e) {
+    e.stopPropagation();
+    reset();
+  });
+  playAgain.addEventListener("keydown", function (e) {
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      reset();
+    }
+  });
+
+  reset();
+})();
+</script>
+</body>
+</html>

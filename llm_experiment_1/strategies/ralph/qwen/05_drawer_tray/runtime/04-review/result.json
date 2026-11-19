@@ -1,0 +1,20 @@
+{
+  "round": 2,
+  "role": "review",
+  "modelLabel": "qwen",
+  "model": "qwen3.6:35b-a3b",
+  "started": "2026-11-16T21:30:51.605382+00:00",
+  "events": "ralph/qwen/05_drawer_tray/runtime/04-review/events.jsonl",
+  "status": "completed",
+  "finished": "2026-11-16T21:36:39.307414+00:00",
+  "minutes": 5.8,
+  "reason": "agent_settled",
+  "exitCode": 143,
+  "proof": {
+    "forcedActivations": 0,
+    "completionRequests": 0,
+    "red": 0,
+    "green": 0
+  },
+  "testExitCode": 1
+}

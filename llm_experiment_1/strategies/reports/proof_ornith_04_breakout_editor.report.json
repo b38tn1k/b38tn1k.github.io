@@ -1,0 +1,145 @@
+{
+  "score": 67,
+  "grade": "C provisional - playable core and JSON round-trip, but restart and pointer controls remain broken",
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 20,
+    "usability": 8,
+    "self_verification": 7,
+    "autonomy": 0
+  },
+  "strengths": [
+    "The real editor draws and erases bricks; normal keyboard launch moves the ball and arrow keys move the paddle.",
+    "Controlled collision/life fixtures confirm brick removal, score updates and three misses reaching game over.",
+    "Actual downloaded JSON bytes round-trip through the real file-input handler. Pi repaired initially stationary ball launch and a missing FileReader.readAsText call. Its final 34 authored tests pass in the protected unpiped run."
+  ],
+  "defects": [
+    "The Get ready overlay remains visible after launch. Source launchBall() does not hide it, obscuring the playing field and intercepting pointer interaction.",
+    "Mouse movement always returns early because the handler requires classList.contains(''), which is false. Keyboard movement works.",
+    "Restart reuses the surviving mutable brick array instead of restoring the edited layout. The independent fixture starts with two bricks, destroys one, then restarts with only the survivor.",
+    "Restart directly calls loop() while an existing requestAnimationFrame chain remains live, producing two pending animation loops and potentially accelerating simulation.",
+    "The shared 60-minute deadline ended the attempt. A proof start/end pair and passing tests did not yield completion of the requested workflow."
+  ],
+  "verification": [
+    "Final SHA a1566286ae2c21bf4889513de33835aaa106ea996774fc7966a3b4079c075699; reports/proof_ornith_04_breakout_editor.qa.cjs/.qa.json executes exact final source, actual controls, scheduled animation callbacks and saved Blob bytes.",
+    "Five of nine independent scenarios pass. Fixture-driven collisions are distinguished from the separate normal-launch check.",
+    "Final controller test run: exit 0, 34 tests pass, no timeout. Product source was frozen before assessment."
+  ],
+  "verificationConcerns": [
+    "The candidate tests cover launch state and reset counters but miss the persistent overlay, ignored mouse movement, lost brick layout and duplicate animation loop.",
+    "No independent browser rendering, focus/default-action or physical touch check. The overlay defect is established from actual class state and source/CSS rather than a browser screenshot."
+  ],
+  "scopeCompliance": "Pi alone wrote the benchmark application and tests. Codex supplied no product code, behavioral tests to the agent or application-specific repair hints.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "60.15 minutes, stopped at shared deadline. One start/end, five red/green signals, four blocked specifying writes; final tests pass but controller workflow gate is false. Repairs improved launch and import, while lifecycle and control defects remain.",
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "proof",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All 34 tests pass, 0 failures. Let me complete the proof.",
+  "workflowInstructions": "run-proof.py; research/pi-proof-setup.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 60.15,
+  "wallMinutes": 60.15,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 47,
+  "toolCalls": 192,
+  "parentToolCalls": 192,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 12,
+  "modelUsageReported": {
+    "input": 111846,
+    "output": 75638,
+    "cacheRead": 17612197,
+    "totalTokens": 17799681
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 177593,
+  "parentPeakReportedPromptTokens": 177593,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 111846,
+    "output": 75638,
+    "cacheRead": 17612197,
+    "totalTokens": 17799681
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 22065,
+  "sha256": "a1566286ae2c21bf4889513de33835aaa106ea996774fc7966a3b4079c075699",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 14,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 41,
+    "delegations": [],
+    "reportedPassWithFailingTAP": {
+      "count": 1,
+      "toolCallIds": [
+        "qbOLV8OmVtdloP9GRM2LkumEGiAs3Gb3"
+      ],
+      "limit": "Detects explicit nonzero TAP final counts accompanying the extension PASS marker; not a general test-output parser."
+    },
+    "starts": 1,
+    "ends": 1,
+    "redTransitions": 5,
+    "greenTransitions": 5,
+    "blockedSpecifyingWrites": 4,
+    "finalTests": {
+      "exitCode": 0,
+      "timedOut": false
+    },
+    "shellWarnings": 17,
+    "note": "Transitions demonstrate procedure only, not test quality or application correctness. Independent final-source grading follows.",
+    "controller": "Single Pi RPC context with pinned pi-proof extension; no role chain",
+    "sequence": {
+      "successfulIndexWritesBeforeActivation": 0,
+      "successfulIndexWritesWhileActive": 16,
+      "satisfied": true,
+      "controllerSignalCriteriaMet": false,
+      "note": "A late start/end pair is not proof-first implementation. Layout-only scaffolding exceptions, if any, require explicit assessment notes."
+    },
+    "mechanicalDeadlineNotices": 1
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "calibration": false
+}

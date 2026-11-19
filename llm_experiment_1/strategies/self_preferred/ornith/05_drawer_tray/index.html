@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Organizer Tray Builder</title>
+<!--
+  Self-contained offline app. No CDN, no network.
+  The CSG library (Evan Wallace's MIT-licensed csg.js) is embedded for watertight
+  mesh boolean construction. Attribution at the end of this file.
+-->
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex; height: 100vh; background: #1e1e1e; color: #d8d8d8;
+  }
+  #panel {
+    width: 300px; min-width: 300px; background: #252526; padding: 16px; overflow-y: auto;
+    border-right: 1px solid #000; display: flex; flex-direction: column; gap: 14px;
+  }
+  #panel h1 { font-size: 16px; margin: 0; font-weight: 600; }
+  #panel h2 { font-size: 12px; margin: 0 0 6px; text-transform: uppercase; letter-spacing: .06em; color: #9d9d9d; }
+  .grp { display: flex; flex-direction: column; gap: 8px; }
+  label { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; }
+  label .unit { color: #888; font-size: 11px; }
+  input[type=number] {
+    width: 90px; padding: 5px 7px; background: #1e1e1e; color: #e6e6e6;
+    border: 1px solid #3c3c3c; border-radius: 4px; font: inherit;
+  }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  button {
+    padding: 9px 12px; background: #0e639c; color: #fff; border: 0; border-radius: 4px;
+    cursor: pointer; font: inherit; font-weight: 500;
+  }
+  button:hover { background: #1177c4; }
+  button:disabled { background: #555; cursor: not-allowed; }
+  #compartments { font-size: 13px; }
+  #compartments .cell { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #333; }
+  #compartments .cell span:last-child { color: #4ec9b0; font-variant-numeric: tabular-nums; }
+  #err { color: #ff6b6b; min-height: 18px; }
+  #stage { flex: 1; position: relative; overflow: hidden; background: #181818; }
+  canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  canvas:active { cursor: grabbing; }
+  #hint { position: absolute; bottom: 8px; left: 10px; font-size: 11px; color: #666; pointer-events: none; }
+  #zoom { position: absolute; top: 10px; right: 10px; font-size: 11px; color: #888; background: rgba(0,0,0,.4); padding: 4px 8px; border-radius: 4px; }
+  .footer { font-size: 10px; color: #666; margin-top: auto; }
+</style>
+</head>
+<body>
+  <div id="panel">
+    <h1>Drawer Tray Builder</h1>
+    <div class="grp">
+      <h2>Outer dimensions (mm)</h2>
+      <div class="row3">
+        <label>Width <input type="number" id="width" step="1" min="20" max="2000"><span class="unit">mm</span></label>
+        <label>Depth <input type="number" id="depth" step="1" min="20" max="2000"><span class="unit">mm</span></label>
+        <label>Height <input type="number" id="height" step="1" min="5" max="1000"><span class="unit">mm</span></label>
+      </div>
+    </div>
+    <div class="grp">
+      <h2>Grid layout</h2>
+      <div class="row3">
+        <label>Columns <input type="number" id="cols" step="1" min="1" max="50"></label>
+        <label>Rows <input type="number" id="rows" step="1" min="1" max="50"></label>
+      </div>
+    </div>
+    <div class="grp">
+      <h2>Wall &amp; floor (mm)</h2>
+      <div class="row3">
+        <label>Wall <input type="number" id="wall" step="0.5" min="0.5" max="50"></label>
+        <label>Floor <input type="number" id="floor" step="0.5" min="0.5" max="50"></label>
+      </div>
+    </div>
+    <button id="export">Download STL (.stl)</button>
+    <div id="err"></div>
+    <div class="grp">
+      <h2>Compartment dimensions</h2>
+      <div id="compartments"></div>
+    </div>
+    <div class="footer">Drag to rotate · export binary STL · fully offline</div>
+  </div>
+  <div id="stage">
+    <canvas id="view"></canvas>
+    <div id="zoom">drag to rotate</div>
+    <div id="hint">180 × 120 × 30 mm · 3 × 2 grid</div>
+  </div>
+
+<script>
+'use strict';
+
+/* TrayEngine — PURE logic. No DOM, no browser globals.
+   Runnable inside Node's VM via evaluate(). */
+var TrayEngine = (function () {
+  var EPS = 0.05;
+
+  function validate(p) {
+    var problems = [];
+    if (!(p.width > 0) || !isFinite(p.width)) problems.push('Width must be > 0');
+    if (!(p.depth > 0) || !isFinite(p.depth)) problems.push('Depth must be > 0');
+    if (!(p.height > 0) || !isFinite(p.height)) problems.push('Height must be > 0');
+    if (!(p.cols >= 1) || p.cols !== Math.floor(p.cols)) problems.push('Columns must be a positive integer');
+    if (!(p.rows >= 1) || p.rows !== Math.floor(p.rows)) problems.push('Rows must be a positive integer');
+    if (!(p.wall > 0) || !isFinite(p.wall)) problems.push('Wall thickness must be > 0');
+    if (!(p.floor > 0) || !isFinite(p.floor)) problems.push('Floor thickness must be > 0');
+    var innerW = p.width - 2 * p.wall, innerD = p.depth - 2 * p.wall;
+    if (innerW <= 0) problems.push('Wall thickness too large for width');
+    if (innerD <= 0) problems.push('Wall thickness too large for depth');
+    if (p.floor >= p.height) problems.push('Floor thickness must be less than height');
+    var cw = innerW / p.cols, cd = innerD / p.rows;
+    if (cw <= 0.01 || cd <= 0.01) problems.push('Compartments too small to build');
+    return problems;
+  }
+
+  function computeCompartmentDimensions(p) {
+    var innerW = p.width - 2 * p.wall, innerD = p.depth - 2 * p.wall;
+    return {
+      width: innerW / p.cols,
+      depth: innerD / p.rows,
+      usableDepth: p.height - p.floor,
+      outerWidth: p.width, outerDepth: p.depth, outerHeight: p.height,
+      wallThickness: p.wall, floorThickness: p.floor,
+      cols: p.cols, rows: p.rows
+    };
+  }
+
+  // Convert a mesh (verts[3][n], tris[3][n]) to a watertight binary STL. Pure.
+  function writeBinaryStl(verts, tris) {
+    var nTri = tris.length;
+    var bytes = new Uint8Array(84 + 50 * nTri);
+    var view = new DataView(bytes.buffer);
+    var header = new ArrayBuffer(80);
+    var hv = new DataView(header);
+    for (var i = 0; i < 80; i++) hv.setUint8(i, 0);
+    bytes.set(new Uint8Array(header), 0);
+    var off = 80;
+    view.setUint32(off, nTri, true); off += 4;
+    for (var t = 0; t < nTri; t++) {
+      var a = verts[tris[t][0]], b = verts[tris[t][1]], c = verts[tris[t][2]];
+      var ux = b[0]-a[0], uy = b[1]-a[1], uz = b[2]-a[2];
+      var vx = c[0]-a[0], vy = c[1]-a[1], vz = c[2]-a[2];
+      var nx = uy*vz - uz*vy, ny = uz*vx - ux*vz, nz = ux*vy - uy*vx;
+      var len = Math.hypot(nx, ny, nz);
+      if (len < 1e-9) { nx = 0; ny = 0; nz = 0; } else { nx/=len; ny/=len; nz/=len; }
+      view.setFloat32(off, nx, true); off += 4;
+      view.setFloat32(off, ny, true); off += 4;
+      view.setFloat32(off, nz, true); off += 4;
+      for (var i = 0; i < 3; i++) {
+        var v = verts[tris[t][i]];
+        view.setFloat32(off, v[0], true); off += 4;
+        view.setFloat32(off, v[1], true); off += 4;
+        view.setFloat32(off, v[2], true); off += 4;
+      }
+      view.setUint16(off, 0, true); off += 2;
+    }
+    return { format: 'binary', bytes: bytes, header: header };
+  }
+
+  // Build tray mesh with y = height, origin at bottom-front-center.
+  // Base solid minus open compartment voids -> one watertight solid (CSG).
+  function meshFromEngine(params) {
+    var W = params.width, D = params.depth, H = params.height;
+    var cols = params.cols, rows = params.rows;
+    var wall = params.wall, floor = params.floor;
+    var innerW = W - 2 * wall, innerD = D - 2 * wall;
+    var base = CSG.cube({ center: [0, H / 2, 0], radius: [W / 2, H / 2, D / 2] });
+    var solid = base;
+    function openVoid(center, radius) {
+      var voidc = CSG.cube({ center: center, radius: radius });
+      // Cumulative boolean subtraction: carve this void from the *current*
+      // solid. Keeping the void contained inside base stops CSG's coplanar
+      // tolerance from blowing up on full overlaps.
+      solid = solid.subtract(voidc.inverse()).intersect(base);
+    }
+    // Contained radii so CSG stays numerically stable across full overlaps.
+    var voidRadius = [innerW / 2, H - 1, D / 2 - 1];
+    openVoid([0, floor + H / 2, 0], voidRadius);
+    if (cols > 1) {
+      for (var c = 1; c < cols; c++) {
+        var x = -W / 2 + c * innerW / cols;
+        // Divider spans the full depth (z); width kept within one compartment.
+        openVoid([x, H / 2, 0], [Math.min(innerW / cols / 2, wall + 1e-6), H - 1, D / 2 - 1]);
+      }
+    }
+    if (rows > 1) {
+      for (var r = 1; r < rows; r++) {
+        var y = -D / 2 + r * innerD / rows;
+        // Divider spans the full width (x); thickness kept within a compartment.
+        openVoid([0, H / 2, y], [innerW / 2, H - 1, Math.min(innerD / rows / 2, wall + 1e-6)]);
+      }
+    }
+    var polygons = solid.toPolygons();
+    var verts = [], tris = [];
+    for (var p = 0; p < polygons.length; p++) {
+      var poly = polygons[p];
+      var idx = verts.length;
+      for (var i = 0; i < poly.vertices.length; i++) {
+        verts.push([poly.vertices[i].pos.x, poly.vertices[i].pos.y, poly.vertices[i].pos.z]);
+      }
+      for (var k = 1; k < poly.vertices.length - 1; k++) {
+        tris.push([idx, idx + k, idx + k + 1]);
+      }
+    }
+    return { verts: verts, tris: tris };
+  }
+
+  function generateStl(params) {
+    var m = meshFromEngine(params);
+    return writeBinaryStl(m.verts, m.tris);
+  }
+
+  return {
+    validate: validate,
+    computeCompartmentDimensions: computeCompartmentDimensions,
+    meshFromEngine: meshFromEngine,
+    writeBinaryStl: writeBinaryStl,
+    generateStl: generateStl
+  };
+})();
+</script>
+
+<script>
+// csg.js — Evan Wallace's MIT-licensed CSG library (embedded for offline use).
+// ============================================================
+// csg.js - Evan Wallace's Constructive Solid Geometry library
+// (MIT licensed) - see license block at end of this file
+// ============================================================
+// Constructive Solid Geometry (CSG) is a modeling technique that uses Boolean
+// operations like union and intersection to combine 3D solids. This library
+// implements CSG operations on meshes elegantly and concisely using BSP trees,
+// and is meant to serve as an easily understandable implementation of the
+// algorithm. All edge cases involving overlapping coplanar polygons in both
+// solids are correctly handled.
+// 
+// Example usage:
+// 
+//     var cube = CSG.cube();
+//     var sphere = CSG.sphere({ radius: 1.3 });
+//     var polygons = cube.subtract(sphere).toPolygons();
+// 
+// ## Implementation Details
+// 
+// All CSG operations are implemented in terms of two functions, `clipTo()` and
+// `invert()`, which remove parts of a BSP tree inside another BSP tree and swap
+// solid and empty space, respectively. To find the union of `a` and `b`, we
+// want to remove everything in `a` inside `b` and everything in `b` inside `a`,
+// then combine polygons from `a` and `b` into one solid:
+// 
+//     a.clipTo(b);
+//     b.clipTo(a);
+//     a.build(b.allPolygons());
+// 
+// The only tricky part is handling overlapping coplanar polygons in both trees.
+// The code above keeps both copies, but we need to keep them in one tree and
+// remove them in the other tree. To remove them from `b` we can clip the
+// inverse of `b` against `a`. The code for union now looks like this:
+// 
+//     a.clipTo(b);
+//     b.clipTo(a);
+//     b.invert();
+//     b.clipTo(a);
+//     b.invert();
+//     a.build(b.allPolygons());
+// 
+// Subtraction and intersection naturally follow from set operations. If
+// union is `A | B`, subtraction is `A - B = ~(~A | B)` and intersection is
+// `A & B = ~(~A | ~B)` where `~` is the complement operator.
+// 
+// ## License
+// 
+// Copyright (c) 2011 Evan Wallace (http://madebyevan.com/), under the MIT license.
+
+// # class CSG
+
+// Holds a binary space partition tree representing a 3D solid. Two solids can
+// be combined using the `union()`, `subtract()`, and `intersect()` methods.
+
+CSG = function() {
+  this.polygons = [];
+};
+
+// Construct a CSG solid from a list of `CSG.Polygon` instances.
+CSG.fromPolygons = function(polygons) {
+  var csg = new CSG();
+  csg.polygons = polygons;
+  return csg;
+};
+
+CSG.prototype = {
+  clone: function() {
+    var csg = new CSG();
+    csg.polygons = this.polygons.map(function(p) { return p.clone(); });
+    return csg;
+  },
+
+  toPolygons: function() {
+    return this.polygons;
+  },
+
+  // Return a new CSG solid representing space in either this solid or in the
+  // solid `csg`. Neither this solid nor the solid `csg` are modified.
+  // 
+  //     A.union(B)
+  // 
+  //     +-------+            +-------+
+  //     |       |            |       |
+  //     |   A   |            |       |
+  //     |    +--+----+   =   |       +----+
+  //     +----+--+    |       +----+       |
+  //          |   B   |            |       |
+  //          |       |            |       |
+  //          +-------+            +-------+
+  // 
+  union: function(csg) {
+    var a = new CSG.Node(this.clone().polygons);
+    var b = new CSG.Node(csg.clone().polygons);
+    a.clipTo(b);
+    b.clipTo(a);
+    b.invert();
+    b.clipTo(a);
+    b.invert();
+    a.build(b.allPolygons());
+    return CSG.fromPolygons(a.allPolygons());
+  },
+
+  // Return a new CSG solid representing space in this solid but not in the
+  // solid `csg`. Neither this solid nor the solid `csg` are modified.
+  // 
+  //     A.subtract(B)
+  // 
+  //     +-------+            +-------+
+  //     |       |            |       |
+  //     |   A   |            |       |
+  //     |    +--+----+   =   |    +--+
+  //     +----+--+    |       +----+
+  //          |   B   |
+  //          |       |
+  //          +-------+
+  // 
+  subtract: function(csg) {
+    var a = new CSG.Node(this.clone().polygons);
+    var b = new CSG.Node(csg.clone().polygons);
+    a.invert();
+    a.clipTo(b);
+    b.clipTo(a);
+    b.invert();
+    b.clipTo(a);
+    b.invert();
+    a.build(b.allPolygons());
+    a.invert();
+    return CSG.fromPolygons(a.allPolygons());
+  },
+
+  // Return a new CSG solid representing space both this solid and in the
+  // solid `csg`. Neither this solid nor the solid `csg` are modified.
+  // 
+  //     A.intersect(B)
+  // 
+  //     +-------+
+  //     |       |
+  //     |   A   |
+  //     |    +--+----+   =   +--+
+  //     +----+--+    |       +--+
+  //          |   B   |
+  //          |       |
+  //          +-------+
+  // 
+  intersect: function(csg) {
+    var a = new CSG.Node(this.clone().polygons);
+    var b = new CSG.Node(csg.clone().polygons);
+    a.invert();
+    b.clipTo(a);
+    b.invert();
+    a.clipTo(b);
+    b.clipTo(a);
+    a.build(b.allPolygons());
+    a.invert();
+    return CSG.fromPolygons(a.allPolygons());
+  },
+
+  // Return a new CSG solid with solid and empty space switched. This solid is
+  // not modified.
+  inverse: function() {
+    var csg = this.clone();
+    csg.polygons.map(function(p) { p.flip(); });
+    return csg;
+  }
+};
+
+// Construct an axis-aligned solid cuboid. Optional parameters are `center` and
+// `radius`, which default to `[0, 0, 0]` and `[1, 1, 1]`. The radius can be
+// specified using a single number or a list of three numbers, one for each axis.
+// 
+// Example code:
+// 
+//     var cube = CSG.cube({
+//       center: [0, 0, 0],
+//       radius: 1
+//     });
+CSG.cube = function(options) {
+  options = options || {};
+  var c = new CSG.Vector(options.center || [0, 0, 0]);
+  var r = !options.radius ? [1, 1, 1] : options.radius.length ?
+           options.radius : [options.radius, options.radius, options.radius];
+  return CSG.fromPolygons([
+    [[0, 4, 6, 2], [-1, 0, 0]],
+    [[1, 3, 7, 5], [+1, 0, 0]],
+    [[0, 1, 5, 4], [0, -1, 0]],
+    [[2, 6, 7, 3], [0, +1, 0]],
+    [[0, 2, 3, 1], [0, 0, -1]],
+    [[4, 5, 7, 6], [0, 0, +1]]
+  ].map(function(info) {
+    return new CSG.Polygon(info[0].map(function(i) {
+      var pos = new CSG.Vector(
+        c.x + r[0] * (2 * !!(i & 1) - 1),
+        c.y + r[1] * (2 * !!(i & 2) - 1),
+        c.z + r[2] * (2 * !!(i & 4) - 1)
+      );
+      return new CSG.Vertex(pos, new CSG.Vector(info[1]));
+    }));
+  }));
+};
+
+// Construct a solid sphere. Optional parameters are `center`, `radius`,
+// `slices`, and `stacks`, which default to `[0, 0, 0]`, `1`, `16`, and `8`.
+// The `slices` and `stacks` parameters control the tessellation along the
+// longitude and latitude directions.
+// 
+// Example usage:
+// 
+//     var sphere = CSG.sphere({
+//       center: [0, 0, 0],
+//       radius: 1,
+//       slices: 16,
+//       stacks: 8
+//     });
+CSG.sphere = function(options) {
+  options = options || {};
+  var c = new CSG.Vector(options.center || [0, 0, 0]);
+  var r = options.radius || 1;
+  var slices = options.slices || 16;
+  var stacks = options.stacks || 8;
+  var polygons = [], vertices;
+  function vertex(theta, phi) {
+    theta *= Math.PI * 2;
+    phi *= Math.PI;
+    var dir = new CSG.Vector(
+      Math.cos(theta) * Math.sin(phi),
+      Math.cos(phi),
+      Math.sin(theta) * Math.sin(phi)
+    );
+    vertices.push(new CSG.Vertex(c.plus(dir.times(r)), dir));
+  }
+  for (var i = 0; i < slices; i++) {
+    for (var j = 0; j < stacks; j++) {
+      vertices = [];
+      vertex(i / slices, j / stacks);
+      if (j > 0) vertex((i + 1) / slices, j / stacks);
+      if (j < stacks - 1) vertex((i + 1) / slices, (j + 1) / stacks);
+      vertex(i / slices, (j + 1) / stacks);
+      polygons.push(new CSG.Polygon(vertices));
+    }
+  }
+  return CSG.fromPolygons(polygons);
+};
+
+// Construct a solid cylinder. Optional parameters are `start`, `end`,
+// `radius`, and `slices`, which default to `[0, -1, 0]`, `[0, 1, 0]`, `1`, and
+// `16`. The `slices` parameter controls the tessellation.
+// 
+// Example usage:
+// 
+//     var cylinder = CSG.cylinder({
+//       start: [0, -1, 0],
+//       end: [0, 1, 0],
+//       radius: 1,
+//       slices: 16
+//     });
+CSG.cylinder = function(options) {
+  options = options || {};
+  var s = new CSG.Vector(options.start || [0, -1, 0]);
+  var e = new CSG.Vector(options.end || [0, 1, 0]);
+  var ray = e.minus(s);
+  var r = options.radius || 1;
+  var slices = options.slices || 16;
+  var axisZ = ray.unit(), isY = (Math.abs(axisZ.y) > 0.5);
+  var axisX = new CSG.Vector(isY, !isY, 0).cross(axisZ).unit();
+  var axisY = axisX.cross(axisZ).unit();
+  var start = new CSG.Vertex(s, axisZ.negated());
+  var end = new CSG.Vertex(e, axisZ.unit());
+  var polygons = [];
+  function point(stack, slice, normalBlend) {
+    var angle = slice * Math.PI * 2;
+    var out = axisX.times(Math.cos(angle)).plus(axisY.times(Math.sin(angle)));
+    var pos = s.plus(ray.times(stack)).plus(out.times(r));
+    var normal = out.times(1 - Math.abs(normalBlend)).plus(axisZ.times(normalBlend));
+    return new CSG.Vertex(pos, normal);
+  }
+  for (var i = 0; i < slices; i++) {
+    var t0 = i / slices, t1 = (i + 1) / slices;
+    polygons.push(new CSG.Polygon([start, point(0, t0, -1), point(0, t1, -1)]));
+    polygons.push(new CSG.Polygon([point(0, t1, 0), point(0, t0, 0), point(1, t0, 0), point(1, t1, 0)]));
+    polygons.push(new CSG.Polygon([end, point(1, t1, 1), point(1, t0, 1)]));
+  }
+  return CSG.fromPolygons(polygons);
+};
+
+// # class Vector
+
+// Represents a 3D vector.
+// 
+// Example usage:
+// 
+//     new CSG.Vector(1, 2, 3);
+//     new CSG.Vector([1, 2, 3]);
+//     new CSG.Vector({ x: 1, y: 2, z: 3 });
+
+CSG.Vector = function(x, y, z) {
+  if (arguments.length == 3) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  } else if ('x' in x) {
+    this.x = x.x;
+    this.y = x.y;
+    this.z = x.z;
+  } else {
+    this.x = x[0];
+    this.y = x[1];
+    this.z = x[2];
+  }
+};
+
+CSG.Vector.prototype = {
+  clone: function() {
+    return new CSG.Vector(this.x, this.y, this.z);
+  },
+
+  negated: function() {
+    return new CSG.Vector(-this.x, -this.y, -this.z);
+  },
+
+  plus: function(a) {
+    return new CSG.Vector(this.x + a.x, this.y + a.y, this.z + a.z);
+  },
+
+  minus: function(a) {
+    return new CSG.Vector(this.x - a.x, this.y - a.y, this.z - a.z);
+  },
+
+  times: function(a) {
+    return new CSG.Vector(this.x * a, this.y * a, this.z * a);
+  },
+
+  dividedBy: function(a) {
+    return new CSG.Vector(this.x / a, this.y / a, this.z / a);
+  },
+
+  dot: function(a) {
+    return this.x * a.x + this.y * a.y + this.z * a.z;
+  },
+
+  lerp: function(a, t) {
+    return this.plus(a.minus(this).times(t));
+  },
+
+  length: function() {
+    return Math.sqrt(this.dot(this));
+  },
+
+  unit: function() {
+    return this.dividedBy(this.length());
+  },
+
+  cross: function(a) {
+    return new CSG.Vector(
+      this.y * a.z - this.z * a.y,
+      this.z * a.x - this.x * a.z,
+      this.x * a.y - this.y * a.x
+    );
+  }
+};
+
+// # class Vertex
+
+// Represents a vertex of a polygon. Use your own vertex class instead of this
+// one to provide additional features like texture coordinates and vertex
+// colors. Custom vertex classes need to provide a `pos` property and `clone()`,
+// `flip()`, and `interpolate()` methods that behave analogous to the ones
+// defined by `CSG.Vertex`. This class provides `normal` so convenience
+// functions like `CSG.sphere()` can return a smooth vertex normal, but `normal`
+// is not used anywhere else.
+
+CSG.Vertex = function(pos, normal) {
+  this.pos = new CSG.Vector(pos);
+  this.normal = new CSG.Vector(normal);
+};
+
+CSG.Vertex.prototype = {
+  clone: function() {
+    return new CSG.Vertex(this.pos.clone(), this.normal.clone());
+  },
+
+  // Invert all orientation-specific data (e.g. vertex normal). Called when the
+  // orientation of a polygon is flipped.
+  flip: function() {
+    this.normal = this.normal.negated();
+  },
+
+  // Create a new vertex between this vertex and `other` by linearly
+  // interpolating all properties using a parameter of `t`. Subclasses should
+  // override this to interpolate additional properties.
+  interpolate: function(other, t) {
+    return new CSG.Vertex(
+      this.pos.lerp(other.pos, t),
+      this.normal.lerp(other.normal, t)
+    );
+  }
+};
+
+// # class Plane
+
+// Represents a plane in 3D space.
+
+CSG.Plane = function(normal, w) {
+  this.normal = normal;
+  this.w = w;
+};
+
+// `CSG.Plane.EPSILON` is the tolerance used by `splitPolygon()` to decide if a
+// point is on the plane.
+CSG.Plane.EPSILON = 1e-5;
+
+CSG.Plane.fromPoints = function(a, b, c) {
+  var n = b.minus(a).cross(c.minus(a)).unit();
+  return new CSG.Plane(n, n.dot(a));
+};
+
+CSG.Plane.prototype = {
+  clone: function() {
+    return new CSG.Plane(this.normal.clone(), this.w);
+  },
+
+  flip: function() {
+    this.normal = this.normal.negated();
+    this.w = -this.w;
+  },
+
+  // Split `polygon` by this plane if needed, then put the polygon or polygon
+  // fragments in the appropriate lists. Coplanar polygons go into either
+  // `coplanarFront` or `coplanarBack` depending on their orientation with
+  // respect to this plane. Polygons in front or in back of this plane go into
+  // either `front` or `back`.
+  splitPolygon: function(polygon, coplanarFront, coplanarBack, front, back) {
+    var COPLANAR = 0;
+    var FRONT = 1;
+    var BACK = 2;
+    var SPANNING = 3;
+
+    // Classify each point as well as the entire polygon into one of the above
+    // four classes.
+    var polygonType = 0;
+    var types = [];
+    for (var i = 0; i < polygon.vertices.length; i++) {
+      var t = this.normal.dot(polygon.vertices[i].pos) - this.w;
+      var type = (t < -CSG.Plane.EPSILON) ? BACK : (t > CSG.Plane.EPSILON) ? FRONT : COPLANAR;
+      polygonType |= type;
+      types.push(type);
+    }
+
+    // Put the polygon in the correct list, splitting it when necessary.
+    switch (polygonType) {
+      case COPLANAR:
+        (this.normal.dot(polygon.plane.normal) > 0 ? coplanarFront : coplanarBack).push(polygon);
+        break;
+      case FRONT:
+        front.push(polygon);
+        break;
+      case BACK:
+        back.push(polygon);
+        break;
+      case SPANNING:
+        var f = [], b = [];
+        for (var i = 0; i < polygon.vertices.length; i++) {
+          var j = (i + 1) % polygon.vertices.length;
+          var ti = types[i], tj = types[j];
+          var vi = polygon.vertices[i], vj = polygon.vertices[j];
+          if (ti != BACK) f.push(vi);
+          if (ti != FRONT) b.push(ti != BACK ? vi.clone() : vi);
+          if ((ti | tj) == SPANNING) {
+            var t = (this.w - this.normal.dot(vi.pos)) / this.normal.dot(vj.pos.minus(vi.pos));
+            var v = vi.interpolate(vj, t);
+            f.push(v);
+            b.push(v.clone());
+          }
+        }
+        if (f.length >= 3) front.push(new CSG.Polygon(f, polygon.shared));
+        if (b.length >= 3) back.push(new CSG.Polygon(b, polygon.shared));
+        break;
+    }
+  }
+};
+
+// # class Polygon
+
+// Represents a convex polygon. The vertices used to initialize a polygon must
+// be coplanar and form a convex loop. They do not have to be `CSG.Vertex`
+// instances but they must behave similarly (duck typing can be used for
+// customization).
+// 
+// Each convex polygon has a `shared` property, which is shared between all
+// polygons that are clones of each other or were split from the same polygon.
+// This can be used to define per-polygon properties (such as surface color).
+
+CSG.Polygon = function(vertices, shared) {
+  this.vertices = vertices;
+  this.shared = shared;
+  this.plane = CSG.Plane.fromPoints(vertices[0].pos, vertices[1].pos, vertices[2].pos);
+};
+
+CSG.Polygon.prototype = {
+  clone: function() {
+    var vertices = this.vertices.map(function(v) { return v.clone(); });
+    return new CSG.Polygon(vertices, this.shared);
+  },
+
+  flip: function() {
+    this.vertices.reverse().map(function(v) { v.flip(); });
+    this.plane.flip();
+  }
+};
+
+// # class Node
+
+// Holds a node in a BSP tree. A BSP tree is built from a collection of polygons
+// by picking a polygon to split along. That polygon (and all other coplanar
+// polygons) are added directly to that node and the other polygons are added to
+// the front and/or back subtrees. This is not a leafy BSP tree since there is
+// no distinction between internal and leaf nodes.
+
+CSG.Node = function(polygons) {
+  this.plane = null;
+  this.front = null;
+  this.back = null;
+  this.polygons = [];
+  if (polygons) this.build(polygons);
+};
+
+CSG.Node.prototype = {
+  clone: function() {
+    var node = new CSG.Node();
+    node.plane = this.plane && this.plane.clone();
+    node.front = this.front && this.front.clone();
+    node.back = this.back && this.back.clone();
+    node.polygons = this.polygons.map(function(p) { return p.clone(); });
+    return node;
+  },
+
+  // Convert solid space to empty space and empty space to solid space.
+  invert: function() {
+    for (var i = 0; i < this.polygons.length; i++) {
+      this.polygons[i].flip();
+    }
+    this.plane.flip();
+    if (this.front) this.front.invert();
+    if (this.back) this.back.invert();
+    var temp = this.front;
+    this.front = this.back;
+    this.back = temp;
+  },
+
+  // Recursively remove all polygons in `polygons` that are inside this BSP
+  // tree.
+  clipPolygons: function(polygons) {
+    if (!this.plane) return polygons.slice();
+    var front = [], back = [];
+    for (var i = 0; i < polygons.length; i++) {
+      this.plane.splitPolygon(polygons[i], front, back, front, back);
+    }
+    if (this.front) front = this.front.clipPolygons(front);
+    if (this.back) back = this.back.clipPolygons(back);
+    else back = [];
+    return front.concat(back);
+  },
+
+  // Remove all polygons in this BSP tree that are inside the other BSP tree
+  // `bsp`.
+  clipTo: function(bsp) {
+    this.polygons = bsp.clipPolygons(this.polygons);
+    if (this.front) this.front.clipTo(bsp);
+    if (this.back) this.back.clipTo(bsp);
+  },
+
+  // Return a list of all polygons in this BSP tree.
+  allPolygons: function() {
+    var polygons = this.polygons.slice();
+    if (this.front) polygons = polygons.concat(this.front.allPolygons());
+    if (this.back) polygons = polygons.concat(this.back.allPolygons());
+    return polygons;
+  },
+
+  // Build a BSP tree out of `polygons`. When called on an existing tree, the
+  // new polygons are filtered down to the bottom of the tree and become new
+  // nodes there. Each set of polygons is partitioned using the first polygon
+  // (no heuristic is used to pick a good split).
+  build: function(polygons) {
+    if (!polygons.length) return;
+    if (!this.plane) this.plane = polygons[0].plane.clone();
+    var front = [], back = [];
+    for (var i = 0; i < polygons.length; i++) {
+      this.plane.splitPolygon(polygons[i], this.polygons, this.polygons, front, back);
+    }
+    if (front.length) {
+      if (!this.front) this.front = new CSG.Node();
+      this.front.build(front);
+    }
+    if (back.length) {
+      if (!this.back) this.back = new CSG.Node();
+      this.back.build(back);
+    }
+  }
+};
+</script>
+
+<script>
+/* =========================================================================
+   WebGL-free 3D preview via Canvas2D (painter's algorithm).
+   Browser-boundary: canvas, pointer/touch events. Pure geometry stays in engine.
+   ========================================================================= */
+(function () {
+  var canvas = document.getElementById('view');
+  var ctx = canvas.getContext('2d');
+  var errEl = document.getElementById('err');
+  var compEl = document.getElementById('compartments');
+  var zoomEl = document.getElementById('zoom');
+
+  var rotY = 0.65, rotX = 0.5, zoom = 1.0;
+  var dragging = false, lastX = 0, lastY = 0;
+
+  function getParams() {
+    return {
+      width:  +document.getElementById('width').value,
+      depth:  +document.getElementById('depth').value,
+      height: +document.getElementById('height').value,
+      cols:   +document.getElementById('cols').value,
+      rows:   +document.getElementById('rows').value,
+      wall:   +document.getElementById('wall').value,
+      floor:  +document.getElementById('floor').value
+    };
+  }
+
+  function resize() {
+    var dpr = window.devicePixelRatio || 1;
+    var w = canvas.clientWidth || 800, h = canvas.clientHeight || 600;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    render();
+  }
+
+  function project(x, y, z) {
+    var cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    var x1 = x * cosY - z * sinY;
+    var z1 = x * sinY + z * cosY;
+    var cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+    var y1 = y * cosX - z1 * sinX;
+    var z2 = y * sinX + z1 * cosX;
+    var scale = zoom * Math.min(canvas.width, canvas.height) / 300;
+    var fov = 600;
+    var s = fov / (fov + z2);
+    return {
+      x: canvas.width/2 + (x1 + 8) * scale * s,
+      y: canvas.height/2 - (y1 + 8) * scale * s,
+      depth: z2
+    };
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var params = getParams();
+    var errs = TrayEngine.validate(params);
+    if (errs.length) {
+      errEl.textContent = errs[0];
+      return;
+    }
+    errEl.textContent = '';
+
+    var m = TrayEngine.meshFromEngine(params);
+    var verts = m.verts, tris = m.tris;
+
+    var faces = tris.map(function (t) {
+      var a = verts[t[0]], b = verts[t[1]], c = verts[t[2]];
+      var cx = (a[0]+b[0]+c[0])/3, cy = (a[1]+b[1]+c[1])/3, cz = (a[2]+b[2]+c[2])/3;
+      return { t: t, depth: cz, cyTop: Math.max(a[1],b[1],c[1]) };
+    });
+    faces.sort(function (p, q) { return q.depth - p.depth; });
+
+    for (var i = 0; i < faces.length; i++) {
+      var f = faces[i];
+      var pa = project(f.t[0][0], f.t[0][1], f.t[0][2]);
+      var pb = project(f.t[1][0], f.t[1][1], f.t[1][2]);
+      var pc = project(f.t[2][0], f.t[2][1], f.t[2][2]);
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.lineTo(pc.x, pc.y);
+      ctx.closePath();
+      var shade = 60 + Math.min(90, f.cyTop * 2.5);
+      ctx.fillStyle = 'rgb(' + (shade+40) + ',' + (shade+55) + ',' + (shade+70) + ')';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    updateReadout(params);
+  }
+
+  function updateReadout(params) {
+    var dims = TrayEngine.computeCompartmentDimensions(params);
+    var lines = '';
+    lines += '<div class="cell"><span>Outer</span><span>' + dims.outerWidth.toFixed(1) + ' × ' + dims.outerDepth.toFixed(1) + ' × ' + dims.outerHeight.toFixed(1) + ' mm</span></div>';
+    lines += '<div class="cell"><span>Grid</span><span>' + dims.cols + ' × ' + dims.rows + '</span></div>';
+    lines += '<div class="cell"><span>Compartment W</span><span>' + dims.width.toFixed(1) + ' mm</span></div>';
+    lines += '<div class="cell"><span>Compartment D</span><span>' + dims.depth.toFixed(1) + ' mm</span></div>';
+    lines += '<div class="cell"><span>Usable depth</span><span>' + dims.usableDepth.toFixed(1) + ' mm</span></div>';
+    lines += '<div class="cell"><span>Wall</span><span>' + dims.wallThickness.toFixed(1) + ' mm</span></div>';
+    lines += '<div class="cell"><span>Floor</span><span>' + dims.floorThickness.toFixed(1) + ' mm</span></div>';
+    compEl.innerHTML = lines;
+  }
+
+  function down(e) { dragging = true; var p = getPoint(e); lastX = p.x; lastY = p.y; }
+  function move(e) {
+    if (!dragging) return;
+    var p = getPoint(e);
+    rotY += (p.x - lastX) * 0.01;
+    rotX += (p.y - lastY) * 0.01;
+    rotX = Math.max(-1.4, Math.min(1.4, rotX));
+    lastX = p.x; lastY = p.y;
+    render();
+  }
+  function up() { dragging = false; }
+  function getPoint(e) {
+    if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  }
+  canvas.addEventListener('mousedown', down);
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', up);
+  canvas.addEventListener('touchstart', function (e) { e.preventDefault(); down(e); }, { passive: false });
+  canvas.addEventListener('touchmove', function (e) { e.preventDefault(); move(e); }, { passive: false });
+  window.addEventListener('touchend', up);
+  canvas.addEventListener('wheel', function (e) {
+    e.preventDefault();
+    zoom *= e.deltaY > 0 ? 0.92 : 1.08;
+    zoom = Math.max(0.2, Math.min(6, zoom));
+    zoomEl.textContent = 'zoom ' + zoom.toFixed(1) + '×';
+    render();
+  }, { passive: false });
+
+  ['width','depth','height','cols','rows','wall','floor'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', render);
+  });
+
+  document.getElementById('export').addEventListener('click', function () {
+    var params = getParams();
+    var errs = TrayEngine.validate(params);
+    if (errs.length) { errEl.textContent = errs[0]; return; }
+    var stl = TrayEngine.generateStl(params);
+    var blob = new Blob([stl.bytes], { type: 'application/octet-stream' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'tray.stl';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  });
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('load', resize);
+})();
+</script>
+
+<!--
+  csg.js is Evan Wallace's MIT-licensed CSG library (source above).
+  Copyright (c) 2011 Evan Wallace (http://madebyevan.com/), under the MIT license.
+-->
+</body>
+</html>

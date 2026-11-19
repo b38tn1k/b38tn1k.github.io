@@ -1,0 +1,180 @@
+{
+  "artifactSHA256": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+  "checks": [
+    {
+      "id": "start",
+      "passed": true,
+      "evidence": "Initial: stageClass=\"stage-start\", currentScreen=\"start\". Expected stage-start / start."
+    },
+    {
+      "id": "random_wait",
+      "passed": true,
+      "evidence": "After App.start(): stageClass=\"stage-wait\", currentScreen=\"wait\". Expected stage-wait / wait."
+    },
+    {
+      "id": "wait_timer_expired",
+      "passed": true,
+      "evidence": "After advance(3500): stageClass=\"stage-active\". Expected stage-active (red screen)."
+    },
+    {
+      "id": "restart_for_false_start_test",
+      "passed": true,
+      "evidence": "Restarted: stageClass=\"stage-wait\"."
+    },
+    {
+      "id": "false_start_retry",
+      "passed": true,
+      "evidence": "After pointerdown during waiting: stageClass=\"stage-false-start\", screen=\"false-start\". Expected false-start state."
+    },
+    {
+      "id": "false_start_retry_after",
+      "passed": false,
+      "evidence": "After retry click: stageClass=\"stage-false-start\", screen=\"false-start\". Expected back to wait."
+    },
+    {
+      "id": "retry_button_text",
+      "passed": true,
+      "evidence": "retry-btn text=\"Try Again\". Contains \"Try\" word. true."
+    },
+    {
+      "id": "first_trial_complete",
+      "passed": false,
+      "evidence": "Trial 1: stage=\"stage-false-start\", screen=\"false-start\", reaction_time=NaNms."
+    },
+    {
+      "id": "trial_2_delay",
+      "passed": true,
+      "evidence": "Advancing 2500ms between trials. stage=\"stage-false-start\"."
+    },
+    {
+      "id": "trial_2_ready",
+      "passed": false,
+      "evidence": "Before trial 2: stage=\"stage-false-start\"."
+    },
+    {
+      "id": "trial_2_complete",
+      "passed": false,
+      "evidence": "Trial 2: stage=\"stage-false-start\", screen=\"false-start\", reaction_time=NaNms."
+    },
+    {
+      "id": "trial_3_delay",
+      "passed": true,
+      "evidence": "Advancing 2500ms between trials. stage=\"stage-false-start\"."
+    },
+    {
+      "id": "trial_3_ready",
+      "passed": false,
+      "evidence": "Before trial 3: stage=\"stage-false-start\"."
+    },
+    {
+      "id": "trial_3_complete",
+      "passed": false,
+      "evidence": "Trial 3: stage=\"stage-false-start\", screen=\"false-start\", reaction_time=NaNms."
+    },
+    {
+      "id": "trial_4_delay",
+      "passed": true,
+      "evidence": "Advancing 2500ms between trials. stage=\"stage-false-start\"."
+    },
+    {
+      "id": "trial_4_ready",
+      "passed": false,
+      "evidence": "Before trial 4: stage=\"stage-false-start\"."
+    },
+    {
+      "id": "trial_4_complete",
+      "passed": false,
+      "evidence": "Trial 4: stage=\"stage-false-start\", screen=\"false-start\", reaction_time=NaNms."
+    },
+    {
+      "id": "trial_5_delay",
+      "passed": true,
+      "evidence": "Advancing 2500ms between trials. stage=\"stage-false-start\"."
+    },
+    {
+      "id": "trial_5_ready",
+      "passed": false,
+      "evidence": "Before trial 5: stage=\"stage-false-start\"."
+    },
+    {
+      "id": "trial_5_complete",
+      "passed": false,
+      "evidence": "Trial 5: stage=\"stage-false-start\", screen=\"false-start\", reaction_time=NaNms."
+    },
+    {
+      "id": "five_valid_trials",
+      "passed": false,
+      "evidence": "After 5 trials + summary delay: stage=\"stage-false-start\", screen=\"false-start\". Expected stage-summary. Trials completed, last reaction=NaNms."
+    },
+    {
+      "id": "five_valid_trials_summary_reached",
+      "passed": false,
+      "evidence": "Final state: stageClass=\"stage-false-start\", screen=\"false-start\". Summary reached."
+    },
+    {
+      "id": "summary",
+      "passed": true,
+      "evidence": "Summary stats displayed: avg=\"\", best=\"\", worst=\"\". Expected non-empty values."
+    },
+    {
+      "id": "summary_grid_rows",
+      "passed": false,
+      "evidence": "Summary grid has 0 cell(s), expected 5."
+    },
+    {
+      "id": "summary_progress_dots",
+      "passed": false,
+      "evidence": "Progress dots: . All completed=true, count=0."
+    },
+    {
+      "id": "restart_play_again",
+      "passed": false,
+      "evidence": "After play-again: stage=\"stage-false-start\", screen=\"false-start\". Expected stage-wait."
+    },
+    {
+      "id": "layout_persistence",
+      "passed": true,
+      "evidence": "All required elements present: app, summary-grid, stat-avg, stat-best, stat-worst."
+    },
+    {
+      "id": "app_module_exists",
+      "passed": false,
+      "evidence": "window.App: function=object, start=function, retryTrial=function."
+    },
+    {
+      "id": "partial_pop_test_trial_1",
+      "passed": false,
+      "evidence": "Trial 1 (pop test): stage=\"stage-false-start\"."
+    },
+    {
+      "id": "partial_pop_test_trial_2",
+      "passed": false,
+      "evidence": "Trial 2 (pop test): stage=\"stage-false-start\"."
+    },
+    {
+      "id": "false_start_with_existing_results",
+      "passed": true,
+      "evidence": "With fresh start (no prior results): false-start triggered. stage=\"stage-false-start\"."
+    },
+    {
+      "id": "retry_after_false_start",
+      "passed": false,
+      "evidence": "After retry: stage=\"stage-false-start\". Expected stage-wait."
+    },
+    {
+      "id": "five_valid_trials_after_false_start",
+      "passed": false,
+      "evidence": "After false-start + retry then 5 valid trials: stage=\"stage-false-start\". Summary reached."
+    },
+    {
+      "id": "summary_stats_after_false_start",
+      "passed": true,
+      "evidence": "Final stats: avg=\"\", best=\"\", worst=\"\"."
+    },
+    {
+      "id": "layout_persistence_final",
+      "passed": true,
+      "evidence": "After full false-start test cycle: all required DOM elements still present = true."
+    }
+  ]
+}

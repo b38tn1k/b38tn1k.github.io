@@ -1,0 +1,18 @@
+{
+  "method": "Exact-source controlled-time VM, no actual browser",
+  "firstBadge": "Trial 1",
+  "firstDisplayed": "200 ms",
+  "nextBadge": "Trial 3",
+  "validSummary": {
+    "average": "220 ms",
+    "best": "200 ms",
+    "worst": "240 ms"
+  },
+  "falseStartHint": "Click or press Space to retry this trial.",
+  "falseStartConsumed": 1,
+  "allFalseSummary": {
+    "average": "NaN ms",
+    "best": "Infinity ms",
+    "worst": "-Infinity ms"
+  }
+}

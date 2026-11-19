@@ -1,0 +1,167 @@
+{
+  "score": 80,
+  "grade": "B - assisted product96.2; editor, JSON and full game flow verified",
+  "summary": "One counted prompt repairs return to editor and short-JSON replacement. Eight independent required control/file/game-flow checks pass; minor margin-click and instruction-label defects remain.",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 24,
+    "usability": 13,
+    "self_verification": 3,
+    "autonomy": 0
+  },
+  "assistedProductTargetMet": true,
+  "strengths": [
+    "Play/win/loss all return to the original custom editor design, permit further edits and retain that design through two partially played restart cycles.",
+    "Actual editor draw/erase and preview/download controls save JSON bytes that round-trip through the real file-input handler. Loading a short single-cell grid fully replaces old cells.",
+    "Keyboard/mouse paddle movement, actual ball launch, three lives, last-brick win and replay work through the existing handlers/scheduler."
+  ],
+  "defects": [
+    "Nonblocking: clicking blank canvas margin in editor throws a null-cell property error; a subsequent valid drawing gesture still works.",
+    "Nonblocking: returning from an actively playing game to the editor leaves the play-mode move/launch instruction text, even though the badge and actual editing mode switch correctly."
+  ],
+  "verification": [
+    "qa/operator-qwen-breakout.cjs passes all eight required checks on immutable round1 and final/current HTML; SHA2566ed820b55a08dd10e4b2ae866c42ccd69ad4ecddc27c720807a45f793260c073.",
+    "Independent tests exercise actual drawing buttons/gestures, downloaded Blob JSON, file-input callbacks, controls, scheduled movement and controlled ball/brick progress. State fixtures supply inputs only; no app algorithm is replaced.",
+    "Two nonblocking optional diagnostics are retained for blank-margin exceptions and stale editor instructions."
+  ],
+  "verificationConcerns": [
+    "VERIFY.md falsely says the documented native-runtime.cjs does not exist. It is present and readable at the supplied absolute path under the same OS boundary; parent directory search denial is not evidence of absence.",
+    "The26 model checks mostly simulate copied game logic and inspect source patterns; they do not execute the actual extracted handlers even where the script comment claims actual-source evaluation. The independent full-source checks establish product behavior.",
+    "The model deleted its test scripts after use; their exact written contents/results remain in native event evidence. No native browser layout, hit-testing or touch-device test."
+  ],
+  "scopeCompliance": "OS read/write isolation active. No successful out-of-project write or reading of other benchmark artifacts/reports observed. Pi alone authored app changes, simulated tests and VERIFY.md.",
+  "workflowNotes": "One persistent native Pi context;1of3 counted prompts. Finished after the first settled response met the independent product target.7.44model-active minutes; baseline creation and model-idle operator review remain separate.",
+  "humanOrSupervisorSteering": 1,
+  "terminalSnapshot": "strategies/reports/operator-finals/case94/index.html",
+  "title": "Breakout with level editor",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "operator_rescue",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The changes are confirmed. Let me provide a final summary of what was done:\n\n---\n\n## Summary of Changes\n\n### Two bugs fixed in `index.html`:\n\n**1. Bug: Play then Place leaves mode playing \u2014 editing unreachable**\n\n- **Location**: `setTool()` function (~line 426)\n- **Problem**: Clicking the Place (\u270f\ufe0f) or Erase (\ud83e\uddf9) tool button from any game state (`'playing'`, `'won'`, `'lost'`) only toggled button styling but never changed `mode` back to `'editor'`. The editor was effectively locked after starting a game.\n- **Fix**: Added conditional logic in `setTool()` that sets `mode = 'editor'` when called from `'won'`, `'lost'`, or `'playing'` states. Also clears `activeBricks`, resets the mode badge text/color, and restores the editor instructions message.\n\n**2. Bug: Short JSON `[[1]]` leaves 210 active cells instead of replacing grid**\n\n- **Location**: `loadJSON()` function (~line 481)  \n- **Problem**: The loaded grid data was merged into the existing `grid` array without clearing it first. Omitted columns/rows retained their old `true` values, so a single-brick JSON loaded onto a default 6\u00d735 brick layout left all 210 original bricks intact.\n- **Fix**: Added `for (let r = 0; r < ROWS; r++) grid[r].fill(false)` before processing any loaded data, establishing full-replace semantics \u2014 omitted cells are empty (`false`).\n\n### Verified working features preserved:\n- JSON download/build roundtrip \u2705 (210 bricks preserved)\n- Keyboard paddle control (Arrow keys / A,D) \u2705\n- Mouse paddle follow \u2705  \n- Ball launch via click/tap/space/enter \u2705\n- 3 lives, score tracking, restart \u2705\n- Clear grid, win/loss detection \u2705\n- Tool button visual toggles \u2705\n\nAll 26 automated tests pass. Full details in `VERIFY.md`.",
+  "workflowInstructions": "operator-rescue-plan.json; run-operator-rescue.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 7.44,
+  "wallMinutes": 7.44,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "operator_finished",
+  "exitCode": 0,
+  "promptWords": 47,
+  "toolCalls": 52,
+  "parentToolCalls": 52,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 15,
+  "modelUsageReported": {
+    "input": 46076,
+    "output": 20896,
+    "cacheRead": 1056323,
+    "totalTokens": 1123295
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 45876,
+  "parentPeakReportedPromptTokens": 45876,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 46076,
+    "output": 20896,
+    "cacheRead": 1056323,
+    "totalTokens": 1123295
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 34395,
+  "sha256": "6ed820b55a08dd10e4b2ae866c42ccd69ad4ecddc27c720807a45f793260c073",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 1,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 9,
+    "delegations": [],
+    "controller": "Codex operator with one persistent native Pi repair context",
+    "operatorPrompts": 1,
+    "rounds": [
+      {
+        "prompt": 1,
+        "settledUTC": "2026-11-17T21:42:35.487982+00:00",
+        "modelSeconds": 446.34,
+        "sha256": "6ed820b55a08dd10e4b2ae866c42ccd69ad4ecddc27c720807a45f793260c073",
+        "snapshot": "strategies/reports/operator-rounds/case94/round1"
+      }
+    ],
+    "seed": {
+      "id": "qwen-guide_worker-4",
+      "mode": "guide_worker",
+      "configurationMean": 70.8,
+      "source": "strategies/guide_worker/qwen/04_breakout_editor/index.html",
+      "report": "strategies/reports/guide_worker_qwen_04_breakout_editor.report.json",
+      "sha256": "adfb1c8e580f204a93c5c5549c6e7eafb47bc1f16c69b15ca09bc4725f81570c",
+      "score": 84,
+      "grade": "B provisional - Core Breakout/editor works; returning to editor and short JSON loads are flawed",
+      "rubricScores": {
+        "functionality": 34,
+        "artifact_correctness": 24,
+        "usability": 12,
+        "self_verification": 4,
+        "autonomy": 10
+      },
+      "baselineScope": "OS write boundary active. No successful out-of-tree write observed.",
+      "baselineSteering": 0,
+      "baselineMinutes": 12.1,
+      "baselineActiveMinutes": 12.1,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_qwen_04_breakout_editor/index.html"
+    },
+    "repairSettings": {
+      "thinking": "off",
+      "billionContext": false,
+      "compaction": {
+        "enabled": true
+      },
+      "forcedProof": false,
+      "singlePersistentAgent": true,
+      "note": "Copied seed configuration is provenance; repair workflow uses corrected standalone Pi profiles, not the original delegation/extension architecture."
+    },
+    "modelActiveMinutes": 7.44,
+    "operatorReviewMinutes": 1.95,
+    "repairElapsedMinutes": 9.39
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Operator-assisted rescue of a selected existing artifact. Baseline creation cost and new repair cost are separate; normalized product quality is not an autonomous100-point grade."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "supervisorAssisted": true,
+  "assistedProductScore": 96.2
+}

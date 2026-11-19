@@ -1,0 +1,79 @@
+{
+  "method": "Independent exact-source VM/DOM/nativeCanvas, real keyboard/buttons and scheduled interval/RAF callbacks. Controlled input state fixtures call existing game logic; no algorithms replaced. No browser layout/hit testing or visual-polish proof.",
+  "sha256": "70e579fcd652cd3260a76bb17765b431c87e35e3f25601d82cd7d07d5f5b1a88",
+  "checks": [
+    {
+      "id": "actual_start_keyboard_pause_resume_restart_and_render",
+      "pass": true,
+      "evidence": {
+        "keyboard": true,
+        "pause": true,
+        "resume": true,
+        "resetValues": true,
+        "headPixel": [
+          91,
+          237,
+          247,
+          255
+        ]
+      }
+    },
+    {
+      "id": "food_growth_score_and_increasing_difficulty",
+      "pass": true,
+      "evidence": {
+        "length": 5,
+        "score": 5,
+        "level": 2,
+        "speedMS": 140
+      }
+    },
+    {
+      "id": "immediate_wall_body_collision_and_reverse_guard",
+      "pass": true,
+      "evidence": {
+        "wall": true,
+        "body": true,
+        "reversePrevented": true
+      }
+    },
+    {
+      "id": "moving_into_vacating_tail_is_legal",
+      "pass": false,
+      "error": "Self collision includes the tail cell that should move away",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "restart_while_running_keeps_one_tick_schedule_and_normal_speed",
+      "pass": false,
+      "error": "Repeated R creates concurrent tick intervals and accelerates play",
+      "actual": {
+        "intervals": 4,
+        "moved": 4
+      },
+      "expected": {
+        "intervals": 1,
+        "moved": 1
+      }
+    },
+    {
+      "id": "full_board_food_search_terminates",
+      "pass": true,
+      "evidence": {
+        "terminated": true,
+        "gameOver": true,
+        "completionOverlayVisible": false,
+        "note": "No win-screen requirement added; termination checked separately from completion UI."
+      }
+    },
+    {
+      "id": "self_contained_offline_source",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "pass": false
+}

@@ -1,0 +1,2078 @@
+{
+  "score": 94,
+  "grade": "A- - verified timer repair; early acceptance after two local feedbacks",
+  "rubricScores": {
+    "functionality": 39,
+    "artifact_correctness": 25,
+    "usability": 13,
+    "self_verification": 7,
+    "autonomy": 10
+  },
+  "blockingRequiredDefect": false,
+  "summary": "The local pair repairs replay behavior, false-start verdicts and the no-valid-response summary. Independent normal, mixed and all-false flows pass; the pair stops early after two counted repair requests.",
+  "strengths": [
+    "Actual five200/225/250/275/300ms responses produce250ms average,200ms best and100ms spread, five result rows and working replay.",
+    "False starts are detected and recorded without a spurious speed verdict. All-false summaries show unavailable statistics; mixed runs average valid responses only.",
+    "Actual Space and pointer flows pass; source stays a self-contained offline HTML.",
+    "Worker-authored deterministic DOM-shim tests exercise replay and the repaired summary cases, including pre-fix reproduction."
+  ],
+  "defects": [
+    "Immediate false-start feedback retains the waiting presentation until its700ms transition; after transition the result is accurate. Minor usability limitation.",
+    "Only four of five progress dots are marked done on the summary."
+  ],
+  "verification": [
+    "Independent exact immutable final sourcefedd2d7bc1272ec4c8b7252f49f392ce0fc68e944697f362d0728a5164f5cec5 in VM/DOM with actual pointer/Space handlers, deterministic scheduler, summary rows and replay.",
+    "All six focused independent checks pass, including five valid responses, mixed valid/false trials and zero valid samples. Existing app closure state is exposed read-only; algorithms are not replaced."
+  ],
+  "verificationConcerns": [
+    "No browser hit testing/layout or independent visual-polish confirmation.",
+    "Model tests required extended mock-helper debugging; supervisor mainly used source traces and progress rather than independent runtime checks."
+  ],
+  "scopeCompliance": "Worker alone wrote product files. Local supervisor independently found defects but included repair snippets, violating its behavioral-only instruction. Codex supplied no product code, diagnoses or replacement feedback. Host infrastructure correction restored only a lost mechanical rejection reason; no native prompt, findings, CONTROL or product edit occurred.",
+  "supervisorInstructionDeviations": [
+    "Supervisor feedback included model-authored implementation snippets despite the no-repair-code instruction. This is retained as a configuration compliance deviation; worker remained sole product-file writer."
+  ],
+  "workflowNotes": "RTFM Qwen-supervised Ornith timer, two total counted worker prompts in the same native worker context/PID. Independent acceptance stopped the pair at32.921of120original wall minutes. Infrastructure metadata repair preserved both PIDs, deadline and feedback ceiling; model itself reformatted/resubmitted its own findings. No human product guidance; joint-system autonomy remains eligible.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "Single paired attempt on its exact frozen solo source; bundled author settings and local Q4 weights.",
+    "An A-range rubric grade and the separate normalized product/no-blocker acceptance criterion are reported separately.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM author-profile cross-model rescue of the exact frozen solo app. Solo creation and incremental repair costs are separate; already-qualified baselines may remain unchanged with zero feedback and no improvement claim. A120-minute shared wall includes both actors and review waits; Codex grades but supplies no repair diagnoses/code. Product quality is normalized from80points. Pair wall differs from summed concurrent model activity."
+  ],
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "rtfm_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Both remaining defects are fixed and verified.\n\n## Summary\n\n**Defect 2 \u2014 nonsensical verdict text for false starts** (`index.html` ~line 336)\n- Root cause: `verdict` was computed unconditionally. For a false start `last.ms` is `null`, and `null < 200` is `true` in JS (null coerces to 0), so false starts always showed \"Too fast \u2014 were you guessing?\".\n- Fix: compute `verdict` only when `!last.falseStart`; otherwise it stays `\"\"`. The \"False start!\" title/emoji already convey the outcome.\n\n**Defect 3 \u2014 \"Average: 0ms\" when all trials are false starts** (`index.html` ~lines 357, 372)\n- Root cause: `valid.reduce(..., 0) / (valid.length || 1)` yields `0/1 = 0` when there are no valid trials.\n- Fix: `const avg = valid.length ? Math.round(valid.reduce((a, b) => a + b, 0) / valid.length) : null;` and the template now renders `\u2014` for `avg == null`.\n\n**Verification** \u2014 I extracted the inline script into a DOM shim with a deterministic fake clock and drove real game flows:\n- False-start result \u2192 subtitle is empty, and the \"were you guessing\" text is absent. \u2705\n- All-false-start run \u2192 Average shows `\u2014`, never `0ms`. \u2705\n- Valid run \u2192 Average shows a numeric value (not a dash), confirming the change didn't break normal results. \u2705\n- Confirmed the pre-fix code fails these assertions, so the tests are meaningful.\n\nCombined with the earlier session's **Defect 1** (\"Play again\" now starts a new game via the `pointerdown` guard + `click \u2192 startGame`), all three defects are resolved. The deliverable remains a single self-contained offline `index.html`, and the scratch test artifacts have been cleaned up.",
+  "workflowInstructions": "rtfm-supervised-plan.json; run-rtfm-supervised.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 32.921,
+  "wallMinutes": 32.921,
+  "status": "assessed",
+  "runStatus": "assessed",
+  "stopReason": "independently_verified_A_product",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 147,
+  "parentToolCalls": 86,
+  "childToolCalls": 61,
+  "toolResultsMarkedError": 17,
+  "modelUsageReported": {
+    "input": 68446,
+    "output": 67657,
+    "cacheRead": 4776156,
+    "totalTokens": 4912259
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 81756,
+  "parentPeakReportedPromptTokens": 48178,
+  "childPeakReportedPromptTokens": 81756,
+  "parentModelUsage": {
+    "input": 22198,
+    "output": 32172,
+    "cacheRead": 2099924,
+    "totalTokens": 2154294
+  },
+  "childModelUsage": {
+    "input": 46248,
+    "output": 35485,
+    "cacheRead": 2676232,
+    "totalTokens": 2757965
+  },
+  "artifactBytes": 13754,
+  "sha256": "fedd2d7bc1272ec4c8b7252f49f392ce0fc68e944697f362d0728a5164f5cec5",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 7,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b-rtfm"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 28,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "ornith-1.5:35b-256k",
+    "supervisorModel": "qwen3.6:35b-a3b",
+    "feedbackCount": 2,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "ornith-rtfm-001",
+        "message": "DEFECT: \"Play again\" button does not work \u2014 clicking it resets the game to idle instead of starting a new game.\n\nEvidence (code trace):\n- At phase \"done\" (results summary), user clicks the `<button id=\"restartBtn\">Play again</button>` (line 380).\n- The stage has a `pointerdown` listener (line 458) that calls `handlePress()`. The button is a child of the stage, so `pointerdown` fires on the button first, then bubbles to the stage.\n- In `handlePress()`, when `phase === \"done\"`, it calls `startGame()`, which calls `reset()` then `nextTrial()` \u2014 the game starts and enters \"waiting\" phase with the timer running.\n- AFTER that, the button's `click` listener (line 384: `addEventListener(\"click\", reset)`) fires and calls `reset()` \u2014 which clears the timer and sets phase back to \"idle\".\n- Net result: the user sees the idle \"Ready to test?\" screen. The game never actually starts.\n\nEvent ordering on button click:\n  1. pointerdown on button \u2192 bubbles to stage \u2192 handlePress() \u2192 startGame() \u2192 game starts\n  2. click on button \u2192 reset() \u2192 game resets to idle \u2190 this undoes step 1\n\nThe button's click handler is never reached in a useful state because pointerdown fires first. There is no `stopPropagation()` on the button, and no check in the stage's pointerdown handler to skip buttons.\n\nExpected behavior: Clicking \"Play again\" should start a new game immediately (enter \"waiting\" phase with a random timer).\n\nFix: In the stage's `pointerdown` handler (line 458), add a guard to skip events originating from the restart button:\n  stage.addEventListener(\"pointerdown\", (e) => {\n    if (e.target.closest('#restartBtn')) return;  // \u2190 add this line\n    e.preventDefault();\n    handlePress();\n  });\n\nAlternatively, pass the event to handlePress and add the check there.\n",
+        "reason": "Confirmed defect: 'Play again' button does not start a new game \u2014 pointerdown on stage fires before button's click handler and startGame() is then undone by reset().",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T16:17:05.698749+00:00",
+        "acceptedUTC": "2026-11-18T16:17:05.698774+00:00",
+        "elapsedSeconds": 128.908,
+        "workerPID": 42973,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T16:17:05.739609+00:00",
+        "deliveredElapsedSeconds": 128.908
+      },
+      {
+        "number": 2,
+        "id": "ornith-rtfm-002b",
+        "message": "DEFECT 2: Verdict text is nonsensical for false-start results.\n\nIn render() at the \"result\" phase, the verdict is calculated unconditionally:\n  let verdict = ms < 200 ? \"Too fast \u2014 were you guessing?\" : ...\n\nFor a false start, last.ms is null. In JavaScript, null < 200 evaluates to true (null coerced to 0), so the verdict always shows \"Too fast \u2014 were you guessing?\" for false starts. This is displayed in the subtitle below the \"False start!\" title.\n\nFix: Guard the verdict calculation to only run for valid trials:\n  let verdict = \"\";\n  if (!last.falseStart) {\n    verdict = ms < 200 ? \"Too fast \u2014 were you guessing?\" :\n              ms < 250 ? \"Quick reflexes!\" :\n              ms < 350 ? \"Solid reaction.\" : \"Take your time next time.\";\n  }\n\nDEFECT 3: Average shows 0ms when all trials are false starts.\n\nIn renderDone():\n  const valid = results.filter(r => !r.falseStart).map(r => r.ms);\n  const avg = valid.reduce((a, b) => a + b, 0) / (valid.length || 1);\n\nWhen all 5 trials are false starts, valid is []. reduce returns 0 (initial value). valid.length || 1 is 1. So avg = 0 / 1 = 0. The summary displays \"Average: 0ms\" which is incorrect.\n\nFix: Show dash when there are no valid trials:\n  const avg = valid.length ? Math.round(valid.reduce((a, b) => a + b, 0) / valid.length) : null;\nAnd update the template to show dash for null avg.\n",
+        "reason": "Verdict text shows wrong value for false starts due to null coercion. Average shows 0ms when all trials false.",
+        "interrupt": false,
+        "proposedUTC": "2026-11-18T16:38:27.217387+00:00",
+        "acceptedUTC": "2026-11-18T16:38:27.217404+00:00",
+        "elapsedSeconds": 1410.339,
+        "workerPID": 42973,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T16:38:27.258616+00:00",
+        "deliveredElapsedSeconds": 1410.339
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-18T16:24:13.993906+00:00",
+        "sha256": "426a8a9cf715746159aa672834c5afed406d6b0fb8583aaac7cb536cd5b9a481",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case116/feedback1"
+      },
+      {
+        "feedback": 1,
+        "at": "2026-11-18T16:31:57.404847+00:00",
+        "sha256": "426a8a9cf715746159aa672834c5afed406d6b0fb8583aaac7cb536cd5b9a481",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case116/feedback1"
+      },
+      {
+        "feedback": 2,
+        "at": "2026-11-18T16:47:23.115844+00:00",
+        "sha256": "fedd2d7bc1272ec4c8b7252f49f392ce0fc68e944697f362d0728a5164f5cec5",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case116/feedback2"
+      }
+    ],
+    "supervisorWakeups": [
+      {
+        "at": "2026-11-18T16:31:08.689729+00:00",
+        "elapsedSeconds": 971.82,
+        "source": "worker_progress_or_clock_metadata"
+      }
+    ],
+    "supervisorYields": [
+      {
+        "at": "2026-11-18T16:31:07.106401+00:00",
+        "id": "ornith-wait-001",
+        "pid": 42974,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      }
+    ],
+    "supervisorStopRequest": {
+      "at": "2026-11-18T16:31:57.403957+00:00",
+      "id": "ornith-stop-001",
+      "action": "stop",
+      "reason": "Worker completed repair of restart button defect and stopped. Artifact was not accepted by independent evaluation. I identified 2 additional defects (verdict text null-coercion for false starts, average 0ms when all trials false) but second feedback was rejected as invalid_control. Remaining budget: 2 feedback slots, ~104 min. Requesting independent assessment of current artifact."
+    },
+    "independentGradeGates": [
+      {
+        "at": "2026-11-18T16:25:03.128734+00:00",
+        "sha256": "426a8a9cf715746159aa672834c5afed406d6b0fb8583aaac7cb536cd5b9a481",
+        "productScore": 93.75,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_ornith_01_reaction_timer.round1.qa.json"
+      },
+      {
+        "at": "2026-11-18T16:32:34.034676+00:00",
+        "sha256": "426a8a9cf715746159aa672834c5afed406d6b0fb8583aaac7cb536cd5b9a481",
+        "productScore": 93.75,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_ornith_01_reaction_timer.round1.qa.json"
+      },
+      {
+        "at": "2026-11-18T16:47:52.007524+00:00",
+        "sha256": "fedd2d7bc1272ec4c8b7252f49f392ce0fc68e944697f362d0728a5164f5cec5",
+        "productScore": 96.25,
+        "blockingRequiredDefect": false,
+        "qa": "reports/rtfm_supervised_ornith_01_reaction_timer.round2.qa.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "sha256": "0092975091dc7f9f1ea01cb732b31a8659f43d1eb7c785d8c4c07d0a453e59ff",
+      "baselineScore": 88,
+      "baselineRubricScores": {
+        "functionality": 37,
+        "artifact_correctness": 25,
+        "usability": 12,
+        "self_verification": 4,
+        "autonomy": 10
+      },
+      "baselineProductScore": 92.5,
+      "baselineTargetMet": false,
+      "baselineReport": "strategies/reports/rtfm_ornith_01_reaction_timer.report.json",
+      "creationCost": {
+        "model": "ornith",
+        "role": "worker",
+        "pid": 14928,
+        "assistantUsage": {
+          "input": 16568,
+          "output": 29284,
+          "cacheRead": 773052,
+          "cacheWrite": 0,
+          "totalTokens": 818904
+        },
+        "recordedCompactionUsage": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "totalTokens": 0
+        },
+        "recordedCombinedUsage": {
+          "input": 16568,
+          "output": 29284,
+          "cacheRead": 773052,
+          "cacheWrite": 0,
+          "totalTokens": 818904
+        },
+        "unreportedCompactions": 0,
+        "activeMinutes": 11.344,
+        "promptCount": 1,
+        "streamingWindows": [
+          {
+            "start": 1159833.982629,
+            "end": 1159836.425852125
+          },
+          {
+            "start": 1159836.484595125,
+            "end": 1159924.691807208
+          },
+          {
+            "start": 1159924.69772025,
+            "end": 1159924.698200583
+          },
+          {
+            "start": 1159926.759556458,
+            "end": 1159936.14412625
+          },
+          {
+            "start": 1159936.445378333,
+            "end": 1159946.233240541
+          },
+          {
+            "start": 1159946.5122395,
+            "end": 1159960.540512625
+          },
+          {
+            "start": 1159960.805356916,
+            "end": 1159973.40821975
+          },
+          {
+            "start": 1159973.637704166,
+            "end": 1159987.681230666
+          },
+          {
+            "start": 1159987.958145666,
+            "end": 1160000.06873175
+          },
+          {
+            "start": 1160000.3610275,
+            "end": 1160024.2522425
+          },
+          {
+            "start": 1160024.519803958,
+            "end": 1160043.862382208
+          },
+          {
+            "start": 1160044.154897458,
+            "end": 1160063.105763416
+          },
+          {
+            "start": 1160063.389280041,
+            "end": 1160087.139906375
+          },
+          {
+            "start": 1160087.504355458,
+            "end": 1160102.049212875
+          },
+          {
+            "start": 1160102.347151875,
+            "end": 1160120.799087041
+          },
+          {
+            "start": 1160121.157262708,
+            "end": 1160156.117207291
+          },
+          {
+            "start": 1160156.402093625,
+            "end": 1160176.69407725
+          },
+          {
+            "start": 1160177.034644875,
+            "end": 1160189.548459375
+          },
+          {
+            "start": 1160189.883135625,
+            "end": 1160220.118379541
+          },
+          {
+            "start": 1160220.411961666,
+            "end": 1160236.707081
+          },
+          {
+            "start": 1160237.042522916,
+            "end": 1160256.083493916
+          },
+          {
+            "start": 1160256.40282025,
+            "end": 1160299.594594708
+          },
+          {
+            "start": 1160299.94478075,
+            "end": 1160320.227222208
+          },
+          {
+            "start": 1160320.581834791,
+            "end": 1160347.076391583
+          },
+          {
+            "start": 1160347.388173583,
+            "end": 1160360.823797666
+          },
+          {
+            "start": 1160361.121725833,
+            "end": 1160377.006274083
+          },
+          {
+            "start": 1160377.31739725,
+            "end": 1160391.803007416
+          },
+          {
+            "start": 1160392.122440166,
+            "end": 1160419.854909625
+          },
+          {
+            "start": 1160420.184349333,
+            "end": 1160441.026203125
+          },
+          {
+            "start": 1160441.33915625,
+            "end": 1160443.807059833
+          },
+          {
+            "start": 1160444.100773083,
+            "end": 1160447.148381791
+          },
+          {
+            "start": 1160447.31830775,
+            "end": 1160455.340871791
+          },
+          {
+            "start": 1160455.503987375,
+            "end": 1160460.098392416
+          },
+          {
+            "start": 1160460.252805791,
+            "end": 1160470.64259725
+          },
+          {
+            "start": 1160470.656734125,
+            "end": 1160470.657499708
+          },
+          {
+            "start": 1160472.829778,
+            "end": 1160492.183338291
+          },
+          {
+            "start": 1160492.528495291,
+            "end": 1160500.923396875
+          },
+          {
+            "start": 1160501.289152958,
+            "end": 1160512.934082791
+          }
+        ],
+        "exitCode": 0
+      },
+      "sourceCase": 106,
+      "sourceFolder": "rtfm/ornith/01_reaction_timer",
+      "frozenArtifact": "strategies/reports/initial-artifacts/rtfm_supervised_ornith_01_reaction_timer/index.html",
+      "frozenUTC": "2026-11-18T16:13:22.818932+00:00"
+    },
+    "sharedLimitSeconds": 7200,
+    "authorProfiles": "research/rtfm-runtime-profiles.json",
+    "runtimeConformance": "research/rtfm-supervised-conformance.json",
+    "sourceRTFMSoloCase": 106,
+    "supervisorInstructionDeviations": [
+      "Supervisor feedback included model-authored implementation snippets despite the no-repair-code instruction. This is retained as a configuration compliance deviation; worker remained sole product-file writer."
+    ]
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [
+    {
+      "type": "mechanical_control_error_metadata_repair",
+      "evidence": "runtime/rtfm-supervised-case116.infrastructure-metadata.json",
+      "nativePIDsPreserved": true,
+      "deadlinePreserved": true,
+      "newPrompts": 0,
+      "productGuidance": false
+    }
+  ],
+  "humanSteering": false,
+  "localSupervisorFeedback": 2,
+  "localModelCosts": {
+    "worker": {
+      "model": "ornith",
+      "role": "worker",
+      "pid": 42973,
+      "assistantUsage": {
+        "input": 22198,
+        "output": 32172,
+        "cacheRead": 2099924,
+        "cacheWrite": 0,
+        "totalTokens": 2154294
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 22198,
+        "output": 32172,
+        "cacheRead": 2099924,
+        "cacheWrite": 0,
+        "totalTokens": 2154294
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 16.067,
+      "promptCount": 2,
+      "streamingWindows": [
+        {
+          "start": 1167238.8312075,
+          "end": 1167242.827489833
+        },
+        {
+          "start": 1167243.026903,
+          "end": 1167244.871247
+        },
+        {
+          "start": 1167244.924941833,
+          "end": 1167247.627240625
+        },
+        {
+          "start": 1167247.714881791,
+          "end": 1167250.300324083
+        },
+        {
+          "start": 1167250.392697,
+          "end": 1167252.637560666
+        },
+        {
+          "start": 1167252.842944708,
+          "end": 1167255.93639575
+        },
+        {
+          "start": 1167256.033103583,
+          "end": 1167281.530837208
+        },
+        {
+          "start": 1167281.600793208,
+          "end": 1167283.562621833
+        },
+        {
+          "start": 1167283.64202725,
+          "end": 1167290.994143833
+        },
+        {
+          "start": 1167291.305585625,
+          "end": 1167297.797137791
+        },
+        {
+          "start": 1167298.1310735,
+          "end": 1167307.180818583
+        },
+        {
+          "start": 1167307.473572791,
+          "end": 1167310.123132958
+        },
+        {
+          "start": 1167310.241333958,
+          "end": 1167315.506231
+        },
+        {
+          "start": 1167315.811180916,
+          "end": 1167317.714786666
+        },
+        {
+          "start": 1167318.00542175,
+          "end": 1167343.159645291
+        },
+        {
+          "start": 1167343.261718291,
+          "end": 1167349.657572791
+        },
+        {
+          "start": 1167349.745225291,
+          "end": 1167351.649540875
+        },
+        {
+          "start": 1167351.6497795,
+          "end": 1167351.649804166
+        },
+        {
+          "start": 1167353.769252541,
+          "end": 1167356.954717125
+        },
+        {
+          "start": 1167357.0751385,
+          "end": 1167382.323607541
+        },
+        {
+          "start": 1167382.440217583,
+          "end": 1167390.647946791
+        },
+        {
+          "start": 1167390.955840458,
+          "end": 1167396.374495125
+        },
+        {
+          "start": 1167396.519178291,
+          "end": 1167398.959243416
+        },
+        {
+          "start": 1167399.306568666,
+          "end": 1167404.312828208
+        },
+        {
+          "start": 1167404.43416075,
+          "end": 1167406.134774875
+        },
+        {
+          "start": 1167406.465127583,
+          "end": 1167409.157896916
+        },
+        {
+          "start": 1167409.272012083,
+          "end": 1167415.455760166
+        },
+        {
+          "start": 1167415.590751541,
+          "end": 1167418.610597833
+        },
+        {
+          "start": 1167418.947858166,
+          "end": 1167424.765352666
+        },
+        {
+          "start": 1167424.87898125,
+          "end": 1167432.85509875
+        },
+        {
+          "start": 1167432.96073725,
+          "end": 1167435.262460291
+        },
+        {
+          "start": 1167456.452153208,
+          "end": 1167467.702369583
+        },
+        {
+          "start": 1167467.828839041,
+          "end": 1167476.167817375
+        },
+        {
+          "start": 1167476.289253083,
+          "end": 1167479.113024916
+        },
+        {
+          "start": 1167488.484033416,
+          "end": 1167516.806275166
+        },
+        {
+          "start": 1167516.976058083,
+          "end": 1167519.831935875
+        },
+        {
+          "start": 1167530.700904375,
+          "end": 1167545.235740333
+        },
+        {
+          "start": 1167545.381710708,
+          "end": 1167547.050326541
+        },
+        {
+          "start": 1167557.95048275,
+          "end": 1167615.0035675
+        },
+        {
+          "start": 1167615.010898458,
+          "end": 1167615.011724041
+        },
+        {
+          "start": 1167617.168118666,
+          "end": 1167620.319661708
+        },
+        {
+          "start": 1167620.678878958,
+          "end": 1167625.7697425
+        },
+        {
+          "start": 1167626.125804083,
+          "end": 1167635.293901291
+        },
+        {
+          "start": 1167635.414661208,
+          "end": 1167638.48540075
+        },
+        {
+          "start": 1167638.820826208,
+          "end": 1167648.897126416
+        },
+        {
+          "start": 1167649.285422,
+          "end": 1167654.783955958
+        },
+        {
+          "start": 1167655.130223291,
+          "end": 1167665.367521208
+        },
+        {
+          "start": 1168520.320708125,
+          "end": 1168524.5485935
+        },
+        {
+          "start": 1168524.885291625,
+          "end": 1168526.974186666
+        },
+        {
+          "start": 1168527.135467791,
+          "end": 1168541.540512416
+        },
+        {
+          "start": 1168541.701278708,
+          "end": 1168549.650876416
+        },
+        {
+          "start": 1168549.986828416,
+          "end": 1168553.238311375
+        },
+        {
+          "start": 1168553.58353775,
+          "end": 1168559.794680875
+        },
+        {
+          "start": 1168560.131487666,
+          "end": 1168564.961759541
+        },
+        {
+          "start": 1168565.2778105,
+          "end": 1168637.694363083
+        },
+        {
+          "start": 1168637.877559916,
+          "end": 1168665.529148666
+        },
+        {
+          "start": 1168665.894725833,
+          "end": 1168673.68679075
+        },
+        {
+          "start": 1168673.862332666,
+          "end": 1168681.144608375
+        },
+        {
+          "start": 1168681.5395715,
+          "end": 1168696.229078541
+        },
+        {
+          "start": 1168696.589476625,
+          "end": 1168714.130508958
+        },
+        {
+          "start": 1168714.135447291,
+          "end": 1168714.139412416
+        },
+        {
+          "start": 1168716.360333041,
+          "end": 1168721.048368041
+        },
+        {
+          "start": 1168721.419365291,
+          "end": 1168727.169077583
+        },
+        {
+          "start": 1168727.494597291,
+          "end": 1168735.973476208
+        },
+        {
+          "start": 1168736.364331875,
+          "end": 1168741.188121208
+        },
+        {
+          "start": 1168741.549126625,
+          "end": 1168749.158263708
+        },
+        {
+          "start": 1168749.543134916,
+          "end": 1168757.690217958
+        },
+        {
+          "start": 1168758.152354541,
+          "end": 1168764.7517655
+        },
+        {
+          "start": 1168764.763546875,
+          "end": 1168764.765071416
+        },
+        {
+          "start": 1168766.972674625,
+          "end": 1168769.598330833
+        },
+        {
+          "start": 1168769.993983083,
+          "end": 1168772.98991475
+        },
+        {
+          "start": 1168773.390142375,
+          "end": 1168792.935275333
+        },
+        {
+          "start": 1168793.132028,
+          "end": 1168797.703670375
+        },
+        {
+          "start": 1168798.111963333,
+          "end": 1168803.045386708
+        },
+        {
+          "start": 1168803.248469,
+          "end": 1168805.90752575
+        },
+        {
+          "start": 1168806.328334833,
+          "end": 1168841.694761833
+        },
+        {
+          "start": 1168842.1092195,
+          "end": 1168861.982942125
+        },
+        {
+          "start": 1168861.994732208,
+          "end": 1168861.995685125
+        },
+        {
+          "start": 1168864.217348125,
+          "end": 1168867.86968225
+        },
+        {
+          "start": 1168868.0875045,
+          "end": 1168888.412483291
+        },
+        {
+          "start": 1168888.621241916,
+          "end": 1168890.997613625
+        },
+        {
+          "start": 1168891.398499916,
+          "end": 1168895.192939291
+        },
+        {
+          "start": 1168895.204512666,
+          "end": 1168895.205583166
+        },
+        {
+          "start": 1168897.424696333,
+          "end": 1168901.886428875
+        },
+        {
+          "start": 1168901.899461583,
+          "end": 1168901.900994
+        },
+        {
+          "start": 1168904.12684825,
+          "end": 1168906.97024925
+        },
+        {
+          "start": 1168907.45088075,
+          "end": 1168955.886176583
+        },
+        {
+          "start": 1168955.891544875,
+          "end": 1168955.892538458
+        },
+        {
+          "start": 1168958.114788916,
+          "end": 1168960.452723583
+        },
+        {
+          "start": 1168960.45756525,
+          "end": 1168960.458702041
+        },
+        {
+          "start": 1168962.669223708,
+          "end": 1168978.525529041
+        },
+        {
+          "start": 1168978.739443625,
+          "end": 1168981.30518575
+        },
+        {
+          "start": 1168981.736353875,
+          "end": 1169004.44975375
+        },
+        {
+          "start": 1169004.678257041,
+          "end": 1169010.373547791
+        },
+        {
+          "start": 1169010.807622541,
+          "end": 1169033.819489291
+        },
+        {
+          "start": 1169034.254085833,
+          "end": 1169039.806790833
+        },
+        {
+          "start": 1169040.203424666,
+          "end": 1169054.783147791
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "qwen",
+      "role": "supervisor",
+      "pid": 42974,
+      "assistantUsage": {
+        "input": 46248,
+        "output": 35485,
+        "cacheRead": 2676232,
+        "cacheWrite": 0,
+        "totalTokens": 2757965
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 46248,
+        "output": 35485,
+        "cacheRead": 2676232,
+        "cacheWrite": 0,
+        "totalTokens": 2757965
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 32.919,
+      "promptCount": 2,
+      "streamingWindows": [
+        {
+          "start": 1167110.3692915,
+          "end": 1167115.2513715
+        },
+        {
+          "start": 1167115.3193935,
+          "end": 1167122.706787
+        },
+        {
+          "start": 1167123.011507916,
+          "end": 1167179.941779833
+        },
+        {
+          "start": 1167180.254928208,
+          "end": 1167211.762830291
+        },
+        {
+          "start": 1167212.098621625,
+          "end": 1167220.284261333
+        },
+        {
+          "start": 1167220.387478208,
+          "end": 1167226.0586795
+        },
+        {
+          "start": 1167226.386523458,
+          "end": 1167236.262008375
+        },
+        {
+          "start": 1167236.377374708,
+          "end": 1167238.741547208
+        },
+        {
+          "start": 1167238.741711916,
+          "end": 1167238.741729625
+        },
+        {
+          "start": 1167240.860746083,
+          "end": 1167243.593418666
+        },
+        {
+          "start": 1167245.89193375,
+          "end": 1167280.119715083
+        },
+        {
+          "start": 1167295.469919791,
+          "end": 1167305.275015666
+        },
+        {
+          "start": 1167335.553437583,
+          "end": 1167339.027486041
+        },
+        {
+          "start": 1167384.362714083,
+          "end": 1167387.845855458
+        },
+        {
+          "start": 1167448.165751625,
+          "end": 1167450.107698791
+        },
+        {
+          "start": 1167510.426037416,
+          "end": 1167513.794169583
+        },
+        {
+          "start": 1167603.954121541,
+          "end": 1167606.77208675
+        },
+        {
+          "start": 1167607.041128916,
+          "end": 1167611.009014458
+        },
+        {
+          "start": 1167701.154292875,
+          "end": 1167702.539514458
+        },
+        {
+          "start": 1167702.847735416,
+          "end": 1167706.611021458
+        },
+        {
+          "start": 1167706.945993,
+          "end": 1167710.881371541
+        },
+        {
+          "start": 1167741.185093375,
+          "end": 1167745.910062458
+        },
+        {
+          "start": 1167746.056560958,
+          "end": 1167941.421037625
+        },
+        {
+          "start": 1167941.60281975,
+          "end": 1167977.474282458
+        },
+        {
+          "start": 1167977.665989666,
+          "end": 1167980.792754583
+        },
+        {
+          "start": 1167980.983329541,
+          "end": 1167982.475826041
+        },
+        {
+          "start": 1167997.849823958,
+          "end": 1168017.598531166
+        },
+        {
+          "start": 1168017.96467675,
+          "end": 1168020.83302475
+        },
+        {
+          "start": 1168020.847496958,
+          "end": 1168020.848472666
+        },
+        {
+          "start": 1168023.032345833,
+          "end": 1168024.808763041
+        },
+        {
+          "start": 1168035.168002916,
+          "end": 1168038.810266833
+        },
+        {
+          "start": 1168059.166923041,
+          "end": 1168080.018983166
+        },
+        {
+          "start": 1168080.028630416,
+          "end": 1168080.029568208
+        },
+        {
+          "start": 1168081.789485916,
+          "end": 1168085.146661041
+        },
+        {
+          "start": 1168085.379141041,
+          "end": 1168130.349051458
+        },
+        {
+          "start": 1168130.5418255,
+          "end": 1168132.286453666
+        },
+        {
+          "start": 1168142.698221791,
+          "end": 1168145.897575625
+        },
+        {
+          "start": 1168176.329941416,
+          "end": 1168196.0217645
+        },
+        {
+          "start": 1168256.473089375,
+          "end": 1168276.812595
+        },
+        {
+          "start": 1168277.03844825,
+          "end": 1168279.841483666
+        },
+        {
+          "start": 1168279.8569815,
+          "end": 1168279.858546
+        },
+        {
+          "start": 1168282.099175458,
+          "end": 1168284.238859125
+        },
+        {
+          "start": 1168299.68108575,
+          "end": 1168307.62742125
+        },
+        {
+          "start": 1168397.971083791,
+          "end": 1168399.990272083
+        },
+        {
+          "start": 1168400.3964205,
+          "end": 1168407.229988291
+        },
+        {
+          "start": 1168497.460870791,
+          "end": 1168499.485694625
+        },
+        {
+          "start": 1168499.905982833,
+          "end": 1168512.814033125
+        },
+        {
+          "start": 1168512.827789541,
+          "end": 1168512.829100208
+        },
+        {
+          "start": 1168515.110828041,
+          "end": 1168520.169219708
+        },
+        {
+          "start": 1168520.385122833,
+          "end": 1168524.527947166
+        },
+        {
+          "start": 1168540.008257375,
+          "end": 1168548.536445416
+        },
+        {
+          "start": 1168608.981209416,
+          "end": 1168619.500231541
+        },
+        {
+          "start": 1168709.747441375,
+          "end": 1168713.684422416
+        },
+        {
+          "start": 1168714.106484625,
+          "end": 1168717.521178791
+        },
+        {
+          "start": 1168807.785292,
+          "end": 1168811.90294975
+        },
+        {
+          "start": 1168812.301539,
+          "end": 1168819.11831
+        },
+        {
+          "start": 1168909.416072958,
+          "end": 1168913.742607625
+        },
+        {
+          "start": 1168914.202228041,
+          "end": 1168921.805732708
+        },
+        {
+          "start": 1169012.068622958,
+          "end": 1169016.421372
+        },
+        {
+          "start": 1169016.859896541,
+          "end": 1169025.957676958
+        },
+        {
+          "start": 1169026.239889333,
+          "end": 1169034.4653005
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 32.921,
+  "summedModelActiveMinutes": 48.987,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 22198,
+      "output": 32172,
+      "cacheRead": 2099924,
+      "totalTokens": 2154294
+    },
+    "qwen": {
+      "input": 46248,
+      "output": 35485,
+      "cacheRead": 2676232,
+      "totalTokens": 2757965
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 16.067,
+    "qwen": 32.919
+  },
+  "localProductScore": 96.2,
+  "localProductTargetMet": true,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  },
+  "localProductScoreExact": 96.25,
+  "baselineAlreadyA": false,
+  "baselineScore": 88,
+  "baselineProductScore": 92.5,
+  "baselineTargetMet": false,
+  "baselineReport": "strategies/reports/rtfm_ornith_01_reaction_timer.report.json",
+  "baselineCreationCost": {
+    "model": "ornith",
+    "role": "worker",
+    "pid": 14928,
+    "assistantUsage": {
+      "input": 16568,
+      "output": 29284,
+      "cacheRead": 773052,
+      "cacheWrite": 0,
+      "totalTokens": 818904
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 16568,
+      "output": 29284,
+      "cacheRead": 773052,
+      "cacheWrite": 0,
+      "totalTokens": 818904
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 11.344,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1159833.982629,
+        "end": 1159836.425852125
+      },
+      {
+        "start": 1159836.484595125,
+        "end": 1159924.691807208
+      },
+      {
+        "start": 1159924.69772025,
+        "end": 1159924.698200583
+      },
+      {
+        "start": 1159926.759556458,
+        "end": 1159936.14412625
+      },
+      {
+        "start": 1159936.445378333,
+        "end": 1159946.233240541
+      },
+      {
+        "start": 1159946.5122395,
+        "end": 1159960.540512625
+      },
+      {
+        "start": 1159960.805356916,
+        "end": 1159973.40821975
+      },
+      {
+        "start": 1159973.637704166,
+        "end": 1159987.681230666
+      },
+      {
+        "start": 1159987.958145666,
+        "end": 1160000.06873175
+      },
+      {
+        "start": 1160000.3610275,
+        "end": 1160024.2522425
+      },
+      {
+        "start": 1160024.519803958,
+        "end": 1160043.862382208
+      },
+      {
+        "start": 1160044.154897458,
+        "end": 1160063.105763416
+      },
+      {
+        "start": 1160063.389280041,
+        "end": 1160087.139906375
+      },
+      {
+        "start": 1160087.504355458,
+        "end": 1160102.049212875
+      },
+      {
+        "start": 1160102.347151875,
+        "end": 1160120.799087041
+      },
+      {
+        "start": 1160121.157262708,
+        "end": 1160156.117207291
+      },
+      {
+        "start": 1160156.402093625,
+        "end": 1160176.69407725
+      },
+      {
+        "start": 1160177.034644875,
+        "end": 1160189.548459375
+      },
+      {
+        "start": 1160189.883135625,
+        "end": 1160220.118379541
+      },
+      {
+        "start": 1160220.411961666,
+        "end": 1160236.707081
+      },
+      {
+        "start": 1160237.042522916,
+        "end": 1160256.083493916
+      },
+      {
+        "start": 1160256.40282025,
+        "end": 1160299.594594708
+      },
+      {
+        "start": 1160299.94478075,
+        "end": 1160320.227222208
+      },
+      {
+        "start": 1160320.581834791,
+        "end": 1160347.076391583
+      },
+      {
+        "start": 1160347.388173583,
+        "end": 1160360.823797666
+      },
+      {
+        "start": 1160361.121725833,
+        "end": 1160377.006274083
+      },
+      {
+        "start": 1160377.31739725,
+        "end": 1160391.803007416
+      },
+      {
+        "start": 1160392.122440166,
+        "end": 1160419.854909625
+      },
+      {
+        "start": 1160420.184349333,
+        "end": 1160441.026203125
+      },
+      {
+        "start": 1160441.33915625,
+        "end": 1160443.807059833
+      },
+      {
+        "start": 1160444.100773083,
+        "end": 1160447.148381791
+      },
+      {
+        "start": 1160447.31830775,
+        "end": 1160455.340871791
+      },
+      {
+        "start": 1160455.503987375,
+        "end": 1160460.098392416
+      },
+      {
+        "start": 1160460.252805791,
+        "end": 1160470.64259725
+      },
+      {
+        "start": 1160470.656734125,
+        "end": 1160470.657499708
+      },
+      {
+        "start": 1160472.829778,
+        "end": 1160492.183338291
+      },
+      {
+        "start": 1160492.528495291,
+        "end": 1160500.923396875
+      },
+      {
+        "start": 1160501.289152958,
+        "end": 1160512.934082791
+      }
+    ],
+    "exitCode": 0
+  },
+  "incrementalRepairCost": {
+    "worker": {
+      "model": "ornith",
+      "role": "worker",
+      "pid": 42973,
+      "assistantUsage": {
+        "input": 22198,
+        "output": 32172,
+        "cacheRead": 2099924,
+        "cacheWrite": 0,
+        "totalTokens": 2154294
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 22198,
+        "output": 32172,
+        "cacheRead": 2099924,
+        "cacheWrite": 0,
+        "totalTokens": 2154294
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 16.067,
+      "promptCount": 2,
+      "streamingWindows": [
+        {
+          "start": 1167238.8312075,
+          "end": 1167242.827489833
+        },
+        {
+          "start": 1167243.026903,
+          "end": 1167244.871247
+        },
+        {
+          "start": 1167244.924941833,
+          "end": 1167247.627240625
+        },
+        {
+          "start": 1167247.714881791,
+          "end": 1167250.300324083
+        },
+        {
+          "start": 1167250.392697,
+          "end": 1167252.637560666
+        },
+        {
+          "start": 1167252.842944708,
+          "end": 1167255.93639575
+        },
+        {
+          "start": 1167256.033103583,
+          "end": 1167281.530837208
+        },
+        {
+          "start": 1167281.600793208,
+          "end": 1167283.562621833
+        },
+        {
+          "start": 1167283.64202725,
+          "end": 1167290.994143833
+        },
+        {
+          "start": 1167291.305585625,
+          "end": 1167297.797137791
+        },
+        {
+          "start": 1167298.1310735,
+          "end": 1167307.180818583
+        },
+        {
+          "start": 1167307.473572791,
+          "end": 1167310.123132958
+        },
+        {
+          "start": 1167310.241333958,
+          "end": 1167315.506231
+        },
+        {
+          "start": 1167315.811180916,
+          "end": 1167317.714786666
+        },
+        {
+          "start": 1167318.00542175,
+          "end": 1167343.159645291
+        },
+        {
+          "start": 1167343.261718291,
+          "end": 1167349.657572791
+        },
+        {
+          "start": 1167349.745225291,
+          "end": 1167351.649540875
+        },
+        {
+          "start": 1167351.6497795,
+          "end": 1167351.649804166
+        },
+        {
+          "start": 1167353.769252541,
+          "end": 1167356.954717125
+        },
+        {
+          "start": 1167357.0751385,
+          "end": 1167382.323607541
+        },
+        {
+          "start": 1167382.440217583,
+          "end": 1167390.647946791
+        },
+        {
+          "start": 1167390.955840458,
+          "end": 1167396.374495125
+        },
+        {
+          "start": 1167396.519178291,
+          "end": 1167398.959243416
+        },
+        {
+          "start": 1167399.306568666,
+          "end": 1167404.312828208
+        },
+        {
+          "start": 1167404.43416075,
+          "end": 1167406.134774875
+        },
+        {
+          "start": 1167406.465127583,
+          "end": 1167409.157896916
+        },
+        {
+          "start": 1167409.272012083,
+          "end": 1167415.455760166
+        },
+        {
+          "start": 1167415.590751541,
+          "end": 1167418.610597833
+        },
+        {
+          "start": 1167418.947858166,
+          "end": 1167424.765352666
+        },
+        {
+          "start": 1167424.87898125,
+          "end": 1167432.85509875
+        },
+        {
+          "start": 1167432.96073725,
+          "end": 1167435.262460291
+        },
+        {
+          "start": 1167456.452153208,
+          "end": 1167467.702369583
+        },
+        {
+          "start": 1167467.828839041,
+          "end": 1167476.167817375
+        },
+        {
+          "start": 1167476.289253083,
+          "end": 1167479.113024916
+        },
+        {
+          "start": 1167488.484033416,
+          "end": 1167516.806275166
+        },
+        {
+          "start": 1167516.976058083,
+          "end": 1167519.831935875
+        },
+        {
+          "start": 1167530.700904375,
+          "end": 1167545.235740333
+        },
+        {
+          "start": 1167545.381710708,
+          "end": 1167547.050326541
+        },
+        {
+          "start": 1167557.95048275,
+          "end": 1167615.0035675
+        },
+        {
+          "start": 1167615.010898458,
+          "end": 1167615.011724041
+        },
+        {
+          "start": 1167617.168118666,
+          "end": 1167620.319661708
+        },
+        {
+          "start": 1167620.678878958,
+          "end": 1167625.7697425
+        },
+        {
+          "start": 1167626.125804083,
+          "end": 1167635.293901291
+        },
+        {
+          "start": 1167635.414661208,
+          "end": 1167638.48540075
+        },
+        {
+          "start": 1167638.820826208,
+          "end": 1167648.897126416
+        },
+        {
+          "start": 1167649.285422,
+          "end": 1167654.783955958
+        },
+        {
+          "start": 1167655.130223291,
+          "end": 1167665.367521208
+        },
+        {
+          "start": 1168520.320708125,
+          "end": 1168524.5485935
+        },
+        {
+          "start": 1168524.885291625,
+          "end": 1168526.974186666
+        },
+        {
+          "start": 1168527.135467791,
+          "end": 1168541.540512416
+        },
+        {
+          "start": 1168541.701278708,
+          "end": 1168549.650876416
+        },
+        {
+          "start": 1168549.986828416,
+          "end": 1168553.238311375
+        },
+        {
+          "start": 1168553.58353775,
+          "end": 1168559.794680875
+        },
+        {
+          "start": 1168560.131487666,
+          "end": 1168564.961759541
+        },
+        {
+          "start": 1168565.2778105,
+          "end": 1168637.694363083
+        },
+        {
+          "start": 1168637.877559916,
+          "end": 1168665.529148666
+        },
+        {
+          "start": 1168665.894725833,
+          "end": 1168673.68679075
+        },
+        {
+          "start": 1168673.862332666,
+          "end": 1168681.144608375
+        },
+        {
+          "start": 1168681.5395715,
+          "end": 1168696.229078541
+        },
+        {
+          "start": 1168696.589476625,
+          "end": 1168714.130508958
+        },
+        {
+          "start": 1168714.135447291,
+          "end": 1168714.139412416
+        },
+        {
+          "start": 1168716.360333041,
+          "end": 1168721.048368041
+        },
+        {
+          "start": 1168721.419365291,
+          "end": 1168727.169077583
+        },
+        {
+          "start": 1168727.494597291,
+          "end": 1168735.973476208
+        },
+        {
+          "start": 1168736.364331875,
+          "end": 1168741.188121208
+        },
+        {
+          "start": 1168741.549126625,
+          "end": 1168749.158263708
+        },
+        {
+          "start": 1168749.543134916,
+          "end": 1168757.690217958
+        },
+        {
+          "start": 1168758.152354541,
+          "end": 1168764.7517655
+        },
+        {
+          "start": 1168764.763546875,
+          "end": 1168764.765071416
+        },
+        {
+          "start": 1168766.972674625,
+          "end": 1168769.598330833
+        },
+        {
+          "start": 1168769.993983083,
+          "end": 1168772.98991475
+        },
+        {
+          "start": 1168773.390142375,
+          "end": 1168792.935275333
+        },
+        {
+          "start": 1168793.132028,
+          "end": 1168797.703670375
+        },
+        {
+          "start": 1168798.111963333,
+          "end": 1168803.045386708
+        },
+        {
+          "start": 1168803.248469,
+          "end": 1168805.90752575
+        },
+        {
+          "start": 1168806.328334833,
+          "end": 1168841.694761833
+        },
+        {
+          "start": 1168842.1092195,
+          "end": 1168861.982942125
+        },
+        {
+          "start": 1168861.994732208,
+          "end": 1168861.995685125
+        },
+        {
+          "start": 1168864.217348125,
+          "end": 1168867.86968225
+        },
+        {
+          "start": 1168868.0875045,
+          "end": 1168888.412483291
+        },
+        {
+          "start": 1168888.621241916,
+          "end": 1168890.997613625
+        },
+        {
+          "start": 1168891.398499916,
+          "end": 1168895.192939291
+        },
+        {
+          "start": 1168895.204512666,
+          "end": 1168895.205583166
+        },
+        {
+          "start": 1168897.424696333,
+          "end": 1168901.886428875
+        },
+        {
+          "start": 1168901.899461583,
+          "end": 1168901.900994
+        },
+        {
+          "start": 1168904.12684825,
+          "end": 1168906.97024925
+        },
+        {
+          "start": 1168907.45088075,
+          "end": 1168955.886176583
+        },
+        {
+          "start": 1168955.891544875,
+          "end": 1168955.892538458
+        },
+        {
+          "start": 1168958.114788916,
+          "end": 1168960.452723583
+        },
+        {
+          "start": 1168960.45756525,
+          "end": 1168960.458702041
+        },
+        {
+          "start": 1168962.669223708,
+          "end": 1168978.525529041
+        },
+        {
+          "start": 1168978.739443625,
+          "end": 1168981.30518575
+        },
+        {
+          "start": 1168981.736353875,
+          "end": 1169004.44975375
+        },
+        {
+          "start": 1169004.678257041,
+          "end": 1169010.373547791
+        },
+        {
+          "start": 1169010.807622541,
+          "end": 1169033.819489291
+        },
+        {
+          "start": 1169034.254085833,
+          "end": 1169039.806790833
+        },
+        {
+          "start": 1169040.203424666,
+          "end": 1169054.783147791
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "qwen",
+      "role": "supervisor",
+      "pid": 42974,
+      "assistantUsage": {
+        "input": 46248,
+        "output": 35485,
+        "cacheRead": 2676232,
+        "cacheWrite": 0,
+        "totalTokens": 2757965
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 46248,
+        "output": 35485,
+        "cacheRead": 2676232,
+        "cacheWrite": 0,
+        "totalTokens": 2757965
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 32.919,
+      "promptCount": 2,
+      "streamingWindows": [
+        {
+          "start": 1167110.3692915,
+          "end": 1167115.2513715
+        },
+        {
+          "start": 1167115.3193935,
+          "end": 1167122.706787
+        },
+        {
+          "start": 1167123.011507916,
+          "end": 1167179.941779833
+        },
+        {
+          "start": 1167180.254928208,
+          "end": 1167211.762830291
+        },
+        {
+          "start": 1167212.098621625,
+          "end": 1167220.284261333
+        },
+        {
+          "start": 1167220.387478208,
+          "end": 1167226.0586795
+        },
+        {
+          "start": 1167226.386523458,
+          "end": 1167236.262008375
+        },
+        {
+          "start": 1167236.377374708,
+          "end": 1167238.741547208
+        },
+        {
+          "start": 1167238.741711916,
+          "end": 1167238.741729625
+        },
+        {
+          "start": 1167240.860746083,
+          "end": 1167243.593418666
+        },
+        {
+          "start": 1167245.89193375,
+          "end": 1167280.119715083
+        },
+        {
+          "start": 1167295.469919791,
+          "end": 1167305.275015666
+        },
+        {
+          "start": 1167335.553437583,
+          "end": 1167339.027486041
+        },
+        {
+          "start": 1167384.362714083,
+          "end": 1167387.845855458
+        },
+        {
+          "start": 1167448.165751625,
+          "end": 1167450.107698791
+        },
+        {
+          "start": 1167510.426037416,
+          "end": 1167513.794169583
+        },
+        {
+          "start": 1167603.954121541,
+          "end": 1167606.77208675
+        },
+        {
+          "start": 1167607.041128916,
+          "end": 1167611.009014458
+        },
+        {
+          "start": 1167701.154292875,
+          "end": 1167702.539514458
+        },
+        {
+          "start": 1167702.847735416,
+          "end": 1167706.611021458
+        },
+        {
+          "start": 1167706.945993,
+          "end": 1167710.881371541
+        },
+        {
+          "start": 1167741.185093375,
+          "end": 1167745.910062458
+        },
+        {
+          "start": 1167746.056560958,
+          "end": 1167941.421037625
+        },
+        {
+          "start": 1167941.60281975,
+          "end": 1167977.474282458
+        },
+        {
+          "start": 1167977.665989666,
+          "end": 1167980.792754583
+        },
+        {
+          "start": 1167980.983329541,
+          "end": 1167982.475826041
+        },
+        {
+          "start": 1167997.849823958,
+          "end": 1168017.598531166
+        },
+        {
+          "start": 1168017.96467675,
+          "end": 1168020.83302475
+        },
+        {
+          "start": 1168020.847496958,
+          "end": 1168020.848472666
+        },
+        {
+          "start": 1168023.032345833,
+          "end": 1168024.808763041
+        },
+        {
+          "start": 1168035.168002916,
+          "end": 1168038.810266833
+        },
+        {
+          "start": 1168059.166923041,
+          "end": 1168080.018983166
+        },
+        {
+          "start": 1168080.028630416,
+          "end": 1168080.029568208
+        },
+        {
+          "start": 1168081.789485916,
+          "end": 1168085.146661041
+        },
+        {
+          "start": 1168085.379141041,
+          "end": 1168130.349051458
+        },
+        {
+          "start": 1168130.5418255,
+          "end": 1168132.286453666
+        },
+        {
+          "start": 1168142.698221791,
+          "end": 1168145.897575625
+        },
+        {
+          "start": 1168176.329941416,
+          "end": 1168196.0217645
+        },
+        {
+          "start": 1168256.473089375,
+          "end": 1168276.812595
+        },
+        {
+          "start": 1168277.03844825,
+          "end": 1168279.841483666
+        },
+        {
+          "start": 1168279.8569815,
+          "end": 1168279.858546
+        },
+        {
+          "start": 1168282.099175458,
+          "end": 1168284.238859125
+        },
+        {
+          "start": 1168299.68108575,
+          "end": 1168307.62742125
+        },
+        {
+          "start": 1168397.971083791,
+          "end": 1168399.990272083
+        },
+        {
+          "start": 1168400.3964205,
+          "end": 1168407.229988291
+        },
+        {
+          "start": 1168497.460870791,
+          "end": 1168499.485694625
+        },
+        {
+          "start": 1168499.905982833,
+          "end": 1168512.814033125
+        },
+        {
+          "start": 1168512.827789541,
+          "end": 1168512.829100208
+        },
+        {
+          "start": 1168515.110828041,
+          "end": 1168520.169219708
+        },
+        {
+          "start": 1168520.385122833,
+          "end": 1168524.527947166
+        },
+        {
+          "start": 1168540.008257375,
+          "end": 1168548.536445416
+        },
+        {
+          "start": 1168608.981209416,
+          "end": 1168619.500231541
+        },
+        {
+          "start": 1168709.747441375,
+          "end": 1168713.684422416
+        },
+        {
+          "start": 1168714.106484625,
+          "end": 1168717.521178791
+        },
+        {
+          "start": 1168807.785292,
+          "end": 1168811.90294975
+        },
+        {
+          "start": 1168812.301539,
+          "end": 1168819.11831
+        },
+        {
+          "start": 1168909.416072958,
+          "end": 1168913.742607625
+        },
+        {
+          "start": 1168914.202228041,
+          "end": 1168921.805732708
+        },
+        {
+          "start": 1169012.068622958,
+          "end": 1169016.421372
+        },
+        {
+          "start": 1169016.859896541,
+          "end": 1169025.957676958
+        },
+        {
+          "start": 1169026.239889333,
+          "end": 1169034.4653005
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "artifactChangedFromSeed": true,
+  "productDelta": 3.8,
+  "newlyReachedAQuality": true
+}

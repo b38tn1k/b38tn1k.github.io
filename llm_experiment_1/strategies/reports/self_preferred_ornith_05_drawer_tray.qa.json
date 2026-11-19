@@ -1,0 +1,41 @@
+{
+  "method": "Independent frozen-source VM/DOM/nativeCanvas2D; actual controls and output bytes, controlled state fixtures exposing existing functions only. No browser layout/GPU/default actions or physical printing. Qwen Snake receives the standard CanvasRenderingContext2D brand global solely for its instanceof check; the adapter otherwise omits this browser class. No game logic replaced.",
+  "sha256": "1ef867aabee4357e87d0692c363292dff7e89d00d04b454380513637f07e9e56",
+  "checks": [
+    {
+      "id": "default_fields_are_populated",
+      "pass": false,
+      "error": "No input has a value attribute or default assignment",
+      "actual": "",
+      "expected": "180"
+    },
+    {
+      "id": "entered_valid_dimensions_export_nonempty_tray",
+      "pass": false,
+      "error": "Cannot read properties of null (reading 'flip')"
+    },
+    {
+      "id": "clear_compartments_include_internal_wall_thickness",
+      "pass": false,
+      "error": "Readout divides outer cavity without subtracting internal divider walls",
+      "actual": 87,
+      "expected": 85.5
+    },
+    {
+      "id": "one_compartment_mesh_has_correct_outer_bounds",
+      "pass": false,
+      "error": "subtract(void.inverse()) retains the void intersection, not the surrounding tray",
+      "actual": [
+        174,
+        30,
+        118
+      ],
+      "expected": [
+        180,
+        30,
+        120
+      ]
+    }
+  ],
+  "pass": false
+}

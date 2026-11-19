@@ -1,0 +1,112 @@
+{
+  "status": "completed_with_critical_defects",
+  "grade": "C- - binary export works; maker dimensions unreliable",
+  "score": 60,
+  "rubricScores": {
+    "functionality": 25,
+    "artifact_correctness": 17,
+    "usability": 7,
+    "self_verification": 3,
+    "autonomy": 8
+  },
+  "verified": [
+    "Exact-source VM startup and valid96-triangle binary structure:4884 bytes, count96",
+    "Finite geometry and180x120x30mm outer bounds",
+    "Offline self-contained HTML"
+  ],
+  "criticalDefects": [
+    "UI reads every parameter with parseInt: wall2.4mm silently becomes2mm",
+    "Compartment labels do not match partition placement; defaultX clearances56.33/55.33/60.33mm versus claimed57.33mm each",
+    "STL is concatenated overlapping boxes rather than a clean union:13 positive-volume box-pair overlaps; slicer repair/union behavior unverified"
+  ],
+  "additionalDefects": [
+    "Grid label always says3x2 even after grid changes",
+    "No validation that floor thickness is below overall height",
+    "Auto-rotate checkbox changes a flag but no animation loop uses it"
+  ],
+  "verificationConcerns": [
+    "Repeatedly debugged faulty test scaffolding instead of exercising UI parameter parsing",
+    "Final statement all temporary files stayed inside project contradicts pre-intervention/tmp writes",
+    "Tests called pure geometry directly with2.4mm wall, hiding UI truncation"
+  ],
+  "scopeCompliance": "Failed before intervention: repeated/tmp test writes. Supervisor stopped process, applied tested OS filesystem boundary, resumed same session with scope-only reminder. No app code or geometry hint supplied.",
+  "humanOrSupervisorSteering": 1,
+  "limitations": [
+    "Interrupted/resumed run with filesystem boundary and scope reminder; timing includes the intervention gap and is not a clean one-shot comparison.",
+    "No independent real-browser/visual testing; prior browser-origin denial honored.",
+    "Single run per task; differences do not isolate extension effect from sampling variability."
+  ],
+  "title": "Simple drawer tray generator",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "elapsedMinutes": 15.9,
+  "wallMinutes": 4.19,
+  "promptWords": 65,
+  "toolCalls": 38,
+  "toolResultsMarkedError": 9,
+  "implementationChangesBySupervisor": 0,
+  "modelUsageReported": {
+    "input": 40404,
+    "output": 35347,
+    "cacheRead": 1030262,
+    "totalTokens": 1106013
+  },
+  "peakReportedPromptTokens": 40445,
+  "assistantTextContainingToolCallMarkup": 0,
+  "artifactBytes": 19249,
+  "sha256": "dc64030bd81c24da3279800f3b3304d0d36f921d243059f8190b758f9dc01356",
+  "billionContext": {
+    "loadedConfirmed": true,
+    "sessionId": "01a1dbb4-c0be-72c7-9bfc-487748b8b9ad",
+    "extensionVersion": "0.1.213",
+    "stats": {
+      "requests": 40,
+      "tokensSaved": 0,
+      "inputTokens": 1070666,
+      "cachedTokens": 1030262,
+      "outputTokens": 35347,
+      "cacheSamples": 39,
+      "lastInputTokens": 40445,
+      "lastInputTokensSource": "usage",
+      "compressCreditTokens": 0,
+      "contextTokens": 40445,
+      "contextTokensSource": "usage",
+      "localInputEstimate": 97481,
+      "lastUsageGradeTokens": 40445,
+      "lastInputTokensOrigin": "http://127.0.0.1:11435",
+      "calibratedEstimate": 1.3099178145923605,
+      "calibratedEstimateOrigin": "http://127.0.0.1:11435",
+      "calibrationRing": {
+        "origin": "http://127.0.0.1:11435",
+        "values": [
+          1.3088438507600184,
+          1.3097610210327537,
+          1.3111485719843097
+        ],
+        "model": "ornith-1.5:35b-256k"
+      },
+      "retrieveCalls": 0,
+      "retrieveHits": 0,
+      "retrieveMisses": 0,
+      "retrieveDropped": 0,
+      "retrieveDelivered": 0,
+      "storedBytes": 0,
+      "storeBytesSaved": 0,
+      "rangeRestores": 0,
+      "wholeBlockRestores": 0,
+      "wholeBlockRestoresPreciseAvailable": 0,
+      "contextEstimateTokens": 40315,
+      "contextEstimateCalibrated": true,
+      "lastUsagePayloadUpper": 97481,
+      "calibratedEstimateModel": "ornith-1.5:35b-256k"
+    },
+    "compressionStats": {
+      "tokensCompressed": 0,
+      "compressionCount": 0,
+      "absorbedTokens": 0,
+      "storedCount": 0,
+      "retrievalCount": 0
+    },
+    "blocks": 0
+  }
+}

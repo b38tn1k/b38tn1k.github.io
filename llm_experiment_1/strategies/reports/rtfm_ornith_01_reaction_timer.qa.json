@@ -1,0 +1,61 @@
+{
+  "method": "Independent exact-source VM/DOM scheduler and actual pointer/keyboard events. Read-only closure state exposed; no algorithm replacement. No browser layout/hit testing or visual-polish claim.",
+  "sha256": "0092975091dc7f9f1ea01cb732b31a8659f43d1eb7c785d8c4c07d0a453e59ff",
+  "checks": [
+    {
+      "id": "five_actual_responses_summary_and_replay",
+      "pass": true,
+      "evidence": {
+        "values": [
+          "250ms",
+          "200ms",
+          "100ms"
+        ],
+        "rows": 5,
+        "completedDots": 4,
+        "replay": true,
+        "randomWaitsMS": [
+          2149.8695358866826,
+          1639.0625128522515,
+          2432.0842776447535,
+          2771.6839770786464,
+          1811.7363147437572
+        ],
+        "allWaitsIn800To3500": true
+      }
+    },
+    {
+      "id": "false_start_rejected_and_delayed_feedback",
+      "pass": true,
+      "evidence": {
+        "phase": "false",
+        "immediateTitle": "Wait for it…",
+        "immediate": "🟢 Wait for it… Don't click until it turns green. A false start will cost you this trial. Hold back — wait for green!",
+        "delayed": "⚠️ False start! —ms Too fast — were you guessing? Press Space to continue",
+        "immediateTitleExplainsFalseStart": false
+      }
+    },
+    {
+      "id": "all_false_starts_summary_remains_finite_and_honest",
+      "pass": false,
+      "error": "Zero valid responses misleadingly reported as0ms average",
+      "actual": "0ms",
+      "expected": "0ms"
+    },
+    {
+      "id": "space_keyboard_actual_flow",
+      "pass": true,
+      "evidence": {
+        "ms": 250
+      }
+    },
+    {
+      "id": "self_contained_offline_source",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "pass": false
+}

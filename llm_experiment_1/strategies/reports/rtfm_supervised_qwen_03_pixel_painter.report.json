@@ -1,0 +1,1317 @@
+{
+  "score": 76,
+  "grade": "C+ - modal resize repaired; preset regression and display/history failures remain",
+  "rubricScores": {
+    "functionality": 34,
+    "artifact_correctness": 21,
+    "usability": 8,
+    "self_verification": 3,
+    "autonomy": 10
+  },
+  "blockingRequiredDefect": true,
+  "summary": "Header/modal resizing now preserves2Dpixel positions, and presets apply dimensions. The preset repair introduces artwork scrambling in the actual PNG export, while display-pointer scaling and resizeUndo failures remain. Three counted prompts end without A-quality acceptance.",
+  "strengths": [
+    "Actual mouse/touch drawing, color palette, brush/eraser, ordinary Undo/Redo, ClearUndo and redo-branch invalidation pass in logical artwork state.",
+    "Header/modal resize now preserves existing pixels using the old source stride. Preset buttons now apply their selected dimensions rather than ignoring the size.",
+    "Normal actual PNG export has correct native32x32dimensions and decoded selected green pixel; source remains a self-contained offline file."
+  ],
+  "defects": [
+    "At default zoom8, painted artwork is still put unscaled into the top-left32x32area of a256x256backing canvas. The pixel under the actual normalized pointer remains unpainted even though the logical pixel is modified.",
+    "New regression: preset handlers set state.width/state.height before the repaired resize helper captures the old dimensions. Actual paint(5,5)\u219248x48preset\u2192PNG relocates the red pixel to(21,3), while(5,5)becomes white. Original ignored presets did not scramble artwork.",
+    "Undo after resize retains new dimensions instead of restoring the prior canvas size; shrinking then Undo still throws offset-is-out-of-bounds."
+  ],
+  "verification": [
+    "Independent exact final8be2fb33f91f94767c103d734e42189b72922281c42a577112c42596b8e5473e using actual mouse/touch/buttons/input attributes, logicalRGBA state, nativeCanvas backing pixels and real encoded/decodedPNG bytes. No app algorithms replaced.",
+    "Display expected backing coordinates are derived from actual canvas/logical dimensions, permitting legitimate backing-resolution/CSS alternatives rather than forcing a particular zoom implementation. The current artifact still exhibits the original physical backing mismatch.",
+    "New preset-data loss is verified in both actual logical pixels and a decoded48x48PNG. The optional existence of presets is not invented as an original-brief requirement; the tested advertised action corrupts existing artwork."
+  ],
+  "verificationConcerns": [
+    "Supervisor correctly found the resize stride problem by simulating copied pixel-copy code. Worker and supervisor separately simulated preset dimension changes, but did not execute a full paint\u2192preset\u2192export regression that would expose the pre-mutated old stride.",
+    "Both actors confirmed individual helper fixes and claimed unchanged brush/history/export behavior. They missed display scaling and resize-history failures, and their component-only preset checks missed a newly introduced interaction regression. Joint self-verification earns3points; independent Codex checks are not counted as model self-verification.",
+    "A real counted in-flight interrupt at8.17min stopped the busy worker and resumed feedback2in the samePID39972/native context. That capability worked, but the new preset repair still missed the surrounding state interaction. Third feedback was confirmation-only and made no product change.",
+    "Generic execution of original inline input/change attributes models standard browser event binding missing from the DOM adapter. No browser layout/hit testing or physical-touch-latency proof; actual backing pixels and decoded exports establish the reported defects.",
+    "Recovered connection errors: worker1, supervisor5. One worker abort was the counted supervisor interruption; supervisor voluntaryWAIT/final-stop aborts are separate. Failed partial-stream usage is unknown."
+  ],
+  "scopeCompliance": "Worker alone authored the product. Supervisor wrote scratch/control outputs and its own findings, with read-only consistent artifact/progress access. Codex supplied no product code, diagnoses or repair feedback; private independent QA/controller/report files stayed outside actor access.",
+  "workflowNotes": "RTFM Ornith-supervised Qwen painter. Three counted worker prompts,12.889pairwallminutes and19.407summed actor-activity minutes. First response was interrupted by feedback2, so feedback2is the first settled snapshot. The final confirmation prompt consumed the last slot without adding a repair. Joint autonomy remains eligible10; no human product guidance was supplied.",
+  "humanOrSupervisorSteering": 0,
+  "supervisorInstructionDeviations": [
+    "Feedback included an explicit const oldW assignment and implementation suggestions despite the behavioral-only/no-repair-code instruction. Product writes remained exclusively with the worker; this is a local supervisor instruction deviation, not Codex repair steering."
+  ],
+  "limitations": [
+    "One valid paired result on the exact frozen solo source; no outcome-based rerun or budget reset.",
+    "Data preservation is judged against this artifact\u2019s existing resize intent and the local requested repair, without mandating a universal resize anchor or mandatory preset feature.",
+    "Native activity includes overlapping turns/tool waits, not GPU busy time. Reported tokens include cached prefixes; baseline creation and new rescue costs remain separate.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM author-profile cross-model rescue of the exact frozen solo app. Solo creation and incremental repair costs are separate; already-qualified baselines may remain unchanged with zero feedback and no improvement claim. A120-minute shared wall includes both actors and review waits; Codex grades but supplies no repair diagnoses/code. Product quality is normalized from80points. Pair wall differs from summed concurrent model activity."
+  ],
+  "title": "Pixel painter",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "rtfm_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The `index.html` is complete with both fixes applied and verified. The artifact is ready for independent assessment.",
+  "workflowInstructions": "rtfm-supervised-plan.json; run-rtfm-supervised-control-v2.py",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 12.889,
+  "wallMinutes": 12.889,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "three_feedbacks_settled",
+  "exitCode": 0,
+  "promptWords": 40,
+  "toolCalls": 78,
+  "parentToolCalls": 29,
+  "childToolCalls": 49,
+  "toolResultsMarkedError": 8,
+  "modelUsageReported": {
+    "input": 45536,
+    "output": 26729,
+    "cacheRead": 1854366,
+    "totalTokens": 1926631
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 39978,
+  "parentPeakReportedPromptTokens": 31140,
+  "childPeakReportedPromptTokens": 39978,
+  "parentModelUsage": {
+    "input": 19114,
+    "output": 10924,
+    "cacheRead": 578204,
+    "totalTokens": 608242
+  },
+  "childModelUsage": {
+    "input": 26422,
+    "output": 15805,
+    "cacheRead": 1276162,
+    "totalTokens": 1318389
+  },
+  "artifactBytes": 34005,
+  "sha256": "8be2fb33f91f94767c103d734e42189b72922281c42a577112c42596b8e5473e",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 2,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-rtfm"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 5,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "qwen3.6:35b-a3b",
+    "supervisorModel": "ornith-1.5:35b-256k",
+    "feedbackCount": 3,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "sup-03fp-7kqa-0001",
+        "message": "First repair request. Verified artifact hash a98c8caf33d6857ed69a76b0a93ff0ac40bf1c7f8e38863072a405b7cd8a88a8 matches state.json.\n\nDETECTIVE FINDING - real app defect (verified by byte-level simulation of the exact copy code):\n\nWhen you resize the canvas to a LARGER width than the current canvas, existing pixel data is scrambled/lost. Both onCanvasSizeChange() and applyResize() (the resize modal) contain the same bug.\n\nRoot cause: both functions assign state.width = w and state.height = h BEFORE the pixel copy loop. The copy loop then reads source pixels with index (y * state.width + x) * 4, but state.width is now the NEW width, not the old width. The old pixel array is still the OLD width wide, so the source stride is wrong. When new width > old width and there is more than one row, pixels are read from the wrong source rows.\n\nEvidence: I simulated the exact copy loop on a 4x4 grid where each pixel held a unique marker (pixel x,y => r=x*10, g=y*10). Resizing 4x4 -> 8x8:\n- Correct logic (stride = old width 4): pixel at new (0,1) has g = 10. PASS.\n- App logic (stride = new width 8): pixel at new (0,1) has g = 20. FAIL - data scrambled.\n\nExpected behavior: enlarging the canvas should preserve all original pixels in their correct positions in the top-left region and only add empty (background) cells. Currently enlarging shifts/mixes rows so the drawing is corrupted.\n\nAlso note: the copy loop reads state.width inside the loop even though it already stored w; capture the old width in a local variable (e.g. const oldW = state.width) and use oldW as the source stride, or do the copy before reassigning state.width/state.height.\n\nThis affects the \"editable canvas size\" requirement and the resize modal. Fix the source-stride index in BOTH onCanvasSizeChange and applyResize. Please also add a test that resizes up and down and checks original pixels are preserved.\n\nDo not change any other verified-good behavior.\n",
+        "reason": "verified byte-level defect: enlarging the canvas scrambles existing pixels in onCanvasSizeChange/applyResize (source stride uses new width instead of old width). Evidence and expected outcome in feedback-1.txt.",
+        "interrupt": true,
+        "proposedUTC": "2026-11-19T00:27:43.536835+00:00",
+        "acceptedUTC": "2026-11-19T00:27:43.536862+00:00",
+        "elapsedSeconds": 127.325,
+        "workerPID": 39972,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-19T00:27:43.581075+00:00",
+        "deliveredElapsedSeconds": 127.325
+      },
+      {
+        "number": 2,
+        "id": "sup-03fp-7kqa-0004",
+        "message": "Two points in this message.\n\n1) CONFIRMED - the resize pixel-scramble defect you fixed is now verified correct. I simulated the exact new copy loop (source stride = old width) for enlarge-W, enlarge-both, shrink, shrink-W, equal, and enlarge-H-only. In every case original pixels are preserved positionally. Good work on that fix; you can stop worrying about it.\n\n2) NEW FINDING - real defect in the sidebar \"Preset Sizes\" panel (part of the editable-canvas-size requirement). The preset buttons are ignored.\n\nRoot cause: buildPresets wires each preset button to onclick = () => { state.width = w; state.height = h; onCanvasSizeChange(); }. But onCanvasSizeChange does not read the target size from state - it reads it from the DOM inputs #canvas-w and #canvas-h. The preset click never updates those inputs, so onCanvasSizeChange always uses whatever the header inputs currently hold (default 32x32). Clicking \"64x64\" therefore resizes to 32x32, not 64x64.\n\nEvidence (byte-level simulation of the real handler path): starting from DOM inputs 32x32, clicking the 64x64 preset sets state.width=64 but the handler reads the DOM inputs (still 32) and resizes to 32x32. FAIL.\n\nExpected behavior: clicking a preset button (16x16, 32x32, 48x48, 64x64, 128x128, 256x256) should resize the canvas to that preset size. The simplest correct fix is to make the preset button also write the header inputs before calling the resize handler, e.g. set the #canvas-w / #canvas-h values to w and h first, or call a shared resize(oldW, oldH, w, h) helper directly. Either way the clicked preset size must be the size applied.\n\nPlease fix the preset buttons and add a test that clicks a preset and checks the resulting canvas dimensions match the preset. Do not otherwise change verified-good behavior.\n",
+        "reason": "resize fix verified correct (stop worrying about it). New verified defect: sidebar Preset Sizes buttons are ignored - onCanvasSizeChange reads header DOM inputs which the preset click never updates, so clicking 64x64 resizes to 32x32. Evidence + expected outcome in feedback-2.txt.",
+        "interrupt": true,
+        "proposedUTC": "2026-11-19T00:33:46.136104+00:00",
+        "acceptedUTC": "2026-11-19T00:33:46.136115+00:00",
+        "elapsedSeconds": 489.924,
+        "workerPID": 39972,
+        "interrupted": true,
+        "deliveredUTC": "2026-11-19T00:33:47.011235+00:00",
+        "deliveredElapsedSeconds": 490.806
+      },
+      {
+        "number": 3,
+        "id": "sup-03fp-7kqa-0006",
+        "message": "Final update. Both of my findings are now verified RESOLVED in the current artifact (hash 8be2fb33f91f94767c103d734e42189b72922281c42a577112c42596b8e5473e):\n\n1) Resize pixel-scramble: fixed and re-verified. I simulated the new copy loop (source stride = old width) for enlarge-W, enlarge-both, shrink, shrink-W, equal, and enlarge-H-only. All preserve original pixels positionally. Your own preset/shrink tests also pass.\n\n2) Sidebar Preset Sizes buttons: fixed and verified. Clicking 16x16, 32x32, 48x48, 64x64, 128x128, 256x256 now correctly resizes the canvas to that size even when the header inputs start dirty. My simulation confirms 64x64 -> 64x64 and 256x256 -> 256x256.\n\nNo further defects found in the editable-canvas-size area. The rest of the tool (brush, eraser, fill, pick, undo/redo, clear, PNG export, mouse+touch) was unchanged and I preserved it.\n\nYou may finalize and submit the current artifact for independent assessment. No more required feedback from me.\n",
+        "reason": "both findings resolved and verified. Queuing final confirmation so worker can finalize/submit. Non-disruptive (interrupt:false).",
+        "interrupt": false,
+        "proposedUTC": "2026-11-19T00:35:57.255216+00:00",
+        "acceptedUTC": "2026-11-19T00:38:10.527004+00:00",
+        "elapsedSeconds": 754.333,
+        "workerPID": 39972,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-19T00:38:10.559864+00:00",
+        "deliveredElapsedSeconds": 754.333
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 2,
+        "at": "2026-11-19T00:35:51.940506+00:00",
+        "sha256": "8be2fb33f91f94767c103d734e42189b72922281c42a577112c42596b8e5473e",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case123/feedback2"
+      },
+      {
+        "feedback": 3,
+        "at": "2026-11-19T00:38:29.450297+00:00",
+        "sha256": "8be2fb33f91f94767c103d734e42189b72922281c42a577112c42596b8e5473e",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case123/feedback3"
+      }
+    ],
+    "supervisorWakeups": [
+      {
+        "at": "2026-11-19T00:28:47.825150+00:00",
+        "elapsedSeconds": 191.62,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:29:17.851803+00:00",
+        "elapsedSeconds": 221.65,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:33:58.333510+00:00",
+        "elapsedSeconds": 502.13,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:36:11.828415+00:00",
+        "elapsedSeconds": 635.63,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:37:41.895347+00:00",
+        "elapsedSeconds": 725.7,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:38:11.920861+00:00",
+        "elapsedSeconds": 755.73,
+        "source": "worker_progress_or_clock_metadata"
+      }
+    ],
+    "supervisorYields": [
+      {
+        "at": "2026-11-19T00:28:47.282821+00:00",
+        "id": "sup-03fp-7kqa-0002",
+        "pid": 39974,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:29:03.138804+00:00",
+        "id": "sup-03fp-7kqa-0003",
+        "pid": 39974,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:33:57.682354+00:00",
+        "id": "sup-03fp-7kqa-0005",
+        "pid": 39974,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:36:10.418789+00:00",
+        "id": "sup-03fp-7kqa-0007",
+        "pid": 39974,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:36:18.804448+00:00",
+        "id": "sup-03fp-7kqa-0008",
+        "pid": 39974,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:37:49.667163+00:00",
+        "id": "sup-03fp-7kqa-0009",
+        "pid": 39974,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      }
+    ],
+    "supervisorStopRequest": null,
+    "independentGradeGates": [
+      {
+        "at": "2026-11-19T00:38:10.374137+00:00",
+        "sha256": "8be2fb33f91f94767c103d734e42189b72922281c42a577112c42596b8e5473e",
+        "productScore": 78.75,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_qwen_03_pixel_painter.round2.qa.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "sha256": "a98c8caf33d6857ed69a76b0a93ff0ac40bf1c7f8e38863072a405b7cd8a88a8",
+      "baselineScore": 72,
+      "baselineRubricScores": {
+        "functionality": 32,
+        "artifact_correctness": 21,
+        "usability": 8,
+        "self_verification": 1,
+        "autonomy": 10
+      },
+      "baselineProductScore": 76.25,
+      "baselineTargetMet": false,
+      "baselineReport": "strategies/reports/rtfm_qwen_03_pixel_painter.report.json",
+      "creationCost": {
+        "model": "qwen",
+        "role": "worker",
+        "pid": 73244,
+        "assistantUsage": {
+          "input": 3188,
+          "output": 11571,
+          "cacheRead": 71245,
+          "cacheWrite": 0,
+          "totalTokens": 86004
+        },
+        "recordedCompactionUsage": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "totalTokens": 0
+        },
+        "recordedCombinedUsage": {
+          "input": 3188,
+          "output": 11571,
+          "cacheRead": 71245,
+          "cacheWrite": 0,
+          "totalTokens": 86004
+        },
+        "unreportedCompactions": 0,
+        "activeMinutes": 2.403,
+        "promptCount": 1,
+        "streamingWindows": [
+          {
+            "start": 1165545.67566775,
+            "end": 1165549.273691541
+          },
+          {
+            "start": 1165549.507382541,
+            "end": 1165673.796734875
+          },
+          {
+            "start": 1165673.880743875,
+            "end": 1165676.132412
+          },
+          {
+            "start": 1165676.41893925,
+            "end": 1165678.437870291
+          },
+          {
+            "start": 1165678.670596791,
+            "end": 1165680.133522541
+          },
+          {
+            "start": 1165680.417110041,
+            "end": 1165681.999957541
+          },
+          {
+            "start": 1165682.254309166,
+            "end": 1165687.657088916
+          }
+        ],
+        "exitCode": 0
+      },
+      "sourceCase": 113,
+      "sourceFolder": "rtfm/qwen/03_pixel_painter",
+      "frozenArtifact": "strategies/reports/initial-artifacts/rtfm_supervised_qwen_03_pixel_painter/index.html",
+      "frozenUTC": "2026-11-18T16:13:22.818932+00:00"
+    },
+    "sharedLimitSeconds": 7200,
+    "authorProfiles": "research/rtfm-runtime-profiles.json",
+    "runtimeConformance": "research/rtfm-supervised-conformance.json",
+    "sourceRTFMSoloCase": 113,
+    "supervisorInstructionDeviations": [
+      "Feedback included an explicit const oldW assignment and implementation suggestions despite the behavioral-only/no-repair-code instruction. Product writes remained exclusively with the worker; this is a local supervisor instruction deviation, not Codex repair steering."
+    ]
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 3,
+  "localModelCosts": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 39972,
+      "assistantUsage": {
+        "input": 19114,
+        "output": 10924,
+        "cacheRead": 578204,
+        "cacheWrite": 0,
+        "totalTokens": 608242
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 19114,
+        "output": 10924,
+        "cacheRead": 578204,
+        "cacheWrite": 0,
+        "totalTokens": 608242
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 8.454,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1196676.687936416,
+          "end": 1196683.675738958
+        },
+        {
+          "start": 1196683.798904375,
+          "end": 1196689.448328916
+        },
+        {
+          "start": 1196689.728770666,
+          "end": 1196692.807982166
+        },
+        {
+          "start": 1196693.056151916,
+          "end": 1196694.658775291
+        },
+        {
+          "start": 1196694.923617166,
+          "end": 1196697.319689541
+        },
+        {
+          "start": 1196697.42266575,
+          "end": 1196763.830876791
+        },
+        {
+          "start": 1196763.947532666,
+          "end": 1196857.125773708
+        },
+        {
+          "start": 1196857.292518666,
+          "end": 1196859.572687916
+        },
+        {
+          "start": 1196859.892888666,
+          "end": 1196863.095364125
+        },
+        {
+          "start": 1196863.39697825,
+          "end": 1196866.340028
+        },
+        {
+          "start": 1196866.684821666,
+          "end": 1196871.112617708
+        },
+        {
+          "start": 1196871.395477166,
+          "end": 1196875.834966916
+        },
+        {
+          "start": 1196876.142310958,
+          "end": 1196880.604253708
+        },
+        {
+          "start": 1196881.003763208,
+          "end": 1196883.698557291
+        },
+        {
+          "start": 1196884.029920625,
+          "end": 1196898.917327
+        },
+        {
+          "start": 1196899.079084208,
+          "end": 1196902.191851458
+        },
+        {
+          "start": 1196902.547255625,
+          "end": 1196908.06225575
+        },
+        {
+          "start": 1196908.442516916,
+          "end": 1197038.9605435
+        },
+        {
+          "start": 1197039.987867541,
+          "end": 1197042.282327625
+        },
+        {
+          "start": 1197042.868919625,
+          "end": 1197050.656235041
+        },
+        {
+          "start": 1197050.810949083,
+          "end": 1197062.341793958
+        },
+        {
+          "start": 1197062.689905333,
+          "end": 1197106.170616333
+        },
+        {
+          "start": 1197106.179394125,
+          "end": 1197106.180127958
+        },
+        {
+          "start": 1197108.329870041,
+          "end": 1197110.119768708
+        },
+        {
+          "start": 1197110.463065583,
+          "end": 1197140.638822125
+        },
+        {
+          "start": 1197140.924015291,
+          "end": 1197147.318203041
+        },
+        {
+          "start": 1197147.657954541,
+          "end": 1197163.343715458
+        },
+        {
+          "start": 1197303.497126083,
+          "end": 1197308.501111541
+        },
+        {
+          "start": 1197308.819810625,
+          "end": 1197318.452905208
+        },
+        {
+          "start": 1197318.802084333,
+          "end": 1197321.423363041
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 39974,
+      "assistantUsage": {
+        "input": 26422,
+        "output": 15805,
+        "cacheRead": 1276162,
+        "cacheWrite": 0,
+        "totalTokens": 1318389
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 26422,
+        "output": 15805,
+        "cacheRead": 1276162,
+        "cacheWrite": 0,
+        "totalTokens": 1318389
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 10.953,
+      "promptCount": 7,
+      "streamingWindows": [
+        {
+          "start": 1196549.777998208,
+          "end": 1196553.5512585
+        },
+        {
+          "start": 1196553.610092958,
+          "end": 1196556.66654975
+        },
+        {
+          "start": 1196556.898170458,
+          "end": 1196611.531670416
+        },
+        {
+          "start": 1196611.820850541,
+          "end": 1196632.442205291
+        },
+        {
+          "start": 1196632.742990583,
+          "end": 1196646.837048958
+        },
+        {
+          "start": 1196646.962714916,
+          "end": 1196648.36699375
+        },
+        {
+          "start": 1196648.667549375,
+          "end": 1196672.967405416
+        },
+        {
+          "start": 1196673.088173541,
+          "end": 1196676.358034916
+        },
+        {
+          "start": 1196676.438214833,
+          "end": 1196682.721033666
+        },
+        {
+          "start": 1196683.04391575,
+          "end": 1196687.323294083
+        },
+        {
+          "start": 1196687.6435105,
+          "end": 1196691.505272708
+        },
+        {
+          "start": 1196691.76766975,
+          "end": 1196697.058983166
+        },
+        {
+          "start": 1196697.379412583,
+          "end": 1196710.955596166
+        },
+        {
+          "start": 1196710.964571458,
+          "end": 1196710.965299166
+        },
+        {
+          "start": 1196713.1251565,
+          "end": 1196740.059742375
+        },
+        {
+          "start": 1196740.06737475,
+          "end": 1196740.06900975
+        },
+        {
+          "start": 1196740.771197791,
+          "end": 1196742.976728833
+        },
+        {
+          "start": 1196743.138533708,
+          "end": 1196748.817115083
+        },
+        {
+          "start": 1196749.11575725,
+          "end": 1196755.915714833
+        },
+        {
+          "start": 1196755.9211545,
+          "end": 1196755.924051791
+        },
+        {
+          "start": 1196770.810759958,
+          "end": 1196772.743841791
+        },
+        {
+          "start": 1196772.8862835,
+          "end": 1196783.627551416
+        },
+        {
+          "start": 1196784.024450708,
+          "end": 1196788.59040275
+        },
+        {
+          "start": 1196788.961193666,
+          "end": 1196795.443421916
+        },
+        {
+          "start": 1196795.658455625,
+          "end": 1196863.853566833
+        },
+        {
+          "start": 1196864.044386666,
+          "end": 1196872.087634166
+        },
+        {
+          "start": 1196872.3136835,
+          "end": 1196903.802598625
+        },
+        {
+          "start": 1196904.023749541,
+          "end": 1196909.305291291
+        },
+        {
+          "start": 1196909.623828541,
+          "end": 1196961.405494166
+        },
+        {
+          "start": 1196961.626670791,
+          "end": 1196985.266056791
+        },
+        {
+          "start": 1196985.44557525,
+          "end": 1196992.68635625
+        },
+        {
+          "start": 1196993.138743208,
+          "end": 1197023.31755575
+        },
+        {
+          "start": 1197023.330077833,
+          "end": 1197023.331441083
+        },
+        {
+          "start": 1197025.545670041,
+          "end": 1197038.956251166
+        },
+        {
+          "start": 1197039.102690958,
+          "end": 1197040.490908458
+        },
+        {
+          "start": 1197040.499062583,
+          "end": 1197040.500253708
+        },
+        {
+          "start": 1197042.906442875,
+          "end": 1197050.460019916
+        },
+        {
+          "start": 1197050.4652335,
+          "end": 1197050.466190416
+        },
+        {
+          "start": 1197051.335786916,
+          "end": 1197053.369222333
+        },
+        {
+          "start": 1197053.598159916,
+          "end": 1197063.278618375
+        },
+        {
+          "start": 1197063.633249041,
+          "end": 1197087.574814416
+        },
+        {
+          "start": 1197087.817144333,
+          "end": 1197108.24897025
+        },
+        {
+          "start": 1197108.416543625,
+          "end": 1197114.203773875
+        },
+        {
+          "start": 1197114.655394125,
+          "end": 1197139.012253708
+        },
+        {
+          "start": 1197139.385661416,
+          "end": 1197166.502287291
+        },
+        {
+          "start": 1197166.700080958,
+          "end": 1197170.041085375
+        },
+        {
+          "start": 1197170.2198655,
+          "end": 1197171.273023333
+        },
+        {
+          "start": 1197171.462968541,
+          "end": 1197183.20501325
+        },
+        {
+          "start": 1197183.210893083,
+          "end": 1197183.21226475
+        },
+        {
+          "start": 1197184.80984425,
+          "end": 1197186.205386083
+        },
+        {
+          "start": 1197186.212430791,
+          "end": 1197186.213968958
+        },
+        {
+          "start": 1197188.406869708,
+          "end": 1197191.590722625
+        },
+        {
+          "start": 1197191.600117958,
+          "end": 1197191.601384625
+        },
+        {
+          "start": 1197274.88620625,
+          "end": 1197276.262144291
+        },
+        {
+          "start": 1197276.269744125,
+          "end": 1197276.270920583
+        },
+        {
+          "start": 1197278.4547705,
+          "end": 1197282.453769416
+        },
+        {
+          "start": 1197282.460191125,
+          "end": 1197282.461830333
+        },
+        {
+          "start": 1197304.930215625,
+          "end": 1197307.089059875
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 12.889,
+  "summedModelActiveMinutes": 19.407,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 26422,
+      "output": 15805,
+      "cacheRead": 1276162,
+      "totalTokens": 1318389
+    },
+    "qwen": {
+      "input": 19114,
+      "output": 10924,
+      "cacheRead": 578204,
+      "totalTokens": 608242
+    }
+  },
+  "modelWallMinutes": {
+    "qwen": 8.454,
+    "ornith": 10.953
+  },
+  "localProductScore": 78.8,
+  "localProductTargetMet": false,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  },
+  "localProductScoreExact": 78.75,
+  "attemptNumber": 1,
+  "priorInfrastructureInvalidAttempts": [],
+  "baselineAlreadyA": false,
+  "baselineScore": 72,
+  "baselineProductScore": 76.25,
+  "baselineTargetMet": false,
+  "baselineReport": "strategies/reports/rtfm_qwen_03_pixel_painter.report.json",
+  "baselineCreationCost": {
+    "model": "qwen",
+    "role": "worker",
+    "pid": 73244,
+    "assistantUsage": {
+      "input": 3188,
+      "output": 11571,
+      "cacheRead": 71245,
+      "cacheWrite": 0,
+      "totalTokens": 86004
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 3188,
+      "output": 11571,
+      "cacheRead": 71245,
+      "cacheWrite": 0,
+      "totalTokens": 86004
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 2.403,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1165545.67566775,
+        "end": 1165549.273691541
+      },
+      {
+        "start": 1165549.507382541,
+        "end": 1165673.796734875
+      },
+      {
+        "start": 1165673.880743875,
+        "end": 1165676.132412
+      },
+      {
+        "start": 1165676.41893925,
+        "end": 1165678.437870291
+      },
+      {
+        "start": 1165678.670596791,
+        "end": 1165680.133522541
+      },
+      {
+        "start": 1165680.417110041,
+        "end": 1165681.999957541
+      },
+      {
+        "start": 1165682.254309166,
+        "end": 1165687.657088916
+      }
+    ],
+    "exitCode": 0
+  },
+  "incrementalRepairCost": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 39972,
+      "assistantUsage": {
+        "input": 19114,
+        "output": 10924,
+        "cacheRead": 578204,
+        "cacheWrite": 0,
+        "totalTokens": 608242
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 19114,
+        "output": 10924,
+        "cacheRead": 578204,
+        "cacheWrite": 0,
+        "totalTokens": 608242
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 8.454,
+      "promptCount": 3,
+      "streamingWindows": [
+        {
+          "start": 1196676.687936416,
+          "end": 1196683.675738958
+        },
+        {
+          "start": 1196683.798904375,
+          "end": 1196689.448328916
+        },
+        {
+          "start": 1196689.728770666,
+          "end": 1196692.807982166
+        },
+        {
+          "start": 1196693.056151916,
+          "end": 1196694.658775291
+        },
+        {
+          "start": 1196694.923617166,
+          "end": 1196697.319689541
+        },
+        {
+          "start": 1196697.42266575,
+          "end": 1196763.830876791
+        },
+        {
+          "start": 1196763.947532666,
+          "end": 1196857.125773708
+        },
+        {
+          "start": 1196857.292518666,
+          "end": 1196859.572687916
+        },
+        {
+          "start": 1196859.892888666,
+          "end": 1196863.095364125
+        },
+        {
+          "start": 1196863.39697825,
+          "end": 1196866.340028
+        },
+        {
+          "start": 1196866.684821666,
+          "end": 1196871.112617708
+        },
+        {
+          "start": 1196871.395477166,
+          "end": 1196875.834966916
+        },
+        {
+          "start": 1196876.142310958,
+          "end": 1196880.604253708
+        },
+        {
+          "start": 1196881.003763208,
+          "end": 1196883.698557291
+        },
+        {
+          "start": 1196884.029920625,
+          "end": 1196898.917327
+        },
+        {
+          "start": 1196899.079084208,
+          "end": 1196902.191851458
+        },
+        {
+          "start": 1196902.547255625,
+          "end": 1196908.06225575
+        },
+        {
+          "start": 1196908.442516916,
+          "end": 1197038.9605435
+        },
+        {
+          "start": 1197039.987867541,
+          "end": 1197042.282327625
+        },
+        {
+          "start": 1197042.868919625,
+          "end": 1197050.656235041
+        },
+        {
+          "start": 1197050.810949083,
+          "end": 1197062.341793958
+        },
+        {
+          "start": 1197062.689905333,
+          "end": 1197106.170616333
+        },
+        {
+          "start": 1197106.179394125,
+          "end": 1197106.180127958
+        },
+        {
+          "start": 1197108.329870041,
+          "end": 1197110.119768708
+        },
+        {
+          "start": 1197110.463065583,
+          "end": 1197140.638822125
+        },
+        {
+          "start": 1197140.924015291,
+          "end": 1197147.318203041
+        },
+        {
+          "start": 1197147.657954541,
+          "end": 1197163.343715458
+        },
+        {
+          "start": 1197303.497126083,
+          "end": 1197308.501111541
+        },
+        {
+          "start": 1197308.819810625,
+          "end": 1197318.452905208
+        },
+        {
+          "start": 1197318.802084333,
+          "end": 1197321.423363041
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 39974,
+      "assistantUsage": {
+        "input": 26422,
+        "output": 15805,
+        "cacheRead": 1276162,
+        "cacheWrite": 0,
+        "totalTokens": 1318389
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 26422,
+        "output": 15805,
+        "cacheRead": 1276162,
+        "cacheWrite": 0,
+        "totalTokens": 1318389
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 10.953,
+      "promptCount": 7,
+      "streamingWindows": [
+        {
+          "start": 1196549.777998208,
+          "end": 1196553.5512585
+        },
+        {
+          "start": 1196553.610092958,
+          "end": 1196556.66654975
+        },
+        {
+          "start": 1196556.898170458,
+          "end": 1196611.531670416
+        },
+        {
+          "start": 1196611.820850541,
+          "end": 1196632.442205291
+        },
+        {
+          "start": 1196632.742990583,
+          "end": 1196646.837048958
+        },
+        {
+          "start": 1196646.962714916,
+          "end": 1196648.36699375
+        },
+        {
+          "start": 1196648.667549375,
+          "end": 1196672.967405416
+        },
+        {
+          "start": 1196673.088173541,
+          "end": 1196676.358034916
+        },
+        {
+          "start": 1196676.438214833,
+          "end": 1196682.721033666
+        },
+        {
+          "start": 1196683.04391575,
+          "end": 1196687.323294083
+        },
+        {
+          "start": 1196687.6435105,
+          "end": 1196691.505272708
+        },
+        {
+          "start": 1196691.76766975,
+          "end": 1196697.058983166
+        },
+        {
+          "start": 1196697.379412583,
+          "end": 1196710.955596166
+        },
+        {
+          "start": 1196710.964571458,
+          "end": 1196710.965299166
+        },
+        {
+          "start": 1196713.1251565,
+          "end": 1196740.059742375
+        },
+        {
+          "start": 1196740.06737475,
+          "end": 1196740.06900975
+        },
+        {
+          "start": 1196740.771197791,
+          "end": 1196742.976728833
+        },
+        {
+          "start": 1196743.138533708,
+          "end": 1196748.817115083
+        },
+        {
+          "start": 1196749.11575725,
+          "end": 1196755.915714833
+        },
+        {
+          "start": 1196755.9211545,
+          "end": 1196755.924051791
+        },
+        {
+          "start": 1196770.810759958,
+          "end": 1196772.743841791
+        },
+        {
+          "start": 1196772.8862835,
+          "end": 1196783.627551416
+        },
+        {
+          "start": 1196784.024450708,
+          "end": 1196788.59040275
+        },
+        {
+          "start": 1196788.961193666,
+          "end": 1196795.443421916
+        },
+        {
+          "start": 1196795.658455625,
+          "end": 1196863.853566833
+        },
+        {
+          "start": 1196864.044386666,
+          "end": 1196872.087634166
+        },
+        {
+          "start": 1196872.3136835,
+          "end": 1196903.802598625
+        },
+        {
+          "start": 1196904.023749541,
+          "end": 1196909.305291291
+        },
+        {
+          "start": 1196909.623828541,
+          "end": 1196961.405494166
+        },
+        {
+          "start": 1196961.626670791,
+          "end": 1196985.266056791
+        },
+        {
+          "start": 1196985.44557525,
+          "end": 1196992.68635625
+        },
+        {
+          "start": 1196993.138743208,
+          "end": 1197023.31755575
+        },
+        {
+          "start": 1197023.330077833,
+          "end": 1197023.331441083
+        },
+        {
+          "start": 1197025.545670041,
+          "end": 1197038.956251166
+        },
+        {
+          "start": 1197039.102690958,
+          "end": 1197040.490908458
+        },
+        {
+          "start": 1197040.499062583,
+          "end": 1197040.500253708
+        },
+        {
+          "start": 1197042.906442875,
+          "end": 1197050.460019916
+        },
+        {
+          "start": 1197050.4652335,
+          "end": 1197050.466190416
+        },
+        {
+          "start": 1197051.335786916,
+          "end": 1197053.369222333
+        },
+        {
+          "start": 1197053.598159916,
+          "end": 1197063.278618375
+        },
+        {
+          "start": 1197063.633249041,
+          "end": 1197087.574814416
+        },
+        {
+          "start": 1197087.817144333,
+          "end": 1197108.24897025
+        },
+        {
+          "start": 1197108.416543625,
+          "end": 1197114.203773875
+        },
+        {
+          "start": 1197114.655394125,
+          "end": 1197139.012253708
+        },
+        {
+          "start": 1197139.385661416,
+          "end": 1197166.502287291
+        },
+        {
+          "start": 1197166.700080958,
+          "end": 1197170.041085375
+        },
+        {
+          "start": 1197170.2198655,
+          "end": 1197171.273023333
+        },
+        {
+          "start": 1197171.462968541,
+          "end": 1197183.20501325
+        },
+        {
+          "start": 1197183.210893083,
+          "end": 1197183.21226475
+        },
+        {
+          "start": 1197184.80984425,
+          "end": 1197186.205386083
+        },
+        {
+          "start": 1197186.212430791,
+          "end": 1197186.213968958
+        },
+        {
+          "start": 1197188.406869708,
+          "end": 1197191.590722625
+        },
+        {
+          "start": 1197191.600117958,
+          "end": 1197191.601384625
+        },
+        {
+          "start": 1197274.88620625,
+          "end": 1197276.262144291
+        },
+        {
+          "start": 1197276.269744125,
+          "end": 1197276.270920583
+        },
+        {
+          "start": 1197278.4547705,
+          "end": 1197282.453769416
+        },
+        {
+          "start": 1197282.460191125,
+          "end": 1197282.461830333
+        },
+        {
+          "start": 1197304.930215625,
+          "end": 1197307.089059875
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "artifactChangedFromSeed": true,
+  "productDelta": 2.5,
+  "newlyReachedAQuality": false
+}

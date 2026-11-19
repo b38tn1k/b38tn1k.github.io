@@ -1,0 +1,21 @@
+{
+  "method": "Exact-source VM/DOM with deterministic timer and state-only instrumentation; no browser",
+  "sha256": "cbcbaca22cba945c7c66d9f06697b571f3bb7f20dcd20705176821d7070c6a82",
+  "closedScripts": false,
+  "externalResources": [],
+  "startup": "no closed script executed",
+  "activeEventTimers": 0,
+  "buttons": [
+    {
+      "id": "export",
+      "text": "Export STL",
+      "disabled": false
+    },
+    {
+      "id": "reset",
+      "text": "Reset",
+      "disabled": false
+    }
+  ],
+  "scriptEndMissing": true
+}

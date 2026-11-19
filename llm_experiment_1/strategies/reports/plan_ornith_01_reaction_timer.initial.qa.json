@@ -1,0 +1,55 @@
+{
+  "method": "Exact-source VM, linkedom events, deterministic random wait and clock; no browser",
+  "startup": "pass",
+  "initial": "Ready. Click to start.",
+  "waiting": "Trial 1 of 5. Wait for the green light.",
+  "trials": [
+    {
+      "go": "Go!",
+      "measured": "0",
+      "status": "Trial 2 of 5. Wait for the green light."
+    },
+    {
+      "go": "Go!",
+      "measured": "0",
+      "status": "Trial 4 of 5. Wait for the green light."
+    },
+    {
+      "go": "Go!",
+      "measured": "0",
+      "status": "Trial 6 of 5. Wait for the green light."
+    },
+    {
+      "go": "Go!",
+      "measured": "0",
+      "status": "Trial 8 of 5. Wait for the green light."
+    },
+    {
+      "go": "Go!",
+      "measured": "0",
+      "status": "Trial 10 of 5. Wait for the green light."
+    }
+  ],
+  "summary": {
+    "average": "—",
+    "min": "—",
+    "max": "—",
+    "rows": 0,
+    "status": "Trial 11 of 5. Wait for the green light."
+  },
+  "restart": "Ready. Click to start.",
+  "falseStart": "Trial 2 of 5. Wait for the green light.",
+  "retry": "Trial 3 of 5. Wait for the green light.",
+  "afterOneFalseStart": {
+    "summaryRows": 0,
+    "average": "—",
+    "status": "Trial 11 of 5. Wait for the green light."
+  },
+  "expectedNormal": {
+    "average": "220 ms",
+    "min": "200 ms",
+    "max": "240 ms",
+    "rows": 5
+  },
+  "sha256": "bcec0faceb5d4892084da29d1896fd691abac52f22c8c02558b4f84408a1a491"
+}

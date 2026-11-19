@@ -1,0 +1,224 @@
+{
+  "score": 84,
+  "grade": "B - core Snake works; restart duplicates ticks and tail collision is wrong",
+  "rubricScores": {
+    "functionality": 35,
+    "artifact_correctness": 25,
+    "usability": 13,
+    "self_verification": 1,
+    "autonomy": 10
+  },
+  "summary": "Core keyboard play, growth, score, difficulty and pause/resume work. Restart while running accumulates tick intervals and accelerates play; collision logic also rejects a legal move into the vacating tail cell.",
+  "strengths": [
+    "Actual start/keyboard/pause/resume/reset controls and native Canvas2D head pixels pass.",
+    "Food grows the snake, score updates, fifth food raises level2 and lowers tick interval150\u2192140ms.",
+    "Wall and occupied-body collisions trigger immediately and reverse direction is prevented. Full-board food search terminates without looping.",
+    "Single self-contained offline HTML."
+  ],
+  "defects": [
+    "Three R restarts during play leave four active tick intervals. In155ms the head moves four cells instead of one, changing the intended difficulty and making restart behavior incorrect.",
+    "Self-collision checks include the tail cell even when it will move away on that tick, incorrectly ending a legal non-growing turn.",
+    "Minor completion-state issue: full-board food search sets gameOver but does not display the completion/game-over overlay. No explicit win-screen requirement was imposed."
+  ],
+  "verification": [
+    "Independent final source70e579fcd652cd3260a76bb17765b431c87e35e3f25601d82cd7d07d5f5b1a88 with actual buttons/document key events, interval/RAF scheduler and nativeCanvas pixels.",
+    "Controlled input fixtures exercise unchanged food, growth, difficulty, next-head collision, tail and full-board algorithms; actual repeated-restart timing confirms the duplicate schedules affect gameplay."
+  ],
+  "verificationConcerns": [
+    "Model verification lists files, checks tags/function/source counts and attempts an unavailable open command. It does not execute game behavior or scheduling. Minimal self-verification credit.",
+    "No browser layout/hit testing or independent visual-polish verification."
+  ],
+  "scopeCompliance": "Model authored its own product within the isolated project. No Codex app code, diagnoses, repair prompts or other-model guidance supplied. Browser-opening attempt was unavailable; no browser automation used. Independent QA remained outside candidate directories.",
+  "workflowNotes": "Fresh solo RTFM Qwen, one exact original kickoff, normal autonomous settlement after1.477wall minutes. Frozen verified author-informed profile, same native context and unchanged60minute cap.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "Single trial of a bundled settings/serving configuration; local Q4 weights and32768tokens per response.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM is a fresh solo author-informed settings bundle, not an isolated causal test of reasoning or sampling. Same Q4 weights; common32K local output cap and60min deadline. Actual backend/template evidence is linked separately; this is not a replication of full-precision author benchmarks."
+  ],
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "rtfm",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The Snake game is complete! Here's a summary of what's been built:\n\n## \ud83d\udc0d Snake Game \u2014 `index.html`\n\n**Features delivered:**\n- **Keyboard controls** \u2014 Arrow keys or WASD for movement\n- **Food spawning** \u2014 Pulsating red food that spawns on free cells\n- **Scoring** \u2014 Score counter + persistent high score via `localStorage`\n- **Wall collision** \u2014 Game ends if snake hits the boundary\n- **Self collision** \u2014 Game ends if snake runs into itself\n- **Pause** \u2014 Press `Space` to pause/resume (PAUSED overlay shown)\n- **Restart** \u2014 Press `R` or click \"Play Again\" button\n- **Increasing difficulty** \u2014 Speed increases every 5 points (20 levels), with a gradient difficulty bar showing current level\n- **New high score detection** \u2014 Celebratory message when beaten\n\n**Visual polish:**\n- Gradient snake body with eyes that follow direction\n- Animated food with glow effect\n- Particle burst on eating food\n- Dark themed UI with gradient accents\n- Smooth overlay transitions\n- Grid background\n- RoundRect snake segments with radial gradients\n\n**Controls:**\n| Key | Action |\n|-----|--------|\n| `\u2191 \u2193 \u2190 \u2192` or `W A S D` | Move |\n| `Space` | Pause / Resume |\n| `R` | Restart |\n\nThe file at `./index.html` is fully self-contained \u2014 no external dependencies, works completely offline. Open it in any modern browser to play.",
+  "workflowInstructions": "rtfm-plan.json; run-rtfm.py; research/rtfm-conformance.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 1.477,
+  "wallMinutes": 1.477,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 6,
+  "parentToolCalls": 6,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 0,
+  "modelUsageReported": {
+    "input": 2921,
+    "output": 6942,
+    "cacheRead": 47651,
+    "totalTokens": 57514
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 9659,
+  "parentPeakReportedPromptTokens": 9659,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 2921,
+    "output": 6942,
+    "cacheRead": 47651,
+    "totalTokens": 57514
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 17434,
+  "sha256": "70e579fcd652cd3260a76bb17765b431c87e35e3f25601d82cd7d07d5f5b1a88",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 0,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": [],
+    "controller": "Fresh single persistent native Pi; exact original kickoff, author-informed inference recipe",
+    "actualPromptCount": 1,
+    "sharedLimitSeconds": 3600,
+    "authorRecipeSource": "research/rtfm-author-recipes.json",
+    "requestedRecipe": {
+      "model": "qwen3.6:35b-a3b",
+      "recipe": "Official thinking-mode precise-coding/WebDev sampling",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "presence_penalty": 0.0,
+      "repeat_penalty": 1.0,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "outputBudgetBasis": "Authors recommend32768 for mostqueries;81920 for difficult competition math/programming benchmarks.",
+      "preserveThinking": true,
+      "preserveThinkingBasis": "Official Preserve Thinking section says retaining prior reasoning helps agent scenarios; verify actual roundtrip/rendered history, not only requested flag."
+    },
+    "appliedRuntimeProfile": {
+      "apiModel": "qwen3.6:35b-a3b-rtfm",
+      "baseUrl": "http://127.0.0.1:11438/v1",
+      "port": 11438,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "weights": "/home/b38tn1k/models/ollama/blobs/sha256-d372de8e934898a59e6ccfabc3368474711384d8f1fd4d22d87a3f0a45400cdc",
+      "templateSHA256": "1b8361565cc35d47551d342214cff341c0f1a9685ce529c7ce31de0ed3616248",
+      "unitSHA256": "1b3c9d76647f0b1644d48486cce062e5bc857c59dedcfce924ed844722e546f5",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "repeat_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "gpuLayers": "42/42",
+      "role": "fresh solo",
+      "outputBudgetCaveat": "32768 shared local ceiling; not an Ornith universal author recommendation"
+    },
+    "runtimeConformance": "research/rtfm-conformance.json",
+    "productAuthor": "single local model only",
+    "externalProductGuidance": 0
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "humanSteering": false,
+  "modelActiveMinutes": 1.476,
+  "nativeModelCost": {
+    "model": "qwen",
+    "role": "worker",
+    "pid": 62484,
+    "assistantUsage": {
+      "input": 2921,
+      "output": 6942,
+      "cacheRead": 47651,
+      "cacheWrite": 0,
+      "totalTokens": 57514
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 2921,
+      "output": 6942,
+      "cacheRead": 47651,
+      "cacheWrite": 0,
+      "totalTokens": 57514
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 1.476,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1165297.960738208,
+        "end": 1165301.743102875
+      },
+      {
+        "start": 1165301.966635833,
+        "end": 1165369.764761083
+      },
+      {
+        "start": 1165369.840031,
+        "end": 1165371.915706333
+      },
+      {
+        "start": 1165372.192994625,
+        "end": 1165373.706765791
+      },
+      {
+        "start": 1165373.922211166,
+        "end": 1165376.779180375
+      },
+      {
+        "start": 1165377.016562791,
+        "end": 1165379.00088525
+      },
+      {
+        "start": 1165379.229264166,
+        "end": 1165384.595607916
+      }
+    ],
+    "exitCode": 0
+  },
+  "rtfmFinalSnapshot": "strategies/reports/rtfm-finals/case112"
+}

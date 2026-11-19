@@ -1,0 +1,69 @@
+{
+  "method": "Independent actual-source event and Canvas-buffer checks. Real pointer/palette/eraser/history/resize/export/touch handlers, no substituted app algorithms. PNG bytes and browser behavior unverified.",
+  "sha256": "e44c5fac065c5e82d2a8c8dac1672a6bedd4e0ed8ea0be4567d843cd96f5ed34",
+  "checks": [
+    {
+      "id": "palette_brush",
+      "pass": true,
+      "evidence": {
+        "red": true,
+        "pixel": [
+          231,
+          76,
+          60,
+          255
+        ]
+      }
+    },
+    {
+      "id": "eraser",
+      "pass": false,
+      "error": "Selected eraser still paints"
+    },
+    {
+      "id": "continuous_brush_drag",
+      "pass": false,
+      "error": "Brush drag erases its path instead of painting"
+    },
+    {
+      "id": "two_step_undo_redo",
+      "pass": false,
+      "error": "First undo must preserve the first stroke"
+    },
+    {
+      "id": "clear_undo",
+      "pass": false,
+      "error": "Undo clear must restore both strokes"
+    },
+    {
+      "id": "rectangular_resize_export",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          80,
+          40
+        ],
+        "farCorner": true,
+        "PNGDispatch": {
+          "kind": "canvasDataURL",
+          "width": 80,
+          "height": 40
+        },
+        "nativePNGUnverified": true
+      }
+    },
+    {
+      "id": "touch_paint",
+      "pass": true,
+      "evidence": {
+        "pixel": [
+          0,
+          0,
+          0,
+          255
+        ]
+      }
+    }
+  ],
+  "pass": false
+}

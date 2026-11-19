@@ -1,0 +1,12 @@
+This is an operator-assisted repair of the existing index.html in this project. Preserve working features and keep the final app one self-contained offline HTML file. You implement all code and tests. This is feedback1 of at most3; the same conversation will continue if another revision is needed.
+
+Original brief:
+Build a playable Snake game with keyboard controls, food, scoring, wall and self collisions, pause, restart, and increasing difficulty. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+Operator feedback:
+Independent current-source checks reproduce wall and self collisions being recognized one tick late: after the move into a wall/body the game remains running. Collision must be detected on the move that enters it, without an out-of-board head being displayed. The departing tail cell must remain legal when not growing. A fully occupied board currently leaves the game running with stale food; end with a clear win and no invalid food. Preserve working pause/resume/restart, controls, scoring and increasing speed; verify actual scheduled movement plus controlled collision/full-board fixtures.
+
+Verify through actual controls, callbacks and downloaded bytes, not source patterns alone. Record exact checks and remaining limitations in VERIFY.md. Stop when required behavior works; do not add unrelated features.
+
+Generic local tools: read the runtime API/limits at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/preferred-harness/README.md. Native Canvas2D/DOM/clock helper: /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/native-runtime.cjs. The exact helper files above are individually readable under isolation even when their parent-directory listing/search is denied; use those absolute paths. Use the documented returned runtime interfaces: application globals live in the sandbox/evaluation surface; the returned window object is an event target. Use bounded Bash timeout 90. Work only in this project. Browser automation is unavailable; do not launch browsers, headless Chromium, Playwright or Puppeteer. Unsupported adapter behavior is an environment limit, not an app defect. The repair budget is 60 minutes across all prompts and tests. No external reviewer or forced proof loop is active.
+

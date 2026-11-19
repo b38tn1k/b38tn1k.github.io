@@ -1,0 +1,274 @@
+{
+  "score": 22,
+  "grade": "F provisional - normal cue and reaction handling call an undefined testing helper",
+  "rubricScores": {
+    "functionality": 6,
+    "artifact_correctness": 7,
+    "usability": 7,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "strengths": [
+    "The file loads and the actual Start control schedules a wait. A pre-cue click displays the early/retry UI."
+  ],
+  "defects": [
+    "The normal scheduled cue callback calls _getFakeTime(), which is never defined in the delivered file. The actual timed flow throws before recording a valid measurement. The reaction handler also calls the same undefined helper.",
+    "The exposed advance() testing seam refers to undeclared _currentFakeTime under strict mode. Test-only timing assumptions have leaked into the product rather than using a complete real-clock implementation.",
+    "All three mixed rounds exhaust their budget without clearing the test/review gate."
+  ],
+  "verification": [
+    "The exact delivered file starts, then its genuine cue callback throws _getFakeTime is not defined. No fake-clock functions are injected by the independent driver. Pre-cue early-state handling passes."
+  ],
+  "humanOrSupervisorSteering": 0,
+  "scopeCompliance": "Pi models alone authored app, tests and reviews; OS read isolation and mandatory proof were active. No supervisor product implementation or task-specific repair hints.",
+  "verificationConcerns": [
+    "Independent Node VM/DOM/nativeCanvas execution, not browser layout or physical input verification. Single trial per task/configuration."
+  ],
+  "workflowNotes": "Frozen final source, original brief unchanged. qa/ralph-remaining-timers.cjs executes actual UI and scheduled timers; QA SHA must match before grading.",
+  "title": "Reaction timer",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "ralph_pingpong",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The review is complete. Here's my summary.\n\n## Review Summary\n\n**Verdict: `passed: false`** \u2014 the app contains a genuine, critical application bug.\n\n### The core defect\n`_getFakeTime` is **referenced but never defined** in `index.html` (lines 277 and 370). The comment at line 128 documents the intent: `clickStart // performance.now() when green appeared`, and the app uses `performance.now()` correctly elsewhere \u2014 so this was clearly an incomplete refactor where `_getFakeTime()` should have been `performance.now()`.\n\n**Impact:** The moment the green signal appears, `enterReady()` throws `ReferenceError` at `clickStart = _getFakeTime();`, and the click handler throws again at the measurement line. So:\n- No reaction time is ever recorded\n- Trials never advance\n- The 5-trial results summary is unreachable through normal play\n\nThis is a real application bug, **not** a harness/unsupported-API limitation: the identifiers exist in the app's own scope, they're just undefined, and the same crash fires in any real JS engine/browser.\n\n### What actually works (verified, `passed` for these)\n- Random per-trial wait (`MIN_WAIT=2000 / MAX_WAIT=6000` with `Math.random`)\n- False-start detection \u2192 `early` state + retry button (used `performance.now()`, no undefined ref)\n- Five trials (`NUM_TRIALS === 5`), retry loop, restart reset\n- Single self-contained offline `index.html` (inline CSS/JS, no network refs)\n\n### Test outcome\n43 candidate tests pass; tests 20 & 21 fail \u2014 precisely because they exercise the green path (`_getFakeTime is not defined`), and those failures reflect the real app bug, not broken tests. I did not weaken any assertions.\n\n### review.json\nWritten to `.ralph/review.json` with 5 passing requirement checks and 2 application failures (both with concrete reproductions), the second correctly derived from the first. `passed` is false because the core \"measure reaction time + results summary\" requirement is broken.",
+  "workflowInstructions": "run-ralph.py; research/ralph-setup.json",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 39.64,
+  "wallMinutes": 39.64,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "iteration_limit",
+  "exitCode": null,
+  "promptWords": 34,
+  "toolCalls": 416,
+  "parentToolCalls": 416,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 229,
+  "modelUsageReported": {
+    "input": 281067,
+    "output": 94326,
+    "cacheRead": 7754397,
+    "totalTokens": 8129790
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 48642,
+  "parentPeakReportedPromptTokens": 48642,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 281067,
+    "output": 94326,
+    "cacheRead": 7754397,
+    "totalTokens": 8129790
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 14642,
+  "sha256": "af69090169c422f2caa8cbace7c2cd1826ce5389936b81cfdf49fe90f3393d56",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 26,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 59,
+    "delegations": [],
+    "controller": "External Ralph-style fresh-process implementation/review loop",
+    "gate": {
+      "passed": false,
+      "iterations": 3,
+      "forcedProofEachImplementation": true
+    },
+    "stages": [
+      {
+        "round": 1,
+        "role": "implement",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-17T05:42:20.377447+00:00",
+        "events": "ralph_pingpong/qwen/01_reaction_timer/runtime/01-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T05:53:44.461734+00:00",
+        "minutes": 11.4,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 1,
+          "red": 1,
+          "green": 1
+        },
+        "testExitCode": 0
+      },
+      {
+        "round": 1,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-17T05:53:44.485881+00:00",
+        "events": "ralph_pingpong/qwen/01_reaction_timer/runtime/02-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T05:59:48.361387+00:00",
+        "minutes": 6.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 2,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-17T06:00:01.168800+00:00",
+        "events": "ralph_pingpong/qwen/01_reaction_timer/runtime/03-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T06:01:50.248184+00:00",
+        "minutes": 1.82,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 1,
+          "red": 1,
+          "green": 1
+        },
+        "testExitCode": 0
+      },
+      {
+        "round": 2,
+        "role": "review",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-17T06:01:50.267694+00:00",
+        "events": "ralph_pingpong/qwen/01_reaction_timer/runtime/04-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T06:05:56.589195+00:00",
+        "minutes": 4.11,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "implement",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-17T06:06:09.663642+00:00",
+        "events": "ralph_pingpong/qwen/01_reaction_timer/runtime/05-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T06:18:13.587907+00:00",
+        "minutes": 12.07,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 1,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-17T06:18:13.605870+00:00",
+        "events": "ralph_pingpong/qwen/01_reaction_timer/runtime/06-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T06:21:45.641112+00:00",
+        "minutes": 3.53,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      }
+    ],
+    "mandatoryProof": true,
+    "readIsolation": true,
+    "forcedProofEachImplementation": true
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 3,
+    "completed": 2,
+    "aborted": 0,
+    "events": [
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 53993,
+        "estimatedTokensAfter": 20579
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 52630,
+        "estimatedTokensAfter": 23270
+      }
+    ],
+    "reportedUsage": {
+      "input": 39934,
+      "output": 1438,
+      "cacheRead": 0,
+      "totalTokens": 41372
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 78281,
+      "output": 21569,
+      "cacheRead": 2465359,
+      "totalTokens": 2565209
+    },
+    "qwen": {
+      "input": 202786,
+      "output": 72757,
+      "cacheRead": 5289038,
+      "totalTokens": 5564581
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 11.41,
+    "qwen": 27.580000000000002
+  }
+}

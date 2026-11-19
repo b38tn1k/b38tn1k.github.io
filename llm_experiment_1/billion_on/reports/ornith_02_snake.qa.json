@@ -1,0 +1,25 @@
+{
+  "method": "Exact-source VM logic with no-op drawing; no browser",
+  "growthScore": [
+    4,
+    1
+  ],
+  "pauseStopsLoop": true,
+  "reversePrevented": true,
+  "levelSpeed": [
+    2,
+    138
+  ],
+  "wallDeath": true,
+  "selfDeath": true,
+  "vacatingTailAllowed": true,
+  "restart": [
+    0,
+    3
+  ],
+  "fullBoardWin": {
+    "gameOver": true,
+    "food": null,
+    "title": "You Win! 🎉"
+  }
+}

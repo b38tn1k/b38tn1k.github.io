@@ -1,0 +1,262 @@
+{
+  "score": 66,
+  "grade": "C- provisional - normal five trials work; false starts skip a trial and corrupt the summary; gate rejected",
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 18,
+    "usability": 12,
+    "self_verification": 4,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Normal mouse-driven reactions of 200, 210, 220, 230 and 240 ms produce the correct 220 ms average. Keyboard Space records 250 ms correctly; restart clears trial state.",
+    "Independent seeded waits differ (1300 and 3400 ms), confirming the delay uses randomness. File is self-contained and startup works.",
+    "Repair corrected the first-result NaN display by setting pendingMs before painting. The external gate did reject failed acceptance evidence instead of accepting a final prose claim."
+  ],
+  "defects": [
+    "False-start retry calls startTrial(), which increments trial again. A false start on trial one retries as trial two and the app finishes after only four valid reactions.",
+    "The skipped index leaves a hole in times. Final main summary averages the sparse array and displays NaN average and NaN best after a false start.",
+    "No reviewer produced the required review JSON before its stage cap. Acceptance tests still failed; the controller ended with repair_limit and did not certify completion."
+  ],
+  "verification": [
+    "Independent final-source verifier reports/enforced_ornith_01_reaction_timer.qa.cjs advances to actual next timer boundaries, avoiding the candidate tests timing overshoot. Final SHA matches the checked artifact.",
+    "Normal five-trial statistics, exact keyboard timing, reset, varying waits and false-start completion were executed through actual DOM handlers with state-only exposure.",
+    "Candidate evidence, controller gate, stage deadlines and infrastructure recoveries are retained in the run folder and linked scorecard."
+  ],
+  "verificationConcerns": [
+    "Candidate tests and reviews repeatedly confused their own timer sequencing with an app defect. Some five-trial failures were fixture errors: the independent normal flow passes.",
+    "The first new attempt is confounded by two supervisor infrastructure corrections (Bash timeout enforcement and reviewer scratch permissions). Its original shared deadline and all interrupted stages were retained; no application repair hints or supervisor app edits were supplied. Compare its wall time and autonomy cautiously.",
+    "The controller enforced stage execution and rejection, but could not make the local model finish a sound review. A completed stage schedule is not proof of application correctness."
+  ],
+  "scopeCompliance": "OS write boundary active. Out-of-project /tmp writes and initially disallowed reviewer scratch writes were blocked; no successful out-of-tree write observed. Reviewer scratch policy was corrected.",
+  "workflowNotes": "External controller used fresh Pi contexts and mechanically required build/test/review/repair. Two infrastructure interventions preserved the original deadline. Only build reached agent_settled; later test/review/repair stages hit their stage limits. The final artifact is graded independently; gate remained failed. Autonomy receives no credit for a fully autonomous terminal handoff because required stages never completed. This is an infrastructure-confounded pilot within the new cohort.",
+  "breakdown": {
+    "functionality": 32,
+    "artifact_correctness": 18,
+    "usability": 12,
+    "self_verification": 4,
+    "autonomy": 0
+  },
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "That read was the wrong offset. Let me look at the actual JS section around lines 390-428.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 4,
+  "elapsedMinutes": 51.68,
+  "wallMinutes": 51.68,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "repair_limit",
+  "exitCode": 1,
+  "promptWords": 34,
+  "toolCalls": 268,
+  "parentToolCalls": 0,
+  "childToolCalls": 268,
+  "toolResultsMarkedError": 30,
+  "modelUsageReported": {
+    "input": 170346,
+    "output": 80547,
+    "cacheRead": 5062968,
+    "totalTokens": 5313861
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 42737,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 42737,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 170346,
+    "output": 80547,
+    "cacheRead": 5062968,
+    "totalTokens": 5313861
+  },
+  "artifactBytes": 14746,
+  "sha256": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+  "implementationChangesBySupervisor": 0,
+  "humanOrSupervisorSteering": 2,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 2,
+      "review": 4,
+      "repair": 3
+    },
+    "rolesCompleted": {
+      "build": 1
+    },
+    "parentArtifactReads": 23,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 4.22,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": null,
+        "artifactAfter": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/01-build/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/01-build/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 8.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "artifactAfter": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/02-test/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/02-test/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 5.0,
+        "reason": "stage_time_limit",
+        "exitCode": 0,
+        "artifactBefore": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "artifactAfter": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/03-review/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/03-review/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 0.71,
+        "reason": "infrastructure_timeout_hook_install",
+        "exitCode": -9,
+        "artifactBefore": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "artifactAfter": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/04-repair/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/04-repair/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 5,
+        "minutes": 5.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "artifactAfter": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/05-review/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/05-review/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/05-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 6,
+        "minutes": 0.47,
+        "reason": "infrastructure_review_scratch_policy_fix",
+        "exitCode": -9,
+        "artifactBefore": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "artifactAfter": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/06-repair/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/06-repair/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/06-repair/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 7,
+        "minutes": 5.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "artifactAfter": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/07-review/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/07-review/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/07-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 8,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "9b3b3c18e07dcf762e5e6b3599e839aeacfa69e78ff7c2deced7bb9ae5761e2b",
+        "artifactAfter": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/08-repair/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/08-repair/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/08-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 9,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+        "artifactAfter": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/09-test/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/09-test/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/09-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 10,
+        "minutes": 4.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+        "artifactAfter": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+        "prompt": "enforced/ornith/01_reaction_timer/runtime/10-review/prompt.txt",
+        "events": "enforced/ornith/01_reaction_timer/runtime/10-review/events.jsonl",
+        "stderr": "enforced/ornith/01_reaction_timer/runtime/10-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "4d43ad28f6e414b084430d298675d0446becbd74a7661cbbe9c746e8576ffedc",
+      "errors": [
+        "Executable acceptance test did not exit successfully",
+        "Acceptance check missing/failed: five_valid_trials",
+        "Acceptance check missing/failed: summary",
+        "Acceptance ledger contains a failed check; every recorded check must pass",
+        "Independent review missing, stale or reports blocking findings",
+        "Independent reviewer did not attest that tests execute application behavior"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": true,
+  "matrixEligible": false,
+  "calibrationReason": "Supervisor test-platform and stage-budget setup changed during these attempts. Retain all artifacts, grades and cost; repeat both prompts under the final procedure regardless of scores."
+}

@@ -1,0 +1,262 @@
+{
+  "score": 77,
+  "grade": "C+ provisional - setup calibration; pointer flow works, keyboard and verification remain broken",
+  "rubricScores": {
+    "functionality": 38,
+    "artifact_correctness": 24,
+    "usability": 12,
+    "self_verification": 3,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent actual-pointer checks complete five trials with correct mean/best/worst and summary rows.",
+    "False starts cancel the pending cue, preserve the valid-trial count and retry correctly; Restart cancels the cue and clears the round."
+  ],
+  "defects": [
+    "Advertised Space control is ignored: the keyboard handler sets justHandled=true immediately before handlePress(), whose first action is to return when that flag is true.",
+    "All three outer iterations end with a deliberately failing agent-authored diagnostic test; no controller completion gate is achieved. The agent later misidentifies that own test as supervisor-injected.",
+    "The supervisor reporter omitted stdout and structured assertion diagnostics. This is a concrete setup defect; costs and snapshot grade are retained separately, with this attempt excluded from configuration means."
+  ],
+  "verification": [
+    "Three of four exact-source independent scenarios pass. reports/ralph_ornith_01_reaction_timer.qa.json is produced by qa/ralph-calibrations.cjs.",
+    "All six stage final-test commands fail on the agent-authored diagnostic. Runtime logs and reviewer responses remain visible; the failed gate is distinct from the working pointer application."
+  ],
+  "verificationConcerns": [
+    "Setup calibration: no inference about Ralph efficacy. The missing reporter stdout may have contributed to the debugging loop; causality and magnitude are not established."
+  ],
+  "calibration": true,
+  "humanOrSupervisorSteering": 0,
+  "scopeCompliance": "Pi alone wrote product and tests. Supervisor stopped the cohort for an owned reporter defect; no product-specific repair hints or application edits supplied.",
+  "workflowNotes": "Retained as reporter-v1 setup calibration, excluded from main matrix means. Fresh exact-brief repeat uses corrected reporter-v2.",
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "ralph",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "That succeeded! So `.scratch/review-tests/` works (nested). The earlier failure was transient (the very first write to a new nested dir). Now let me run the test to confirm the harness picks it up.",
+  "workflowInstructions": "run-ralph.py; research/ralph-setup.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 50.71,
+  "wallMinutes": 50.71,
+  "status": "assessed",
+  "runStatus": "assessed",
+  "stopReason": "iteration_limit",
+  "exitCode": null,
+  "promptWords": 34,
+  "toolCalls": 457,
+  "parentToolCalls": 457,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 235,
+  "modelUsageReported": {
+    "input": 308690,
+    "output": 76627,
+    "cacheRead": 14568003,
+    "totalTokens": 14953320
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 91250,
+  "parentPeakReportedPromptTokens": 91250,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 308690,
+    "output": 76627,
+    "cacheRead": 14568003,
+    "totalTokens": 14953320
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 13742,
+  "sha256": "e0413ddb2ac647b7105f341cef799f578702c318230259eda4df6717d0da8a57",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 20,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 66,
+    "delegations": [],
+    "controller": "External Ralph-style fresh-process implementation/review loop",
+    "gate": {
+      "passed": false,
+      "iterations": 3,
+      "forcedProofEachImplementation": true
+    },
+    "stages": [
+      {
+        "round": 1,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T15:19:49.057088+00:00",
+        "events": "ralph/ornith/01_reaction_timer/runtime/01-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T15:31:52.996195+00:00",
+        "minutes": 12.07,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 9,
+          "green": 8
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 1,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T15:31:53.017897+00:00",
+        "events": "ralph/ornith/01_reaction_timer/runtime/02-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T15:37:05.175581+00:00",
+        "minutes": 5.2,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 2,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T15:37:17.908046+00:00",
+        "events": "ralph/ornith/01_reaction_timer/runtime/03-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T15:49:21.657899+00:00",
+        "minutes": 12.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 1,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 2,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T15:49:21.678360+00:00",
+        "events": "ralph/ornith/01_reaction_timer/runtime/04-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T15:55:25.395542+00:00",
+        "minutes": 6.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T15:55:36.467087+00:00",
+        "events": "ralph/ornith/01_reaction_timer/runtime/05-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T16:04:16.448266+00:00",
+        "minutes": 8.67,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 1,
+          "red": 1,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T16:04:16.467039+00:00",
+        "events": "ralph/ornith/01_reaction_timer/runtime/06-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T16:10:20.313401+00:00",
+        "minutes": 6.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      }
+    ],
+    "mandatoryProof": true,
+    "readIsolation": true,
+    "forcedProofEachImplementation": true
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 308690,
+      "output": 76627,
+      "cacheRead": 14568003,
+      "totalTokens": 14953320
+    },
+    "qwen": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 50.12,
+    "qwen": 0
+  }
+}

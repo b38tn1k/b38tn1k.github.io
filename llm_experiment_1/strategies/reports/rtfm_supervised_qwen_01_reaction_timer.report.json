@@ -1,0 +1,935 @@
+{
+  "score": 90,
+  "grade": "A- - false-start flow repaired; auxiliary trial labels remain incorrect",
+  "rubricScores": {
+    "functionality": 39,
+    "artifact_correctness": 25,
+    "usability": 11,
+    "self_verification": 5,
+    "autonomy": 10
+  },
+  "blockingRequiredDefect": false,
+  "summary": "False-start retries now preserve the current trial and complete five valid measurements. Actual summary, last-trial retry/cancelled-cue behavior and two full replay sessions pass. Auxiliary labels still readTrial2through6of5; this nonblocking feedback defect lowers functionality/usability, while product93.75meets the frozen early-stop criterion.",
+  "strengths": [
+    "Actual200/225/250/275/300ms responses produce exactlyfive rows, mean250, best200and worst300.",
+    "Seven repeated early taps still require five valid measurements; last-trial retry preserves its index and a cancelled green cue does not fire after the false start.",
+    "Replay completes a second full five-trial session with a fresh300ms mean rather than stale first-session measurements. Source remains a single self-contained offline file."
+  ],
+  "defects": [
+    "Nonblocking: the auxiliary waiting labels remainTrial2of5throughTrial6of5. Actual session length and result table contain exactlyfive measurements. The misleading feedback is explicitly deducted in functionality/usability rather than treated as another required response."
+  ],
+  "verification": [
+    "Independent exact final1829bffd2d49141052a47452ac5718be146c1cdf772b111cb4e684e25536b6f3 via actual onclick handlers, scheduled random cues, deterministic performance clock and read-only closure state exposure. No app algorithms replaced.",
+    "Normal varied summary, repeated false starts, last-trial retry/stale-cue cancellation and two full replay sessions pass. The only failed independent assertion is the disclosed auxiliary-label defect. Product acceptance does not require every minor UI assertion to pass; it requires normalized90and no known blocking required behavior."
+  ],
+  "verificationConcerns": [
+    "Supervisor reproduced the real false-start skip with actual source in a handwritten DOM/timer mock and compared a five-row normal baseline. Post-repair single/double-false-start checks return five rows, but the stub records0ms times and does not verify actual varied summary arithmetic or catch the label defect.",
+    "Worker primarily checked source edits and HTML structure; joint self-verification earns partial credit. Independent Codex timing/replay checks establish the broader behavior but are not counted as model self-verification.",
+    "No browser layout/hit testing or physical reaction-latency calibration. Exact wording or five valid measurements was not invented as a universal brief requirement: this app explicitly promises to retry the same trial, and its unchanged retry policy is what the tests verify.",
+    "Recovered connection errors: worker4, supervisor5; failed partial-stream usage is unknown. Supervisor was mechanically aborted when the independent early-A gate ended the pair; that abort is separate from provider errors."
+  ],
+  "scopeCompliance": "Worker alone authored the one-line product repair; supervisor supplied its own reproduced behavioral finding and wrote scratch/control outputs. Codex supplied no product code, diagnoses or repair feedback; private independent QA/gates remained outside actor access.",
+  "workflowNotes": "RTFM Ornith-supervised Qwen timer, one counted repair prompt in persistent native contexts. Independently accepted early after8.460pairwallminutes and9.494summed actor-activity minutes; three feedbacks are a ceiling, not a quota. Minor label error is disclosed and scored, not silently waived as a pass. Joint autonomy eligible10 with no human product guidance.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "One paired result on the exact frozen solo output; no outcome-based rerun.",
+    "Original brief asks five trials and a summary; false-start retry assertions follow this app\u2019s explicit policy. Consistently documented five-attempt designs can be assessed under that policy, as in Ornith, without imposing a universal five-valid-response rule.",
+    "Author-informed localQ4profiles; baseline creation and incremental rescue cost remain separate. Summed actor activity includes concurrent turns/tool waits rather than GPU busy time.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM author-profile cross-model rescue of the exact frozen solo app. Solo creation and incremental repair costs are separate; already-qualified baselines may remain unchanged with zero feedback and no improvement claim. A120-minute shared wall includes both actors and review waits; Codex grades but supplies no repair diagnoses/code. Product quality is normalized from80points. Pair wall differs from summed concurrent model activity."
+  ],
+  "title": "Reaction timer",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "rtfm_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "**Fix applied.** Here's the change:\n\n**File:** `index.html`, line 739\n\n**Bug:** When a false-start occurred, `startTrial()` was called twice:\n1. First call (from the initial false-start detection) \u2192 `currentTrial++`\n2. Second call (from the retry handler) \u2192 `currentTrial++` again\n\nThis meant the trial counter advanced past the current trial, and that trial was never recorded.\n\n**Fix:** Added `currentTrial--;` in the false-start retry handler, right before calling `startTrial()`:\n\n```javascript\nplayArea.onclick = () => {\n    playArea.onclick = handleClick;\n    currentTrial--;  // Undo the increment so the same trial replays\n    startTrial();\n};\n```\n\n**Result:** The `currentTrial` value is decremented back to its original value, then `startTrial()` increments it again \u2014 so the same trial number is replayed. After exactly 5 valid reaction measurements, `times.length === 5` and the results summary will correctly show 5 rows, regardless of how many false starts occurred.",
+  "workflowInstructions": "rtfm-supervised-plan.json; run-rtfm-supervised-control-v2.py",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 8.46,
+  "wallMinutes": 8.46,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "independently_verified_A_product",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 50,
+  "parentToolCalls": 13,
+  "childToolCalls": 37,
+  "toolResultsMarkedError": 11,
+  "modelUsageReported": {
+    "input": 27887,
+    "output": 19027,
+    "cacheRead": 816210,
+    "totalTokens": 863124
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 29608,
+  "parentPeakReportedPromptTokens": 14856,
+  "childPeakReportedPromptTokens": 29608,
+  "parentModelUsage": {
+    "input": 12610,
+    "output": 2629,
+    "cacheRead": 117403,
+    "totalTokens": 132642
+  },
+  "childModelUsage": {
+    "input": 15277,
+    "output": 16398,
+    "cacheRead": 698807,
+    "totalTokens": 730482
+  },
+  "artifactBytes": 19683,
+  "sha256": "1829bffd2d49141052a47452ac5718be146c1cdf772b111cb4e684e25536b6f3",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 5,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-rtfm"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "qwen3.6:35b-a3b",
+    "supervisorModel": "ornith-1.5:35b-256k",
+    "feedbackCount": 1,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "feedback-1-rtfm-qwen-01",
+        "message": "DEFECT: False-start retry skips the trial instead of retrying it.\n\nEvidence (behavioral test run against .observed/current/index.html, hash 0821df522caa98a61d6c58d988145b7828c3002c9f4e86e1e8cb34d306011330 verified against the immutable artifact path in .observed/state.json):\n\nSetup: minimal DOM stub driving the real IIFE handlers. One false start, then normal play.\n\nResult: only 4 trial rows appear in the results summary instead of 5. A baseline run with no false start correctly records 5 trials.\n\nRoot cause: In startTrial(), currentTrial is incremented at the top. The false-start branch (phase waiting) sets playArea.onclick to a retry closure that calls startTrial() again, which increments currentTrial a second time. So tapping to retry a false-started trial advances to the next trial and the original trial is never recorded. The UI text literally says \"Tap to retry this trial\", but the behavior skips it.\n\nExpected outcome: A false-start retry must replay the SAME trial number, so all 5 trials are eventually recorded and the summary always contains 5 rows. The game should only finish after 5 valid reaction measurements, regardless of how many false starts occurred.\n\nPlease fix the false-start retry so it does not advance the trial counter (retry the same trial). Preserve all other verified-good behavior (random wait 1500-4500ms, five trials, results summary with avg/best/worst, category badges).\n",
+        "reason": "verified behavioral defect: false-start retry advances the trial counter, so one false start yields only 4 of 5 recorded trials and the summary ends early; the app's own UI says 'retry this trial'. Evidence in .scratch/test_falsestart.mjs and test_baseline.mjs.",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T22:17:32.240626+00:00",
+        "acceptedUTC": "2026-11-18T22:17:32.240634+00:00",
+        "elapsedSeconds": 250.934,
+        "workerPID": 92277,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T22:17:32.281638+00:00",
+        "deliveredElapsedSeconds": 250.934
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-18T22:18:34.344559+00:00",
+        "sha256": "1829bffd2d49141052a47452ac5718be146c1cdf772b111cb4e684e25536b6f3",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case121/feedback1"
+      }
+    ],
+    "supervisorWakeups": [],
+    "supervisorYields": [],
+    "supervisorStopRequest": null,
+    "independentGradeGates": [
+      {
+        "at": "2026-11-18T22:21:48.852727+00:00",
+        "sha256": "1829bffd2d49141052a47452ac5718be146c1cdf772b111cb4e684e25536b6f3",
+        "productScore": 93.75,
+        "blockingRequiredDefect": false,
+        "qa": "reports/rtfm_supervised_qwen_01_reaction_timer.round1.qa.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "sha256": "0821df522caa98a61d6c58d988145b7828c3002c9f4e86e1e8cb34d306011330",
+      "baselineScore": 80,
+      "baselineRubricScores": {
+        "functionality": 32,
+        "artifact_correctness": 25,
+        "usability": 11,
+        "self_verification": 2,
+        "autonomy": 10
+      },
+      "baselineProductScore": 85.0,
+      "baselineTargetMet": false,
+      "baselineReport": "strategies/reports/rtfm_qwen_01_reaction_timer.report.json",
+      "creationCost": {
+        "model": "qwen",
+        "role": "worker",
+        "pid": 43372,
+        "assistantUsage": {
+          "input": 9329,
+          "output": 7859,
+          "cacheRead": 24244,
+          "cacheWrite": 0,
+          "totalTokens": 41432
+        },
+        "recordedCompactionUsage": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "totalTokens": 0
+        },
+        "recordedCombinedUsage": {
+          "input": 9329,
+          "output": 7859,
+          "cacheRead": 24244,
+          "cacheWrite": 0,
+          "totalTokens": 41432
+        },
+        "unreportedCompactions": 0,
+        "activeMinutes": 1.716,
+        "promptCount": 1,
+        "streamingWindows": [
+          {
+            "start": 1164855.711294166,
+            "end": 1164859.313121708
+          },
+          {
+            "start": 1164859.373511083,
+            "end": 1164938.752113875
+          },
+          {
+            "start": 1164938.819940083,
+            "end": 1164945.584217583
+          },
+          {
+            "start": 1164945.922303,
+            "end": 1164952.018887458
+          },
+          {
+            "start": 1164952.285886083,
+            "end": 1164956.737182208
+          }
+        ],
+        "exitCode": 0
+      },
+      "sourceCase": 111,
+      "sourceFolder": "rtfm/qwen/01_reaction_timer",
+      "frozenArtifact": "strategies/reports/initial-artifacts/rtfm_supervised_qwen_01_reaction_timer/index.html",
+      "frozenUTC": "2026-11-18T16:13:22.818932+00:00"
+    },
+    "sharedLimitSeconds": 7200,
+    "authorProfiles": "research/rtfm-runtime-profiles.json",
+    "runtimeConformance": "research/rtfm-supervised-conformance.json",
+    "sourceRTFMSoloCase": 111
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 1,
+  "localModelCosts": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 92277,
+      "assistantUsage": {
+        "input": 12610,
+        "output": 2629,
+        "cacheRead": 117403,
+        "cacheWrite": 0,
+        "totalTokens": 132642
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 12610,
+        "output": 2629,
+        "cacheRead": 117403,
+        "cacheWrite": 0,
+        "totalTokens": 132642
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 1.034,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1188865.497641875,
+          "end": 1188873.093770916
+        },
+        {
+          "start": 1188873.101680375,
+          "end": 1188873.10238325
+        },
+        {
+          "start": 1188875.160966083,
+          "end": 1188876.295600083
+        },
+        {
+          "start": 1188876.30355775,
+          "end": 1188876.304176416
+        },
+        {
+          "start": 1188878.380541375,
+          "end": 1188892.783055375
+        },
+        {
+          "start": 1188892.866273791,
+          "end": 1188894.562869666
+        },
+        {
+          "start": 1188894.570442708,
+          "end": 1188894.570966541
+        },
+        {
+          "start": 1188896.665418291,
+          "end": 1188898.812798333
+        },
+        {
+          "start": 1188898.899955,
+          "end": 1188900.364100333
+        },
+        {
+          "start": 1188900.475783666,
+          "end": 1188902.502847125
+        },
+        {
+          "start": 1188902.618317708,
+          "end": 1188904.789537083
+        },
+        {
+          "start": 1188904.799808666,
+          "end": 1188904.800395625
+        },
+        {
+          "start": 1188906.909148166,
+          "end": 1188911.935431666
+        },
+        {
+          "start": 1188912.244593125,
+          "end": 1188914.147534208
+        },
+        {
+          "start": 1188914.36863275,
+          "end": 1188921.635478416
+        },
+        {
+          "start": 1188921.912915416,
+          "end": 1188925.548564791
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 92279,
+      "assistantUsage": {
+        "input": 15277,
+        "output": 16398,
+        "cacheRead": 698807,
+        "cacheWrite": 0,
+        "totalTokens": 730482
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 15277,
+        "output": 16398,
+        "cacheRead": 698807,
+        "cacheWrite": 0,
+        "totalTokens": 730482
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 8.46,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1188614.850367166,
+          "end": 1188618.467390625
+        },
+        {
+          "start": 1188618.728827125,
+          "end": 1188621.212323083
+        },
+        {
+          "start": 1188621.237504791,
+          "end": 1188621.238259583
+        },
+        {
+          "start": 1188623.313107416,
+          "end": 1188624.741574083
+        },
+        {
+          "start": 1188624.847299666,
+          "end": 1188633.560961375
+        },
+        {
+          "start": 1188633.834650041,
+          "end": 1188673.132762166
+        },
+        {
+          "start": 1188673.40141175,
+          "end": 1188694.802109958
+        },
+        {
+          "start": 1188694.809408125,
+          "end": 1188694.810592875
+        },
+        {
+          "start": 1188697.2009815,
+          "end": 1188703.474736291
+        },
+        {
+          "start": 1188703.752382416,
+          "end": 1188722.913933
+        },
+        {
+          "start": 1188723.045634291,
+          "end": 1188724.86728
+        },
+        {
+          "start": 1188725.188755875,
+          "end": 1188747.857476375
+        },
+        {
+          "start": 1188747.9723825,
+          "end": 1188754.846773
+        },
+        {
+          "start": 1188755.129995541,
+          "end": 1188759.384370458
+        },
+        {
+          "start": 1188759.500287041,
+          "end": 1188761.457576083
+        },
+        {
+          "start": 1188761.773394041,
+          "end": 1188777.260333291
+        },
+        {
+          "start": 1188777.389848,
+          "end": 1188780.012338833
+        },
+        {
+          "start": 1188780.150268833,
+          "end": 1188781.923546208
+        },
+        {
+          "start": 1188782.053725041,
+          "end": 1188799.4747025
+        },
+        {
+          "start": 1188799.610771375,
+          "end": 1188811.716053
+        },
+        {
+          "start": 1188811.87839925,
+          "end": 1188816.696785833
+        },
+        {
+          "start": 1188817.031370875,
+          "end": 1188832.636209958
+        },
+        {
+          "start": 1188832.646009166,
+          "end": 1188832.647388666
+        },
+        {
+          "start": 1188834.792907333,
+          "end": 1188837.841014708
+        },
+        {
+          "start": 1188838.1450205,
+          "end": 1188855.857039
+        },
+        {
+          "start": 1188855.864241541,
+          "end": 1188855.866148208
+        },
+        {
+          "start": 1188858.069933291,
+          "end": 1188865.010937791
+        },
+        {
+          "start": 1188865.101414166,
+          "end": 1188873.011185208
+        },
+        {
+          "start": 1188963.182494333,
+          "end": 1188965.277744541
+        },
+        {
+          "start": 1188965.608078958,
+          "end": 1188978.815068416
+        },
+        {
+          "start": 1188979.151215416,
+          "end": 1188984.875363
+        },
+        {
+          "start": 1188985.203464625,
+          "end": 1188990.965031041
+        },
+        {
+          "start": 1188991.260177791,
+          "end": 1188997.22090925
+        },
+        {
+          "start": 1188997.564239958,
+          "end": 1188999.941052291
+        },
+        {
+          "start": 1189000.157596708,
+          "end": 1189005.372390208
+        },
+        {
+          "start": 1189005.772664458,
+          "end": 1189049.976233125
+        },
+        {
+          "start": 1189050.142701083,
+          "end": 1189057.330150708
+        },
+        {
+          "start": 1189057.6857215,
+          "end": 1189073.436632208
+        },
+        {
+          "start": 1189073.44480525,
+          "end": 1189073.446086
+        },
+        {
+          "start": 1189075.615328833,
+          "end": 1189079.3643515
+        },
+        {
+          "start": 1189079.724237083,
+          "end": 1189114.721421166
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 8.46,
+  "summedModelActiveMinutes": 9.494,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 15277,
+      "output": 16398,
+      "cacheRead": 698807,
+      "totalTokens": 730482
+    },
+    "qwen": {
+      "input": 12610,
+      "output": 2629,
+      "cacheRead": 117403,
+      "totalTokens": 132642
+    }
+  },
+  "modelWallMinutes": {
+    "qwen": 1.034,
+    "ornith": 8.46
+  },
+  "localProductScore": 93.8,
+  "localProductTargetMet": true,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  },
+  "localProductScoreExact": 93.75,
+  "attemptNumber": 1,
+  "priorInfrastructureInvalidAttempts": [],
+  "baselineAlreadyA": false,
+  "baselineScore": 80,
+  "baselineProductScore": 85.0,
+  "baselineTargetMet": false,
+  "baselineReport": "strategies/reports/rtfm_qwen_01_reaction_timer.report.json",
+  "baselineCreationCost": {
+    "model": "qwen",
+    "role": "worker",
+    "pid": 43372,
+    "assistantUsage": {
+      "input": 9329,
+      "output": 7859,
+      "cacheRead": 24244,
+      "cacheWrite": 0,
+      "totalTokens": 41432
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 9329,
+      "output": 7859,
+      "cacheRead": 24244,
+      "cacheWrite": 0,
+      "totalTokens": 41432
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 1.716,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1164855.711294166,
+        "end": 1164859.313121708
+      },
+      {
+        "start": 1164859.373511083,
+        "end": 1164938.752113875
+      },
+      {
+        "start": 1164938.819940083,
+        "end": 1164945.584217583
+      },
+      {
+        "start": 1164945.922303,
+        "end": 1164952.018887458
+      },
+      {
+        "start": 1164952.285886083,
+        "end": 1164956.737182208
+      }
+    ],
+    "exitCode": 0
+  },
+  "incrementalRepairCost": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 92277,
+      "assistantUsage": {
+        "input": 12610,
+        "output": 2629,
+        "cacheRead": 117403,
+        "cacheWrite": 0,
+        "totalTokens": 132642
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 12610,
+        "output": 2629,
+        "cacheRead": 117403,
+        "cacheWrite": 0,
+        "totalTokens": 132642
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 1.034,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1188865.497641875,
+          "end": 1188873.093770916
+        },
+        {
+          "start": 1188873.101680375,
+          "end": 1188873.10238325
+        },
+        {
+          "start": 1188875.160966083,
+          "end": 1188876.295600083
+        },
+        {
+          "start": 1188876.30355775,
+          "end": 1188876.304176416
+        },
+        {
+          "start": 1188878.380541375,
+          "end": 1188892.783055375
+        },
+        {
+          "start": 1188892.866273791,
+          "end": 1188894.562869666
+        },
+        {
+          "start": 1188894.570442708,
+          "end": 1188894.570966541
+        },
+        {
+          "start": 1188896.665418291,
+          "end": 1188898.812798333
+        },
+        {
+          "start": 1188898.899955,
+          "end": 1188900.364100333
+        },
+        {
+          "start": 1188900.475783666,
+          "end": 1188902.502847125
+        },
+        {
+          "start": 1188902.618317708,
+          "end": 1188904.789537083
+        },
+        {
+          "start": 1188904.799808666,
+          "end": 1188904.800395625
+        },
+        {
+          "start": 1188906.909148166,
+          "end": 1188911.935431666
+        },
+        {
+          "start": 1188912.244593125,
+          "end": 1188914.147534208
+        },
+        {
+          "start": 1188914.36863275,
+          "end": 1188921.635478416
+        },
+        {
+          "start": 1188921.912915416,
+          "end": 1188925.548564791
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 92279,
+      "assistantUsage": {
+        "input": 15277,
+        "output": 16398,
+        "cacheRead": 698807,
+        "cacheWrite": 0,
+        "totalTokens": 730482
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 15277,
+        "output": 16398,
+        "cacheRead": 698807,
+        "cacheWrite": 0,
+        "totalTokens": 730482
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 8.46,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1188614.850367166,
+          "end": 1188618.467390625
+        },
+        {
+          "start": 1188618.728827125,
+          "end": 1188621.212323083
+        },
+        {
+          "start": 1188621.237504791,
+          "end": 1188621.238259583
+        },
+        {
+          "start": 1188623.313107416,
+          "end": 1188624.741574083
+        },
+        {
+          "start": 1188624.847299666,
+          "end": 1188633.560961375
+        },
+        {
+          "start": 1188633.834650041,
+          "end": 1188673.132762166
+        },
+        {
+          "start": 1188673.40141175,
+          "end": 1188694.802109958
+        },
+        {
+          "start": 1188694.809408125,
+          "end": 1188694.810592875
+        },
+        {
+          "start": 1188697.2009815,
+          "end": 1188703.474736291
+        },
+        {
+          "start": 1188703.752382416,
+          "end": 1188722.913933
+        },
+        {
+          "start": 1188723.045634291,
+          "end": 1188724.86728
+        },
+        {
+          "start": 1188725.188755875,
+          "end": 1188747.857476375
+        },
+        {
+          "start": 1188747.9723825,
+          "end": 1188754.846773
+        },
+        {
+          "start": 1188755.129995541,
+          "end": 1188759.384370458
+        },
+        {
+          "start": 1188759.500287041,
+          "end": 1188761.457576083
+        },
+        {
+          "start": 1188761.773394041,
+          "end": 1188777.260333291
+        },
+        {
+          "start": 1188777.389848,
+          "end": 1188780.012338833
+        },
+        {
+          "start": 1188780.150268833,
+          "end": 1188781.923546208
+        },
+        {
+          "start": 1188782.053725041,
+          "end": 1188799.4747025
+        },
+        {
+          "start": 1188799.610771375,
+          "end": 1188811.716053
+        },
+        {
+          "start": 1188811.87839925,
+          "end": 1188816.696785833
+        },
+        {
+          "start": 1188817.031370875,
+          "end": 1188832.636209958
+        },
+        {
+          "start": 1188832.646009166,
+          "end": 1188832.647388666
+        },
+        {
+          "start": 1188834.792907333,
+          "end": 1188837.841014708
+        },
+        {
+          "start": 1188838.1450205,
+          "end": 1188855.857039
+        },
+        {
+          "start": 1188855.864241541,
+          "end": 1188855.866148208
+        },
+        {
+          "start": 1188858.069933291,
+          "end": 1188865.010937791
+        },
+        {
+          "start": 1188865.101414166,
+          "end": 1188873.011185208
+        },
+        {
+          "start": 1188963.182494333,
+          "end": 1188965.277744541
+        },
+        {
+          "start": 1188965.608078958,
+          "end": 1188978.815068416
+        },
+        {
+          "start": 1188979.151215416,
+          "end": 1188984.875363
+        },
+        {
+          "start": 1188985.203464625,
+          "end": 1188990.965031041
+        },
+        {
+          "start": 1188991.260177791,
+          "end": 1188997.22090925
+        },
+        {
+          "start": 1188997.564239958,
+          "end": 1188999.941052291
+        },
+        {
+          "start": 1189000.157596708,
+          "end": 1189005.372390208
+        },
+        {
+          "start": 1189005.772664458,
+          "end": 1189049.976233125
+        },
+        {
+          "start": 1189050.142701083,
+          "end": 1189057.330150708
+        },
+        {
+          "start": 1189057.6857215,
+          "end": 1189073.436632208
+        },
+        {
+          "start": 1189073.44480525,
+          "end": 1189073.446086
+        },
+        {
+          "start": 1189075.615328833,
+          "end": 1189079.3643515
+        },
+        {
+          "start": 1189079.724237083,
+          "end": 1189114.721421166
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "artifactChangedFromSeed": true,
+  "productDelta": 8.8,
+  "newlyReachedAQuality": true
+}

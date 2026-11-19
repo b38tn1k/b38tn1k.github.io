@@ -1,0 +1,12 @@
+{
+  "role": "review",
+  "number": 9,
+  "minutes": 3.67,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+  "artifactAfter": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+  "prompt": "enforced/ornith/03_pixel_painter/runtime/09-review/prompt.txt",
+  "events": "enforced/ornith/03_pixel_painter/runtime/09-review/events.jsonl",
+  "stderr": "enforced/ornith/03_pixel_painter/runtime/09-review/stderr.log"
+}

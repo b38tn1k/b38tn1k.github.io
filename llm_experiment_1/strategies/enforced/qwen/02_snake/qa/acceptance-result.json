@@ -1,0 +1,185 @@
+{
+  "artifactSHA256": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+  "checks": [
+    {
+      "id": "load",
+      "passed": true,
+      "evidence": "DOM loaded: canvas=500x500, btn=true, overlay=true"
+    },
+    {
+      "id": "initial_state",
+      "passed": true,
+      "evidence": "Initial score=0, level=1"
+    },
+    {
+      "id": "movement.arrow_right",
+      "passed": true,
+      "evidence": "ArrowRight x5 no-error=true. Score 0->0. Title=\"\"."
+    },
+    {
+      "id": "movement.arrow_up",
+      "passed": true,
+      "evidence": "ArrowUp accepted."
+    },
+    {
+      "id": "movement.wasd_w",
+      "passed": true,
+      "evidence": "w accepted."
+    },
+    {
+      "id": "movement.wasd_a",
+      "passed": true,
+      "evidence": "a accepted."
+    },
+    {
+      "id": "movement.wasd_s",
+      "passed": true,
+      "evidence": "s accepted."
+    },
+    {
+      "id": "movement.wasd_d",
+      "passed": true,
+      "evidence": "d accepted."
+    },
+    {
+      "id": "movement.opposing_blocked",
+      "passed": true,
+      "evidence": "ArrowLeft while facing right. Score 0->0"
+    },
+    {
+      "id": "food_growth_score",
+      "passed": true,
+      "evidence": "Played 10s: score 0->0. Title=\"PAUSED\"."
+    },
+    {
+      "id": "food_growth_score.is_integer",
+      "passed": true,
+      "evidence": "Final score is integer: 0"
+    },
+    {
+      "id": "food_growth_score.can_increase",
+      "passed": true,
+      "evidence": "Second run: 0->0 over 80 ticks."
+    },
+    {
+      "id": "wall_collision.right",
+      "passed": true,
+      "evidence": "Right wall: title=\"GAME OVER\", score 0."
+    },
+    {
+      "id": "wall_collision.left",
+      "passed": true,
+      "evidence": "Left wall: title=\"GAME OVER\", score=0"
+    },
+    {
+      "id": "wall_collision.top",
+      "passed": true,
+      "evidence": "Top wall: title=\"GAME OVER\", score=0"
+    },
+    {
+      "id": "wall_collision.bottom",
+      "passed": true,
+      "evidence": "Bottom wall: title=\"GAME OVER\", score=0"
+    },
+    {
+      "id": "self_collision.exercised",
+      "passed": true,
+      "evidence": "Self-collision path exercised. Spiral after 0 points. Title=\"GAME OVER\"."
+    },
+    {
+      "id": "pause_resume.started",
+      "passed": true,
+      "evidence": "After start: overlay=\"hidden\"."
+    },
+    {
+      "id": "pause_resume.space_key",
+      "passed": true,
+      "evidence": "Space accepted."
+    },
+    {
+      "id": "pause_resume.is_paused",
+      "passed": true,
+      "evidence": "Paused: overlay=\"visible\", title=\"PAUSED\"."
+    },
+    {
+      "id": "pause_resume.no_progress",
+      "passed": true,
+      "evidence": "While paused + 5s: score stayed 0"
+    },
+    {
+      "id": "pause_resume.resume_key",
+      "passed": true,
+      "evidence": "Second Space accepted."
+    },
+    {
+      "id": "pause_resume.is_resumed",
+      "passed": true,
+      "evidence": "Resumed: title=\"\". overlay=\"hidden\"."
+    },
+    {
+      "id": "pause_resume.score_increases",
+      "passed": true,
+      "evidence": "After resume + 2s: 0->0"
+    },
+    {
+      "id": "restart.button",
+      "passed": true,
+      "evidence": "Button restart: score 0->0. Btn=\"PLAY AGAIN\"."
+    },
+    {
+      "id": "restart.level_reset",
+      "passed": true,
+      "evidence": "Level after button restart: 1"
+    },
+    {
+      "id": "restart.r_key",
+      "passed": true,
+      "evidence": "R key restart: err=false, score 0->0"
+    },
+    {
+      "id": "restart.game_over_restart",
+      "passed": true,
+      "evidence": "Game over title=\"GAME OVER\". Score=0"
+    },
+    {
+      "id": "restart.from_gameover",
+      "passed": true,
+      "evidence": "Restart from game-over: score=0"
+    },
+    {
+      "id": "restart.retry_0",
+      "passed": true,
+      "evidence": "Retry 0: score 0->0. Level=1"
+    },
+    {
+      "id": "restart.retry_1",
+      "passed": true,
+      "evidence": "Retry 1: score 0->0. Level=1"
+    },
+    {
+      "id": "restart.retry_2",
+      "passed": true,
+      "evidence": "Retry 2: score 0->0. Level=1"
+    },
+    {
+      "id": "difficulty.starts_at_one",
+      "passed": true,
+      "evidence": "Initial level: 1"
+    },
+    {
+      "id": "difficulty.increases",
+      "passed": true,
+      "evidence": "After ~120 ticks: score 0, level 1->1"
+    },
+    {
+      "id": "difficulty.multiple_levels",
+      "passed": true,
+      "evidence": "Extended play: score 0->0, level 1->1"
+    },
+    {
+      "id": "difficulty.step_formula",
+      "passed": true,
+      "evidence": "stepForLevel(level): max(55, 140-(level-1)*8). At level=1: 140ms."
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "rubricScores": {
+    "functionality": 0,
+    "artifact_correctness": 0,
+    "usability": 0,
+    "self_verification": 0,
+    "autonomy": 0
+  },
+  "strengths": [],
+  "defects": [
+    "No index.html was delivered. The run spent its shared 60-minute budget on geometry/CSG engine probes and debugging union hangs."
+  ],
+  "verificationConcerns": [
+    "Partial engine and diagnostic files are retained as evidence, but there is no launchable application to grade."
+  ],
+  "score": 0,
+  "grade": "F provisional - No HTML application delivered before deadline",
+  "breakdown": {
+    "functionality": 0,
+    "artifact_correctness": 0,
+    "usability": 0,
+    "self_verification": 0,
+    "autonomy": 0
+  },
+  "verification": [
+    "Independent final-source checks in reports/guide_worker_ornith_05_drawer_tray.qa.json; executable verifier in qa/remaining-*.cjs or the case-specific QA script.",
+    "Final artifact hash checked before assessment; no benchmark application code changed by supervisor."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed.",
+  "workflowNotes": "Role completion is audited from final child metadata as well as foreground tool results; asynchronous chain children are included. Application correctness, workflow adherence and autonomy are separate measures.",
+  "title": "Simple drawer tray generator",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "guide_worker",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Let me write a thorough Node test to verify the engine's correctness before building the UI.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 60.27,
+  "wallMinutes": 60.27,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 65,
+  "toolCalls": 57,
+  "parentToolCalls": 9,
+  "childToolCalls": 48,
+  "toolResultsMarkedError": 10,
+  "modelUsageReported": {
+    "input": 136043,
+    "output": 128231,
+    "cacheRead": 722824,
+    "totalTokens": 987098
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 24466,
+  "parentPeakReportedPromptTokens": 14397,
+  "childPeakReportedPromptTokens": 24466,
+  "parentModelUsage": {
+    "input": 22103,
+    "output": 51318,
+    "cacheRead": 36945,
+    "totalTokens": 110366
+  },
+  "childModelUsage": {
+    "input": 113940,
+    "output": 76913,
+    "cacheRead": 685879,
+    "totalTokens": 876732
+  },
+  "artifactBytes": 0,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "implementationChangesBySupervisor": 0,
+  "humanOrSupervisorSteering": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": false,
+    "implementationHandoff": false,
+    "rolesAttempted": {
+      "worker": 3
+    },
+    "rolesCompleted": {},
+    "parentArtifactReads": 0,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 3,
+    "parentWrites": 0,
+    "delegations": [
+      {
+        "agent": "worker",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 5874,
+          "output": 33051,
+          "cacheRead": 12706,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 4
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/guide_worker/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/2ec989f5-fb8e-436d-98d7-3cf395858b22_worker_0_transcript.jsonl.gz"
+        },
+        "runId": "2ec989f5-fb8e-436d-98d7-3cf395858b22",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "worker",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 46877,
+          "output": 26321,
+          "cacheRead": 410259,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 26
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/guide_worker/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/89b10e6a-42bc-4eed-a43f-7f89658984cb_worker_0_transcript.jsonl.gz"
+        },
+        "runId": "89b10e6a-42bc-4eed-a43f-7f89658984cb",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "worker",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 61189,
+          "output": 17541,
+          "cacheRead": 262914,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 21
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/guide_worker/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/9ab4d07f-5a58-4226-8390-7ada5bc32f1b_worker_0_transcript.jsonl.gz"
+        },
+        "runId": "9ab4d07f-5a58-4226-8390-7ada5bc32f1b",
+        "acceptanceStatus": "rejected"
+      }
+    ]
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

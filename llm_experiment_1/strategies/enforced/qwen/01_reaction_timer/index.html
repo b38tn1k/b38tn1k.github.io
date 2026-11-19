@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Time Tester</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-wait: #2d6a4f;
+    --bg-active: #d32f2f;
+    --bg-result: #1a1a2e;
+    --bg-summary: #16213e;
+    --text-light: #f0f0f0;
+    --text-muted: rgba(255,255,255,0.6);
+    --accent: #00e676;
+    --warn: #ffab00;
+    --card-radius: 16px;
+    --transition-speed: 0.3s;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--bg-result);
+    transition: background var(--transition-speed) ease;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #app {
+    width: min(90vw, 700px);
+    height: min(80vh, 560px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--card-radius);
+    background: var(--bg-result);
+    box-shadow: 0 24px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06);
+    transition: background var(--transition-speed) ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #app.stage-wait {
+    background: var(--bg-wait);
+    cursor: pointer;
+  }
+  #app.stage-active {
+    background: var(--bg-active);
+    cursor: pointer;
+  }
+  #app.stage-result {
+    background: var(--bg-result);
+  }
+  #app.stage-summary {
+    background: var(--bg-summary);
+    cursor: default;
+  }
+  #app.stage-false-start {
+    background: var(--warn);
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    width: 100%;
+    height: 100%;
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    font-size: clamp(0.95rem, 2vw, 1.25rem);
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .instruction {
+    font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+    color: var(--text-light);
+    font-weight: 600;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.97); }
+  }
+
+  .timer-display {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    color: var(--accent);
+    margin: 1rem 0;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .timer-unit {
+    font-size: clamp(1rem, 2vw, 1.4rem);
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .progress-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+
+  .progress-dot {
+    width: clamp(14px, 2vw, 20px);
+    height: clamp(14px, 2vw, 20px);
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    transition: all var(--transition-speed) ease;
+  }
+
+  .progress-dot.completed {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(0,230,118,0.5);
+  }
+
+  .progress-dot.current {
+    border-color: var(--text-light);
+    background: rgba(255,255,255,0.25);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  /* Summary styles */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 520px;
+    margin: 1rem 0;
+  }
+
+  .summary-cell {
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 0.75rem 0.25rem;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all var(--transition-speed) ease;
+  }
+
+  .summary-cell.best {
+    background: rgba(0,230,118,0.12);
+    border-color: rgba(0,230,118,0.3);
+  }
+
+  .trial-label {
+    font-size: clamp(0.7rem, 1.5vw, 0.85rem);
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .trial-value {
+    font-size: clamp(1rem, 2.2vw, 1.4rem);
+    font-weight: 700;
+    color: var(--text-light);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .summary-stats {
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  .stat-box {
+    text-align: center;
+  }
+
+  .stat-label {
+    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+    color: var(--text-muted);
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .stat-value {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  button#restart-btn, button#play-btn {
+    margin-top: 1.8rem;
+    padding: clamp(0.7rem, 1.5vw, 0.9rem) clamp(1.6rem, 3vw, 2.2rem);
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #1a1a2e;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+  }
+
+  button#restart-btn:hover, button#play-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,230,118,0.35);
+  }
+
+  button#restart-btn:active, button#play-btn:active {
+    transform: translateY(0);
+  }
+
+  button#retry-btn {
+    margin-top: 2rem;
+    padding: clamp(0.7rem, 1.5vw, 0.9rem) clamp(1.6rem, 3vw, 2.2rem);
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    background: #1a1a2e;
+    color: var(--warn);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  button#retry-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(26,26,46,0.35);
+  }
+
+  .false-start-text {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    color: var(--bg-result);
+    margin-bottom: 0.5rem;
+  }
+
+  .false-start-sub {
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: rgba(26,26,46,0.7);
+  }
+
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+<div id="app" class="stage-start">
+  <div class="content">
+    <!-- Start Screen -->
+    <div id="screen-start" class="content">
+      <h1>&#9889; Reaction Timer</h1>
+      <p class="subtitle">Click the screen when it turns red.<br>Average of 5 trials.</p>
+      <button id="restart-btn" onclick="App.start()">Start Test</button>
+    </div>
+
+    <!-- Wait Screen -->
+    <div id="screen-wait" class="content hide">
+      <p class="subtitle" style="margin-bottom:2rem;">Wait for green to turn red&hellip;</p>
+      <div class="instruction">Click anywhere!</div>
+      <div class="progress-row" id="progress-wait"></div>
+    </div>
+
+    <!-- Active Screen (red, waiting to click) -->
+    <div id="screen-active" class="content hide">
+      <p class="instruction">CLICK NOW!</p>
+      <div class="progress-row" id="progress-active"></div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="screen-result" class="content hide">
+      <h1 style="font-size:clamp(1.3rem,3vw,2rem);">Reaction Time</h1>
+      <div class="timer-display" id="result-ms"></div>
+      <p class="timer-unit">milliseconds</p>
+      <div class="progress-row" id="progress-result"></div>
+    </div>
+
+    <!-- False Start Screen -->
+    <div id="screen-false-start" class="content hide">
+      <div class="false-start-text">Too Soon!</div>
+      <p class="false-start-sub">You clicked before it was time.</p>
+      <button id="retry-btn" onclick="App.retryTrial()">Try Again</button>
+    </div>
+
+    <!-- Summary Screen -->
+    <div id="screen-summary" class="content hide">
+      <h1>Results</h1>
+      <p class="subtitle">All 5 trials complete</p>
+      <div class="summary-grid" id="summary-grid"></div>
+      <div class="summary-stats">
+        <div class="stat-box">
+          <div class="stat-label">Average</div>
+          <div class="stat-value" id="stat-avg"></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Best</div>
+          <div class="stat-value" id="stat-best"></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Worst</div>
+          <div class="stat-value" id="stat-worst"></div>
+        </div>
+      </div>
+      <button id="play-btn" onclick="App.start()">Play Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  "use strict";
+
+  var NUM_TRIALS = 5;
+  var WAIT_MIN_MS = 1500;
+  var WAIT_MAX_MS = 4500;
+
+  var state = 'start';   // start | waiting | active | result | false-start | summary
+  var trialNum = 0;      // 1-based count of current trial being played
+  var results = [];       // recorded ms per trial
+  var waitTimerId = null;
+  var nextTrialDelayId = null;
+  var summaryDelayId = null;
+  var startTime = 0;
+
+  var $app = document.getElementById('app');
+
+  function clearAllTimers() {
+    if (waitTimerId !== null) clearTimeout(waitTimerId);
+    if (nextTrialDelayId !== null) clearTimeout(nextTrialDelayId);
+    if (summaryDelayId !== null) clearTimeout(summaryDelayId);
+    waitTimerId = null;
+    nextTrialDelayId = null;
+    summaryDelayId = null;
+  }
+
+  function getScreenEls() {
+    return {
+      start: document.getElementById('screen-start'),
+      wait: document.getElementById('screen-wait'),
+      active: document.getElementById('screen-active'),
+      result: document.getElementById('screen-result'),
+      falseStart: document.getElementById('screen-false-start'),
+      summary: document.getElementById('screen-summary')
+    };
+  }
+
+  function showScreen(key) {
+    var els = getScreenEls();
+    Object.keys(els).forEach(function(k) {
+      if (k === key) {
+        els[k].classList.remove('hide');
+      } else {
+        els[k].classList.add('hide');
+      }
+    });
+  }
+
+  function buildProgress(currentTrial, completedIdx) {
+    var html = '';
+    for (var i = 1; i <= NUM_TRIALS; i++) {
+      var cls = 'progress-dot';
+      if (completedIdx !== undefined && i < completedIdx + 1) {
+        cls += ' completed';
+      } else if (i === currentTrial) {
+        cls += ' current';
+      }
+      html += '<div class="' + cls + '"></div>';
+    }
+    return html;
+  }
+
+  function setAppClass(cls) {
+    $app.className = 'stage-' + cls;
+  }
+
+  // ---- Public API ----
+  var App = {
+    start: function() {
+      clearAllTimers();
+      trialNum = 0;
+      results = [];
+      state = 'waiting';
+      setAppClass('wait');
+      showScreen('wait');
+      document.getElementById('progress-wait').innerHTML = buildProgress(1, -1);
+      scheduleNext();
+    },
+
+    retryTrial: function() {
+      // A false-start doesn't count as a trial. Keep all valid results.
+      clearAllTimers();
+      state = 'waiting';
+      setAppClass('wait');
+      showScreen('wait');
+      document.getElementById('progress-wait').innerHTML = buildProgress(trialNum + 1, -1);
+      scheduleNext();
+    }
+  };
+
+  // ---- Expose App to multiple scopes for cross-compatibility ----
+  // On linkedom's window (for inline onclick="App.start()" and test harness)
+  if (typeof document !== 'undefined' && document.defaultView) {
+    document.defaultView.App = App;
+  }
+  // On sandbox/window (for expose option in test harness)
+  if (typeof window !== 'undefined') {
+    window.App = App;
+  }
+
+  function scheduleNext() {
+    clearAllTimers();
+    var wait = WAIT_MIN_MS + Math.random() * (WAIT_MAX_MS - WAIT_MIN_MS);
+    state = 'waiting';
+    setAppClass('wait');
+    showScreen('wait');
+    document.getElementById('progress-wait').innerHTML = buildProgress(trialNum + 1, -1);
+
+    // Schedule transition to active (red) after random delay
+    waitTimerId = setTimeout(function() {
+      state = 'active';
+      setAppClass('active');
+      showScreen('active');
+      document.getElementById('progress-active').innerHTML = buildProgress(trialNum + 1, -1);
+      startTime = performance.now();
+    }, wait);
+  }
+
+  function handleTrialClick() {
+    if (state === 'waiting') {
+      // False start! Clicked before green turned red.
+      clearAllTimers();
+      state = 'false-start';
+      setAppClass('false-start');
+      showScreen('falseStart');
+    } else if (state === 'active') {
+      var ms = Math.round(performance.now() - startTime);
+      results.push(ms);
+      trialNum++;
+      state = 'result';
+      setAppClass('result');
+      document.getElementById('result-ms').textContent = ms;
+      showScreen('result');
+      document.getElementById('progress-result').innerHTML = buildProgress(trialNum, trialNum - 1);
+
+      if (results.length >= NUM_TRIALS) {
+        // All done — delay briefly then show summary
+        state = 'summary';
+        summaryDelayId = setTimeout(showSummary, 2500);
+      } else {
+        // Next trial after a short delay
+        var ct = results.length;
+        nextTrialDelayId = setTimeout(function() {
+          state = 'waiting';
+          setAppClass('wait');
+          showScreen('wait');
+          document.getElementById('progress-wait').innerHTML = buildProgress(ct + 1, -1);
+          scheduleNext();
+        }, 2500);
+      }
+    }
+  }
+
+  function retryFromTimer() {
+    App.retryTrial();
+  }
+
+  function showSummary() {
+    var avg = Math.round(results.reduce(function(a, b) { return a + b; }, 0) / results.length);
+    var best = Math.min.apply(null, results);
+    var worst = Math.max.apply(null, results);
+
+    document.getElementById('stat-avg').textContent = avg;
+    document.getElementById('stat-best').textContent = best;
+    document.getElementById('stat-worst').textContent = worst;
+
+    var gridHtml = '';
+    for (var i = 0; i < results.length; i++) {
+      var val = results[i];
+      var isBest = (val === best && results.filter(function(v) { return v === best; }).length === 1);
+      gridHtml += '<div class="summary-cell' + (isBest ? ' best' : '') + '">' +
+        '<div class="trial-label">Trial ' + (i + 1) + '</div>' +
+        '<div class="trial-value">' + val + '<span style="font-size:0.7em;color:var(--text-muted)">ms</span></div>' +
+        '</div>';
+    }
+    document.getElementById('summary-grid').innerHTML = gridHtml;
+
+    setAppClass('summary');
+    showScreen('summary');
+  }
+
+  // ---- Event Handlers ----
+  document.addEventListener('pointerdown', function onPointerDown(e) {
+    if (state === 'waiting' || state === 'active') {
+      e.preventDefault();
+      handleTrialClick();
+    }
+  });
+
+  // Prevent context menu
+  $app.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+})();
+</script>
+</body>
+</html>

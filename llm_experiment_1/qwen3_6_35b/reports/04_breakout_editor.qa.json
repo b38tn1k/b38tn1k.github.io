@@ -1,0 +1,14 @@
+{
+  "method": "Exact-source VM Canvas/DOM simulation; no actual browser",
+  "startup": "pass",
+  "keyboardMoves": 30,
+  "mousePaddle": 455,
+  "rowOneCollision": {
+    "brickStillPresent": true,
+    "score": 0
+  },
+  "paddleBounceVerticalVelocity": 5.25,
+  "draw": 1,
+  "erase": 0,
+  "jsonRoundTrip": true
+}

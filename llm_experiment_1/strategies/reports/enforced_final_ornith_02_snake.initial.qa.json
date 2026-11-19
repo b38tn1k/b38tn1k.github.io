@@ -1,0 +1,55 @@
+{
+  "method": "Actual source with real registered handlers and deterministic timers. Lexical observer and controlled food/body fixtures only; game algorithms unchanged. Native browser rendering unverified.",
+  "sha256": "c3f938bd71656527ed8d2d66a30cbdacebf932dec2d4ba49eb7a9e49ef661091",
+  "checks": [
+    {
+      "id": "movement_turn_reversal_pause",
+      "pass": true,
+      "evidence": {
+        "turn": true,
+        "reversalBlocked": true,
+        "pauseResume": true
+      }
+    },
+    {
+      "id": "food_growth_and_difficulty",
+      "pass": true,
+      "evidence": {
+        "score": 50,
+        "length": 4,
+        "level": 2,
+        "tick": 140
+      }
+    },
+    {
+      "id": "wall_collision_and_play_again",
+      "pass": true,
+      "evidence": {
+        "playAgain": true
+      }
+    },
+    {
+      "id": "self_collision",
+      "pass": true,
+      "evidence": {
+        "collision": true
+      }
+    },
+    {
+      "id": "restart_during_play",
+      "pass": false,
+      "error": "Restart control must reset an active game"
+    },
+    {
+      "id": "keyboard_restart_while_paused",
+      "pass": false,
+      "error": "true == false"
+    },
+    {
+      "id": "vacating_tail",
+      "pass": false,
+      "error": "Non-growing move into the departing tail should remain legal"
+    }
+  ],
+  "pass": false
+}

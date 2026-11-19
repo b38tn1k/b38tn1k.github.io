@@ -1,0 +1,41 @@
+{
+  "method": "Independent frozen-source VM/DOM/nativeCanvas2D; actual controls and output bytes, controlled state fixtures exposing existing functions only. No browser layout/GPU/default actions or physical printing. Qwen Snake receives the standard CanvasRenderingContext2D brand global solely for its instanceof check; the adapter otherwise omits this browser class. No game logic replaced.",
+  "sha256": "5ce335ad1205a9b31704aaf5b9fdf3e44683be896dc72117e36bba94c6d45ab7",
+  "checks": [
+    {
+      "id": "actual_start_movement_turn_pause_restart",
+      "pass": true,
+      "evidence": {
+        "moveTurn": true,
+        "pauseResume": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "growth_scoring_and_live_difficulty",
+      "pass": true,
+      "evidence": {
+        "score": 5,
+        "length": 8,
+        "tickInterval": 142
+      }
+    },
+    {
+      "id": "wall_self_collision_and_reverse_guard",
+      "pass": true,
+      "evidence": {
+        "wall": true,
+        "self": true,
+        "reversal": true
+      }
+    },
+    {
+      "id": "departing_tail_is_legal",
+      "pass": false,
+      "error": "Collision includes the tail that vacates on this move",
+      "actual": true,
+      "expected": false
+    }
+  ],
+  "pass": false
+}

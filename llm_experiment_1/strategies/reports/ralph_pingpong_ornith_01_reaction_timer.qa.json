@@ -1,0 +1,29 @@
+{
+  "method": "Exact final source, real start/stage/reset handlers and scheduled cue callbacks with known200/225/250/275/300ms responses. Independent Node VM/DOM/nativeCanvas only; no browser layout or injected app timing hooks.",
+  "sha256": "1552d8b330751e8924a139e371a6732beb3a09e3315f5ead53d39b0ff0cf2367",
+  "checks": [
+    {
+      "id": "normal_five_trial_flow_and_known_mean",
+      "pass": true,
+      "evidence": {
+        "mean": 250,
+        "finished": true
+      }
+    },
+    {
+      "id": "pre_cue_false_start_detected",
+      "pass": false,
+      "error": "Pre-cue click must visibly change the live stage to a false-start state",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "reset_cancels_pending_cue",
+      "pass": true,
+      "evidence": {
+        "reset": true
+      }
+    }
+  ],
+  "pass": false
+}

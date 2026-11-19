@@ -1,0 +1,58 @@
+{
+  "method": "Exact-source VM with DOM mouse/touch/control events, deterministic RAF, actual JSON Blob/FileReader route and controlled physics fixtures; no browser",
+  "startup": "pass",
+  "clear": 0,
+  "drawCount": 1,
+  "eraseCount": 0,
+  "touchDrawCount": 1,
+  "saved": {
+    "w": 11,
+    "h": 10,
+    "rows": 10,
+    "cols": 11,
+    "bricks": 1
+  },
+  "loaded": {
+    "bricks": 1,
+    "filename": "roundtrip.json"
+  },
+  "invalidJSONUnchanged": true,
+  "enteredPlay": {
+    "mode": "PLAY",
+    "status": "Ready",
+    "bricks": 1,
+    "lives": 3
+  },
+  "keyboardPaddleWorks": true,
+  "readyBallFollowsPaddle": false,
+  "ballMovedAfterLaunch": true,
+  "touchPaddleWorks": true,
+  "brickCollision": {
+    "score": 10,
+    "remaining": 0,
+    "status": "Won"
+  },
+  "restart": {
+    "score": 0,
+    "lives": 3,
+    "bricks": 0,
+    "status": "Ready"
+  },
+  "wallBounce": true,
+  "paddleBounce": true,
+  "lifeSequence": [
+    {
+      "lives": 2,
+      "status": "Ready"
+    },
+    {
+      "lives": 1,
+      "status": "Ready"
+    },
+    {
+      "lives": 0,
+      "status": "Lost"
+    }
+  ],
+  "sha256": "48b5f540a577b48b8365142960c91e117f1f7c4933e185488f186abaf7caed6f"
+}

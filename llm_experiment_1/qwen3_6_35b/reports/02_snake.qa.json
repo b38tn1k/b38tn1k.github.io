@@ -1,0 +1,22 @@
+{
+  "method": "Exact-source VM logic and keyboard-event checks; no actual browser",
+  "foodGrowthScore": {
+    "length": 4,
+    "score": 1
+  },
+  "pause": {
+    "state": "paused",
+    "activeTickTimers": 0
+  },
+  "resume": 1,
+  "keyboardReversalPrevented": true,
+  "difficulty": 144,
+  "wallCollision": "dead",
+  "selfCollision": "dead",
+  "restart": {
+    "score": 0,
+    "length": 3,
+    "state": "playing"
+  },
+  "enterVacatingTail": "dead"
+}

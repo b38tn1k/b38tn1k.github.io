@@ -1,0 +1,100 @@
+{
+  "status": "completed_with_defects",
+  "grade": "B- - playable; difficulty timer not updated",
+  "score": 78,
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 23,
+    "usability": 11,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "verified": [
+    "Exact-source VM: growth/score, keyboard reversal, wall/self collisions, pause/resume timers, legal tail move",
+    "Self-contained HTML"
+  ],
+  "defects": [
+    "Level-up changes interval and HUD but does not reschedule active setInterval; actual game stays150ms until pause/resume or manual speed change",
+    "Food placement loops forever when board is full"
+  ],
+  "verificationConcerns": [
+    "No runtime level-up scheduler assertions recorded"
+  ],
+  "scopeCompliance": "Filesystem boundary applied from process start; no confirmed out-of-directory writes",
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "elapsedMinutes": 1.6,
+  "wallMinutes": 1.8,
+  "promptWords": 36,
+  "toolCalls": 5,
+  "toolResultsMarkedError": 0,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "modelUsageReported": {
+    "input": 14517,
+    "output": 6204,
+    "cacheRead": 58536,
+    "totalTokens": 79257
+  },
+  "peakReportedPromptTokens": 14497,
+  "assistantTextContainingToolCallMarkup": 0,
+  "artifactBytes": 14790,
+  "sha256": "cf3d547d234dc79aadbee0f90b29ced780b6d604a785a31d2dd043b03c899861",
+  "billionContext": {
+    "loadedConfirmed": true,
+    "sessionId": "01a1dbc5-85ba-7374-a039-6063786e31b8",
+    "extensionVersion": "0.1.213",
+    "stats": {
+      "requests": 6,
+      "tokensSaved": 0,
+      "inputTokens": 73053,
+      "cachedTokens": 58536,
+      "outputTokens": 6204,
+      "cacheSamples": 6,
+      "lastInputTokens": 14497,
+      "compressCreditTokens": 0,
+      "contextTokens": 14497,
+      "retrieveCalls": 0,
+      "retrieveHits": 0,
+      "retrieveMisses": 0,
+      "retrieveDropped": 0,
+      "retrieveDelivered": 0,
+      "storedBytes": 0,
+      "storeBytesSaved": 0,
+      "rangeRestores": 0,
+      "contextTokensSource": "usage",
+      "localInputEstimate": 27416,
+      "contextEstimateTokens": 14400,
+      "contextEstimateCalibrated": true,
+      "lastUsageGradeTokens": 14497,
+      "lastUsagePayloadUpper": 27416,
+      "lastInputTokensSource": "usage",
+      "lastInputTokensOrigin": "http://127.0.0.1:11435",
+      "calibrationRing": {
+        "origin": "http://127.0.0.1:11435",
+        "model": "qwen3.6:35b-a3b",
+        "values": [
+          1.0841467254408061,
+          1.0874579896119767,
+          1.090491951256206
+        ]
+      },
+      "calibratedEstimate": 1.0873655554363295,
+      "calibratedEstimateOrigin": "http://127.0.0.1:11435",
+      "calibratedEstimateModel": "qwen3.6:35b-a3b"
+    },
+    "compressionStats": {
+      "tokensCompressed": 0,
+      "compressionCount": 0,
+      "absorbedTokens": 0,
+      "storedCount": 0,
+      "retrievalCount": 0
+    },
+    "blocks": 0
+  },
+  "limitations": [
+    "No independent real-browser/visual testing; prior browser-origin denial honored.",
+    "Single run per task; differences do not isolate extension effect from sampling variability."
+  ]
+}

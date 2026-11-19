@@ -1,0 +1,181 @@
+{
+  "score": 84,
+  "grade": "B - assisted product97.5; collisions and full-board flow verified",
+  "summary": "One counted prompt repairs same-move collisions and the full-board ending. Required Snake behavior passes independent exact-source checks; a minor win-heading state persists into a subsequent loss.",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 13,
+    "self_verification": 6,
+    "autonomy": 0
+  },
+  "assistedProductTargetMet": true,
+  "strengths": [
+    "Wall and body collisions stop on the move entering the invalid cell, without an out-of-board head; the departing tail cell remains legal when not growing.",
+    "Actual scheduled food pickups grow the snake, increase score and shorten its movement interval; twelve scheduled steps use the increased speed.",
+    "Pause/resume/restart preserve one animation chain. A valid Hamiltonian899-cell body consumes its final food to fill900cells, ends with no stale food and restarts with scheduled movement."
+  ],
+  "defects": [
+    "Nonblocking: after a full-board win, restart and a normal wall loss retain the YOU WIN! heading. The game still stops correctly and displays the current score."
+  ],
+  "verification": [
+    "qa/operator-qwen-snake.cjs passes all five required checks on immutable round1 and final/current HTML; SHA256d047f0dd6f1981d62336686ce93a15a85654926ae6b0b00c9e6fb9073ceb9b67.",
+    "Actual keys, controls, scheduled callbacks and nativeCanvas/DOM execute. Existing closure state/functions are exposed only for controlled collision/full-board inputs; no app algorithm is replaced.",
+    "Pi authored tests, reported17 passing checks and wrote VERIFY.md. Its verification explicitly leaves body and full-board fixtures at source-inspection level."
+  ],
+  "verificationConcerns": [
+    "VERIFY.md incorrectly treats controlled self-collision/full-board fixtures as impractical in the supplied runtime. The independent suite runs these fixtures directly; this is an unexercised verification opportunity, not an environment prohibition.",
+    "Some verified-working claims are later qualified as structural-only in VERIFY.md. Retained scratch scripts include early exploratory traces as well as final checks; a model pass count alone does not establish required behavior.",
+    "No browser layout, hit testing, focus/device behavior or native visual polish verification."
+  ],
+  "scopeCompliance": "Native OS read/write isolation remained active. No successful out-of-project write or reading of other benchmark artifacts/reports observed. Pi alone authored app changes and tests.",
+  "workflowNotes": "One persistent native Pi context;1of3 counted prompts. Finished early at independently verified assisted product target despite a disclosed nonblocking heading issue.17.07 model-active minutes; baseline creation cost remains separate.",
+  "humanOrSupervisorSteering": 1,
+  "terminalSnapshot": "strategies/reports/operator-finals/case92/index.html",
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "operator_rescue",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Here's a summary of the completed repair:\n\n## Snake Game Repair Complete \u2713\n\n### Three bugs fixed in `index.html`:\n\n**1. Collision Timing (One Tick Late)** \u2014 `isCollision()` was checking `snake[0]` (current head position) instead of the newly calculated future position. Now passes the computed `head` to `isCollision(head, true)` so collision is detected on the tick the move enters invalid territory, with no out-of-bounds display.\n\n**2. Departing Tail Self-Collision** \u2014 When not growing, the tail vacates its cell the same tick the head moves. Previously the departing tail falsely blocked movement into that position. Now `isCollision(head, true)` excludes the last body segment from the self-collision check when the snake isn't eating.\n\n**3. Full Board Win Condition** \u2014 When all 900 cells are filled after eating, `spawnFood()` now sets `food = null` (no stale references), and `tick()` detects `snake.length >= GRID_COLS * GRID_ROWS` to trigger a \"YOU WIN!\" overlay instead of letting the game continue indefinitely.\n\n### Working features preserved and verified:\n- Pause/Resume via Space or P key \u2713\n- Restart via R key or button click \u2713\n- Arrow keys + WASD direction control \u2713\n- Scoring, leveling, speed increase \u2713\n- High score persistence (localStorage) \u2713\n- Auto-pause on tab blur/focus resume \u2713\n\n**VERIFY.md** documents all fixes, testing approach, and limitations.",
+  "workflowInstructions": "operator-rescue-plan.json; run-operator-rescue.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 17.07,
+  "wallMinutes": 17.07,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "operator_finished",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 58,
+  "parentToolCalls": 58,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 22,
+  "modelUsageReported": {
+    "input": 97600,
+    "output": 45628,
+    "cacheRead": 1631561,
+    "totalTokens": 1774789
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 48858,
+  "parentPeakReportedPromptTokens": 48858,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 97600,
+    "output": 45628,
+    "cacheRead": 1631561,
+    "totalTokens": 1774789
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 19175,
+  "sha256": "d047f0dd6f1981d62336686ce93a15a85654926ae6b0b00c9e6fb9073ceb9b67",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 2,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 3,
+    "delegations": [],
+    "controller": "Codex operator with one persistent native Pi repair context",
+    "operatorPrompts": 1,
+    "rounds": [
+      {
+        "prompt": 1,
+        "settledUTC": "2026-11-17T20:54:46.721752+00:00",
+        "modelSeconds": 1024.48,
+        "sha256": "d047f0dd6f1981d62336686ce93a15a85654926ae6b0b00c9e6fb9073ceb9b67",
+        "snapshot": "strategies/reports/operator-rounds/case92/round1"
+      }
+    ],
+    "seed": {
+      "id": "qwen-guide_worker-2",
+      "mode": "guide_worker",
+      "configurationMean": 70.8,
+      "source": "strategies/guide_worker/qwen/02_snake/index.html",
+      "report": "strategies/reports/guide_worker_qwen_02_snake.report.json",
+      "sha256": "72f5c6a9d33bf3621739cebbbcdb33bcd8542449283843075e1b79c986e6d5d8",
+      "score": 82,
+      "grade": "B provisional - Playable Snake; collision detection runs one tick late",
+      "rubricScores": {
+        "functionality": 33,
+        "artifact_correctness": 24,
+        "usability": 11,
+        "self_verification": 4,
+        "autonomy": 10
+      },
+      "baselineScope": "OS write boundary active. No successful out-of-tree write observed.",
+      "baselineSteering": 0,
+      "baselineMinutes": 4.01,
+      "baselineActiveMinutes": 4.01,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_qwen_02_snake/index.html"
+    },
+    "repairSettings": {
+      "thinking": "off",
+      "billionContext": false,
+      "compaction": {
+        "enabled": true
+      },
+      "forcedProof": false,
+      "singlePersistentAgent": true,
+      "note": "Copied seed configuration is provenance; repair workflow uses corrected standalone Pi profiles, not the original delegation/extension architecture."
+    },
+    "modelActiveMinutes": 17.07,
+    "operatorReviewMinutes": 0.22,
+    "repairElapsedMinutes": 17.29
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Operator-assisted rescue of a selected existing artifact. Baseline creation cost and new repair cost are separate; normalized product quality is not an autonomous100-point grade."
+  ],
+  "nativeCompaction": {
+    "started": 2,
+    "completed": 2,
+    "aborted": 0,
+    "events": [
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 50362,
+        "estimatedTokensAfter": 23105
+      },
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 49178,
+        "estimatedTokensAfter": 23079
+      }
+    ],
+    "reportedUsage": {
+      "input": 44305,
+      "output": 1990,
+      "cacheRead": 0,
+      "totalTokens": 46295
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "supervisorAssisted": true,
+  "assistedProductScore": 97.5
+}

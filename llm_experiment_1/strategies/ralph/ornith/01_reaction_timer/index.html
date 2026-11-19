@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Reaction Timer</title>
+<style>
+  :root {
+    --bg: #0f1220;
+    --surface: #181c2e;
+    --surface-2: #212740;
+    --text: #e7ecf5;
+    --muted: #8b93ad;
+    --accent: #6ea8fe;
+    --green: #37d67a;
+    --red: #ff6b6b;
+    --amber: #ffcc66;
+    --radius: 16px;
+    --shadow: 0 10px 40px rgba(0,0,0,.45);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(1200px 800px at 50% -10%, #1b2140 0%, var(--bg) 55%);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  header { padding: 22px 20px 8px; text-align: center; }
+  h1 { margin: 0; font-size: clamp(22px, 5vw, 30px); letter-spacing: .3px; font-weight: 700; }
+  .subtitle { margin-top: 6px; color: var(--muted); font-size: 14px; }
+  main {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 12px 16px 24px; gap: 18px;
+  }
+  #stage {
+    position: relative; width: min(920px, 100%); aspect-ratio: 16 / 9; min-height: 260px;
+    border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow);
+    border: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; cursor: pointer;
+    outline: none; transition: background-color .12s ease, transform .08s ease; touch-action: manipulation;
+    overflow: hidden;
+  }
+  #stage:active { transform: scale(.998); }
+  #stage.waiting { background: #2f6f4f; }
+  #stage.ready    { background: var(--green); }
+  #stage.tooearly { background: var(--red); }
+  #stage.result   { background: var(--accent); }
+  .stage-title { font-size: clamp(22px, 5vw, 40px); font-weight: 700; line-height: 1.1; padding: 0 24px; }
+  .stage-sub { margin-top: 10px; font-size: clamp(13px, 2.6vw, 17px); color: rgba(255,255,255,.82); }
+  #stage.ready .stage-sub, #stage.tooearly .stage-sub { color: rgba(255,255,255,.92); }
+  .pill {
+    padding: 6px 14px; border-radius: 999px; background: var(--surface-2); color: var(--muted);
+    font-size: 13px; letter-spacing: .4px;
+  }
+  .progress { display: flex; gap: 8px; align-items: center; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--surface-2); border: 1px solid rgba(255,255,255,.12); }
+  .dot.done { background: var(--accent); border-color: transparent; }
+  .dot.current { background: var(--amber); border-color: transparent; box-shadow: 0 0 0 4px rgba(255,204,102,.25); }
+  #controls { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  button.btn {
+    font: inherit; color: var(--text); background: var(--surface-2);
+    border: 1px solid rgba(255,255,255,.08); padding: 12px 20px; border-radius: 12px; cursor: pointer;
+    transition: background .12s ease, transform .06s ease;
+  }
+  button.btn:hover { background: #2b3253; }
+  button.btn:active { transform: translateY(1px); }
+  button.btn.primary { background: var(--accent); color: #0b1020; border-color: transparent; font-weight: 700; }
+  button.btn:disabled { opacity: .5; cursor: not-allowed; }
+  #results {
+    width: min(920px, 100%); background: var(--surface); border: 1px solid rgba(255,255,255,.06);
+    border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px;
+  }
+  .summary-row { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+  .stat { min-width: 96px; text-align: center; }
+  .stat .num { font-size: clamp(24px, 5vw, 34px); font-weight: 800; }
+  .stat .lbl { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .6px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  th, td { text-align: center; padding: 8px 10px; font-size: 14px; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  td { border-bottom: 1px solid rgba(255,255,255,.06); }
+  tr td.first-cell { text-align: left; color: var(--muted); }
+  tr.best td { color: var(--green); }
+  tr.worst td { color: var(--red); }
+  .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:.4px; }
+  .badge.good { background: rgba(55,214,122,.15); color: var(--green); }
+  .badge.avg  { background: rgba(255,204,102,.15); color: var(--amber); }
+  .badge.slow { background: rgba(255,107,107,.15); color: var(--red); }
+  .rank-line { margin-top: 10px; color: var(--muted); font-size: 13px; text-align: center; }
+  .sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Reaction Timer</h1>
+    <div class="subtitle">Watch the box. Tap the moment it turns green. Five trials, then see your scores.</div>
+  </header>
+
+  <main>
+    <div class="pill" id="state-pill">Idle</div>
+    <div class="progress" id="dots" role="list" aria-label="Trial progress"></div>
+
+    <div id="stage" tabindex="0" role="button" aria-live="polite">
+      <div class="stage-title" id="stage-title">Ready to test your reflexes?</div>
+      <div class="stage-sub" id="stage-sub">Press <strong>Space</strong> or tap the box to begin</div>
+    </div>
+
+    <div id="controls">
+      <button class="btn primary" id="start-btn">Start</button>
+      <button class="btn" id="reset-btn" disabled>Restart</button>
+    </div>
+    <p class="rank-line" id="rank-line"></p>
+  </main>
+
+  <footer>Fastest human reflexes are around 150&nbsp;ms. Most people sit near 200–250&nbsp;ms.</footer>
+
+  <div id="results" hidden>
+    <div class="summary-row">
+      <div class="stat"><div class="num" id="stat-avg">–</div><div class="lbl">Average</div></div>
+      <div class="stat"><div class="num" id="stat-best">–</div><div class="lbl">Best</div></div>
+      <div class="stat"><div class="num" id="stat-worst">–</div><div class="lbl">Worst</div></div>
+      <div class="stat"><div class="num" id="stat-stdev">–</div><div class="lbl">Consistency</div></div>
+    </div>
+    <table id="results-table">
+      <thead><tr><th>Trial</th><th>Result</th><th>Latency</th><th>Rating</th></tr></thead>
+      <tbody id="results-body"></tbody>
+    </table>
+  </div>
+
+  <span class="sr-only" id="aria-live"></span>
+
+<script>
+(function () {
+  "use strict";
+
+  var TOTAL_TRIALS = 5;
+  var MIN_WAIT_MS = 1000;
+  var MAX_WAIT_MS = 4000;
+
+  var stage, titleEl, subEl, pillEl, dotsEl, rankLineEl;
+  var resultsEl, startBtn, resetBtn, ariaLiveEl;
+  var results = [];
+  var timerId = null;
+  var status = "idle";
+
+  function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function fmt(ms) { return Math.round(ms) + " ms"; }
+  function rating(ms) {
+    if (ms < 200) return { label: "Lightning", cls: "good" };
+    if (ms < 280) return { label: "Fast", cls: "good" };
+    if (ms < 380) return { label: "Average", cls: "avg" };
+    return { label: "Slow", cls: "slow" };
+  }
+  function clearTimer() { if (timerId !== null) { clearTimeout(timerId); timerId = null; } }
+  function announce(text) { ariaLiveEl.textContent = ""; setTimeout(function () { ariaLiveEl.textContent = text; }, 40); }
+
+  function setStatus(next) {
+    status = next;
+    stage.classList.remove("waiting", "ready", "tooearly", "result");
+    if (next !== "finished" && next !== "idle") stage.classList.add(next);
+    pillEl.textContent = {
+      idle: "Idle", waiting: "Get ready…", ready: "Tap now!", tooearly: "Too early", finished: "Done"
+    }[next] || "Idle";
+  }
+
+  function setStageText(title, sub) { titleEl.innerHTML = title; subEl.innerHTML = sub || ""; }
+
+  function renderDots() {
+    dotsEl.innerHTML = "";
+    for (var i = 0; i < TOTAL_TRIALS; i++) {
+      var dot = document.createElement("div");
+      dot.className = "dot";
+      dot.setAttribute("role", "listitem");
+      if (i < results.length) dot.classList.add("done");
+      else if (i === results.length && status === "waiting") dot.classList.add("current");
+      dotsEl.appendChild(dot);
+    }
+  }
+
+  function startGame() {
+    clearTimer();
+    results = [];
+    renderDots();
+    setStatus("waiting");
+    timerId = setTimeout(showReady, randInt(MIN_WAIT_MS, MAX_WAIT_MS));
+    setStageText("Focus…", "The box will turn green at a random time. Don't jump the gun.");
+    startBtn.disabled = true;
+    resetBtn.disabled = false;
+    resultsEl.hidden = true;
+    rankLineEl.textContent = "";
+  }
+
+  var readyAt = 0;
+  function showReady() {
+    timerId = null;
+    readyAt = Date.now();
+    setStatus("ready");
+    setStageText("Go!", "Tap as fast as you can!");
+  }
+
+  var justHandled = false;
+  function handlePress() {
+    if (justHandled) { return; }
+    justHandled = true;
+    window.setTimeout(function () { justHandled = false; }, 0);
+
+    if (status === "idle" || status === "finished") { startGame(); return; }
+    if (status === "waiting") {
+      clearTimer();
+      setStatus("tooearly");
+      setStageText("Too early!", "You pressed before the box turned green. Tap to try again.");
+      announce("Too early. Try again.");
+      return;
+    }
+    if (status === "ready") {
+      var latency = Date.now() - readyAt;
+      results.push(latency);
+      renderDots();
+      setStatus("result");
+      var r = rating(latency);
+      setStageText(
+        fmt(latency),
+        '<small>' + r.label + '</small>' +
+        (results.length < TOTAL_TRIALS ? " — Tap for trial " + (results.length + 1) : " — Tap to see results")
+      );
+      announce(r.label + ". " + fmt(latency));
+      if (results.length >= TOTAL_TRIALS) { endGame(); }
+      return;
+    }
+    setStatus("waiting");
+    timerId = setTimeout(showReady, randInt(MIN_WAIT_MS, MAX_WAIT_MS));
+    setStageText("Focus…", "The box will turn green at a random time. Ready for this attempt?");
+    announce("Ready.");
+  }
+
+  function mean(arr) { return arr.reduce(function (a, b) { return a + b; }, 0) / arr.length; }
+  function stdev(arr) {
+    var m = mean(arr);
+    return Math.sqrt(arr.reduce(function (a, b) { return a + (b - m) * (b - m); }, 0) / arr.length);
+  }
+
+  function endGame() {
+    setStatus("finished");
+    setStageText("Results", "Here is how you did across all five trials.");
+    startBtn.textContent = "Play again";
+    startBtn.onclick = startGame;
+    startBtn.disabled = false;
+    renderResults();
+  }
+
+  function renderResults() {
+    var ordered = results.slice().sort(function (a, b) { return a - b; });
+    var best = ordered[0], worst = ordered[ordered.length - 1];
+    document.getElementById("stat-avg").textContent = fmt(mean(results));
+    document.getElementById("stat-best").textContent = fmt(best);
+    document.getElementById("stat-worst").textContent = fmt(worst);
+    document.getElementById("stat-stdev").textContent = fmt(stdev(results));
+    var bestIdx = results.indexOf(best), worstIdx = results.indexOf(worst);
+    var body = document.getElementById("results-body");
+    body.innerHTML = "";
+    for (var i = 0; i < results.length; i++) {
+      var r = rating(results[i]);
+      var tr = document.createElement("tr");
+      if (i === bestIdx) tr.classList.add("best");
+      if (i === worstIdx && results.length > 1) tr.classList.add("worst");
+      tr.innerHTML = '<td class="first-cell">Trial ' + (i + 1) + '</td><td>' + r.label + '</td><td>' + fmt(results[i]) + '</td><td><span class="badge ' + r.cls + '">' + r.label + '</span></td>';
+      body.appendChild(tr);
+    }
+    var rank = mean(results) < 200 ? "Elite reflexes!" : mean(results) < 250 ? "Snappy reflexes!" : mean(results) < 350 ? "Solid effort!" : "Keep practicing!";
+    rankLineEl.textContent = rank + " · average " + fmt(mean(results)) + " over " + results.length + " trials";
+    resultsEl.hidden = false;
+  }
+
+  function resetGame() {
+    clearTimer();
+    results = [];
+    startBtn.textContent = "Start";
+    startBtn.onclick = startGame;
+    startBtn.disabled = false;
+    resetBtn.disabled = true;
+    renderDots();
+    setStatus("idle");
+    setStageText("Ready to test your reflexes?", "Press <strong>Space</strong> or tap the box to begin");
+    resultsEl.hidden = true;
+    rankLineEl.textContent = "";
+    announce("Reset. Ready to start.");
+  }
+
+  function init() {
+    stage = document.getElementById("stage");
+    titleEl = document.getElementById("stage-title");
+    subEl = document.getElementById("stage-sub");
+    pillEl = document.getElementById("state-pill");
+    dotsEl = document.getElementById("dots");
+    rankLineEl = document.getElementById("rank-line");
+    resultsEl = document.getElementById("results");
+    startBtn = document.getElementById("start-btn");
+    resetBtn = document.getElementById("reset-btn");
+    ariaLiveEl = document.getElementById("aria-live");
+    startBtn.addEventListener("click", function (e) { e.stopPropagation(); startGame(); });
+    resetBtn.addEventListener("click", resetGame);
+    stage.addEventListener("pointerup", handlePress);
+    stage.addEventListener("click", handlePress);
+    window.addEventListener("keydown", function (e) {
+      if (e.code === "Space" || e.key === " ") {
+        e.preventDefault();
+        justHandled = true;
+        window.setTimeout(function () { justHandled = false; }, 0);
+        handlePress();
+      }
+    });
+    renderDots();
+    setStatus("idle");
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>

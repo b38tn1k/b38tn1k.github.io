@@ -1,0 +1,26 @@
+{
+  "sha256": "48acaac351d978611b217707b055a960c56b0af4dc0e540a8bf7901d062a4998",
+  "method": "Exact-source VM/DOM events, controlled physics states and real JSON Blob text; no browser",
+  "startup": "pass",
+  "draw": true,
+  "erase": true,
+  "jsonRoundTrip": true,
+  "saveUIWiring": "doSave has no listener/callsite; label says Save but file input invokes doLoad.",
+  "launched": true,
+  "keyboardPaddle": true,
+  "before": {
+    "x": 360,
+    "y": 435.8,
+    "vx": 3.1840816777831187e-16,
+    "vy": -5.2
+  },
+  "brickHit": {
+    "score": 10,
+    "won": true
+  },
+  "restart": {
+    "score": 0,
+    "lives": 3,
+    "bricks": 0
+  }
+}

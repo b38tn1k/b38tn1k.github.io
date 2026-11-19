@@ -1,0 +1,96 @@
+{
+  "method": "Independent exact-source DOM/nativeCanvas handlers, scheduled callbacks, downloaded JSON parsed and round-tripped through existing loader. Closure exposure only for fixture setup, not algorithm replacement. No browser hit testing/layout.",
+  "sha256": "992dd591ad72cf6bfd135e38e1e5bc7bcc5b642decad3c801dba32cff1dbf4c7",
+  "checks": [
+    {
+      "id": "actual_editor_draw_and_erase",
+      "pass": true,
+      "evidence": {
+        "draw": true,
+        "erase": true
+      }
+    },
+    {
+      "id": "overlay_Play_starts_game",
+      "pass": false,
+      "error": "'edit' == 'play'",
+      "actual": "edit",
+      "expected": "play"
+    },
+    {
+      "id": "actual_save_download_roundtrip_retains_bricks_and_colors",
+      "pass": false,
+      "error": "'[]' == '[[\"4,0\",\"#ff0000\"],[\"4,1\",\"#4dd0e1\"],[\"4,3\",\"#4dd0e1\"],[\"4,5\",\"#4dd0e1\"],[\"4,7\",\"#4dd0e1\"],[\"4,9\",\"#4dd0e1\"],[\"5,0\",\"#4dd0e1\"],[\"5,1\",\"#00ff00\"],[\"5,2\",\"#4dd0e1\"],[\"5,4\",\"#4dd0e1\"],[\"5,6\",\"#4dd0e1\"],[\"5,8\",\"#4dd0e1\"],[\"6,1\",\"#4dd0e1\"],[\"6,3\",\"#4dd0e1\"],[\"6,5\",\"#4dd0e1\"],[\"6,7\",\"#4dd0e1\"],[\"6,9\",\"#4dd0e1\"],[\"7,0\",\"#4dd0e1\"],[\"7,2\",\"#4dd0e1\"],[\"7,4\",\"#4dd0e1\"],[\"7,6\",\"#4dd0e1\"],[\"7,8\",\"#4dd0e1\"]]'",
+      "actual": "[]",
+      "expected": "[[\"4,0\",\"#ff0000\"],[\"4,1\",\"#4dd0e1\"],[\"4,3\",\"#4dd0e1\"],[\"4,5\",\"#4dd0e1\"],[\"4,7\",\"#4dd0e1\"],[\"4,9\",\"#4dd0e1\"],[\"5,0\",\"#4dd0e1\"],[\"5,1\",\"#00ff00\"],[\"5,2\",\"#4dd0e1\"],[\"5,4\",\"#4dd0e1\"],[\"5,6\",\"#4dd0e1\"],[\"5,8\",\"#4dd0e1\"],[\"6,1\",\"#4dd0e1\"],[\"6,3\",\"#4dd0e1\"],[\"6,5\",\"#4dd0e1\"],[\"6,7\",\"#4dd0e1\"],[\"6,9\",\"#4dd0e1\"],[\"7,0\",\"#4dd0e1\"],[\"7,2\",\"#4dd0e1\"],[\"7,4\",\"#4dd0e1\"],[\"7,6\",\"#4dd0e1\"],[\"7,8\",\"#4dd0e1\"]]"
+    },
+    {
+      "id": "actual_play_mouse_keyboard_restart",
+      "pass": false,
+      "error": "Mouse motion does not move paddle",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "editor_mode_closes_blocking_overlay",
+      "pass": false,
+      "error": "Initial overlay remains over editor",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "last_brick_results_in_win_or_rebuilt_level",
+      "pass": true,
+      "evidence": {
+        "score": 10,
+        "bricks": 26,
+        "running": true
+      }
+    },
+    {
+      "id": "actual_return_to_editor_during_play",
+      "pass": false,
+      "error": "Visible editing controls do not return to editor",
+      "actual": "play",
+      "expected": "edit"
+    },
+    {
+      "id": "edited_level_survives_restart_and_return_to_editor",
+      "pass": false,
+      "error": "Restart loses part of the edited design in cycle 1",
+      "actual": "[[\"4,1\",\"#4dd0e1\"]]",
+      "expected": "[[\"4,0\",\"#ff0000\"],[\"4,1\",\"#4dd0e1\"],[\"4,3\",\"#4dd0e1\"],[\"4,5\",\"#4dd0e1\"],[\"4,7\",\"#4dd0e1\"],[\"4,9\",\"#4dd0e1\"],[\"5,0\",\"#4dd0e1\"],[\"5,2\",\"#4dd0e1\"],[\"5,4\",\"#4dd0e1\"],[\"5,6\",\"#4dd0e1\"],[\"5,8\",\"#4dd0e1\"],[\"6,1\",\"#4dd0e1\"],[\"6,3\",\"#4dd0e1\"],[\"6,5\",\"#4dd0e1\"],[\"6,7\",\"#4dd0e1\"],[\"6,9\",\"#4dd0e1\"],[\"7,0\",\"#4dd0e1\"],[\"7,2\",\"#4dd0e1\"],[\"7,4\",\"#4dd0e1\"],[\"7,6\",\"#4dd0e1\"],[\"7,8\",\"#4dd0e1\"]]"
+    },
+    {
+      "id": "win_replay_restores_level_and_three_misses_end_game",
+      "pass": false,
+      "error": "10 == 0",
+      "actual": 10,
+      "expected": 0
+    },
+    {
+      "id": "three_misses_end_game_and_update_lives",
+      "pass": true,
+      "evidence": {
+        "lives": [
+          2,
+          1,
+          0
+        ],
+        "gameOver": true
+      }
+    },
+    {
+      "id": "first_miss_preserves_edited_layout_before_any_brick_is_hit",
+      "pass": false,
+      "evidence": {
+        "lives": 2,
+        "redCustomBrickBefore": true,
+        "redCustomBrickAfter": false,
+        "beforeCount": 21,
+        "afterCount": 26
+      }
+    }
+  ],
+  "pass": false
+}

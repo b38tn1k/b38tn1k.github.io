@@ -1,0 +1,20 @@
+{
+  "round": 1,
+  "role": "review",
+  "modelLabel": "ornith",
+  "model": "ornith-1.5:35b-256k",
+  "started": "2026-11-16T18:44:50.933035+00:00",
+  "events": "ralph/ornith/05_drawer_tray/runtime/02-review/events.jsonl",
+  "status": "completed",
+  "finished": "2026-11-16T18:50:54.797208+00:00",
+  "minutes": 6.06,
+  "reason": "stage_deadline",
+  "exitCode": -9,
+  "proof": {
+    "forcedActivations": 0,
+    "completionRequests": 0,
+    "red": 0,
+    "green": 0
+  },
+  "testExitCode": 0
+}

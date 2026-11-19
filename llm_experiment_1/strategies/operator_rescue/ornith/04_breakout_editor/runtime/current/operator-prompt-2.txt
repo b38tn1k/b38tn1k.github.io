@@ -1,0 +1,10 @@
+Feedback 2 of at most 3, same conversation and shared 60-minute repair deadline.
+
+Independent checks of settled round 1 confirm that draw/erase, opening Play, actual keyboard/mouse movement, and downloaded-file JSON roundtrip with two custom brick colors now work. The last brick also reaches the win screen on the following scheduled frame. Preserve those fixes.
+
+Two required flows still fail:
+- Playing consumes the edited level itself. After some bricks are destroyed, Restart resets score/lives but restarts only the remaining bricks; the full original edited layout is lost. After the final brick, You Win -> Editor -> Play cannot replay because there are zero bricks, despite the message promising the same level. Restart and replay must restore the complete user-edited design, with a fresh score and lives.
+- During play, selecting the visible Draw or Erase controls does not return to an editable level; painting is ignored. Provide a working, discoverable return to the editor that preserves the full edited design and permits further changes, then Play again.
+
+Verify the complete real-control loop: draw a custom design, play and destroy bricks, restart with that full design, return to editor and modify it, clear the last brick, replay, and lose all three lives. Check actual scheduled callbacks and final source. The reference adapter does schedule RAF callbacks; they are not a no-op. Update VERIFY.md with actual remaining failures. Do not add unrelated features or reset the repair budget.
+

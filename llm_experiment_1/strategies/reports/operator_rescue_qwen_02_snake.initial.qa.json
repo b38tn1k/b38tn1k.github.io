@@ -1,0 +1,37 @@
+{
+  "method": "Independent exact-source VM/DOM/nativeCanvas actual keys and scheduled callbacks, existing state/function exposure for controlled collision/full-board fixtures. No algorithm replacement; no browser visual check.",
+  "sha256": "72f5c6a9d33bf3621739cebbbcdb33bcd8542449283843075e1b79c986e6d5d8",
+  "checks": [
+    {
+      "id": "actual_movement_pause_resume_restart_single_loop",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pause": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "wall_collision_occurs_on_first_invalid_move",
+      "pass": false,
+      "error": "'running' == 'gameover'",
+      "actual": "running",
+      "expected": "gameover"
+    },
+    {
+      "id": "self_collision_immediate_and_departing_tail_legal",
+      "pass": false,
+      "error": "'running' == 'gameover'",
+      "actual": "running",
+      "expected": "gameover"
+    },
+    {
+      "id": "food_growth_speed_and_full_board_terminal_win",
+      "pass": false,
+      "error": "Full board leaves game running with stale food",
+      "actual": "running",
+      "expected": "running"
+    }
+  ],
+  "pass": false
+}

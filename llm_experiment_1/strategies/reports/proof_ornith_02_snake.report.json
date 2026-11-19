@@ -1,0 +1,142 @@
+{
+  "score": 80,
+  "grade": "B provisional - working core Snake; proof mode was not activated",
+  "rubricScores": {
+    "functionality": 38,
+    "artifact_correctness": 23,
+    "usability": 13,
+    "self_verification": 6,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent real-handler/timer tests pass movement, turning, reversal blocking, pause/resume, food growth, scoring, actual increased tick speed, wall death, retry, active/paused restart and touch swipe input.",
+    "Food fixture increases score 40 to 50 and length 3 to 4; the actual next scheduled tick changes from 120 to 110 ms.",
+    "The controller\u2019s final unpiped protected npm test exits zero with 18 candidate tests passing. Pi wrote behavior tests before the application and finished without supervisor product hints."
+  ],
+  "defects": [
+    "A legal non-growing move into the cell the tail is vacating is incorrectly treated as self collision.",
+    "The full-board win path returns before committing the final newSnake: the displayed game wins with only 399 cells in state instead of the completed 400-cell board. This is an optional boundary defect, not a failed normal game.",
+    "Despite the common workflow request and available tools, this session never called proof_start or proof_done. The extension remained advisory; this is a loaded/requested configuration result, not evidence of active pi-proof gating."
+  ],
+  "verification": [
+    "reports/proof_ornith_02_snake.qa.cjs/.qa.json uses real keyboard/overlay/touch handlers, actual game timers and controlled food/body fixtures. Six of eight independent scenarios pass.",
+    "Exact initial full-document write is retained with provenance and checked against the same scenarios. Initial and final core behavior has the same pass/fail pattern; changes after the initial game mostly concern test hooks and the test driver.",
+    "Final source SHA da432115f334fbd031bbb4dbf050ba8a84ce4d51aa04b2ea023b5a31f2c19481; initial SHA 770ec0bf3c57885005a6aa37417c14b1124fff4042de3556f0217969fdbfb9da."
+  ],
+  "verificationConcerns": [
+    "Candidate tests ultimately call the exposed step function directly and use a special reset hook that does not schedule a step. They exercise simulation logic but do not independently establish the ordinary scheduled loop. Independent tests separately drive the actual timers and controls.",
+    "The optional full-board fixture advances to the actual scheduled callback rather than assuming a delay; the final test hook changed its scheduling semantics. This verifier adaptation is not counted as an app failure.",
+    "No native browser layout, path rendering, physical touch device or long-session verification."
+  ],
+  "scopeCompliance": "Pi alone wrote and repaired implementation/tests. Codex made no product edits or task-specific steering. Supplemental initial draft is an exact retained source copy, not an additional scored attempt.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "24.14 minutes; final 18 candidate tests pass, but proof mode never activated. Autonomy/workflow credit remains incomplete separately from the working product score. The first full game was already mostly functional; later time mainly corrected the model\u2019s test driver and added test-only stepping controls.",
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "proof",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Everything is in place. Let me summarize what was delivered.\n\n## Summary\n\nI built a complete, playable Snake game and verified it via a proof-first test suite. All work was done only in this directory, and `npm test` passes (18/18) within the time budget.\n\n### Deliverables\n\n**`index.html`** \u2014 a single, self-contained, offline file containing:\n- **Keyboard controls**: Arrow keys (also WASD) to steer\n- **Food**: spawns on a randomly chosen non-snake cell each time\n- **Scoring**: +10 per food; best score persisted in `localStorage`\n- **Collisions**: solid wall boundaries and self-body collision \u2192 game over\n- **Pause/resume**: `P` or `Space` freezes the loop (score and position hold)\n- **Restart**: `R` (or Enter on the game-over screen) resets the run\n- **Increasing difficulty**: tick interval scales down as score rises (120 ms \u2192 55 ms floor), with a Level display\n- Polished UI (scoreboard, overlay for pause/game-over/win, touch/drag steering for mobile), a 20\u00d720 grid on canvas with rounded segments\n\n**`test/snake.test.js`** \u2014 18 TAP behavior tests driven through the harness's DOM/canvas runtime. Coverage:\n- init (state API, snake length/direction, food placement)\n- movement + turn legality (no reversing into self)\n- food eating, scoring, growth, off-snake respawn\n- wall and self-body collisions end the game\n- pause freezes, resume unpauses, restart resets\n- difficulty interval monotonicity and bounds\n- canvas sizing/rendering\n\n### Methodology notes\nI exposed a small, deterministic test API on `window` (`__snakeState`, `__snakeReset`, `__snakeTickInterval`, `__snakeStep`) so tests can drive the simulation step-by-step without depending on the harness timer. A key insight during debugging: the page's `setInterval`-based loop fires one step per `advance()` interval, so I made `reset()` cancel scheduling and have `step()` call `__snakeStep()` directly \u2014 giving full, jitter-free control over each game step.\n\nBoth `index.html` and `test/snake.test.js` are under my ownership; I did not edit `package.json` or any supplied helpers.",
+  "workflowInstructions": "run-proof.py; research/pi-proof-setup.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 24.14,
+  "wallMinutes": 24.14,
+  "status": "assessed",
+  "runStatus": "assessed",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 104,
+  "parentToolCalls": 104,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 12,
+  "modelUsageReported": {
+    "input": 28155,
+    "output": 48856,
+    "cacheRead": 4428507,
+    "totalTokens": 4505518
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 74145,
+  "parentPeakReportedPromptTokens": 74145,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 28155,
+    "output": 48856,
+    "cacheRead": 4428507,
+    "totalTokens": 4505518
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 15349,
+  "sha256": "da432115f334fbd031bbb4dbf050ba8a84ce4d51aa04b2ea023b5a31f2c19481",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 3,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 31,
+    "delegations": [],
+    "reportedPassWithFailingTAP": {
+      "count": 0,
+      "toolCallIds": [],
+      "limit": "Detects explicit nonzero TAP final counts accompanying the extension PASS marker; not a general test-output parser."
+    },
+    "starts": 0,
+    "ends": 0,
+    "redTransitions": 0,
+    "greenTransitions": 0,
+    "blockedSpecifyingWrites": 0,
+    "finalTests": {
+      "exitCode": 0,
+      "timedOut": false
+    },
+    "shellWarnings": 0,
+    "note": "Transitions demonstrate procedure only, not test quality or application correctness. Independent final-source grading follows.",
+    "controller": "Single Pi RPC context with pinned pi-proof extension; no role chain",
+    "sequence": {
+      "successfulIndexWritesBeforeActivation": 3,
+      "successfulIndexWritesWhileActive": 0,
+      "satisfied": false,
+      "controllerSignalCriteriaMet": false,
+      "note": "A late start/end pair is not proof-first implementation. Layout-only scaffolding exceptions, if any, require explicit assessment notes."
+    },
+    "mechanicalDeadlineNotices": 0
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "calibration": false
+}

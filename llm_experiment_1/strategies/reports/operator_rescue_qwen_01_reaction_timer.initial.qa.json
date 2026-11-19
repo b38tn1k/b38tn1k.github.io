@@ -1,0 +1,21 @@
+{
+  "method": "Independent exact-source VM/DOM actual button/global click handlers and deterministic scheduled green cue; no browser layout/hit testing.",
+  "sha256": "41c2518cd28d4797a1e39070ce4478ed94c015b9c21bca6b3330c18215d10c3d",
+  "checks": [
+    {
+      "id": "exactly_five_real_trials_summary_and_replay",
+      "pass": false,
+      "error": "Results not shown after fifth valid response",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "false_start_retry_preserves_all_five_valid_measurements",
+      "pass": false,
+      "error": "NaN == 250",
+      "actual": null,
+      "expected": 250
+    }
+  ],
+  "pass": false
+}

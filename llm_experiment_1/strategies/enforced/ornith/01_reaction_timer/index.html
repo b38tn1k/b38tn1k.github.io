@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Timer</title>
+<style>
+  :root {
+    --bg: #0f1220;
+    --fg: #eef1f8;
+    --muted: #9aa3b8;
+    --accent: #5ce0c8;
+    --accent-2: #6ea8ff;
+    --warn: #ffb454;
+    --danger: #ff6b7a;
+    --good: #5ce0c8;
+    --card: rgba(255,255,255,0.04);
+    --card-border: rgba(255,255,255,0.09);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(1200px 800px at 70% -10%, #1a1f38 0%, var(--bg) 55%);
+    color: var(--fg);
+    display: flex;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ---- Stage canvas ---- */
+  #stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.35s ease;
+    z-index: 0;
+  }
+  #stage.waiting  { background: linear-gradient(160deg, #16213f, #0f1220); }
+  #stage.ready    { background: linear-gradient(160deg, #155a4a, #0d3d33); }
+  #stage.click    { background: linear-gradient(160deg, #2b6b3f, #123a24); }
+  #stage.result   { background: linear-gradient(160deg, #1a2b52, #0f1220); }
+  #stage.error    { background: linear-gradient(160deg, #5a2230, #2a0f16); }
+
+  .glyph {
+    text-align: center;
+    transform: translateY(-6vh);
+    padding: 0 6vw;
+  }
+  .glyph .title {
+    font-size: clamp(28px, 5.2vw, 62px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .glyph .subtitle {
+    margin-top: 1.2rem;
+    font-size: clamp(15px, 2vw, 22px);
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .kbd {
+    display: inline-block;
+    margin-top: 0.6rem;
+    padding: 0.35em 0.8em;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    background: var(--card);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .big-ms {
+    font-size: clamp(60px, 15vw, 180px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .big-ms .unit { font-size: 0.28em; color: var(--muted); margin-left: 0.4em; }
+
+  .pill {
+    display: inline-block;
+    padding: 0.3em 0.9em;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--muted);
+    margin-bottom: 1.4rem;
+  }
+
+  /* ---- Sidebar ---- */
+  #sidebar {
+    position: relative;
+    z-index: 2;
+    width: 320px;
+    max-width: 42vw;
+    height: 100vh;
+    padding: 26px 22px;
+    background: rgba(10,12,22,0.55);
+    backdrop-filter: blur(14px);
+    border-right: 1px solid var(--card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand .logo {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid; place-items: center; font-size: 22px;
+    box-shadow: 0 8px 24px rgba(94,224,200,0.25);
+  }
+  .brand h1 { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; }
+  .brand small { color: var(--muted); font-weight: 500; }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .stat .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+  .stat .value { font-size: 22px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat .value small { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+  .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+
+  .trials { display: flex; flex-direction: column; gap: 8px; }
+  .trial {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    font-size: 14px;
+  }
+  .trial .num { color: var(--muted); font-weight: 600; }
+  .trial .time { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .trial .badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 2px 7px; border-radius: 6px;
+  }
+  .trial .badge.good { background: rgba(92,224,200,0.15); color: var(--good); }
+  .trial .badge.bad  { background: rgba(255,107,122,0.15); color: var(--danger); }
+  .trial .badge.fs   { background: rgba(255,180,84,0.15); color: var(--warn); }
+  .trial.pending { opacity: 0.4; }
+  .trial.active  { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+  .btn {
+    appearance: none; border: 0; cursor: pointer;
+    padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: 15px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #08110f; transition: transform 0.1s ease, opacity 0.2s ease;
+  }
+  .btn:hover { opacity: 0.92; }
+  .btn:active { transform: scale(0.98); }
+  .btn.ghost {
+    background: var(--card); color: var(--fg); border: 1px solid var(--card-border);
+  }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-row .btn { flex: 1; }
+
+  .hint { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .footnote { margin-top: auto; font-size: 11px; color: rgba(154,163,184,0.6); text-align: center; }
+
+  @media (max-width: 720px) {
+    body { flex-direction: column; }
+    #sidebar { width: 100%; max-width: none; height: auto; max-height: 45vh; border-right: 0; border-bottom: 1px solid var(--card-border); }
+  }
+</style>
+</head>
+<body>
+  <div id="stage" class="waiting" aria-live="polite">
+    <div class="glyph" id="glyph"><!-- content set by JS --></div>
+  </div>
+
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="logo">⚡</div>
+      <div>
+        <h1>Reaction Timer</h1>
+        <small>5 trials · avg + best</small>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="label">Current</div>
+        <div class="value" id="stat-current">–<small>ms</small></div>
+      </div>
+      <div class="stat">
+        <div class="label">Best</div>
+        <div class="value" id="stat-best">–<small>ms</small></div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="label">Average</div>
+        <div class="value" id="stat-avg">–<small>ms</small></div>
+      </div>
+      <div class="stat">
+        <div class="label">Trial</div>
+        <div class="value" id="stat-trial"><small>0 / 5</small></div>
+      </div>
+    </div>
+
+    <div class="section-title">Trials</div>
+    <div class="trials" id="trials"><!-- rows set by JS --></div>
+
+    <button class="btn" id="btn-restart">Restart Test</button>
+    <p class="hint">Wait for the screen to turn <b>green</b>, then click or press <span class="kbd">Space</span> as fast as you can. Clicking too early is a false start.</p>
+    <div class="footnote">Fully offline · runs entirely in your browser</div>
+  </aside>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- Tunable product defaults ----
+  var CONFIG = {
+    TOTAL_TRIALS: 5,
+    WAIT_MIN_MS: 1000,
+    WAIT_MAX_MS: 4000,
+    SPACE_KEY: " "
+  };
+
+  // ---- Stage constants ----
+  var STAGE = {
+    READY: "READY",
+    WAITING: "WAITING",
+    CLICK: "CLICK",
+    RESULT: "RESULT",
+    RESULT_ALL: "RESULT_ALL",
+    ERROR: "ERROR"
+  };
+
+  // ---- DOM ----
+  var stage = document.getElementById("stage");
+  var glyph = document.getElementById("glyph");
+  var elCurrent = document.getElementById("stat-current");
+  var elBest = document.getElementById("stat-best");
+  var elAvg = document.getElementById("stat-avg");
+  var elTrial = document.getElementById("stat-trial");
+  var elTrials = document.getElementById("trials");
+  var btnRestart = document.getElementById("btn-restart");
+
+  // ---- State ----
+  var state = {
+    stage: STAGE.READY,
+    trial: 0,
+    times: [],      // valid ms per trial (length TOTAL_TRIALS)
+    falseStart: false,
+    timeout: null,
+    startedAt: 0
+  };
+
+  function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+
+  function waitText() {
+    return '<div class="pill">Get ready</div>' +
+           '<div class="title">Wait for green…</div>' +
+           '<div class="subtitle">Click or press Space the instant it turns green</div>';
+  }
+
+  function readyText() {
+    return '<div class="title" style="color:var(--accent)">Ready</div>' +
+           '<div class="subtitle">Focus. The square will turn green after a random delay.</div>' +
+           '<div class="kbd">Space / Click</div>';
+  }
+
+  function errorText() {
+    return '<div class="pill">False start</div>' +
+           '<div class="title">Too early!</div>' +
+           '<div class="subtitle">Don\'t click until it turns green.</div>';
+  }
+
+  function resultText(ms) {
+    var verdict = ms < 200 ? "Firing early" : ms < 300 ? "Snappy" : ms < 400 ? "Solid" : "Steady";
+    return '<div class="pill">Your reaction</div>' +
+           '<div class="big-ms">' + Math.round(ms) + '<span class="unit">ms</span></div>' +
+           '<div class="subtitle">' + verdict + '</div>';
+  }
+
+  function finishText() {
+    var avg = average(state.times);
+    var best = Math.min.apply(null, state.times);
+    var rows = "";
+    for (var i = 0; i < CONFIG.TOTAL_TRIALS; i++) {
+      var t = state.times[i];
+      var label = (i + 1);
+      rows += '<div class="trial"><span class="num">Trial ' + label + '</span>';
+      if (typeof t === "number") {
+        rows += '<span class="time">' + Math.round(t) + ' ms</span>';
+      } else {
+        rows += '<span class="time" style="color:var(--muted)">–</span>';
+      }
+      rows += '</div>';
+    }
+    var html = '<div class="pill">Done</div>' +
+               '<div class="big-ms">' + Math.round(avg) + '<span class="unit">ms avg</span></div>' +
+               '<div class="subtitle">Best: ' + Math.round(best) + ' ms</div>' +
+               '<div style="margin-top:2rem">' + rows + '</div>';
+    return html;
+  }
+
+  function average(arr) {
+    var sum = 0;
+    for (var i = 0; i < arr.length; i++) sum += arr[i];
+    return arr.length ? sum / arr.length : 0;
+  }
+
+  // ---- Rendering ----
+  function paint() {
+    stage.className = {
+      READY: "ready", WAITING: "waiting", CLICK: "click",
+      RESULT: "result", RESULT_ALL: "result", ERROR: "error"
+    }[state.stage];
+
+    if (state.stage === STAGE.READY) {
+      if (state.trial === 0) { glyph.innerHTML = readyText(); }
+      else { glyph.innerHTML = waitText(); }
+    } else if (state.stage === STAGE.WAITING) {
+      glyph.innerHTML = waitText();
+    } else if (state.stage === STAGE.ERROR) {
+      glyph.innerHTML = errorText();
+    } else if (state.stage === STAGE.RESULT) {
+      glyph.innerHTML = resultText(state.pendingMs);
+    } else if (state.stage === STAGE.RESULT_ALL) {
+      glyph.innerHTML = finishText();
+    }
+    updateSidebar();
+  }
+
+  function updateSidebar() {
+    var validTimes = state.times.filter(function (t) { return typeof t === "number"; });
+    elCurrent.textContent = validTimes.length ? Math.round(validTimes[validTimes.length - 1]) : "–";
+    elCurrent.innerHTML += '<small>ms</small>';
+    elBest.textContent = validTimes.length ? Math.round(Math.min.apply(null, validTimes)) : "–";
+    elBest.innerHTML += '<small>ms</small>';
+    elAvg.textContent = validTimes.length ? Math.round(average(validTimes)) : "–";
+    elAvg.innerHTML += '<small>ms</small>';
+    elTrial.textContent = state.trial + " / " + CONFIG.TOTAL_TRIALS;
+
+    var rows = "";
+    for (var i = 0; i < CONFIG.TOTAL_TRIALS; i++) {
+      var t = state.times[i];
+      var cls = "trial";
+      if (typeof t !== "number") cls += " pending";
+      if (i === state.trial && state.stage !== STAGE.RESULT_ALL) cls += " active";
+      rows += '<div class="' + cls + '"><span class="num">Trial ' + (i + 1) + '</span>';
+      if (typeof t === "number") {
+        var rating = t < 200 ? "badge bad" : t < 400 ? "badge good" : "badge fs";
+        rows += '<span class="time">' + Math.round(t) + ' ms</span>';
+      } else {
+        rows += '<span class="time" style="color:var(--muted)">–</span>';
+      }
+      rows += '</div>';
+    }
+    elTrials.innerHTML = rows;
+  }
+
+  // ---- Stage control ----
+  function go(stageName) {
+    state.stage = STAGE[stageName];
+    paint();
+  }
+
+  function startTrial() {
+    state.trial++;
+    state.falseStart = false;
+    go("WAITING");
+    var delay = clamp(Math.floor(Math.random() * (CONFIG.WAIT_MAX_MS - CONFIG.WAIT_MIN_MS) + CONFIG.WAIT_MIN_MS), 1, 999999);
+    console.log("[DEBUG startTrial] now=", performance.now(), "delay=", delay, "-> scheduled at", performance.now()+delay);
+    state.timeout = setTimeout(function () {
+      go("CLICK");
+      state.startedAt = performance.now();
+    }, delay);
+  }
+
+  function handleClick() {
+    if (state.stage === STAGE.WAITING) {
+      clearTimeout(state.timeout);
+      state.falseStart = true;
+      go("ERROR");
+      setTimeout(function () { if (state.stage === STAGE.ERROR) startTrial(); }, 900);
+      return;
+    }
+    if (state.stage === STAGE.READY) {
+      startTrial();
+      return;
+    }
+    if (state.stage === STAGE.CLICK) {
+      var rt = performance.now() - state.startedAt;
+      console.log("[DEBUG] rt=",rt,"now=",performance.now(),"startedAt=",state.startedAt);
+      state.pendingMs = rt;
+      state.times[state.trial - 1] = rt;
+      go("RESULT");
+      if (state.trial >= CONFIG.TOTAL_TRIALS) {
+        go("RESULT_ALL");
+      } else {
+        state.timeout = setTimeout(function () { startTrial(); }, 1500);
+      }
+      return;
+    }
+    if (state.stage === STAGE.RESULT_ALL) {
+      restart();
+      return;
+    }
+  }
+
+  function restart() {
+    clearTimeout(state.timeout);
+    state.trial = 0;
+    state.times = [];
+    state.falseStart = false;
+    go("READY");
+  }
+
+  // ---- Events ----
+  stage.addEventListener("mousedown", function (e) {
+    e.preventDefault();
+    handleClick();
+  });
+  window.addEventListener("keydown", function (e) {
+    if (e.key === CONFIG.SPACE_KEY || e.code === "Space") {
+      e.preventDefault();
+      handleClick();
+    }
+  });
+  btnRestart.addEventListener("click", function (e) {
+    e.stopPropagation();
+    restart();
+  });
+
+  // ---- Boot ----
+  restart();
+})();
+</script>
+</body>
+</html>

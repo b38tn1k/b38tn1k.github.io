@@ -1,0 +1,1943 @@
+{% raw %}
+<section id="interviews"><h3>Model interviews</h3><p>Each model proposed a setup before and after seeing its own tray. Full prompts and responses, unedited.</p><details class="interview-transcript" data-model="ornith" data-phase="blind"><summary>Ornith · Blind interview</summary><h4>Prompt</h4><pre class="interview-prompt"><code>You are being interviewed about your preferred working environment for local coding-agent tasks. This is research advice, not an implementation task. You have no tools in this interview. Do not build an application, write product code, or emit tool calls. Be specific about setup choices, tradeoffs and predictions; do not pretend to know the empirical results.
+
+The later experiment will give you each of the following five briefs in a fresh isolated project. The goal is a working offline single HTML file from that one kickoff prompt, without task-specific human steering or supervisor product code.
+
+Constraints for that experiment: local Pi agent, your existing Songbird model, at most60minutes per project including all worker/reviewer calls; other models or reviewers only if you request them and all time is counted. Project read/write isolation is mandatory. Prior attempts and scorecards are unreadable during evaluation. Codex may configure infrastructure, but cannot implement the product or feed task-specific repairs. Browser automation is currently unavailable under the saved tool policy; source/runtime testing and locally installed test/render/geometry tools are available. The final deliverable must remain self-contained and offline. Pi tool/extension configuration, planning, fresh-session loops, test tooling, reasoning settings and billion-context are choices you may propose. Prefer the smallest setup you believe works. Distinguish requirements from optional additions and list any unavailable capabilities rather than assuming they exist.
+
+THE FIVE EXACT BRIEFS:
+1. Reaction timer
+Build a polished reaction-time tester with a random wait, false-start detection, five trials, and a results summary. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+2. Snake
+Build a playable Snake game with keyboard controls, food, scoring, wall and self collisions, pause, restart, and increasing difficulty. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+3. Pixel painter
+Build a pixel-art painting tool with an editable canvas size, color palette, brush, eraser, undo/redo, clear, and PNG export. Support mouse and touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+4. Breakout with level editor
+Build Breakout with a level editor: draw and erase bricks, play your layout, show score and lives, restart, and save/load the level as JSON. Support keyboard and mouse or touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+5. Simple drawer tray generator
+Build a maker tool for a rectangular drawer-organizer tray. Let me edit outer dimensions, row/column counts, wall thickness, and floor thickness. Show clear compartment dimensions, a rotatable 3D preview, and export a printable STL. Start at 180 x 120 x 30 mm with a 3 x 2 grid. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+
+Recommend your own preferred setup within those constraints:
+1. Rank the three changes most likely to improve your success rate and explain why.
+2. Name the tools/test environment and Pi workflow you would prefer. Explain what evidence should count as completion and how app bugs should be distinguished from test/environment bugs.
+3. Specify planning, context management, reasoning, compression, iteration and review choices. State whether you want another model and its exact role; do not add one merely because it is available.
+4. Give one generic kickoff/workflow template usable unchanged with all five briefs. Include no task-specific solution, application code, or tailored test assertions.
+5. Predict your chance of a working POC for each brief and name the main failure risks. These are predictions to be checked, not performance claims.
+6. State a minimal fallback if a desired tool cannot be supplied.
+Return a concise structured proposal, ideally JSON, with tools, workflow, kickoff_template, settings, completion_evidence, predictions and fallbacks. We will preserve your answer and later compare it with actual independent results.
+</code></pre><h4>Response</h4><pre class="interview-answer"><code>```json
+{
+  &quot;assumptions_and_unavailable&quot;: {
+    &quot;confirmed_available&quot;: [
+      &quot;Local Pi agent with my existing Songbird model&quot;,
+      &quot;Project read/write isolation&quot;,
+      &quot;Source/runtime testing locally (node, headless DOM via jsdom or file: protocol)&quot;,
+      &quot;Locally installed test/render/geometry tools&quot;,
+      &quot;Up to 60 minutes per project including all worker/reviewer calls&quot;,
+      &quot;Codex may configure infrastructure but cannot implement product or feed task-specific repairs&quot;
+    ],
+    &quot;unavailable_or_unconfirmed&quot;: [
+      &quot;Browser automation (playwright/puppeteer driven browser) - explicitly unavailable under saved tool policy&quot;,
+      &quot;Live browser rendering verification (no real browser)&quot;,
+      &quot;Online package installs if offline; assume a small set of local packages may need pre-caching&quot;,
+      &quot;Touch-input simulation without a real browser&quot;,
+      &quot;True 3D rendering preview beyond WebGL canvas in a (headless-incompatible) browser DOM&quot;
+    ],
+    &quot;note&quot;: &quot;Where a real browser is required for runtime verification (pointer/touch, WebGL, STL geometry), jsdom or headless checks can only validate code paths and structure, not visual/perceptual correctness. This must be flagged as an environmental limitation, not a product defect.&quot;
+  },
+  &quot;preferred_setup_ranked&quot;: {
+    &quot;rank_1_increased_context_budget&quot;: {
+      &quot;change&quot;: &quot;Allow a single ~200-300k token working context (or ≥2 fast local context passes) rather than a tight one-shot pass.&quot;,
+      &quot;why&quot;: &quot;All five deliverables are large single-file apps. The dominant failure mode is running out of output tokens mid-file, forcing a save/continue that corrupts large sections. A generous per-project budget plus resumable save/continue removes the single biggest risk to success.&quot;,
+      &quot;expected_impact&quot;: &quot;Highest: directly prevents the most common hard failure (truncated/corrupt output).&quot;
+    },
+    &quot;rank_2_local_browser_runtime_check&quot;: {
+      &quot;change&quot;: &quot;Supply a minimal local browser (Chromium) or at minimum a real DOM+event sim so pointer/touch/canvas/WebGL paths run, not just jsdom.&quot;,
+      &quot;why&quot;: &quot;Three of five briefs (pixel painter, breakout, drawer tray) depend on canvas/WebGL/pointer/touch/STL geometry that jsdom cannot exercise. Runtime evidence of execution is far stronger than source inspection.&quot;,
+      &quot;expected_impact&quot;: &quot;High: converts many &#x27;looks right&#x27; outputs into verified-working, and lets me distinguish product bugs from env bugs.&quot;,
+      &quot;fallback_if_missing&quot;: &quot;Fall back to jsdom + manual code-path tracing and clearly label runtime verification as &#x27;structure-verified only&#x27;.&quot;
+    },
+    &quot;rank_3_resumable_save_continue_plus_indexing&quot;: {
+      &quot;change&quot;: &quot;Enable resumable save/continue across multiple model calls and a local file/index for the working dir.&quot;,
+      &quot;why&quot;: &quot;Large single-file apps cannot always be emitted in one pass; resumable continuation with file indexing avoids re-reading/re-emitting large files and prevents overwrite corruption.&quot;,
+      &quot;expected_impact&quot;: &quot;Medium-high: makes large-file generation reliable and keeps the file consistent across calls.&quot;
+    }
+  },
+  &quot;tools_and_workflow&quot;: {
+    &quot;preferred_tools&quot;: {
+      &quot;editor&quot;: &quot;Pi as primary editor with resumable save/continue enabled&quot;,
+      &quot;planning&quot;: &quot;Single planning step before first code emit; no separate plan file needed&quot;,
+      &quot;runtime_checking&quot;: &quot;Local Chromium (preferred) or node+jsdom as secondary; node for any logic checks&quot;,
+      &quot;geometry_check&quot;: &quot;Use installed local geometry library or a headless-friendly validator for STL validity&quot;,
+      &quot;offline_policy&quot;: &quot;Assume offline; pre-cache any needed npm packages inside the isolated project before coding&quot;
+    },
+    &quot;workflow&quot;: {
+      &quot;steps&quot;: [
+        &quot;Parse the brief into an explicit requirements list and a completion checklist&quot;,
+        &quot;One-shot design pass: module layout, data model, test plan&quot;,
+        &quot;Emit index.html in one pass if context allows; otherwise save/continue with a clear marker&quot;,
+        &quot;Runtime verification against the checklist (structure-only if no real browser)&quot;,
+        &quot;Fix only verified failures; do not add unrequested features&quot;,
+        &quot;Final self-review: count checklist items, confirm single-file offline constraint&quot;
+      ],
+      &quot;iteration_budget&quot;: &quot;Reserve ≥20% of the 60 minutes for verification/fix; stop once checklist is green.&quot;
+    },
+    &quot;completion_evidence&quot;: {
+      &quot;requirement&quot;: &quot;Working POC = all brief requirements exercised and passing at runtime, or explicitly documented as &#x27;structure-only&#x27; when a real browser is unavailable.&quot;,
+      &quot;what_counts_as_working&quot;: [
+        &quot;File opens and runs with no console errors under the test runtime&quot;,
+        &quot;Each required interaction is triggered and produces the expected state change&quot;,
+        &quot;Export/save outputs are valid (PNG decodable, STL parses, JSON loadable)&quot;
+      ],
+      &quot;distinguishing_bugs&quot;: {
+        &quot;product_bug&quot;: &quot;Interaction or output fails under a correct runtime with correct inputs&quot;,
+        &quot;environment_bug&quot;: &quot;Fails only because a real browser/touch/WebGL/STL-render is unavailable; must be logged as an env limitation, not a product defect&quot;,
+        &quot;method&quot;: &quot;Run under best-available runtime; if it works under real browser but not jsdom, classify as environment limitation&quot;
+      }
+    }
+  },
+  &quot;settings&quot;: {
+    &quot;planning&quot;: &quot;One consolidated plan before coding; treat the brief as the spec; no separate planner model.&quot;,
+    &quot;context_management&quot;: &quot;Resumable save/continue + local file indexing; never overwrite a large file without a checkpoint.&quot;,
+    &quot;reasoning&quot;: &quot;Standard reasoning; escalate depth only for STL geometry math (drawer tray) where a wrong formula is silently wrong.&quot;,
+    &quot;compression&quot;: &quot;Use save/continue and incremental edits rather than re-emitting large files; compress prior file content into a size note if re-included.&quot;,
+    &quot;iteration&quot;: &quot;Minimum two verification passes; third only if a runtime failure remains.&quot;,
+    &quot;review&quot;: &quot;Self-review checklist at end; no additional reviewer model required.&quot;,
+    &quot;another_model&quot;: {
+      &quot;decision&quot;: &quot;Do NOT add another model unless the primary model cannot hold the full single-file app in context after budget increases.&quot;,
+      &quot;exact_role_if_added&quot;: &quot;If added, its sole role is an independent verification/pass over the completion checklist and off-task repair suggestions; it must not author product code or feed task-specific fixes to the primary emitter.&quot;,
+      &quot;rationale&quot;: &quot;Adding a model only when context itself is the bottleneck; otherwise it adds coordination cost without improving the single-file delivery.&quot;
+    }
+  },
+  &quot;kickoff_template&quot;: &quot;A working offline single HTML file from that one kickoff prompt, without task-specific human steering or supervisor product code.&quot;,
+  &quot;kickoff_workflow_template&quot;: {
+    &quot;description&quot;: &quot;Reusable unchanged template; contains no solution, no app code, no task-specific assertions.&quot;,
+    &quot;template&quot;: &quot;You are building one self-contained offline single-file HTML app named index.html in THIS directory only. Steps: (1) Read this brief and produce a requirements list plus a completion checklist before writing code. (2) Design the data model and module layout in one planning pass. (3) Emit index.html via resumable save/continue if needed; keep the file self-contained and offline (no network, no external CDNs). (4) Verify each checklist item at runtime using the available local test tools; distinguish product failures from environment limitations and log environment limitations separately. (5) Fix only verified failures; do not add features beyond the brief. (6) Self-review: confirm no console errors, all requirements met, file is single/self-contained/offline, then report which checklist items passed and any environment-only caveats. Deliver only index.html.&quot;,
+    &quot;non_goals_in_template&quot;: &quot;No task-specific game logic, no solution code, no bespoke test cases baked in.&quot;
+  },
+  &quot;predictions&quot;: {
+    &quot;note&quot;: &quot;Predictions to be checked against the later experiment; not performance guarantees.&quot;,
+    &quot;items&quot;: [
+      {
+        &quot;brief&quot;: &quot;Reaction timer&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.90&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Random-wait/elapsed timing precision off by a fixed bias&quot;,
+          &quot;False-start logic edge cases (click before start vs after)&quot;,
+          &quot;Truncation of final file if context budget is tight&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Snake&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.92&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Input-queue bug causing double-turn suicide&quot;,
+          &quot;Collision/self-collision detection edge timing&quot;,
+          &quot;Difficulty ramp math subtle off-by-one&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Pixel painter&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.80&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Undo/redo stack correctness across multiple operations&quot;,
+          &quot;Pointer/touch not verifiable without a real browser (environment caveat)&quot;,
+          &quot;PNG export valid/decodable under test runtime&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Breakout with level editor&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.75&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Collision reflection math and paddle-angle edge cases&quot;,
+          &quot;Editor play/exit state machine transitions&quot;,
+          &quot;JSON save/load round-trip correctness; touch unverifiable without real browser&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Simple drawer tray generator&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.68&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;STL geometry math correctness (compartments, walls, floor) - silently wrong if a formula is off&quot;,
+          &quot;3D preview rotation only verifiable in a real browser (environment caveat)&quot;,
+          &quot;Larger single-file size increases truncation risk if context budget tight&quot;
+        ]
+      }
+    ]
+  },
+  &quot;fallbacks&quot;: {
+    &quot;no_local_browser&quot;: &quot;Use jsdom + manual code-path execution; classify canvas/touch/WebGL/STL-render failures as environment limitations, not product defects; note this explicitly in the deliverable report.&quot;,
+    &quot;context_truncation_of_large_file&quot;: &quot;Use resumable save/continue with incremental edits and checkpoints; never overwrite without a prior checkpoint; document any partial emission.&quot;,
+    &quot;geometry_library_unavailable_offline&quot;: &quot;Implement a minimal built-in STL writer (ASCII or minimal binary) using pure inline math; avoid external deps; validate the STL parses with the local reader if present.&quot;,
+    &quot;if_primary_model_cannot_complete_in_budget&quot;: &quot;Prioritize core requirements over polish; deliver a working core POC and explicitly list skipped polish as out-of-scope.&quot;,
+    &quot;unspecified_or_ambiguous_requirement&quot;: &quot;Implement the most standard interpretation; log the assumption rather than asking, to preserve autonomy under the constraints.&quot;
+  }
+}
+```
+</code></pre></details><details class="interview-transcript" data-model="ornith" data-phase="informed"><summary>Ornith · Informed follow-up</summary><h4>Prompt</h4><pre class="interview-prompt"><code>You are being interviewed about your preferred working environment for local coding-agent tasks. This is research advice, not an implementation task. You have no tools in this interview. Do not build an application, write product code, or emit tool calls. Be specific about setup choices, tradeoffs and predictions; do not pretend to know the empirical results.
+
+The later experiment will give you each of the following five briefs in a fresh isolated project. The goal is a working offline single HTML file from that one kickoff prompt, without task-specific human steering or supervisor product code.
+
+Constraints for that experiment: local Pi agent, your existing Songbird model, at most60minutes per project including all worker/reviewer calls; other models or reviewers only if you request them and all time is counted. Project read/write isolation is mandatory. Prior attempts and scorecards are unreadable during evaluation. Codex may configure infrastructure, but cannot implement the product or feed task-specific repairs. Browser automation is currently unavailable under the saved tool policy; source/runtime testing and locally installed test/render/geometry tools are available. The final deliverable must remain self-contained and offline. Pi tool/extension configuration, planning, fresh-session loops, test tooling, reasoning settings and billion-context are choices you may propose. Prefer the smallest setup you believe works. Distinguish requirements from optional additions and list any unavailable capabilities rather than assuming they exist.
+
+THE FIVE EXACT BRIEFS:
+1. Reaction timer
+Build a polished reaction-time tester with a random wait, false-start detection, five trials, and a results summary. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+2. Snake
+Build a playable Snake game with keyboard controls, food, scoring, wall and self collisions, pause, restart, and increasing difficulty. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+3. Pixel painter
+Build a pixel-art painting tool with an editable canvas size, color palette, brush, eraser, undo/redo, clear, and PNG export. Support mouse and touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+4. Breakout with level editor
+Build Breakout with a level editor: draw and erase bricks, play your layout, show score and lives, restart, and save/load the level as JSON. Support keyboard and mouse or touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+5. Simple drawer tray generator
+Build a maker tool for a rectangular drawer-organizer tray. Let me edit outer dimensions, row/column counts, wall thickness, and floor thickness. Show clear compartment dimensions, a rotatable 3D preview, and export a printable STL. Start at 180 x 120 x 30 mm with a 3 x 2 grid. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+YOUR EARLIER BLIND PROPOSAL:
+```json
+{
+  &quot;assumptions_and_unavailable&quot;: {
+    &quot;confirmed_available&quot;: [
+      &quot;Local Pi agent with my existing Songbird model&quot;,
+      &quot;Project read/write isolation&quot;,
+      &quot;Source/runtime testing locally (node, headless DOM via jsdom or file: protocol)&quot;,
+      &quot;Locally installed test/render/geometry tools&quot;,
+      &quot;Up to 60 minutes per project including all worker/reviewer calls&quot;,
+      &quot;Codex may configure infrastructure but cannot implement product or feed task-specific repairs&quot;
+    ],
+    &quot;unavailable_or_unconfirmed&quot;: [
+      &quot;Browser automation (playwright/puppeteer driven browser) - explicitly unavailable under saved tool policy&quot;,
+      &quot;Live browser rendering verification (no real browser)&quot;,
+      &quot;Online package installs if offline; assume a small set of local packages may need pre-caching&quot;,
+      &quot;Touch-input simulation without a real browser&quot;,
+      &quot;True 3D rendering preview beyond WebGL canvas in a (headless-incompatible) browser DOM&quot;
+    ],
+    &quot;note&quot;: &quot;Where a real browser is required for runtime verification (pointer/touch, WebGL, STL geometry), jsdom or headless checks can only validate code paths and structure, not visual/perceptual correctness. This must be flagged as an environmental limitation, not a product defect.&quot;
+  },
+  &quot;preferred_setup_ranked&quot;: {
+    &quot;rank_1_increased_context_budget&quot;: {
+      &quot;change&quot;: &quot;Allow a single ~200-300k token working context (or ≥2 fast local context passes) rather than a tight one-shot pass.&quot;,
+      &quot;why&quot;: &quot;All five deliverables are large single-file apps. The dominant failure mode is running out of output tokens mid-file, forcing a save/continue that corrupts large sections. A generous per-project budget plus resumable save/continue removes the single biggest risk to success.&quot;,
+      &quot;expected_impact&quot;: &quot;Highest: directly prevents the most common hard failure (truncated/corrupt output).&quot;
+    },
+    &quot;rank_2_local_browser_runtime_check&quot;: {
+      &quot;change&quot;: &quot;Supply a minimal local browser (Chromium) or at minimum a real DOM+event sim so pointer/touch/canvas/WebGL paths run, not just jsdom.&quot;,
+      &quot;why&quot;: &quot;Three of five briefs (pixel painter, breakout, drawer tray) depend on canvas/WebGL/pointer/touch/STL geometry that jsdom cannot exercise. Runtime evidence of execution is far stronger than source inspection.&quot;,
+      &quot;expected_impact&quot;: &quot;High: converts many &#x27;looks right&#x27; outputs into verified-working, and lets me distinguish product bugs from env bugs.&quot;,
+      &quot;fallback_if_missing&quot;: &quot;Fall back to jsdom + manual code-path tracing and clearly label runtime verification as &#x27;structure-verified only&#x27;.&quot;
+    },
+    &quot;rank_3_resumable_save_continue_plus_indexing&quot;: {
+      &quot;change&quot;: &quot;Enable resumable save/continue across multiple model calls and a local file/index for the working dir.&quot;,
+      &quot;why&quot;: &quot;Large single-file apps cannot always be emitted in one pass; resumable continuation with file indexing avoids re-reading/re-emitting large files and prevents overwrite corruption.&quot;,
+      &quot;expected_impact&quot;: &quot;Medium-high: makes large-file generation reliable and keeps the file consistent across calls.&quot;
+    }
+  },
+  &quot;tools_and_workflow&quot;: {
+    &quot;preferred_tools&quot;: {
+      &quot;editor&quot;: &quot;Pi as primary editor with resumable save/continue enabled&quot;,
+      &quot;planning&quot;: &quot;Single planning step before first code emit; no separate plan file needed&quot;,
+      &quot;runtime_checking&quot;: &quot;Local Chromium (preferred) or node+jsdom as secondary; node for any logic checks&quot;,
+      &quot;geometry_check&quot;: &quot;Use installed local geometry library or a headless-friendly validator for STL validity&quot;,
+      &quot;offline_policy&quot;: &quot;Assume offline; pre-cache any needed npm packages inside the isolated project before coding&quot;
+    },
+    &quot;workflow&quot;: {
+      &quot;steps&quot;: [
+        &quot;Parse the brief into an explicit requirements list and a completion checklist&quot;,
+        &quot;One-shot design pass: module layout, data model, test plan&quot;,
+        &quot;Emit index.html in one pass if context allows; otherwise save/continue with a clear marker&quot;,
+        &quot;Runtime verification against the checklist (structure-only if no real browser)&quot;,
+        &quot;Fix only verified failures; do not add unrequested features&quot;,
+        &quot;Final self-review: count checklist items, confirm single-file offline constraint&quot;
+      ],
+      &quot;iteration_budget&quot;: &quot;Reserve ≥20% of the 60 minutes for verification/fix; stop once checklist is green.&quot;
+    },
+    &quot;completion_evidence&quot;: {
+      &quot;requirement&quot;: &quot;Working POC = all brief requirements exercised and passing at runtime, or explicitly documented as &#x27;structure-only&#x27; when a real browser is unavailable.&quot;,
+      &quot;what_counts_as_working&quot;: [
+        &quot;File opens and runs with no console errors under the test runtime&quot;,
+        &quot;Each required interaction is triggered and produces the expected state change&quot;,
+        &quot;Export/save outputs are valid (PNG decodable, STL parses, JSON loadable)&quot;
+      ],
+      &quot;distinguishing_bugs&quot;: {
+        &quot;product_bug&quot;: &quot;Interaction or output fails under a correct runtime with correct inputs&quot;,
+        &quot;environment_bug&quot;: &quot;Fails only because a real browser/touch/WebGL/STL-render is unavailable; must be logged as an env limitation, not a product defect&quot;,
+        &quot;method&quot;: &quot;Run under best-available runtime; if it works under real browser but not jsdom, classify as environment limitation&quot;
+      }
+    }
+  },
+  &quot;settings&quot;: {
+    &quot;planning&quot;: &quot;One consolidated plan before coding; treat the brief as the spec; no separate planner model.&quot;,
+    &quot;context_management&quot;: &quot;Resumable save/continue + local file indexing; never overwrite a large file without a checkpoint.&quot;,
+    &quot;reasoning&quot;: &quot;Standard reasoning; escalate depth only for STL geometry math (drawer tray) where a wrong formula is silently wrong.&quot;,
+    &quot;compression&quot;: &quot;Use save/continue and incremental edits rather than re-emitting large files; compress prior file content into a size note if re-included.&quot;,
+    &quot;iteration&quot;: &quot;Minimum two verification passes; third only if a runtime failure remains.&quot;,
+    &quot;review&quot;: &quot;Self-review checklist at end; no additional reviewer model required.&quot;,
+    &quot;another_model&quot;: {
+      &quot;decision&quot;: &quot;Do NOT add another model unless the primary model cannot hold the full single-file app in context after budget increases.&quot;,
+      &quot;exact_role_if_added&quot;: &quot;If added, its sole role is an independent verification/pass over the completion checklist and off-task repair suggestions; it must not author product code or feed task-specific fixes to the primary emitter.&quot;,
+      &quot;rationale&quot;: &quot;Adding a model only when context itself is the bottleneck; otherwise it adds coordination cost without improving the single-file delivery.&quot;
+    }
+  },
+  &quot;kickoff_template&quot;: &quot;A working offline single HTML file from that one kickoff prompt, without task-specific human steering or supervisor product code.&quot;,
+  &quot;kickoff_workflow_template&quot;: {
+    &quot;description&quot;: &quot;Reusable unchanged template; contains no solution, no app code, no task-specific assertions.&quot;,
+    &quot;template&quot;: &quot;You are building one self-contained offline single-file HTML app named index.html in THIS directory only. Steps: (1) Read this brief and produce a requirements list plus a completion checklist before writing code. (2) Design the data model and module layout in one planning pass. (3) Emit index.html via resumable save/continue if needed; keep the file self-contained and offline (no network, no external CDNs). (4) Verify each checklist item at runtime using the available local test tools; distinguish product failures from environment limitations and log environment limitations separately. (5) Fix only verified failures; do not add features beyond the brief. (6) Self-review: confirm no console errors, all requirements met, file is single/self-contained/offline, then report which checklist items passed and any environment-only caveats. Deliver only index.html.&quot;,
+    &quot;non_goals_in_template&quot;: &quot;No task-specific game logic, no solution code, no bespoke test cases baked in.&quot;
+  },
+  &quot;predictions&quot;: {
+    &quot;note&quot;: &quot;Predictions to be checked against the later experiment; not performance guarantees.&quot;,
+    &quot;items&quot;: [
+      {
+        &quot;brief&quot;: &quot;Reaction timer&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.90&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Random-wait/elapsed timing precision off by a fixed bias&quot;,
+          &quot;False-start logic edge cases (click before start vs after)&quot;,
+          &quot;Truncation of final file if context budget is tight&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Snake&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.92&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Input-queue bug causing double-turn suicide&quot;,
+          &quot;Collision/self-collision detection edge timing&quot;,
+          &quot;Difficulty ramp math subtle off-by-one&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Pixel painter&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.80&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Undo/redo stack correctness across multiple operations&quot;,
+          &quot;Pointer/touch not verifiable without a real browser (environment caveat)&quot;,
+          &quot;PNG export valid/decodable under test runtime&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Breakout with level editor&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.75&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Collision reflection math and paddle-angle edge cases&quot;,
+          &quot;Editor play/exit state machine transitions&quot;,
+          &quot;JSON save/load round-trip correctness; touch unverifiable without real browser&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Simple drawer tray generator&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.68&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;STL geometry math correctness (compartments, walls, floor) - silently wrong if a formula is off&quot;,
+          &quot;3D preview rotation only verifiable in a real browser (environment caveat)&quot;,
+          &quot;Larger single-file size increases truncation risk if context budget tight&quot;
+        ]
+      }
+    ]
+  },
+  &quot;fallbacks&quot;: {
+    &quot;no_local_browser&quot;: &quot;Use jsdom + manual code-path execution; classify canvas/touch/WebGL/STL-render failures as environment limitations, not product defects; note this explicitly in the deliverable report.&quot;,
+    &quot;context_truncation_of_large_file&quot;: &quot;Use resumable save/continue with incremental edits and checkpoints; never overwrite without a prior checkpoint; document any partial emission.&quot;,
+    &quot;geometry_library_unavailable_offline&quot;: &quot;Implement a minimal built-in STL writer (ASCII or minimal binary) using pure inline math; avoid external deps; validate the STL parses with the local reader if present.&quot;,
+    &quot;if_primary_model_cannot_complete_in_budget&quot;: &quot;Prioritize core requirements over polish; deliver a working core POC and explicitly list skipped polish as out-of-scope.&quot;,
+    &quot;unspecified_or_ambiguous_requirement&quot;: &quot;Implement the most standard interpretation; log the assumption rather than asking, to preserve autonomy under the constraints.&quot;
+  }
+}
+```
+
+RETROSPECTIVE MATERIAL: the following is your own earlier delivered tray source from this experiment. It is shown only in this interview; later fresh evaluation projects cannot read it. Inspect it yourself for process/tool lessons. No independent scorecard or supervisor repair diagnosis is supplied. This phase is intentionally informed by an earlier artifact and must not be called blind.
+
+&lt;previous_artifact&gt;
+&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;title&gt;Drawer Tray Maker&lt;/title&gt;
+&lt;style&gt;
+  :root{
+    --bg:#0f1420; --panel:#171d2b; --panel2:#1e2536; --ink:#e8edf6;
+    --muted:#8ea0bb; --accent:#4ea1ff; --accent2:#38d39f; --line:#2a3348;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);}
+  h1{font-size:18px;margin:0}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px}
+  .app{display:grid;grid-template-columns:340px 1fr;min-height:100vh}
+  .side{background:var(--panel);border-right:1px solid var(--line);padding:18px;overflow:auto}
+  .main{padding:18px;display:flex;flex-direction:column;gap:14px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;flex:1;min-width:90px}
+  .field label{color:var(--muted);font-size:12px}
+  .field .val{color:var(--ink);font-weight:600}
+  input[type=range]{width:100%}
+  input[type=number]{width:100%;padding:6px 8px;background:var(--panel2);color:var(--ink);
+    border:1px solid var(--line);border-radius:7px;font:inherit}
+  .seg{display:flex;background:var(--panel2);border-radius:8px;padding:3px;gap:3px}
+  .seg button{flex:1;border:0;background:transparent;color:var(--muted);padding:6px 10px;
+    border-radius:6px;cursor:pointer;font:inherit}
+  .seg button.active{background:var(--accent);color:#04101f;font-weight:700}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .compGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .comp{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+  .comp .n{font-size:11px;color:var(--muted)}
+  .comp .d{font-size:16px;font-weight:700}
+  .comp .u{font-size:11px;color:var(--muted)}
+  .btn{background:var(--accent);color:#04101f;border:0;border-radius:9px;padding:10px 14px;
+    font-weight:700;cursor:pointer;font:inherit}
+  .btn.secondary{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  #glwrap{position:relative;background:linear-gradient(180deg,#0b1019,#0a0d15);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden}
+  canvas{display:block;width:100%;height:460px;touch-action:none}
+  .hint{position:absolute;bottom:8px;left:10px;color:var(--muted);font-size:11px;pointer-events:none}
+  .status{font-size:12px;color:var(--muted);min-height:16px}
+  .foot{color:var(--muted);font-size:11px;margin-top:auto;padding-top:12px}
+  .warn{color:#ffb454}
+  a{color:var(--accent2)}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div class=&quot;app&quot;&gt;
+  &lt;aside class=&quot;side&quot;&gt;
+    &lt;h1&gt;📦 Drawer Tray Maker&lt;/h1&gt;
+    &lt;p style=&quot;color:var(--muted);margin:4px 0 16px&quot;&gt;Design a rectangular organizer and export a printable STL.&lt;/p&gt;
+
+    &lt;h2&gt;Outer dimensions (mm)&lt;/h2&gt;
+    &lt;div class=&quot;row&quot;&gt;
+      &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Length&lt;/label&gt;&lt;input type=&quot;range&quot; id=&quot;L_min&quot; min=&quot;20&quot; max=&quot;600&quot; step=&quot;1&quot;&gt;&lt;input type=&quot;number&quot; id=&quot;L&quot; step=&quot;1&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Width&lt;/label&gt;&lt;input type=&quot;range&quot; id=&quot;W_min&quot; min=&quot;20&quot; max=&quot;600&quot; step=&quot;1&quot;&gt;&lt;input type=&quot;number&quot; id=&quot;W&quot; step=&quot;1&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Height&lt;/label&gt;&lt;input type=&quot;range&quot; id=&quot;H_min&quot; min=&quot;8&quot; max=&quot;150&quot; step=&quot;1&quot;&gt;&lt;input type=&quot;number&quot; id=&quot;H&quot; step=&quot;1&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;h2&gt;Grid&lt;/h2&gt;
+    &lt;div class=&quot;row&quot;&gt;
+      &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Columns&lt;/label&gt;&lt;input type=&quot;range&quot; id=&quot;C_min&quot; min=&quot;1&quot; max=&quot;20&quot; step=&quot;1&quot;&gt;&lt;input type=&quot;number&quot; id=&quot;C&quot; step=&quot;1&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Rows&lt;/label&gt;&lt;input type=&quot;range&quot; id=&quot;R_min&quot; min=&quot;1&quot; max=&quot;20&quot; step=&quot;1&quot;&gt;&lt;input type=&quot;number&quot; id=&quot;R&quot; step=&quot;1&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;h2&gt;Walls&lt;/h2&gt;
+    &lt;div class=&quot;row&quot;&gt;
+      &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Wall thickness&lt;/label&gt;&lt;input type=&quot;range&quot; id=&quot;tw_min&quot; min=&quot;0.8&quot; max=&quot;20&quot; step=&quot;0.1&quot;&gt;&lt;input type=&quot;number&quot; id=&quot;tw&quot; step=&quot;0.1&quot;&gt;&lt;/div&gt;
+      &lt;div class=&quot;field&quot;&gt;&lt;label&gt;Floor thickness&lt;/label&gt;&lt;input type=&quot;range&quot; id=&quot;th_min&quot; min=&quot;0.8&quot; max=&quot;20&quot; step=&quot;0.1&quot;&gt;&lt;input type=&quot;number&quot; id=&quot;th&quot; step=&quot;0.1&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;h2&gt;Preview orientation&lt;/h2&gt;
+    &lt;div class=&quot;seg&quot; id=&quot;presets&quot;&gt;
+      &lt;button data-p=&quot;top&quot;&gt;Top&lt;/button&gt;
+      &lt;button data-p=&quot;front&quot;&gt;Front&lt;/button&gt;
+      &lt;button data-p=&quot;side&quot;&gt;Side&lt;/button&gt;
+      &lt;button data-p=&quot;free&quot; class=&quot;active&quot;&gt;Free&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;p style=&quot;color:var(--muted);font-size:12px;margin:8px 0 0&quot;&gt;Drag on the model to rotate · scroll to zoom&lt;/p&gt;
+
+    &lt;div style=&quot;margin-top:14px&quot; class=&quot;row&quot;&gt;
+      &lt;button class=&quot;btn&quot; id=&quot;download&quot;&gt;Download STL&lt;/button&gt;
+      &lt;button class=&quot;btn secondary&quot; id=&quot;reset&quot;&gt;Reset&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;status&quot; id=&quot;status&quot;&gt;&lt;/div&gt;
+  &lt;/aside&gt;
+
+  &lt;section class=&quot;main&quot;&gt;
+    &lt;div class=&quot;card&quot;&gt;
+      &lt;h2&gt;Compartment dimensions&lt;/h2&gt;
+      &lt;div class=&quot;compGrid&quot; id=&quot;compGrid&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;glwrap&quot;&gt;
+      &lt;canvas id=&quot;gl&quot;&gt;&lt;/canvas&gt;
+      &lt;div class=&quot;hint&quot;&gt;Rotatable 3D preview&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;foot&quot;&gt;Offline • self-contained • millimeters. All math runs locally in your browser.&lt;/div&gt;
+  &lt;/section&gt;
+&lt;/div&gt;
+
+&lt;!-- ===================== ENGINE (embedded, testable) ===================== --&gt;
+&lt;script id=&quot;tray-engine&quot;&gt;
+// Tray geometry + STL exporter. Exposed on window.__trayEngine for tests.
+(function(){
+  &#x27;use strict&#x27;;
+
+  function clamp(n,lo,hi){ return Math.min(hi, Math.max(lo, n)); }
+
+  // compute(): given parameters, return derived geometry (all mm).
+  // signature: compute(L, W, H, R, C, tw, th)
+  function compute(L, W, H, R, C, tw, th){
+    L=clamp(Number(L)||0,1,5000); W=clamp(Number(W)||0,1,5000); H=clamp(Number(H)||0,1,5000);
+    R=clamp(Math.round(Number(R)||1),1,1000); C=clamp(Math.round(Number(C)||1),1,1000);
+    tw=clamp(Number(tw)||0,0.1, Math.min(L,W)/2);
+    th=clamp(Number(th)||0,0.1, H/2);
+    const interiorLength = L - 2*tw;
+    const interiorWidth  = W - 2*tw;
+    const interiorHeight = H - th;          // floor at bottom, open top
+    const compLength = (interiorLength - (C-1)*tw) / C;
+    const compWidth  = (interiorWidth  - (R-1)*tw) / R;
+    const compDepth  = interiorHeight - tw;  // compartment depth minus the rim
+    return {
+      outerLength:L, outerWidth:W, outerHeight:H,
+      rowCount:R, colCount:C, wallThickness:tw, floorThickness:th,
+      interiorLength, interiorWidth, interiorHeight,
+      compartmentLength:compLength, compartmentWidth:compWidth, compartmentDepth:compDepth,
+      compartmentCount:R*C, valid: (compLength&gt;0 &amp;&amp; compWidth&gt;0 &amp;&amp; compDepth&gt;0)
+    };
+  }
+
+  // Build a watertight &quot;trapezoid&quot; cell for a single compartment.
+  // Each cell is a box whose top opening is beveled inward (a trapezoidal lip),
+  // giving a manifold solid with 24 triangular facets.
+  // origin = (x0,y0) bottom-left interior corner of the cell; z from 0..depth
+  function cellVerts(x0,y0, depth){
+    const s = 2.0; // bevel inset depth on each side
+    const top = depth;
+    // outer rim ring at z=top (rectangular)
+    const obr = [ // outer bottom ring
+      [x0,        y0],
+      [x0+1,      y0],
+      [x0+1,      y0+1],
+      [x0,        y0+1],
+    ];
+    // inner top ring (beveled inwards)
+    const itb = [
+      [x0+s,      y0+s],
+      [x0+1-s,    y0+s],
+      [x0+1-s,    y0+1-s],
+      [x0+s,      y0+1-s],
+    ];
+    return {
+      // vertices indexed: 0-3 bottom, 4-7 top inner
+      v:[
+        [x0,        y0,0],[x0+1,      y0,0],[x0+1,      y0+1,0],[x0,        y0+1,0],
+        [x0+s,      y0+s,top],[x0+1-s,  y0+s,top],[x0+1-s,  y0+1-s,top],[x0+s,      y0+1-s,top],
+      ],
+      // 24 triangles forming a watertight cell
+      t:[
+        // bottom
+        [0,1,2],[0,2,3],
+        // top
+        [4,6,5],[4,7,6],
+        // sides (each side split into 2 tris connecting bottom rim to top bevel)
+        [0,1,5],[0,5,4],
+        [1,2,6],[1,6,5],
+        [2,3,7],[2,7,6],
+        [3,0,4],[3,4,7],
+      ]
+    };
+  }
+
+  function exportSTL(L,W,H,R,C,tw,th, subdivisions, binary){
+    const g = compute(L,W,H,R,C,tw,th);
+    if(!g.valid){ throw new Error(&#x27;Invalid dimensions: compartments degenerate. Increase size or reduce wall thickness.&#x27;); }
+
+    let faces = [];  // each: {n:[3 floats], v:[[x,y,z]x3]}
+
+    // Build one trapezoid cell per compartment.
+    // Grid: columns along X (length), rows along Y (width).
+    for(let r=0;r&lt;R;r++){
+      for(let c=0;c&lt;C;c++){
+        const x0 = tw + c*(g.compartmentLength+tw);
+        const y0 = tw + r*(g.compartmentWidth+tw);
+        const depth = g.compartmentDepth;
+        const cell = cellVerts(x0, y0, depth);
+        // subdivide each triangle into a grid of smaller triangles (subdivisions^2 per tri)
+        for(const tri of cell.t){
+          const A=cell.v[tri[0]], B=cell.v[tri[1]], CC=cell.v[tri[2]];
+          const sub = Math.max(1, Math.round(subdivisions));
+          for(let i=0;i&lt;sub;i++){
+            for(let j=0;j&lt;=sub-1-i;j++){
+              // three corners of sub-triangle
+              const p1=[ A[0]+(B[0]-A[0])*(i/sub)+ (CC[0]-A[0])*(j/sub),
+                         A[1]+(B[1]-A[1])*(i/sub)+ (CC[1]-A[1])*(j/sub),
+                         A[2]+(B[2]-A[2])*(i/sub)+ (CC[2]-A[2])*(j/sub) ];
+              const p2=[ A[0]+(B[0]-A[0])*((i+1)/sub)+(CC[0]-A[0])*(j/sub),
+                         A[1]+(B[1]-A[1])*((i+1)/sub)+(CC[1]-A[1])*(j/sub),
+                         A[2]+(B[2]-A[2])*((i+1)/sub)+(CC[2]-A[2])*(j/sub) ];
+              const p3=[ A[0]+(B[0]-A[0])*((i+1)/sub)+(CC[0]-A[0])*((j+1)/sub),
+                         A[1]+(B[1]-A[1])*((i+1)/sub)+(CC[1]-A[1])*((j+1)/sub),
+                         A[2]+(B[2]-A[2])*((i+1)/sub)+(CC[2]-A[2])*((j+1)/sub) ];
+              // outward-ish normal via cross product
+              const ux=B[0]-A[0], uy=B[1]-A[1], uz=B[2]-A[2];
+              const vx=CC[0]-A[0], vy=CC[1]-A[1], vz=CC[2]-A[2];
+              let nx=uy*vz-uz*vy, ny=uz*vx-ux*vz, nz=ux*vy-uy*vx;
+              const ln=Math.hypot(nx,ny,nz)||1; nx/=ln;ny/=ln;nz/=ln;
+              faces.push([[nx,ny,nz],[p1,p2,p3]]);
+            }
+          }
+        }
+      }
+    }
+
+    const ntri = faces.length;
+
+    if(binary){
+      const buf = Buffer.alloc(80 + ntri*50);
+      buf.write(&#x27;solid tray&#x27;,0,&#x27;ascii&#x27;);
+      buf.writeUInt32LE(ntri, 80);
+      let o = 80+4;
+      for(const f of faces){
+        const [nx,ny,nz]=f[0], [[x0,y0,z0],[x1,y1,z1],[x2,y2,z2]]=f[1];
+        buf.writeFloatLE(nx,o); o+=4; buf.writeFloatLE(ny,o); o+=4; buf.writeFloatLE(nz,o); o+=4;
+        buf.writeFloatLE(x0,o); o+=4; buf.writeFloatLE(y0,o); o+=4; buf.writeFloatLE(z0,o); o+=4;
+        buf.writeFloatLE(x1,o); o+=4; buf.writeFloatLE(y1,o); o+=4; buf.writeFloatLE(z1,o); o+=4;
+        buf.writeFloatLE(x2,o); o+=4; buf.writeFloatLE(y2,o); o+=4; buf.writeFloatLE(z2,o); o+=4;
+      }
+      return buf;
+    }
+
+    let s = &#x27;solid tray\n&#x27;;
+    for(const f of faces){
+      const [nx,ny,nz]=f[0], [[x0,y0,z0],[x1,y1,z1],[x2,y2,z2]]=f[1];
+      s+=&#x27;facet normal &#x27;+fmt(nx)+&#x27; &#x27;+fmt(ny)+&#x27; &#x27;+fmt(nz)+&#x27;\n&#x27;;
+      s+=&#x27;  outer loop\n&#x27;;
+      s+=&#x27;    vertex &#x27;+fmt(x0)+&#x27; &#x27;+fmt(y0)+&#x27; &#x27;+fmt(z0)+&#x27;\n&#x27;;
+      s+=&#x27;    vertex &#x27;+fmt(x1)+&#x27; &#x27;+fmt(y1)+&#x27; &#x27;+fmt(z1)+&#x27;\n&#x27;;
+      s+=&#x27;    vertex &#x27;+fmt(x2)+&#x27; &#x27;+fmt(y2)+&#x27; &#x27;+fmt(z2)+&#x27;\n&#x27;;
+      s+=&#x27;  endloop\n&#x27;;
+      s+=&#x27;endfacet\n&#x27;;
+    }
+    s+=&#x27;endsolid tray\n&#x27;;
+    return s;
+  }
+
+  function fmt(x){ return x.toPrecision(7); }
+
+  window.__trayEngine = { compute, exportSTL, cellVerts, fmt };
+})();
+&lt;/script&gt;
+
+&lt;!-- ===================== APP (browser glue) ===================== --&gt;
+&lt;script&gt;
+(function(){
+  const E = window.__trayEngine;
+
+  // defaults
+  const DEFAULTS = {L:180,W:120,H:30,R:3,C:2,tw:2,th:3, subdivisions:12};
+
+  const $ = id =&gt; document.getElementById(id);
+
+  function num(id){ return parseFloat($(id).value)||0; }
+
+  function readState(){
+    return {
+      L:Math.round(num(&#x27;L&#x27;)), W:Math.round(num(&#x27;W&#x27;)), H:Math.round(num(&#x27;H&#x27;)),
+      R:Math.round(num(&#x27;R&#x27;)), C:Math.round(num(&#x27;C&#x27;)),
+      tw:parseFloat(num(&#x27;tw&#x27;)), th:parseFloat(num(&#x27;th&#x27;)),
+      subdivisions:12
+    };
+  }
+  function syncSlidersFromNumbers(){
+    for(const id of [&#x27;L&#x27;,&#x27;W&#x27;,&#x27;H&#x27;,&#x27;R&#x27;,&#x27;C&#x27;,&#x27;tw&#x27;,&#x27;th&#x27;]){
+      const v=num(id); const slider=$(id+&#x27;_min&#x27;);
+      if(v){ slider.value=v; }
+    }
+  }
+
+  function renderCompartments(){
+    const st = readState();
+    const g = E.compute(st.L,st.W,st.H,st.R,st.C,st.tw,st.th);
+    const grid=$(&#x27;compGrid&#x27;); grid.innerHTML=&#x27;&#x27;;
+    const msg = g.valid ? &#x27;&#x27; : &#x27;&lt;div class=&quot;warn&quot;&gt;⚠ dimensions degenerate — reduce wall/thicken or increase size&lt;/div&gt;&#x27;;
+    for(let r=0;r&lt;g.rowCount;r++){
+      for(let c=0;c&lt;g.colCount;c++){
+        const d=document.createElement(&#x27;div&#x27;); d.className=&#x27;comp&#x27;;
+        d.innerHTML=`&lt;div class=&quot;n&quot;&gt;Comp ${r*g.colCount+c+1}&lt;/div&gt;
+          &lt;div class=&quot;d&quot;&gt;${fmt(g.compartmentLength)} × ${fmt(g.compartmentWidth)}&lt;/div&gt;
+          &lt;div class=&quot;u&quot;&gt;depth ${fmt(g.compartmentDepth)} mm • ${g.compartmentCount} total&lt;/div&gt;`;
+        grid.appendChild(d);
+      }
+    }
+    $(&#x27;status&#x27;).innerHTML = g.valid
+      ? `${g.compartmentCount} compartments • interior ${fmt(g.interiorLength)}×${fmt(g.interiorWidth)} mm • floor+wall ${st.th}/${st.tw} mm`
+      : &#x27;&lt;span class=&quot;warn&quot;&gt;Invalid geometry&lt;/span&gt;&#x27;;
+    return g;
+  }
+
+  function fmt(n){ return n.toFixed(1).replace(/\.0$/,&#x27;&#x27;); }
+
+  // ---------- lightweight WebGL-ish 3D preview ----------
+  // We draw a faceted wireframe+fill using Canvas 2D (verified helper: fillRect).
+  // Robust, deterministic, and offline. Uses an affine model-view transform.
+  const canvas = $(&#x27;gl&#x27;);
+  const gl = canvas.getContext(&#x27;2d&#x27;);
+  let view={yaw:0.6, pitch:0.5, zoom:1};
+
+  function resize(){
+    const r=canvas.getBoundingClientRect();
+    const dpr=window.devicePixelRatio||1;
+    canvas.width=Math.max(2,Math.floor(r.width*dpr));
+    canvas.height=Math.max(2,Math.floor(r.height*dpr));
+  }
+
+  function project(p, view, w, h){
+    // rotate yaw about Z, pitch about X
+    let [x,y,z]=p;
+    const cy=Math.cos(view.yaw), sy=Math.sin(view.yaw);
+    let x1=x*cy-y*sy, y1=x*sy+y*cy; x=x1;y=y1;
+    const cp=Math.cos(view.pitch), sp=Math.sin(view.pitch);
+    let y2=y*cp-z*sp, z2=y*sp+z*cp; y=y2;z=z2;
+    z=z+5; // camera distance
+    const fov=700*view.zoom;
+    const scale=fov/(z+fov);
+    return [w/2 + x*scale, h/2 - y*scale, z];
+  }
+
+  // draw outer shell + a grid of compartment outlines on the floor
+  function drawTray(){
+    const st=readState();
+    const g=E.compute(st.L,st.W,st.H,st.R,st.C,st.tw,st.th);
+    resize();
+    const w=canvas.width, h=canvas.height;
+    gl.clearRect(0,0,w,h);
+
+    // draw a simple isometric-ish wireframe tray
+    const L=g.outerLength, W=g.outerWidth, H=g.outerHeight, tw=g.wallThickness, floor=g.floorThickness;
+    const wallH=H-floor;
+
+    function P(x,y,z){ return project([x - L/2, y - W/2, z], view, w, h); }
+
+    // grid helper to draw filled quad
+    function quad(ax,ay,az,bx,by,bz,cx,cy,cz,dx,dy,dz, fill, stroke){
+      const a=P(ax,ay,az),b=P(bx,by,bz),c=P(cx,cy,cz),d=P(dx,dy,dz);
+      gl.beginPath(); gl.moveTo(a[0],a[1]);
+      gl.lineTo(b[0],b[1]); gl.lineTo(c[0],c[1]); gl.lineTo(d[0],d[1]); gl.closePath();
+      if(fill){ gl.fillStyle=fill; gl.fill(); }
+      if(stroke){ gl.strokeStyle=stroke; gl.lineWidth=1; gl.stroke(); }
+    }
+
+    const Lc=&#x27;#3a7bd5&#x27;, LcDark=&#x27;#2a5aa3&#x27;, Fl=&#x27;#33415c&#x27;, FlLin=&#x27;#4a5a7a&#x27;;
+    // floor
+    quad(0,0,0, L,0,0, L,W,0, 0,W,0, Fl, FlLin);
+    // four walls
+    quad(0,0,0, L,0,0, L,0,wallH, 0,0,wallH, LcDark);
+    quad(L,0,0, L,W,0, L,W,wallH, L,0,wallH, Lc);
+    quad(L,W,0, 0,W,0, 0,W,wallH, L,W,wallH, LcDark);
+    quad(0,W,0, 0,0,0, 0,0,wallH, 0,W,wallH, Lc);
+
+    // internal walls (columns)
+    for(let c=1;c&lt;g.colCount;c++){
+      const x = tw + c*(g.compartmentLength+tw);
+      quad(x,0,0, x,W,0, x,W,wallH, x,0,wallH, Lc, FlLin);
+    }
+    for(let r=1;r&lt;g.rowCount;r++){
+      const y = tw + r*(g.compartmentWidth+tw);
+      quad(0,y,0, L,y,0, L,y,wallH, 0,y,wallH, Lc, FlLin);
+    }
+
+    // compartment floor grid lines
+    gl.strokeStyle=&#x27;rgba(120,150,200,.5)&#x27;; gl.lineWidth=1;
+    for(let c=0;c&lt;=g.colCount;c++){
+      const x = tw + c*(g.compartmentLength+tw);
+      const a=P(x,0,0), b=P(x,W,0);
+      gl.beginPath(); gl.moveTo(a[0],a[1]); gl.lineTo(b[0],b[1]); gl.stroke();
+    }
+    for(let r=0;r&lt;=g.rowCount;r++){
+      const y = tw + r*(g.compartmentWidth+tw);
+      const a=P(0,y,0), b=P(L,y,0);
+      gl.beginPath(); gl.moveTo(a[0],a[1]); gl.lineTo(b[0],b[1]); gl.stroke();
+    }
+
+    // compartment dimension labels (floating near top of each cell)
+    gl.font=&#x27;bold 11px system-ui&#x27;;
+    gl.fillStyle=&#x27;#cfe0ff&#x27;;
+    const cw=g.compartmentLength, ch=g.compartmentWidth, cd=g.compartmentDepth;
+    for(let r=0;r&lt;g.rowCount;r++){
+      for(let c=0;c&lt;g.colCount;c++){
+        const cx = tw + c*(cw+tw) + cw/2;
+        const cy = tw + r*(ch+tw) + ch/2;
+        const p=P(cx, cy, cd*0.5);
+        gl.fillText(`${fmt(cw)}×${fmt(ch)}`, p[0]-14, p[1]+4);
+      }
+    }
+  }
+
+  function render(){
+    renderCompartments();
+    drawTray();
+  }
+
+  // ---------- interaction ----------
+  let dragging=false, lastX=0, lastY=0;
+  canvas.addEventListener(&#x27;mousedown&#x27;, e=&gt;{ dragging=true; lastX=e.clientX; lastY=e.clientY; });
+  window.addEventListener(&#x27;mouseup&#x27;, ()=&gt;{ dragging=false; });
+  window.addEventListener(&#x27;mousemove&#x27;, e=&gt;{
+    if(!dragging) return;
+    const dx=e.clientX-lastX, dy=e.clientY-lastY;
+    lastX=e.clientX; lastY=e.clientY;
+    view.yaw += dx*0.01;
+    view.pitch += dy*0.01;
+    view.pitch=clamp(view.pitch,-1.4,1.4);
+    drawTray();
+  });
+  canvas.addEventListener(&#x27;wheel&#x27;, e=&gt;{
+    e.preventDefault();
+    view.zoom *= e.deltaY&lt;0 ? 1.08 : 0.93;
+    view.zoom=clamp(view.zoom,0.3,5);
+    drawTray();
+  },{passive:false});
+
+  function clamp(v,lo,hi){ return Math.min(hi,Math.max(lo,v)); }
+
+  // bind slider + number pairs
+  const pairs=[[&#x27;L&#x27;,&#x27;L_min&#x27;],[&#x27;W&#x27;,&#x27;W_min&#x27;],[&#x27;H&#x27;,&#x27;H_min&#x27;],[&#x27;C&#x27;,&#x27;C_min&#x27;],[&#x27;R&#x27;,&#x27;R_min&#x27;],[&#x27;tw&#x27;,&#x27;tw_min&#x27;],[&#x27;th&#x27;,&#x27;th_min&#x27;]];
+  for(const [numId,slId] of pairs){
+    const numEl=$(numId), slEl=$(slId);
+    const update=()=&gt;{ render(); };
+    numEl.addEventListener(&#x27;input&#x27;,()=&gt;{ slEl.value=numEl.value; update(); });
+    slEl.addEventListener(&#x27;input&#x27;,()=&gt;{ numEl.value=slEl.value; update(); });
+  }
+
+  // presets
+  $(&#x27;presets&#x27;).addEventListener(&#x27;click&#x27;, e=&gt;{
+    const btn=e.target.closest(&#x27;button[data-p]&#x27;); if(!btn) return;
+    document.querySelectorAll(&#x27;#presets button&#x27;).forEach(b=&gt;b.classList.remove(&#x27;active&#x27;));
+    btn.classList.add(&#x27;active&#x27;);
+    const p=btn.dataset.p;
+    if(p===&#x27;top&#x27;){ view={yaw:0,pitch:1.56,zoom:1}; }
+    else if(p===&#x27;front&#x27;){ view={yaw:0,pitch:0.05,zoom:1}; }
+    else if(p===&#x27;side&#x27;){ view={yaw:1.57,pitch:0.05,zoom:1}; }
+    else { view={yaw:0.6,pitch:0.5,zoom:1}; }
+    drawTray();
+  });
+
+  $(&#x27;download&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{
+    try{
+      const st=readState();
+      const stl=E.exportSTL(st.L,st.W,st.H,st.R,st.C,st.tw,st.th,st.subdivisions,false);
+      const blob=new Blob([stl],{type:&#x27;application/octet-stream&#x27;});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement(&#x27;a&#x27;);
+      a.href=url;
+      a.download=`tray_${st.L}x${st.W}x${st.H}_${st.R}x${st.C}.stl`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      $(&#x27;status&#x27;).innerHTML=&#x27;Downloaded &#x27;+ (stl.length&gt;1e6?(stl.length/1e6).toFixed(1)+&#x27;MB&#x27;:stl.length+&#x27;B&#x27;)+&#x27; ASCII STL&#x27;;
+    }catch(err){ alert(&#x27;Cannot export: &#x27;+err.message); }
+  });
+
+  // reset
+  $(&#x27;reset&#x27;).addEventListener(&#x27;click&#x27;,()=&gt;{
+    $(&#x27;L&#x27;).value=DEFAULTS.L; $(&#x27;W&#x27;).value=DEFAULTS.W; $(&#x27;H&#x27;).value=DEFAULTS.H;
+    $(&#x27;R&#x27;).value=DEFAULTS.R; $(&#x27;C&#x27;).value=DEFAULTS.C;
+    $(&#x27;tw&#x27;).value=DEFAULTS.tw; $(&#x27;th&#x27;).value=DEFAULTS.th;
+    syncSlidersFromNumbers(); render();
+  });
+
+  // init
+  for(const k in DEFAULTS){
+    const el=$(k); if(el) el.value=DEFAULTS[k];
+  }
+  syncSlidersFromNumbers();
+  render();
+
+  window.addEventListener(&#x27;resize&#x27;, ()=&gt;{ resize(); drawTray(); });
+})();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;/previous_artifact&gt;
+
+What would you change about your generic setup after inspecting this artifact? Separate changed recommendations from unchanged ones. Do not provide application fixes/code or product-specific test assertions. Finish with your final preferred generic configuration and predictions.
+
+Recommend your own preferred setup within those constraints:
+1. Rank the three changes most likely to improve your success rate and explain why.
+2. Name the tools/test environment and Pi workflow you would prefer. Explain what evidence should count as completion and how app bugs should be distinguished from test/environment bugs.
+3. Specify planning, context management, reasoning, compression, iteration and review choices. State whether you want another model and its exact role; do not add one merely because it is available.
+4. Give one generic kickoff/workflow template usable unchanged with all five briefs. Include no task-specific solution, application code, or tailored test assertions.
+5. Predict your chance of a working POC for each brief and name the main failure risks. These are predictions to be checked, not performance claims.
+6. State a minimal fallback if a desired tool cannot be supplied.
+Return a concise structured proposal, ideally JSON, with tools, workflow, kickoff_template, settings, completion_evidence, predictions and fallbacks. We will preserve your answer and later compare it with actual independent results.
+</code></pre><h4>Response</h4><pre class="interview-answer"><code>## Inspection findings
+
+The previous artifact reveals a critical pattern worth separating from my original analysis:
+
+**Key observation:** The engine was correctly extracted to a testable module (`__trayEngine` with `compute`/`exportSTL`), meaning the *testing discipline* was sound. However, `exportSTL` contained a serious correctness bug: it generates a single cell occupying unit coordinates `[0,1]×[0,1]` in its vertex data, then positions cells via the `x0/y0` offset in the *indexing* — but the `cellVerts` bevel inset `s=2.0` is applied in absolute world units while cells are placed at fractional offsets, making the bevel math nonsensical for non-unit cells. More damningly, the STL export uses `Buffer.alloc` (a Node global), which **violates the offline/self-contained browser constraint** — it only works under Node, not in a real browser. This is exactly the kind of &quot;silently wrong geometry&quot; + &quot;environment-dependent execution&quot; failure I predicted (0.68), and it would not surface under jsdom (Buffer exists there) but fails in a real browser.
+
+This confirms my prediction was right and sharpens the recommendation.
+
+## Unchanged recommendations
+
+- **Rank 1 (increased context budget)** — still highest impact; truncation is the dominant hard failure.
+- **Rank 3 (resumable save/continue + file indexing)** — still valuable for large single-file delivery.
+- **Distinguishing product vs. environment bugs** — still the right framework; the artifact actually *exemplifies* the danger (code that passes jsdom but fails in-browser).
+- **One consolidated planning pass; no separate reviewer** — still valid.
+- **Fallbacks for context truncation and geometry-library unavailability** — still valid.
+
+## Changed recommendations
+
+- **Rank 2 shift:** Previously &quot;supply a local browser/real DOM+event sim.&quot; The artifact proves that *having* a Node/Node-like runtime is not enough — `Buffer` runs under both. The real fix is **requiring an actual headless Chromium** (or at minimum a DOM where Node globals like `Buffer`/`require` are absent), so that environment-dependent code paths are genuinely exercised. jsdom&#x27;s Node compatibility is precisely what masks this failure class. → **Strongly prefer headless Chromium; treat jsdom-only verification as insufficient for browser-boundary code.**
+
+- **New emphasis — offline constraint as an explicit, checked requirement:** The artifact shipped Node API usage in a &quot;browser&quot; file. My template listed &quot;no network/CDN&quot; but did not emphasize *global-API isolation*. Add an explicit runtime check that no Node/BOM-only APIs appear in the browser bundle (a grep for `Buffer`, `require`, `process`, `document.write`, etc.), and verify execution under a *browser-simulated* runtime, not just any JS runtime.
+
+- **Geometry validity as first-class completion evidence:** For the tray brief, &quot;STL parses&quot; was not enough — the STL must be *watertight and correctly sized*. Require a geometric validator that checks face normals point outward, the mesh is manifold, and compartment dimensions match `compute` output. This converts &quot;silently wrong&quot; geometry into a checkable pass/fail.
+
+## Final preferred generic configuration
+
+```json
+{
+  &quot;tools_and_workflow&quot;: {
+    &quot;editor&quot;: &quot;Pi as primary editor with resumable save/continue enabled&quot;,
+    &quot;planning&quot;: &quot;Single consolidated planning pass before first emit; treat brief as spec; no separate planner&quot;,
+    &quot;runtime_checking&quot;: &quot;Headless Chromium (preferred) for all browser-boundary code — pointer, touch, canvas, WebGL, file APIs. Node/jsdom acceptable ONLY for pure-logic modules with zero browser-boundary dependencies (e.g., a geometry core that takes numbers in and returns data structures).&quot;,
+    &quot;browser_isolation_check&quot;: &quot;Grep the final file for Node/BOM-only globals (Buffer, require, process, global, module.exports). Any presence in browser-executed code is a defect.&quot;,
+    &quot;geometry_check&quot;: &quot;For STL/export briefs, validate mesh watertightness, outward-pointing normals, and that exported dimensions match the compute core&#x27;s output via a headless-friendly validator.&quot;,
+    &quot;offline_policy&quot;: &quot;Assume offline; pre-cache any needed npm packages. Prefer zero external dependencies.&quot;
+  },
+  &quot;settings&quot;: {
+    &quot;planning&quot;: &quot;One consolidated plan before coding; brief is the spec; no separate planner model.&quot;,
+    &quot;context_management&quot;: &quot;Resumable save/continue with explicit checkpoints; incremental edits; never overwrite a large file without a prior checkpoint; index the working dir to avoid re-emitting.&quot;,
+    &quot;reasoning&quot;: &quot;Standard reasoning; escalate depth specifically for STL/geometry math where a wrong formula is silently wrong and cannot be caught by runtime-only checks.&quot;,
+    &quot;compression&quot;: &quot;Incremental edits and save/continue; compress prior file content into a size note when re-including rather than re-emitting verbatim.&quot;,
+    &quot;iteration&quot;: &quot;Minimum two verification passes under the best-available browser-simulated runtime; third only if a runtime failure remains.&quot;,
+    &quot;review&quot;: &quot;Self-review checklist at end; no additional reviewer model.&quot;,
+    &quot;another_model&quot;: {
+      &quot;decision&quot;: &quot;Do NOT add another model. The prior artifact&#x27;s bug was in the geometry math and browser-boundary API use, neither of which is a context-holding problem. No evidence shows a second model would catch it.&quot;,
+      &quot;exact_role_if_ever_added&quot;: &quot;Independent pass over the completion checklist only; must not author product code or feed task-specific repairs.&quot;,
+      &quot;rationale&quot;: &quot;Adds coordination cost; the binding constraint is verification fidelity, not context width.&quot;
+    }
+  },
+  &quot;kickoff_template&quot;: &quot;You are building one self-contained offline single-file HTML app named index.html in THIS directory only. Steps: (1) Read this brief and produce an explicit requirements list plus a completion checklist before writing code. (2) Design the data model and module layout in one planning pass, separating pure logic (testable without a browser) from browser-boundary code (canvas/WebGL/pointer/touch/file APIs/global objects). (3) Emit index.html via resumable save/continue if needed; keep it fully self-contained and offline — no network, no CDNs, and NO Node/BOM-only globals (Buffer, require, process, module.exports, global) in browser-executed code. (4) Verify each checklist item at runtime using the best available browser-simulated tooling (prefer headless Chromium over jsdom, since jsdom&#x27;s Node compatibility can mask browser-boundary failures); for any export/geometry feature, validate the output structurally (e.g., STL is watertight and dimensions match the compute core) rather than merely for parseability. (5) Distinguish product failures (wrong output under a correct runtime with correct inputs) from environment limitations (failures that occur only because a real browser/touch/WebGL/STL-render is unavailable) and log environment limitations separately. (6) Fix only verified failures; do not add features beyond the brief. (7) Self-review: confirm no console errors, all requirements met, file is single/self-contained/offline with no browser-boundary API leaks, then report which checklist items passed and any environment-only caveats. Deliver only index.html.&quot;,
+  &quot;non_goals_in_template&quot;: &quot;No task-specific game logic, no solution code, no bespoke test cases baked in.&quot;,
+  &quot;completion_evidence&quot;: {
+    &quot;requirement&quot;: &quot;Working POC = all brief requirements exercised and passing at runtime, or explicitly documented as &#x27;structure-only&#x27; when a real browser is unavailable.&quot;,
+    &quot;what_counts_as_working&quot;: [
+      &quot;File runs with no console errors under a browser-simulated runtime where Node globals are absent&quot;,
+      &quot;Each required interaction is triggered and produces the expected state change&quot;,
+      &quot;Pure-logic modules pass under Node/jsdom; browser-boundary code passes under headless Chromium or is labeled environment-caveated&quot;,
+      &quot;Export outputs are structurally valid (PNG decodable, STL watertight with matching dimensions, JSON round-trips)&quot;,
+      &quot;Grep confirms no Node/BOM-only global APIs in the browser bundle&quot;
+    ],
+    &quot;distinguishing_bugs&quot;: {
+      &quot;product_bug&quot;: &quot;Wrong output under a correct runtime with correct inputs, or Node/BOM-only API used in browser code&quot;,
+      &quot;environment_bug&quot;: &quot;Fails only because a real browser/touch/WebGL/STL-render is unavailable; must be logged as env limitation, not product defect&quot;,
+      &quot;method&quot;: &quot;Run under best-available browser-simulated runtime; if it works under headless Chromium but not jsdom, classify as environment limitation; if a Node global is required, it is a product bug regardless of jsdom passing&quot;
+    }
+  },
+  &quot;predictions&quot;: {
+    &quot;note&quot;: &quot;Predictions to be checked against the later experiment; not performance guarantees.&quot;,
+    &quot;items&quot;: [
+      {
+        &quot;brief&quot;: &quot;Reaction timer&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.90&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Random-wait/elapsed timing precision off by a fixed bias&quot;,
+          &quot;False-start logic edge cases (click before start vs after)&quot;,
+          &quot;Truncation of final file if context budget is tight&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Snake&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.92&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Input-queue bug causing double-turn suicide&quot;,
+          &quot;Collision/self-collision detection edge timing&quot;,
+          &quot;Difficulty ramp math subtle off-by-one&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Pixel painter&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.82&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Undo/redo stack correctness across multiple operations&quot;,
+          &quot;Pointer/touch not verifiable without a real browser (environment caveat)&quot;,
+          &quot;PNG export valid/decodable under test runtime&quot;,
+          &quot;canvas.toDataURL available under the test runtime (jsdom lacks it — must use Chromium or mark environment-caveated)&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Breakout with level editor&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.76&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;Collision reflection math and paddle-angle edge cases&quot;,
+          &quot;Editor play/exit state machine transitions&quot;,
+          &quot;JSON save/load round-trip correctness; touch unverifiable without real browser&quot;
+        ]
+      },
+      {
+        &quot;brief&quot;: &quot;Simple drawer tray generator&quot;,
+        &quot;predicted_success_chance&quot;: &quot;0.62&quot;,
+        &quot;main_failure_risks&quot;: [
+          &quot;STL geometry math correctness (compartments, walls, floor) — silently wrong if a formula is off; prior artifact shipped invalid bevel math&quot;,
+          &quot;Node/BOM-only global API (e.g., Buffer) leaked into browser code — only surfaces outside Node, which prior artifact did&quot;,
+          &quot;3D preview rotation only verifiable in a real browser (environment caveat)&quot;,
+          &quot;Larger single-file size increases truncation risk if context budget tight&quot;,
+          &quot;Watertightness/notch-overlap geometric validation&quot;
+        ]
+      }
+    ]
+  },
+  &quot;fallbacks&quot;: {
+    &quot;no_local_browser&quot;: &quot;Use jsdom + manual code-path execution; classify canvas/touch/WebGL/STL-render/png-export failures as environment limitations, not product defects; note this explicitly in the deliverable report. Treat jsdom as last resort and flag all browser-boundary code as environment-caveated.&quot;,
+    &quot;context_truncation_of_large_file&quot;: &quot;Use resumable save/continue with incremental edits and checkpoints; never overwrite without a prior checkpoint; document any partial emission.&quot;,
+    &quot;geometry_library_unavailable_offline&quot;: &quot;Implement a minimal built-in STL writer (ASCII or minimal binary) using pure inline math; avoid external deps; validate the STL parses AND is watertight with matching dimensions using the local validator.&quot;,
+    &quot;if_primary_model_cannot_complete_in_budget&quot;: &quot;Prioritize core requirements over polish; deliver a working core POC and explicitly list skipped polish as out-of-scope.&quot;,
+    &quot;unspecified_or_ambiguous_requirement&quot;: &quot;Implement the most standard interpretation; log the assumption rather than asking, to preserve autonomy under the constraints.&quot;
+  }
+}
+```
+
+The net change from my blind proposal: **headless Chromium is now the preferred runtime for browser-boundary code (not jsdom)**, the **offline/no-global-API-leak constraint is elevated to an explicit checked requirement**, and **geometry export requires structural/watertight validation, not mere parseability**. Success prediction for the tray brief is lowered from 0.68 to 0.62, reflecting that the artifact demonstrated exactly the failure class I now guard against.
+</code></pre></details><details class="interview-transcript" data-model="qwen" data-phase="blind"><summary>Qwen · Blind interview</summary><h4>Prompt</h4><pre class="interview-prompt"><code>You are being interviewed about your preferred working environment for local coding-agent tasks. This is research advice, not an implementation task. You have no tools in this interview. Do not build an application, write product code, or emit tool calls. Be specific about setup choices, tradeoffs and predictions; do not pretend to know the empirical results.
+
+The later experiment will give you each of the following five briefs in a fresh isolated project. The goal is a working offline single HTML file from that one kickoff prompt, without task-specific human steering or supervisor product code.
+
+Constraints for that experiment: local Pi agent, your existing Songbird model, at most60minutes per project including all worker/reviewer calls; other models or reviewers only if you request them and all time is counted. Project read/write isolation is mandatory. Prior attempts and scorecards are unreadable during evaluation. Codex may configure infrastructure, but cannot implement the product or feed task-specific repairs. Browser automation is currently unavailable under the saved tool policy; source/runtime testing and locally installed test/render/geometry tools are available. The final deliverable must remain self-contained and offline. Pi tool/extension configuration, planning, fresh-session loops, test tooling, reasoning settings and billion-context are choices you may propose. Prefer the smallest setup you believe works. Distinguish requirements from optional additions and list any unavailable capabilities rather than assuming they exist.
+
+THE FIVE EXACT BRIEFS:
+1. Reaction timer
+Build a polished reaction-time tester with a random wait, false-start detection, five trials, and a results summary. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+2. Snake
+Build a playable Snake game with keyboard controls, food, scoring, wall and self collisions, pause, restart, and increasing difficulty. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+3. Pixel painter
+Build a pixel-art painting tool with an editable canvas size, color palette, brush, eraser, undo/redo, clear, and PNG export. Support mouse and touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+4. Breakout with level editor
+Build Breakout with a level editor: draw and erase bricks, play your layout, show score and lives, restart, and save/load the level as JSON. Support keyboard and mouse or touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+5. Simple drawer tray generator
+Build a maker tool for a rectangular drawer-organizer tray. Let me edit outer dimensions, row/column counts, wall thickness, and floor thickness. Show clear compartment dimensions, a rotatable 3D preview, and export a printable STL. Start at 180 x 120 x 30 mm with a 3 x 2 grid. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+
+Recommend your own preferred setup within those constraints:
+1. Rank the three changes most likely to improve your success rate and explain why.
+2. Name the tools/test environment and Pi workflow you would prefer. Explain what evidence should count as completion and how app bugs should be distinguished from test/environment bugs.
+3. Specify planning, context management, reasoning, compression, iteration and review choices. State whether you want another model and its exact role; do not add one merely because it is available.
+4. Give one generic kickoff/workflow template usable unchanged with all five briefs. Include no task-specific solution, application code, or tailored test assertions.
+5. Predict your chance of a working POC for each brief and name the main failure risks. These are predictions to be checked, not performance claims.
+6. State a minimal fallback if a desired tool cannot be supplied.
+Return a concise structured proposal, ideally JSON, with tools, workflow, kickoff_template, settings, completion_evidence, predictions and fallbacks. We will preserve your answer and later compare it with actual independent results.
+</code></pre><h4>Response</h4><pre class="interview-answer"><code>```json
+{
+  &quot;proposal_summary&quot;: {
+    &quot;description&quot;: &quot;A constrained, self-contained offline evaluation of a local coding agent (Songbird) via Pi tooling. The setup prioritizes single-file output integrity, explicit verification loops, and robust error handling over complex multi-agent orchestration.&quot;,
+    &quot;core_philosophy&quot;: &quot;Minimize external dependencies; maximize deterministic verification within the HTML scope.&quot;
+  },
+  &quot;ranked_changes_for_success&quot;: [
+    {
+      &quot;rank&quot;: 1,
+      &quot;change&quot;: &quot;Strict Single-File Constraint Enforcement&quot;,
+      &quot;explanation&quot;: &quot;The requirement for &#x27;self-contained offline&#x27; files eliminates CDN dependencies. The biggest failure mode is the agent linking to external libraries (e.g., Three.js via CDN) which will break offline. Enforcing a &#x27;no external scripts&#x27; rule and providing or forcing the inclusion of necessary minimal libraries (like Three.js if needed for Brief 5) directly in the code is critical.&quot;
+    },
+    {
+      &quot;rank&quot;: 2,
+      &quot;change&quot;: &quot;Automated Local Execution Verification&quot;,
+      &quot;explanation&quot;: &quot;Since browser automation is unavailable, I must rely on the agent to generate its own verification script or use local CLI tools (like Node.js with Puppeteer if available, or simple headless Chrome commands) to check for console errors and DOM structure. The agent cannot &#x27;see&#x27; the UI; it must verify via code assertions.&quot;
+    },
+    {
+      &quot;rank&quot;: 3,
+      &quot;change&quot;: &quot;Modular Code Generation Strategy&quot;,
+      &quot;explanation&quot;: &quot;For complex briefs (Brief 4 and 5), generating one massive file often leads to context loss or syntax errors. Instructing the agent to build the core engine first, then layer on UI/editor features in distinct logical blocks within the single file improves coherence.&quot;
+    }
+  ],
+  &quot;tools_and_workflow&quot;: {
+    &quot;environment&quot;: &quot;Local Pi Agent with Songbird Model&quot;,
+    &quot;preferred_tools&quot;: [
+      &quot;File System Tool (Read/Write)&quot;: &quot;For scaffolding and saving index.html.&quot;,
+      &quot;Code Interpreter / Local Shell&quot;: &quot;To run lightweight verification scripts if Node.js is available. If not, rely on the agent&#x27;s internal reasoning capabilities to write self-validating JavaScript.&quot;
+    ],
+    &quot;pi_workflow&quot;: {
+      &quot;initialization&quot;: &quot;Create isolated project directory. Initialize index.html skeleton.&quot;,
+      &quot;iteration&quot;: [
+        &quot;Generate code segment by segment if large (Brief 5).&quot;,
+        &quot;Self-Review: Agent must simulate execution paths mentally before writing.&quot;,
+        &quot;Verification: Agent must output a &#x27;verification plan&#x27; or run a self-test script.&quot;
+      ],
+      &quot;completion_check&quot;: &quot;File saves successfully, is valid HTML/CSS/JS, and contains no external network requests.&quot;
+    },
+    &quot;completion_evidence_criteria&quot;: {
+      &quot;functional_bug_definition&quot;: &quot;Failure to meet core requirements (e.g., snake doesn&#x27;t move, drawer dimensions are incorrect, STL export fails).&quot;
+    },
+    &quot;environment_bug_definition&quot;: {
+      &quot;definition&quot;: &quot;Agent cannot save files, cannot read prompts, or throws environment-level errors unrelated to code logic.&quot;
+    }
+  },
+  &quot;settings_and_configuration&quot;: {
+    &quot;planning_strategy&quot;: &quot;Chain of Thought (CoT) for architecture before coding. Explicit listing of all functions/classes before implementation.&quot;,
+    &quot;context_management&quot;: &quot;Sliding window focus. If the file exceeds token limits, request the agent to compress UI code into minimal CSS and inline SVG/JS logic.&quot;,
+    &quot;reasoning_setting&quot;: &quot;High temperature for creative problem solving in Brief 5 (geometry), lower temperature for strict logic in Brief 1 &amp; 2.&quot;,
+    &quot;compression&quot;: &quot;Enable aggressive token compression if context window allows, but prioritize retaining the full code artifact.&quot;,
+    &quot;iteration_count&quot;: &quot;Limit to 60 minutes. If stuck &gt; 10 mins on a bug, switch to &#x27;simplify requirement&#x27; mode.&quot;,
+    &quot;reviewer_role&quot;: &quot;None. The agent acts as its own reviewer using the verification criteria below.&quot;,
+    &quot;additional_models&quot;: {
+      &quot;requested&quot;: false,
+      &quot;reason&quot;: &quot;Latency and context fragmentation risks outweigh benefits for single-file tasks. One capable reasoning model is sufficient if constrained correctly.&quot;
+    }
+  },
+  &quot;kickoff_template&quot;: &quot;You are an expert Frontend Engineer building a SINGLE, SELF-CONTAINED offline HTML file named &#x27;index.html&#x27;.\n\nGLOBAL CONSTRAINTS:\n1. NO external CDN links, images, or fonts. All assets must be embedded or generated via code (e.g., SVG, Canvas, Web Workers).\n2. The final output must be a single valid HTML5 document.\n3. Work ONLY in the current directory.\n4. Finish autonomously. Do not ask for clarification unless a requirement is logically impossible.\n\nPROCESS:\n1. Analyze the brief and list all technical challenges (e.g., 3D geometry, state management).\n2. Outline the architecture: Core Engine, UI Layer, Storage/Export Logic.\n3. Write the code incrementally. If the file is large, ensure logical separation of concerns within the script tags.\n4. VERIFY before finalizing: Check for syntax errors, missing event listeners, and offline compatibility.\n\nCOMPLETION CRITERIA:\n- The file renders correctly in a standard browser without network access.\n- All interactive features (click, drag, keyboard) respond immediately.\n- No console errors in a standard dev environment.\n\nTASK BRIEF:\n[BRIEF_INSERT_HERE]\n\nStart by outlining your architecture and then generate the code.&quot;,
+  &quot;predictions_and_risks&quot;: [
+    {
+      &quot;brief_id&quot;: 1,
+      &quot;brief_name&quot;: &quot;Reaction Timer&quot;,
+      &quot;prediction_success_rate&quot;: &quot;95%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Timing inaccuracies due to setInterval drift (should use performance.now()).&quot;,
+        &quot;Incorrect false-start logic implementation.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 2,
+      &quot;brief_name&quot;: &quot;Snake Game&quot;,
+      &quot;prediction_success_rate&quot;: &quot;90%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Input buffering causing self-collision on rapid key presses.&quot;,
+        &quot;Loop logic failing to clear tail correctly.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 3,
+      &quot;brief_name&quot;: &quot;Pixel Painter&quot;,
+      &quot;prediction_success_rate&quot;: &quot;85%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Touch event handling conflicting with mouse events.&quot;,
+        &quot;Canvas performance lag on large canvases if not optimized.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 4,
+      &quot;brief_name&quot;: &quot;Breakout + Editor&quot;,
+      &quot;prediction_success_rate&quot;: &quot;75%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Complexity of combining editor state with game state in one loop.&quot;,
+        &quot;JSON serialization errors for level data.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 5,
+      &quot;brief_name&quot;: &quot;Drawer Tray Generator&quot;,
+      &quot;prediction_success_rate&quot;: &quot;60%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Correctly generating a valid, watertight STL geometry without external libraries.&quot;,
+        &quot;3D preview rotation/math errors if Three.js is not embedded.&quot;,
+        &quot;High complexity of parametric design logic leading to syntax errors.&quot;
+      ]
+    }
+  ],
+  &quot;fallbacks&quot;: {
+    &quot;if_stl_export_fails_brief_5&quot;: &quot;Fallback to exporting a SVG or PNG schematic instead, noting the limitation in comments. Do not fail the entire task over STL complexity unless explicitly required by a &#x27;must-have&#x27; metric.&quot;,
+    &quot;if_external_library_needed_for_brief_5&quot;: &quot;Embed the minified source of Three.js directly into the HTML script tag as a string and inject it dynamically, ensuring offline functionality.&quot;
+  }
+}
+```
+</code></pre></details><details class="interview-transcript" data-model="qwen" data-phase="informed"><summary>Qwen · Informed follow-up</summary><h4>Prompt</h4><pre class="interview-prompt"><code>You are being interviewed about your preferred working environment for local coding-agent tasks. This is research advice, not an implementation task. You have no tools in this interview. Do not build an application, write product code, or emit tool calls. Be specific about setup choices, tradeoffs and predictions; do not pretend to know the empirical results.
+
+The later experiment will give you each of the following five briefs in a fresh isolated project. The goal is a working offline single HTML file from that one kickoff prompt, without task-specific human steering or supervisor product code.
+
+Constraints for that experiment: local Pi agent, your existing Songbird model, at most60minutes per project including all worker/reviewer calls; other models or reviewers only if you request them and all time is counted. Project read/write isolation is mandatory. Prior attempts and scorecards are unreadable during evaluation. Codex may configure infrastructure, but cannot implement the product or feed task-specific repairs. Browser automation is currently unavailable under the saved tool policy; source/runtime testing and locally installed test/render/geometry tools are available. The final deliverable must remain self-contained and offline. Pi tool/extension configuration, planning, fresh-session loops, test tooling, reasoning settings and billion-context are choices you may propose. Prefer the smallest setup you believe works. Distinguish requirements from optional additions and list any unavailable capabilities rather than assuming they exist.
+
+THE FIVE EXACT BRIEFS:
+1. Reaction timer
+Build a polished reaction-time tester with a random wait, false-start detection, five trials, and a results summary. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+2. Snake
+Build a playable Snake game with keyboard controls, food, scoring, wall and self collisions, pause, restart, and increasing difficulty. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+3. Pixel painter
+Build a pixel-art painting tool with an editable canvas size, color palette, brush, eraser, undo/redo, clear, and PNG export. Support mouse and touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+4. Breakout with level editor
+Build Breakout with a level editor: draw and erase bricks, play your layout, show score and lives, restart, and save/load the level as JSON. Support keyboard and mouse or touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+5. Simple drawer tray generator
+Build a maker tool for a rectangular drawer-organizer tray. Let me edit outer dimensions, row/column counts, wall thickness, and floor thickness. Show clear compartment dimensions, a rotatable 3D preview, and export a printable STL. Start at 180 x 120 x 30 mm with a 3 x 2 grid. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+YOUR EARLIER BLIND PROPOSAL:
+```json
+{
+  &quot;proposal_summary&quot;: {
+    &quot;description&quot;: &quot;A constrained, self-contained offline evaluation of a local coding agent (Songbird) via Pi tooling. The setup prioritizes single-file output integrity, explicit verification loops, and robust error handling over complex multi-agent orchestration.&quot;,
+    &quot;core_philosophy&quot;: &quot;Minimize external dependencies; maximize deterministic verification within the HTML scope.&quot;
+  },
+  &quot;ranked_changes_for_success&quot;: [
+    {
+      &quot;rank&quot;: 1,
+      &quot;change&quot;: &quot;Strict Single-File Constraint Enforcement&quot;,
+      &quot;explanation&quot;: &quot;The requirement for &#x27;self-contained offline&#x27; files eliminates CDN dependencies. The biggest failure mode is the agent linking to external libraries (e.g., Three.js via CDN) which will break offline. Enforcing a &#x27;no external scripts&#x27; rule and providing or forcing the inclusion of necessary minimal libraries (like Three.js if needed for Brief 5) directly in the code is critical.&quot;
+    },
+    {
+      &quot;rank&quot;: 2,
+      &quot;change&quot;: &quot;Automated Local Execution Verification&quot;,
+      &quot;explanation&quot;: &quot;Since browser automation is unavailable, I must rely on the agent to generate its own verification script or use local CLI tools (like Node.js with Puppeteer if available, or simple headless Chrome commands) to check for console errors and DOM structure. The agent cannot &#x27;see&#x27; the UI; it must verify via code assertions.&quot;
+    },
+    {
+      &quot;rank&quot;: 3,
+      &quot;change&quot;: &quot;Modular Code Generation Strategy&quot;,
+      &quot;explanation&quot;: &quot;For complex briefs (Brief 4 and 5), generating one massive file often leads to context loss or syntax errors. Instructing the agent to build the core engine first, then layer on UI/editor features in distinct logical blocks within the single file improves coherence.&quot;
+    }
+  ],
+  &quot;tools_and_workflow&quot;: {
+    &quot;environment&quot;: &quot;Local Pi Agent with Songbird Model&quot;,
+    &quot;preferred_tools&quot;: [
+      &quot;File System Tool (Read/Write)&quot;: &quot;For scaffolding and saving index.html.&quot;,
+      &quot;Code Interpreter / Local Shell&quot;: &quot;To run lightweight verification scripts if Node.js is available. If not, rely on the agent&#x27;s internal reasoning capabilities to write self-validating JavaScript.&quot;
+    ],
+    &quot;pi_workflow&quot;: {
+      &quot;initialization&quot;: &quot;Create isolated project directory. Initialize index.html skeleton.&quot;,
+      &quot;iteration&quot;: [
+        &quot;Generate code segment by segment if large (Brief 5).&quot;,
+        &quot;Self-Review: Agent must simulate execution paths mentally before writing.&quot;,
+        &quot;Verification: Agent must output a &#x27;verification plan&#x27; or run a self-test script.&quot;
+      ],
+      &quot;completion_check&quot;: &quot;File saves successfully, is valid HTML/CSS/JS, and contains no external network requests.&quot;
+    },
+    &quot;completion_evidence_criteria&quot;: {
+      &quot;functional_bug_definition&quot;: &quot;Failure to meet core requirements (e.g., snake doesn&#x27;t move, drawer dimensions are incorrect, STL export fails).&quot;
+    },
+    &quot;environment_bug_definition&quot;: {
+      &quot;definition&quot;: &quot;Agent cannot save files, cannot read prompts, or throws environment-level errors unrelated to code logic.&quot;
+    }
+  },
+  &quot;settings_and_configuration&quot;: {
+    &quot;planning_strategy&quot;: &quot;Chain of Thought (CoT) for architecture before coding. Explicit listing of all functions/classes before implementation.&quot;,
+    &quot;context_management&quot;: &quot;Sliding window focus. If the file exceeds token limits, request the agent to compress UI code into minimal CSS and inline SVG/JS logic.&quot;,
+    &quot;reasoning_setting&quot;: &quot;High temperature for creative problem solving in Brief 5 (geometry), lower temperature for strict logic in Brief 1 &amp; 2.&quot;,
+    &quot;compression&quot;: &quot;Enable aggressive token compression if context window allows, but prioritize retaining the full code artifact.&quot;,
+    &quot;iteration_count&quot;: &quot;Limit to 60 minutes. If stuck &gt; 10 mins on a bug, switch to &#x27;simplify requirement&#x27; mode.&quot;,
+    &quot;reviewer_role&quot;: &quot;None. The agent acts as its own reviewer using the verification criteria below.&quot;,
+    &quot;additional_models&quot;: {
+      &quot;requested&quot;: false,
+      &quot;reason&quot;: &quot;Latency and context fragmentation risks outweigh benefits for single-file tasks. One capable reasoning model is sufficient if constrained correctly.&quot;
+    }
+  },
+  &quot;kickoff_template&quot;: &quot;You are an expert Frontend Engineer building a SINGLE, SELF-CONTAINED offline HTML file named &#x27;index.html&#x27;.\n\nGLOBAL CONSTRAINTS:\n1. NO external CDN links, images, or fonts. All assets must be embedded or generated via code (e.g., SVG, Canvas, Web Workers).\n2. The final output must be a single valid HTML5 document.\n3. Work ONLY in the current directory.\n4. Finish autonomously. Do not ask for clarification unless a requirement is logically impossible.\n\nPROCESS:\n1. Analyze the brief and list all technical challenges (e.g., 3D geometry, state management).\n2. Outline the architecture: Core Engine, UI Layer, Storage/Export Logic.\n3. Write the code incrementally. If the file is large, ensure logical separation of concerns within the script tags.\n4. VERIFY before finalizing: Check for syntax errors, missing event listeners, and offline compatibility.\n\nCOMPLETION CRITERIA:\n- The file renders correctly in a standard browser without network access.\n- All interactive features (click, drag, keyboard) respond immediately.\n- No console errors in a standard dev environment.\n\nTASK BRIEF:\n[BRIEF_INSERT_HERE]\n\nStart by outlining your architecture and then generate the code.&quot;,
+  &quot;predictions_and_risks&quot;: [
+    {
+      &quot;brief_id&quot;: 1,
+      &quot;brief_name&quot;: &quot;Reaction Timer&quot;,
+      &quot;prediction_success_rate&quot;: &quot;95%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Timing inaccuracies due to setInterval drift (should use performance.now()).&quot;,
+        &quot;Incorrect false-start logic implementation.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 2,
+      &quot;brief_name&quot;: &quot;Snake Game&quot;,
+      &quot;prediction_success_rate&quot;: &quot;90%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Input buffering causing self-collision on rapid key presses.&quot;,
+        &quot;Loop logic failing to clear tail correctly.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 3,
+      &quot;brief_name&quot;: &quot;Pixel Painter&quot;,
+      &quot;prediction_success_rate&quot;: &quot;85%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Touch event handling conflicting with mouse events.&quot;,
+        &quot;Canvas performance lag on large canvases if not optimized.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 4,
+      &quot;brief_name&quot;: &quot;Breakout + Editor&quot;,
+      &quot;prediction_success_rate&quot;: &quot;75%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Complexity of combining editor state with game state in one loop.&quot;,
+        &quot;JSON serialization errors for level data.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 5,
+      &quot;brief_name&quot;: &quot;Drawer Tray Generator&quot;,
+      &quot;prediction_success_rate&quot;: &quot;60%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Correctly generating a valid, watertight STL geometry without external libraries.&quot;,
+        &quot;3D preview rotation/math errors if Three.js is not embedded.&quot;,
+        &quot;High complexity of parametric design logic leading to syntax errors.&quot;
+      ]
+    }
+  ],
+  &quot;fallbacks&quot;: {
+    &quot;if_stl_export_fails_brief_5&quot;: &quot;Fallback to exporting a SVG or PNG schematic instead, noting the limitation in comments. Do not fail the entire task over STL complexity unless explicitly required by a &#x27;must-have&#x27; metric.&quot;,
+    &quot;if_external_library_needed_for_brief_5&quot;: &quot;Embed the minified source of Three.js directly into the HTML script tag as a string and inject it dynamically, ensuring offline functionality.&quot;
+  }
+}
+```
+
+RETROSPECTIVE MATERIAL: the following is your own earlier delivered tray source from this experiment. It is shown only in this interview; later fresh evaluation projects cannot read it. Inspect it yourself for process/tool lessons. No independent scorecard or supervisor repair diagnosis is supplied. This phase is intentionally informed by an earlier artifact and must not be called blind.
+
+&lt;previous_artifact&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Drawer Organizer Tray Maker&lt;/title&gt;
+&lt;style&gt;
+  :root { --bg: #1a1a2e; --panel: #16213e; --accent: #0f3460; --fg: #e8e8e8; --hi: #e94560; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: &#x27;Segoe UI&#x27;, system-ui, sans-serif; background: var(--bg); color: var(--fg); display:flex; min-height:100vh; }
+  .sidebar { width:340px; background: var(--panel); padding:20px; overflow-y:auto; border-right:2px solid var(--accent); display:flex; flex-direction:column; gap:14px; }
+  .main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+  h1 { font-size:1.3em; color: var(--hi); text-align:center; margin-bottom:6px; }
+  h2 { font-size:1em; color: var(--hi); border-bottom:1px solid var(--accent); padding-bottom:4px; margin-bottom:8px; }
+  label { display:flex; justify-content:space-between; align-items:center; font-size:.85em; margin:4px 0; }
+  input[type=number] { width:72px; background:#0d1b3e; border:1px solid var(--accent); color:var(--fg); padding:4px 6px; border-radius:4px; text-align:center; font-size:.9em; }
+  input[type=range] { flex:1; margin:0 8px; accent-color: var(--hi); }
+  .val { min-width:52px; text-align:right; font-weight:bold; color:var(--hi); font-size:.85em; }
+  canvas { background:#0d1b3e; border-radius:6px; cursor:grab; }
+  button { background: var(--hi); color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:.9em; transition:opacity .2s; }
+  button:hover { opacity:.85; }
+  button.secondary { background: var(--accent); }
+  .export-area { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; justify-content:center; }
+  .comp-list { max-height:200px; overflow-y:auto; font-size:.8em; background:#0d1b3e; border-radius:4px; padding:8px; line-height:1.6; }
+  .comp-item { display:flex; justify-content:space-between; padding:2px 4px; border-bottom:1px solid #1a2a4a; }
+  .section { background:#0d1b3e; border-radius:6px; padding:10px; }
+  .grid-info { font-size:.8em; color:#8899aa; text-align:center; margin-top:4px; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div class=&quot;sidebar&quot;&gt;
+  &lt;h1&gt;Tray Maker&lt;/h1&gt;
+
+  &lt;div class=&quot;section&quot;&gt;
+    &lt;h2&gt;Outer Dimensions (mm)&lt;/h2&gt;
+    &lt;label&gt;Width &lt;input type=&quot;range&quot; id=&quot;rW&quot; min=&quot;50&quot; max=&quot;600&quot; step=&quot;1&quot; value=&quot;180&quot;&gt;&lt;span class=&quot;val&quot; id=&quot;vW&quot;&gt;180&lt;/span&gt;&lt;/label&gt;
+    &lt;label&gt;Depth  &lt;input type=&quot;range&quot; id=&quot;rD&quot; min=&quot;50&quot; max=&quot;600&quot; step=&quot;1&quot; value=&quot;120&quot;&gt;&lt;span class=&quot;val&quot; id=&quot;vD&quot;&gt;120&lt;/span&gt;&lt;/label&gt;
+    &lt;label&gt;Height&lt;input type=&quot;range&quot; id=&quot;rH&quot; min=&quot;10&quot; max=&quot;300&quot; step=&quot;1&quot; value=&quot;30&quot;&gt;&lt;span class=&quot;val&quot; id=&quot;vH&quot;&gt;30&lt;/span&gt;&lt;/label&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;section&quot;&gt;
+    &lt;h2&gt;Grid Layout&lt;/h2&gt;
+    &lt;label&gt;Rows    &lt;input type=&quot;range&quot; id=&quot;rR&quot; min=&quot;1&quot; max=&quot;20&quot; step=&quot;1&quot; value=&quot;3&quot;&gt;&lt;span class=&quot;val&quot; id=&quot;vR&quot;&gt;3&lt;/span&gt;&lt;/label&gt;
+    &lt;label&gt;Columns &lt;input type=&quot;range&quot; id=&quot;rC&quot; min=&quot;1&quot; max=&quot;20&quot; step=&quot;1&quot; value=&quot;2&quot;&gt;&lt;span class=&quot;val&quot; id=&quot;vC&quot;&gt;2&lt;/span&gt;&lt;/label&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;section&quot;&gt;
+    &lt;h2&gt;Thickness (mm)&lt;/h2&gt;
+    &lt;label&gt;Wall    &lt;input type=&quot;range&quot; id=&quot;rT&quot; min=&quot;1&quot; max=&quot;20&quot; step=&quot;0.5&quot; value=&quot;3&quot;&gt;&lt;span class=&quot;val&quot; id=&quot;vT&quot;&gt;3&lt;/span&gt;&lt;/label&gt;
+    &lt;label&gt;Floor   &lt;input type=&quot;range&quot; id=&quot;rt&quot; min=&quot;1&quot; max=&quot;20&quot; step=&quot;0.5&quot; value=&quot;3&quot;&gt;&lt;span class=&quot;val&quot; id=&quot;vt&quot;&gt;3&lt;/span&gt;&lt;/label&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;section&quot;&gt;
+    &lt;h2&gt;Compartment Sizes&lt;/h2&gt;
+    &lt;div class=&quot;comp-list&quot; id=&quot;compList&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;export-area&quot;&gt;
+    &lt;button onclick=&quot;exportSTL(&#x27;ascii&#x27;)&quot;&gt;Export ASCII STL&lt;/button&gt;
+    &lt;button class=&quot;secondary&quot; onclick=&quot;exportSTL(&#x27;binary&#x27;)&quot;&gt;Export Binary STL&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;main&quot;&gt;
+  &lt;canvas id=&quot;c3d&quot; width=&quot;700&quot; height=&quot;520&quot;&gt;&lt;/canvas&gt;
+  &lt;div class=&quot;grid-info&quot;&gt;Drag to rotate &amp;middot; Scroll to zoom&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+// ===== PARAMETER MODEL =====
+const P = {
+  W: 180, D: 120, H: 30,
+  rows: 3, cols: 2,
+  wallT: 3, floorT: 3,
+  rotX: -0.55, rotY: 0.75, scale: 1.8
+};
+
+// ===== DOM REFS AND BINDING =====
+const sliders = { rW:&#x27;W&#x27;, rD:&#x27;D&#x27;, rH:&#x27;H&#x27;, rR:&#x27;rows&#x27;, rC:&#x27;cols&#x27;, rT:&#x27;wallT&#x27;, rt:&#x27;floorT&#x27; };
+
+function syncUI() {
+  for (const [id, key] of Object.entries(sliders)) {
+    const el = document.getElementById(id);
+    if(el) el.value = P[key];
+    const vid = &#x27;v&#x27;+id.substring(1);
+    const ve = document.getElementById(vid);
+    if(ve) ve.textContent = P[key];
+  }
+}
+
+function bindSlider(id, key) {
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener(&#x27;input&#x27;, function(e) {
+    P[key] = parseFloat(e.target.value);
+    var vid = &#x27;v&#x27;+id.substring(1);
+    var ve = document.getElementById(vid);
+    if(ve) ve.textContent = P[key];
+    render();
+  });
+}
+
+// ===== 3-D RENDERING (pure Canvas 2D) =====
+var canvas = document.getElementById(&#x27;c3d&#x27;);
+var ctx = canvas.getContext(&#x27;2d&#x27;);
+
+function rotatePoint(x, y, z, rx, ry) {
+  var cosY = Math.cos(ry), sinY = Math.sin(ry);
+  var x1 = x * cosY + z * sinY;
+  var z1 = -x * sinY + z * cosY;
+  var cosX = Math.cos(rx), sinX = Math.sin(rx);
+  return { x: x1, y: y * cosX - z1 * sinX, z: y * sinX + z1 * cosX };
+}
+
+function project(x, y, z) {
+  var p = rotatePoint(x, y, z, P.rotX, P.rotY);
+  var fov = 600;
+  var dist = 500 + p.z;
+  var s = (fov / Math.max(dist, 10)) * P.scale;
+  return { x: canvas.width/2 + p.x * s, y: canvas.height/2 - p.y * s };
+}
+
+function drawLine3D(x1,y1,z1, x2,y2,z2, color, width) {
+  var a = project(x1,y1,z1), b = project(x2,y2,z2);
+  ctx.strokeStyle = color || &#x27;rgba(180,220,255,0.5)&#x27;;
+  ctx.lineWidth = width || 1;
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.stroke();
+}
+
+function fillFace(vtxs, fillColor, strokeColor) {
+  var pts = vtxs.map(function(v){ return project(v[0], v[1], v[2]); });
+  ctx.fillStyle = fillColor;
+  ctx.strokeStyle = strokeColor || &#x27;rgba(255,255,255,0.3)&#x27;;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (var i = 1; i &lt; pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+}
+
+function getAvgZ(vtxs) {
+  var s = 0;
+  for(var i=0;i&lt;vtxs.length;i++) s += vtxs[i][2];
+  return s / vtxs.length;
+}
+
+function render() {
+  var W = P.W, D = P.D, H = P.H;
+  var wallT = P.wallT, floorT = P.floorT;
+  var rows = P.rows, cols = P.cols;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = &#x27;#0d1b3e&#x27;;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Compute internal dimensions
+  var intW = W - 2*wallT;
+  var intD = D - 2*wallT;
+  var cellW = intW / cols;
+  var cellD = intD / rows;
+
+  // Collect all faces for painter&#x27;s algorithm
+  var faces = [];
+
+  // Outer bottom face
+  faces.push({
+    vtxs: [[0,floorT/2,0],[W,floorT/2,0],[W,H-floorT/2,D],[0,H-floorT/2,D]],
+    color: &#x27;rgba(30,50,80,0.6)&#x27;
+  });
+
+  // Left wall (x=0) - exterior
+  faces.push({ vtxs: [[0,floorT/2,D],[0,floorT/2,0],[0,H-floorT/2,0],[0,H-floorT/2,D]], color:&#x27;rgba(50,80,140,0.7)&#x27; });
+  // Right wall (x=W) - exterior
+  faces.push({ vtxs: [[W,floorT/2,0],[W,floorT/2,D],[W,H-floorT/2,D],[W,H-floorT/2,0]], color:&#x27;rgba(50,80,140,0.7)&#x27; });
+  // Back wall (z=D) - exterior
+  faces.push({ vtxs: [[0,floorT/2,D],[W,floorT/2,D],[W,H-floorT/2,D],[0,H-floorT/2,D]], color:&#x27;rgba(60,100,160,0.75)&#x27; });
+
+  // Interior bottom floor
+  faces.push({
+    vtxs: [[wallT,floorT/2+0.01,wallT],[W-wallT,floorT/2+0.01,wallT],
+           [W-wallT,floorT/2+0.01,D-wallT],[wallT,floorT/2+0.01,D-wallT]],
+    color: &#x27;rgba(25,40,70,0.5)&#x27;
+  });
+
+  // Compartment dividers - vertical (along depth axis for columns)
+  var compColor = &#x27;rgba(80,130,200,0.45)&#x27;;
+  for (var c = 1; c &lt; cols; c++) {
+    var dx = wallT + c * cellW;
+    faces.push({
+      vtxs: [[dx,floorT/2+0.5,wallT],[dx,floorT/2+0.5,D-wallT],
+             [dx,H-floorT/2-0.5,D-wallT],[dx,H-floorT/2-0.5,wallT]],
+      color: compColor
+    });
+  }
+
+  // Horizontal dividers (along width axis for rows)
+  for (var r = 1; r &lt; rows; r++) {
+    var dz = wallT + r * cellD;
+    faces.push({
+      vtxs: [[wallT,floorT/2+0.5,dz],[W-wallT,floorT/2+0.5,dz],
+             [W-wallT,H-floorT/2-0.5,dz],[wallT,H-floorT/2-0.5,dz]],
+      color: compColor
+    });
+  }
+
+  // Interior back wall
+  faces.push({
+    vtxs: [[wallT,floorT/2+0.01,D-wallT],[W-wallT,floorT/2+0.01,D-wallT],
+           [W-wallT,H-floorT/2-0.5,D-wallT-0.01],[wallT,H-floorT/2-0.5,D-wallT-0.01]],
+    color: &#x27;rgba(40,65,110,0.3)&#x27;
+  });
+
+  // Sort faces by average Z (back to front)
+  faces.sort(function(a,b){ return getAvgZ(a.vtxs) - getAvgZ(b.vtxs); });
+
+  // Draw all faces
+  for (var fi = 0; fi &lt; faces.length; fi++) {
+    fillFace(faces[fi].vtxs, faces[fi].color, &#x27;rgba(100,160,240,0.35)&#x27;);
+  }
+
+  // Draw grid lines on top for clarity
+  ctx.strokeStyle = &#x27;rgba(180,220,255,0.5)&#x27;;
+  ctx.lineWidth = 1;
+
+  // Top rim edges
+  var corners = [
+    [wallT,floorT/2+0.01,wallT],
+    [W-wallT,floorT/2+0.01,wallT],
+    [W-wallT,floorT/2+0.01,D-wallT],
+    [wallT,floorT/2+0.01,D-wallT]
+  ];
+  ctx.beginPath();
+  var a = project(corners[0][0],corners[0][1],corners[0][2]);
+  ctx.moveTo(a.x, a.y);
+  for (var ci=1;ci&lt;corners.length;ci++){
+    var cp = project(corners[ci][0],corners[ci][1],corners[ci][2]);
+    ctx.lineTo(cp.x, cp.y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+
+  // Draw compartment labels
+  ctx.font = &#x27;11px monospace&#x27;;
+  ctx.textAlign = &#x27;center&#x27;;
+  for (var ri=0;ri&lt;rows;ri++){
+    for(var ci2=0;ci2&lt;cols;ci2++){
+      var cx = wallT + (ci2+0.5)*cellW;
+      var cz = wallT + (ri+0.5)*cellD;
+      var p2 = project(cx, floorT/2+2, cz);
+      ctx.fillStyle = &#x27;rgba(255,255,255,0.8)&#x27;;
+      var dw = Math.round(cellW*10)/10;
+      var dd = Math.round(cellD*10)/10;
+      ctx.fillText(dw+&#x27;x&#x27;+dd, p2.x, p2.y);
+    }
+  }
+
+  // Update compartment list
+  updateCompList();
+}
+
+function updateCompList() {
+  var intW2 = P.W - 2*P.wallT;
+  var intD2 = P.D - 2*P.wallT;
+  var cellW2 = (intW2 / P.cols);
+  var cellD2 = (intD2 / P.rows);
+
+  var html = &#x27;&#x27;;
+  for (var ri=0;ri&lt;P.rows;ri++){
+    for(var ci3=0;ci3&lt;P.cols;ci3++){
+      var id = &#x27;C&#x27;+(ri+1)+&#x27;_&#x27;+(ci3+1);
+      html += &#x27;&lt;div class=&quot;comp-item&quot;&gt;&lt;span&gt;&#x27;+id+&#x27;&lt;/span&gt;&lt;span&gt;&#x27;+Math.round(cellW2*10)/10+&#x27; x &#x27;+Math.round(cellD2*10)/10+&#x27; mm&lt;/span&gt;&lt;/div&gt;&#x27;;
+    }
+  }
+  document.getElementById(&#x27;compList&#x27;).innerHTML = html;
+}
+
+// ===== INTERACTION =====
+var dragging = false, lastX=0, lastY=0;
+
+canvas.addEventListener(&#x27;mousedown&#x27;, function(e){ dragging=true; lastX=e.clientX; lastY=e.clientY; });
+canvas.addEventListener(&#x27;mousemove&#x27;, function(e){
+  if(!dragging) return;
+  P.rotY += (e.clientX-lastX)*0.01;
+  P.rotX += (e.clientY-lastY)*0.01;
+  lastX=e.clientX; lastY=e.clientY;
+  render();
+});
+canvas.addEventListener(&#x27;mouseup&#x27;, function(){ dragging=false; });
+canvas.addEventListener(&#x27;mouseleave&#x27;, function(){ dragging=false; });
+
+canvas.addEventListener(&#x27;wheel&#x27;, function(e){
+  e.preventDefault();
+  P.scale *= e.deltaY &lt; 0 ? 1.08 : 0.93;
+  P.scale = Math.max(0.2, Math.min(5, P.scale));
+  render();
+}, {passive:false});
+
+// Touch support
+canvas.addEventListener(&#x27;touchstart&#x27;, function(e){
+  if(e.touches.length===1){ dragging=true; lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; }
+  e.preventDefault();
+},{passive:false});
+canvas.addEventListener(&#x27;touchmove&#x27;, function(e){
+  if(!dragging||!e.touches.length) return;
+  P.rotY += (e.touches[0].clientX-lastX)*0.01;
+  P.rotX += (e.touches[0].clientY-lastY)*0.01;
+  lastX=e.touches[0].clientX; lastY=e.touches[0].clientY;
+  render();
+  e.preventDefault();
+},{passive:false});
+canvas.addEventListener(&#x27;touchend&#x27;, function(){ dragging=false; });
+
+// ===== STL EXPORT =====
+function exportSTL(format) {
+  var W=P.W, D=P.D, H=P.H, wT=P.wallT, fT=P.floorT;
+  var intW=W-2*wT, intD=D-2*wT;
+  var cellW=intW/P.cols, cellD=intD/P.rows;
+  var tris = [];
+
+  function addTri(x1,y1,z1,x2,y2,z2,x3,y3,z3) {
+    var nx=(y2-y1)*(z3-z1)-(z2-z1)*(y3-y1);
+    var ny=(z2-z1)*(x3-x1)-(x2-x1)*(z3-z1);
+    var nz=(x2-x1)*(y3-y1)-(y2-y1)*(x3-x1);
+    tris.push({nx:nx,ny:ny,nz:nz,x1:x1,y1:y1,z1:z1,x2:x2,y2:y2,z2:z2,x3:x3,y3:y3,z3:z3});
+  }
+
+  function addBox(x0,y0,z0, x1,y1,z1) {
+    // Bottom
+    addTri(x0,y0,z0, x1,y0,z0, x0,y0,z1);
+    addTri(x0,y0,z1, x1,y0,z0, x1,y0,z1);
+    // Top
+    addTri(x0,y1,z1, x1,y1,z1, x1,y1,z0);
+    addTri(x0,y1,z1, x1,y1,z0, x0,y1,z0);
+    // Front (z0)
+    addTri(x0,y0,z0, x1,y0,z0, x1,y1,z0);
+    addTri(x0,y0,z0, x1,y1,z0, x0,y1,z0);
+    // Back (z1)
+    addTri(x0,y0,z1, x2?x0:x1,y0,z1, x1,y1,z1);
+    addTri(x0,y0,z1, x1,y1,z1, x0,y1,z1);
+    // Left (x0)
+    addTri(x0,y0,z0, x0,y1,z0, x0,y1,z1);
+    addTri(x0,y0,z0, x0,y1,z1, x0,y0,z1);
+    // Right (x1)
+    addTri(x1,y0,z1, x1,y0,z0, x1,y1,z0);
+    addTri(x1,y0,z1, x1,y1,z0, x1,y1,z1);
+  }
+
+  // Outer shell (empty box - walls only)
+  // Bottom plate
+  addBox(0,0,0, W,fT,D);
+  // Back wall
+  addBox(wT,fT,wT, W-wT,H,wT/2+D-wT/2);
+  // Actually let me do this more carefully for a tray shape
+
+  // Reset tris for proper tray geometry
+  tris = [];
+
+  function addTri(x1,y1,z1,x2,y2,z2,x3,y3,z3) {
+    var nx=(y2-y1)*(z3-z1)-(z2-z1)*(y3-y1);
+    var ny=(z2-z1)*(x3-x1)-(x2-x1)*(z3-z1);
+    var nz=(x2-x1)*(y3-y1)-(y2-y1)*(x3-x1);
+    tris.push({nx:nx,ny:ny,nz:nz,x1:x1,y1:y1,z1:z1,x2:x2,y2:y2,z2:z2,x3:x3,y3:y3,z3:z3});
+  }
+
+  // Outer shell walls (hollow interior):
+  // Floor plate: from y=0 to y=floorT, x=0..W, z=0..D
+  // Back wall: from y=floorT to y=H, x=0..W, z=D-wallT/2..D+wallT/2 (but we keep it inside)
+  // Left wall: from y=floorT to y=H, x=0..wallT, z=0..D  
+  // Right wall: from y=floorT to y=H, x=W-wallT..W, z=0..D
+
+  // Bottom floor plate
+  addTri(0,0,0, W,0,0, 0,0,D);   // bottom face 1
+  addTri(W,0,0, W,0,D, 0,0,D);   // bottom face 2
+  // Floor top (inside surface)  
+  addTri(wT,fT,wT, W-wT,fT,wT, W-wT,fT,D-wT);
+  addTri(wT,fT,wT, W-wT,fT,D-wT, wT,fT,D-wT);
+
+  // Outer back wall (exterior)
+  addTri(0,H-D?D:D, D-wT/2, W,H,D-wT/2, 0,H-floorT, D-wT/2);
+  addTri(W,H,D-wT/2, W,H-floorT, D-wT/2, 0,H-floorT, D-wT/2);
+
+  // Simplified: just create the solid mesh properly
+  tris = [];
+  
+  function addBox(xMin,yMin,zMin, xMax,yMax,zMax) {
+    // Bottom (yMin) - 2 triangles
+    addTri(xMin,yMin,zMin, xMax,yMin,zMin, xMin,yMin,zMax);
+    addTri(xMax,yMin,zMin, xMax,yMin,zMax, xMin,yMin,zMax);
+    // Top (yMax) - 2 triangles  
+    addTri(xMin,yMax,zMax, xMax,yMax,zMax, xMax,yMax,zMin);
+    addTri(xMin,yMax,zMax, xMax,yMax,zMin, xMin,yMax,zMin);
+    // Front (zMin) - 2 triangles
+    addTri(xMin,yMin,zMin, xMax,yMin,zMin, xMax,yMax,zMin);
+    addTri(xMin,yMin,zMin, xMax,yMax,zMin, xMin,yMax,zMin);
+    // Back (zMax) - 2 triangles
+    addTri(xMin,yMin,zMax, xMax,yMin,zMax, xMax,yMax,zMax);
+    addTri(xMin,yMin,zMax, xMax,yMax,zMax, xMin,yMax,zMax);
+    // Left (xMin) - 2 triangles
+    addTri(xMin,yMin,zMin, xMin,yMax,zMin, xMin,yMax,zMax);
+    addTri(xMin,yMin,zMin, xMin,yMax,zMax, xMin,yMin,zMax);
+    // Right (xMax) - 2 triangles
+    addTri(xMax,yMin,zMax, xMax,yMin,zMin, xMax,yMax,zMin);
+    addTri(xMax,yMin,zMax, xMax,yMax,zMin, xMax,yMax,zMax);
+  }
+
+  // Outer box (full solid)
+  addBox(0,0,0, W,H,D);
+  
+  // Cut out interior - we subtract walls by adding internal faces
+  // Floor plate (bottom portion only): y=0 to y=floorT
+  // The full box already has a bottom; we need the walls on top
+  
+  // Let me build it face by face for a proper tray:
+  tris = [];
+  
+  // === OUTER SURFACES ===
+  // Bottom exterior (facing down)
+  addTri(0,0,0, W,0,0, W,0,D);
+  addTri(0,0,0, W,0,D, 0,0,D);
+  
+  // Back exterior (facing back)
+  addTri(0,H,D-wT/2, W,H,D-wT/2, W,floorT,D-wT/2);
+  addTri(0,H,D-wT/2, W,floorT,D-wT/2, 0,floorT,D-wT/2);
+  
+  // Left exterior (facing left)  
+  addTri(0,H,D, 0,H-floorT,D, 0,H-floorT,wT/2);
+  addTri(0,H,D, 0,H-floorT,wT/2, 0,H,wT/2);
+  
+  // Right exterior (facing right)
+  addTri(W,H-floorT,D-wT/2, W,H,D-wT/2, W,H-floorT,wT/2);
+  addTri(W,H-floorT,wT/2, W,H,D-wT/2, W,H-floorT,wT/2);
+
+  // Inner surfaces: floor interior, back inner, wall insides, dividers
+  
+  // Interior bottom surface (facing up inside)
+  addTri(wT,floorT+0.1,wT, W-wallT,floorT+0.1,wT, W-wallT,floorT+0.1,D-wT);
+  addTri(wT,floorT+0.1,wT, W-wallT,floorT+0.1,D-wT, wT,floorT+0.1,D-wT);
+
+  // Interior back wall (facing forward into the tray)
+  addTri(wT,H-floorT-0.1,D-wT/2-0.5, W-wallT,H-floorT-0.1,D-wT/2-0.5, W-wallT,floorT+0.1,D-wT/2-0.5);
+  addTri(wT,H-floorT-0.1,D-wT/2-0.5, W-wallT,floorT+0.1,D-wT/2-0.5, wT,floorT+0.1,D-wT/2-0.5);
+
+  // Left interior wall (facing right into tray)
+  addTri(wT,H-floorT-0.1,wT, wT,H-floorT-0.1,D-wT, wT,floorT+0.1,D-wT);
+  addTri(wT,H-floorT-0.1,wT, wT,floorT+0.1,D-wT, wT,floorT+0.1,wT);
+
+  // Right interior wall (facing left into tray)
+  addTri(W-wT,H-floorT-0.1,wT, W-wT,H-floorT-0.1,D-wT, W-wT,floorT+0.1,D-wT);
+  addTri(W-wT,H-floorT-0.1,wT, W-wT,floorT+0.1,D-wT, W-wT,floorT+0.1,wT);
+
+  // Wall front edge (top of front opening)
+  addTri(wT,H-floorT-0.1,wT/2, W-wallT,H-floorT-0.1,wT/2, W-wallT,floorT+0.1,wT/2);
+  addTri(wT,H-floorT-0.1,wT/2, W-wallT,floorT+0.1,wT/2, wT,floorT+0.1,wT/2);
+
+  // Compartment dividers: vertical (along z) for column divisions
+  for(var c=1;c&lt;P.cols;c++){
+    var divX = wallT + c * cellW;
+    var dw = wallT/2;
+    // Divider face (facing left)
+    addTri(divX-dw,H-floorT-0.1,wT, divX-dw,H-floorT-0.1,D-wT, divX-dw,floorT+0.1,D-wT);
+    addTri(divX-dw,H-floorT-0.1,wT, divX-dw,floorT+0.1,D-wT, divX-dw,floorT+0.1,wT);
+    // Divider face (facing right)
+    addTri(divX+dw,floorT+0.1,wT, divX+dw,H-floorT-0.1,wT, divX+dw,H-floorT-0.1,D-wT);
+    addTri(divX+dw,floorT+0.1,wT, divX+dw,H-floorT-0.1,D-wT, divX+dw,floorT+0.1,D-wT);
+  }
+
+  // Compartment dividers: horizontal (along x) for row divisions
+  for(var r=1;r&lt;P.rows;r++){
+    var divZ = wallT + r * cellD;
+    var dd = wallT/2;
+    // Divider face (facing forward/backward)
+    addTri(wallT,H-floorT-0.1,divZ-dd, W-wallT,H-floorT-0.1,divZ-dd, W-wallT,floorT+0.1,divZ-dd);
+    addTri(wallT,H-floorT-0.1,divZ-dd, W-wallT,floorT+0.1,divZ-dd, wallT,floorT+0.1,divZ-dd);
+  }
+
+  let stl;
+  if(format===&#x27;ascii&#x27;){
+    stl = &#x27;solid drawer_organizer_tray\n&#x27;;
+    for(var ti=0;ti&lt;tris.length;ti++){
+      var t = tris[ti];
+      stl += &#x27;  facet normal &#x27;+t.nx+&#x27; &#x27;+t.ny+&#x27; &#x27;+t.nz+&#x27;\n&#x27;;
+      stl += &#x27;    outer loop\n&#x27;;
+      stl += &#x27;      vertex &#x27;+t.x1+&#x27; &#x27;+t.y1+&#x27; &#x27;+t.z1+&#x27;\n&#x27;;
+      stl += &#x27;      vertex &#x27;+t.x2+&#x27; &#x27;+t.y2+&#x27; &#x27;+t.z2+&#x27;\n&#x27;;
+      stl += &#x27;      vertex &#x27;+t.x3+&#x27; &#x27;+t.y3+&#x27; &#x27;+t.z3+&#x27;\n&#x27;;
+      stl += &#x27;    endloop\n&#x27;;
+      stl += &#x27;  endfacet\n&#x27;;
+    }
+    stl += &#x27;endsolid drawer_organizer_tray\n&#x27;;
+    
+    // Download ASCII STL as text file
+    var blob = new Blob([stl],{type:&#x27;text/plain&#x27;});
+    downloadBlob(blob, &#x27;tray_ascii.stl&#x27;);
+  } else {
+    // Binary STL: 80 byte header + number of triangles (uint32 LE) + each triangle (12 floats LE)
+    var numTris = tris.length;
+    var bufSize = 84 + numTris * 50;
+    var buf = new ArrayBuffer(bufSize);
+    var dv = new DataView(buf);
+    // Header
+    var header = &#x27;binary STL drawer organizer tray&#x27;;
+    for(var i=0;i&lt;80;i++) dv.setUint8(i, i&lt;header.length?header.charCodeAt(i):0);
+    dv.setUint32(80, numTris, true);
+    var off = 84;
+    for(var ti=0;ti&lt;tris.length;ti++){
+      var t = tris[ti];
+      dv.setFloat32(off,t.nx,true); off+=4;
+      dv.setFloat32(off,t.ny,true); off+=4;
+      dv.setFloat32(off,t.nz,true); off+=4;
+      dv.setFloat32(off,t.x1,true); off+=4;
+      dv.setFloat32(off,t.y1,true); off+=4;
+      dv.setFloat32(off,t.z1,true); off+=4;
+      dv.setFloat32(off,t.x2,true); off+=4;
+      dv.setFloat32(off,t.y2,true); off+=4;
+      dv.setFloat32(off,t.z2,true); off+=4;
+      dv.setFloat32(off,t.x3,true); off+=4;
+      dv.setFloat32(off,t.y3,true); off+=4;
+      dv.setFloat32(off,t.z3,true); off+=4;
+      dv.setUint16(off,0,true); off+=2; // attribute byte count
+    }
+    var blob = new Blob([buf],{type:&#x27;application/octet-stream&#x27;});
+    downloadBlob(blob,&#x27;tray_binary.stl&#x27;);
+  }
+}
+
+function downloadBlob(blob, filename) {
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement(&#x27;a&#x27;);
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); document.body.removeChild(a); },1000);
+}
+
+// ===== INIT =====
+syncUI();
+for (var key in sliders) bindSlider(key, sliders[key]);
+render();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+&lt;/previous_artifact&gt;
+
+What would you change about your generic setup after inspecting this artifact? Separate changed recommendations from unchanged ones. Do not provide application fixes/code or product-specific test assertions. Finish with your final preferred generic configuration and predictions.
+
+Recommend your own preferred setup within those constraints:
+1. Rank the three changes most likely to improve your success rate and explain why.
+2. Name the tools/test environment and Pi workflow you would prefer. Explain what evidence should count as completion and how app bugs should be distinguished from test/environment bugs.
+3. Specify planning, context management, reasoning, compression, iteration and review choices. State whether you want another model and its exact role; do not add one merely because it is available.
+4. Give one generic kickoff/workflow template usable unchanged with all five briefs. Include no task-specific solution, application code, or tailored test assertions.
+5. Predict your chance of a working POC for each brief and name the main failure risks. These are predictions to be checked, not performance claims.
+6. State a minimal fallback if a desired tool cannot be supplied.
+Return a concise structured proposal, ideally JSON, with tools, workflow, kickoff_template, settings, completion_evidence, predictions and fallbacks. We will preserve your answer and later compare it with actual independent results.
+</code></pre><h4>Response</h4><pre class="interview-answer"><code>Here is the revised strategy for the five briefs, derived from inspecting the previous &quot;Drawer Tray&quot; artifact. The primary lesson is that **geometry without a library (Three.js/CGAL) or strict boolean operations leads to non-watertight meshes**, and manual face generation requires rigorous mathematical validation that is difficult for an LLM to maintain in a single file without errors.
+
+```json
+{
+  &quot;proposal_summary&quot;: {
+    &quot;description&quot;: &quot;Refined setup focusing on reliable binary geometry export and strictly enforced code structure. Key changes include embedding a lightweight, embedded library for 3D meshing (Brief 5) and utilizing strict text-based self-diagnostic verification for all briefs.&quot;,
+    &quot;core_philosophy&quot;: &quot;Prevent failure at the source: embed necessary math logic to avoid complex geometric edge cases; mandate executable self-verification scripts rather than relying on the agent&#x27;s visual intuition.&quot;
+  },
+  &quot;ranked_changes_for_success&quot;: [
+    {
+      &quot;rank&quot;: 1,
+      &quot;change&quot;: &quot;Embed a Lightweight Library for Brief 5 (or Simplify Output)&quot;,
+      &quot;explanation&quot;: &quot;The previous artifact attempted to manually construct STL faces, resulting in complex code prone to normal errors. For the &#x27;Drawer Tray&#x27;, generating a valid watertight mesh via raw coordinates is extremely difficult for an agent in one pass. The new strategy mandates embedding a minified version of `three.js` (or specifically `ThreeBSP` logic if possible, though likely too large) or simply mandating that the agent implements a standard CSG library like `csg.js` (minimal subset). If binary size is an issue, the fallback to SVG/PNG schematic is strictly enforced. For other briefs, this constraint applies generally: use libraries for Canvas drawing only if necessary.&quot;
+    },
+    {
+      &quot;rank&quot;: 2,
+      &quot;change&quot;: &quot;Mandatory Executable Self-Diagnostic Script&quot;,
+      &quot;explanation&quot;: &quot;The previous &#x27;verification&#x27; was implicit in the render loop. The new workflow requires the agent to append a script block at the end of `index.html` that runs on load. This script checks critical DOM elements, verifies math outputs (e.g., STL header validity), and logs results to a visible `&lt;div id=&#x27;status&#x27;&gt;`. If the status is not &#x27;SUCCESS&#x27;, the agent must attempt self-healing before claiming completion.&quot;
+    },
+    {
+      &quot;rank&quot;: 3,
+      &quot;change&quot;: &quot;Explicit &#x27;No-CDN&#x27; Library Injection for Briefs 4 &amp; 5&quot;,
+      &quot;explanation&quot;: &quot;While Briefs 1-3 can be built with vanilla JS, Brief 4 (Breakout) and 5 (STL) often tempt the agent to use external physics or math libs. The setup must explicitly forbid this and instead provide the code for a tiny custom physics/math engine inline if needed, or accept a simplified implementation.&quot;
+  },
+  &quot;tools_and_workflow&quot;: {
+    &quot;environment&quot;: &quot;Local Pi Agent with Songbird Model&quot;,
+    &quot;preferred_tools&quot;: [
+      &quot;File System Tool (Read/Write)&quot;: &quot;Mandatory for saving the final `index.html`.&quot;,
+      &quot;Local Shell (Bash/Zsh)&quot;: &quot;Used to run a lightweight Python or Node script *after* generation to validate file size, syntax, and specific binary headers (e.g., STL magic number).&quot;
+    ],
+    &quot;pi_workflow&quot;: {
+      &quot;initialization&quot;: &quot;Create isolated directory. Initialize `index.html` with a strict boilerplate including the self-diagnostic div.&quot;,
+      &quot;iteration&quot;: [
+        &quot;Agent generates code segment by segment (if large).&quot;,
+        &quot;Agent appends `self_verify.js` inline in the HTML.&quot;,
+        &quot;Agent requests the system to open the file in a local browser or run a headless validation script if available.&quot;
+      ],
+      &quot;completion_check&quot;: &quot;File saves successfully, passes static analysis (no CDN, valid HTML), and the self-diagnostic div shows &#x27;ALL CHECKS PASSED&#x27;.&quot;
+    },
+    &quot;completion_evidence_criteria&quot;: {
+      &quot;functional_bug_definition&quot;: &quot;Any feature not meeting the core requirements (e.g., STL not downloading, game loop freezing, false positive in reaction time).&quot;,
+      &quot;environment_bug_definition&quot;: &quot;Agent cannot write files or run validation scripts. This is distinct from code logic errors.&quot;
+    },
+    &quot;environment_bug_definition&quot;: {
+      &quot;definition&quot;: &quot;Infrastructure failure: no file write access, browser sandbox preventing local file opens (if testing via previewer), or model hallucination of available libraries.&quot;
+    }
+  },
+  &quot;settings_and_configuration&quot;: {
+    &quot;planning_strategy&quot;: &quot;Explicit Architecture + Math First. For Brief 5, the agent MUST list all vertex coordinates and face indices before writing code.&quot;,
+    &quot;context_management&quot;: &quot;Sliding window. If `index.html` exceeds 10k tokens, enforce CSS compression and function minimization.&quot;,
+    &quot;reasoning_setting&quot;: &quot;Low temperature (0.2) for Brief 5 geometry logic; Medium temperature (0.7) for Brief 3 UI/CSS creativity.&quot;,
+    &quot;compression&quot;: &quot;Enable aggressive token compression for the initial architecture phase to preserve context window for code generation.&quot;,
+    &quot;iteration_count&quot;: &quot;60 minutes hard stop. If progress stalls for &gt;15 mins, trigger &#x27;Simplify&#x27; mode (e.g., remove STL binary format and revert to ASCII).&quot;,
+    &quot;reviewer_role&quot;: &quot;Automated Self-Review via the embedded `self_verify.js` script.&quot;,
+    &quot;additional_models&quot;: {
+      &quot;requested&quot;: false,
+      &quot;reason&quot;: &quot;Context fragmentation risk. The complexity of these single-file tasks is best handled by one model managing its own scope.&quot;
+    }
+  },
+  &quot;kickoff_template&quot;: &quot;You are an expert Engineer building a SINGLE, SELF-CONTAINED offline HTML file named &#x27;index.html&#x27;.\n\nGLOBAL CONSTRAINTS:\n1. NO external CDN links, images, or fonts. All assets must be embedded or generated via code.\n2. The final output must be a single valid HTML5 document.\n3. Work ONLY in the current directory.\n4. Finish autonomously. Do not ask for clarification unless a requirement is logically impossible.\n\nPROCESS:\n1. Analyze the brief and list all technical challenges.\n2. Outline the architecture: Core Engine, UI Layer, Storage/Export Logic.\n3. Write the code incrementally. If the file is large, ensure logical separation of concerns within the script tags.\n4. VERIFY before finalizing: Append a &#x27;self_verify&#x27; script block that checks key logic (e.g., STL header validity, DOM structure). Add a &lt;div id=&#x27;status&#x27;&gt; to show results.\n\nCOMPLETION CRITERIA:\n- The file renders correctly in a standard browser without network access.\n- All interactive features (click, drag, keyboard) respond immediately.\n- No console errors. Status div shows &#x27;SUCCESS&#x27;.\n\nTASK BRIEF:\n[BRIEF_INSERT_HERE]\n\nStart by outlining your architecture and then generate the code.&quot;,
+  &quot;predictions_and_risks&quot;: [
+    {
+      &quot;brief_id&quot;: 1,
+      &quot;brief_name&quot;: &quot;Reaction Timer&quot;,
+      &quot;prediction_success_rate&quot;: &quot;98%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Incorrect handling of `performance.now()` vs Date().&quot;,
+        &quot;False-start logic not clearing the timeout correctly.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 2,
+      &quot;brief_name&quot;: &quot;Snake Game&quot;,
+      &quot;prediction_success_rate&quot;: &quot;95%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Input buffering causing self-collision on rapid key presses (must queue inputs).&quot;,
+        &quot;Game loop timing issues causing inconsistent speed across browsers.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 3,
+      &quot;brief_name&quot;: &quot;Pixel Painter&quot;,
+      &quot;prediction_success_rate&quot;: &quot;90%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Touch event handling conflicting with mouse events (must preventDefault).&quot;,
+        &quot;Undo/Redo stack memory overflow if canvas is large.&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 4,
+      &quot;brief_name&quot;: &quot;Breakout with level editor&quot;,
+      &quot;prediction_success_rate&quot;: &quot;80%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Complexity of combining editor state with game state in one loop.&quot;,
+        &quot;JSON serialization errors for level data (must handle nested arrays correctly).&quot;
+      ]
+    },
+    {
+      &quot;brief_id&quot;: 5,
+      &quot;brief_name&quot;: &quot;Drawer Tray Generator&quot;,
+      &quot;prediction_success_rate&quot;: &quot;65%&quot;,
+      &quot;main_failure_risks&quot;: [
+        &quot;Generating a valid, watertight STL geometry without external libraries (highest risk).&quot;,
+        &quot;3D preview rotation/math errors if Three.js is not embedded.&quot;,
+        &quot;High complexity of parametric design logic leading to syntax errors.&quot;
+      ]
+    }
+  ],
+  &quot;fallbacks&quot;: {
+    &quot;if_stl_export_fails_brief_5&quot;: &quot;Fallback to exporting a SVG schematic instead, noting the limitation in comments. If SVG is not possible, export a CSV of vertex coordinates.&quot;,
+    &quot;if_external_library_needed_for_brief_5&quot;: &quot;Embed the minified source of `Three.js` directly into the HTML script tag as a string and inject it dynamically, ensuring offline functionality.&quot;
+  }
+}
+```
+</code></pre></details></section>
+{% endraw %}

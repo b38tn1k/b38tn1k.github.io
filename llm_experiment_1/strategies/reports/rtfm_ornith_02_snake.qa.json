@@ -1,0 +1,107 @@
+{
+  "method": "Independent exact-source VM/DOM/native Canvas2D. Actual keyboard/buttons and scheduled RAF checked. Closure exposure/controlled state fixtures exercise existing step/food algorithms without replacement. Full-board fixture is an edge diagnostic, not an explicit win-screen requirement. No browser layout/hit testing or visual-polish proof.",
+  "sha256": "1105960567f6680a18deb62c7d94333e98098ff6f2273ffd47b72e07ea484cb8",
+  "checks": [
+    {
+      "id": "actual_start_keyboard_pause_resume_restart_and_pixels",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pause": true,
+        "resume": true,
+        "restart": true,
+        "drawnHeadPixel": [
+          34,
+          197,
+          94,
+          255
+        ]
+      }
+    },
+    {
+      "id": "food_increases_score_and_snake_length",
+      "pass": true,
+      "evidence": {
+        "s": {
+          "snake": [
+            {
+              "x": 12,
+              "y": 11
+            },
+            {
+              "x": 11,
+              "y": 11
+            },
+            {
+              "x": 10,
+              "y": 11
+            },
+            {
+              "x": 9,
+              "y": 11
+            }
+          ],
+          "dir": {
+            "x": 1,
+            "y": 0
+          },
+          "nextDir": {
+            "x": 1,
+            "y": 0
+          },
+          "food": {
+            "x": 8,
+            "y": 18
+          },
+          "score": 1,
+          "level": 1,
+          "speed": 140,
+          "running": true,
+          "paused": false,
+          "gameOver": false,
+          "best": 1
+        }
+      }
+    },
+    {
+      "id": "increasing_difficulty_and_best_score",
+      "pass": true,
+      "evidence": {
+        "score": 5,
+        "level": 2,
+        "speedMS": 132,
+        "best": 5
+      }
+    },
+    {
+      "id": "immediate_wall_and_body_collisions_tail_rule_and_reverse_guard",
+      "pass": true,
+      "evidence": {
+        "wallImmediate": true,
+        "bodyImmediate": true,
+        "vacatedTailAllowed": true,
+        "directReversePrevented": true
+      }
+    },
+    {
+      "id": "rapid_pause_resume_has_one_animation_chain",
+      "pass": true,
+      "evidence": {
+        "scheduledCallbacks": 1
+      }
+    },
+    {
+      "id": "full_board_food_generation_terminates",
+      "pass": false,
+      "error": "Script execution timed out after 100ms"
+    },
+    {
+      "id": "self_contained_offline_source",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "pass": false
+}

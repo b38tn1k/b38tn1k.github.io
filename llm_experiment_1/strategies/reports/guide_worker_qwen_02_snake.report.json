@@ -1,0 +1,130 @@
+{
+  "rubricScores": {
+    "functionality": 33,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 4,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Movement, food growth, score/difficulty increase, pause/resume, restart and eventual wall/self game over pass runtime fixtures.",
+    "Food selection enumerates empty cells rather than unbounded random retries."
+  ],
+  "defects": [
+    "tick computes a prospective head but isCollision examines the old snake before insertion. A wall crossing leaves the head outside the board in running state until the next tick; body collisions likewise resolve late.",
+    "When the board fills, spawnFood returns without assigning a victory state or clearing old food."
+  ],
+  "verificationConcerns": [
+    "Source inspection checked that collision code existed, without verifying which head position it tests."
+  ],
+  "score": 82,
+  "grade": "B provisional - Playable Snake; collision detection runs one tick late",
+  "breakdown": {
+    "functionality": 33,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 4,
+    "autonomy": 10
+  },
+  "verification": [
+    "Independent final-source checks in reports/guide_worker_qwen_02_snake.qa.json; executable verifier in qa/remaining-*.cjs or the case-specific QA script.",
+    "Final artifact hash checked before assessment; no benchmark application code changed by supervisor."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed.",
+  "workflowNotes": "Role completion is audited from final child metadata as well as foreground tool results; asynchronous chain children are included. Application correctness, workflow adherence and autonomy are separate measures.",
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "guide_worker",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The Snake game has been built successfully at `index.html` (630 lines). Here's a verification of all required features:\n\n| Feature | Status | Details |\n|---|---|---|\n| **Keyboard controls** | \u2705 | Arrow keys + WASD movement with 180\u00b0 reversal prevention |\n| **Food** | \u2705 | Random spawning on empty cells only, red glowing orb rendering |\n| **Scoring** | \u2705 | Current score display, persistent high score via localStorage |\n| **Wall collision** | \u2705 | Game over when snake hits any grid edge |\n| **Self collision** | \u2705 | Game over when head overlaps any body segment |\n| **Pause** | \u2705 | Space/P key toggle, plus auto-pause on tab blur/focus |\n| **Restart** | \u2705 | R key or \"Play Again\" button |\n| **Increasing difficulty** | \u2705 | Speed increases every 5 food items (150ms \u2192 55ms minimum) |\n| **Self-contained** | \u2705 | Zero external dependencies, fully offline |\n\n**Visual polish included:**\n- Dark theme with subtle grid lines\n- Gradient snake body (head lighter, tail darker)\n- Direction-aware eyes on the snake head\n- Glowing red food orb with specular highlight\n- Frosted glass overlays for pause/game-over screens\n- Responsive layout that works on mobile too\n\n**Controls summary:**\n- **\u2191\u2193\u2190\u2192 / WASD** \u2014 Move\n- **Space / P** \u2014 Pause/Resume  \n- **R** \u2014 Restart\n- Game auto-pauses when you switch browser tabs",
+  "workflowInstructions": "run-suite.py and config/qwen/agents",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 4.01,
+  "wallMinutes": 4.01,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 24,
+  "parentToolCalls": 10,
+  "childToolCalls": 14,
+  "toolResultsMarkedError": 3,
+  "modelUsageReported": {
+    "input": 16682,
+    "output": 12542,
+    "cacheRead": 219153,
+    "totalTokens": 248377
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 14538,
+  "parentPeakReportedPromptTokens": 13556,
+  "childPeakReportedPromptTokens": 14538,
+  "parentModelUsage": {
+    "input": 11081,
+    "output": 2342,
+    "cacheRead": 77184,
+    "totalTokens": 90607
+  },
+  "childModelUsage": {
+    "input": 5601,
+    "output": 10200,
+    "cacheRead": 141969,
+    "totalTokens": 157770
+  },
+  "artifactBytes": 17974,
+  "sha256": "72f5c6a9d33bf3621739cebbbcdb33bcd8542449283843075e1b79c986e6d5d8",
+  "implementationChangesBySupervisor": 0,
+  "humanOrSupervisorSteering": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": false,
+    "implementationHandoff": false,
+    "rolesAttempted": {
+      "worker": 1
+    },
+    "rolesCompleted": {
+      "worker": 1
+    },
+    "parentArtifactReads": 3,
+    "successfulPostWorkerArtifactReads": 2,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b"
+    ],
+    "delegationCalls": 1,
+    "parentWrites": 0,
+    "delegations": [
+      {
+        "agent": "worker",
+        "model": "songbird/qwen3.6:35b-a3b:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 5601,
+          "output": 10200,
+          "cacheRead": 141969,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 15
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/guide_worker/qwen/02_snake/artifact-pi/subagents/artifacts/4749177b-6ab2-4b58-92e6-2b7e49220e77_worker_0_transcript.jsonl.gz"
+        },
+        "runId": "4749177b-6ab2-4b58-92e6-2b7e49220e77",
+        "acceptanceStatus": "attested"
+      }
+    ]
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

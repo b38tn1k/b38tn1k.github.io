@@ -1,0 +1,29 @@
+{
+  "method": "Exact-source VM using pixel-buffer Canvas model and100ms script timeout; no browser/PNG encoding",
+  "startup": "pass",
+  "click": [
+    139,
+    58,
+    58,
+    255
+  ],
+  "firstUndo": [
+    139,
+    58,
+    58,
+    255
+  ],
+  "eraserStart": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "eraserDragEnd": [
+    139,
+    58,
+    58,
+    255
+  ],
+  "diagonalError": "Script execution timed out after 100ms"
+}

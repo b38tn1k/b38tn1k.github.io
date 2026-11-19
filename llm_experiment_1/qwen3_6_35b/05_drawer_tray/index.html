@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Organizer Tray Maker</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --panel: #1a1d28;
+    --border: #2a2d3a;
+    --accent: #6c8cff;
+    --accent-glow: #6c8cff40;
+    --text: #e2e4eb;
+    --text-dim: #8b8fa3;
+    --input-bg: #12141d;
+    --success: #4ade80;
+    --warn: #fbbf24;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+  }
+
+  /* Sidebar */
+  #sidebar {
+    width: 360px;
+    min-width: 360px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  #sidebar::-webkit-scrollbar { width: 6px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .panel-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #1e2132, var(--panel));
+  }
+
+  .panel-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-header h1 .icon { font-size: 20px; }
+
+  .panel-header p {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .section {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 3px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .param-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .param-single { margin-bottom: 10px; }
+
+  .param-group { display: flex; flex-direction: column; gap: 3px; }
+
+  .param-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.2px;
+  }
+
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .input-wrap:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .input-wrap input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 10px;
+    width: 100%;
+    outline: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .input-wrap input[type="number"] { -moz-appearance: textfield; }
+  .input-wrap input[type="number"]::-webkit-inner-spin-button,
+  .input-wrap input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+
+  .input-unit {
+    padding: 0 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.03);
+    border-left: 1px solid var(--border);
+    height: 34px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Compartment info */
+  .comp-grid {
+    display: grid;
+    gap: 8px;
+  }
+
+  .comp-card {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .comp-index {
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .comp-dims {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .comp-dims span { color: var(--text-dim); font-weight: 400; }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .stat-box {
+    background: var(--input-bg);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* Export button */
+  .export-section { padding: 16px 24px 24px; }
+
+  .btn-export {
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.15s, box-shadow 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-export:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px var(--accent-glow);
+  }
+
+  .btn-export:active { transform: scale(0.98); }
+
+  /* Canvas area */
+  #canvas-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #canvas-container canvas { display: block; }
+
+  /* Overlay info */
+  .overlay-info {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(26, 29, 40, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 16px;
+    pointer-events: none;
+  }
+
+  .overlay-info span { white-space: nowrap; }
+  .overlay-info kbd {
+    background: rgba(255,255,255,0.1);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 11px;
+  }
+
+  /* Color swatch for preview */
+  .color-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+
+  .color-swatch:hover { transform: scale(1.1); }
+  .color-swatch.active { border-color: var(--text); transform: scale(1.1); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    body { flex-direction: column; }
+    #sidebar { width: 100%; min-width: unset; max-height: 50vh; }
+  }
+</style>
+</head>
+<body>
+
+<aside id="sidebar">
+  <div class="panel-header">
+    <h1><span class="icon">📐</span> Tray Maker</h1>
+    <p>Design a rectangular drawer organizer • Export printable STL</p>
+  </div>
+
+  <!-- Dimensions -->
+  <div class="section">
+    <div class="section-title">Outer Dimensions</div>
+    <div class="param-row">
+      <div class="param-group">
+        <label>Width (X)</label>
+        <div class="input-wrap">
+          <input type="number" id="p-width" min="40" max="1000" step="1" value="180">
+          <div class="input-unit">mm</div>
+        </div>
+      </div>
+      <div class="param-group">
+        <label>Depth (Y)</label>
+        <div class="input-wrap">
+          <input type="number" id="p-depth" min="40" max="1000" step="1" value="120">
+          <div class="input-unit">mm</div>
+        </div>
+      </div>
+    </div>
+    <div class="param-single">
+      <div class="param-group">
+        <label>Height (Z)</label>
+        <div class="input-wrap">
+          <input type="number" id="p-height" min="10" max="500" step="1" value="30">
+          <div class="input-unit">mm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="section">
+    <div class="section-title">Grid Layout</div>
+    <div class="param-row">
+      <div class="param-group">
+        <label>Columns (X div)</label>
+        <div class="input-wrap">
+          <input type="number" id="p-cols" min="1" max="20" step="1" value="3">
+        </div>
+      </div>
+      <div class="param-group">
+        <label>Rows (Y div)</label>
+        <div class="input-wrap">
+          <input type="number" id="p-rows" min="1" max="20" step="1" value="2">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wall & Floor -->
+  <div class="section">
+    <div class="section-title">Wall &amp; Floor Thickness</div>
+    <div class="param-row">
+      <div class="param-group">
+        <label>Wall Thickness</label>
+        <div class="input-wrap">
+          <input type="number" id="p-wall" min="1" max="20" step="0.5" value="3">
+          <div class="input-unit">mm</div>
+        </div>
+      </div>
+      <div class="param-group">
+        <label>Floor Thickness</label>
+        <div class="input-wrap">
+          <input type="number" id="p-floor" min="0.5" max="20" step="0.5" value="1.5">
+          <div class="input-unit">mm</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview color -->
+  <div class="section">
+    <div class="section-title">Preview Color</div>
+    <div class="color-row" id="color-picker"></div>
+  </div>
+
+  <!-- Compartment Dimensions -->
+  <div class="section">
+    <div class="section-title">Compartment Dimensions</div>
+    <div class="comp-grid" id="comp-dims"></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="section">
+    <div class="section-title">Summary</div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-value" id="stat-cols">3</div>
+        <div class="stat-label">Columns</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-rows">2</div>
+        <div class="stat-label">Rows</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="stat-total">6</div>
+        <div class="stat-label">Compartments</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export -->
+  <div class="export-section">
+    <button class="btn-export" id="btn-export">
+      <span>📦</span> Export STL (Printable)
+    </button>
+  </div>
+</aside>
+
+<main id="canvas-container"></main>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.163.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.163.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ─── DOM refs ──────────────────────────────────────
+const $ = id => document.getElementById(id);
+const pWidth  = $('p-width');
+const pDepth  = $('p-depth');
+const pHeight = $('p-height');
+const pCols   = $('p-cols');
+const pRows   = $('p-rows');
+const pWall   = $('p-wall');
+const pFloor  = $('p-floor');
+
+// ─── Colors ────────────────────────────────────────
+const COLORS = [
+  '#6c8cff', // default blue
+  '#4ade80', // green
+  '#f472b6', // pink
+  '#fbbf24', // yellow
+  '#fb923c', // orange
+  '#e2e4eb', // white
+  '#3b82f6', // royal blue
+  '#a78bfa', // purple
+];
+
+let currentColor = COLORS[0];
+const pickerEl = $('color-picker');
+
+COLORS.forEach((c, i) => {
+  const swatch = document.createElement('div');
+  swatch.className = 'color-swatch' + (i === 0 ? ' active' : '');
+  swatch.style.background = c;
+  swatch.addEventListener('click', () => {
+    pickerEl.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+    swatch.classList.add('active');
+    currentColor = c;
+    updatePreview();
+  });
+  pickerEl.appendChild(swatch);
+});
+
+// ─── Three.js scene ────────────────────────────────
+const container = $('canvas-container');
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0f1117);
+
+// Grid helper (ground)
+const gridHelper = new THREE.GridHelper(300, 30, 0x2a2d3a, 0x1a1d28);
+gridHelper.material.transparent = true;
+gridHelper.material.opacity = 0.6;
+scene.add(gridHelper);
+
+// Axes
+const axesHelper = new THREE.AxesHelper(50);
+scene.add(axesHelper);
+
+// Lights
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.2);
+dirLight1.position.set(80, 120, 80);
+scene.add(dirLight1);
+
+const dirLight2 = new THREE.DirectionalLight(0x6c8cff, 0.3);
+dirLight2.position.set(-60, 40, -60);
+scene.add(dirLight2);
+
+// Camera & controls
+const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 2000);
+camera.position.set(150, 130, 180);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 30;
+controls.maxDistance = 600;
+controls.target.set(0, 15, 0);
+
+// Tray mesh group
+const trayGroup = new THREE.Group();
+scene.add(trayGroup);
+
+// ─── STL export ────────────────────────────────────
+function generateSTL(w, d, h, cols, rows, wallT, floorT) {
+  const meshes = []; // array of { geometry }
+
+  // Helper: add box mesh
+  function addBox(cx, cy, cz, sx, sy, sz) {
+    const g = new THREE.BoxGeometry(sx, sy, sz, 1, 1, 1);
+    g.translate(cx, cy, cz);
+    meshes.push(g);
+  }
+
+  // Floor (bottom plate)
+  addBox(0, -floorT / 2, 0, w, floorT, d);
+
+  // Outer walls — 4 walls with proper thickness
+  const hWall = h - floorT;
+  if (hWall > 0.1) {
+    // Front wall
+    addBox(0, floorT/2 + hWall/2,  d/2 - wallT/2, w, hWall, wallT);
+    // Back wall
+    addBox(0, floorT/2 + hWall/2, -d/2 + wallT/2, w, hWall, wallT);
+    // Left wall
+    addBox(-w/2 + wallT/2, floorT/2 + hWall/2, 0, wallT, hWall, d);
+    // Right wall
+    addBox(w/2 - wallT/2, floorT/2 + hWall/2, 0, wallT, hWall, d);
+  }
+
+  // Vertical dividers (columns walls — along Y axis)
+  if (cols > 1) {
+    const colPitch = w / cols;
+    for (let i = 1; i < cols; i++) {
+      const x = -w/2 + i * colPitch;
+      addBox(x, floorT/2 + hWall/2, 0, wallT, hWall, d);
+    }
+  }
+
+  // Horizontal dividers (rows walls — along X axis)
+  if (rows > 1) {
+    const rowPitch = d / rows;
+    for (let j = 1; j < rows; j++) {
+      const z = -d/2 + j * rowPitch;
+      addBox(0, floorT/2 + hWall/2, z, w, hWall, wallT);
+    }
+  }
+
+  // Merge all geometries
+  const merged = mergeGeometries(meshes);
+  return geometryToSTL(merged);
+}
+
+function mergeGeometries(meshes) {
+  if (meshes.length === 0) return new THREE.BufferGeometry();
+  const merged = meshes.reduce((acc, g) => {
+    const pos = g.getAttribute('position');
+    const idx = g.getIndex();
+    const count = idx ? idx.count : pos.count;
+
+    for (let i = 0; i < count; i += 3) {
+      if (idx) {
+        for (const k of [0,1,2]) {
+          const vi = idx.getComponent(i + k);
+          acc.positions.push(pos.getX(vi), pos.getY(vi), pos.getZ(vi));
+        }
+      } else {
+        for (const k of [0,1,2]) {
+          acc.positions.push(pos.getComponent(i + k));
+        }
+      }
+    }
+
+    if (g.hasIndex()) g.dispose();
+    return acc;
+  }, { positions: [] });
+
+  const geo = new THREE.BufferGeometry();
+  const arr = new Float32Array(merged.positions);
+  geo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+  geo.computeVertexNormals();
+  return geo;
+}
+
+function geometryToSTL(geometry) {
+  const pos = geometry.getAttribute('position');
+  const normals = geometry.getAttribute('normal');
+  const numTris = pos.count / 3;
+  // Binary STL: 80 byte header + (numTris * 50 bytes) each triangle
+  const byteLength = 80 + numTris * 50;
+  const buf = new ArrayBuffer(byteLength);
+  const view = new DataView(buf);
+  const u8 = new Uint8Array(buf);
+
+  // Header (null-padded to 80 bytes)
+  const header = 'Three.js STL Binary Export';
+  for (let i = 0; i < Math.min(80, header.length); i++) view.setUint8(i, header.charCodeAt(i));
+
+  let offset = 80;
+  for (let i = 0; i < numTris; i++) {
+    const bx = normals.getX(i * 3);
+    const by = normals.getY(i * 3);
+    const bz = normals.getZ(i * 3);
+    view.setFloat32(offset, bx, true); offset += 4; // normal x
+    view.setFloat32(offset, by, true); offset += 4; // normal y
+    view.setFloat32(offset, bz, true); offset += 4; // normal z
+
+    for (const v of [0, 1, 2]) {
+      const vi = i * 3 + v;
+      view.setFloat32(offset, pos.getX(vi), true); offset += 4; // vertex x
+      view.setFloat32(offset, pos.getY(vi), true); offset += 4; // vertex y
+      view.setFloat32(offset, pos.getZ(vi), true); offset += 4; // vertex z
+    }
+    view.setUint16(offset, 0, true); offset += 2; // attribute byte count
+  }
+
+  return new Blob([buf], { type: 'application/sla' });
+}
+
+// ─── Update functions ──────────────────────────────
+function readParams() {
+  return {
+    w: parseFloat(pWidth.value) || 180,
+    d: parseFloat(pDepth.value) || 120,
+    h: parseFloat(pHeight.value) || 30,
+    cols: parseInt(pCols.value) || 3,
+    rows: parseInt(pRows.value) || 2,
+    wall: parseFloat(pWall.value) || 3,
+    floor: parseFloat(pFloor.value) || 1.5,
+  };
+}
+
+function isValid(p) {
+  return p.w > 0 && p.d > 0 && p.h > 0 && p.cols > 0 && p.rows > 0
+    && p.wall >= 0.5 && p.floor >= 0.5
+    && (p.h - p.floor) > 0.1;
+}
+
+function updateCompDims() {
+  const p = readParams();
+  if (!isValid(p)) return;
+
+  const compW = (p.w - (p.cols + 1) * p.wall) / p.cols;
+  const compD = (p.d - (p.rows + 1) * p.wall) / p.rows;
+  const compH = p.h - p.floor - p.wall;
+
+  const innerW = p.w - 2 * p.wall;
+  const innerD = p.d - 2 * p.wall;
+  const outerV = (p.w * p.d * p.h);
+  const innerV = Math.max(0, innerW) * Math.max(0, innerD) * Math.max(0, compH + p.floor);
+  const matVol = outerV - innerV;
+
+  $('stat-cols').textContent = p.cols;
+  $('stat-rows').textContent = p.rows;
+  $('stat-total').textContent = p.cols * p.rows;
+
+  const grid = $('comp-dims');
+  grid.innerHTML = '';
+
+  for (let r = 0; r < p.rows; r++) {
+    for (let c = 0; c < p.cols; c++) {
+      const card = document.createElement('div');
+      card.className = 'comp-card';
+      card.innerHTML = `
+        <div class="comp-index">${r * p.cols + c + 1}</div>
+        <div class="comp-dims">
+          ${compW.toFixed(1)}<span>×${compD.toFixed(1)}</span>${compH > 0 ? `<span>×${compH.toFixed(1)}</span>` : '<span>(no height)</span>'}
+        </div>
+        <div class="input-unit">mm</div>
+      `;
+      grid.appendChild(card);
+    }
+  }
+
+  // Store for reference
+  window._lastParams = { ...p, compW: compW.toFixed(1), compD: compD.toFixed(1), compH: compH > 0 ? compH.toFixed(1) : '—' };
+}
+
+function updatePreview() {
+  const p = readParams();
+  if (!isValid(p)) return;
+
+  // Clear old mesh
+  while (trayGroup.children.length) trayGroup.remove(trayGroup.children[0]);
+
+  const compW = (p.w - (p.cols + 1) * p.wall) / p.cols;
+  const compD = (p.d - (p.rows + 1) * p.wall) / p.rows;
+  const compH = p.h - p.floor - p.wall;
+
+  if (compW <= 0 || compD <= 0 || compH <= 0) return;
+
+  // Build tray from individual box meshes for clean STL later
+  const parts = [];
+
+  // Floor
+  parts.push({ x: 0, y: -p.floor/2, z: 0, sx: p.w, sy: p.floor, sz: p.d });
+  const hWall = p.h - p.floor;
+
+  // Outer walls
+  if (hWall > 0.1) {
+    parts.push({ x: 0, y: p.floor/2 + hWall/2, z:  p.d/2 - p.wall/2, sx: p.w, sy: hWall, sz: p.wall }); // front
+    parts.push({ x: 0, y: p.floor/2 + hWall/2, z: -p.d/2 + p.wall/2, sx: p.w, sy: hWall, sz: p.wall }); // back
+    parts.push({ x: -p.w/2 + p.wall/2, y: p.floor/2 + hWall/2, z: 0, sx: p.wall, sy: hWall, sz: p.d });  // left
+    parts.push({ x:  p.w/2 - p.wall/2, y: p.floor/2 + hWall/2, z: 0, sx: p.wall, sy: hWall, sz: p.d });  // right
+  }
+
+  const colPitch = p.w / p.cols;
+  const rowPitch = p.d / p.rows;
+
+  // Vertical dividers
+  for (let i = 1; i < p.cols; i++) {
+    parts.push({ x: -p.w/2 + i*colPitch, y: p.floor/2 + hWall/2, z: 0, sx: p.wall, sy: hWall, sz: p.d });
+  }
+
+  // Horizontal dividers
+  for (let j = 1; j < p.rows; j++) {
+    parts.push({ x: 0, y: p.floor/2 + hWall/2, z: -p.d/2 + j*rowPitch, sx: p.w, sy: hWall, sz: p.wall });
+  }
+
+  const color = new THREE.Color(currentColor);
+  const mat = new THREE.MeshStandardMaterial({
+    color,
+    roughness: 0.45,
+    metalness: 0.05,
+  });
+
+  parts.forEach(part => {
+    const g = new THREE.BoxGeometry(part.sx, part.sy, part.sz);
+    g.translate(part.x, part.y, part.z);
+    const m = new THREE.Mesh(g, mat);
+    trayGroup.add(m);
+  });
+
+  // Wireframe overlay for edges
+  const edgeMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.12 });
+  parts.forEach(part => {
+    const eGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(part.sx, part.sy, part.sz));
+    eGeo.translate(part.x, part.y, part.z);
+    trayGroup.add(new THREE.LineSegments(eGeo, edgeMat));
+  });
+
+  // Center scene
+  const bounds = new THREE.Box3().setFromObject(trayGroup);
+  const center = bounds.getCenter(new THREE.Vector3());
+  const size = bounds.getSize(new THREE.Vector3());
+  trayGroup.position.sub(center);
+  trayGroup.position.y += p.h / 2;
+
+  controls.target.set(0, p.h/2, 0);
+  controls.update();
+
+  updateCompDims();
+}
+
+// ─── Event handlers ────────────────────────────────
+const params = [pWidth, pDepth, pHeight, pCols, pRows, pWall, pFloor];
+params.forEach(el => {
+  el.addEventListener('input', () => {
+    updatePreview();
+  });
+});
+
+// Export
+$('btn-export').addEventListener('click', () => {
+  const p = readParams();
+  if (!isValid(p)) { alert('Invalid parameters: check wall/floor thickness vs height.'); return; }
+
+  const stlBlob = generateSTL(p.w, p.d, p.h, p.cols, p.rows, p.wall, p.floor);
+  const name = `tray_${p.w}x${p.d}x${p.h}_${p.cols}x${p.rows}.stl`;
+
+  const url = URL.createObjectURL(stlBlob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+// ─── Resize ────────────────────────────────────────
+window.addEventListener('resize', () => {
+  const w = container.clientWidth, h = container.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+});
+
+// ─── Render loop ───────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// Initial build
+updatePreview();
+
+</script>
+</body>
+</html>

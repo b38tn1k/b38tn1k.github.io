@@ -1,0 +1,55 @@
+{
+  "method": "Exact source, actual registered control/keyboard handlers, virtual clock. Existing seed hook set before app boot for repeatability; no application algorithm replaced. One timing fixture delays a registered callback by 100 ms through the environment task schedule to test the clock reference. No native layout/rendering or physical display timing claims.",
+  "sha256": "408d92a388fdf19ab8793f2c30f2daceadc2a3b245dca7b6f065dffaba0a1570",
+  "checks": [
+    {
+      "id": "five_trials_summary_restart",
+      "pass": true,
+      "evidence": {
+        "waits": [
+          4149,
+          1714,
+          2981,
+          1925,
+          2503
+        ],
+        "mean": 250,
+        "best": 200,
+        "worst": 300,
+        "restart": true
+      }
+    },
+    {
+      "id": "false_start_same_trial_retry_preserves_results",
+      "pass": true,
+      "evidence": {
+        "validResults": 5,
+        "mean": 240,
+        "trialPreserved": true
+      }
+    },
+    {
+      "id": "pending_wait_restart_cancels_timer",
+      "pass": true,
+      "evidence": {
+        "cancels": true,
+        "note": "Direct reset control diagnostic; restart is visibly offered only in summary."
+      }
+    },
+    {
+      "id": "reaction_time_uses_actual_cue_callback",
+      "pass": false,
+      "error": "100ms delayed cue callback was included in reaction time",
+      "actual": 300,
+      "expected": 200
+    },
+    {
+      "id": "keyboard_reaction",
+      "pass": true,
+      "evidence": {
+        "milliseconds": 240
+      }
+    }
+  ],
+  "pass": false
+}

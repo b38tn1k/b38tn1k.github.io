@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Art Painter</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 16px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+  h1 { font-size: 1.4rem; margin-bottom: 12px; color: #f5c542; letter-spacing: 1px; }
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    padding: 10px;
+    background: #16213e;
+    border-radius: 10px;
+    max-width: 95vw;
+  }
+  .toolbar label { font-size: 0.8rem; color: #aaa; }
+  .toolbar input[type="number"] {
+    width: 60px; padding: 4px 6px; border: 1px solid #333;
+    background: #0f3460; color: #fff; border-radius: 4px; font-size: 0.85rem;
+  }
+  .toolbar button {
+    padding: 6px 12px; border: none; border-radius: 6px;
+    background: #0f3460; color: #e0e0e0; cursor: pointer;
+    font-size: 0.8rem; transition: background 0.15s;
+  }
+  .toolbar button:hover { background: #1a5276; }
+  .toolbar button.active { background: #f5c542; color: #1a1a2e; font-weight: bold; }
+  .color-palette {
+    display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;
+    max-width: 360px;
+  }
+  .palette-swatch {
+    width: 28px; height: 28px; border-radius: 4px; border: 2px solid transparent;
+    cursor: pointer; transition: border-color 0.15s, transform 0.1s;
+  }
+  .palette-swatch:hover { transform: scale(1.15); }
+  .palette-swatch.selected { border-color: #f5c542; }
+  #custom-color-wrap { display: flex; align-items: center; gap: 4px; margin-left: 4px; }
+  #custom-color-wrap label { font-size: 0.7rem; color: #888; }
+  #custom-color { width: 32px; height: 28px; border: none; cursor: pointer; padding: 0; background: none; }
+  .canvas-wrap {
+    position: relative;
+    display: inline-block;
+    border: 2px solid #333;
+    border-radius: 6px;
+    overflow: hidden;
+    background: repeating-conic-gradient(#ddd 0% 25%, #fff 0% 50%) 0 0 / 16px 16px;
+  }
+  #pixel-canvas {
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .size-preview { font-size: 0.7rem; color: #666; text-align: center; margin-top: 4px; }
+  .separator { width: 1px; height: 28px; background: #333; }
+</style>
+</head>
+<body>
+
+<h1>Pixel Art Painter</h1>
+
+<div class="toolbar" id="toolbar">
+  <div>
+    <label for="canvas-w">W</label>
+    <input type="number" id="canvas-w" value="32" min="8" max="256" step="1">
+  </div>
+  <div>
+    <label for="canvas-h">H</label>
+    <input type="number" id="canvas-h" value="32" min="8" max="256" step="1">
+  </div>
+  <button id="btn-size-apply">Resize</button>
+
+  <div class="separator"></div>
+
+  <button id="btn-brush" class="active" title="Brush (B)">Brush</button>
+  <button id="btn-eraser" title="Eraser (E)">Eraser</button>
+  <label style="font-size:0.75rem;color:#aaa;">Size:</label>
+  <input type="range" id="brush-size" min="1" max="16" value="1" style="width:80px;accent-color:#f5c542;">
+  <span id="brush-size-val" style="font-size:0.75rem;color:#aaa;">1</span>
+
+  <div class="separator"></div>
+
+  <button id="btn-undo" title="Undo (Ctrl+Z)">Undo</button>
+  <button id="btn-redo" title="Redo (Ctrl+Y)">Redo</button>
+  <button id="btn-clear" title="Clear Canvas">Clear</button>
+
+  <div class="separator"></div>
+
+  <button id="btn-export" title="Export PNG">Export PNG</button>
+</div>
+
+<div class="color-palette" id="color-palette"></div>
+<div style="display:flex;align-items:center;margin-top:6px;">
+  <div id="custom-color-wrap">
+    <label>Custom:</label>
+    <input type="color" id="custom-color" value="#000000">
+  </div>
+</div>
+
+<div style="margin-top:12px;" class="canvas-wrap">
+  <canvas id="pixel-canvas" width="32" height="32"></canvas>
+</div>
+<div class="size-preview" id="size-label">32 x 32</div>
+
+<script>
+(function() {
+  "use strict";
+
+  // --- Configuration ---
+  var PRESET_COLORS = [
+    "#000000","#1a1c2c","#5d275d","#b13e53","#ef7d57",
+    "#ffcd75","#a7f070","#38b764","#257179","#3998bb",
+    "#1fb5ad","#7ee8fa","#7838ee","#976fd4","#ff6e40",
+    "#ffdd2d","#fdf49a","#ffffff","#8b8b8b","#6b7794"
+  ];
+
+  // --- State ---
+  var canvasW = 32, canvasH = 32;
+  var selectedColor = "#000000";
+  var tool = "brush";        // "brush" | "eraser"
+  var brushSize = 1;
+  var isDrawing = false;
+  var history = [];           // array of ImageData snapshots (pre-draw)
+  var historyIdx = -1;
+  var MAX_HISTORY = 50;
+
+  // --- DOM refs ---
+  var canvas = document.getElementById("pixel-canvas");
+  var ctx = canvas.getContext("2d");
+  var paletteEl = document.getElementById("color-palette");
+  var sizeLabel = document.getElementById("size-label");
+  var brushSizeSlider = document.getElementById("brush-size");
+  var brushSizeVal = document.getElementById("brush-size-val");
+
+  // --- Build palette ---
+  function buildPalette() {
+    paletteEl.innerHTML = "";
+    for (var i = 0; i < PRESET_COLORS.length; i++) {
+      (function(c, idx) {
+        var swatch = document.createElement("div");
+        swatch.className = "palette-swatch" + (c === selectedColor ? " selected" : "");
+        swatch.style.background = c;
+        if (c === "#ffffff") swatch.style.border = "2px solid #ccc";
+        swatch.dataset.color = c;
+        swatch.addEventListener("click", function() {
+          document.querySelectorAll(".palette-swatch.selected").forEach(function(el) { el.classList.remove("selected"); });
+          swatch.classList.add("selected");
+          selectedColor = c;
+          ctx.fillStyle = c;
+        });
+        paletteEl.appendChild(swatch);
+      })(PRESET_COLORS[i], i);
+    }
+    // Update custom color input to match
+    document.getElementById("custom-color").value = selectedColor;
+  }
+
+  function setTool(t) {
+    tool = t;
+    document.getElementById("btn-brush").classList.toggle("active", t === "brush");
+    document.getElementById("btn-eraser").classList.toggle("active", t === "eraser");
+  }
+
+  // --- Canvas setup ---
+  function setupCanvas() {
+    canvas.width = canvasW;
+    canvas.height = canvasH;
+    ctx.imageSmoothingEnabled = false;
+    sizeLabel.textContent = canvasW + " x " + canvasH;
+  }
+
+  // Save/restore pixel state
+  function saveState() {
+    // Remove future history if we branched
+    history = history.slice(0, historyIdx + 1);
+    var imgData = ctx.getImageData(0, 0, canvasW, canvasH);
+    history.push(imgData);
+    if (history.length > MAX_HISTORY) history.shift();
+    historyIdx = history.length - 1;
+  }
+
+  function restoreState(idx) {
+    if (idx < 0 || idx >= history.length) return;
+    historyIdx = idx;
+    ctx.putImageData(history[historyIdx], 0, 0);
+  }
+
+  // --- Drawing helpers ---
+  function getCanvasPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    var scaleX = canvas.width / rect.width;
+    var scaleY = canvas.height / rect.height;
+    return { x: Math.floor((clientX - rect.left) * scaleX), y: Math.floor((clientY - rect.top) * scaleY) };
+  }
+
+  function drawAt(px, py) {
+    if (px < 0 || px >= canvasW || py < 0 || py >= canvasH) return;
+    var half = Math.floor(brushSize / 2);
+    for (var dy = -half; dy < brushSize - half; dy++) {
+      for (var dx = -half; dx < brushSize - half; dx++) {
+        var nx = px + dx, ny = py + dy;
+        if (nx >= 0 && nx < canvasW && ny >= 0 && ny < canvasH) {
+          ctx.fillStyle = tool === "eraser" ? "#ffffff" : selectedColor;
+          ctx.fillRect(nx, ny, 1, 1);
+        }
+      }
+    }
+  }
+
+  function onDown(e) {
+    e.preventDefault();
+    isDrawing = true;
+    saveState(); // Save before the stroke starts
+    var pos = getCanvasPos(e);
+    drawAt(pos.x, pos.y);
+  }
+
+  function onMove(e) {
+    if (!isDrawing) return;
+    e.preventDefault();
+    var pos = getCanvasPos(e);
+    drawAt(pos.x, pos.y);
+  }
+
+  function onUp() { isDrawing = false; }
+
+  // --- Resize ---
+  document.getElementById("btn-size-apply").addEventListener("click", function() {
+    var nw = Math.max(8, Math.min(256, parseInt(document.getElementById("canvas-w").value) || 32));
+    var nh = Math.max(8, Math.min(256, parseInt(document.getElementById("canvas-h").value) || 32));
+    if (nw === canvasW && nh === canvasH) return;
+    saveState();
+    // Save old image data to restore into new canvas
+    var oldImg = ctx.getImageData(0, 0, canvasW, canvasH);
+    canvasW = nw; canvasH = nh;
+    canvas.width = nw; canvas.height = nh;
+    ctx.imageSmoothingEnabled = false;
+    // Fill white (new canvas)
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, nw, nh);
+    // Draw old image clipped to new size
+    ctx.putImageData(oldImg, 0, 0);
+    sizeLabel.textContent = nw + " x " + nh;
+    // Clear history after structural change
+    history = [];
+    historyIdx = -1;
+    saveState();
+  });
+
+  // --- Tool buttons ---
+  document.getElementById("btn-brush").addEventListener("click", function() { setTool("brush"); });
+  document.getElementById("btn-eraser").addEventListener("click", function() { setTool("eraser"); });
+
+  // --- Brush size slider ---
+  brushSizeSlider.addEventListener("input", function() {
+    brushSize = parseInt(this.value, 10);
+    brushSizeVal.textContent = brushSize;
+  });
+
+  // --- Undo / Redo ---
+  document.getElementById("btn-undo").addEventListener("click", function() {
+    if (historyIdx > 0) {
+      restoreState(historyIdx - 1);
+      historyIdx--;
+    }
+  });
+  document.getElementById("btn-redo").addEventListener("click", function() {
+    if (historyIdx < history.length - 1) {
+      historyIdx++;
+      restoreState(historyIdx);
+    }
+  });
+
+  // --- Clear ---
+  document.getElementById("btn-clear").addEventListener("click", function() {
+    saveState();
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvasW, canvasH);
+  });
+
+  // --- Export PNG ---
+  document.getElementById("btn-export").addEventListener("click", function() {
+    var link = document.createElement("a");
+    link.download = "pixel-art.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+
+  // --- Custom color picker ---
+  document.getElementById("custom-color").addEventListener("input", function() {
+    selectedColor = this.value;
+    document.querySelectorAll(".palette-swatch.selected").forEach(function(el) { el.classList.remove("selected"); });
+    ctx.fillStyle = selectedColor;
+  });
+
+  // --- Keyboard shortcuts ---
+  document.addEventListener("keydown", function(e) {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === "z" || e.key === "Z") { e.preventDefault(); document.getElementById("btn-undo").click(); }
+      if (e.key === "y" || e.key === "Y") { e.preventDefault(); document.getElementById("btn-redo").click(); }
+    }
+  });
+
+  // --- Canvas events (mouse + touch) ---
+  canvas.addEventListener("mousedown", onDown);
+  canvas.addEventListener("mousemove", onMove);
+  window.addEventListener("mouseup", onUp);
+
+  canvas.addEventListener("touchstart", onDown, { passive: false });
+  canvas.addEventListener("touchmove", onMove, { passive: false });
+  window.addEventListener("touchend", onUp);
+
+  // --- Init ---
+  setupCanvas();
+  buildPalette();
+  saveState(); // Initial blank state
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvasW, canvasH);
+})();
+</script>
+</body>
+</html>

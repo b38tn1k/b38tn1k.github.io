@@ -1,0 +1,36 @@
+{
+  "method": "Independent exact-source nativeCanvas/DOM actual keyboard/button/scheduled callbacks. Closure exposes existing state/functions for fixtures; algorithms unchanged. No browser layout or visual verification.",
+  "sha256": "35bccceeff0315cd722b73e91911b90b7b21854994fff62ec5e562394cb722ec",
+  "checks": [
+    {
+      "id": "actual_start_keyboard_movement_pause_resume_restart",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pause": true,
+        "resume": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "rapid_pause_resume_has_single_animation_chain",
+      "pass": false,
+      "error": "Rapid pause/resume duplicates scheduled animation chains",
+      "actual": 6,
+      "expected": 1
+    },
+    {
+      "id": "controlled_growth_speed_collision_tail_and_full_board",
+      "pass": true,
+      "evidence": {
+        "growth": true,
+        "speed": true,
+        "wall": true,
+        "self": true,
+        "tail": true,
+        "win": true
+      }
+    }
+  ],
+  "pass": false
+}

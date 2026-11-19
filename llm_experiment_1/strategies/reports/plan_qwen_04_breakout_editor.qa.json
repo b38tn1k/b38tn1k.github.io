@@ -1,0 +1,134 @@
+{
+  "method": "Exact-source VM; DOM key/mouse/touch events, actual inline toolbar handler bodies, JSON modal functions and controlled physics fixtures; no real browser",
+  "startup": "pass",
+  "keyboardBeforeLaunch": true,
+  "keyboardAfterLaunchMoves": false,
+  "ballMoves": true,
+  "mouseMovesPaddle": false,
+  "touchMovesPaddle": false,
+  "hoverPaintsWithoutPress": true,
+  "rightClickErases": true,
+  "drawCount": 1,
+  "savedJSON": {
+    "width": 10,
+    "height": 7,
+    "grid": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "validRoundtrip": {
+    "count": 1,
+    "mode": "editor"
+  },
+  "hit": {
+    "score": 10,
+    "count": 0,
+    "cleared": true
+  },
+  "restart": {
+    "score": 0,
+    "lives": 3,
+    "count": 0
+  },
+  "wallBounce": true,
+  "paddleBounce": true,
+  "lifeSequence": [
+    {
+      "lives": 2,
+      "gameOver": false
+    },
+    {
+      "lives": 1,
+      "gameOver": false
+    },
+    {
+      "lives": 0,
+      "gameOver": true
+    }
+  ],
+  "shortRowLoadError": "Script execution timed out after 30ms",
+  "sha256": "11fa5606d598190089f781d84d2a999d44854777438b22d98ce4e4703bd67709"
+}

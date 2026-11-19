@@ -1,0 +1,48 @@
+{
+  "method": "Independent exact-source DOM/nativeCanvas pixels and real PNG bytes. Native ImageData constructor supplied as generic standards environment support. Actual controls with canvas coordinate scaling; no app algorithms replaced. No browser layout/hit testing.",
+  "sha256": "242cbe1468c52feef5899ee608dd3277e9ef37efcec1829e98ec8a0e728d2b61",
+  "checks": [
+    {
+      "id": "brush_eraser_multistep_history_and_clear_undo",
+      "pass": true,
+      "evidence": {
+        "history": true,
+        "clearUndo": true
+      }
+    },
+    {
+      "id": "resize_preserves_2D_coordinates_and_undo_redo_dimensions",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  0,\n  0,\n  0,\n  0\n]\n\nshould loosely deep-equal\n\n[\n  255,\n  0,\n  0,\n  255\n]",
+      "actual": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "resize_undo_does_not_throw_even_without_drawn_pixels",
+      "pass": false,
+      "error": "Failed to construct 'ImageData': The input data length is not equal to (4 * width * height)."
+    },
+    {
+      "id": "real_PNG_export_dimensions_and_pixel",
+      "pass": true,
+      "evidence": {
+        "bytes": 119,
+        "dimensions": [
+          32,
+          32
+        ]
+      }
+    }
+  ],
+  "pass": false
+}

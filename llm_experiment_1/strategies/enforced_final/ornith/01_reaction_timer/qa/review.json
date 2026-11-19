@@ -1,0 +1,13 @@
+{
+  "artifactSHA256": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+  "status": "pass",
+  "testsActuallyExerciseBehavior": true,
+  "blockingFindings": [],
+  "residualRisks": [
+    "Sub-30ms clicks during 'go' are classified as false starts (treated as a guess). This is a deliberate product heuristic, not a defect; acceptable.",
+    "Tests reuse identical check IDs (false_start_retry x2, five_valid_trials x2, summary x4); duplicates all still surface in failed[], so no pass/fail masking occurs.",
+    "The five_valid_trials recovery loop clicks mousedown when the app is stuck in a non-progressing phase, which can mask a genuine state-transition regression; the genuine clean path was independently verified to go->result->next->ready.",
+    "No cross-reload settings persistence (localStorage) is implemented; this matches the acceptance test's explicit default-only design, not a hidden requirement.",
+    "Validated only under the exact-source Node VM + linkedom partial DOM (no browser/visual rendering); behavior is exercised via handlers and timers, not pixel checks."
+  ]
+}

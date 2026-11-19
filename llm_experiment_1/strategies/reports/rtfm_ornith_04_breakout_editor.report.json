@@ -1,0 +1,566 @@
+{
+  "score": 77,
+  "grade": "C+ - play and JSON work; editor overlay and restart layout fail",
+  "rubricScores": {
+    "functionality": 28,
+    "artifact_correctness": 25,
+    "usability": 8,
+    "self_verification": 6,
+    "autonomy": 10
+  },
+  "summary": "Keyboard/mouse/touch play, physics, score/lives and actual JSON round-trip work after model-authored fixes. A full-stage initial overlay obstructs editor pointer entry; restart/replay retains the damaged grid instead of restoring the edited level.",
+  "strengths": [
+    "Actual scheduled keyboard paddle and ball movement pass. Mouse/touch paddle, pause/resume, brick damage/scoring and all three life losses work.",
+    "Actual downloaded JSON Blob parses and FileReader upload replaces the level exactly, including stale-cell removal and correct HUD brick count.",
+    "A1500-frame real-scheduler pointer-controlled sample scores535 with3lives and32bricks remaining; this establishes working play for that input, not all layouts.",
+    "Self-contained offline HTML; model independently catches and fixes missing keyboard-loop integration and missing tab handlers."
+  ],
+  "defects": [
+    "Editor initialization shows the Ready overlay, positioned absolutely with inset0 over the full stage, with no pointer pass-through or dismissal/forwarding handler. Targeted overlay events do nothing. Direct canvas drawing works only when bypassing that cover; normal pointer reachability is obstructed by the explicit source/CSS structure.",
+    "Restart resets balls, score and lives but keeps destroyed bricks absent. After clearing the final brick, Replay starts with an empty layout.",
+    "Save/Download status flash incidentally hides the editor overlay after1.4seconds, an undocumented workaround rather than a usable initial editing flow. The advertised tap-to-launch path is also obstructed while the Ready cover is shown; keyboard Space does launch and remove it."
+  ],
+  "verification": [
+    "Independent source-hashed final immutable artifact17cec180d0272bb785ef837ac90cee3ec5bff49de75e805362eab9ff31050eb5 in VM/DOM/nativeCanvas, actual events and RAF scheduler.",
+    "Real JSON download\u2192FileReader upload, exact layout replacement, keyboard/mouse/touch controls, score/lives, collision, last-brick win, restart/replay, and scheduled pointer gameplay checked. Ball position/velocity fixtures supply inputs to existing physics only; algorithms unchanged.",
+    "Editor reachability assessment combines explicit shown DOM/full-inset positioned CSS with targeted overlay events and absent forwarding/dismissal. No live browser hit testing was performed. Save\u21921400ms later hides the overlay in the actual scheduler."
+  ],
+  "verificationConcerns": [
+    "Many of54Bash calls debug a scratch RAF mock; it initially advances the ball once then clears its newly scheduled callback, producing misleading3000/5000-frame frozen simulations. Independent native scheduler confirms gameplay. Final model tests verify7physics and4keyboard scenarios and catch2real integration bugs, but miss overlay reachability and restart design restoration. Partial self-verification credit.",
+    "Directly dispatching canvas events bypasses a covering overlay and cannot alone establish a usable editor. That distinction is preserved in QA and grading.",
+    "No browser layout/hit testing or independent visual-polish verification; the overlay conclusion is a source/CSS/event-routing inference."
+  ],
+  "scopeCompliance": "Model alone authored product and scratch tests within its project; Codex supplied no app code, diagnoses, feedback or repair prompts. Independent QA stayed outside candidate directories.",
+  "workflowNotes": "Fresh solo RTFM Ornith, one exact original kickoff and normal autonomous settlement after29.408wall minutes. Model itself repaired keyboard integration and tab bindings. Native context and fixed60minute deadline preserved; no supervisor or human product steering.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "Single trial of a bundled author-informed configuration; same Q4 weights and shared32K output ceiling.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM is a fresh solo author-informed settings bundle, not an isolated causal test of reasoning or sampling. Same Q4 weights; common32K local output cap and60min deadline. Actual backend/template evidence is linked separately; this is not a replication of full-precision author benchmarks."
+  ],
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "rtfm",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Done. I built a complete, self-contained Breakout game with level editor as a single offline `index.html` (28 KB, zero external dependencies).\n\n## Deliverable\n- **`index.html`** \u2014 the single self-contained file. Open it directly in any browser; works fully offline.\n\n## Features implemented\n- **Level editor**: paint bricks with 5 types (varying hit-points, multi-hit bricks show a number), erase, clear all, or load presets.\n- **Play your layout**: \"\u25b6\ufe0f Play Layout\" / Play tab launches the ball against your grid.\n- **HUD**: live Score, Lives, Level, and remaining Bricks.\n- **Restart**: `R` key or the Restart/Replay buttons.\n- **Save/Load JSON**: save to `localStorage`, download as `breakout-level.json`, or load a JSON file back.\n- **Controls**: keyboard (`\u2190\u2192`/`WASD` move, `Space`/`\u2191`/`W` launch, `P` pause, `Esc` back to editor), plus mouse drag-to-paint / drag-to-move and full touch support.\n- **Editor \u2194 Play tabs** now correctly switch modes (a bug I caught and fixed during verification).\n\n## Verification\nI wrote a headless browser mock and drove the real game logic through it (no browser was available). I found and fixed two real bugs along the way:\n1. `movePaddleKeyboard()` was defined but never called \u2192 arrow keys did nothing. Fixed.\n2. Header tabs didn't switch modes. Fixed.\n\nTest results (all passing):\n- **Editor / save-load / mode-switch / HUD**: 10/10\n- **Physics** (brick collision + reflection, scoring, multi-hit, win detection, life-loss when ball falls): 7/7\n- **Keyboard** (event delivery + paddle movement during play + pause/resume): 4/4\n\nThe game is self-contained (no CDN/fonts/external URLs), and `index.html` passes a JS syntax check.",
+  "workflowInstructions": "rtfm-plan.json; run-rtfm.py; research/rtfm-conformance.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 29.408,
+  "wallMinutes": 29.408,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 47,
+  "toolCalls": 88,
+  "parentToolCalls": 88,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 1,
+  "modelUsageReported": {
+    "input": 27939,
+    "output": 61614,
+    "cacheRead": 4179961,
+    "totalTokens": 4269514
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 79419,
+  "parentPeakReportedPromptTokens": 79419,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 27939,
+    "output": 61614,
+    "cacheRead": 4179961,
+    "totalTokens": 4269514
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 28559,
+  "sha256": "17cec180d0272bb785ef837ac90cee3ec5bff49de75e805362eab9ff31050eb5",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 9,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 23,
+    "delegations": [],
+    "controller": "Fresh single persistent native Pi; exact original kickoff, author-informed inference recipe",
+    "actualPromptCount": 1,
+    "sharedLimitSeconds": 3600,
+    "authorRecipeSource": "research/rtfm-author-recipes.json",
+    "requestedRecipe": {
+      "model": "ornith-1.5:35b-256k",
+      "recipe": "Official general-task sampling; default reasoning enabled",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "outputBudgetBasis": "Common local benchmark cap; not presented as an Ornith-author universal recommendation. Their benchmark-specific larger budgets are separate.",
+      "preserveThinking": "Verify official template handling; no unsupported preservation promise."
+    },
+    "appliedRuntimeProfile": {
+      "apiModel": "ornith-1.5:35b-rtfm",
+      "baseUrl": "http://127.0.0.1:11437/v1",
+      "port": 11437,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "weights": "/home/b38tn1k/models/ollama/blobs/sha256-aaeb640f98a892980ef54876024293cc8d6987a86523aa1b947ffa9274ef800a",
+      "templateSHA256": "182e77dd83bd8e9ca818b240b82e28f243762cd5dda32e6eef327df7b1cd107e",
+      "unitSHA256": "a498d9e4986fb657b24d882e659e6550806d9e654efec7af919eb16b3876e5f2",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "repeat_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "gpuLayers": "42/42",
+      "role": "fresh solo",
+      "outputBudgetCaveat": "32768 shared local ceiling; not an Ornith universal author recommendation"
+    },
+    "runtimeConformance": "research/rtfm-conformance.json",
+    "productAuthor": "single local model only",
+    "externalProductGuidance": 0
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "humanSteering": false,
+  "modelActiveMinutes": 29.406,
+  "nativeModelCost": {
+    "model": "ornith",
+    "role": "worker",
+    "pid": 85193,
+    "assistantUsage": {
+      "input": 27939,
+      "output": 61614,
+      "cacheRead": 4179961,
+      "cacheWrite": 0,
+      "totalTokens": 4269514
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 27939,
+      "output": 61614,
+      "cacheRead": 4179961,
+      "cacheWrite": 0,
+      "totalTokens": 4269514
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 29.406,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1161312.525323875,
+        "end": 1161314.918946083
+      },
+      {
+        "start": 1161314.966268416,
+        "end": 1161315.816241875
+      },
+      {
+        "start": 1161315.861645833,
+        "end": 1161317.210229166
+      },
+      {
+        "start": 1161317.40314525,
+        "end": 1161494.487152791
+      },
+      {
+        "start": 1161494.567496291,
+        "end": 1161500.161670291
+      },
+      {
+        "start": 1161500.427833125,
+        "end": 1161555.7056735
+      },
+      {
+        "start": 1161555.958206041,
+        "end": 1161564.065012625
+      },
+      {
+        "start": 1161564.311123208,
+        "end": 1161569.352949041
+      },
+      {
+        "start": 1161569.634916791,
+        "end": 1161582.755225333
+      },
+      {
+        "start": 1161583.062147791,
+        "end": 1161606.979667916
+      },
+      {
+        "start": 1161607.276491333,
+        "end": 1161646.149696083
+      },
+      {
+        "start": 1161646.257319583,
+        "end": 1161651.162409416
+      },
+      {
+        "start": 1161651.283297791,
+        "end": 1161662.012701416
+      },
+      {
+        "start": 1161662.301713708,
+        "end": 1161669.383555708
+      },
+      {
+        "start": 1161669.489773083,
+        "end": 1161674.02635025
+      },
+      {
+        "start": 1161674.300624875,
+        "end": 1161707.622137875
+      },
+      {
+        "start": 1161707.742055375,
+        "end": 1161716.382462583
+      },
+      {
+        "start": 1161716.513451708,
+        "end": 1161722.946432458
+      },
+      {
+        "start": 1161723.285439625,
+        "end": 1161772.8399695
+      },
+      {
+        "start": 1161772.981714541,
+        "end": 1161776.940791291
+      },
+      {
+        "start": 1161777.238791208,
+        "end": 1161864.324845833
+      },
+      {
+        "start": 1161864.706533041,
+        "end": 1161893.132089958
+      },
+      {
+        "start": 1161893.459964875,
+        "end": 1161899.769636083
+      },
+      {
+        "start": 1161900.072146333,
+        "end": 1161905.700987458
+      },
+      {
+        "start": 1161905.988286125,
+        "end": 1161916.696378208
+      },
+      {
+        "start": 1161917.048241791,
+        "end": 1161938.22408325
+      },
+      {
+        "start": 1161938.5095615,
+        "end": 1161975.6434745
+      },
+      {
+        "start": 1161976.007875083,
+        "end": 1161990.475651125
+      },
+      {
+        "start": 1161990.850943666,
+        "end": 1162019.104202291
+      },
+      {
+        "start": 1162019.4880155,
+        "end": 1162030.022234625
+      },
+      {
+        "start": 1162030.346373375,
+        "end": 1162046.654624916
+      },
+      {
+        "start": 1162046.825339958,
+        "end": 1162052.925558958
+      },
+      {
+        "start": 1162053.268101833,
+        "end": 1162085.730353916
+      },
+      {
+        "start": 1162085.912370875,
+        "end": 1162098.330701041
+      },
+      {
+        "start": 1162098.341306333,
+        "end": 1162098.341877083
+      },
+      {
+        "start": 1162100.535996291,
+        "end": 1162128.934446875
+      },
+      {
+        "start": 1162129.125562916,
+        "end": 1162132.740978833
+      },
+      {
+        "start": 1162133.082868208,
+        "end": 1162184.348254833
+      },
+      {
+        "start": 1162184.786546041,
+        "end": 1162208.892355416
+      },
+      {
+        "start": 1162209.089270375,
+        "end": 1162212.512146458
+      },
+      {
+        "start": 1162212.922575916,
+        "end": 1162238.912714458
+      },
+      {
+        "start": 1162239.101718208,
+        "end": 1162249.94810025
+      },
+      {
+        "start": 1162250.321682958,
+        "end": 1162266.386772625
+      },
+      {
+        "start": 1162266.398765416,
+        "end": 1162266.399326041
+      },
+      {
+        "start": 1162268.601071875,
+        "end": 1162273.850083541
+      },
+      {
+        "start": 1162274.215731208,
+        "end": 1162280.043431291
+      },
+      {
+        "start": 1162280.453101416,
+        "end": 1162293.189973208
+      },
+      {
+        "start": 1162293.567558,
+        "end": 1162320.675147083
+      },
+      {
+        "start": 1162320.891690125,
+        "end": 1162333.803056541
+      },
+      {
+        "start": 1162334.035329333,
+        "end": 1162340.388492875
+      },
+      {
+        "start": 1162340.799688916,
+        "end": 1162347.400900625
+      },
+      {
+        "start": 1162347.785378416,
+        "end": 1162362.972839083
+      },
+      {
+        "start": 1162363.202575041,
+        "end": 1162369.101150166
+      },
+      {
+        "start": 1162369.477795958,
+        "end": 1162377.932169583
+      },
+      {
+        "start": 1162377.944736666,
+        "end": 1162377.945574708
+      },
+      {
+        "start": 1162380.173927333,
+        "end": 1162391.89175875
+      },
+      {
+        "start": 1162392.115263583,
+        "end": 1162404.387365083
+      },
+      {
+        "start": 1162404.620557833,
+        "end": 1162418.065505291
+      },
+      {
+        "start": 1162418.494088708,
+        "end": 1162474.784142666
+      },
+      {
+        "start": 1162475.249250083,
+        "end": 1162479.293253
+      },
+      {
+        "start": 1162479.659676083,
+        "end": 1162495.317639375
+      },
+      {
+        "start": 1162495.779402375,
+        "end": 1162521.203842
+      },
+      {
+        "start": 1162521.6551575,
+        "end": 1162566.252316041
+      },
+      {
+        "start": 1162566.706200833,
+        "end": 1162589.978691458
+      },
+      {
+        "start": 1162590.221499208,
+        "end": 1162605.30883475
+      },
+      {
+        "start": 1162605.814518875,
+        "end": 1162616.056760083
+      },
+      {
+        "start": 1162616.481422875,
+        "end": 1162620.363550875
+      },
+      {
+        "start": 1162620.762006875,
+        "end": 1162680.949775666
+      },
+      {
+        "start": 1162681.244621958,
+        "end": 1162687.443075833
+      },
+      {
+        "start": 1162687.930733125,
+        "end": 1162697.470272
+      },
+      {
+        "start": 1162697.733690708,
+        "end": 1162703.5101125
+      },
+      {
+        "start": 1162703.934169875,
+        "end": 1162759.319123625
+      },
+      {
+        "start": 1162759.568796291,
+        "end": 1162766.227244291
+      },
+      {
+        "start": 1162766.70946575,
+        "end": 1162809.618197541
+      },
+      {
+        "start": 1162810.177716625,
+        "end": 1162819.633779833
+      },
+      {
+        "start": 1162820.040073208,
+        "end": 1162828.067491041
+      },
+      {
+        "start": 1162828.319625625,
+        "end": 1162853.1274485
+      },
+      {
+        "start": 1162853.3913595,
+        "end": 1162866.676289625
+      },
+      {
+        "start": 1162867.193278833,
+        "end": 1162903.095412291
+      },
+      {
+        "start": 1162903.369546,
+        "end": 1162922.39516725
+      },
+      {
+        "start": 1162922.411395125,
+        "end": 1162922.412017333
+      },
+      {
+        "start": 1162924.694014666,
+        "end": 1162933.381330041
+      },
+      {
+        "start": 1162933.646089875,
+        "end": 1162940.38927075
+      },
+      {
+        "start": 1162940.842529416,
+        "end": 1162956.18030125
+      },
+      {
+        "start": 1162956.667695708,
+        "end": 1162972.08728175
+      },
+      {
+        "start": 1162972.589542791,
+        "end": 1162979.924877
+      },
+      {
+        "start": 1162980.415834666,
+        "end": 1162997.682531416
+      },
+      {
+        "start": 1162998.194219333,
+        "end": 1163011.7977885
+      },
+      {
+        "start": 1163012.077703833,
+        "end": 1163017.778075541
+      },
+      {
+        "start": 1163018.070710625,
+        "end": 1163032.117791541
+      },
+      {
+        "start": 1163032.552633041,
+        "end": 1163035.230884375
+      },
+      {
+        "start": 1163035.524229458,
+        "end": 1163054.446667666
+      },
+      {
+        "start": 1163054.980559291,
+        "end": 1163075.144520625
+      }
+    ],
+    "exitCode": 0
+  },
+  "rtfmFinalSnapshot": "strategies/reports/rtfm-finals/case109"
+}

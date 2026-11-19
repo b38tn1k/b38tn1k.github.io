@@ -1,0 +1,29 @@
+{
+  "method": "Independent exact final/stopped source and actual registered handlers/virtual timers. Setup calibration snapshot, not a main comparison. No browser verification.",
+  "sha256": "c7ee50d600ac98d62fc600cce916d71c00ca95e1948b7aecbcdbe9341c277f11",
+  "checks": [
+    {
+      "id": "default_start_first_scheduled_tick",
+      "pass": false,
+      "error": "Self-collision loop includes the new head at index0 and always loses",
+      "actual": true,
+      "expected": false
+    },
+    {
+      "id": "pause_resume_controls",
+      "pass": true,
+      "evidence": {
+        "pause": true,
+        "resume": true
+      }
+    },
+    {
+      "id": "restart_resets_dead_game",
+      "pass": true,
+      "evidence": {
+        "restart": true
+      }
+    }
+  ],
+  "pass": false
+}

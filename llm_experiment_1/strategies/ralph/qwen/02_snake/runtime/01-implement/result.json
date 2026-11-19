@@ -1,0 +1,20 @@
+{
+  "round": 1,
+  "role": "implement",
+  "modelLabel": "qwen",
+  "model": "qwen3.6:35b-a3b",
+  "started": "2026-11-16T19:44:18.232988+00:00",
+  "events": "ralph/qwen/02_snake/runtime/01-implement/events.jsonl",
+  "status": "completed",
+  "finished": "2026-11-16T19:54:36.829428+00:00",
+  "minutes": 10.31,
+  "reason": "agent_settled",
+  "exitCode": 143,
+  "proof": {
+    "forcedActivations": 1,
+    "completionRequests": 1,
+    "red": 1,
+    "green": 0
+  },
+  "testExitCode": 1
+}

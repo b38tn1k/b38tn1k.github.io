@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Tray Maker</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #1a1d23; color: #e8ecef; display: flex; height: 100vh; overflow: hidden;
+  }
+  .sidebar {
+    width: 340px; background: #22262e; padding: 20px; overflow-y: auto; border-right: 1px solid #333945;
+    flex-shrink: 0;
+  }
+  .main { flex: 1; display: flex; flex-direction: column; position: relative; }
+  .preview-wrap { flex: 1; position: relative; }
+  canvas { width: 100%; height: 100%; display: block; cursor: grab; }
+  canvas:active { cursor: grabbing; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .subtitle { font-size: 12px; color: #8b92a0; margin-bottom: 20px; }
+  .control { margin-bottom: 18px; }
+  .control label { display: block; font-size: 12px; color: #b8bfcc; margin-bottom: 4px; }
+  .control input[type="number"], .control input[type="range"] { width: 100%; }
+  .control input[type="number"] {
+    background: #2c313b; border: 1px solid #3a414d; color: #e8ecef; padding: 8px;
+    border-radius: 6px; font-size: 14px;
+  }
+  .control input[type="range"] { margin-top: 4px; }
+  .row2 { display: flex; gap: 10px; }
+  .row2 .control { flex: 1; }
+  .section { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #6b7380; margin: 24px 0 12px; }
+  .btn {
+    width: 100%; background: #3b82f6; color: white; border: none; padding: 12px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px;
+  }
+  .btn:hover { background: #2563eb; }
+  .dims { background: #2c313b; border-radius: 8px; padding: 12px; font-size: 12px; margin-top: 8px; }
+  .dim-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #3a414d; }
+  .dim-row:last-child { border-bottom: none; }
+  .dim-row .val { color: #7dd3fc; font-weight: 600; }
+  .hint { font-size: 11px; color: #6b7380; margin-top: 12px; line-height: 1.5; }
+  .status { position: absolute; bottom: 12px; right: 12px; font-size: 11px; color: #6b7380; }
+</style>
+</head>
+<body>
+  <div class="sidebar">
+    <h1>Drawer Tray Maker</h1>
+    <div class="subtitle">Design a compartmentalized organizer tray · export printable STL</div>
+
+    <div class="section">Outer Dimensions (mm)</div>
+    <div class="control">
+      <label>Length (X)</label>
+      <input type="number" id="length" value="180" step="1">
+      <input type="range" id="lengthSlider" value="180" min="40" max="400" step="1">
+    </div>
+    <div class="row2">
+      <div class="control">
+        <label>Width (Y)</label>
+        <input type="number" id="width" value="120" step="1">
+        <input type="range" id="widthSlider" value="120" min="40" max="300" step="1">
+      </div>
+      <div class="control">
+        <label>Height (Z)</label>
+        <input type="number" id="height" value="30" step="1">
+        <input type="range" id="heightSlider" value="30" min="10" max="100" step="1">
+      </div>
+    </div>
+
+    <div class="section">Grid</div>
+    <div class="row2">
+      <div class="control">
+        <label>Columns (X)</label>
+        <input type="number" id="cols" value="3" min="1" max="12" step="1">
+      </div>
+      <div class="control">
+        <label>Rows (Y)</label>
+        <input type="number" id="rows" value="2" min="1" max="12" step="1">
+      </div>
+    </div>
+
+    <div class="section">Thickness (mm)</div>
+    <div class="control">
+      <label>Wall thickness</label>
+      <input type="number" id="wall" value="2.5" min="0.8" max="10" step="0.5">
+    </div>
+    <div class="control">
+      <label>Floor thickness</label>
+      <input type="number" id="floor" value="2" min="0.8" max="10" step="0.5">
+    </div>
+
+    <button class="btn" id="exportBtn">Export STL</button>
+
+    <div class="section">Compartment Dimensions</div>
+    <div class="dims" id="dims"></div>
+
+    <div class="hint">
+      Drag on the preview to rotate the tray. Adjust the inputs to reshape it live.
+      The STL export contains the full tray (floor, walls, and partitions) as a triangle mesh,
+      ready to slice. Default grid is 3 columns × 2 rows.
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="preview-wrap">
+      <canvas id="view"></canvas>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ---------- State ----------
+  const state = {
+    length: 180, width: 120, height: 30,
+    cols: 3, rows: 2,
+    wall: 2.5, floor: 2
+  };
+
+  // ---------- Geometry ----------
+  function computeGeometry() {
+    const { length: L, width: W, height: H, cols, rows, wall, floor } = state;
+    const boxes = [];
+
+    // Floor slab: full footprint
+    boxes.push({ min: [0, 0, 0], max: [L, W, floor] });
+
+    const wallZ0 = floor;
+    const wallZ1 = H;
+    const innerY0 = wall;
+    const innerY1 = W - wall;
+    const innerX0 = wall;
+    const innerX1 = L - wall;
+
+    // Back wall (y = 0)
+    boxes.push({ min: [0, 0, wallZ0], max: [L, wall, wallZ1] });
+    // Front wall (y = W)
+    boxes.push({ min: [0, W - wall, wallZ0], max: [L, W, wallZ1] });
+    // Left wall (x = 0), between front/back
+    boxes.push({ min: [0, innerY0, wallZ0], max: [wall, innerY1, wallZ1] });
+    // Right wall (x = L)
+    boxes.push({ min: [L - wall, innerY0, wallZ0], max: [L, innerY1, wallZ1] });
+
+    // Interior partitions (perpendicular to X): cols - 1 plates
+    const cellL = (L - 2 * wall - (cols - 1) * wall) / cols;
+    for (let i = 1; i < cols; i++) {
+      const px = wall + i * cellL;
+      boxes.push({ min: [px, innerY0, wallZ0], max: [px + wall, innerY1, wallZ1] });
+    }
+
+    // Interior partitions (perpendicular to Y): rows - 1 plates
+    const cellW = (W - 2 * wall - (rows - 1) * wall) / rows;
+    for (let j = 1; j < rows; j++) {
+      const py = wall + j * cellW;
+      boxes.push({ min: [innerX0, py, wallZ0], max: [innerX1, py + wall, wallZ1] });
+    }
+
+    // Compartment size
+    const compL = cellL;
+    const compW = cellW;
+    const compH = H - floor;
+
+    return { boxes, compL, compW, compH };
+  }
+
+  // ---------- STL generation ----------
+  function boxToTriangles(box) {
+    const [x0, y0, z0] = box.min;
+    const [x1, y1, z1] = box.max;
+    const tris = [];
+
+    const faces = [
+      // +X
+      { normal: [1, 0, 0], corners: [[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1]] },
+      // -X
+      { normal: [-1, 0, 0], corners: [[x0,y0,z1],[x0,y1,z1],[x0,y1,z0],[x0,y0,z0]] },
+      // +Y
+      { normal: [0, 1, 0], corners: [[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]] },
+      // -Y
+      { normal: [0, -1, 0], corners: [[x0,y0,z1],[x1,y0,z1],[x1,y0,z0],[x0,y0,z0]] },
+      // +Z
+      { normal: [0, 0, 1], corners: [[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]] },
+      // -Z
+      { normal: [0, 0, -1], corners: [[x0,y0,z0],[x0,y1,z0],[x1,y1,z0],[x1,y0,z0]] }
+    ];
+
+    for (const f of faces) {
+      const [a, b, c, d] = f.corners;
+      tris.push({ normal: f.normal, tri: [a, b, c] });
+      tris.push({ normal: f.normal, tri: [a, c, d] });
+    }
+    return tris;
+  }
+
+  function generateSTL() {
+    const { boxes } = computeGeometry();
+    let allTris = [];
+    for (const box of boxes) allTris = allTris.concat(boxToTriangles(box));
+
+    let out = 'tray.stl\n';
+    for (const t of allTris) {
+      const [nx, ny, nz] = t.normal;
+      const [v0, v1, v2] = t.tri;
+      out += 'facet normal ' + nx.toFixed(6) + ' ' + ny.toFixed(6) + ' ' + nz.toFixed(6) + '\n';
+      out += '  outer loop\n';
+      out += '    vertex ' + v0[0].toFixed(6) + ' ' + v0[1].toFixed(6) + ' ' + v0[2].toFixed(6) + '\n';
+      out += '    vertex ' + v1[0].toFixed(6) + ' ' + v1[1].toFixed(6) + ' ' + v1[2].toFixed(6) + '\n';
+      out += '    vertex ' + v2[0].toFixed(6) + ' ' + v2[1].toFixed(6) + ' ' + v2[2].toFixed(6) + '\n';
+      out += '  endloop\nendfacet\n';
+    }
+    return { stl: out, tris: allTris.length };
+  }
+
+  // ---------- Rendering (simple 3D projection) ----------
+  const canvas = document.getElementById('view');
+  const ctx = canvas.getContext('2d');
+  let yaw = -0.5, pitch = 0.5, zoom = 1;
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
+    render();
+  }
+
+  function rotatePoint(p) {
+    let [x, y, z] = p;
+    // yaw about Z
+    let x1 = x * Math.cos(yaw) - y * Math.sin(yaw);
+    let y1 = x * Math.sin(yaw) + y * Math.cos(yaw);
+    // pitch about X
+    let y2 = y1 * Math.cos(pitch) - z * Math.sin(pitch);
+    let z2 = y1 * Math.sin(pitch) + z * Math.cos(pitch);
+    return [x1, y2, z2];
+  }
+
+  function project(p) {
+    const z = p[2] + 400; // camera distance
+    const f = (300 * zoom) / z;
+    return [canvas.width / 2 + p[0] * f, canvas.height / 2 - p[1] * f, z];
+  }
+
+  function cross(a, b) {
+    return [
+      a[1] * b[2] - a[2] * b[1],
+      a[2] * b[0] - a[0] * b[2],
+      a[0] * b[1] - a[1] * b[0]
+    ];
+  }
+
+  function normalize(v) {
+    const len = Math.hypot(v[0], v[1], v[2]) || 1;
+    return [v[0] / len, v[1] / len, v[2] / len];
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#1a1d23';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const { boxes } = computeGeometry();
+    const light = normalize([0.4, 0.6, 0.7]);
+    const tris = [];
+
+    for (const box of boxes) {
+      const trisForBox = boxToTriangles(box);
+      for (const t of trisForBox) {
+        const verts = t.tri.map(v => rotatePoint(v));
+        const projected = verts.map(v => project(v));
+        let normal = normalize(cross(
+          [verts[1][0]-verts[0][0], verts[1][1]-verts[0][1], verts[1][2]-verts[0][2]],
+          [verts[2][0]-verts[0][0], verts[2][1]-verts[0][1], verts[2][2]-verts[0][2]]
+        ));
+        // flip if back-facing
+        if (normal[2] < 0) {
+          const tmp = projected[1]; projected[1] = projected[2]; projected[2] = tmp;
+          normal = [-normal[0], -normal[1], -normal[2]];
+        }
+        const diff = normal[0]*light[0] + normal[1]*light[1] + normal[2]*light[2];
+        const brightness = Math.max(0.15, Math.min(1, 0.3 + 0.7 * diff));
+        tris.push({ projected, z: (verts[0][2]+verts[1][2]+verts[2][2])/3, brightness });
+      }
+    }
+
+    // painter's algorithm: far first
+    tris.sort((a, b) => b.z - a.z);
+
+    for (const t of tris) {
+      const b = Math.round(t.brightness * 60 + 20); // blue-ish base tone
+      ctx.beginPath();
+      ctx.moveTo(t.projected[0][0], t.projected[0][1]);
+      ctx.lineTo(t.projected[1][0], t.projected[1][1]);
+      ctx.lineTo(t.projected[2][0], t.projected[2][1]);
+      ctx.closePath();
+      ctx.fillStyle = 'rgb(' + b + ', ' + (b+20) + ', ' + (b+40) + ')';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(' + (b+30) + ', ' + (b+50) + ', ' + (b+70) + ', 0.6)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  // ---------- UI updates ----------
+  function updateDims() {
+    const { compL, compW, compH, cols, rows } = computeGeometry();
+    const dims = document.getElementById('dims');
+    let html = '';
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const id = (r * cols + c + 1);
+        html += '<div class="dim-row"><span>Cell ' + id + '</span>' +
+                '<span class="val">' + compL.toFixed(1) + ' × ' + compW.toFixed(1) +
+                ' × ' + compH.toFixed(1) + ' mm</span></div>';
+      }
+    }
+    dims.innerHTML = html;
+  }
+
+  function readInputs() {
+    state.length = clamp(parseFloat(document.getElementById('length').value) || 180, 40, 400);
+    state.width = clamp(parseFloat(document.getElementById('width').value) || 120, 40, 300);
+    state.height = clamp(parseFloat(document.getElementById('height').value) || 30, 10, 100);
+    state.cols = clamp(parseInt(document.getElementById('cols').value, 10) || 1, 1, 12);
+    state.rows = clamp(parseInt(document.getElementById('rows').value, 10) || 1, 1, 12);
+    state.wall = clamp(parseFloat(document.getElementById('wall').value) || 2.5, 0.8, 10);
+    state.floor = clamp(parseFloat(document.getElementById('floor').value) || 2, 0.8, 10);
+    // sync sliders
+    document.getElementById('lengthSlider').value = state.length;
+    document.getElementById('widthSlider').value = state.width;
+    document.getElementById('heightSlider').value = state.height;
+  }
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  function syncAndRender() {
+    readInputs();
+    updateDims();
+    render();
+    document.getElementById('status').textContent =
+      (computeGeometry().boxes.length * 2 * 6) + ' triangles';
+  }
+
+  // ---------- Event wiring ----------
+  function bindControl(id, sliderId) {
+    const input = document.getElementById(id);
+    input.addEventListener('input', syncAndRender);
+    if (sliderId) {
+      document.getElementById(sliderId).addEventListener('input', () => {
+        input.value = document.getElementById(sliderId).value;
+        syncAndRender();
+      });
+    }
+  }
+
+  bindControl('length', 'lengthSlider');
+  bindControl('width', 'widthSlider');
+  bindControl('height', 'heightSlider');
+  bindControl('cols', null);
+  bindControl('rows', null);
+  bindControl('wall', null);
+  bindControl('floor', null);
+
+  document.getElementById('exportBtn').addEventListener('click', function() {
+    const { stl, tris } = generateSTL();
+    const blob = new Blob([stl], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tray.stl';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    this.textContent = 'Exported (' + tris + ' tris)';
+    setTimeout(() => { this.textContent = 'Export STL'; }, 2000);
+  });
+
+  // Drag to rotate
+  let dragging = false, lastX = 0, lastY = 0;
+  canvas.addEventListener('mousedown', e => {
+    dragging = true; lastX = e.clientX; lastY = e.clientY;
+  });
+  window.addEventListener('mouseup', () => { dragging = false; });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    yaw += dx * 0.01;
+    pitch = clamp(pitch + dy * 0.01, -1.2, 1.2);
+    render();
+  });
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoom *= e.deltaY > 0 ? 0.9 : 1.1;
+    zoom = clamp(zoom, 0.3, 4);
+    render();
+  }, { passive: false });
+
+  window.addEventListener('resize', resize);
+  resize();
+  updateDims();
+})();
+</script>
+</body>
+</html>

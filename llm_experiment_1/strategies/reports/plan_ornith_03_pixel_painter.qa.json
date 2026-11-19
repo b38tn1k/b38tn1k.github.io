@@ -1,0 +1,89 @@
+{
+  "method": "Exact-source VM, DOM pointer/control events, backing grid and pixel-buffer Canvas shim; no real browser/PNG encoder",
+  "startup": "pass",
+  "clickGrid": [
+    0,
+    0,
+    0,
+    255
+  ],
+  "clickCanvas": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "undoAfterStroke": {
+    "entries": 1,
+    "disabled": true
+  },
+  "dragPixels": [
+    [
+      255,
+      91,
+      95,
+      255
+    ],
+    [
+      255,
+      91,
+      95,
+      255
+    ]
+  ],
+  "renderedRed": [
+    255,
+    91,
+    95,
+    255
+  ],
+  "erased": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "clear": {
+    "allTransparent": true,
+    "undoEntries": 4,
+    "undoDisabled": true
+  },
+  "resize": {
+    "width": 48,
+    "height": 40,
+    "gridLength": 1920,
+    "canvasWidth": 48,
+    "canvasHeight": 40,
+    "undoDisabled": true
+  },
+  "undoResize": {
+    "width": 48,
+    "height": 40,
+    "gridLength": 1920
+  },
+  "exportCalls": [
+    {
+      "kind": "canvasDataURL",
+      "width": 48,
+      "height": 40
+    },
+    {
+      "kind": "anchor",
+      "download": "pixel-art.png",
+      "href": "data:image/png;base64,QA_NOT_REAL_PNG"
+    }
+  ],
+  "forcedHistoryProbe": {
+    "reason": "Temporarily enable disabled Undo in a separate VM to inspect the underlying history handlers",
+    "undoOriginallyDisabled": true,
+    "afterUndo": {
+      "width": 32,
+      "height": 32
+    },
+    "afterRedo": {
+      "width": 48,
+      "height": 40
+    }
+  },
+  "sha256": "8a15c3c6ba3e7a1cdd003051c7b21e066c4f35149e53bb5a5be0b2a6a56d37f0"
+}

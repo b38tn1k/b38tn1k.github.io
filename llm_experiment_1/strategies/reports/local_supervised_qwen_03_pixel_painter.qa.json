@@ -1,0 +1,53 @@
+{
+  "method": "Independent exact-source nativeCanvas pixels, actual DOM controls and scaled coordinates, encoded PNG bytes. No browser layout/hit testing.",
+  "sha256": "a70b91eb7df63ed68b712a38e8a698be6f4f3319b1c677eb5250f43717345549",
+  "checks": [
+    {
+      "id": "actual_brush_eraser_clear",
+      "pass": true,
+      "evidence": {
+        "paint": true,
+        "erase": true,
+        "clear": true
+      }
+    },
+    {
+      "id": "two_stroke_undo_redo_and_clear_undo",
+      "pass": true,
+      "evidence": {
+        "undo": true,
+        "redo": true,
+        "clearUndo": true
+      }
+    },
+    {
+      "id": "real_native_PNG_export_at_selected_size",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          48,
+          24
+        ],
+        "bytes": 114
+      }
+    },
+    {
+      "id": "undo_then_new_stroke_discards_only_redo",
+      "pass": true,
+      "evidence": {
+        "branch": true,
+        "olderHistory": true
+      }
+    },
+    {
+      "id": "actual_touch_stroke_history_and_palette",
+      "pass": true,
+      "evidence": {
+        "touch": true,
+        "singleStrokeHistory": true,
+        "paletteControl": true
+      }
+    }
+  ],
+  "pass": true
+}

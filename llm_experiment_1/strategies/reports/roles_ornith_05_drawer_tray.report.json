@@ -1,0 +1,255 @@
+{
+  "rubricScores": {
+    "functionality": 0,
+    "artifact_correctness": 8,
+    "usability": 3,
+    "self_verification": 0,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Created a local UI scaffold with tray dimension fields and export/reset controls."
+  ],
+  "defects": [
+    "HTML ends in unfinished JavaScript without a closing script tag, initialization, event wiring or completed geometry/export implementation.",
+    "Coordinator spent the run delegating incremental CSG/BSP code fragments and diagnostic tasks; no working maker tool was delivered."
+  ],
+  "verificationConcerns": [
+    "Successful file append and syntax checks of fragments were treated as progress, but they did not establish an executable final application."
+  ],
+  "score": 11,
+  "grade": "F provisional - Unfinished HTML scaffold at the shared deadline",
+  "breakdown": {
+    "functionality": 0,
+    "artifact_correctness": 8,
+    "usability": 3,
+    "self_verification": 0,
+    "autonomy": 0
+  },
+  "verification": [
+    "Independent final-source checks in reports/roles_ornith_05_drawer_tray.qa.json; executable verifier in qa/remaining-*.cjs or the case-specific QA script.",
+    "Final artifact hash checked before assessment; no benchmark application code changed by supervisor."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed.",
+  "workflowNotes": "Role completion is audited from final child metadata as well as foreground tool results; asynchronous chain children are included. Application correctness, workflow adherence and autonomy are separate measures.",
+  "title": "Simple drawer tray generator",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "roles",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "I need to step back. The incremental appends are accumulating buggy code (e.g., `clipTreeNodes` references `tree.split`, which doesn't exist; the CSG is fundamentally broken). This approach isn't working well.\n\nLet me check the current state and switch strategy: reset the file and have a single developer write the **complete, correct** file in one `write` call (writing to disk doesn't hit output limits \u2014 the earlier failures were from pasting into chat).",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 60.27,
+  "wallMinutes": 60.27,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 65,
+  "toolCalls": 46,
+  "parentToolCalls": 17,
+  "childToolCalls": 29,
+  "toolResultsMarkedError": 9,
+  "modelUsageReported": {
+    "input": 38399,
+    "output": 145826,
+    "cacheRead": 243776,
+    "totalTokens": 428001
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 13101,
+  "parentPeakReportedPromptTokens": 13101,
+  "childPeakReportedPromptTokens": 7437,
+  "parentModelUsage": {
+    "input": 12401,
+    "output": 39024,
+    "cacheRead": 103622,
+    "totalTokens": 155047
+  },
+  "childModelUsage": {
+    "input": 25998,
+    "output": 106802,
+    "cacheRead": 140154,
+    "totalTokens": 272954
+  },
+  "artifactBytes": 9769,
+  "sha256": "cbcbaca22cba945c7c66d9f06697b571f3bb7f20dcd20705176821d7070c6a82",
+  "implementationChangesBySupervisor": 0,
+  "humanOrSupervisorSteering": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": false,
+    "implementationHandoff": false,
+    "rolesAttempted": {
+      "developer": 8
+    },
+    "rolesCompleted": {
+      "developer": 5
+    },
+    "parentArtifactReads": 2,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 8,
+    "parentWrites": 0,
+    "delegations": [
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 2883,
+          "output": 248,
+          "cacheRead": 5469,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 3
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/07665c48-8e33-4236-8123-b9ad8df257ca_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "07665c48-8e33-4236-8123-b9ad8df257ca",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 2675,
+          "output": 1294,
+          "cacheRead": 29264,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 7
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/3702257f-28df-47a7-987e-9de876160e8f_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "3702257f-28df-47a7-987e-9de876160e8f",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 3079,
+          "output": 32768,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 1
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/3724a528-a0bc-450c-9817-f9134c240cac_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "3724a528-a0bc-450c-9817-f9134c240cac",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 2412,
+          "output": 1442,
+          "cacheRead": 14714,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 4
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/60bf1a99-4fd4-45d7-8b03-867d117873a5_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "60bf1a99-4fd4-45d7-8b03-867d117873a5",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 3408,
+          "output": 32948,
+          "cacheRead": 12850,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 4
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/a3bd5e16-b13f-4997-a3d2-bb5eb48d06ab_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "a3bd5e16-b13f-4997-a3d2-bb5eb48d06ab",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 4820,
+          "output": 3064,
+          "cacheRead": 46154,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 8
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/c37be408-25ec-485b-8f19-28bcc23ec54f_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "c37be408-25ec-485b-8f19-28bcc23ec54f",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 2851,
+          "output": 2144,
+          "cacheRead": 24477,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 6
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/d0e5912e-a23c-44b1-8956-d3e4ed536446_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "d0e5912e-a23c-44b1-8956-d3e4ed536446",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 3870,
+          "output": 32894,
+          "cacheRead": 7226,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 3
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/05_drawer_tray/artifact-pi/subagents/artifacts/d80a050a-521f-4177-b8d4-07645dc697dd_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "d80a050a-521f-4177-b8d4-07645dc697dd",
+        "acceptanceStatus": "rejected"
+      }
+    ]
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

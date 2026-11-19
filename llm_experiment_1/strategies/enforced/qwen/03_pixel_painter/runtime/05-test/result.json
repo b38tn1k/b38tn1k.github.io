@@ -1,0 +1,12 @@
+{
+  "role": "test",
+  "number": 5,
+  "minutes": 6.1,
+  "reason": "stage_time_limit",
+  "exitCode": -9,
+  "artifactBefore": "12e841412859722ae04c74a0b274b9d3a133a9983a49ac28ee94373589ff9d77",
+  "artifactAfter": "12e841412859722ae04c74a0b274b9d3a133a9983a49ac28ee94373589ff9d77",
+  "prompt": "enforced/qwen/03_pixel_painter/runtime/05-test/prompt.txt",
+  "events": "enforced/qwen/03_pixel_painter/runtime/05-test/events.jsonl",
+  "stderr": "enforced/qwen/03_pixel_painter/runtime/05-test/stderr.log"
+}

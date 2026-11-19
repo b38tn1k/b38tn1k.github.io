@@ -1,0 +1,60 @@
+{
+  "artifactSHA256": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+  "checks": [
+    {
+      "id": "start",
+      "passed": true,
+      "evidence": "#startBtn present: true, boot stage=\"stage warmup\""
+    },
+    {
+      "id": "start",
+      "passed": true,
+      "evidence": "after clicking #startBtn, stage=\"stage ready\" (left warmup into ready)"
+    },
+    {
+      "id": "random_wait",
+      "passed": true,
+      "evidence": "pending timers after ready=1, still-not-go at +500ms=\"stage ready\", go at +4000ms=\"stage go\""
+    },
+    {
+      "id": "false_start_retry",
+      "passed": true,
+      "evidence": "was in ready=true; false-start stage=\"stage false\" contains \"false start\": true; after retry stage=\"stage ready\" ready: true"
+    },
+    {
+      "id": "false_start_retry",
+      "passed": true,
+      "evidence": "go rendered: true; sub-30ms click during go -> \"stage false\" (false start): true"
+    },
+    {
+      "id": "five_valid_trials",
+      "passed": true,
+      "evidence": "completed 5 valid trials: completed=true, final stage=\"stage done\", loops=0"
+    },
+    {
+      "id": "five_valid_trials",
+      "passed": true,
+      "evidence": "results-grid cards=5, valid numeric trial values=5"
+    },
+    {
+      "id": "summary",
+      "passed": true,
+      "evidence": "Average=true Fastest=true Slowest=true Spread=true restartBtn=true restartGhost=true"
+    },
+    {
+      "id": "summary",
+      "passed": true,
+      "evidence": "documented average=2700ms, recomputed mean of [2700, 2700, 2700, 2700, 2700] = 2700ms"
+    },
+    {
+      "id": "summary",
+      "passed": true,
+      "evidence": "New Settings button present at done=true; after click stage=\"stage warmup\" (returned to warmup / replayable)"
+    },
+    {
+      "id": "layout_persistence",
+      "passed": true,
+      "evidence": "default controls minWait=1000ms maxWait=3000ms trialCount=5 (defaults: 1s/3s/5)"
+    }
+  ]
+}

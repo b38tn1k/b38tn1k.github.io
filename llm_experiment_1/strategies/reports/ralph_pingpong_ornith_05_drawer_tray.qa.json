@@ -1,0 +1,18 @@
+{
+  "method": "Exact final source, full script startup in Node VM/DOM with native Canvas2D. No application algorithms changed; no browser/navigation. An isolated unmodified engine diagnostic uses browser-style globals without Node Buffer; it is not credit for a working UI or export.",
+  "sha256": "476f9df56b31400afeab463d4cbd463f99718785edded70fbf00c3bab2bdc00b",
+  "checks": [
+    {
+      "id": "exact_source_startup",
+      "pass": false,
+      "error": "Cannot read properties of undefined (reading 'addEventListener')",
+      "stack": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/ralph_pingpong/ornith/05_drawer_tray/index.html:script1:186\n  canvas.addEventListener(\"mousedown\", function (e) { dragging = true; var p = pointer(e); lastX = p[0]; lastY = p[1]; });\n         ^\n\nTypeError: Cannot read properties of undefined (reading 'addEventListener')\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/ralph_pingpong/ornith/05_drawer_tray/index.html:script1:186:10\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/ralph_pingpong/ornith/05_drawer_tray/index.html:script1:278:3\n    at Script.runInContext (node:vm:149:12)\n    at Object.runInContext (node:vm:301:6)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:30\n    at Array.forEach (<anonymous>)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:10)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/enforced-harness/runtime.cjs:17:14)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/proof-harness/runtime.cjs:6:15)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/proof-harness/runtime-v2.cjs:6:15)"
+    }
+  ],
+  "engineDiagnostic": {
+    "isolatedEngineOnly": true,
+    "bufferGlobal": "undefined",
+    "binaryError": "header is not defined"
+  },
+  "pass": false
+}

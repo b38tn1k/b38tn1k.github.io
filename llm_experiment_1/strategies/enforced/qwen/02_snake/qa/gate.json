@@ -1,0 +1,19 @@
+{
+  "passed": false,
+  "artifactSHA256": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+  "errors": [
+    "Executable acceptance test did not exit successfully",
+    "Acceptance check missing/failed: movement",
+    "Acceptance check missing/failed: wall_collision",
+    "Acceptance check missing/failed: self_collision",
+    "Acceptance check missing/failed: pause_resume",
+    "Acceptance check missing/failed: restart",
+    "Acceptance check missing/failed: difficulty",
+    "Independent review missing, stale or reports blocking findings"
+  ],
+  "stl": null,
+  "limits": [
+    "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+    "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+  ]
+}

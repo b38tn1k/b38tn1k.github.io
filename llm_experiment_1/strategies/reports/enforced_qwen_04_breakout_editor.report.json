@@ -1,0 +1,251 @@
+{
+  "score": 70,
+  "grade": "C+ provisional - playable editor/game and JSON roundtrip; restart layout and loaded-editor flow fail",
+  "rubricScores": {
+    "functionality": 34,
+    "artifact_correctness": 21,
+    "usability": 12,
+    "self_verification": 3,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent actual-handler tests pass brick drawing/erasing, keyboard and touch paddle control, positive scoring with brick removal, three life losses/game-over, and saved JSON Blob bytes loaded through the real file-input path.",
+    "The initial build reached a normal handoff in 3.34 minutes and already passed those core checks. Exact initial bytes are retained separately and tested with the same independent scenarios as the final artifact.",
+    "Repairs added a missing editorGridFromBricks helper, removing the initial ReferenceError when choosing Editor after loading during play."
+  ],
+  "defects": [
+    "Restart after destroying one of two edited bricks and then losing all lives resets score/lives but leaves only one brick. It restores hit points of surviving bricks rather than the original layout.",
+    "Loading JSON during play and selecting Editor leaves the overlay modal visible over the editor. The missing-helper crash was removed, but the complete user path still fails.",
+    "The first reviewer misclassified raw synthetic click events failing to trigger mousedown listeners as a missing application feature. Native user clicks already include mousedown. Repairs globalized scoped variables and added a click handler to accommodate the candidate tests, without resolving the core restart defect.",
+    "The seven independent scenarios have the same pass/fail pattern on initial and final artifacts: five pass, restart and loaded-editor access fail. The latter changes from a missing-helper exception to a persistent overlay; this is a partial repair, not a completed flow."
+  ],
+  "verification": [
+    "reports/enforced_qwen_04_breakout_editor.qa.cjs/.qa.json uses exact final source, real editor/toolbar/keyboard/touch/file handlers, controlled ball fixtures and the actual inline modal Restart code after a reachable partial-damage loss.",
+    "Final hash 2107750ff02b936f3f4a6e9b7218f8dd62713b38fed7506d45fabee929b10ca5. Initial snapshot hash 525f672fa77236bfadc03c4c3ac029918412fa9a73890273f8de65eb693bfe4b matches the recorded first-build artifact and has its own .initial.qa.json evidence."
+  ],
+  "verificationConcerns": [
+    "The supplied runtime dispatches individual DOM events. A synthetic click alone does not reproduce a physical click sequence; candidate failures from that mismatch are not independently counted as app bugs.",
+    "No independent browser layout/rendering, physical touch device or long-session stability check. Modal accessibility is inferred from the application's actual overlay class/state and CSS, not a browser screenshot.",
+    "The final artifact is frozen after the last repair; the later tester/reviewer cannot write it. Record the assessment only after terminal run metadata and a matching source hash."
+  ],
+  "scopeCompliance": "Pi alone implemented and repaired the application. Supplemental initial snapshot is an exact byte copy for evaluation, not supervisor application code or an additional benchmark attempt. No supervisor app-specific hints.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Required fresh build/test/review and two repair rounds ran. Independent application correctness and gate completion are assessed separately. Initial-versus-final evidence shows a narrow helper repair alongside unresolved restart/modal lifecycle failures. Final gate failed after 53.27 minutes; last test and review phases both reached their stage limits.",
+  "title": "Breakout with level editor",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Let me check where I can write:",
+  "workflowInstructions": "run-suite.py and config/qwen/agents",
+  "workflowProtocolRevision": 5,
+  "elapsedMinutes": 53.27,
+  "wallMinutes": 53.27,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "repair_limit",
+  "exitCode": 1,
+  "promptWords": 47,
+  "toolCalls": 260,
+  "parentToolCalls": 0,
+  "childToolCalls": 260,
+  "toolResultsMarkedError": 39,
+  "modelUsageReported": {
+    "input": 454073,
+    "output": 130347,
+    "cacheRead": 6130015,
+    "totalTokens": 6714435
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 49119,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 49119,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 454073,
+    "output": 130347,
+    "cacheRead": 6130015,
+    "totalTokens": 6714435
+  },
+  "artifactBytes": 31807,
+  "sha256": "2107750ff02b936f3f4a6e9b7218f8dd62713b38fed7506d45fabee929b10ca5",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 3,
+      "review": 3,
+      "repair": 2
+    },
+    "rolesCompleted": {
+      "build": 1,
+      "repair": 1,
+      "review": 1
+    },
+    "parentArtifactReads": 17,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 7,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 3.34,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": null,
+        "artifactAfter": "525f672fa77236bfadc03c4c3ac029918412fa9a73890273f8de65eb693bfe4b",
+        "prompt": "enforced/qwen/04_breakout_editor/runtime/01-build/prompt.txt",
+        "events": "enforced/qwen/04_breakout_editor/runtime/01-build/events.jsonl",
+        "stderr": "enforced/qwen/04_breakout_editor/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 8.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "525f672fa77236bfadc03c4c3ac029918412fa9a73890273f8de65eb693bfe4b",
+        "artifactAfter": "525f672fa77236bfadc03c4c3ac029918412fa9a73890273f8de65eb693bfe4b",
+        "prompt": "enforced/qwen/04_breakout_editor/runtime/02-test/prompt.txt",
+        "events": "enforced/qwen/04_breakout_editor/runtime/02-test/events.jsonl",
+        "stderr": "enforced/qwen/04_breakout_editor/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 5.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "525f672fa77236bfadc03c4c3ac029918412fa9a73890273f8de65eb693bfe4b",
+        "artifactAfter": "525f672fa77236bfadc03c4c3ac029918412fa9a73890273f8de65eb693bfe4b",
+        "prompt": "enforced/qwen/04_breakout_editor/runtime/03-review/prompt.txt",
+        "events": "enforced/qwen/04_breakout_editor/runtime/03-review/events.jsonl",
+        "stderr": "enforced/qwen/04_breakout_editor/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 6.42,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "525f672fa77236bfadc03c4c3ac029918412fa9a73890273f8de65eb693bfe4b",
+        "artifactAfter": "cbc44a0b1feb21f696ec4121faa2fc1695bc3055b460a80126fdc97d5ebc6469",
+        "prompt": "enforced/qwen/04_breakout_editor/runtime/04-repair/prompt.txt",
+        "events": "enforced/qwen/04_breakout_editor/runtime/04-repair/events.jsonl",
+        "stderr": "enforced/qwen/04_breakout_editor/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 5,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "cbc44a0b1feb21f696ec4121faa2fc1695bc3055b460a80126fdc97d5ebc6469",
+        "artifactAfter": "cbc44a0b1feb21f696ec4121faa2fc1695bc3055b460a80126fdc97d5ebc6469",
+        "prompt": "enforced/qwen/04_breakout_editor/runtime/05-test/prompt.txt",
+        "events": "enforced/qwen/04_breakout_editor/runtime/05-test/events.jsonl",
+        "stderr": "enforced/qwen/04_breakout_editor/runtime/05-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 6,
+        "minutes": 3.78,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "cbc44a0b1feb21f696ec4121faa2fc1695bc3055b460a80126fdc97d5ebc6469",
+        "artifactAfter": "cbc44a0b1feb21f696ec4121faa2fc1695bc3055b460a80126fdc97d5ebc6469",
+        "prompt": "enforced/qwen/04_breakout_editor/runtime/06-review/prompt.txt",
+        "events": "enforced/qwen/04_breakout_editor/runtime/06-review/events.jsonl",
+        "stderr": "enforced/qwen/04_breakout_editor/runtime/06-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 7,
+        "minutes": 10.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "cbc44a0b1feb21f696ec4121faa2fc1695bc3055b460a80126fdc97d5ebc6469",
+        "artifactAfter": "2107750ff02b936f3f4a6e9b7218f8dd62713b38fed7506d45fabee929b10ca5",
+        "prompt": "enforced/qwen/04_breakout_editor/runtime/07-repair/prompt.txt",
+        "events": "enforced/qwen/04_breakout_editor/runtime/07-repair/events.jsonl",
+        "stderr": "enforced/qwen/04_breakout_editor/runtime/07-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 8,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "2107750ff02b936f3f4a6e9b7218f8dd62713b38fed7506d45fabee929b10ca5",
+        "artifactAfter": "2107750ff02b936f3f4a6e9b7218f8dd62713b38fed7506d45fabee929b10ca5",
+        "prompt": "enforced/qwen/04_breakout_editor/runtime/08-test/prompt.txt",
+        "events": "enforced/qwen/04_breakout_editor/runtime/08-test/events.jsonl",
+        "stderr": "enforced/qwen/04_breakout_editor/runtime/08-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 9,
+        "minutes": 4.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "2107750ff02b936f3f4a6e9b7218f8dd62713b38fed7506d45fabee929b10ca5",
+        "artifactAfter": "2107750ff02b936f3f4a6e9b7218f8dd62713b38fed7506d45fabee929b10ca5",
+        "prompt": "enforced/qwen/04_breakout_editor/runtime/09-review/prompt.txt",
+        "events": "enforced/qwen/04_breakout_editor/runtime/09-review/events.jsonl",
+        "stderr": "enforced/qwen/04_breakout_editor/runtime/09-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "2107750ff02b936f3f4a6e9b7218f8dd62713b38fed7506d45fabee929b10ca5",
+      "errors": [
+        "Executable acceptance test did not exit successfully",
+        "Acceptance ledger missing or stale",
+        "Acceptance check missing/failed: editor_draw_erase",
+        "Acceptance check missing/failed: play_controls",
+        "Acceptance check missing/failed: brick_score",
+        "Acceptance check missing/failed: lives_game_over",
+        "Acceptance check missing/failed: restart_layout",
+        "Acceptance check missing/failed: json_roundtrip",
+        "Acceptance ledger contains a failed check; every recorded check must pass",
+        "Verifier did not trace loading the actual page and interacting with its controls",
+        "Verifier did not exercise timed application execution",
+        "Independent review missing, stale or reports blocking findings",
+        "Independent reviewer did not attest that tests execute application behavior"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": false
+}

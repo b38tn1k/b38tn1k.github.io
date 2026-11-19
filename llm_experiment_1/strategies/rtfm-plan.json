@@ -1,0 +1,59 @@
+{
+  "authorizedUTC": "2026-11-18T06:32:29.992922+00:00",
+  "name": "RTFM (solo)",
+  "strategy": "rtfm",
+  "status": "complete",
+  "startCondition": "All10 local_supervised attempts terminal, independently assessed, report/usage refreshed; then serving/Pi conformance pass. Do not change running cohort.",
+  "attempts": 10,
+  "models": [
+    "ornith",
+    "qwen"
+  ],
+  "tasks": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "mode": "Fresh standalone Pi builds from empty project directories; exact original five minimal kickoff prompts, once permodel. No supervisor, copied seed, forced proof/plan framework or task-specific Codex guidance.",
+  "budgetSeconds": 3600,
+  "budgetBasis": "Single-agent freshbuild cohort uses the existing60-minute freshbuild cap; prior120-minute cap applies to two-model rescuepairs.",
+  "recipes": "research/rtfm-author-recipes.json",
+  "folder": "rtfm/<model>/<original_task_folder>",
+  "runtime": "Corrected isolated Pi/Songbird transport, authors reasoning/sampling/context/template behavior verified before launch. Localweightsquantization maintained.",
+  "feedbackPolicy": "No Codex product code or repair prompts. Harness/config fixes logged separately; no hidden rerolls.",
+  "grading": "Same original app100-point rubric and original brief acceptance tests. Grade finalHTMLindependently, update existing matrix as eachlands.",
+  "report": "One RTFM column permodel in existing splitmatrix. Preserve all earlier columns/order; no duplicate grade table. Show Running/Not started/Grading distinctly, exact recipes/sources, costs and limitations.",
+  "accounting": "Track input/output/cache/nativecompaction, actual modelactivity and walltime; keep setup/conformance costs separate.",
+  "runtimeCompatibilityRevision": {
+    "recordedUTC": "2026-11-18T13:28:27.778281+00:00",
+    "httpIdleTimeoutMs": 3600000,
+    "reason": "Default5min HTTP idle timeout was observed during current localtray; futureRTFM aligns transport timeout to its unchanged60min originalwall to permit buffered long toolcalls. Currentcohort/profile unchanged.",
+    "proof": "research/rtfm-http-timeout-smoke.json",
+    "authorRecipesChanged": false,
+    "actualBackendVerified": true,
+    "serving": "Isolated same binary/Q4/CUDA/q8KV/flash/MTP author-template runners; original Ollama profiles/env intact",
+    "originalOllamaHistoryFailure": "research/rtfm-live-template.json",
+    "templateProof": "research/rtfm-direct-template.json",
+    "nativeProof": "research/rtfm-live-native.json",
+    "servingProof": "research/rtfm-live-serving-audit.json",
+    "neutralOrnithDefaults": "min_p0,repeat_penalty1,presence_penalty0; explicitly operational defaults, not published author additions"
+  },
+  "prelaunchProgress": {
+    "updatedUTC": "2026-11-18T14:13:40.512596+00:00",
+    "localSupervisionAssessed": 10,
+    "scoredRTFMStarted": 0,
+    "livePinnedAuthorTemplateExactBytesPass": true,
+    "actualNativeReasoningToolsSamplerChecks": "pass",
+    "servingCompatibility": "Isolated same-binary/same-weights llama-server services with pinned author Jinja templates; original Ollama profiles/env unchanged. Existing Ollama dropped prior thinking; failed probes retained.",
+    "proof": "research/rtfm-direct-template.json",
+    "servingAudit": "research/rtfm-live-serving-audit.json"
+  },
+  "startedUTC": "2026-11-18T14:13:40.589884+00:00",
+  "updatedUTC": "2026-11-18T16:12:34.523068+00:00",
+  "assessed": 10,
+  "activeCase": null,
+  "results": "rtfm-results.json",
+  "outputLimitInterpretation": "32768 is the API per-response generation ceiling; cumulative project output across native tool turns may exceed it. Clarification only; no inference setting or recipe changed."
+}

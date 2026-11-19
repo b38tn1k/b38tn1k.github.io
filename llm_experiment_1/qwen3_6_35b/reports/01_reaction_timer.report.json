@@ -1,0 +1,47 @@
+{
+  "status": "completed_with_critical_defects",
+  "grade": "F - reaction times invalid",
+  "score": 45,
+  "rubricScores": {
+    "functionality": 12,
+    "artifact_correctness": 17,
+    "usability": 5,
+    "self_verification": 1,
+    "autonomy": 10
+  },
+  "verified": [
+    "Initial script runs in controlled-clock VM",
+    "Five successful trials reach summary",
+    "No external runtime resources"
+  ],
+  "criticalDefects": [
+    "Starts timing in ready state, ignores taps then waits the same1.5-5s again before green; records3470ms for220ms response with random midpoint3250ms",
+    "False starts consume trials; five false starts yieldNaN average andInfinity best",
+    "Results bar animation calls indexOf on HTMLCollection, causing TypeError"
+  ],
+  "verificationConcerns": [
+    "Used static checks and launched browser with open; no observed browser assertions or interaction evidence",
+    "Final completion presents functionality without disclosing timing defects"
+  ],
+  "scopeCompliance": "No out-of-directory file write found in run; opened generated artifact in default browser without observing its state",
+  "title": "Reaction timer",
+  "elapsedMinutes": 1.9,
+  "promptWords": 34,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "toolCalls": 4,
+  "toolResultsMarkedError": 0,
+  "modelUsageReported": {
+    "input": 2026,
+    "output": 6998,
+    "cacheRead": 32723,
+    "totalTokens": 41747
+  },
+  "artifactBytes": 16841,
+  "sha256": "80205c125a8cd65b5d7ad7e71b414099cdb33f51bafe0d58d506767259713ddd",
+  "assistantTextContainingToolCallMarkup": 0,
+  "limitations": [
+    "Independent browser/visual testing not authorized after prior browser-origin denial; used exact-source VM checks and source review.",
+    "Qwen64K context differs from Ornith256K; not a controlled model-only comparison."
+  ]
+}

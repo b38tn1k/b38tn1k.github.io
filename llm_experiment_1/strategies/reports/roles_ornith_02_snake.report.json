@@ -1,0 +1,156 @@
+{
+  "score": 76,
+  "grade": "C+ provisional - playable Snake; deadline reached during broken verifier work",
+  "rubricScores": {
+    "functionality": 36,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 5,
+    "autonomy": 0
+  },
+  "breakdown": {
+    "functionality": 36,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 5,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent final-source checks pass keyboard start/movement, reversal protection, keyboard pause/resume, wall/self collision, tail-vacate handling and restart after death.",
+    "Eating food grows the snake and increases score; the tested interval changes from 140 to 133 ms after the first food. The delivered HTML has no external dependencies.",
+    "Developer returned a complete app in about 6.5 minutes. Final source matches the saved developer-stage artifact; tester did not modify application code."
+  ],
+  "defects": [
+    "Clicking Resume resets the game: the original startBtn click listener always calls startGame, alongside the later onclick resume handler. A paused fixture with six segments and three points becomes a fresh game with three segments and zero points.",
+    "Food placement stops after 500 random attempts and accepts the last candidate even if occupied. A nearly-full-board fixture demonstrates the invalid fallback; this fixture does not measure random-play failure frequency.",
+    "Space is handled without preventDefault because the prevention list contains a literal space rather than the Space code. Page scrolling or native button activation remains browser-unverified.",
+    "The shared 60 minute deadline elapsed during tester execution. UI was initially rejected because of concurrent separate foreground subagent calls and never subsequently ran."
+  ],
+  "verification": [
+    "Exact final-source event and physics fixtures in reports/roles_ornith_02_snake.qa.cjs/.qa.json. The event harness separately verifies that both addEventListener and onclick callbacks execute.",
+    "Final SHA-256: 1a20a12a5805b08e5e0e0cd65f71346d9ea96fcf508018db267348b95099ea2a matches the developer-stage snapshot.",
+    "One infrastructure-only recovery terminated an identified Node test process after 7 minutes at 100% CPU. No application code or repair hint was supplied. Cleanup after the shared deadline found no remaining case 12 Node verifier processes."
+  ],
+  "verificationConcerns": [
+    "Tester spent most of its time rewriting a homemade VM/DOM harness. It reported movement/scoring failures that are not reproduced by independent controlled fixtures, then entered an unbounded autoGrow loop.",
+    "After the one manual process termination, another verifier call remained pending until the project deadline. Developer's successful core tests did not cover the broken Resume button.",
+    "The renderer is a partial Canvas shim. Audio, native scrolling, browser appearance and compatibility were not checked."
+  ],
+  "scopeCompliance": "OS write boundary active. An attempted /tmp/snaketest.js write was blocked; subsequent verification files stayed inside the project. No successful out-of-tree write observed.",
+  "humanOrSupervisorSteering": 1,
+  "workflowNotes": "Developer completed; tester ran but did not complete; UI request was rejected by the one-call-per-turn guard. Foreground delegation itself worked. One logged infrastructure notice accompanied termination of a hung test subprocess. No app advice or implementation was provided. Protocol/timeout revision 2 applies only to subsequent cases.",
+  "runStatus": "completed_pending_assessment",
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "roles",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "No external references \u2014 the file is fully inline. Now let me delegate independent testing to a tester and a read-only UI review to a UI reviewer.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 60.01,
+  "wallMinutes": 60.01,
+  "status": "assessed",
+  "stopReason": "time_limit",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 60,
+  "parentToolCalls": 17,
+  "childToolCalls": 43,
+  "toolResultsMarkedError": 11,
+  "modelUsageReported": {
+    "input": 87074,
+    "output": 95009,
+    "cacheRead": 1000996,
+    "totalTokens": 1183079
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 55393,
+  "parentPeakReportedPromptTokens": 13443,
+  "childPeakReportedPromptTokens": 55393,
+  "parentModelUsage": {
+    "input": 12820,
+    "output": 3825,
+    "cacheRead": 95315,
+    "totalTokens": 111960
+  },
+  "childModelUsage": {
+    "input": 74254,
+    "output": 91184,
+    "cacheRead": 905681,
+    "totalTokens": 1071119
+  },
+  "artifactBytes": 17697,
+  "sha256": "1a20a12a5805b08e5e0e0cd65f71346d9ea96fcf508018db267348b95099ea2a",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": false,
+    "implementationHandoff": false,
+    "rolesAttempted": {
+      "developer": 1,
+      "tester": 1,
+      "ui": 1
+    },
+    "rolesCompleted": {
+      "developer": 1
+    },
+    "parentArtifactReads": 1,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 3,
+    "parentWrites": 0,
+    "delegations": [
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 18769,
+          "output": 17526,
+          "cacheRead": 190463,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 18
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/02_snake/artifact-pi/subagents/artifacts/1ace6966-fdc5-4ee4-903e-0239f4870373_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "1ace6966-fdc5-4ee4-903e-0239f4870373",
+        "acceptanceStatus": "attested"
+      },
+      {
+        "agent": "tester",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 55485,
+          "output": 73658,
+          "cacheRead": 715218,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 25
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/02_snake/artifact-pi/subagents/artifacts/e91930eb-b161-4183-a913-4f63261c69ea_tester_0_transcript.jsonl.gz"
+        },
+        "runId": "e91930eb-b161-4183-a913-4f63261c69ea",
+        "acceptanceStatus": "rejected"
+      }
+    ]
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

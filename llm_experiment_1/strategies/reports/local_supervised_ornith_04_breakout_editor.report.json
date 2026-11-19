@@ -1,0 +1,2438 @@
+{
+  "score": 56,
+  "grade": "D - product66.2; required editor/persistence flows fail and pair hits deadline",
+  "rubricScores": {
+    "functionality": 27,
+    "artifact_correctness": 18,
+    "usability": 8,
+    "self_verification": 3,
+    "autonomy": 0
+  },
+  "sha256": "992dd591ad72cf6bfd135e38e1e5bc7bcc5b642decad3c801dba32cff1dbf4c7",
+  "blockingRequiredDefect": true,
+  "summary": "The local worker repairs the empty-level advance loop, but required save/load, restart and editor/play flows remain broken. A new life-loss reset also replaces the edited level with a preset. The supervisor loses the task frame and the original pair deadline ends the attempt.",
+  "strengths": [
+    "Actual editor draw/erase handlers, keyboard paddle movement, scoring and three-life loss/game-over behavior work.",
+    "Clearing the last brick now repopulates a playable level rather than endlessly incrementing an empty level.",
+    "Self-contained offline single-file artifact remains; worker authored the source changes."
+  ],
+  "defects": [
+    "Downloaded JSON does not round-trip its own brick/color arrays through the actual file loader; it loads an empty layout.",
+    "Initial overlay Play is unwired; drawing does not dismiss that overlay; no functioning return-to-editor control during play.",
+    "Mouse motion does not move the paddle; restart/custom-layout restoration and win/replay reset fail.",
+    "Losing even the first life before hitting a brick now replaces the custom edited layout with presetClassic, removing custom brick colors/design."
+  ],
+  "verification": [
+    "Independent source-hashed VM/DOM/nativeCanvas actual handlers, scheduled callbacks, downloaded JSON Blob bytes and real file-change loader path. Existing closure functions/state exposed for fixtures only; no app algorithms replaced.",
+    "Controlled actual ball-loss/brick-hit fixtures test end-of-level and lives; explicit first-miss test records a red edited brick disappearing and brickcount21\u219226.",
+    "The source diff confirms presetClassic was newly inserted on life loss. Final recording requires the same exact source SHA992dd591ad72cf6bfd135e38e1e5bc7bcc5b642decad3c801dba32cff1dbf4c7."
+  ],
+  "verificationConcerns": [
+    "Local worker focused its checks on supervisor-requested win/life/physics changes; broad required persistence/editor flows remain unverified or incorrectly assumed good.",
+    "After its early native compactions, the supervisor treats benchmark projectID99 as a state-machine state and tries unsupported acceptance/transition actions instead of further app repairs. This is temporal association, not proof compaction alone caused the error.",
+    "Browser layout, hit testing/default actions and physical-device timing are not independently verified."
+  ],
+  "scopeCompliance": "Worker product writes stayed in its copy. Supervisor attempted outside-workspace state-machine/harness discovery; blocked read-scope attempts and rejected unsupported control actions are retained. No observed successful hidden-gold/history/other-case access. Local feedback included code-level suggestions despite requested behavioral style; Codex supplied none.",
+  "workflowNotes": "One counted local feedback delivered; original120-minute wall reached (120.004min, 71.794summed two-role active min). Supervisor drifted into unsupported state-machine acceptance actions instead of further app repairs. No Codex product diagnoses/code or context rewrite was supplied. Joint autonomy eligibility does not override original deadline rule: autonomy0.",
+  "humanOrSupervisorSteering": 0,
+  "supervisorControlActionCounts": {
+    "wait": 56,
+    "feedback": 2,
+    "accepted": 2,
+    "independentAcceptance": 1,
+    "feedback_accepted": 1,
+    "independent_acceptance": 1
+  },
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "local_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Cleaned up. Here's a summary of what I did.\n\n## Summary\n\nI repaired `index.html` (single self-contained offline file) fixing the three defects in the Breakout level editor.\n\n### Defect 1 (HIGH) \u2014 infinite level-advance loop\n**Problem:** In `update()`, when `bricks.size === 0`, the code did `level++` and called `startLevel()` \u2014 but `startLevel()` only resets ball/paddle; it never recreates bricks. So the grid stayed empty, the win check fired every tick, and `level` incremented forever with no bricks on screen.\n**Fix:** `presetClassic()` now repopulates the bricks *before* `startLevel()` when winning, so the level is playable after advancing.\n\n### Defect 2 (MEDIUM) \u2014 layout lost on losing a life\n**Problem:** On losing a life (lives > 0), `startLevel()` was called but did not restore the bricks the player had already broken, wiping that session's level.\n**Fix:** Added `rebuildCurrentLayout()` (wraps `presetClassic()`), called before `startLevel()` when a life is lost. The broken layout is repopulated for a fair replay of the current level.\n\n### Defect 3 (MEDIUM) \u2014 paddle hitbox over-extends at high velocity\n**Problem:** The paddle collision used `paddle.y + paddle.h + Math.max(6, ball.vy)`, extending the hitbox by the full (potentially >20px) velocity, so the ball could register a hit well below the paddle.\n**Fix:** Changed the tolerance to `Math.min(ball.vy, 6)` so the ball must be physically near the paddle to register a bounce.\n\n### Verification\nI ran a headless Node harness that loads the actual game script with a DOM/canvas stub, exposes internal state via injected hooks, and drives `update()` directly. All checks passed:\n- Game initializes (score 0, lives 3, level 1, bricks populated).\n- **Defect 1:** After clearing all bricks and 8 update ticks, level advances to exactly **2** (not looping) and bricks are repopulated (26).\n- **Defect 2:** After losing a life, lives \u2192 1 and the layout is rebuilt (26 bricks).\n- **Defect 3:** At `vy=100` with the ball +50px below the paddle, it does **not** bounce (hitbox correctly capped), whereas the old `max(6,vy)=100` logic would have.\n- JS parses cleanly and HTML tags are balanced.\n\nAll changes were confined to this directory; the single `index.html` remains self-contained and offline.",
+  "workflowInstructions": "local-supervised-rescue-plan.json; run-local-supervised.py",
+  "workflowProtocolRevision": 3,
+  "elapsedMinutes": 120.004,
+  "wallMinutes": 120.004,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": 0,
+  "promptWords": 47,
+  "toolCalls": 308,
+  "parentToolCalls": 45,
+  "childToolCalls": 263,
+  "toolResultsMarkedError": 38,
+  "modelUsageReported": {
+    "input": 359779,
+    "output": 51094,
+    "cacheRead": 10943448,
+    "totalTokens": 11354321
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 49322,
+  "parentPeakReportedPromptTokens": 35302,
+  "childPeakReportedPromptTokens": 49322,
+  "parentModelUsage": {
+    "input": 22798,
+    "output": 16295,
+    "cacheRead": 1064490,
+    "totalTokens": 1103583
+  },
+  "childModelUsage": {
+    "input": 336981,
+    "output": 34799,
+    "cacheRead": 9878958,
+    "totalTokens": 10250738
+  },
+  "artifactBytes": 27826,
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 3,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 16,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "ornith-1.5:35b-256k",
+    "supervisorModel": "qwen3.6:35b-a3b",
+    "feedbackCount": 1,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "supv-feedback-001",
+        "message": "BREAKOUT LEVEL EDITOR \u2014 Behavioral Findings (Evidence-Based)\n\nDefect 1 (HIGH): After clearing all bricks (winning a level), the game enters an infinite level-advance loop with zero bricks.\n\nEvidence: In update() around line ~498, when `bricks.size === 0`:\n  - code does `level++`\n  - calls `updateHUD()`\n  - calls `startLevel()` which resets ball/paddle state ONLY\n  - does NOT call defaultLayout(), presetClassic(), or any brick-creating function\n  - The empty `win(){}` function exists at line 525 but is never called from this path\n\nResult: After beating a level, bricks.size stays 0. The next update tick triggers the same win check again \u2192 level increments to 3, then 4, etc., forever. Ball physics runs on an empty canvas. Player can see no bricks and cannot play.\n\nExpected: When all bricks are cleared, the layout should be repopulated (e.g., reset to a new pattern or reload the editor's current brick grid) before advancing the level. The win() function should repopulate bricks, or the inline check should do so directly.\n\nDefect 2 (MEDIUM): Ball death on losing last life calls startLevel() which does not restore cleared bricks from this session.\n\nEvidence: In update() around line ~487, when `ball.y - ball.r > size.h`:\n  - decrements lives\n  - if lives > 0, calls startLevel() \u2014 resets ball/paddle/speed but NOT the brick grid\n  - The player's edited layout is partially lost: bricks they broke remain broken\n\nExpected: On losing a life (but not game over), the game should reset ball position for replay of the current level without removing progress on that life. However, calling startLevel() to \"restart\" after losing a life would also clear the score which may be intended \u2014 verify if this is correct behavior or a separate issue. Note: if the player intentionally wants to break bricks as part of scoring, losing a life shouldn't reset their level's brick layout since they already broke them and got points.\n\nDefect 3 (MEDIUM): Paddle collision bottom boundary extends too far when ball.vy is high.\n\nEvidence: Line ~443: `ball.y + ball.r <= paddle.y + paddle.h + Math.max(6, ball.vy)`\n  - When ball.vy > ~20 (possible at higher speeds with COLS scaling), the hitbox extends 20+ pixels below the paddle\n  - The ball can be visually well past the paddle and still register a valid collision\n  - This causes incorrect bounces: ball appears to pass under the paddle but physics registers a hit\n\nExpected: The collision extension should use a small fixed tolerance (e.g., `Math.min(ball.vy, 6)` or just `+6` or `+paddle.h`) rather than extending by the full velocity which scales with speed. This ensures the ball must be physically near or overlapping the paddle to register a hit.\n\nPlease fix Defect 1 as the priority \u2014 it breaks the core game loop. Defects 2 and 3 should also be corrected for proper gameplay behavior.\n",
+        "reason": "Found critical infinite level-loop bug: win condition does not repopulate bricks, causing endless level increments with zero bricks",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T05:45:16.176722+00:00",
+        "acceptedUTC": "2026-11-18T05:45:16.176734+00:00",
+        "elapsedSeconds": 346.554,
+        "workerPID": 36013,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T05:45:16.199764+00:00",
+        "deliveredElapsedSeconds": 346.554
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-18T05:52:44.356635+00:00",
+        "sha256": "992dd591ad72cf6bfd135e38e1e5bc7bcc5b642decad3c801dba32cff1dbf4c7",
+        "snapshot": "strategies/reports/local-supervised-rounds/case99/feedback1"
+      }
+    ],
+    "supervisorWakeups": [
+      {
+        "at": "2026-11-18T06:03:52.710738+00:00",
+        "elapsedSeconds": 1463.1,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:05:22.806919+00:00",
+        "elapsedSeconds": 1553.19,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:06:52.823043+00:00",
+        "elapsedSeconds": 1643.21,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:10:38.254145+00:00",
+        "elapsedSeconds": 1868.64,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:13:53.304376+00:00",
+        "elapsedSeconds": 2063.69,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:15:23.448271+00:00",
+        "elapsedSeconds": 2153.83,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:18:38.558448+00:00",
+        "elapsedSeconds": 2348.94,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:20:08.633521+00:00",
+        "elapsedSeconds": 2439.02,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:23:23.627918+00:00",
+        "elapsedSeconds": 2634.01,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:24:53.647410+00:00",
+        "elapsedSeconds": 2724.03,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:26:33.874920+00:00",
+        "elapsedSeconds": 2824.26,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:28:04.003670+00:00",
+        "elapsedSeconds": 2914.39,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:29:43.798328+00:00",
+        "elapsedSeconds": 3014.18,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:31:23.941223+00:00",
+        "elapsedSeconds": 3114.33,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:32:54.094541+00:00",
+        "elapsedSeconds": 3204.46,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:34:24.176315+00:00",
+        "elapsedSeconds": 3294.54,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:36:03.505617+00:00",
+        "elapsedSeconds": 3393.87,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:37:33.618472+00:00",
+        "elapsedSeconds": 3483.98,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:39:03.624422+00:00",
+        "elapsedSeconds": 3573.99,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:40:43.153124+00:00",
+        "elapsedSeconds": 3673.52,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:42:13.259350+00:00",
+        "elapsedSeconds": 3763.62,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:43:53.415960+00:00",
+        "elapsedSeconds": 3863.78,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:45:23.457780+00:00",
+        "elapsedSeconds": 3953.82,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:47:03.082364+00:00",
+        "elapsedSeconds": 4053.44,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:48:33.154474+00:00",
+        "elapsedSeconds": 4143.51,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:50:03.245302+00:00",
+        "elapsedSeconds": 4233.6,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:51:42.947373+00:00",
+        "elapsedSeconds": 4333.31,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:53:12.977625+00:00",
+        "elapsedSeconds": 4423.34,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:54:53.163451+00:00",
+        "elapsedSeconds": 4523.54,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:56:23.232485+00:00",
+        "elapsedSeconds": 4613.63,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:57:53.284237+00:00",
+        "elapsedSeconds": 4703.68,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T06:59:23.285773+00:00",
+        "elapsedSeconds": 4793.68,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:00:53.403746+00:00",
+        "elapsedSeconds": 4883.8,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:02:23.557308+00:00",
+        "elapsedSeconds": 4973.95,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:04:52.926351+00:00",
+        "elapsedSeconds": 5123.32,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:06:22.964122+00:00",
+        "elapsedSeconds": 5213.36,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:07:53.046247+00:00",
+        "elapsedSeconds": 5303.44,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:09:23.152158+00:00",
+        "elapsedSeconds": 5393.53,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:10:53.287351+00:00",
+        "elapsedSeconds": 5483.68,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:12:23.405823+00:00",
+        "elapsedSeconds": 5573.8,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:13:53.525604+00:00",
+        "elapsedSeconds": 5663.92,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:15:23.672099+00:00",
+        "elapsedSeconds": 5754.07,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:16:53.762594+00:00",
+        "elapsedSeconds": 5844.13,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:18:23.872762+00:00",
+        "elapsedSeconds": 5934.24,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:19:54.004761+00:00",
+        "elapsedSeconds": 6024.37,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:23:15.569405+00:00",
+        "elapsedSeconds": 6225.94,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:24:45.687329+00:00",
+        "elapsedSeconds": 6316.06,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:26:15.767016+00:00",
+        "elapsedSeconds": 6406.13,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:27:45.886359+00:00",
+        "elapsedSeconds": 6496.25,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:29:15.986734+00:00",
+        "elapsedSeconds": 6586.35,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:30:46.026323+00:00",
+        "elapsedSeconds": 6676.39,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:32:16.049567+00:00",
+        "elapsedSeconds": 6766.42,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:33:46.200906+00:00",
+        "elapsedSeconds": 6856.57,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:35:16.307696+00:00",
+        "elapsedSeconds": 6946.67,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:36:46.378935+00:00",
+        "elapsedSeconds": 7036.76,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T07:38:16.380024+00:00",
+        "elapsedSeconds": 7126.77,
+        "source": "worker_progress_or_clock_metadata"
+      }
+    ],
+    "supervisorYields": [
+      {
+        "at": "2026-11-18T06:03:58.709981+00:00",
+        "id": "supv-wait-001",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:05:28.265907+00:00",
+        "id": "supv-wait-002",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:10:37.301364+00:00",
+        "id": "supv-wait-003",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:13:51.884313+00:00",
+        "id": "supv-wait-004",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:13:58.194095+00:00",
+        "id": "supv-wait-005",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:18:37.133154+00:00",
+        "id": "supv-wait-006",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:18:43.034474+00:00",
+        "id": "supv-wait-007",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:23:22.220148+00:00",
+        "id": "supv-wait-008",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:23:28.269798+00:00",
+        "id": "supv-wait-009",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:26:33.090058+00:00",
+        "id": "supv-wait-010",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:26:38.462331+00:00",
+        "id": "supv-wait-011",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:29:43.177966+00:00",
+        "id": "supv-wait-012",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:31:23.304184+00:00",
+        "id": "supv-wait-013",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:31:28.263773+00:00",
+        "id": "supv-wait-014",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:33:54.670081+00:00",
+        "id": "supv-wait-015",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:36:02.712539+00:00",
+        "id": "supv-wait-016",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:36:07.692649+00:00",
+        "id": "supv-wait-017",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:37:37.948537+00:00",
+        "id": "supv-wait-018",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:40:42.203938+00:00",
+        "id": "supv-wait-019",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:40:47.309030+00:00",
+        "id": "supv-wait-020",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:43:51.831535+00:00",
+        "id": "supv-wait-021",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:43:57.685175+00:00",
+        "id": "supv-wait-022",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:47:02.283699+00:00",
+        "id": "supv-wait-023",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:47:07.331463+00:00",
+        "id": "supv-wait-024",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:48:37.637687+00:00",
+        "id": "supv-wait-025",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:51:42.165651+00:00",
+        "id": "supv-wait-026",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:51:47.151511+00:00",
+        "id": "supv-wait-027",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:54:52.075297+00:00",
+        "id": "supv-wait-028",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:54:57.596048+00:00",
+        "id": "supv-wait-029",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:56:27.909168+00:00",
+        "id": "supv-wait-030",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:57:57.996670+00:00",
+        "id": "supv-wait-031",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T06:59:27.922148+00:00",
+        "id": "supv-wait-032",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:00:57.977532+00:00",
+        "id": "supv-wait-033",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:04:51.964164+00:00",
+        "id": "supv-wait-034",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:04:57.334530+00:00",
+        "id": "supv-wait-035",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:06:27.305497+00:00",
+        "id": "supv-wait-036",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:07:57.559924+00:00",
+        "id": "supv-wait-037",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:09:27.540446+00:00",
+        "id": "supv-wait-038",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:10:57.778992+00:00",
+        "id": "supv-wait-039",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:12:27.961012+00:00",
+        "id": "supv-wait-040",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:13:58.200435+00:00",
+        "id": "supv-wait-041",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:15:28.324655+00:00",
+        "id": "supv-wait-042",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:16:55.975201+00:00",
+        "id": "supv-wait-043",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:18:28.542167+00:00",
+        "id": "supv-wait-044",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:23:14.113177+00:00",
+        "id": "supv-wait-045",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:23:20.108966+00:00",
+        "id": "supv-wait-046",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:25:55.630053+00:00",
+        "id": "supv-wait-047",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:26:20.124501+00:00",
+        "id": "supv-wait-048",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:27:48.036692+00:00",
+        "id": "supv-wait-049",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:29:20.447334+00:00",
+        "id": "supv-wait-050",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:30:48.143292+00:00",
+        "id": "supv-wait-051",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:32:18.128978+00:00",
+        "id": "supv-wait-052",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:33:50.751124+00:00",
+        "id": "supv-wait-053",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:35:18.408527+00:00",
+        "id": "supv-wait-054",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:36:50.815707+00:00",
+        "id": "supv-wait-055",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T07:38:18.446805+00:00",
+        "id": "supv-wait-056",
+        "pid": 36014,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      }
+    ],
+    "supervisorStopRequest": null,
+    "independentGradeGates": [
+      {
+        "at": "2026-11-18T05:53:57.590005+00:00",
+        "sha256": "992dd591ad72cf6bfd135e38e1e5bc7bcc5b642decad3c801dba32cff1dbf4c7",
+        "productScore": 66.25,
+        "blockingRequiredDefect": true,
+        "qa": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/reports/local_supervised_ornith_04_breakout_editor.round1.qa.json",
+        "assessment": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/runtime/local-supervised-case99-round1-product-assessment.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "id": "ornith-solo_billion-4",
+      "mode": "solo_billion",
+      "configurationMean": 74.8,
+      "source": "billion_on/ornith/04_breakout_editor/index.html",
+      "report": "billion_on/reports/ornith_04_breakout_editor.report.json",
+      "sha256": "8dfd279dd8b0965bb49d7df2217bb99e3027b76503be0154d72a141968acd883",
+      "score": 64,
+      "grade": "C- - game core improved; save/load and flow broken",
+      "rubricScores": {
+        "functionality": 26,
+        "artifact_correctness": 18,
+        "usability": 8,
+        "self_verification": 2,
+        "autonomy": 10
+      },
+      "baselineScope": "No out-of-directory file writes found on initial log review",
+      "baselineSteering": 0,
+      "baselineMinutes": 4.6,
+      "baselineActiveMinutes": 4.74,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_ornith_04_breakout_editor/index.html"
+    },
+    "sharedLimitSeconds": 7200
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Local supervisor/worker rescue of the exact original operator pre-seed with a120-minute shared wall. Codex independently validates outputs but supplies no repair diagnoses/code; product quality is separately normalized from80points. Pair wall and summed concurrent model activity differ. Superseded review-only work and prior human-rescue costs are separate."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 1,
+  "localModelCosts": {
+    "worker": {
+      "model": "ornith",
+      "role": "worker",
+      "pid": 36013,
+      "assistantUsage": {
+        "input": 22798,
+        "output": 16295,
+        "cacheRead": 1064490,
+        "cacheWrite": 0,
+        "totalTokens": 1103583
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 22798,
+        "output": 16295,
+        "cacheRead": 1064490,
+        "cacheWrite": 0,
+        "totalTokens": 1103583
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 7.469,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1129333.04701425,
+          "end": 1129334.21608
+        },
+        {
+          "start": 1129335.566127041,
+          "end": 1129335.575918666
+        },
+        {
+          "start": 1129344.404666875,
+          "end": 1129363.13969425
+        },
+        {
+          "start": 1129363.459443375,
+          "end": 1129365.046126958
+        },
+        {
+          "start": 1129366.29957325,
+          "end": 1129366.310648875
+        },
+        {
+          "start": 1129367.062409708,
+          "end": 1129368.350967166
+        },
+        {
+          "start": 1129369.195108541,
+          "end": 1129370.799327083
+        },
+        {
+          "start": 1129371.610307333,
+          "end": 1129375.568056666
+        },
+        {
+          "start": 1129376.51809225,
+          "end": 1129405.04935175
+        },
+        {
+          "start": 1129405.407359,
+          "end": 1129432.660463916
+        },
+        {
+          "start": 1129434.118766958,
+          "end": 1129475.249260708
+        },
+        {
+          "start": 1129476.355909166,
+          "end": 1129476.358243708
+        },
+        {
+          "start": 1129477.441915833,
+          "end": 1129480.895147958
+        },
+        {
+          "start": 1129482.081815208,
+          "end": 1129482.103201041
+        },
+        {
+          "start": 1129483.420432291,
+          "end": 1129498.579179833
+        },
+        {
+          "start": 1129499.86876725,
+          "end": 1129499.891381666
+        },
+        {
+          "start": 1129500.9413855,
+          "end": 1129508.625107083
+        },
+        {
+          "start": 1129513.346285,
+          "end": 1129513.358771916
+        },
+        {
+          "start": 1129514.250171458,
+          "end": 1129521.731481583
+        },
+        {
+          "start": 1129522.823492083,
+          "end": 1129543.803907666
+        },
+        {
+          "start": 1129544.704011625,
+          "end": 1129583.317421625
+        },
+        {
+          "start": 1129584.669725916,
+          "end": 1129584.675757
+        },
+        {
+          "start": 1129585.847564083,
+          "end": 1129593.362127375
+        },
+        {
+          "start": 1129594.741721958,
+          "end": 1129594.751505291
+        },
+        {
+          "start": 1129595.970871125,
+          "end": 1129612.830893125
+        },
+        {
+          "start": 1129615.067551041,
+          "end": 1129615.068551833
+        },
+        {
+          "start": 1129616.250364333,
+          "end": 1129623.364210083
+        },
+        {
+          "start": 1129624.780183625,
+          "end": 1129624.782455125
+        },
+        {
+          "start": 1129625.972177,
+          "end": 1129638.06662375
+        },
+        {
+          "start": 1129645.129009041,
+          "end": 1129645.133058625
+        },
+        {
+          "start": 1129646.07318375,
+          "end": 1129656.800064875
+        },
+        {
+          "start": 1129657.697093625,
+          "end": 1129669.426075708
+        },
+        {
+          "start": 1129669.950015375,
+          "end": 1129672.238521916
+        },
+        {
+          "start": 1129674.203308,
+          "end": 1129674.218214083
+        },
+        {
+          "start": 1129675.445104916,
+          "end": 1129677.092259
+        },
+        {
+          "start": 1129678.096218875,
+          "end": 1129690.284933958
+        },
+        {
+          "start": 1129691.807982416,
+          "end": 1129691.815844375
+        },
+        {
+          "start": 1129692.951285166,
+          "end": 1129701.438239958
+        },
+        {
+          "start": 1129704.51638425,
+          "end": 1129704.519909875
+        },
+        {
+          "start": 1129706.076137083,
+          "end": 1129706.080602833
+        },
+        {
+          "start": 1129708.674512125,
+          "end": 1129740.154232125
+        },
+        {
+          "start": 1129742.880692875,
+          "end": 1129742.885402958
+        },
+        {
+          "start": 1129745.446596125,
+          "end": 1129750.750083083
+        },
+        {
+          "start": 1129751.826372333,
+          "end": 1129757.318389041
+        },
+        {
+          "start": 1129758.274265291,
+          "end": 1129759.865452708
+        },
+        {
+          "start": 1129761.031835791,
+          "end": 1129776.609648208
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "qwen",
+      "role": "supervisor",
+      "pid": 36014,
+      "assistantUsage": {
+        "input": 336981,
+        "output": 34799,
+        "cacheRead": 9878958,
+        "cacheWrite": 0,
+        "totalTokens": 10250738
+      },
+      "recordedCompactionUsage": {
+        "input": 73531,
+        "output": 19637,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 93168
+      },
+      "recordedCombinedUsage": {
+        "input": 410512,
+        "output": 54436,
+        "cacheRead": 9878958,
+        "cacheWrite": 0,
+        "totalTokens": 10343906
+      },
+      "unreportedCompactions": 2,
+      "activeMinutes": 64.324,
+      "promptCount": 57,
+      "streamingWindows": [
+        {
+          "start": 1128985.060687625,
+          "end": 1128986.070958916
+        },
+        {
+          "start": 1128986.70969875,
+          "end": 1128987.979402291
+        },
+        {
+          "start": 1128996.835866166,
+          "end": 1128997.755991458
+        },
+        {
+          "start": 1128998.451604333,
+          "end": 1129000.000309416
+        },
+        {
+          "start": 1129001.262448416,
+          "end": 1129001.272124541
+        },
+        {
+          "start": 1129020.068892541,
+          "end": 1129020.0758375
+        },
+        {
+          "start": 1129022.405843375,
+          "end": 1129022.415011458
+        },
+        {
+          "start": 1129025.803886875,
+          "end": 1129025.812598083
+        },
+        {
+          "start": 1129028.667976041,
+          "end": 1129028.6772125
+        },
+        {
+          "start": 1129030.59018275,
+          "end": 1129030.596944875
+        },
+        {
+          "start": 1129032.186151791,
+          "end": 1129032.224959333
+        },
+        {
+          "start": 1129034.057702458,
+          "end": 1129034.065096958
+        },
+        {
+          "start": 1129035.821565291,
+          "end": 1129035.827916208
+        },
+        {
+          "start": 1129038.396087,
+          "end": 1129038.404523125
+        },
+        {
+          "start": 1129039.78467675,
+          "end": 1129039.833404291
+        },
+        {
+          "start": 1129042.63860375,
+          "end": 1129042.64515
+        },
+        {
+          "start": 1129044.572038708,
+          "end": 1129044.614828291
+        },
+        {
+          "start": 1129046.938215,
+          "end": 1129046.946331833
+        },
+        {
+          "start": 1129047.790142041,
+          "end": 1129068.917153041
+        },
+        {
+          "start": 1129072.478103583,
+          "end": 1129072.48607925
+        },
+        {
+          "start": 1129075.37766075,
+          "end": 1129075.390313708
+        },
+        {
+          "start": 1129077.182815791,
+          "end": 1129077.193139416
+        },
+        {
+          "start": 1129079.189593666,
+          "end": 1129079.235133666
+        },
+        {
+          "start": 1129097.774729291,
+          "end": 1129097.786857208
+        },
+        {
+          "start": 1129101.146473791,
+          "end": 1129101.156050708
+        },
+        {
+          "start": 1129102.70350125,
+          "end": 1129121.859272708
+        },
+        {
+          "start": 1129125.2309925,
+          "end": 1129125.237293375
+        },
+        {
+          "start": 1129126.517920541,
+          "end": 1129127.994976666
+        },
+        {
+          "start": 1129130.14760125,
+          "end": 1129130.154813458
+        },
+        {
+          "start": 1129132.170162541,
+          "end": 1129132.179014833
+        },
+        {
+          "start": 1129134.243178625,
+          "end": 1129134.255900208
+        },
+        {
+          "start": 1129135.370765291,
+          "end": 1129169.111327208
+        },
+        {
+          "start": 1129173.181774541,
+          "end": 1129173.192259125
+        },
+        {
+          "start": 1129174.61430775,
+          "end": 1129206.933896541
+        },
+        {
+          "start": 1129211.052836041,
+          "end": 1129211.062234916
+        },
+        {
+          "start": 1129212.69722475,
+          "end": 1129232.34111125
+        },
+        {
+          "start": 1129235.837705208,
+          "end": 1129235.846185166
+        },
+        {
+          "start": 1129237.265802125,
+          "end": 1129238.922069916
+        },
+        {
+          "start": 1129240.833627166,
+          "end": 1129240.8878785
+        },
+        {
+          "start": 1129242.455833041,
+          "end": 1129243.646176833
+        },
+        {
+          "start": 1129244.697427375,
+          "end": 1129246.378488458
+        },
+        {
+          "start": 1129248.767228083,
+          "end": 1129248.7748445
+        },
+        {
+          "start": 1129250.754976916,
+          "end": 1129250.76439325
+        },
+        {
+          "start": 1129251.799762916,
+          "end": 1129253.014890958
+        },
+        {
+          "start": 1129254.154348958,
+          "end": 1129255.554930083
+        },
+        {
+          "start": 1129256.615379791,
+          "end": 1129259.2239505
+        },
+        {
+          "start": 1129260.416946958,
+          "end": 1129262.258590958
+        },
+        {
+          "start": 1129264.030363,
+          "end": 1129264.036815083
+        },
+        {
+          "start": 1129265.055614041,
+          "end": 1129270.987766041
+        },
+        {
+          "start": 1129272.384511958,
+          "end": 1129296.716155916
+        },
+        {
+          "start": 1129300.654464791,
+          "end": 1129300.724507
+        },
+        {
+          "start": 1129302.4517635,
+          "end": 1129325.669644625
+        },
+        {
+          "start": 1129329.216774708,
+          "end": 1129329.250851875
+        },
+        {
+          "start": 1129330.623626958,
+          "end": 1129334.087298166
+        },
+        {
+          "start": 1129335.969268875,
+          "end": 1129341.976060166
+        },
+        {
+          "start": 1129354.030210375,
+          "end": 1129358.022462083
+        },
+        {
+          "start": 1129392.131405958,
+          "end": 1129392.139986791
+        },
+        {
+          "start": 1129439.093046541,
+          "end": 1129443.323420083
+        },
+        {
+          "start": 1129492.751034791,
+          "end": 1129492.759863
+        },
+        {
+          "start": 1129554.730845541,
+          "end": 1129557.786367333
+        },
+        {
+          "start": 1129622.182517458,
+          "end": 1129622.187880791
+        },
+        {
+          "start": 1129684.154818791,
+          "end": 1129688.111433375
+        },
+        {
+          "start": 1129780.086313583,
+          "end": 1129780.102389125
+        },
+        {
+          "start": 1129781.410434083,
+          "end": 1129783.475305
+        },
+        {
+          "start": 1129784.595660166,
+          "end": 1129786.039417083
+        },
+        {
+          "start": 1129787.997102875,
+          "end": 1129788.006937875
+        },
+        {
+          "start": 1129788.894342583,
+          "end": 1129790.759840041
+        },
+        {
+          "start": 1129791.875143708,
+          "end": 1129794.159325
+        },
+        {
+          "start": 1129796.219955916,
+          "end": 1129796.226546083
+        },
+        {
+          "start": 1129798.108046208,
+          "end": 1129798.118361416
+        },
+        {
+          "start": 1129800.107456625,
+          "end": 1129800.1170735
+        },
+        {
+          "start": 1129800.914451916,
+          "end": 1129806.957804791
+        },
+        {
+          "start": 1129808.255727958,
+          "end": 1129811.362035416
+        },
+        {
+          "start": 1129813.424869208,
+          "end": 1129813.439038833
+        },
+        {
+          "start": 1129814.494132791,
+          "end": 1129841.890621875
+        },
+        {
+          "start": 1129885.809869875,
+          "end": 1129885.819058583
+        },
+        {
+          "start": 1129890.174031583,
+          "end": 1129915.263820416
+        },
+        {
+          "start": 1129918.992066166,
+          "end": 1129918.997534666
+        },
+        {
+          "start": 1129920.332649541,
+          "end": 1129924.279859625
+        },
+        {
+          "start": 1129925.979111791,
+          "end": 1129926.032615208
+        },
+        {
+          "start": 1129927.371589416,
+          "end": 1129928.614710333
+        },
+        {
+          "start": 1129930.390716833,
+          "end": 1129930.441443458
+        },
+        {
+          "start": 1129932.255101666,
+          "end": 1129932.265400666
+        },
+        {
+          "start": 1129934.612186375,
+          "end": 1129934.623205458
+        },
+        {
+          "start": 1129936.618798166,
+          "end": 1129936.668194291
+        },
+        {
+          "start": 1129939.218883541,
+          "end": 1129939.228723708
+        },
+        {
+          "start": 1129946.489764625,
+          "end": 1129947.727317666
+        },
+        {
+          "start": 1129949.102846333,
+          "end": 1129951.489347
+        },
+        {
+          "start": 1129952.55328,
+          "end": 1129959.425887708
+        },
+        {
+          "start": 1129961.417882166,
+          "end": 1129961.469403833
+        },
+        {
+          "start": 1129968.904408625,
+          "end": 1129968.91506925
+        },
+        {
+          "start": 1129975.342907666,
+          "end": 1129980.240514083
+        },
+        {
+          "start": 1129983.306485375,
+          "end": 1129983.317776875
+        },
+        {
+          "start": 1129986.733161875,
+          "end": 1129986.776263208
+        },
+        {
+          "start": 1129989.730592,
+          "end": 1129989.782328083
+        },
+        {
+          "start": 1129990.824620625,
+          "end": 1129993.267315875
+        },
+        {
+          "start": 1129995.03371,
+          "end": 1129995.079593458
+        },
+        {
+          "start": 1130001.5333345,
+          "end": 1130006.054329625
+        },
+        {
+          "start": 1130009.122088833,
+          "end": 1130009.172132166
+        },
+        {
+          "start": 1130012.230864375,
+          "end": 1130012.240021458
+        },
+        {
+          "start": 1130017.76480425,
+          "end": 1130021.400143916
+        },
+        {
+          "start": 1130023.272452083,
+          "end": 1130023.277963291
+        },
+        {
+          "start": 1130029.777740166,
+          "end": 1130036.916646458
+        },
+        {
+          "start": 1130038.958524333,
+          "end": 1130038.966462458
+        },
+        {
+          "start": 1130052.314033041,
+          "end": 1130052.321570375
+        },
+        {
+          "start": 1130053.3281565,
+          "end": 1130055.759037583
+        },
+        {
+          "start": 1130057.810147541,
+          "end": 1130057.8523885
+        },
+        {
+          "start": 1130059.450623083,
+          "end": 1130061.066191583
+        },
+        {
+          "start": 1130062.5109285,
+          "end": 1130068.834708875
+        },
+        {
+          "start": 1130070.291146541,
+          "end": 1130077.261769166
+        },
+        {
+          "start": 1130079.3069435,
+          "end": 1130079.317399708
+        },
+        {
+          "start": 1130087.045628291,
+          "end": 1130087.056838
+        },
+        {
+          "start": 1130119.7040345,
+          "end": 1130119.708942541
+        },
+        {
+          "start": 1130181.29747725,
+          "end": 1130185.051396291
+        },
+        {
+          "start": 1130187.006813666,
+          "end": 1130187.0203485
+        },
+        {
+          "start": 1130193.619309083,
+          "end": 1130195.74701575
+        },
+        {
+          "start": 1130197.623402291,
+          "end": 1130197.6346575
+        },
+        {
+          "start": 1130209.256478833,
+          "end": 1130211.305961625
+        },
+        {
+          "start": 1130274.031909666,
+          "end": 1130274.045172083
+        },
+        {
+          "start": 1130365.9763525,
+          "end": 1130365.987616625
+        },
+        {
+          "start": 1130367.314894291,
+          "end": 1130372.432520541
+        },
+        {
+          "start": 1130432.691408333,
+          "end": 1130432.74119175
+        },
+        {
+          "start": 1130433.654870875,
+          "end": 1130444.978116875
+        },
+        {
+          "start": 1130447.858889166,
+          "end": 1130447.867159708
+        },
+        {
+          "start": 1130449.044653166,
+          "end": 1130451.769741833
+        },
+        {
+          "start": 1130451.777565541,
+          "end": 1130451.778997333
+        },
+        {
+          "start": 1130537.699089708,
+          "end": 1130537.708284541
+        },
+        {
+          "start": 1130539.037988125,
+          "end": 1130541.325723208
+        },
+        {
+          "start": 1130541.32940025,
+          "end": 1130541.330677625
+        },
+        {
+          "start": 1130627.781520583,
+          "end": 1130627.789456291
+        },
+        {
+          "start": 1130630.263193,
+          "end": 1130630.271529625
+        },
+        {
+          "start": 1130692.836843416,
+          "end": 1130692.846064166
+        },
+        {
+          "start": 1130754.329449375,
+          "end": 1130755.72081425
+        },
+        {
+          "start": 1130847.567916625,
+          "end": 1130847.574701916
+        },
+        {
+          "start": 1130848.996296708,
+          "end": 1130850.360941916
+        },
+        {
+          "start": 1130850.362225291,
+          "end": 1130850.362256458
+        },
+        {
+          "start": 1130852.985514125,
+          "end": 1130852.995666333
+        },
+        {
+          "start": 1130855.352058791,
+          "end": 1130855.364972041
+        },
+        {
+          "start": 1130947.1953325,
+          "end": 1130947.201328416
+        },
+        {
+          "start": 1130949.679162291,
+          "end": 1130949.686987208
+        },
+        {
+          "start": 1131041.512221625,
+          "end": 1131041.524315875
+        },
+        {
+          "start": 1131042.892419958,
+          "end": 1131044.943008
+        },
+        {
+          "start": 1131044.947906,
+          "end": 1131044.95100675
+        },
+        {
+          "start": 1131048.152020291,
+          "end": 1131048.158478041
+        },
+        {
+          "start": 1131049.558695333,
+          "end": 1131051.252895416
+        },
+        {
+          "start": 1131051.258233916,
+          "end": 1131051.259420458
+        },
+        {
+          "start": 1131138.349370416,
+          "end": 1131138.356663875
+        },
+        {
+          "start": 1131140.852285625,
+          "end": 1131140.858505875
+        },
+        {
+          "start": 1131232.975584916,
+          "end": 1131232.991808875
+        },
+        {
+          "start": 1131235.478857958,
+          "end": 1131235.530871416
+        },
+        {
+          "start": 1131327.397437541,
+          "end": 1131327.407435416
+        },
+        {
+          "start": 1131328.66372375,
+          "end": 1131330.191583583
+        },
+        {
+          "start": 1131330.194350666,
+          "end": 1131330.195313416
+        },
+        {
+          "start": 1131333.400627541,
+          "end": 1131333.41612
+        },
+        {
+          "start": 1131334.84222075,
+          "end": 1131336.092989541
+        },
+        {
+          "start": 1131336.097472041,
+          "end": 1131336.09826225
+        },
+        {
+          "start": 1131423.542433083,
+          "end": 1131423.556466541
+        },
+        {
+          "start": 1131426.1498185,
+          "end": 1131426.162267666
+        },
+        {
+          "start": 1131517.997468166,
+          "end": 1131518.010694916
+        },
+        {
+          "start": 1131520.61601025,
+          "end": 1131520.623349333
+        },
+        {
+          "start": 1131612.55020325,
+          "end": 1131612.555171625
+        },
+        {
+          "start": 1131613.906845916,
+          "end": 1131615.278498166
+        },
+        {
+          "start": 1131615.286188625,
+          "end": 1131615.287533958
+        },
+        {
+          "start": 1131618.505454791,
+          "end": 1131618.513687916
+        },
+        {
+          "start": 1131620.066562791,
+          "end": 1131621.328124375
+        },
+        {
+          "start": 1131621.332313291,
+          "end": 1131621.333607875
+        },
+        {
+          "start": 1131708.664540791,
+          "end": 1131708.673690083
+        },
+        {
+          "start": 1131711.274069625,
+          "end": 1131711.288516416
+        },
+        {
+          "start": 1131803.230281583,
+          "end": 1131803.239554333
+        },
+        {
+          "start": 1131804.780524375,
+          "end": 1131806.148493041
+        },
+        {
+          "start": 1131806.155772,
+          "end": 1131806.157228916
+        },
+        {
+          "start": 1131808.766103708,
+          "end": 1131808.773368666
+        },
+        {
+          "start": 1131810.260155166,
+          "end": 1131811.520456166
+        },
+        {
+          "start": 1131811.525267916,
+          "end": 1131811.526389875
+        },
+        {
+          "start": 1131899.0371735,
+          "end": 1131899.048311416
+        },
+        {
+          "start": 1131901.591175916,
+          "end": 1131901.596509708
+        },
+        {
+          "start": 1131993.505277916,
+          "end": 1131993.518860666
+        },
+        {
+          "start": 1131995.0478075,
+          "end": 1131996.234381458
+        },
+        {
+          "start": 1131996.239776416,
+          "end": 1131996.242314166
+        },
+        {
+          "start": 1131998.702157625,
+          "end": 1131998.708786625
+        },
+        {
+          "start": 1132001.3522245,
+          "end": 1132001.359178958
+        },
+        {
+          "start": 1132093.303904125,
+          "end": 1132093.307505166
+        },
+        {
+          "start": 1132094.833459583,
+          "end": 1132096.358427458
+        },
+        {
+          "start": 1132096.366497875,
+          "end": 1132096.367910166
+        },
+        {
+          "start": 1132098.824983833,
+          "end": 1132098.831429416
+        },
+        {
+          "start": 1132100.123268291,
+          "end": 1132101.321778125
+        },
+        {
+          "start": 1132101.329819458,
+          "end": 1132101.329852458
+        },
+        {
+          "start": 1132245.138946958,
+          "end": 1132245.17937125
+        },
+        {
+          "start": 1132246.534633708,
+          "end": 1132247.71746275
+        },
+        {
+          "start": 1132247.721698375,
+          "end": 1132247.722929916
+        },
+        {
+          "start": 1132278.981245375,
+          "end": 1132278.993796458
+        },
+        {
+          "start": 1132281.387905833,
+          "end": 1132281.39805925
+        },
+        {
+          "start": 1132373.184907666,
+          "end": 1132373.198988166
+        },
+        {
+          "start": 1132374.612046041,
+          "end": 1132375.750927458
+        },
+        {
+          "start": 1132375.755518791,
+          "end": 1132375.757191166
+        },
+        {
+          "start": 1132378.224917208,
+          "end": 1132378.233485541
+        },
+        {
+          "start": 1132379.575718333,
+          "end": 1132380.7308275
+        },
+        {
+          "start": 1132380.734443166,
+          "end": 1132380.734484125
+        },
+        {
+          "start": 1132468.469311083,
+          "end": 1132468.477539125
+        },
+        {
+          "start": 1132469.862897416,
+          "end": 1132470.986120333
+        },
+        {
+          "start": 1132470.990989125,
+          "end": 1132470.992237375
+        },
+        {
+          "start": 1132558.476419375,
+          "end": 1132558.483866833
+        },
+        {
+          "start": 1132560.857964375,
+          "end": 1132560.864884125
+        },
+        {
+          "start": 1132652.679409541,
+          "end": 1132652.687378416
+        },
+        {
+          "start": 1132654.132248416,
+          "end": 1132655.240580875
+        },
+        {
+          "start": 1132655.24545275,
+          "end": 1132655.247683333
+        },
+        {
+          "start": 1132657.944831583,
+          "end": 1132657.953162875
+        },
+        {
+          "start": 1132659.201535708,
+          "end": 1132660.345699666
+        },
+        {
+          "start": 1132660.351255,
+          "end": 1132660.352436708
+        },
+        {
+          "start": 1132748.142657208,
+          "end": 1132748.1516015
+        },
+        {
+          "start": 1132750.502183875,
+          "end": 1132750.513030916
+        },
+        {
+          "start": 1132842.318455375,
+          "end": 1132842.32500625
+        },
+        {
+          "start": 1132843.717183875,
+          "end": 1132844.865226583
+        },
+        {
+          "start": 1132844.870009958,
+          "end": 1132844.871702375
+        },
+        {
+          "start": 1132848.175700041,
+          "end": 1132848.186075625
+        },
+        {
+          "start": 1132849.541974625,
+          "end": 1132850.721007125
+        },
+        {
+          "start": 1132850.726829291,
+          "end": 1132850.728523833
+        },
+        {
+          "start": 1132938.370627625,
+          "end": 1132938.379678833
+        },
+        {
+          "start": 1132940.723606208,
+          "end": 1132940.73382675
+        },
+        {
+          "start": 1133032.650556291,
+          "end": 1133032.65877425
+        },
+        {
+          "start": 1133034.1407795,
+          "end": 1133035.318129791
+        },
+        {
+          "start": 1133035.322869916,
+          "end": 1133035.324036
+        },
+        {
+          "start": 1133037.87727775,
+          "end": 1133037.883955833
+        },
+        {
+          "start": 1133039.205867875,
+          "end": 1133040.366283875
+        },
+        {
+          "start": 1133040.371598041,
+          "end": 1133040.371632208
+        },
+        {
+          "start": 1133128.052391583,
+          "end": 1133128.062991708
+        },
+        {
+          "start": 1133129.529387958,
+          "end": 1133130.671587291
+        },
+        {
+          "start": 1133130.676456625,
+          "end": 1133130.678067625
+        },
+        {
+          "start": 1133218.199204333,
+          "end": 1133218.20661325
+        },
+        {
+          "start": 1133220.699958416,
+          "end": 1133220.707067416
+        },
+        {
+          "start": 1133312.559077416,
+          "end": 1133312.571286791
+        },
+        {
+          "start": 1133314.054648291,
+          "end": 1133315.194532833
+        },
+        {
+          "start": 1133315.201135041,
+          "end": 1133315.202389333
+        },
+        {
+          "start": 1133317.752063083,
+          "end": 1133317.759105666
+        },
+        {
+          "start": 1133319.002945583,
+          "end": 1133320.184500208
+        },
+        {
+          "start": 1133320.188949416,
+          "end": 1133320.189960583
+        },
+        {
+          "start": 1133407.947377541,
+          "end": 1133407.96069775
+        },
+        {
+          "start": 1133410.529610666,
+          "end": 1133410.544151375
+        },
+        {
+          "start": 1133502.423895458,
+          "end": 1133502.434196166
+        },
+        {
+          "start": 1133503.916541125,
+          "end": 1133505.11870375
+        },
+        {
+          "start": 1133505.124929291,
+          "end": 1133505.126015666
+        },
+        {
+          "start": 1133508.050941833,
+          "end": 1133508.063377958
+        },
+        {
+          "start": 1133509.4642525,
+          "end": 1133510.64613875
+        },
+        {
+          "start": 1133510.653545125,
+          "end": 1133510.654451333
+        },
+        {
+          "start": 1133598.218661416,
+          "end": 1133598.238153
+        },
+        {
+          "start": 1133599.77472275,
+          "end": 1133600.974974875
+        },
+        {
+          "start": 1133600.9818575,
+          "end": 1133600.983221958
+        },
+        {
+          "start": 1133688.261740375,
+          "end": 1133688.279573166
+        },
+        {
+          "start": 1133689.873881666,
+          "end": 1133691.062769083
+        },
+        {
+          "start": 1133691.067065041,
+          "end": 1133691.069314875
+        },
+        {
+          "start": 1133778.357460041,
+          "end": 1133778.369538708
+        },
+        {
+          "start": 1133779.823113666,
+          "end": 1133780.988568291
+        },
+        {
+          "start": 1133780.995298916,
+          "end": 1133780.997098958
+        },
+        {
+          "start": 1133868.466035208,
+          "end": 1133868.471851875
+        },
+        {
+          "start": 1133869.802415833,
+          "end": 1133871.044374875
+        },
+        {
+          "start": 1133871.051007791,
+          "end": 1133871.052881041
+        },
+        {
+          "start": 1133958.583934291,
+          "end": 1133958.594590875
+        },
+        {
+          "start": 1134103.910544208,
+          "end": 1134105.031631541
+        },
+        {
+          "start": 1134105.03979425,
+          "end": 1134105.039899916
+        },
+        {
+          "start": 1134107.750460125,
+          "end": 1134107.761253708
+        },
+        {
+          "start": 1134109.273423666,
+          "end": 1134110.401903458
+        },
+        {
+          "start": 1134110.406802916,
+          "end": 1134110.408571333
+        },
+        {
+          "start": 1134197.896288291,
+          "end": 1134197.910617166
+        },
+        {
+          "start": 1134199.231199375,
+          "end": 1134200.373033625
+        },
+        {
+          "start": 1134200.377747875,
+          "end": 1134200.379605041
+        },
+        {
+          "start": 1134288.012828541,
+          "end": 1134288.024481916
+        },
+        {
+          "start": 1134289.484502666,
+          "end": 1134290.627682416
+        },
+        {
+          "start": 1134290.633448291,
+          "end": 1134290.63499975
+        },
+        {
+          "start": 1134378.10824225,
+          "end": 1134378.120354958
+        },
+        {
+          "start": 1134379.461408708,
+          "end": 1134380.608456208
+        },
+        {
+          "start": 1134380.615378375,
+          "end": 1134380.617535916
+        },
+        {
+          "start": 1134468.254862791,
+          "end": 1134468.264831875
+        },
+        {
+          "start": 1134469.724470416,
+          "end": 1134470.847457083
+        },
+        {
+          "start": 1134470.856954666,
+          "end": 1134470.858689125
+        },
+        {
+          "start": 1134558.366177541,
+          "end": 1134558.381244458
+        },
+        {
+          "start": 1134559.898251333,
+          "end": 1134561.029779541
+        },
+        {
+          "start": 1134561.035897166,
+          "end": 1134561.038963416
+        },
+        {
+          "start": 1134648.527048375,
+          "end": 1134648.545346291
+        },
+        {
+          "start": 1134650.120956916,
+          "end": 1134651.2695665
+        },
+        {
+          "start": 1134651.27701575,
+          "end": 1134651.278903333
+        },
+        {
+          "start": 1134738.71078775,
+          "end": 1134738.737667875
+        },
+        {
+          "start": 1134740.226160166,
+          "end": 1134741.393948666
+        },
+        {
+          "start": 1134741.398616708,
+          "end": 1134741.401274791
+        },
+        {
+          "start": 1134827.720190708,
+          "end": 1134829.018963666
+        },
+        {
+          "start": 1134829.024650541,
+          "end": 1134829.02676675
+        },
+        {
+          "start": 1134918.903735416,
+          "end": 1134918.916197833
+        },
+        {
+          "start": 1134920.417779416,
+          "end": 1134921.584514333
+        },
+        {
+          "start": 1134921.590091833,
+          "end": 1134921.592337625
+        },
+        {
+          "start": 1135009.017583416,
+          "end": 1135009.035433
+        },
+        {
+          "start": 1135205.982131458,
+          "end": 1135207.151207666
+        },
+        {
+          "start": 1135207.159881666,
+          "end": 1135207.161177583
+        },
+        {
+          "start": 1135210.4935385,
+          "end": 1135210.508544583
+        },
+        {
+          "start": 1135211.972252833,
+          "end": 1135213.150481833
+        },
+        {
+          "start": 1135213.155480291,
+          "end": 1135213.15552025
+        },
+        {
+          "start": 1135367.506685625,
+          "end": 1135368.671933625
+        },
+        {
+          "start": 1135368.675531041,
+          "end": 1135368.67691825
+        },
+        {
+          "start": 1135390.6867425,
+          "end": 1135390.696125958
+        },
+        {
+          "start": 1135392.014083375,
+          "end": 1135393.165014375
+        },
+        {
+          "start": 1135393.168984625,
+          "end": 1135393.170941041
+        },
+        {
+          "start": 1135479.815106083,
+          "end": 1135481.076878833
+        },
+        {
+          "start": 1135481.081499458,
+          "end": 1135481.084783666
+        },
+        {
+          "start": 1135570.927181833,
+          "end": 1135570.94032225
+        },
+        {
+          "start": 1135572.361421625,
+          "end": 1135573.480451
+        },
+        {
+          "start": 1135573.492268416,
+          "end": 1135573.494006416
+        },
+        {
+          "start": 1135659.964877333,
+          "end": 1135661.182825041
+        },
+        {
+          "start": 1135661.186921666,
+          "end": 1135661.188447791
+        },
+        {
+          "start": 1135749.976193833,
+          "end": 1135751.16822975
+        },
+        {
+          "start": 1135751.173074166,
+          "end": 1135751.174867541
+        },
+        {
+          "start": 1135841.145881791,
+          "end": 1135841.168130583
+        },
+        {
+          "start": 1135842.66500075,
+          "end": 1135843.790061958
+        },
+        {
+          "start": 1135843.796923666,
+          "end": 1135843.799072625
+        },
+        {
+          "start": 1135930.247940083,
+          "end": 1135931.44716425
+        },
+        {
+          "start": 1135931.45199325,
+          "end": 1135931.453390375
+        },
+        {
+          "start": 1136021.295648041,
+          "end": 1136021.307304958
+        },
+        {
+          "start": 1136022.74417075,
+          "end": 1136023.876176291
+        },
+        {
+          "start": 1136023.882115,
+          "end": 1136023.883465958
+        },
+        {
+          "start": 1136110.296747708,
+          "end": 1136111.50916575
+        },
+        {
+          "start": 1136111.512280125,
+          "end": 1136111.513272708
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 120.004,
+  "summedModelActiveMinutes": 71.794,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 22798,
+      "output": 16295,
+      "cacheRead": 1064490,
+      "totalTokens": 1103583
+    },
+    "qwen": {
+      "input": 336981,
+      "output": 34799,
+      "cacheRead": 9878958,
+      "totalTokens": 10250738
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 7.469,
+    "qwen": 64.324
+  },
+  "localProductScore": 66.2,
+  "localProductTargetMet": false,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 73531,
+        "output": 19637,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 93168
+      },
+      "unreportedAttempts": 2
+    }
+  }
+}

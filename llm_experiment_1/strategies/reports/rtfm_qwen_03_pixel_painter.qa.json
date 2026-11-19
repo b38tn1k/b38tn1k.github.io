@@ -1,0 +1,109 @@
+{
+  "method": "Independent exact-source VM/DOM, actual mouse/touch/buttons/input attributes, logical RGBA and real nativeCanvas backing pixels plus decoded PNG. Generic execution of original inline input/change attribute handlers models browser event binding absent in DOM adapter; no app algorithms replaced. Canvas backing pixel geometry checked, not browser layout/hit testing.",
+  "sha256": "a98c8caf33d6857ed69a76b0a93ff0ac40bf1c7f8e38863072a405b7cd8a88a8",
+  "checks": [
+    {
+      "id": "mouse_touch_palette_brush_eraser_history_clear_and_branch",
+      "pass": true,
+      "evidence": {
+        "logicalMouse": true,
+        "touch": true,
+        "eraserUsesDeclaredBackground": true,
+        "undoRedo": true,
+        "clearUndo": true,
+        "branch": true,
+        "palette": true
+      }
+    },
+    {
+      "id": "zoomed_display_renders_paint_under_actual_pointer",
+      "pass": false,
+      "error": "Zoom8 maps click to logical5,5 but renders it at backing5,5 instead of44,44",
+      "actual": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "resize_modal_dimensions_and_preserved_2D_coordinates",
+      "pass": false,
+      "error": "Resize reinterprets the old flat buffer with the new width",
+      "actual": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "resize_undo_restores_dimensions_and_artwork",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  48,\n  24\n]\n\nshould loosely deep-equal\n\n[\n  32,\n  32\n]",
+      "actual": [
+        48,
+        24
+      ],
+      "expected": [
+        32,
+        32
+      ]
+    },
+    {
+      "id": "shrink_then_undo_does_not_throw",
+      "pass": false,
+      "error": "offset is out of bounds"
+    },
+    {
+      "id": "real_PNG_export_native_dimensions_and_decoded_pixels",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          32,
+          32
+        ],
+        "pixel": [
+          0,
+          255,
+          0,
+          255
+        ],
+        "bytes": 145
+      }
+    },
+    {
+      "id": "single_file_offline",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "optionalChecks": [
+    {
+      "id": "main_48x48_preset_changes_size",
+      "pass": false,
+      "blocking": false,
+      "evidence": {
+        "actual": [
+          32,
+          32
+        ]
+      }
+    }
+  ],
+  "pass": false
+}

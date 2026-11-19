@@ -1,0 +1,12 @@
+{
+  "role": "review",
+  "number": 3,
+  "minutes": 4.1,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": "80fdd774d20bd523095d4bfcbdd61c2eb265d7b11034b99f63357b17934fa133",
+  "artifactAfter": "80fdd774d20bd523095d4bfcbdd61c2eb265d7b11034b99f63357b17934fa133",
+  "prompt": "enforced/qwen/03_pixel_painter/runtime/03-review/prompt.txt",
+  "events": "enforced/qwen/03_pixel_painter/runtime/03-review/events.jsonl",
+  "stderr": "enforced/qwen/03_pixel_painter/runtime/03-review/stderr.log"
+}

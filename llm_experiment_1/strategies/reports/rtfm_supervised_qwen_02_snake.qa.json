@@ -1,0 +1,114 @@
+{
+  "method": "Independent exact-source VM/DOM/nativeCanvas, real keyboard/buttons and scheduled interval/RAF callbacks. Controlled input state fixtures call existing game logic; no algorithms replaced. No browser layout/hit testing or visual-polish proof.",
+  "sha256": "8604c2b8c82243747954d39d55ed46bd2b4b6e9d8c74b1f9954f6b0086042087",
+  "checks": [
+    {
+      "id": "actual_start_keyboard_pause_resume_restart_and_render",
+      "pass": true,
+      "evidence": {
+        "keyboard": true,
+        "pause": true,
+        "resume": true,
+        "resetValues": true,
+        "headPixel": [
+          91,
+          237,
+          247,
+          255
+        ]
+      }
+    },
+    {
+      "id": "food_growth_score_and_increasing_difficulty",
+      "pass": true,
+      "evidence": {
+        "length": 5,
+        "score": 5,
+        "level": 2,
+        "speedMS": 140
+      }
+    },
+    {
+      "id": "immediate_wall_body_collision_and_reverse_guard",
+      "pass": true,
+      "evidence": {
+        "wall": true,
+        "body": true,
+        "reversePrevented": true
+      }
+    },
+    {
+      "id": "moving_into_vacating_tail_is_legal",
+      "pass": true,
+      "evidence": {
+        "tailMoveAllowed": true,
+        "reachableViaActualGrowthAndTurns": true,
+        "tailCell": {
+          "x": 10,
+          "y": 10
+        }
+      }
+    },
+    {
+      "id": "rapid_direction_inputs_never_reverse_into_actual_neck",
+      "pass": true,
+      "evidence": {
+        "actualTickAfterRealKeyEvents": true,
+        "results": [
+          {
+            "keys": [
+              "ArrowUp",
+              "ArrowLeft"
+            ],
+            "head": {
+              "x": 10,
+              "y": 9
+            }
+          },
+          {
+            "keys": [
+              "ArrowUp",
+              "ArrowLeft",
+              "ArrowDown"
+            ],
+            "head": {
+              "x": 10,
+              "y": 11
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "restart_while_running_keeps_one_tick_schedule_and_normal_speed",
+      "pass": false,
+      "error": "Repeated R creates concurrent tick intervals and accelerates play",
+      "actual": {
+        "intervals": 4,
+        "moved": 4
+      },
+      "expected": {
+        "intervals": 1,
+        "moved": 1
+      }
+    },
+    {
+      "id": "full_board_food_search_terminates",
+      "pass": true,
+      "evidence": {
+        "terminated": true,
+        "gameOver": true,
+        "completionOverlayVisible": false,
+        "note": "No win-screen requirement added; termination checked separately from completion UI."
+      }
+    },
+    {
+      "id": "self_contained_offline_source",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "pass": false
+}

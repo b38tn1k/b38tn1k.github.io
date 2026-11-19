@@ -1,0 +1,12 @@
+{
+  "role": "test",
+  "number": 8,
+  "minutes": 6.11,
+  "reason": "stage_time_limit",
+  "exitCode": -9,
+  "artifactBefore": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+  "artifactAfter": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+  "prompt": "enforced/qwen/02_snake/runtime/08-test/prompt.txt",
+  "events": "enforced/qwen/02_snake/runtime/08-test/events.jsonl",
+  "stderr": "enforced/qwen/02_snake/runtime/08-test/stderr.log"
+}

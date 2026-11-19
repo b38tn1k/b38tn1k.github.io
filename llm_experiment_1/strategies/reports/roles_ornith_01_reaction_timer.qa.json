@@ -1,0 +1,62 @@
+{
+  "method": "Actual source and DOM event flow with deterministic performance and Date clocks; state-access seam only, no browser",
+  "initial": "idle",
+  "waiting": "waiting",
+  "trials": [
+    {
+      "go": "go",
+      "result": 200
+    },
+    {
+      "go": "go",
+      "result": 210
+    },
+    {
+      "go": "go",
+      "result": 220
+    },
+    {
+      "go": "go",
+      "result": 230
+    },
+    {
+      "go": "go",
+      "result": 240
+    }
+  ],
+  "summary": {
+    "state": "done",
+    "values": [
+      "220",
+      "200",
+      "220",
+      "240"
+    ],
+    "rows": 5
+  },
+  "restart": {
+    "state": "waiting",
+    "visibleResults": true
+  },
+  "early": {
+    "state": "early",
+    "falseStarts": "1"
+  },
+  "retry": {
+    "state": "waiting",
+    "trial": 1
+  },
+  "afterFalseStart": {
+    "state": "done",
+    "valid": 5,
+    "rows": 5
+  },
+  "doubleInput": {
+    "state": "go",
+    "results": [
+      200,
+      300
+    ]
+  },
+  "sha256": "5dddf0ce5264ebd27366fe09a2423ee20beb82e1978b6a0e78f225a4c9214fa5"
+}

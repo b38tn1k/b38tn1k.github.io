@@ -1,0 +1,28 @@
+{
+  "method": "Node VM with minimal DOM and controlled timers; not a real browser",
+  "sha256": "21592d7971ac7f79a819c5096b0b1663dbac82242db1313da078602440caae6d",
+  "syntaxValid": true,
+  "normal": {
+    "falseDetected": null,
+    "retryBadge": null,
+    "randomDelaysInRange": true,
+    "summaryVisible": true,
+    "trials": 5,
+    "average": "220 ms",
+    "best": "200 ms",
+    "worst": "240 ms",
+    "perTrialResultVisible": false
+  },
+  "falseStart": {
+    "falseDetected": "Too early!",
+    "retryBadge": "Trial 2 / 5",
+    "randomDelaysInRange": true,
+    "summaryVisible": true,
+    "trials": 5,
+    "average": "220 ms",
+    "best": "200 ms",
+    "worst": "240 ms",
+    "perTrialResultVisible": false
+  },
+  "externalResources": false
+}

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Tray Maker</title>
+<style>
+:root{--bg:#1a1a2e;--pan:#16213e;--acc:#0f3460;--hl:#e94560;--txt:#eee;--muted:#8899aa;--inp:#0a1628;--bdr:#2a3a5e}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);display:flex}
+.sidebar{width:340px;min-width:340px;background:var(--pan);padding:18px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:14px;border-right:1px solid var(--bdr)}
+.sidebar h1{text-align:center;color:var(--hl);font-size:1.35em;letter-spacing:1px}
+.stitle{font-size:.82em;text-transform:uppercase;letter-spacing:2px;color:var(--muted);border-bottom:1px solid var(--bdr);padding-bottom:6px;margin-top:4px}
+.cg{display:flex;flex-direction:column;gap:7px}
+.row{display:flex;align-items:center;gap:8px}
+.row label{font-size:.88em;color:var(--muted);width:105px;text-align:right;flex-shrink:0}
+.row input[type=range]{flex:1;height:6px;-webkit-appearance:none;background:var(--inp);border-radius:3px;outline:none;cursor:pointer}
+.row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--hl);cursor:pointer}
+.row input[type=number]{width:78px;background:var(--inp);border:1px solid var(--bdr);color:var(--txt);padding:4px 6px;border-radius:4px;font-size:.88em;text-align:right;outline:none}
+.row input[type=number]:focus{border-color:var(--hl)}
+.val{font-size:.88em;color:var(--hl);min-width:52px;text-align:left;font-weight:600;font-variant-numeric:tabular-nums}
+.u{font-size:.73em;color:var(--muted)}
+.ci{background:var(--inp);border:1px solid var(--bdr);border-radius:8px;padding:12px;font-size:.84em}
+.cr{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #1a2a4e}.cr:last-child{border-bottom:none}
+.cl{color:var(--muted)}.cv{color:var(--txt);font-weight:600;font-variant-numeric:tabular-nums}
+.btns{display:flex;gap:8px;margin-top:auto;padding-top:12px}
+.btn{flex:1;padding:10px;border:none;border-radius:6px;font-size:.88em;font-weight:600;cursor:pointer;transition:all .2s}
+.bp{background:var(--hl);color:#fff}.bp:hover{background:#d13a54;transform:translateY(-1px)}
+.bs{background:var(--acc);color:var(--txt);border:1px solid var(--bdr)}.bs:hover{background:#1a4a80}
+.vp{flex:1;position:relative;overflow:hidden;background:#0e0e18}
+#c3d{width:100%;height:100%;display:block}
+.vc{position:absolute;top:12px;right:12px;display:flex;gap:6px}
+.vb{background:rgba(22,33,62,.9);border:1px solid var(--bdr);color:var(--txt);padding:6px 10px;border-radius:4px;cursor:pointer;font-size:.78em;transition:all .15s}.vb:hover{background:var(--accent)}.vb.on{background:var(--hl);border-color:var(--hl)}
+.io{position:absolute;bottom:12px;left:12px;background:rgba(22,33,62,.9);padding:8px 14px;border-radius:6px;font-size:.73em;color:var(--muted);pointer-events:none}
+.vs{text-align:center;background:var(--acc);border-radius:8px;padding:10px}
+.vsb{font-size:1.5em;font-weight:700;color:var(--hl)}
+.vsl{font-size:.73em;color:var(--muted)}
+@media(max-width:920px){.sidebar{width:290px;min-width:290px;padding:14px 16px}}
+</style>
+</head>
+<body>
+<div class="sidebar">
+<h1>&#9878; TRAY MAKER</h1>
+<div class="stitle">Outer Dimensions (mm)</div>
+<div class="cg">
+<div class="row"><label>Width X</label><input type="range" id="wR" min="50" max="600" value="180" step="1"><input type="number" id="wN" min="50" max="600" value="180" step="1"><span class="val">180 <span class="u">mm</span></span></div>
+<div class="row"><label>Depth Y</label><input type="range" id="dR" min="50" max="600" value="120" step="1"><input type="number" id="dN" min="50" max="600" value="120" step="1"><span class="val">120 <span class="u">mm</span></span></div>
+<div class="row"><label>Height Z</label><input type="range" id="hR" min="10" max="200" value="30" step="1"><input type="number" id="hN" min="10" max="200" value="30" step="1"><span class="val">30 <span class="u">mm</span></span></div>
+</div>
+<div class="stitle">Grid Layout</div>
+<div class="cg">
+<div class="row"><label>Columns</label><input type="range" id="cR" min="1" max="20" value="3" step="1"><input type="number" id="cN" min="1" max="20" value="3" step="1"><span class="val">3</span></div>
+<div class="row"><label>Rows</label><input type="range" id="rR" min="1" max="20" value="2" step="1"><input type="number" id="rN" min="1" max="20" value="2" step="1"><span class="val">2</span></div>
+</div>
+<div class="stitle">Wall &amp; Floor (mm)</div>
+<div class="cg">
+<div class="row"><label>Wall Thk</label><input type="range" id="tR" min="1" max="20" value="3" step="0.5"><input type="number" id="tN" min="1" max="20" value="3" step="0.5"><span class="val">3 <span class="u">mm</span></span></div>
+<div class="row"><label>Floor Thk</label><input type="range" id="fR" min="1" max="20" value="3" step="0.5"><input type="number" id="fN" min="1" max="20" value="3" step="0.5"><span class="val">3 <span class="u">mm</span></span></div>
+</div>
+<div class="stitle">Compartment Info</div>
+<div class="ci">
+<div class="cr"><span class="cl">Each compartment</span><span class="cv" id="cSz">&mdash;</span></div>
+<div class="cr"><span class="cl">Each volume</span><span class="cv" id="cVol">&mdash;</span></div>
+<div class="cr"><span class="cl">Total interior</span><span class="cv" id="tIntVol">&mdash;</span></div>
+</div>
+<div class="vs"><div class="vsb" id="wtg">&mdash;</div><div class="vsl">PLA Est. Weight (g)</div></div>
+<div class="btns">
+<button class="btn bp" onclick="exportSTL(false)">&#128465; Binary STL</button>
+<button class="btn bs" onclick="exportSTL(true)">&#128465; ASCII STL</button>
+</div>
+</div>
+<div class="vp">
+<canvas id="c3d"></canvas>
+<div class="vc">
+<button class="vb" onclick="setView(this,'front')">Front</button>
+<button class="vb" onclick="setView(this,'top')">Top</button>
+<button class="vb" onclick="setView(this,'side')">Side</button>
+<button class="vb on" onclick="setView(this,'iso')">ISO</button>
+</div>
+<div class="io">Drag: Rotate &nbsp;|&nbsp; Scroll: Zoom &nbsp;|&nbsp; S: Export STL</div>
+</div>
+
+<script>
+"use strict";
+/* ── Matrix math ───────────────────────────────────── */
+var SQRT=Math.sqrt, COS=Math.cos, SIN=Math.sin, PI=Math.PI;
+
+function mP(fov,asp,n,f) {
+  var f1=1/Math.tan(fov/2), nf=1/(n-f);
+  return new Float32Array([f1/asp,0,0,0, 0,f1,0,0, 0,0,(f+n)*nf,-1, 0,0,2*f*n*nf,0]);
+}
+
+function mLA(eye,ctr,up) {
+  var zx=eye[0]-ctr[0], zy=eye[1]-ctr[1], zz=eye[2]-ctr[2];
+  var L=SQRT(zx*zx+zy*zy+zz*zz)||1;
+  zx/=L;zy/=L;zz/=L;
+  var xx=up[1]*zz-up[2]*zy, xy=up[2]*zx-up[0]*zz, xz=up[0]*zy-up[1]*zx;
+  var Lx=SQRT(xx*xx+xy*xy+xz*xz)||1; xx/=Lx;xy/=Lx;xz/=Lx;
+  var yx=zy*xz-zz*xy, yy=zz*xx-zx*xz, yz=zx*xy-zy*xx;
+  var Ly=SQRT(yx*yx+yy*yy+yz*yz)||1; yx/=Ly;yy/=Ly;yz/=Ly;
+  var r=new Float32Array(16);
+  r[0]=xx;r[1]=xy;r[2]=xz;r[3]=0;
+  r[4]=yx;r[5]=yy;r[6]=yz;r[7]=0;
+  r[8]=zx;r[9]=zy;r[10]=zz;r[11]=0;
+  r[12]=-(xx*eye[0]+yx*eye[1]+zx*eye[2]);
+  r[13]=-(xy*eye[0]+yy*eye[1]+zy*eye[2]);
+  r[14]=-(xz*eye[0]+yz*eye[1]+zz*eye[2]);
+  r[15]=1;
+  return r;
+}
+
+function mM(a,b) {
+  var o=new Float32Array(16);
+  for(var i=0;i<4;i++)for(var j=0;j<4;j++){var s=0;for(var k=0;k<4;k++)s+=a[i*4+k]*b[k*4+j];o[i*4+j]=s}
+  return o;
+}
+
+/* ── State ─────────────────────────────────────────── */
+var P={w:180,d:120,h:30,cx:3,cy:2,wt:3,ft:3};
+var rX=-0.5, rY=0.7, zm=1;
+var dragging=false, lastM=[0,0];
+
+/* ── WebGL init ────────────────────────────────────── */
+var cv=document.getElementById('c3d');
+var gl=cv.getContext('webgl2')||cv.getContext('webgl');
+if(!gl){document.body.innerHTML='<h1 style="color:red;text-align:center;margin-top:40vh">WebGL not supported</h1>';throw 0}
+
+var VSSRC='attribute vec3 aP;attribute vec3 aC;uniform mat4 uMVP;void main(){gl_Position=uMVP*vec4(aP,1.0);}'
+var FSSRC=[
+'precision mediump float;',
+'varying vec3 vCol, vN;',
+'uniform vec3 uLight;',
+'void main(){',
+'  float d=max(dot(vN,normalize(uLight)),0.0);',
+'  gl_FragColor=vec4(vCol*(0.30+0.70*d),1.0);',
+'}'
+].join('\n');
+
+function compileShader(src,type){var sh=gl.createShader(type);gl.shaderSource(sh,src);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(sh));return sh}
+
+var prog=gl.createProgram();
+gl.attachShader(prog,compileShader(VSSRC,35633));
+gl.attachShader(prog,compileShader(FSSRC,35632));
+gl.linkProgram(prog);
+gl.useProgram(prog);
+
+var aP_loc=gl.getAttribLocation(prog,'aP');
+var aN_loc=gl.getAttribLocation(prog,'aN');
+var aC_loc=gl.getAttribLocation(prog,'aC');
+var uMVP_loc=gl.getUniformLocation(prog,'uMVP');
+var uLight_loc=gl.getUniformLocation(prog,'uLight');
+
+gl.enable(gl.DEPTH_TEST);
+gl.enable(gl.CULL_FACE);
+gl.clearColor(.07,.07,.13,1);
+
+var pb=gl.createBuffer(), nb=gl.createBuffer(), cb=gl.createBuffer();
+var pBuf=[], nBuf=[], cBuf=[];
+
+function uploadData(){
+  gl.bindBuffer(gl.ARRAY_BUFFER,pb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(pBuf),gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,nb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(nBuf),gl.DYNAMIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER,cb);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(cBuf),gl.DYNAMIC_DRAW);
+}
+
+/* ── Box builder ─────────────────────────────────────
+   Each box = 6 faces × 2 tris = 12 triangles (36 verts for TRIANGLES mode).
+   Face normals: +Z(0,0,1) -Z(0,0,-1) +Y(0,1,0) -Y(0,-1,0) +X(1,0,0) -X(-1,0,0)
+   Each face quad is CCW when viewed from outside.
+*/
+
+function makeQuad(cx,cy,cz,hw,hh,hd,faceIdx){
+  // faceIdx: 0=front(+Z),1=back(-Z),2=top(+Y),3=bottom(-Y),4=right(+X),5=left(-X)
+  var q;
+  switch(faceIdx){
+    case 0: q=[[-hw,-hh, hd],[ hw,-hh, hd],[ hw, hh, hd],[-hw, hh, hd]]; break; // front +Z
+    case 1: q=[[ hw,-hh,-hd],[-hw,-hh,-hd],[-hw, hh,-hd],[ hw, hh,-hd]]; break; // back -Z
+    case 2: q=[[-1,1,-1],[-1,1,1],[1,1,1],[1,1,-1]]; break; // top +Y
+    case 3: q=[[1,-1,-1],[1,-1,1],[-1,-1,1],[-1,-1,-1]]; break; // bottom -Y
+    case 4: q=[[ hw,-hh, hd],[ hw,-hh,-hd],[ hw, hh,-hd],[ hw, hh, hd]]; break; // right +X
+    case 5: q=[[-hw,-hh,-hd],[-hw,-hh, hd],[-hw, hh, hd],[-hw, hh,-hd]]; break; // left -X
+    default: return null;
+  }
+  var norms=[[0,0,1],[0,0,-1],[0,1,0],[0,-1,0],[1,0,0],[-1,0,0]];
+  var col=[[.58,.72,.88],[.45,.60,.80],[.55,.73,.90],[.42,.56,.76],[.56,.69,.87],[.40,.54,.74]];
+  // Quad → 2 triangles: (0,1,2) and (0,2,3)
+  var tris=[[0,1,2],[0,2,3]];
+  return {verts:[],norms:[],cols:[],tris:tris,norm:norms[faceIdx],color:col[faceIdx]};
+}
+
+function addBoxToGL(cx,cy,cz,w,h,d){
+  for(var f=0;f<6;f++){
+    var quad=makeQuad(cx,cy,cz,w/2,h/2,d/2,f);
+    if(!quad)continue;
+    for(var i=0;i<quad.tris.length;i++){
+      var tri=quad.tris[i];
+      for(var j=0;j<3;j++){
+        var v=quad.verts[tri[j]];
+        pBuf.push(v[0]+cx,v[1]+cy,v[2]+cz);
+        nBuf.push(quad.norm[0],quad.norm[1],quad.norm[2]);
+        cBuf.push(quad.color[0],quad.color[1],quad.color[2]);
+      }
+    }
+  }
+}
+
+function addBoxToSTL(cx,cy,cz,w,h,d){
+  for(var f=0;f<6;f++){
+    var quad=makeQuad(cx,cy,cz,w/2,h/2,d/2,f);
+    if(!quad)continue;
+    for(var i=0;i<quad.tris.length;i++){
+      var tri=quad.tris[i];
+      var vlist=[];
+      for(var j=0;j<3;j++) vlist.push([quad.verts[tri[j]][0]+cx,quad.verts[tri[j]][1]+cy,quad.verts[tri[j]][2]+cz]);
+      stlList.push({v:vlist,n:[quad.norm[0],quad.norm[1],quad.norm[2]]});
+    }
+  }
+}
+
+var stlList=[];
+
+/* ── Build tray model ──────────────────────────────── */
+function buildTray(){
+  pBuf=[];nBuf=[];cBuf=[];stlList=[];
+
+  var W=P.w, D=P.d, H=P.h, Nc=P.cx, Nr=P.cy, WT=P.wt, FT=P.ft;
+  var wH=H-FT, inW=W-2*WT, inD=D-2*WT;
+
+  // Floor slab (full width/depth)
+  addBoxToGL(0,FT/2,0,W,FT,D);
+  addBoxToSTL(0,FT/2,0,W,FT,D);
+
+  if(inW>0 && inD>0){
+    var wcy=FT+wH/2;
+
+    // Four outer walls (hollow box sitting on floor)
+    addBoxToGL(-W/2+WT/2,wcy,0,WT,wH,D);   addBoxToSTL(-W/2+WT/2,wcy,0,WT,wH,D);   // left
+    addBoxToGL( W/2-WT/2,wcy,0,WT,wH,D);   addBoxToSTL( W/2-WT/2,wcy,0,WT,wH,D);   // right
+    addBoxToGL(0,wcy,-D/2+WT/2,inW,wH,WT); addBoxToSTL(0,wcy,-D/2+WT/2,inW,wH,WT); // front
+    addBoxToGL(0,wcy, D/2-WT/2,inW,wH,WT); addBoxToSTL(0,wcy, D/2-WT/2,inW,wH,WT); // back
+
+    var sX=inW/Nc, sY=inD/Nr;
+
+    // Grid dividers (vertical walls, partial height)
+    for(var i=1;i<Nc;i++){
+      var gx=-W/2+WT+i*sX;
+      addBoxToGL(gx,FT+wH*0.3,0,WT,wH*0.6,inD);
+      addBoxToSTL(gx,FT+wH*0.3,0,WT,wH*0.6,inD);
+    }
+    for(var j=1;j<Nr;j++){
+      var gy=-D/2+WT+j*sY;
+      addBoxToGL(0,FT+wH*0.3,gy,inW,wH*0.6,WT);
+      addBoxToSTL(0,FT+wH*0.3,gy,inW,wH*0.6,WT);
+    }
+
+    // Top rim lips (thin wall extensions at top edge)
+    var rp=H-WT/2;
+    addBoxToGL(0,rp,-D/2+WT/2,W,WT,WT);   addBoxToSTL(0,rp,-D/2+WT/2,W,WT,WT); // front lip
+    addBoxToGL(0,rp, D/2-WT/2,W,WT,WT);   addBoxToSTL(0,rp, D/2-WT/2,W,WT,WT); // back lip
+    addBoxToGL(-W/2+WT/2,rp,WT/2,WT,WT,inD); addBoxToSTL(-W/2+WT/2,rp,WT/2,WT,WT,inD); // left lip
+    addBoxToGL( W/2-WT/2,rp,WT/2,WT,WT,inD); addBoxToSTL( W/2-WT/2,rp,WT/2,WT,WT,inD); // right lip
+
+    // Divider top ribs (small extensions at rim)
+    for(var i=1;i<Nc;i++){
+      var gx=-W/2+WT+i*sX;
+      addBoxToGL(gx,H-WT/2,0,WT,WT,inD);
+      addBoxToSTL(gx,H-WT/2,0,WT,WT,inD);
+    }
+    for(var j=1;j<Nr;j++){
+      var gy=-D/2+WT+j*sY;
+      addBoxToGL(0,H-WT/2,gy,inW,WT,WT);
+      addBoxToSTL(0,H-WT/2,gy,inW,WT,WT);
+    }
+  } else {
+    // Walls consume interior: render as solid block
+    addBoxToGL(0,H/2,0,W,H,D);
+    addBoxToSTL(0,H/2,0,W,H,D);
+  }
+
+  updateInfo();
+  drawScene();
+}
+
+/* ── WebGL draw ─────────────────────────────────────── */
+function drawScene(){
+  var rect=cv.getBoundingClientRect();
+  if(cv.width!==rect.width||cv.height!==rect.height){cv.width=rect.width|0;cv.height=rect.height|0}
+  gl.viewport(0,0,cv.width,cv.height);
+  gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+
+  if(pBuf.length===0)return;
+
+  var asp=cv.width/cv.height;
+
+  // Camera: spherical position around tray center
+  var dist=Math.max(P.w,P.d,P.h)*.65*zm;
+  var cosRX=COS(rX),sinRX=SIN(rX);
+  var cosRY=COS(rY),sinRY=SIN(rY);
+  var camX=dist*sinRY*cosRX;
+  var camY=dist*sinRX;
+  var camZ=dist*cosRY*cosRX;
+  var eyeL=SQRT(camX*camX+camY*camY+camZ*camZ)||1;
+  camX/=eyeL;camY/=eyeL;camZ/=eyeL;
+  var eye=[camX,dist*camY/P.h*.35+camY,camZ]; // shift up a bit
+  var ctr=[0,P.h*.4,0];
+
+  var proj=mP(PI/6,asp,.5,10000);
+  var view=mLA(eye,ctr,[0,1,0]);
+  var mvp=mM(proj,view);
+
+  gl.uniformMatrix4fv(uMVP_loc,false,mvp);
+  gl.uniform3f(uLight_loc,.3,.55,1.0);
+
+  uploadData();
+
+  gl.enableVertexAttribArray(aP_loc);gl.vertexAttribPointer(aP_loc,3,gl.FLOAT,false,0,0);
+  gl.enableVertexAttribArray(aN_loc);gl.vertexAttribPointer(aN_loc,3,gl.FLOAT,false,0,0);
+  gl.enableVertexAttribArray(aC_loc);gl.vertexAttribPointer(aC_loc,3,gl.FLOAT,false,0,0);
+
+  gl.drawArrays(gl.TRIANGLES,0,pBuf.length/3);
+}
+
+/* ── Compartment info ───────────────────────────────── */
+function updateInfo(){
+  var W=P.w,D=P.d,H=P.h,Nc=P.cx,Nr=P.cy,WT=P.wt,FT=P.ft;
+  var inW=W-2*WT,inD=D-2*WT,iH=H-FT;
+  if(inW>0&&inD>0){
+    var cw=inW/Nc,ch=inD/Nr;
+    document.getElementById('cSz').textContent=cw.toFixed(1)+' × '+ch.toFixed(1)+' × '+iH+' mm';
+    document.getElementById('cVol').textContent=(cw*ch*iH/1e3).toFixed(2)+' cm\u00b3';
+    var tot=inW*inD*iH/1e3;
+    document.getElementById('tIntVol').textContent=tot.toFixed(1)+' cm\u00b3';
+    var extCC=W*D*H/1e3, intCC=inW*inD*iH/1e3;
+    document.getElementById('wtg').textContent=((extCC-intCC)*1.24).toFixed(0)+' g';
+  }else{
+    ['cSz','cVol','tIntVol'].forEach(function(id){document.getElementById(id).textContent='\u2014'});
+    document.getElementById('wtg').textContent='\u2014';
+  }
+}
+
+/* ── Controls binding ───────────────────────────────── */
+function bindS(rId,nId,key,step){
+  var rEl=document.getElementById(rId),nEl=document.getElementById(nId);
+  function set(v){var nv=parseFloat(v);if(isNaN(nv))return;P[key]=nv;rEl.value=P[key];nEl.value=P[key];buildTray()}
+  rEl.addEventListener('input',function(){set(rEl.value)});
+  nEl.addEventListener('change',function(){set(parseFloat(nEl.value))});
+}
+function bindI(rId,nId,key,lo,hi){
+  var rEl=document.getElementById(rId),nEl=document.getElementById(nId);
+  function set(v){var nv=Math.max(lo,Math.min(hi,parseInt(v)||1));P[key]=nv;rEl.value=P[key];nEl.value=P[key];buildTray()}
+  rEl.addEventListener('input',function(){set(rEl.value)});
+  nEl.addEventListener('change',function(){set(parseInt(nEl.value)||lo)});
+}
+
+bindS('wR','wN','w',1);
+bindS('dR','dN','d',1);
+bindS('hR','hN','h',1);
+bindS('tR','tN','wt',.5);
+bindS('fR','fN','ft',.5);
+bindI('cR','cN','cx',1,20);
+bindI('rR','rN','cy',1,20);
+
+/* ── Mouse/touch orbit ─────────────────────────────── */
+cv.addEventListener('mousedown',function(e){if(e.button===0){dragging=true;lastM=[e.clientX,e.clientY]}});
+cv.addEventListener('mousemove',function(e){
+  if(!dragging)return;
+  rY+=(e.clientX-lastM[0])*.008;
+  rX+=(e.clientY-lastM[1])*.008;
+  if(rX>1.45)rX=1.45;if(rX<-1.45)rX=-1.45;
+  lastM=[e.clientX,e.clientY];drawScene();
+});
+cv.addEventListener('mouseup',function(){dragging=false});
+cv.addEventListener('mouseleave',function(){dragging=false});
+cv.addEventListener('wheel',function(e){
+  e.preventDefault();
+  zm*=e.deltaY>0?.92:1.08;
+  zm=Math.max(.1,Math.min(5,zm));drawScene();
+},{passive:false});
+
+var tP=null;
+cv.addEventListener('touchstart',function(e){if(e.touches.length===1)tP=[e.touches[0].clientX,e.touches[0].clientY]});
+cv.addEventListener('touchmove',function(e){
+  if(e.touches.length===1&&tP){
+    rY+=(e.touches[0].clientX-tP[0])*.008;
+    rX+=(e.touches[0].clientY-tP[1])*.008;
+    if(rX>1.45)rX=1.45;if(rX<-1.45)rX=-1.45;
+    tP=[e.touches[0].clientX,e.touches[0].clientY];drawScene();
+  }
+},{passive:false});
+cv.addEventListener('touchend',function(){tP=null});
+
+/* ── View presets ───────────────────────────────────── */
+function setView(btn,v){
+  document.querySelectorAll('.vb').forEach(function(b){b.classList.remove('on')});
+  btn.classList.add('on');
+  var mx=Math.max(P.w,P.d);
+  switch(v){
+    case'front':rX=-.01;rY=0;zm=Math.max(.5,80/P.w);break;
+    case'top':rX=-PI/2+.01;rY=0;zm=Math.max(.5,80/mx);break;
+    case'side':rX=-.01;rY=PI/2;zm=Math.max(.5,80/Math.max(mx,P.h));break;
+    default:rX=-.5;rY=.7;zm=1;
+  }
+  drawScene();
+}
+
+/* ── Keyboard shortcut ─────────────────────────────── */
+document.addEventListener('keydown',function(e){if(e.key==='s'||e.key==='S'){e.preventDefault();exportSTL(false)}});
+
+/* ── STL Export ─────────────────────────────────────── */
+function exportSTL(ascii){
+  var tris=[];
+  var W=P.w,D=P.d,H=P.h,Nc=P.cx,Nr=P.cy,WT=P.wt,FT=P.ft;
+  var wH=H-FT,inW=W-2*WT,inD=D-2*WT;
+
+  function sBox(cx,cy,cz,w,h,d){
+    // Copy geometry to STL tris using same box logic as render
+    for(var f=0;f<6;f++){
+      var quad=makeQuad(cx,cy,cz,w/2,h/2,d/2,f);
+      if(!quad)continue;
+      for(var i=0;i<quad.tris.length;i++){
+        var tri=quad.tris[i];
+        var verts=[];
+        for(var j=0;j<3;j++)verts.push([quad.verts[tri[j]][0]+cx,quad.verts[tri[j]][1]+cy,quad.verts[tri[j]][2]+cz]);
+        tris.push({v:verts,n:[quad.norm[0],quad.norm[1],quad.norm[2]]});
+      }
+    }
+  }
+
+  sBox(0,FT/2,0,W,FT,D); // floor
+
+  if(inW>0&&inD>0){
+    var wcy=FT+wH/2;
+    sBox(-W/2+WT/2,wcy,0,WT,wH,D);sBox(W/2-WT/2,wcy,0,WT,wH,D);// walls
+    sBox(0,wcy,-D/2+WT/2,inW,wH,WT);sBox(0,wcy,D/2-WT/2,inW,wH,WT);
+    var sX=inW/Nc,sY=inD/Nr;
+    for(var i=1;i<Nc;i++){var x=-W/2+WT+i*sX;sBox(x,FT+wH*.3,0,WT,wH*.6,inD)}
+    for(var j=1;j<Nr;j++){var y=-D/2+WT+j*sY;sBox(0,FT+wH*.3,y,inW,wH*.6,WT)}
+    var rp=H-WT/2;
+    sBox(0,rp,-D/2+WT/2,W,WT,WT);sBox(0,rp,D/2-WT/2,W,WT,WT);// lips
+    sBox(-W/2+WT/2,rp,WT/2,WT,WT,inD);sBox(W/2-WT/2,rp,WT/2,WT,WT,inD);
+    for(var i=1;i<Nc;i++){var x=-W/2+WT+i*sX;sBox(x,H-WT/2,0,WT,WT,inD)}
+    for(var j=1;j<Nr;j++){var y=-D/2+WT+j*sY;sBox(0,H-WT/2,y,inW,WT,WT)}
+  }
+
+  var blob;
+  if(ascii){
+    var s='solid drawer_tray\n';
+    for(var k=0;k<tris.length;k++){
+      var t=tris[k];
+      s+='  normal '+t.n[0].toFixed(6)+' '+t.n[1].toFixed(6)+' '+t.n[2].toFixed(6)+'\n';
+      s+='    outer loop\n';
+      for(var m=0;m<3;m++)s+='      vertex '+t.v[m][0].toFixed(6)+' '+t.v[m][1].toFixed(6)+' '+t.v[m][2].toFixed(6)+'\n';
+      s+='    endloop\n';
+    }
+    blob=new Blob([s+'\n'],{type:'application/sla'});
+  }else{
+    var sz=80+tris.length*50;
+    var buf=new ArrayBuffer(sz),dv=new DataView(buf),u8=new Uint8Array(buf);
+    var hdr='binary_stl_drawer_tray';
+    for(var k=0;k<80&&k<hdr.length;k++)u8[k]=hdr.charCodeAt(k);
+    dv.setUint32(80,tris.length,true);var off=84;
+    for(var k=0;k<tris.length;k++){
+      var t=tris[k];
+      dv.setFloat32(off,t.n[0],true);off+=4;
+      dv.setFloat32(off,t.n[1],true);off+=4;
+      dv.setFloat32(off,t.n[2],true);off+=4;
+      for(var m=0;m<3;m++){
+        dv.setFloat32(off,t.v[m][0],true);off+=4;
+        dv.setFloat32(off,t.v[m][1],true);off+=4;
+        dv.setFloat32(off,t.v[m][2],true);off+=4;
+      }
+      dv.setUint16(off,0,true);off+=2;
+    }
+    blob=new Blob([buf],{type:'application/octet-stream'});
+  }
+
+  var nm='tray_'+P.w+'x'+P.d+'x'+P.h+'_'+P.cx+'x'+P.cy;
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nm+'.stl';a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+}
+
+/* ── Init ───────────────────────────────────────────── */
+window.addEventListener('resize',drawScene);
+buildTray();
+</script>
+</body>
+</html>

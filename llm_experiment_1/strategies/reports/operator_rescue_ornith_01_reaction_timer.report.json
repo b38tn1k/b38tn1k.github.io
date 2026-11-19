@@ -1,0 +1,163 @@
+{
+  "score": 86,
+  "grade": "B - assisted product 98.8; five-trial timing and retry verified",
+  "summary": "One counted repair prompt fixes trial progression, false-start retries and summary handling. The final exact-source app meets the assisted product target; autonomy credit remains zero.",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 14,
+    "self_verification": 7,
+    "autonomy": 0
+  },
+  "assistedProductTargetMet": true,
+  "strengths": [
+    "Actual pointer and keyboard handlers complete exactly five valid 200/225/250/275/300 ms responses, display a 250 ms mean, 200 ms best and 300 ms worst, and render five rows; replay resets the session.",
+    "Seven false starts retry Trial 1 without consuming a valid measurement; the subsequent five-trial summary stays finite and accurate.",
+    "Trial badges advance 1, 2, 3, 4, 5; the offline HTML retains clear states and Space input."
+  ],
+  "defects": [],
+  "verification": [
+    "qa/operator-ornith-timer.cjs independently passed on immutable reports/operator-rounds/case86/round1/index.html and current final source; SHA2566a14fa77442ba32e67fb5fffe3ea5b08ad3c1f500322a2970bc79fc5a35b3f5e.",
+    "Independent timing advances to the actual scheduled cue then advances response delays; no state setter or app algorithm replacement.",
+    "Model transcript records passing seam-based controlled statistics/empty guard, later passing shipped-source real-control flow and syntax check."
+  ],
+  "verificationConcerns": [
+    "No independent native browser layout, visual, hit-testing or mobile-device check.",
+    "Model verification required several corrected harness assumptions; comprehensive test relied on a temporary instrumented copy that was removed, reducing reproduction quality. Independent final-source checks do not share that dependency.",
+    "Empty-set guard is normally unreachable under retry-until-five semantics; repeated false-only UI flow was independently tested without forcing finish."
+  ],
+  "scopeCompliance": "OS write/read boundary remained active; no successful out-of-project write or read of prior benchmark work observed. Attempted/tmp backup writes were denied. Pi alone authored all application/verification changes.",
+  "workflowNotes": "One persistent native Pi conversation, 1 of 3 available counted feedback prompts. Finished early after the immutable settled snapshot and current artifact independently passed required flows. Baseline creation cost remains separate from 30.02 model-active repair minutes.",
+  "humanOrSupervisorSteering": 1,
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "operator_rescue",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All clean. The repair is complete and verified.\n\n## Summary\n\nI repaired the three failures in the self-contained offline `index.html` reaction-timer app, working only in this directory.\n\n**Bugs fixed (all in the script logic):**\n\n1. **Trial badge skipped Trial 1 \u2192 3.** Replaced the dual `currentRound` bookkeeping with a single `validCount` that advances *only* on a valid measurement. The badge is now always `Trial min(validCount+1, 5)`, so it counts 1\u21925 with no skip and never exceeds 5.\n\n2. **False start consumed a trial.** `recordFalseStart` previously pushed an invalid row and incremented the trial counter. It now only sets the `fail` state; the same trial is retried via `advanceWaiting()` and `validCount` is untouched \u2014 the five valid measurements are preserved.\n\n3. **NaN/Infinity on an all-false session.** `finish()`/`showSummary()` now guard `valid.length === 0`: stats render as \"\u2013\" (finite) and the stage shows \"No valid measurements this session.\" instead of computing min/max/mean on an empty array.\n\n**Verification** (driven through the real controls \u2014 stage pointerdown + simulated clock \u2014 via the local `native-runtime` VM/DOM adapter; `node .scratch/verify.cjs`):\n- Bug 1: badges progress 1\u21922\u21923\u21924\u21925, then \"Test complete!\"\n- Bug 2: early tap \u2192 \"Too early! False start.\" and stays on the same trial on retry (no penalty); measured trial advances correctly; no false-start rows in a clean run\n- Bug 3: an all-false flow never surfaces NaN/Inf and keeps offering a retry; the empty-set guard renders finite \"\u2013\" stats and the clear message\n- Controlled mean: 200/225/250/275/300 ms \u2192 **avg = 250 ms**, best 200, worst 300, 5 valid rows\n\nAll checks pass; no unrelated features added. `VERIFY.md` records the checks and notes that the closure-private empty-set guard was verified via a temporary test seam (the shipped file contains no seam \u2014 confirmed by grep).\n\nOne environment note documented in `VERIFY.md`: controlled reaction times must be injected by writing `greenAt` (closure-private) through a seam; a bare `evaluate('greenAt = ...')` lands on a global and produced skewed readings \u2014 a harness clock artifact, not an app defect.",
+  "workflowInstructions": "operator-rescue-plan.json; run-operator-rescue.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 30.02,
+  "wallMinutes": 30.02,
+  "status": "assessed",
+  "runStatus": "assessed",
+  "stopReason": "operator_finished",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 129,
+  "parentToolCalls": 129,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 11,
+  "modelUsageReported": {
+    "input": 34476,
+    "output": 55962,
+    "cacheRead": 5942560,
+    "totalTokens": 6032998
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 88166,
+  "parentPeakReportedPromptTokens": 88166,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 34476,
+    "output": 55962,
+    "cacheRead": 5942560,
+    "totalTokens": 6032998
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 14395,
+  "sha256": "6a14fa77442ba32e67fb5fffe3ea5b08ad3c1f500322a2970bc79fc5a35b3f5e",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 10,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 29,
+    "delegations": [],
+    "controller": "Codex operator with one persistent native Pi repair context",
+    "operatorPrompts": 1,
+    "rounds": [
+      {
+        "prompt": 1,
+        "settledUTC": "2026-11-17T17:05:41.134156+00:00",
+        "modelSeconds": 1801.05,
+        "sha256": "6a14fa77442ba32e67fb5fffe3ea5b08ad3c1f500322a2970bc79fc5a35b3f5e",
+        "snapshot": "strategies/reports/operator-rounds/case86/round1"
+      }
+    ],
+    "seed": {
+      "id": "ornith-solo_billion-1",
+      "mode": "solo_billion",
+      "configurationMean": 74.8,
+      "source": "billion_on/ornith/01_reaction_timer/index.html",
+      "report": "billion_on/reports/ornith_01_reaction_timer.report.json",
+      "sha256": "10bc4a646bf3d65bae0a8fffdce5ec2867b854e5cd745a6bd80a99e81df0b066",
+      "score": 80,
+      "grade": "B - normal timing works; false-start and label defects",
+      "rubricScores": {
+        "functionality": 35,
+        "artifact_correctness": 24,
+        "usability": 9,
+        "self_verification": 2,
+        "autonomy": 10
+      },
+      "baselineScope": "No out-of-directory writes found on initial log review",
+      "baselineSteering": 0,
+      "baselineMinutes": 2.9,
+      "baselineActiveMinutes": 3.06,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_ornith_01_reaction_timer/index.html"
+    },
+    "repairSettings": {
+      "thinking": "off",
+      "billionContext": false,
+      "compaction": {
+        "enabled": true
+      },
+      "forcedProof": false,
+      "singlePersistentAgent": true,
+      "note": "Copied seed configuration is provenance; repair workflow uses corrected standalone Pi profiles, not the original delegation/extension architecture."
+    },
+    "modelActiveMinutes": 30.02,
+    "operatorReviewMinutes": 0.14,
+    "repairElapsedMinutes": 30.16
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Operator-assisted rescue of a selected existing artifact. Baseline creation cost and new repair cost are separate; normalized product quality is not an autonomous100-point grade."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "supervisorAssisted": true,
+  "assistedProductScore": 98.8
+}

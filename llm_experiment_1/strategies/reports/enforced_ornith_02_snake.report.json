@@ -1,0 +1,249 @@
+{
+  "score": 60,
+  "grade": "C- provisional - playable basic Snake; self-collision and reversal protection fail; calibration only",
+  "rubricScores": {
+    "functionality": 29,
+    "artifact_correctness": 17,
+    "usability": 12,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent exact-source checks pass startup, keyboard movement, timed play, button pause/resume, restart and wall collision. No external resources are required.",
+    "A controlled food pickup grows the snake from three to four cells, awards ten points and raises speed from 6 to 7.4 cells/sec at level two. Moving into a vacating tail cell is permitted."
+  ],
+  "defects": [
+    "The occupancy Set removes the old tail on ordinary moves but never adds the new head. After a legal right/right/right/down/left/up sequence, the snake overlaps its recent body at(10,8) and continues running instead of ending the game.",
+    "queueDir compares an opposite-direction string to state.dir, which is an object. Reversal is therefore accepted; pressing Left immediately after starting Right kills the game against its own body.",
+    "spawnFood runs before occupancy is rebuilt following growth. A controlled random-choice fixture places the new food on the newly added head. This fixture proves an invalid placement is possible, not its frequency during random play.",
+    "Fresh tester/reviewer stages did not produce reliable executable acceptance and review evidence within their limits. Most followup time went into incorrect state exposure and environment assumptions rather than repairing the gameplay defects."
+  ],
+  "verification": [
+    "reports/enforced_ornith_02_snake.qa.cjs/.qa.json executes actual final source with real UI handlers, virtual timed movement and controlled state/random fixtures. Application algorithms are not replaced.",
+    "The final repair stage is complete and later test/review roles are OS-blocked from changing index.html. Assessment must still be recorded only after terminal metadata and a matching final source hash."
+  ],
+  "verificationConcerns": [
+    "Supervisor environment fault: the default RNG was changed to a repeatable sequence during the first tester, and CSS custom-property lookup was fixed during the first repair. Both are calibration confounds; they are not application failures.",
+    "The initial unchanged Snake starts with corrected CSS lookup. The early reviewer falsely blamed valid getComputedStyle usage, and the resulting repair replaced CSS lookup with a local token map. That unnecessary repair does not fix the genuine gameplay defects.",
+    "No browser appearance, layout, native Canvas rendering, touch behavior or physical interaction was independently verified."
+  ],
+  "scopeCompliance": "Per-role OS boundaries restrict build/repair application writes and lock index.html for tester/reviewer. No supervisor application changes or app-specific hints were supplied.",
+  "humanOrSupervisorSteering": 2,
+  "workflowNotes": "Setup calibration, retained with full cost and evidence but excluded from final-procedure configuration means. Two supervisor test-platform corrections occurred during this attempt. Required fresh stages were externally enforced, but incomplete or incorrect test/review evidence prevented acceptance. The same unchanged prompt is repeated under the final procedure regardless of score.",
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "No errors but `__qaE` undefined \u2014 the instrument appends after the last `</script>` content but the `expose`/instrument concatenation: actually the load runs `(instrument(src,i)+(i===last?'\\\\n'+expose:''))`. The last script gets my appended code appended then no expose. So `__qaE=` should be a global assignment. Unless the appended content is treated as part of the IIFE because there's no newline... Actually `(function(){...})().__qaE=...` \u2014 after `)()` the `.__qaE` is property access on the return value (undefined)! My leading `;` got stripped. Let me check exactly.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 4,
+  "elapsedMinutes": 54.21,
+  "wallMinutes": 54.21,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "repair_limit",
+  "exitCode": 1,
+  "promptWords": 36,
+  "toolCalls": 331,
+  "parentToolCalls": 0,
+  "childToolCalls": 331,
+  "toolResultsMarkedError": 39,
+  "modelUsageReported": {
+    "input": 214434,
+    "output": 91022,
+    "cacheRead": 7425847,
+    "totalTokens": 7731303
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 59845,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 59845,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 214434,
+    "output": 91022,
+    "cacheRead": 7425847,
+    "totalTokens": 7731303
+  },
+  "artifactBytes": 15263,
+  "sha256": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 3,
+      "review": 3,
+      "repair": 2
+    },
+    "rolesCompleted": {
+      "build": 1,
+      "review": 1
+    },
+    "parentArtifactReads": 11,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 0,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 3.85,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": null,
+        "artifactAfter": "d7203e3ade6dea496fb0e7d01d7316d77eab084b9cd07d8d407e9bdddd775ff1",
+        "prompt": "enforced/ornith/02_snake/runtime/01-build/prompt.txt",
+        "events": "enforced/ornith/02_snake/runtime/01-build/events.jsonl",
+        "stderr": "enforced/ornith/02_snake/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 8.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "d7203e3ade6dea496fb0e7d01d7316d77eab084b9cd07d8d407e9bdddd775ff1",
+        "artifactAfter": "d7203e3ade6dea496fb0e7d01d7316d77eab084b9cd07d8d407e9bdddd775ff1",
+        "prompt": "enforced/ornith/02_snake/runtime/02-test/prompt.txt",
+        "events": "enforced/ornith/02_snake/runtime/02-test/events.jsonl",
+        "stderr": "enforced/ornith/02_snake/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 1.74,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "d7203e3ade6dea496fb0e7d01d7316d77eab084b9cd07d8d407e9bdddd775ff1",
+        "artifactAfter": "d7203e3ade6dea496fb0e7d01d7316d77eab084b9cd07d8d407e9bdddd775ff1",
+        "prompt": "enforced/ornith/02_snake/runtime/03-review/prompt.txt",
+        "events": "enforced/ornith/02_snake/runtime/03-review/events.jsonl",
+        "stderr": "enforced/ornith/02_snake/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "d7203e3ade6dea496fb0e7d01d7316d77eab084b9cd07d8d407e9bdddd775ff1",
+        "artifactAfter": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "prompt": "enforced/ornith/02_snake/runtime/04-repair/prompt.txt",
+        "events": "enforced/ornith/02_snake/runtime/04-repair/events.jsonl",
+        "stderr": "enforced/ornith/02_snake/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 5,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "artifactAfter": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "prompt": "enforced/ornith/02_snake/runtime/05-test/prompt.txt",
+        "events": "enforced/ornith/02_snake/runtime/05-test/events.jsonl",
+        "stderr": "enforced/ornith/02_snake/runtime/05-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 6,
+        "minutes": 4.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "artifactAfter": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "prompt": "enforced/ornith/02_snake/runtime/06-review/prompt.txt",
+        "events": "enforced/ornith/02_snake/runtime/06-review/events.jsonl",
+        "stderr": "enforced/ornith/02_snake/runtime/06-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 7,
+        "minutes": 10.0,
+        "reason": "stage_time_limit",
+        "exitCode": 0,
+        "artifactBefore": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "artifactAfter": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "prompt": "enforced/ornith/02_snake/runtime/07-repair/prompt.txt",
+        "events": "enforced/ornith/02_snake/runtime/07-repair/events.jsonl",
+        "stderr": "enforced/ornith/02_snake/runtime/07-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 8,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "artifactAfter": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "prompt": "enforced/ornith/02_snake/runtime/08-test/prompt.txt",
+        "events": "enforced/ornith/02_snake/runtime/08-test/events.jsonl",
+        "stderr": "enforced/ornith/02_snake/runtime/08-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 9,
+        "minutes": 4.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "artifactAfter": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+        "prompt": "enforced/ornith/02_snake/runtime/09-review/prompt.txt",
+        "events": "enforced/ornith/02_snake/runtime/09-review/events.jsonl",
+        "stderr": "enforced/ornith/02_snake/runtime/09-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+      "errors": [
+        "Executable acceptance test did not exit successfully",
+        "Acceptance ledger missing or stale",
+        "Acceptance check missing/failed: movement",
+        "Acceptance check missing/failed: food_growth_score",
+        "Acceptance check missing/failed: wall_collision",
+        "Acceptance check missing/failed: self_collision",
+        "Acceptance check missing/failed: pause_resume",
+        "Acceptance check missing/failed: restart",
+        "Acceptance check missing/failed: difficulty",
+        "Verifier did not trace loading the actual page and interacting with its controls",
+        "Verifier did not exercise timed application execution",
+        "Independent review missing, stale or reports blocking findings",
+        "Independent reviewer did not attest that tests execute application behavior"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": true
+}

@@ -1,0 +1,135 @@
+{
+  "score": 54,
+  "grade": "D provisional - stopped setup calibration, excluded from comparison means",
+  "rubricScores": {
+    "functionality": 26,
+    "artifact_correctness": 16,
+    "usability": 11,
+    "self_verification": 1,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent corrected-event checks of the frozen snapshot complete five clean trials with correct recorded values, mean 250, fastest 200, slowest 300 and standard deviation 35.4 ms.",
+    "Pi wrote tests before the application and attempted repairs without supervisor product code or behavioral hints."
+  ],
+  "defects": [
+    "A false start consumes one of five slots, so a run with one false start finishes with only four valid reaction times.",
+    "Reset leaves the pending signal interval alive: an idle page later changes to the reaction cue. An untracked next-trial timeout can also restart play after Reset.",
+    "Median calculation reverses the odd/even branches: five values 200/225/250/275/300 display 238 instead of 250."
+  ],
+  "verification": [
+    "reports/proof_ornith_01_reaction_timer.qa.cjs/.qa.json uses actual handlers and virtual time on the frozen snapshot; the independent tester uses corrected pointer activation, not the faulty v1 mouse helper.",
+    "This snapshot was stopped by the supervisor to correct the supplied helper, not a completed full-budget proof attempt. The numeric snapshot grade and costs are retained only for transparency."
+  ],
+  "verificationConcerns": [
+    "The original supplied a.click omitted pointer events. Model-authored tests therefore did not activate this app\u2019s valid pointerdown handler. This is a supervisor test-environment fault, not a product bug.",
+    "No proof_start call had occurred before the supervisor stop. This records behavior of the interrupted snapshot, not a conclusive adoption rate for the final cohort.",
+    "Autonomy/self-verification are incomplete due to the supervisor stop; this attempt is excluded from means and replaced by a fresh run under uniform v2 setup.",
+    "No independent browser rendering or physical input timing check."
+  ],
+  "scopeCompliance": "Pi alone implemented and repaired the snapshot. Supervisor stopped owned processes, corrected shared test configuration and retained all files; no benchmark product edits or hints.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Setup calibration: stopped because the supervisor\u2019s click helper omitted pointerdown/pointerup. Original helper and transcript remain immutable. All ten scored proof attempts use corrected version2; this prompt is repeated fresh as case53.",
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "proof",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "`signalId` is `undefined` on window \u2014 it's a local variable inside the IIFE, so `a.window` can't see it, AND the interval never ran. Let me expose it globally to observe.",
+  "workflowInstructions": "run-proof.py; research/pi-proof-setup.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 10.66,
+  "wallMinutes": 10.66,
+  "status": "assessed",
+  "runStatus": "assessed",
+  "stopReason": "supervisor_helper_calibration",
+  "exitCode": -15,
+  "promptWords": 34,
+  "toolCalls": 70,
+  "parentToolCalls": 70,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 4,
+  "modelUsageReported": {
+    "input": 27806,
+    "output": 19673,
+    "cacheRead": 1389905,
+    "totalTokens": 1437384
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 37498,
+  "parentPeakReportedPromptTokens": 37498,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 27806,
+    "output": 19673,
+    "cacheRead": 1389905,
+    "totalTokens": 1437384
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 20527,
+  "sha256": "754ce03bdcb7c7b3929d7d9de25390d09ea74c995be3ec9d068c99176a6346cb",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 3,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 26,
+    "delegations": [],
+    "reportedPassWithFailingTAP": {
+      "count": 0,
+      "toolCallIds": [],
+      "limit": "Detects explicit nonzero TAP final counts accompanying the extension PASS marker; not a general test-output parser."
+    },
+    "starts": 0,
+    "ends": 0,
+    "redTransitions": 0,
+    "greenTransitions": 0,
+    "note": "Supervisor stopped this setup-calibration attempt after finding an incomplete primary-click helper. No quality inference about pi-proof efficacy.",
+    "controller": "Single Pi RPC context with pinned pi-proof extension; no role chain",
+    "sequence": {
+      "successfulIndexWritesBeforeActivation": 9,
+      "successfulIndexWritesWhileActive": 0,
+      "satisfied": false,
+      "controllerSignalCriteriaMet": false,
+      "note": "A late start/end pair is not proof-first implementation. Layout-only scaffolding exceptions, if any, require explicit assessment notes."
+    },
+    "mechanicalDeadlineNotices": 0
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "calibration": true
+}

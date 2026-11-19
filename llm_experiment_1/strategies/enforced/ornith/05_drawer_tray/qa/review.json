@@ -1,0 +1,29 @@
+{
+  "artifactSHA256": "358b4e6a82331d533e0c95de9567507ecb09e208086e344f42e500f8c93d9b5d",
+  "status": "fail",
+  "testsActuallyExerciseBehavior": true,
+  "blockingFindings": [
+    {
+      "description": "The preview never renders. drawMesh() calls gl.uniform3fv(), gl.getParameter() and gl.polygonOffset() unconditionally. The QA WebGL stub (runtime.cjs fakeGL) implements uniform3f/uniformMatrix4fv but NOT uniform3fv/getParameter/polygonOffset, so these throw. The initial run() at page load calls draw() and throws; run()'s try/catch catches it and renders it as a validation error ('Invalid input: gl.uniform3fv is not a function'), so the app silently fails to render and the error banner is poisoned.",
+      "evidence": "index.html lines 503-505 (drawMesh); runtime.cjs fakeGL implements uniform3f/uniformMatrix4fv only. Reproduction: node qa/acceptance.cjs -> crash 'gl.uniform3fv is not a function' at index.html:script4:104 (see qa/execution.json). Probe in .scratch/probe2.cjs: after load, error.textContent === 'Invalid input: gl.uniform3fv is not a function' while s-each still reads '87.0 × 38.0 mm' (written before the failing draw)."
+    },
+    {
+      "description": "Acceptance test gives a false positive on glOk and then crashes the whole run. testRotatablePreview asserts glOk = $('error').textContent !== 'WebGL not supported...'. Because the app hides the render failure as 'Invalid input: ...' (not the WebGL-not-supported string), glOk evaluates true even though nothing renders. Then the test calls fire('wire-toggle','click') -> draw() -> same unguarded drawMesh throw -> uncaught -> Node process aborts. Exit code 1 and NO other test body runs (editable_dimensions, compartment_dimensions, layout_persistence, same_trial_retry, stl_export, wall_floor_thickness never execute).",
+      "evidence": "qa/acceptance.cjs testRotatablePreview (glOk line ~110, fire('wire-toggle') line ~131); qa/execution.json exitCode 1 with the stack ending at acceptance.cjs:146."
+    },
+    {
+      "description": "Value-based acceptance checks pass without any working computation path being proven. edititble_dimensions and compartment_dimensions assert on s-each/cell text containing '87.0'/'38.0'. But run() writes s-count/s-each/comp-table BEFORE calling draw(); the draw() throws and is swallowed, yet the already-written stats remain. So the substring assertions validate data written by the happy path while the renderer is dead - they do not exercise the renderer or the export path that the brief requires.",
+      "evidence": "index.html run() writes s-count/s-each/updateCompTable() then draw() (throws). Acceptance compartment_dimensions reads cells[0].textContent and $('s-each').textContent."
+    },
+    {
+      "description": "STL export is never reached, so the printable-STL deliverable is unverified. testStlExport fires 'export' click -> exportSTL() sets size label, but the test suite aborts at testRotatablePreview (before testStlExport runs at line 146). Even if reached, exportSTL() uses URL.createObjectURL + anchor.click(); the stub models downloads but the blob capture depends on the whole suite still running, which it does not.",
+      "evidence": "qa/acceptance.cjs: testStlExport is registered after testRotatablePreview; process.exitCode set by finish() never runs because the runtime throws and terminates Node (qa/execution.json)."
+    }
+  ],
+  "residualRisks": [
+    "Fix scope must be confined to the app's WebGL guard so it does not change real-browser behavior. drawMesh must guard the three stub-undefined methods (uniform3fv, getParameter, polygonOffset) with the existing GL.* guards, and the startup run() must not swallow a render() throw into the user-facing 'Invalid input' banner (separate validation failures from render failures).",
+    "Even after the guard fix, value-based tests could still pass while draw() silently no-ops; add a positive assertion that draw() executed (e.g. a gl call was issued / a non-trivial error was not set) before trusting stats.",
+    "The QA runtime is a source-only VM with a partial WebGL stub and no browser; real GPU rasterization, actual STL file printability, and true browser drag/zoom are still unverified by this harness regardless of the guard fix.",
+    "No edit access to index.html in this review stage; the defect is identified with exact file/line evidence so a repair agent can act without guidance."
+  ]
+}

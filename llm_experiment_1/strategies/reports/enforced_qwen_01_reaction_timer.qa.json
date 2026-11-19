@@ -1,0 +1,39 @@
+{
+  "method": "Actual source with partial DOM and deterministic clock. Executes exact inline onclick attribute code because the DOM shim does not compile inline attributes; real document pointerdown handlers and exact timer boundaries. Native browser layout/paint timing unverified.",
+  "sha256": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+  "checks": [
+    {
+      "id": "five_trials_summary_restart",
+      "pass": true,
+      "evidence": {
+        "times": [
+          200,
+          225,
+          250,
+          275,
+          300
+        ],
+        "average": 250,
+        "best": 200,
+        "worst": 300,
+        "waits": [
+          2999.8550398740917,
+          2432.291680946946,
+          3313.426975160837,
+          3690.7599745318294,
+          2624.151460826397
+        ],
+        "restart": true
+      }
+    },
+    {
+      "id": "false_start_preserves_valid_trials",
+      "pass": true,
+      "evidence": {
+        "validResults": 5,
+        "average": 200
+      }
+    }
+  ],
+  "pass": true
+}

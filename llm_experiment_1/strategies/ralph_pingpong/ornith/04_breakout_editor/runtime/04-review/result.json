@@ -1,0 +1,20 @@
+{
+  "round": 2,
+  "role": "review",
+  "modelLabel": "ornith",
+  "model": "ornith-1.5:35b-256k",
+  "started": "2026-11-17T04:54:08.197259+00:00",
+  "events": "ralph_pingpong/ornith/04_breakout_editor/runtime/04-review/events.jsonl",
+  "status": "completed",
+  "finished": "2026-11-17T05:00:16.018897+00:00",
+  "minutes": 6.13,
+  "reason": "stage_deadline",
+  "exitCode": -9,
+  "proof": {
+    "forcedActivations": 0,
+    "completionRequests": 0,
+    "red": 0,
+    "green": 0
+  },
+  "testExitCode": 1
+}

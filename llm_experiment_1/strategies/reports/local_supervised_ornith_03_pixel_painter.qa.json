@@ -1,0 +1,86 @@
+{
+  "method": "Independent exact-source VM/DOM/nativeCanvas actual input handlers, correct canvas coordinate scaling, real PNG encoded and decoded bytes. Generic standards ImageData constructor supplied; no app algorithms replaced. Either coherent crop or scale resize semantics accepted because brief leaves choice open. No browser layout/default actions/hit testing verified.",
+  "sha256": "493ccc85fd5d73b6b10c05f7072533c3e475cb13830b0afa882eae51a4d68d5a",
+  "checks": [
+    {
+      "id": "actual_brush_eraser_multistep_history_clear",
+      "pass": true,
+      "evidence": {
+        "history": true
+      }
+    },
+    {
+      "id": "actual_palette_touch_connected_stroke_erase_and_undo",
+      "pass": true,
+      "evidence": {
+        "swatches": 20,
+        "touchStrokePixels": 7
+      }
+    },
+    {
+      "id": "resize_retains_coherent_2D_content_crop_or_scale",
+      "pass": true,
+      "evidence": {
+        "semantics": "scale",
+        "dimensions": [
+          64,
+          32
+        ],
+        "markerRetained": true
+      }
+    },
+    {
+      "id": "resize_undo_redo_restores_dimensions_without_throw",
+      "pass": false,
+      "error": "Failed to construct 'ImageData': The input data length is not a multiple of (4 * width)."
+    },
+    {
+      "id": "blank_resize_undo_does_not_throw",
+      "pass": false,
+      "error": "Failed to construct 'ImageData': The input data length is not equal to (4 * width * height)."
+    },
+    {
+      "id": "real_PNG_export_dimensions_and_pixels",
+      "pass": true,
+      "evidence": {
+        "bytes": 137,
+        "dimensions": [
+          48,
+          24
+        ]
+      }
+    },
+    {
+      "id": "decoded_PNG_matches_visible_pixel",
+      "pass": true,
+      "evidence": {
+        "pixel": [
+          255,
+          0,
+          0,
+          255
+        ],
+        "dimensions": [
+          48,
+          24
+        ]
+      }
+    }
+  ],
+  "optionalChecks": [
+    {
+      "id": "advertised_right_click_erases",
+      "pass": true,
+      "blocking": false,
+      "evidence": {
+        "pixel": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  ],
+  "pass": false
+}

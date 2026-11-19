@@ -1,0 +1,1 @@
+Build Breakout with a level editor: draw and erase bricks, play your layout, show score and lives, restart, and save/load the level as JSON. Support keyboard and mouse or touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.

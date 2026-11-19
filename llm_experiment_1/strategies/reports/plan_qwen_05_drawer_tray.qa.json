@@ -1,0 +1,35 @@
+{
+  "sha256": "8c2728d2f2429874efe5ec4a9b8ab150130a5153b10fa2e1a31a7c3aff76eb5a",
+  "externalImports": [
+    "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+    "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+  ],
+  "compartments": {
+    "cellW": 56,
+    "cellD": 55.5
+  },
+  "checks": {
+    "build": {
+      "ok": false,
+      "error": "Cannot read properties of undefined (reading 'getAttribute')"
+    },
+    "floor": {
+      "thickness": 0.009999990463256836,
+      "requested": 2
+    },
+    "merge": {
+      "inputTriangles": 12,
+      "outputTriangles": 8,
+      "index": null
+    },
+    "export": {
+      "ok": false,
+      "error": "Script execution timed out after 25ms",
+      "remainingSourceChildren": 1
+    }
+  },
+  "limits": [
+    "Geometry functions executed unchanged against the exact Three.js 0.163.0 API. WebGL renderer, browser module loading and appearance not tested.",
+    "Export callback tested separately with one real Mesh fixture because actual startup fails; this does not represent a successful app build."
+  ]
+}

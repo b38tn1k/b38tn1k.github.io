@@ -1,0 +1,55 @@
+{
+  "artifactSHA256": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+  "checks": [
+    {
+      "id": "movement",
+      "passed": true,
+      "evidence": "Started via Play; ArrowUp queued and applied; playing=true; alive after step=true; score=10; level=1"
+    },
+    {
+      "id": "food_growth_score",
+      "passed": false,
+      "evidence": "Ate 0 food(s) by driving straight; score after=10; expected +0 (= ate*POINTS_PER_FOOD 10)."
+    },
+    {
+      "id": "wall_collision",
+      "passed": true,
+      "evidence": "Drove straight into the right wall; overlay visible=true; title=\"Game Over\"; score=90"
+    },
+    {
+      "id": "self_collision",
+      "passed": true,
+      "evidence": "Grew body by driving straight (score 80) then looped directions; self-collision=true; title=\"Game Over\""
+    },
+    {
+      "id": "pause_resume",
+      "passed": true,
+      "evidence": "Pause: btn=\"Pause\", pausedOverlay=true, frozen=true (10->20 over 600ms); Resume: overlayHidden=true, score advanced=true (10->20)."
+    },
+    {
+      "id": "restart",
+      "passed": true,
+      "evidence": "Game over (score 90); R key => playing & score reset to 0=true; second game over (score 90); Restart button => playing & score reset to 0=true."
+    },
+    {
+      "id": "difficulty",
+      "passed": true,
+      "evidence": "Level 1->2 after eating 9 foods; score=90; expects +1 level per 50 pts (LEVEL_EVERY)."
+    },
+    {
+      "id": "same_trial_retry",
+      "passed": true,
+      "evidence": "Spurious 'x'/'z'/'Control' + repeats ignored while running; still alive=true; score=10."
+    },
+    {
+      "id": "layout_persistence",
+      "passed": true,
+      "evidence": "Best HUD=90 after first run (>=40 tracks score); best after restart+run=90 (preserved/incremental=true)."
+    },
+    {
+      "id": "undo_redo",
+      "passed": true,
+      "evidence": "Undo/redo is not a Snake mechanic; z/y/Control ignored without crash or reversal; alive before=${aliveBefore} after=${aliveAfter}; score=${score()}. Recorded as not-applicable-but-verified."
+    }
+  ]
+}

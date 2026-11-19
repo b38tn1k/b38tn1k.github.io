@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Drawer Tray Maker</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    display: grid; grid-template-columns: 340px 1fr; min-height: 100vh;
+    background: #14161a; color: #e6e8ec;
+  }
+  aside { padding: 18px 18px 40px; background: #1b1e24; border-right: 1px solid #2a2f38; overflow: auto; }
+  h1 { font-size: 18px; margin: 0 0 4px; }
+  .sub { color: #8a93a1; margin: 0 0 18px; font-size: 12px; }
+  fieldset { border: 1px solid #2a2f38; border-radius: 10px; margin: 0 0 14px; padding: 10px 12px; }
+  legend { color: #9fb0c8; font-weight: 600; padding: 0 6px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 8px 0; }
+  label { color: #c6cdd8; }
+  input[type=number] { width: 84px; padding: 6px 8px; border: 1px solid #333a45; background: #0f1216; color: #e6e8ec; border-radius: 8px; }
+  input[type=range] { flex: 1; }
+  .unit { color: #8a93a1; width: 34px; text-align: right; }
+  .err { color: #ff8a8a; font-size: 12px; min-height: 16px; margin: 2px 0; }
+  .compart { background: #0f1216; border: 1px solid #2a2f38; border-radius: 10px; padding: 12px; margin-bottom: 14px; }
+  .compart h2 { font-size: 13px; margin: 0 0 8px; color: #9fb0c8; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+  .kv { display: flex; justify-content: space-between; border-bottom: 1px dashed #232a33; padding: 4px 0; }
+  .kv:last-child { border-bottom: 0; }
+  .kv span:first-child { color: #9fb0c8; }
+  .kv span:last-child { font-variant-numeric: tabular-nums; color: #e6e8ec; }
+  main { position: relative; }
+  #canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  #canvas:active { cursor: grabbing; }
+  .toolbar { position: absolute; top: 12px; left: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+  button {
+    background: #232b35; color: #e6e8ec; border: 1px solid #343f4d; border-radius: 8px;
+    padding: 8px 12px; cursor: pointer; font-size: 13px;
+  }
+  button:hover { background: #2c3744; }
+  button.primary { background: #2f6fed; border-color: #2f6fed; color: #fff; }
+  button.primary:hover { background: #245bd1; }
+  .hint { position: absolute; bottom: 12px; left: 12px; color: #6b7482; font-size: 12px; }
+  .readout { font-variant-numeric: tabular-nums; color: #c6cdd8; }
+  footer { position: absolute; bottom: 12px; right: 12px; color: #6b7482; font-size: 11px; }
+</style>
+</head>
+<body>
+<aside>
+  <h1>Drawer Tray Maker</h1>
+  <p class="sub">Rectangular organizer · editable compartments · printable STL</p>
+
+  <fieldset>
+    <legend>Outer dimensions (mm)</legend>
+    <div class="row"><label for="width">Width</label><input id="width" type="range" min="40" max="600" step="1"><input id="widthN" type="number" min="40" max="600" step="1"><span class="unit">mm</span></div>
+    <div class="row"><label for="depth">Depth</label><input id="depth" type="range" min="40" max="600" step="1"><input id="depthN" type="number" min="40" max="600" step="1"><span class="unit">mm</span></div>
+    <div class="row"><label for="height">Height</label><input id="height" type="range" min="10" max="200" step="1"><input id="heightN" type="number" min="10" max="200" step="1"><span class="unit">mm</span></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Grid</legend>
+    <div class="row"><label for="columns">Columns</label><input id="columns" type="range" min="1" max="20" step="1"><input id="columnsN" type="number" min="1" max="20" step="1"><span class="unit">-</span></div>
+    <div class="row"><label for="rows">Rows</label><input id="rows" type="range" min="1" max="20" step="1"><input id="rowsN" type="number" min="1" max="20" step="1"><span class="unit">-</span></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Wall &amp; floor (mm)</legend>
+    <div class="row"><label for="wall">Wall thickness</label><input id="wall" type="range" min="0.6" max="8" step="0.1"><input id="wallN" type="number" min="0.6" max="8" step="0.1"><span class="unit">mm</span></div>
+    <div class="row"><label for="floor">Floor thickness</label><input id="floor" type="range" min="0.6" max="8" step="0.1"><input id="floorN" type="number" min="0.6" max="8" step="0.1"><span class="unit">mm</span></div>
+  </fieldset>
+
+  <div id="err" class="err"></div>
+
+  <div class="compart">
+    <h2>Compartment dimensions</h2>
+    <div class="grid2">
+      <div class="kv"><span>Width</span><span id="cW">–</span></div>
+      <div class="kv"><span>Depth</span><span id="cD">–</span></div>
+      <div class="kv"><span>Clear height</span><span id="cH">–</span></div>
+      <div class="kv"><span>Count</span><span id="cN">–</span></div>
+    </div>
+  </div>
+
+  <div class="toolbar" style="position:static;">
+    <button id="exportBtn" class="primary">Export STL…</button>
+    <button id="resetBtn">Reset</button>
+  </div>
+</aside>
+
+<main>
+  <canvas id="canvas"></canvas>
+  <div class="toolbar">
+    <button data-view="yaw">↔ Rotate Y</button>
+    <button data-view="pitch">↕ Rotate X</button>
+    <button data-view="top">Top view</button>
+    <button data-view="side">Side view</button>
+  </div>
+  <div class="hint">Drag to rotate · scroll to zoom</div>
+  <footer>offline · self-contained</footer>
+</main>
+
+<!-- ===== TRAY CORE (extracted by tests) ===== -->
+<script id="tray-core" type="text/javascript">
+/*TRAY_CORE_START*/
+window.TrayCore = function () {
+  "use strict";
+
+  function sanitize(v, dflt) {
+    var n = (v === undefined || v === null || v === "") ? NaN : parseFloat(v);
+    return (Number.isFinite(n)) ? n : dflt;
+  }
+
+  // Normalize + validate user input into a canonical params object.
+  function validate(p) {
+    p = p || {};
+    var W = sanitize(p.width, 180);
+    var D = sanitize(p.depth, 120);
+    var H = sanitize(p.height, 30);
+    var cols = Math.max(1, Math.round(sanitize(p.columns, 3)));
+    var rows = Math.max(1, Math.round(sanitize(p.rows, 2)));
+    var tw = sanitize(p.wallThickness, 2);
+    var th = sanitize(p.floorThickness, 3);
+
+    if (!(tw > 0)) throw new Error("wall thickness must be > 0");
+    if (!(th > 0)) throw new Error("floor thickness must be > 0");
+
+    var innerW = W - 2 * tw;
+    var innerD = D - 2 * tw;
+    if (innerW < 0) throw new Error("width too small for walls");
+    if (innerD < 0) throw new Error("depth too small for walls");
+    if (cols > 1 && innerW - (cols - 1) * tw <= 0) throw new Error("width too small for walls");
+    if (rows > 1 && innerD - (rows - 1) * tw <= 0) throw new Error("depth too small for walls");
+
+    return Object.assign(
+      {
+        width: W | 0,
+        depth: D | 0,
+        height: H | 0,
+        columns: cols | 0,
+        rows: rows | 0,
+        wallThickness: tw | 0,
+        floorThickness: th | 0
+      },
+      {
+        innerWidth: innerW,
+        innerDepth: innerD
+      }
+    );
+  }
+
+  // Compartment geometry from validated params.
+  function layout(p) {
+    var cols = p.columns;
+    var rows = p.rows;
+    var cellWidth = (p.innerWidth - (cols - 1) * p.wallThickness) / cols;
+    var cellDepth = (p.innerDepth - (rows - 1) * p.wallThickness) / rows;
+    var clearHeight = Math.max(0, p.height - p.floorThickness);
+    return {
+      cellWidth: cellWidth,
+      cellDepth: cellDepth,
+      clearHeight: clearHeight,
+      innerWidth: p.innerWidth,
+      innerDepth: p.innerDepth
+    };
+  }
+
+  // Approximate a cell opening rect (the air void) in world coords.
+  function cellOpening(p, c, r) {
+    var cols = p.columns;
+    var rows = p.rows;
+    var cellW = (p.innerWidth - (cols - 1) * p.wallThickness) / cols;
+    var cellD = (p.innerDepth - (rows - 1) * p.wallThickness) / rows;
+    var x0 = p.wallThickness + c * cellW;
+    var y0 = p.wallThickness + r * cellD;
+    return [x0, y0, cellW, cellD];
+  }
+
+  // Solid boxes (min/max world coords) composing the tray.
+  function boxes(p) {
+    var tw = p.wallThickness;
+    var th = p.floorThickness;
+    var cols = p.columns;
+    var rows = p.rows;
+
+    // Floor slab (also the floor of every compartment).
+    var bs = [{ min: [0, 0, 0], max: [p.width, p.depth, th] }];
+
+    var wallTop = p.height;
+    var innerX0 = tw, innerX1 = p.width - tw;
+    var innerY0 = tw, innerY1 = p.depth - tw;
+
+    // Perimeter walls (top ring), resting on the floor.
+    bs.push({ min: [0, 0, th], max: [p.width, tw, wallTop] });                 // back
+    bs.push({ min: [0, p.depth - tw, th], max: [p.width, p.depth, wallTop] }); // front
+    bs.push({ min: [innerX0, innerY0, th], max: [innerX1, innerY1, wallTop] });
+
+    // Internal vertical partitions (between columns).
+    for (var c = 1; c < cols; c++) {
+      var cellW = (p.innerWidth - (cols - 1) * tw) / cols;
+      var x0 = tw + c * cellW;
+      bs.push({ min: [x0, innerY0, th], max: [x0 + tw, innerY1, wallTop] });
+    }
+    // Internal horizontal partitions (between rows).
+    for (var r = 1; r < rows; r++) {
+      var cellD = (p.innerDepth - (rows - 1) * tw) / rows;
+      var y0 = tw + r * cellD;
+      bs.push({ min: [innerX0, y0, th], max: [innerX1, y0 + tw, wallTop] });
+    }
+
+    return bs;
+  }
+
+  // 12 triangles (2 per face) for an axis-aligned box.
+  function boxMesh(minX, minY, minZ, maxX, maxY, maxZ) {
+    var p = [
+      [minX, minY, minZ], [maxX, minY, minZ], [maxX, maxY, minZ], [minX, maxY, minZ],
+      [minX, minY, maxZ], [maxX, minY, maxZ], [maxX, maxY, maxZ], [minX, maxY, maxZ]
+    ];
+    var faces = [
+      [0, 3, 2, 1], // bottom
+      [4, 5, 6, 7], // top
+      [0, 1, 5, 4], // y-min
+      [1, 2, 6, 5], // y-max
+      [3, 0, 4, 7], // x-min
+      [2, 3, 7, 6]  // x-max
+    ];
+    var tris = [];
+    for (var f = 0; f < faces.length; f++) {
+      var quad = faces[f];
+      tris.push([p[quad[0]], p[quad[1]], p[quad[2]]]);
+      tris.push([p[quad[0]], p[quad[2]], p[quad[3]]]);
+    }
+    return tris;
+  }
+
+  function outwardNormal(v0, v1, v2) {
+    var ux = v1[0] - v0[0], uy = v1[1] - v0[1], uz = v1[2] - v0[2];
+    var vx = v2[0] - v0[0], vy = v2[1] - v0[1], vz = v2[2] - v0[2];
+    var nx = uy * vz - uz * vy;
+    var ny = uz * vx - ux * vz;
+    var nz = ux * vy - uy * vx;
+    var ln = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+    return [nx / ln, ny / ln, nz / ln];
+  }
+
+  function volumeOf(bs) {
+    var v = 0;
+    for (var i = 0; i < bs.length; i++) {
+      var b = bs[i];
+      v += (b.max[0] - b.min[0]) * (b.max[1] - b.min[1]) * (b.max[2] - b.min[2]);
+    }
+    return v;
+  }
+
+  function buildTray(p) {
+    var params = validate(p);
+    var lay = layout(params);
+    var bs = boxes(params);
+    var tris = [];
+    for (var i = 0; i < bs.length; i++) {
+      var b = bs[i];
+      tris.push.apply(tris, boxMesh(b.min[0], b.min[1], b.min[2], b.max[0], b.max[1], b.max[2]));
+    }
+    return {
+      params: params,
+      layout: lay,
+      boxes: bs,
+      triangles: tris,
+      volume: volumeOf(bs),
+      stlBinary: function () { return stlBinary(tris); },
+      stlAscii: function () { return stlAscii(tris); }
+    };
+  }
+
+  // Binary STL (ISO 10303). Returns a Node Buffer in Node, ArrayBuffer in browser.
+  function stlBinary(tris) {
+    var count = tris.length;
+    var headerName = "drawer-organizer-tray";
+    var buf;
+    var useBuffer = (typeof Buffer !== "undefined");
+    var total = 84 + count * 50;
+    if (useBuffer) {
+      buf = Buffer.alloc(total);
+      // Zero-pad header to 80 bytes, then write the name
+      Buffer.from(headerName).copy(buf, 0);
+    } else {
+      buf = new ArrayBuffer(total);
+      var u8 = new Uint8Array(buf);
+      for (var k = 0; k < header.length && k < 80; k++) u8[k] = header.charCodeAt(k);
+    }
+    function setU32(o, v) { if (useBuffer) buf.writeUInt32LE(v, o); else new Uint32Array(buf)[o >> 2] = v; }
+    function setF32(o, v) { if (useBuffer) buf.writeFloatLE(v, o); else new Float32Array(buf)[o >> 2] = v; }
+    setU32(80, count);
+    var o = 84;
+    for (var i = 0; i < count; i++) {
+      var t = tris[i];
+      var n = outwardNormal(t[0], t[1], t[2]);
+      setF32(o, n[0]); o += 4;
+      setF32(o, n[1]); o += 4;
+      setF32(o, n[2]); o += 4;
+      for (var j = 0; j < 3; j++) {
+        setF32(o, t[j][0]); o += 4;
+        setF32(o, t[j][1]); o += 4;
+        setF32(o, t[j][2]); o += 4;
+      }
+      if (useBuffer) buf.writeUInt16LE(0, o); else new Uint16Array(buf)[o >> 1] = 0;
+      o += 2;
+    }
+    return buf;
+  }
+
+  function fmt(n) {
+    if (!Number.isFinite(n)) return "–";
+    return (Math.round(n * 100) / 100).toString();
+  }
+
+  // ASCII STL. Returns a string.
+  function stlAscii(tris) {
+    var out = "ASCII STL\nsolid tray\n";
+    for (var i = 0; i < tris.length; i++) {
+      var t = tris[i];
+      var n = outwardNormal(t[0], t[1], t[2]);
+      out += "facet normal " + n[0].toFixed(6) + " " + n[1].toFixed(6) + " " + n[2].toFixed(6) + "\n";
+      out += "  outer loop\n";
+      for (var j = 0; j < 3; j++) {
+        out += "    vertex " + t[j][0].toFixed(6) + " " + t[j][1].toFixed(6) + " " + t[j][2].toFixed(6) + "\n";
+      }
+      out += "  endloop\nendfacet\n";
+    }
+    out += "endsolid tray\n";
+    return out;
+  }
+
+  return {
+    sanitize: sanitize,
+    validate: validate,
+    layout: layout,
+    boxes: boxes,
+    buildTray: buildTray,
+    stlBinary: stlBinary,
+    stlAscii: stlAscii,
+    fmt: fmt,
+    DEFAULTS: { width: 180, depth: 120, height: 30, columns: 3, rows: 2, wallThickness: 2, floorThickness: 3 }
+  };
+};
+/*TRAY_CORE_END*/
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var tray = window.TrayCore();
+
+  var state = {
+    width: 180, depth: 120, height: 30,
+    columns: 3, rows: 2,
+    wall: 2, floor: 3,
+    yaw: 0.6, pitch: 0.5, zoom: 1
+  };
+
+  var els = {};
+  function $(id) { return document.getElementById(id); }
+  function bindRange(rangeId, numId, key, fmtFn) {
+    var range = $(rangeId), num = $(numId);
+    var read = function () { return parseFloat(num.value); };
+    var apply = function () {
+      var v = read();
+      if (!isFinite(v)) return;
+      state[key] = v;
+      render();
+    };
+    range.addEventListener("input", function () { num.value = range.value; apply(); });
+    num.addEventListener("input", function () { range.value = num.value; apply(); });
+  }
+
+  function readParams() {
+    return {
+      width: +$("widthN").value,
+      depth: +$("depthN").value,
+      height: +$("heightN").value,
+      columns: +$("columnsN").value,
+      rows: +$("rowsN").value,
+      wallThickness: +$("wallN").value,
+      floorThickness: +$("floorN").value
+    };
+  }
+
+  function syncFromState() {
+    $("width").value = state.width; $("widthN").value = state.width;
+    $("depth").value = state.depth; $("depthN").value = state.depth;
+    $("height").value = state.height; $("heightN").value = state.height;
+    $("columns").value = state.columns; $("columnsN").value = state.columns;
+    $("rows").value = state.rows; $("rowsN").value = state.rows;
+    $("wall").value = state.wall; $("wallN").value = state.wall;
+    $("floor").value = state.floor; $("floorN").value = state.floor;
+  }
+
+  var errEl, cWEl, cDEl, cHEl, cNEl;
+
+  function render() {
+    var built;
+    try {
+      built = tray.buildTray(readParams());
+    } catch (e) {
+      errEl.textContent = e.message || String(e);
+      cWEl.textContent = cDEl.textContent = cHEl.textContent = cNEl.textContent = "–";
+      return;
+    }
+    errEl.textContent = "";
+
+    var lay = built.layout;
+    cWEl.textContent = tray.fmt(lay.cellWidth) + " mm";
+    cDEl.textContent = tray.fmt(lay.cellDepth) + " mm";
+    cHEl.textContent = tray.fmt(lay.clearHeight) + " mm";
+    cNEl.textContent = built.params.columns + " × " + built.params.rows + " = " + (built.params.columns * built.params.rows);
+
+    drawPreview(built);
+  }
+
+  // ---- 3D preview (plain canvas, no libraries) ----
+  var canvas, ctx, W, Hc;
+  function resize() {
+    var rect = canvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.max(2, Math.round(rect.width * dpr));
+    canvas.height = Math.max(2, Math.round(rect.height * dpr));
+    W = canvas.width; Hc = canvas.height;
+    drawPreview(current);
+  }
+  var current = null;
+  function drawPreview(built) {
+    if (!canvas) return;
+    current = built;
+    if (!ctx) ctx = canvas.getContext("2d");
+    if (!W) resize();
+
+    ctx.fillStyle = "#0c0e12";
+    ctx.fillRect(0, 0, W, Hc);
+
+    var maxDim = Math.max(built.params.width, built.params.depth, built.params.height);
+    var scale = (Math.min(W, Hc) * 0.7) / maxDim * state.zoom;
+    var cx = W / 2, cy = Hc / 2;
+
+    // world center
+    var ox = built.params.width / 2;
+    var oy = built.params.depth / 2;
+    var oz = built.params.floorThickness / 2 + (built.params.height - built.params.floorThickness) * 0.5;
+
+    var ca = Math.cos(state.pitch), sa = Math.sin(state.pitch);
+    var cb = Math.cos(state.yaw), sb = Math.sin(state.yaw);
+
+    var proj = function (x, y, z) {
+      var px = x - ox, py = y - oy, pz = z - oz;
+      // yaw (around Y)
+      var x1 = px * cb - pz * sb;
+      var z1 = px * sb + pz * cb;
+      // pitch (around X)
+      var y2 = py * ca - z1 * sa;
+      var z2 = py * sa + z1 * ca;
+      var persp = 600 / (600 + z2);
+      return [cx + x1 * scale * persp, cy - y2 * scale * persp, z2];
+    };
+
+    // shade by lighting
+    var light = [-0.4, -0.5, -0.75];
+    var ln = Math.sqrt(light[0] * light[0] + light[1] * light[1] + light[2] * light[2]) || 1;
+    light = [light[0] / ln, light[1] / ln, light[2] / ln];
+
+    var faces = [];
+    for (var bIdx = 0; bIdx < built.boxes.length; bIdx++) {
+      var b = built.boxes[bIdx];
+      var tris = meshTris(b, proj);
+      for (var tIdx = 0; tIdx < tris.length; tIdx++) {
+        var tr = tris[tIdx];
+        // normal in world space (reuse core outward normal via simple axis faces)
+        var n = worldNormal(b, tr);
+        var diff = -(n[0] * light[0] + n[1] * light[1] + n[2] * light[2]);
+        var shade = Math.max(0.18, Math.min(1, 0.35 + diff));
+        faces.push({ z: (tr[0][2] + tr[1][2] + tr[2][2]) / 3, shade: shade, pts: tr });
+      }
+    }
+    faces.sort(function (a, b) { return b.z - a.z; }); // painter's algorithm
+
+    for (var f = 0; f < faces.length; f++) {
+      var ph = faces[f];
+      var s = ph.shade;
+      var r = Math.round(60 + s * 120);
+      var g = Math.round(90 + s * 130);
+      var bl = Math.round(150 + s * 90);
+      ctx.beginPath();
+      ctx.moveTo(ph.pts[0][0], ph.pts[0][1]);
+      ctx.lineTo(ph.pts[1][0], ph.pts[1][1]);
+      ctx.lineTo(ph.pts[2][0], ph.pts[2][1]);
+      ctx.closePath();
+      ctx.fillStyle = "rgb(" + r + "," + g + "," + bl + ")";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.06)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  function meshTris(box, proj) {
+    var mn = box.min, mx = box.max;
+    var pts = [
+      proj(mn[0], mn[1], mn[2]), proj(mx[0], mn[1], mn[2]), proj(mx[0], mx[1], mn[2]), proj(mn[0], mx[1], mn[2]),
+      proj(mn[0], mn[1], mx[2]), proj(mx[0], mn[1], mx[2]), proj(mx[0], mx[1], mx[2]), proj(mn[0], mx[1], mx[2])
+    ];
+    var faces = [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [1, 2, 6, 5], [3, 0, 4, 7], [2, 3, 7, 6]];
+    var out = [];
+    for (var f = 0; f < faces.length; f++) {
+      var q = faces[f];
+      out.push([pts[q[0]], pts[q[1]], pts[q[2]]]);
+      out.push([pts[q[0]], pts[q[2]], pts[q[3]]]);
+    }
+    return out;
+  }
+
+  function worldNormal(box, tr) {
+    var a = tr[0], b = tr[1], c = tr[2];
+    var ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
+    var vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+    var nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    var ln = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+    return [nx / ln, ny / ln, nz / ln];
+  }
+
+  // ---- interaction ----
+  var dragging = false, lastX = 0, lastY = 0;
+  function pointer(e) {
+    var t = e.touches ? e.touches[0] : e;
+    return [t.clientX, t.clientY];
+  }
+  canvas.addEventListener("mousedown", function (e) { dragging = true; var p = pointer(e); lastX = p[0]; lastY = p[1]; });
+  window.addEventListener("mouseup", function () { dragging = false; });
+  window.addEventListener("mousemove", function (e) {
+    if (!dragging) return;
+    var p = pointer(e);
+    state.yaw += (p[0] - lastX) * 0.01;
+    state.pitch += (p[1] - lastY) * 0.01;
+    state.pitch = Math.max(-1.4, Math.min(1.4, state.pitch));
+    lastX = p[0]; lastY = p[1];
+    drawPreview(current);
+  });
+  canvas.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    state.zoom *= (e.deltaY < 0) ? 1.1 : 0.9;
+    state.zoom = Math.max(0.3, Math.min(5, state.zoom));
+    drawPreview(current);
+  }, { passive: false });
+  canvas.addEventListener("touchstart", function (e) { var p = pointer(e); dragging = true; lastX = p[0]; lastY = p[1]; });
+  canvas.addEventListener("touchmove", function (e) {
+    if (!dragging) return;
+    var p = pointer(e);
+    state.yaw += (p[0] - lastX) * 0.01;
+    state.pitch += (p[1] - lastY) * 0.01;
+    lastX = p[0]; lastY = p[1];
+    drawPreview(current);
+    e.preventDefault();
+  }, { passive: false });
+
+  document.querySelectorAll("[data-view]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var v = btn.getAttribute("data-view");
+      if (v === "yaw") state.yaw += Math.PI / 2;
+      else if (v === "pitch") state.pitch = Math.PI / 2.4;
+      else if (v === "top") { state.yaw += Math.PI / 2; state.pitch = Math.PI / 2.05; }
+      else if (v === "side") { state.pitch = 0; }
+      drawPreview(current);
+    });
+  });
+
+  function exportStl() {
+    var built;
+    try { built = tray.buildTray(readParams()); } catch (e) { errEl.textContent = e.message || String(e); return; }
+    errEl.textContent = "";
+    var bin = built.stlBinary();
+    var blob, name;
+    if (typeof Buffer !== "undefined" && bin instanceof Buffer) {
+      blob = new Blob([bin], { type: "application/octet-stream" });
+      name = "tray-" + built.params.width + "x" + built.params.depth + "x" + built.params.height + ".stl";
+    } else {
+      blob = new Blob([bin], { type: "application/octet-stream" });
+      name = "tray.stl";
+    }
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function reset() {
+    state = Object.assign(state, tray.DEFAULTS);
+    syncFromState();
+    render();
+  }
+
+  function init() {
+    els = { err: $("err"), cW: $("cW"), cD: $("cD"), cH: $("cH"), cN: $("cN") };
+    errEl = els.err; cWEl = els.cW; cDEl = els.cD; cHEl = els.cH; cNEl = els.cN;
+    canvas = $("canvas");
+
+    bindRange("width", "widthN", "width", null);
+    bindRange("depth", "depthN", "depth", null);
+    bindRange("height", "heightN", "height", null);
+    bindRange("columns", "columnsN", "columns", null);
+    bindRange("rows", "rowsN", "rows", null);
+    bindRange("wall", "wallN", "wall", null);
+    bindRange("floor", "floorN", "floor", null);
+
+    $("exportBtn").addEventListener("click", exportStl);
+    $("resetBtn").addEventListener("click", reset);
+
+    window.addEventListener("resize", resize);
+    syncFromState();
+    resize();
+    render();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>

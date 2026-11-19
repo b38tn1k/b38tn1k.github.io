@@ -1,0 +1,270 @@
+{
+  "score": 50,
+  "grade": "D provisional - Editor state and controls work, but bricks are invisible and restart loses the layout",
+  "summary": "Editor state and controls work, but bricks are invisible and restart loses the layout",
+  "rubricScores": {
+    "functionality": 23,
+    "artifact_correctness": 16,
+    "usability": 8,
+    "self_verification": 3,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Editor draw/erase and JSON textarea round-trip pass. Keyboard, mouse and touch paddle handlers move the paddle.",
+    "Controlled physics removes a brick and adds score."
+  ],
+  "defects": [
+    "paintBrick is declared with five arguments but both callers pass ctx as an extra first argument. Coordinates shift into the wrong parameters, so placed bricks are not drawn. Native pixels remain the background color.",
+    "Restart reuses the mutated game.grid and cannot restore destroyed bricks.",
+    "Three rounds end at review deadlines with unresolved test/helper diagnosis."
+  ],
+  "verification": [
+    "2/4 independent scenario checks pass. Source SHA256 retained in reports/ralph_pingpong_ornith_04_breakout_editor.qa.json; independent driver qa/ralph-final-breakout.cjs.",
+    "Exact frozen source with real editor, keyboard, mouse/touch, JSON and restart controls in Node VM/DOM/nativeCanvas. Controlled ball fixtures expose existing functions/state only; no app algorithm replaced. Browser layout/hit testing/GPU/default actions remain unverified."
+  ],
+  "verificationConcerns": [
+    "Independent exact-source checks inspect rendered Canvas2D pixels as well as game state. Test bridge/source-matching faults are not counted as separate application defects."
+  ],
+  "scopeCompliance": "Pi alone authored applications, tests and reviews. Forced proof and OS read isolation were active. No supervisor product code or task-specific repair hints.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Native workflow gate passed=False; 45.37 active run minutes. Product behavior and workflow acceptance are assessed separately. Autonomy credit follows accepted completion under the cohort rubric, not mere process exit.",
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "ralph_pingpong",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Now let me fix the test bugs in my verify-requirements.test.js and re-run. The key issues are: (1) IIFE-scoped constants not accessible via evaluate(), (2) state mutation via `evaluate(\"setGame(g)\")` where `g` isn't in scope, and (3) string matching issues with JSON output.",
+  "workflowInstructions": "run-ralph.py; research/ralph-setup.json",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 45.37,
+  "wallMinutes": 45.37,
+  "status": "assessed",
+  "runStatus": "assessed",
+  "stopReason": "iteration_limit",
+  "exitCode": null,
+  "promptWords": 47,
+  "toolCalls": 337,
+  "parentToolCalls": 337,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 137,
+  "modelUsageReported": {
+    "input": 309004,
+    "output": 93050,
+    "cacheRead": 7598836,
+    "totalTokens": 8000890
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 67404,
+  "parentPeakReportedPromptTokens": 67404,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 309004,
+    "output": 93050,
+    "cacheRead": 7598836,
+    "totalTokens": 8000890
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 24082,
+  "sha256": "8dbaec74ed1e016f4d428c564088fc8529a3b86019592dee2f90bc57bc159536",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 17,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 56,
+    "delegations": [],
+    "controller": "External Ralph-style fresh-process implementation/review loop",
+    "gate": {
+      "passed": false,
+      "iterations": 3,
+      "forcedProofEachImplementation": true
+    },
+    "stages": [
+      {
+        "round": 1,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-17T04:27:42.457420+00:00",
+        "events": "ralph_pingpong/ornith/04_breakout_editor/runtime/01-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T04:39:46.809234+00:00",
+        "minutes": 12.07,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 2,
+          "green": 1
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 1,
+        "role": "review",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-17T04:39:46.837093+00:00",
+        "events": "ralph_pingpong/ornith/04_breakout_editor/runtime/02-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T04:45:51.700841+00:00",
+        "minutes": 6.08,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 2,
+        "role": "implement",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-17T04:46:04.184140+00:00",
+        "events": "ralph_pingpong/ornith/04_breakout_editor/runtime/03-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T04:54:08.168620+00:00",
+        "minutes": 8.07,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 2,
+          "red": 1,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 2,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-17T04:54:08.197259+00:00",
+        "events": "ralph_pingpong/ornith/04_breakout_editor/runtime/04-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T05:00:16.018897+00:00",
+        "minutes": 6.13,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-17T05:00:29.112939+00:00",
+        "events": "ralph_pingpong/ornith/04_breakout_editor/runtime/05-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T05:06:41.138228+00:00",
+        "minutes": 6.2,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 1,
+          "red": 1,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "review",
+        "modelLabel": "qwen",
+        "model": "qwen3.6:35b-a3b",
+        "started": "2026-11-17T05:06:41.151348+00:00",
+        "events": "ralph_pingpong/ornith/04_breakout_editor/runtime/06-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-17T05:12:51.492567+00:00",
+        "minutes": 6.17,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      }
+    ],
+    "mandatoryProof": true,
+    "readIsolation": true,
+    "forcedProofEachImplementation": true
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 1,
+    "completed": 1,
+    "aborted": 0,
+    "events": [
+      {
+        "reason": "threshold",
+        "aborted": false,
+        "willRetry": false,
+        "tokensBefore": 50815,
+        "estimatedTokensAfter": 23876
+      }
+    ],
+    "reportedUsage": {
+      "input": 8650,
+      "output": 503,
+      "cacheRead": 0,
+      "totalTokens": 9153
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 141518,
+      "output": 43470,
+      "cacheRead": 5106538,
+      "totalTokens": 5291526
+    },
+    "qwen": {
+      "input": 167486,
+      "output": 49580,
+      "cacheRead": 2492298,
+      "totalTokens": 2709364
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 24.4,
+    "qwen": 20.32
+  }
+}

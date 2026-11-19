@@ -1,0 +1,48 @@
+{
+  "method": "Exact final source, actual controls and scheduled timers in independent Node VM/DOM with native Canvas2D. readyState is loading during inline script execution, followed by the helper DOMContentLoaded event; no application algorithm replaced. No browser layout/GPU/default actions or physical testing.",
+  "sha256": "7df0b31953f72201c0ec5fa1a04c5e790e60e11802f29b21f5381baf362056c4",
+  "checks": [
+    {
+      "id": "actual_start_move_turn_pause_resume",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "turn": true,
+        "pauseResume": true
+      }
+    },
+    {
+      "id": "growth_score_and_real_scheduled_speed",
+      "pass": true,
+      "evidence": {
+        "score": 30,
+        "length": 6,
+        "speed": 132,
+        "nextDelay": 132
+      }
+    },
+    {
+      "id": "wall_death_and_keyboard_restart",
+      "pass": true,
+      "evidence": {
+        "death": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "departing_tail_is_legal",
+      "pass": true,
+      "evidence": {
+        "tailMove": true
+      }
+    },
+    {
+      "id": "first_left_key_does_not_reverse_into_body",
+      "pass": false,
+      "error": "First input skips reversal guard and turns into initial body",
+      "actual": true,
+      "expected": false
+    }
+  ],
+  "pass": false
+}

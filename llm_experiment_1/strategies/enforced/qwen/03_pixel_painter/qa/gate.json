@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "artifactSHA256": "e44c5fac065c5e82d2a8c8dac1672a6bedd4e0ed8ea0be4567d843cd96f5ed34",
+  "errors": [
+    "Painter verifier did not inspect actual pixel data"
+  ],
+  "stl": null,
+  "limits": [
+    "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+    "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+  ]
+}

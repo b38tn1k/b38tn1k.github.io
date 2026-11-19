@@ -1,0 +1,116 @@
+# Drawer Organizer Tray Maker Tool
+
+## Summary
+A single `index.html` file with an interactive 3D tray configurator: parameter inputs, live compartment dimensions display, Three.js rotatable preview, and STL export button. Default: 180×120×30mm, 3-column × 2-row grid.
+
+## Features
+
+### Control Panel (left sidebar)
+| Parameter | Type | Default | Range |
+|---|---|---|---|
+| Outer Width (W) | number, mm | 180 | 60–600 |
+| Outer Depth (D) | number, mm | 120 | 60–500 |
+| Outer Height (H) | number, mm | 30 | 10–150 |
+| Columns (ncols) | integer | 3 | 1–10 |
+| Rows (nrows) | integer | 2 | 1–8 |
+| Wall Thickness (tw) | number, mm | 3 | 1.5–6 |
+| Floor Thickness (ft) | number, mm | 2 | 1–5 |
+
+### Compartment Dimensions Display (sidebar)
+- Grid preview diagram showing rows × cols
+- Per-compartment: internal W × D, rounded to 0.01mm
+- Total internal volume per compartment
+- Labelled as ColRow grid (e.g., "C1R1", "C2R2")
+
+### 3D Preview (center canvas)
+- Three.js scene with OrbitControls (drag to rotate, scroll to zoom, right-drag to pan)
+- Tray drawn with realistic wall/floor thickness — no CSG needed; geometry built from individual faces
+- Default lighting (ambient + directional), shaded material with visible edges
+- Auto-fit camera to model bounds on parameter change
+- Grid overlay or wireframe toggle for visual reference
+
+### STL Export
+- Button triggers `STLExporter` → downloads `tray_nrows_ncols.stl` as ASCII STL
+- Generates a proper watertight mesh: outer shell + internal walls + floor panels, no overlaps
+- Filename includes nrows_x_ncols for versioning (e.g., `tray_2x3.stl`)
+
+## Approach
+
+### Geometry Construction
+No CSG library — procedurally build each face as a Triangle with proper normals:
+
+1. **Outer shell** — hollow box: front, back, left, right walls (extruded up to H)
+2. **Internal grid walls** — for each row separator and column separator
+3. **Floor panels** — one per compartment (rectangular, thickness = ft, positioned at bottom)
+
+Each wall segment is a pair of triangles forming a rectangle. Normals point outward for consistent rendering and correct STL output.
+
+Math:
+- Internal cavity depth = D - 2*tw
+- Compartment internal width = (W - 2*tw - tw*(ncols-1)) / ncols
+  = (W - tw*(ncols+1)) / ncols
+- Compartment internal depth = (D - tw*(nrows+1)) / nrows
+- Each floor panel spans its compartment opening at height ft above bottom
+
+### UI Layout
+```
+┌─────────────────┬──────────────────────┐
+│   Control Panel │                      │
+│  ── Inputs ───  │                      │
+│  W, D, H        │    Three.js Canvas   │
+│  nrows, ncols   │     (centered)       │
+│  tw, ft         │                      │
+│                 │                      │
+│ ── Dimensions ──│                      │
+│ Compartment grid│                      │
+│ preview table   │                      │
+│                 │                      │
+│ [Export STL]    │                      │
+└─────────────────┴──────────────────────┘
+```
+
+Styling: CSS Grid or flexbox, clean sans-serif, subtle shadows, dark sidebar on light canvas background. All CSS inline in `<style>`.
+
+### Dependencies
+- Three.js r160+ via ES module importmap (unpkg or jsdelivr CDN)
+- Three.js addons: `OrbitControls`, `STLExporter` — loaded as ES modules from same CDN
+- Zero build step, zero local installs
+
+## File Structure
+```
+strategies/plan/qwen/05_drawer_tray/index.html  (single file, ~600–800 lines)
+```
+
+No separate files. All HTML, CSS, and JS in one `<html>` document.
+
+## Verification Steps
+1. Open `index.html` in a browser — sidebar loads with all controls at defaults
+2. Change W/D/H → compartment dimensions update instantly, 3D model rebuilds
+3. Change nrows/ncols → grid updates, compartments re-layout
+4. Drag on canvas → rotates tray; scroll → zooms; right-drag → pans
+5. Verify compartment math: e.g., at defaults (180×120×30, 3×2, tw=3):
+   - Internal cavity = 174 × 114 mm
+   - Compartment internal W = (180 - 3*4) / 3 = 54 mm
+   - Compartment internal D = (120 - 3*3) / 2 = 52.5 mm
+   - Display should show: **54.00 × 52.50 mm** per compartment
+6. Click "Export STL" → downloads `tray_2x3.stl`
+7. Open STL in a mesh viewer (meshlab, PrusaSlicer) → validates as watertight, correct dimensions within floating-point tolerance
+8. Adjust floor thickness to 4mm → verify floor panels regenerate; no visual artifacts or z-fighting
+
+## Edge Cases Handled
+- **1×1 grid**: single compartment, no internal dividers
+- **Min dimensions** (e.g., 60×60, tw=3): walls consume space but remain valid
+- **Rapid parameter changes**: geometry rebuild throttled via requestAnimationFrame or debounce
+- **Non-integer results**: compartment sizes display as decimals; STL uses full float precision
+- **Very thin walls** (<1.5mm): clamped at minimum 1mm to prevent invalid geometry
+- **Zero compartments** (impossible with current range): guarded by input constraints
+
+## Assumptions & Defaults
+| Choice | Default / Decision | Rationale |
+|---|---|---|
+| Internal divider thickness | Same as wall thickness (tw) | Structural consistency; 3D printing standard |
+| Wall orientation | Vertical walls meet at corners, no joinery | Simplicity for FDM printing |
+| Floor panel support | Separate panel per compartment | Prevents sagging in printed version |
+| Three.js delivery | CDN importmap (three + addons) | Keeps file manageable; works when browser has network |
+| STL format | ASCII STL | Human-readable, universally supported by slicers |
+| Export filename | `tray_{nrows}x{ncols}.stl` | Clear versioning at a glance |

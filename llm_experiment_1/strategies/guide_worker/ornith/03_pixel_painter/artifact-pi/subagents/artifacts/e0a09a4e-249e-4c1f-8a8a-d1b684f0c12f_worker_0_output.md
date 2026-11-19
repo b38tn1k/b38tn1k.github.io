@@ -1,0 +1,1 @@
+The cosmetic redundancy in `pointerDown` is fixed. Both identical branches collapsed into a single `pushSnapshot();` call, and I confirmed by reading the function back that no other behavior changed.

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Reaction Time Tester</title>
+<style>
+  :root {
+    --bg: #10131a;
+    --fg: #f5f7fa;
+    --muted: #8b93a3;
+    --red: #e5484d;
+    --red-dark: #a83235;
+    --green: #30d158;
+    --green-dark: #1f9c42;
+    --blue: #0a84ff;
+    --card: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  header {
+    padding: 18px 20px 8px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 4px;
+  }
+
+  /* The big interactive stage */
+  #stage {
+    flex: 1 1 auto;
+    margin: 12px 16px 0;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6vw 6vw 40px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background 0.12s ease, box-shadow 0.2s ease;
+    background: #1c2230;
+    box-shadow: inset 0 0 0 1px var(--card-border);
+    position: relative;
+    min-height: 280px;
+  }
+
+  #stage.state-idle     { background: #1c2230; }
+  #stage.state-ready    { background: var(--red); }
+  #stage.state-go       { background: var(--green); }
+  #stage.state-early   { background: var(--red-dark); }
+  #stage.state-done     { background: #1c2230; }
+
+  #mainText {
+    font-size: clamp(2rem, 12vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    transition: transform 0.08s ease;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.35);
+  }
+
+  #subText {
+    margin-top: 14px;
+    font-size: clamp(0.95rem, 3.2vw, 1.25rem);
+    color: rgba(255,255,255,0.9);
+    max-width: 40ch;
+  }
+  #stage.state-idle #subText,
+  #stage.state-done #subText { color: var(--muted); }
+
+  #stage.bounce #mainText { transform: scale(1.12); }
+
+  .hint {
+    margin-top: 22px;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.55);
+  }
+  #stage.state-idle .hint,
+  #stage.state-done .hint { color: var(--muted); }
+
+  /* Results */
+  #results {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .stat .value {
+    font-size: clamp(1.2rem, 5vw, 1.7rem);
+    font-weight: 800;
+  }
+  .stat .label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-top: 4px;
+  }
+
+  .trials {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .trial {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+  .trial .t-name { color: var(--muted); font-weight: 600; }
+  .trial .t-val { font-weight: 700; }
+  .trial.good .t-val { color: var(--green); }
+  .trial.bad .t-val { color: var(--red); }
+  .trial .badge {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.1);
+    color: var(--muted);
+  }
+  .trial.good .badge { background: rgba(48,209,88,0.18); color: var(--green); }
+  .trial.bad .badge { background: rgba(229,72,77,0.18); color: var(--red); }
+
+  /* Controls */
+  footer {
+    padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 34px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.05s ease;
+    min-width: 220px;
+  }
+  .btn:hover { filter: brightness(1.1); }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .footer-meta {
+    display: flex;
+    gap: 18px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .footer-meta b { color: var(--fg); }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .toggle-row input { width: 18px; height: 18px; accent-color: var(--blue); }
+
+  @media (max-width: 420px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Reaction Time Tester</h1>
+    <div class="subtitle">Wait for green → click as fast as you can</div>
+  </header>
+
+  <div id="stage" class="state-idle" aria-live="polite">
+    <div id="mainText">Ready</div>
+    <div id="subText">Tap the card or press <strong>Space</strong> to begin.</div>
+    <div class="hint">5 trials · measured in milliseconds</div>
+  </div>
+
+  <footer>
+    <button id="actionBtn" class="btn">Start</button>
+    <label class="toggle-row">
+      <input type="checkbox" id="strictToggle" checked>
+      Count early clicks as false starts
+    </label>
+    <div class="footer-meta">
+      <span>Trials: <b id="trialProgress">0 / 5</b></span>
+      <span>False starts: <b id="falseStarts">0</b></span>
+    </div>
+  </footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- Config ----
+  var NUM_TRIALS = 5;
+  var MIN_WAIT_MS = 1000;
+  var MAX_WAIT_MS = 5000;
+
+  // ---- DOM ----
+  var stage = document.getElementById("stage");
+  var mainText = document.getElementById("mainText");
+  var subText = document.getElementById("subText");
+  var actionBtn = document.getElementById("actionBtn");
+  var trialProgress = document.getElementById("trialProgress");
+  var falseStartsEl = document.getElementById("falseStarts");
+  var strictToggle = document.getElementById("strictToggle");
+
+  // ---- State machine ----
+  // States: idle, waiting, go, early, done
+  var state = "idle";
+  var trial = 0;                 // current trial index (1..NUM_TRIALS)
+  var results = [];              // array of ms (or null for false starts)
+  var falseStarts = 0;
+  var startTime = 0;             // performance.now() when green appeared
+  var timerId = null;
+
+  function setState(next) {
+    state = next;
+    stage.className = "state-" + next;
+
+    switch (next) {
+      case "idle":
+        mainText.textContent = "Ready";
+        subText.innerHTML = "Tap the card or press <strong>Space</strong> to begin.";
+        actionBtn.textContent = "Start";
+        actionBtn.disabled = false;
+        break;
+
+      case "waiting":
+        mainText.textContent = "Wait…";
+        subText.textContent = "Wait for green. Don’t click yet!";
+        actionBtn.textContent = "";
+        actionBtn.disabled = true;
+        break;
+
+      case "go":
+        mainText.textContent = "CLICK NOW!";
+        subText.textContent = "";
+        break;
+
+      case "early":
+        mainText.textContent = "Too early!";
+        subText.textContent = "You clicked before the screen turned green — that\'s a false start.";
+        actionBtn.textContent = "Continue";
+        actionBtn.disabled = false;
+        break;
+
+      case "done":
+        actionBtn.textContent = "Play Again";
+        actionBtn.disabled = false;
+        break;
+    }
+  }
+
+  function updateMeta() {
+    trialProgress.textContent = Math.min(trial, NUM_TRIALS) + " / " + NUM_TRIALS;
+    falseStartsEl.textContent = falseStarts;
+  }
+
+  function randomWait() {
+    var d = MIN_WAIT_MS + Math.random() * (MAX_WAIT_MS - MIN_WAIT_MS);
+    return Math.round(d);
+  }
+
+  function start() {
+    if (state === "waiting" || state === "go") return;
+    trial = 0;
+    results = [];
+    falseStarts = 0;
+    updateMeta();
+    beginTrial();
+  }
+
+  function beginTrial() {
+    trial += 1;
+    updateMeta();
+    setState("waiting");
+    clearTimeout(timerId);
+    var wait = randomWait();
+    timerId = setTimeout(function () {
+      startTime = performance.now();
+      setState("go");
+    }, wait);
+  }
+
+  // Re-arm the current trial after a false start WITHOUT consuming a trial.
+  function resume() {
+    updateMeta();
+    setState("waiting");
+    clearTimeout(timerId);
+    var wait = randomWait();
+    timerId = setTimeout(function () {
+      startTime = performance.now();
+      setState("go");
+    }, wait);
+  }
+
+  // Handle an interaction (click / key / touch)
+  function handleInput() {
+    switch (state) {
+      case "idle":
+        start();
+        break;
+
+      case "waiting":
+        // Click before green = false start
+        clearTimeout(timerId);
+        falseStarts += 1;
+        updateMeta();
+        setState("early");
+        break;
+
+      case "go":
+        var rt = Math.round(performance.now() - startTime);
+        results.push(rt);
+        updateMeta();
+        // Brief celebration, then move on
+        bounce();
+        setTimeout(function () {
+          if (results.length >= NUM_TRIALS) {
+            finish();
+          } else {
+            beginTrial();
+          }
+        }, 450);
+        break;
+
+      case "early":
+        // Resume after a false start — re-arm the SAME trial.
+        resume();
+        break;
+
+      case "done":
+        // handled by button; guard against stage click
+        break;
+    }
+  }
+
+  function bounce() {
+    stage.classList.add("bounce");
+    setTimeout(function () { stage.classList.remove("bounce"); }, 90);
+  }
+
+  function finish() {
+    setState("done");
+    renderResults();
+  }
+
+  function renderResults() {
+    var valid = results.filter(function (v) { return v != null; });
+    if (valid.length === 0) {
+      stage.innerHTML =
+        '<div id="results">' +
+          '<div class="stats-row">' +
+            '<div class="stat"><div class="value">—</div><div class="label">Average</div></div>' +
+          '</div>' +
+          '<p style="color:var(--muted);text-align:center;margin-bottom:14px;">All trials were false starts. Try again!</p>' +
+          '<div class="trials"></div>' +
+        '</div>';
+      return;
+    }
+
+    valid.sort(function (a, b) { return a - b; });
+    var sum = 0; for (var i = 0; i < valid.length; i++) sum += valid[i];
+    var avg = Math.round(sum / valid.length);
+    var best = valid[0];
+    var worst = valid[valid.length - 1];
+    var median = valid.length % 2 === 1
+      ? valid[Math.floor(valid.length / 2)]
+      : Math.round((valid[Math.floor(valid.length / 2) - 1] + valid[Math.floor(valid.length / 2)]) / 2);
+
+    // Original-order trial cards (we stored results in order)
+    var cards = "";
+    for (var j = 0; j < results.length; j++) {
+      var val = results[j];
+      var cls = "trial";
+      var badge = "";
+      if (val == null) {
+        cls += " bad";
+        badge = '<span class="badge">False start</span>';
+        cards += '<div class="' + cls + '"><span class="t-name">Trial ' + (j + 1) + '</span><span class="t-val">—</span>' + badge + '</div>';
+      } else {
+        if (val < 200) { cls += " good"; badge = '<span class="badge">Fast!</span>'; }
+        else if (val > 400) { cls += " bad"; badge = '<span class="badge">Slow</span>'; }
+        else { badge = '<span class="badge">Normal</span>'; }
+        cards += '<div class="' + cls + '"><span class="t-name">Trial ' + (j + 1) + '</span><span class="t-val">' + val + ' ms</span>' + badge + '</div>';
+      }
+    }
+
+    stage.innerHTML =
+      '<div id="results">' +
+        '<div class="stats-row">' +
+          '<div class="stat"><div class="value">' + avg + '</div><div class="label">Average</div></div>' +
+          '<div class="stat"><div class="value">' + best + '</div><div class="label">Best</div></div>' +
+          '<div class="stat"><div class="value">' + median + '</div><div class="label">Median</div></div>' +
+          '<div class="stat"><div class="value">' + worst + '</div><div class="label">Worst</div></div>' +
+        '</div>' +
+        '<div class="trials">' + cards + '</div>' +
+      '</div>';
+
+    // After rendering, stage no longer has state-done class handling for click
+    // re-apply idle-ish styling but keep results visible
+    stage.classList.remove("state-done");
+    stage.classList.add("state-idle");
+  }
+
+  // ---- Input handlers ----
+  function onAction(e) {
+    // Ignore if the click originated from the footer button
+    if (actionBtn.contains(e.target)) return;
+    // If stage currently shows results, an action shouldn't restart the game
+    // (only the Play Again button does).
+    handleInput();
+  }
+
+  function onKey(e) {
+    if (e.code === "Space" || e.key === " " || e.keyCode === 32) {
+      e.preventDefault();
+      handleInput();
+    }
+  }
+
+  // Only treat a "press" once (avoid dbl-tap / key+pointer double firing)
+  var lastActionTs = 0;
+  function throttled(e) {
+    var now = Date.now();
+    if (now - lastActionTs < 60) return;
+    lastActionTs = now;
+    handleInput();
+  }
+
+  // Use a single click listener on stage; touch uses touchend to feel snappy.
+  stage.addEventListener("click", function (e) {
+    if (e.target.closest("#results")) return;   // ignore clicks on result cards
+    throttled(e);
+  });
+  stage.addEventListener("touchend", function (e) {
+    if (e.target.closest("#results")) return;
+    e.preventDefault();
+    throttled(e);
+  }, { passive: false });
+
+  window.addEventListener("keydown", onKey);
+
+  actionBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (state === "idle" || state === "done") {
+      // Render fresh stage if we are on done
+      start();
+    } else if (state === "early") {
+      resume();
+    }
+  });
+
+  // Init
+  setState("idle");
+  updateMeta();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "role": "test",
+  "number": 2,
+  "minutes": 6.16,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+  "artifactAfter": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+  "prompt": "enforced/ornith/03_pixel_painter/runtime/02-test/prompt.txt",
+  "events": "enforced/ornith/03_pixel_painter/runtime/02-test/events.jsonl",
+  "stderr": "enforced/ornith/03_pixel_painter/runtime/02-test/stderr.log"
+}

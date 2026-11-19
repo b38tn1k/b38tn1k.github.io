@@ -1,0 +1,39 @@
+{
+  "method": "Independent exact-source Node VM/DOM controlled scheduler; actual pointer/keyboard handlers and summary DOM. No browser layout, hit testing or native visual compatibility.",
+  "sha256": "6a14fa77442ba32e67fb5fffe3ea5b08ad3c1f500322a2970bc79fc5a35b3f5e",
+  "checks": [
+    {
+      "id": "five_real_trials_exact_summary_and_replay",
+      "pass": true,
+      "evidence": {
+        "badges": [
+          "Trial 1",
+          "Trial 2",
+          "Trial 3",
+          "Trial 4",
+          "Trial 5"
+        ],
+        "mean": 250,
+        "rows": 5,
+        "replay": true
+      }
+    },
+    {
+      "id": "repeated_false_starts_retry_same_trial_without_corrupt_summary",
+      "pass": true,
+      "evidence": {
+        "falseStarts": 7,
+        "validTrials": 5,
+        "mean": 250
+      }
+    },
+    {
+      "id": "keyboard_space_drives_actual_flow",
+      "pass": true,
+      "evidence": {
+        "space": true
+      }
+    }
+  ],
+  "pass": true
+}

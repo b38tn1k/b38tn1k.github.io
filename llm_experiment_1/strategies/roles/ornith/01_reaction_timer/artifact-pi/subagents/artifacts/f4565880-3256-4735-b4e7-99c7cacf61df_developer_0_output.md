@@ -1,0 +1,1 @@
+I notice a potential CSS issue: `renderResults()` toggles both `state-done` and `state-idle` on the stage, so the background depends on class order in the stylesheet. Let me verify.

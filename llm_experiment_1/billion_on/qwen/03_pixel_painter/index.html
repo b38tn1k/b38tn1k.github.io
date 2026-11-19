@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Pixel Painter</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1a1a2e;
+    --panel: #16213e;
+    --accent: #e94560;
+    --accent-hover: #ff6b81;
+    --text: #eee;
+    --text-dim: #8892a4;
+    --border: #2a2a4a;
+    --input-bg: #0f3460;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    padding: 12px 0 4px;
+    letter-spacing: 1px;
+    color: var(--accent);
+  }
+
+  /* Toolbar */
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--panel);
+    border-radius: 10px;
+    margin: 6px 8px;
+    align-items: center;
+    justify-content: center;
+    max-width: 95vw;
+    box-shadow: 0 2px 12px rgba(0,0,0,.3);
+  }
+
+  .toolbar label {
+    font-size: .78rem;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .toolbar input[type="number"],
+  .toolbar select {
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 6px;
+    font-size: .8rem;
+    width: 54px;
+    text-align: center;
+  }
+
+  .toolbar select { width: auto; }
+
+  .btn {
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .btn:hover { background: var(--accent); border-color: var(--accent-hover); }
+  .btn.active { background: var(--accent); border-color: var(--accent-hover); box-shadow: 0 0 6px rgba(233,69,96,.45); }
+
+  .divider {
+    width: 1px;
+    height: 28px;
+    background: var(--border);
+    margin: 0 2px;
+  }
+
+  /* Color swatches */
+  .palette-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  #currentColor {
+    width: 30px; height: 30px;
+    border: 2px solid var(--text);
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    padding: 0;
+  }
+
+  .swatches {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+    max-width: 240px;
+  }
+
+  .swatch {
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform .1s, border-color .15s;
+  }
+  .swatch:hover { transform: scale(1.2); }
+  .swatch.active { border-color: var(--accent-hover); box-shadow: 0 0 5px rgba(233,69,96,.5); }
+
+  /* Canvas area */
+  .canvas-container {
+    position: relative;
+    margin: 8px auto 16px;
+    line-height: 0;
+    touch-action: none;
+  }
+
+  #pixelCanvas {
+    background: #fff;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    cursor: crosshair;
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 260px);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  /* Status bar */
+  .status {
+    font-size: .72rem;
+    color: var(--text-dim);
+    padding: 4px 12px 10px;
+    display: flex;
+    gap: 16px;
+  }
+
+  /* Brush size preview */
+  .brush-preview {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brush-dot {
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 1.1rem; }
+    .toolbar { padding: 6px 8px; gap: 4px; }
+    .btn { padding: 4px 8px; font-size: .72rem; }
+    .swatch { width: 17px; height: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🎨 Pixel Painter</h1>
+
+<div class="toolbar" id="toolbar">
+  <label>W <input type="number" id="canvasW" value="32" min="4" max="256" step="1"></label>
+  <label>H <input type="number" id="canvasH" value="32" min="4" max="256" step="1"></label>
+  <button class="btn" id="btnResize">Apply</button>
+
+  <div class="divider"></div>
+
+  <button class="btn active" data-tool="brush">🖌 Brush</button>
+  <button class="btn" data-tool="eraser">🧽 Eraser</button>
+  <button class="btn" data-tool="fill">🪣 Fill</button>
+
+  <div class="divider"></div>
+
+  <label>Size
+    <select id="brushSize">
+      <option value="1">1×</option>
+      <option value="2">2×</option>
+      <option value="3">3×</option>
+      <option value="4">4×</option>
+      <option value="8">8×</option>
+      <option value="16">16×</option>
+    </select>
+  </label>
+
+  <div class="brush-preview">
+    <div class="brush-dot" id="brushDot"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="palette-wrap">
+    <input type="color" id="currentColor" value="#e94560">
+    <div class="swatches" id="swatches"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <button class="btn" id="btnUndo" title="Undo (Ctrl+Z)">↩ Undo</button>
+  <button class="btn" id="btnRedo" title="Redo (Ctrl+Y)">↪ Redo</button>
+  <button class="btn" id="btnClear" style="color:#ff6b6b;">✕ Clear</button>
+  <div class="divider"></div>
+  <button class="btn" id="btnExport" style="background:#0a8754;border-color:#0ab86e;">⬇ Export PNG</button>
+</div>
+
+<div class="canvas-container" id="canvasContainer">
+  <canvas id="pixelCanvas"></canvas>
+</div>
+
+<div class="status" id="statusBar">
+  <span id="stSize">32 × 32</span>
+  <span id="stPos">0, 0</span>
+  <span id="stTool">Brush</span>
+</div>
+
+<script>
+(() => {
+  /* ── Config ─────────────────────────── */
+  const DEFAULT_PALETTE = [
+    '#000000','#472F25','#8B3A3A','#CC5500','#FF6B35','#FFD166',
+    '#A7C955','#2D8B4E','#1BA2A8','#2353BC','#5B25A6','#9B59B6',
+  ].concat(
+    ['#FF6B81','#F19066','#F7DC6F','#BBE38B','#4ECDC4','#5DADE2',
+     '#85C1E9','#AF7AC5','#D7BDE2','#EDBB99','#FAD7A0','#FFEBBE']
+  );
+
+  /* ── State ──────────────────────────── */
+  let COLS = 32, ROWS = 32;
+  let currentTool = 'brush';
+  let currentColor = DEFAULT_PALETTE[2];
+  let brushSizeVal = 1;
+  let isDrawing = false;
+  let lastPixel = null; // "x,y" of last drawn pixel for line interpolation
+
+  /* Undo / Redo stacks (store Float32 arrays) */
+  const UNDO_LIMIT = 50;
+  let undoStack = [], redoStack = [];
+
+  /* ── DOM refs ───────────────────────── */
+  const canvas    = document.getElementById('pixelCanvas');
+  const ctx       = canvas.getContext('2d');
+  const container = document.getElementById('canvasContainer');
+  const inpW      = document.getElementById('canvasW');
+  const inpH      = document.getElementById('canvasH');
+  const swatchesEl= document.getElementById('swatches');
+  const colorInp  = document.getElementById('currentColor');
+  const brushSel  = document.getElementById('brushSize');
+  const brushDot  = document.getElementById('brushDot');
+  const stSize    = document.getElementById('stSize');
+  const stPos     = document.getElementById('stPos');
+  const stTool    = document.getElementById('stTool');
+
+  /* ── Init palette ───────────────────── */
+  function buildPalette() {
+    swatchesEl.innerHTML = '';
+    DEFAULT_PALETTE.forEach(c => {
+      const d = document.createElement('div');
+      d.className = 'swatch' + (c === currentColor ? ' active' : '');
+      d.style.background = c;
+      d.dataset.color = c;
+      d.addEventListener('click', () => selectColor(c));
+      swatchesEl.appendChild(d);
+    });
+  }
+
+  function selectColor(c) {
+    currentColor = c;
+    colorInp.value = c;
+    document.querySelectorAll('.swatch').forEach(s =>
+      s.classList.toggle('active', s.dataset.color === c)
+    );
+  }
+
+  /* ── Canvas sizing ──────────────────── */
+  function initCanvas() {
+    canvas.width = COLS;
+    canvas.height = ROWS;
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0, 0, COLS, ROWS);
+    updateBrushDot();
+    stSize.textContent = `${COLS} × ${ROWS}`;
+    pushUndo();
+  }
+
+  function applySize() {
+    const w = Math.max(4, Math.min(256, parseInt(inpW.value) || 32));
+    const h = Math.max(4, Math.min(256, parseInt(inpH.value) || 32));
+    if (w === COLS && h === ROWS) return;
+    // Copy old pixels
+    const oldData = ctx.getImageData(0, 0, COLS, ROWS);
+    COLS = w; ROWS = h;
+    initCanvas();
+    // Paste clipped
+    ctx.putImageData(oldData, 0, 0);
+  }
+
+  function updateBrushDot() {
+    const px = Math.min(brushSizeVal * 6, 34);
+    brushDot.style.width = px + 'px';
+    brushDot.style.height = px + 'px';
+  }
+
+  /* ── Drawing helpers ────────────────── */
+  function getCanvasCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    let clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    const scaleX = COLS / rect.width;
+    const scaleY = ROWS / rect.height;
+    return {
+      x: Math.floor((clientX - rect.left) * scaleX),
+      y: Math.floor((clientY - rect.top) * scaleY)
+    };
+  }
+
+  function clampPixel(x, y) {
+    return [Math.max(0, Math.min(COLS - 1, x)), Math.max(0, Math.min(ROWS - 1, y))];
+  }
+
+  function setPixel(cx, cy, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(cx, cy, 1, 1);
+  }
+
+  function drawLine(x0, y0, x1, y1, color, size) {
+    // Bresenham with sized brush
+    const dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+    const sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+    let err = dx - dy;
+    let cx = x0, cy = y1; // track endpoints for size
+
+    while (true) {
+      if (size === 1) {
+        setPixel(cx, cy, color);
+      } else {
+        ctx.fillStyle = color;
+        ctx.fillRect(cx - Math.floor(size/2), cy - Math.floor(size/2), size, size);
+      }
+      if (cx === x1 && cy === y1) break;
+      const e2 = 2 * err;
+      if (e2 > -dy) { err -= dy; cx += sx; }
+      if (e2 < dx)  { err += dx; cy += sy; }
+    }
+  }
+
+  function placeBrush(x, y, color, size) {
+    const hs = Math.floor(size / 2);
+    for (let dy = -hs; dy <= size - 1 - hs; dy++) {
+      for (let dx = -hs; dx <= size - 1 - hs; dx++) {
+        const [nx, ny] = clampPixel(x + dx, y + dy);
+        if (color === 'transparent') {
+          ctx.clearRect(nx, ny, 1, 1);
+        } else {
+          setPixel(nx, ny, color);
+        }
+      }
+    }
+  }
+
+  /* Flood fill */
+  function floodFill(startX, startY, fillColor) {
+    const imageData = ctx.getImageData(0, 0, COLS, ROWS);
+    const data = imageData.data;
+    const idx = (startY * COLS + startX) * 4;
+    const targetR = data[idx], targetG = data[idx+1], targetB = data[idx+2], targetA = data[idx+3];
+
+    // Parse fill color
+    ctx.fillStyle = fillColor;
+    ctx.fillRect(0,0,1,1);
+    const fc = ctx.getImageData(0,0,1,1).data;
+    ctx.clearRect(0,0,1,1);
+
+    if (targetR === fc[0] && targetG === fc[1] && targetB === fc[2] && targetA === fc[3]) return;
+
+    const stack = [[startX, startY]];
+    const visited = new Uint8Array(COLS * ROWS);
+
+    while (stack.length) {
+      const [cx, cy] = stack.pop();
+      const ci = cy * COLS + cx;
+      if (cx < 0 || cx >= COLS || cy < 0 || cy >= ROWS) continue;
+      if (visited[ci]) continue;
+      const pi = ci * 4;
+      if (data[pi] !== targetR || data[pi+1] !== targetG ||
+          data[pi+2] !== targetB || data[pi+3] !== targetA) continue;
+
+      visited[ci] = 1;
+      data[pi] = fc[0]; data[pi+1] = fc[1]; data[pi+2] = fc[2]; data[pi+3] = fc[3];
+
+      stack.push([cx+1, cy], [cx-1, cy], [cx, cy+1], [cx, cy-1]);
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+  }
+
+  /* ── Undo / Redo ────────────────────── */
+  function pushUndo() {
+    const img = ctx.getImageData(0, 0, COLS, ROWS);
+    undoStack.push(new Float32Array(img.data));
+    if (undoStack.length > UNDO_LIMIT) undoStack.shift();
+    redoStack.length = 0;
+    updateBtnStates();
+  }
+
+  function restoreUndo() {
+    if (!undoStack.length) return;
+    const imgData = ctx.getImageData(0, 0, COLS, ROWS);
+    redoStack.push(new Float32Array(imgData.data));
+    const data = undoStack.pop();
+    imgData.data.set(data);
+    ctx.putImageData(imgData, 0, 0);
+    updateBtnStates();
+  }
+
+  function restoreRedo() {
+    if (!redoStack.length) return;
+    const imgData = ctx.getImageData(0, 0, COLS, ROWS);
+    undoStack.push(new Float32Array(imgData.data));
+    const data = redoStack.pop();
+    imgData.data.set(data);
+    ctx.putImageData(imgData, 0, 0);
+    updateBtnStates();
+  }
+
+  function clearCanvas() {
+    pushUndo();
+    ctx.clearRect(0, 0, COLS, ROWS);
+  }
+
+  function updateBtnStates() {
+    document.getElementById('btnUndo').style.opacity = undoStack.length ? '1' : '.4';
+    document.getElementById('btnRedo').style.opacity = redoStack.length ? '1' : '.4';
+  }
+
+  /* ── Event: tool buttons ────────────── */
+  document.querySelectorAll('[data-tool]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentTool = btn.dataset.tool;
+      document.querySelectorAll('[data-tool]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      canvas.style.cursor = currentTool === 'fill' ? 'cell' : 'crosshair';
+      stTool.textContent = btn.querySelector('span')?.textContent || btn.textContent.trim();
+    });
+  });
+
+  /* ── Mouse / Touch drawing ──────────── */
+  function onPointerDown(e) {
+    e.preventDefault();
+    const { x, y } = getCanvasCoords(e);
+
+    if (currentTool === 'fill') {
+      pushUndo();
+      floodFill(x, y, currentColor);
+      isDrawing = false;
+      return;
+    }
+
+    isDrawing = true;
+    lastPixel = { x, y };
+    placeBrush(x, y, currentTool === 'eraser' ? 'transparent' : currentColor, brushSizeVal);
+  }
+
+  function onPointerMove(e) {
+    const { x, y } = getCanvasCoords(e);
+    stPos.textContent = `${x}, ${y}`;
+
+    if (!isDrawing) return;
+    e.preventDefault();
+
+    if (currentTool === 'fill') { isDrawing = false; return; }
+
+    // Interpolate between last and current to avoid gaps when moving fast
+    const color = currentTool === 'eraser' ? 'transparent' : currentColor;
+    if (lastPixel) {
+      drawLine(lastPixel.x, lastPixel.y, x, y, color, brushSizeVal);
+    } else {
+      placeBrush(x, y, color, brushSizeVal);
+    }
+    lastPixel = { x, y };
+  }
+
+  function onPointerUp(e) {
+    if (isDrawing) {
+      isDrawing = false;
+      lastPixel = null;
+      pushUndo();
+    }
+  }
+
+  canvas.addEventListener('pointerdown', onPointerDown);
+  canvas.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  canvas.addEventListener('pointercancel', () => { isDrawing = false; lastPixel = null; });
+
+  /* Prevent context menu / scroll while drawing */
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+  container.addEventListener('gestureend', e => e.preventDefault());
+
+  /* ── Toolbar actions ────────────────── */
+  document.getElementById('btnResize').addEventListener('click', applySize);
+  inpW.addEventListener('change', applySize);
+  inpH.addEventListener('change', applySize);
+  brushSel.addEventListener('change', () => {
+    brushSizeVal = parseInt(brushSel.value) || 1;
+    updateBrushDot();
+  });
+
+  colorInp.addEventListener('input', e => selectColor(e.target.value));
+
+  document.getElementById('btnUndo').addEventListener('click', restoreUndo);
+  document.getElementById('btnRedo').addEventListener('click', restoreRedo);
+  document.getElementById('btnClear').addEventListener('click', clearCanvas);
+
+  /* Export PNG */
+  document.getElementById('btnExport').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = `pixel-art-${COLS}x${ROWS}.png`;
+    // Render high-res version (32× scale)
+    const hiRes = document.createElement('canvas');
+    const scale = 32;
+    hiRes.width = COLS * scale;
+    hiRes.height = ROWS * scale;
+    const hctx = hiRes.getContext('2d');
+    hctx.imageSmoothingEnabled = false;
+    hctx.drawImage(canvas, 0, 0, hiRes.width, hiRes.height);
+    link.href = hiRes.toDataURL('image/png');
+    link.click();
+  });
+
+  /* ── Keyboard shortcuts ─────────────── */
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); restoreUndo(); }
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) { e.preventDefault(); restoreRedo(); }
+  });
+
+  /* ── Bootstrap ──────────────────────── */
+  buildPalette();
+  initCanvas();
+  selectColor(DEFAULT_PALETTE[2]);
+})();
+</script>
+</body>
+</html>

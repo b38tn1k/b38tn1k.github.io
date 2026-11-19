@@ -1,0 +1,101 @@
+{
+  "status": "completed_with_defects",
+  "grade": "B- - playable core and JSON; restart/end flow incomplete",
+  "score": 76,
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 23,
+    "usability": 9,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "verified": [
+    "Exact-source VM: keyboard/mouse paddle, upward paddle rebound, brick damage below first row, own-format JSON data round trip",
+    "Self-contained HTML"
+  ],
+  "defects": [
+    "Restart resets score/lives but retains damaged layout instead of restoring the level",
+    "Win/loss silently reinitialize score/lives without a final result; after clearing all bricks layout stays empty",
+    "Touch-start during play references t outside its block and throws ReferenceError"
+  ],
+  "verificationConcerns": [
+    "No runtime collision, restart or touch assertions recorded"
+  ],
+  "scopeCompliance": "Filesystem boundary applied from process start; no confirmed out-of-directory writes",
+  "title": "Breakout with level editor",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "elapsedMinutes": 3.1,
+  "wallMinutes": 3.31,
+  "promptWords": 47,
+  "toolCalls": 10,
+  "toolResultsMarkedError": 0,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "modelUsageReported": {
+    "input": 28578,
+    "output": 10172,
+    "cacheRead": 209780,
+    "totalTokens": 248530
+  },
+  "peakReportedPromptTokens": 28538,
+  "assistantTextContainingToolCallMarkup": 0,
+  "artifactBytes": 18336,
+  "sha256": "52cac6c6e87e529bf005b6adcf7b13b1b266f325169b8b7ed5202399031d2a6a",
+  "billionContext": {
+    "loadedConfirmed": true,
+    "sessionId": "01a1dbc9-13ed-7736-9394-01d46d9efbd3",
+    "extensionVersion": "0.1.213",
+    "stats": {
+      "requests": 11,
+      "tokensSaved": 0,
+      "inputTokens": 238358,
+      "cachedTokens": 209780,
+      "outputTokens": 10172,
+      "cacheSamples": 11,
+      "lastInputTokens": 28538,
+      "compressCreditTokens": 0,
+      "contextTokens": 28538,
+      "retrieveCalls": 0,
+      "retrieveHits": 0,
+      "retrieveMisses": 0,
+      "retrieveDropped": 0,
+      "retrieveDelivered": 0,
+      "storedBytes": 0,
+      "storeBytesSaved": 0,
+      "rangeRestores": 0,
+      "contextTokensSource": "usage",
+      "localInputEstimate": 68422,
+      "contextEstimateTokens": 28341,
+      "contextEstimateCalibrated": true,
+      "lastUsageGradeTokens": 28538,
+      "lastUsagePayloadUpper": 68422,
+      "lastInputTokensSource": "usage",
+      "lastInputTokensOrigin": "http://127.0.0.1:11435",
+      "calibrationRing": {
+        "origin": "http://127.0.0.1:11435",
+        "model": "qwen3.6:35b-a3b",
+        "values": [
+          1.2036541119557707,
+          1.2070028251005906,
+          1.211701766304348
+        ]
+      },
+      "calibratedEstimate": 1.2074529011202364,
+      "calibratedEstimateOrigin": "http://127.0.0.1:11435",
+      "calibratedEstimateModel": "qwen3.6:35b-a3b"
+    },
+    "compressionStats": {
+      "tokensCompressed": 0,
+      "compressionCount": 0,
+      "absorbedTokens": 0,
+      "storedCount": 0,
+      "retrievalCount": 0
+    },
+    "blocks": 0
+  },
+  "limitations": [
+    "No independent real-browser/visual testing; prior browser-origin denial honored.",
+    "Single run per task; differences do not isolate extension effect from sampling variability."
+  ]
+}

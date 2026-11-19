@@ -1,0 +1,90 @@
+# Breakout with Level Editor — Single File Web Game
+
+## Summary
+Build one self-contained, offline `index.html` containing a fully playable Breakout game plus a level editor, using only vanilla HTML/CSS/JS (no external dependencies). The game supports keyboard + mouse/touch input, scoring and lives, restart, save/load levels as JSON, and a level editor that can draw and erase bricks and play the saved layout.
+
+## Scope
+- **In scope:** Game engine (paddle, ball, physics, collision), brick grid, scoring, lives, win/lose, restart; level editor (draw/erase/select/mode toggle), play-from-editor, save to JSON, load from JSON; keyboard + mouse + touch input; localStorage persistence for the JSON level; responsive canvas.
+- **Out of scope (assumed):** sound effects, power-ups, multiple ball types, mobile app packaging.
+
+## Architecture
+Single `index.html` with:
+- `<canvas>` for rendering (e.g. 800×600 logical size, CSS-scaled to fit viewport while preserving aspect ratio).
+- `<style>` for layout, toolbar buttons, and a small modal/status overlay.
+- `<script>` with modular IIFE sections: `State`, `Input`, `Editor`, `Game`, `Storage`, `Render`, `Loop`.
+
+## Core Data Model
+```js
+LEVEL_W = 11; LEVEL_H = 10;   // brick grid dimensions
+const EMPTY = null;
+// Level = array of LEVEL_H rows, each row array of LEVEL_W cells.
+// Cell = null (empty) or {type, health} where type is brick id.
+// Brick visual: color index mapped to palette; health = hits needed (1 default).
+```
+
+## Features & Behavior
+
+### 1. Game Modes (toggle)
+- **PLAY** — normal Breakout. Ball launches from paddle on space/click. Bricks destroy on hit; score += bricks value. Paddle bounces ball by hit position (angle varies). Missing the ball costs a life. Lose all lives = Game Over (press R/Restart). Clear all bricks = Win.
+- **EDIT** — level editor. Mouse/touch to draw, keyboard to erase, toolbar to switch tools.
+
+### 2. Level Editor
+- **Tools:** Draw (paints brick of selected type at cell), Erase (sets cell to null). Toggle via toolbar buttons or keys (`E` = erase, `D` = draw).
+- **Brick palette:** 5 color swatches; click to select active brick color.
+- **Drawing:** click-and-drag in edit mode paints continuously; erase drags also work.
+- **Grid overlay:** faint gridlines + selected-cell highlight.
+- **Buttons:** `Play` (loads current editor grid into PLAY mode), `Clear`, `Save` (writes JSON to localStorage + downloads file), `Load` (reads JSON), `New` (reset to default).
+
+### 3. Score & Lives UI
+- HUD shows `Score`, `Lives`, `Level status (Win/Lose/Playing)`.
+- Update live during play; Game Over / Win overlays with "Press Restart".
+
+### 4. Restart
+- `R` key or `Restart` button resets score/lives/ball and returns to ready-to-launch state.
+
+### 5. Save / Load (JSON)
+- **Save:** serialize grid → pretty JSON → `localStorage.setItem('breakoutLevel', json)` + trigger `download` of `level.json`.
+- **Load:** read from localStorage (preferred) or `<input type="file">` for a chosen JSON file; validate shape (must be LEVEL_H×LEVEL_W of null-or-{type,health}); if invalid, show error toast and ignore.
+- On load, immediately reflect the grid in EDIT mode.
+
+### 6. Input
+- **Keyboard:** Arrows/A-D move paddle; Space (PLAY) launches ball; `E`/`D` editor erase/draw; `R` restart; `Esc` toggle edit/play.
+- **Mouse:** pointer moves paddle along X (play), click launches ball; in edit, drag paint/erase.
+- **Touch:** same semantics as mouse via `touchstart/touchmove/touchend` with `touch-action:none`.
+- Input coordinates converted from screen to canvas logical coords via a transform accounting for CSS scaling.
+
+## Physics & Collision
+- Ball-circle vs brick-AABB: resolve by shallowest penetration axis, flip velocity.
+- Paddle-ball: offset-based bounce angle.
+- Wall bounce (L/R/T), bottom = lose ball.
+- Max ball speed cap to keep it playable.
+
+## Visuals
+- Clean dark background, colored bricks with subtle rounded rects, white paddle/ball, monospace HUD.
+- Palette: brick colors = [red, orange, yellow, green, blue].
+
+## Testing / Verification Plan (run after build)
+1. **Build:** create `index.html`.
+2. **Headless smoke test** with a headless browser available on the host (e.g. `npx playwright` or `node --check` on extracted script). At minimum: `node -e` `new Function` won't touch DOM; instead run `npx --yes playwright install-deps` + a tiny test script that loads the page and asserts: canvas exists, `document.querySelectorAll('button').length > 4`, keyboard dispatch moves paddle, Save produces non-empty localStorage JSON, Load restores grid.
+3. **Manual DOM checks** via a Playwright script:
+   - Click `Play`, dispatch Space, assert ball velocity becomes non-zero.
+   - In EDIT, paint a brick, assert grid cell != null; erase, assert null.
+   - Click `Save`, read localStorage, JSON.parse, assert dimensions.
+   - Modify localStorage, click `Load`, assert grid updated.
+   - Restart resets score to 0.
+4. **Validation:** open in browser not required for CI, but ensure no console errors on load.
+5. If a headless browser is unavailable, fall back to `node --check` for JS syntax and a JSDOM-based test (install jsdom) exercising Save/Load/input logic.
+
+## Assumptions / Defaults
+- No build toolchain assumed; file is directly double-clickable and offline.
+- localStorage is the primary persistence; file download/upload is a convenience.
+- Default level: a simple symmetric pattern.
+- Logical canvas 800×600; scales responsively without distortion.
+- Works in modern Chromium/Firefox/Safari/Edge and mobile browsers.
+
+## File Changes
+- Single new file: `index.html` in the current directory. No other files required (tests are temporary and outside scope).
+
+## Open Decisions
+- None remaining; all behaviors defined above.
+

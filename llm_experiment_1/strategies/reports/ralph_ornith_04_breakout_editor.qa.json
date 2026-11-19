@@ -1,0 +1,46 @@
+{
+  "method": "Exact frozen source with real editor, keyboard, mouse/touch, JSON and restart controls in Node VM/DOM/nativeCanvas. Controlled ball fixtures expose existing functions/state only; no app algorithm replaced. Browser layout/hit testing/GPU/default actions remain unverified.",
+  "sha256": "030c226e706846ac4520ea283f970912b939449396039e79ef6afa598f0d761e",
+  "checks": [
+    {
+      "id": "draw_erase_touch_json_roundtrip",
+      "pass": true,
+      "evidence": {
+        "draw": true,
+        "erase": true,
+        "touch": true,
+        "json": true
+      }
+    },
+    {
+      "id": "launch_keyboard_paddle_brick_score_win",
+      "pass": true,
+      "evidence": {
+        "score": 10,
+        "won": true
+      }
+    },
+    {
+      "id": "mouse_paddle_control",
+      "pass": false,
+      "error": "All mouse movement handlers only edit bricks",
+      "actual": 345,
+      "expected": 345
+    },
+    {
+      "id": "restart_restores_layout",
+      "pass": false,
+      "error": "Restart resets counters but leaves destroyed layout",
+      "actual": 0,
+      "expected": 1
+    },
+    {
+      "id": "three_misses_lose_all_lives",
+      "pass": true,
+      "evidence": {
+        "lives": 0
+      }
+    }
+  ],
+  "pass": false
+}

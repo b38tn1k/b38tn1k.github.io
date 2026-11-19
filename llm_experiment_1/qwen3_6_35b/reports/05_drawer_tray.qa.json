@@ -1,0 +1,148 @@
+{
+  "method": "Exact delivered exporter functions with actual Three.js r163 geometry classes in Node; no browser/WebGL",
+  "offline": false,
+  "externalDependencies": [
+    "Three.js r163 from unpkg.com",
+    "OrbitControls from unpkg.com"
+  ],
+  "exportError": {
+    "name": "TypeError",
+    "message": "g.hasIndex is not a function"
+  },
+  "actualLibraryMethods": {
+    "indexGetComponent": "function",
+    "geometryHasIndex": "undefined"
+  },
+  "boundsByPart": [
+    {
+      "min": [
+        -90,
+        -1.5,
+        -60
+      ],
+      "max": [
+        90,
+        0,
+        60
+      ]
+    },
+    {
+      "min": [
+        -90,
+        0.75,
+        57
+      ],
+      "max": [
+        90,
+        29.25,
+        60
+      ]
+    },
+    {
+      "min": [
+        -90,
+        0.75,
+        -60
+      ],
+      "max": [
+        90,
+        29.25,
+        -57
+      ]
+    },
+    {
+      "min": [
+        -90,
+        0.75,
+        -60
+      ],
+      "max": [
+        -87,
+        29.25,
+        60
+      ]
+    },
+    {
+      "min": [
+        87,
+        0.75,
+        -60
+      ],
+      "max": [
+        90,
+        29.25,
+        60
+      ]
+    },
+    {
+      "min": [
+        -31.5,
+        0.75,
+        -60
+      ],
+      "max": [
+        -28.5,
+        29.25,
+        60
+      ]
+    },
+    {
+      "min": [
+        28.5,
+        0.75,
+        -60
+      ],
+      "max": [
+        31.5,
+        29.25,
+        60
+      ]
+    },
+    {
+      "min": [
+        -90,
+        0.75,
+        -1.5
+      ],
+      "max": [
+        90,
+        29.25,
+        1.5
+      ]
+    }
+  ],
+  "overallBounds": [
+    [
+      -90,
+      90
+    ],
+    [
+      -1.5,
+      29.25
+    ],
+    [
+      -60,
+      60
+    ]
+  ],
+  "floorToWallGap": 0.75,
+  "binarySerializer": {
+    "triangleCount": 12,
+    "bytes": 680,
+    "expectedBytes": 684,
+    "triangleCountFieldAt80": 1065353216,
+    "expectedTriangleCountField": 12
+  },
+  "positiveVolumeOverlappingBoxPairs": 12,
+  "claimedCompartments": [
+    56,
+    55.5,
+    25.5
+  ],
+  "actualClearanceX": [
+    55.5,
+    57,
+    55.5
+  ],
+  "actualWallHeight": 28.5
+}

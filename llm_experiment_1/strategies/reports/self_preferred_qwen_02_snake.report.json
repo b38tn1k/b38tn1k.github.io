@@ -1,0 +1,133 @@
+{
+  "score": 85,
+  "grade": "B+ provisional - Playable Snake with live difficulty; legal tail move is incorrectly fatal",
+  "summary": "Playable Snake with live difficulty; legal tail move is incorrectly fatal",
+  "rubricScores": {
+    "functionality": 36,
+    "artifact_correctness": 24,
+    "usability": 12,
+    "self_verification": 3,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Actual start/movement/turning, keyboard pause/resume, restart, wall and body death and reversal guard pass.",
+    "Five scheduled meals grow the snake and update score/level/tick interval. Rendering and core game behavior execute."
+  ],
+  "defects": [
+    "Self-collision includes the departing tail, wrongly ending a legal move into that cell on a non-eating tick.",
+    "randomFood has an unbounded rejection loop when no empty cell remains; no full-board completion guard exists.",
+    "Several inline simulation checks use inconsistent head ordering and claim conditions unrelated to the real update function; these are weak self-verification, not separately counted application failures."
+  ],
+  "verification": [
+    "3/4 independent scenario checks pass. qa/nominated-middle.cjs and reports/self_preferred_qwen_02_snake.qa.json.",
+    "Independent frozen-source VM/DOM/nativeCanvas2D; actual controls and output bytes, controlled state fixtures exposing existing functions only. No browser layout/GPU/default actions or physical printing. Qwen Snake receives the standard CanvasRenderingContext2D brand global solely for its instanceof check; the adapter otherwise omits this browser class. No game logic replaced."
+  ],
+  "verificationConcerns": [
+    "Source/runtime checks do not establish native browser rendering or physical printability.",
+    "The missing CanvasRenderingContext2D global in the independent adapter is supplied for the Snake brand check and is not counted as an app defect. No application algorithm is replaced."
+  ],
+  "humanOrSupervisorSteering": 0,
+  "scopeCompliance": "Pi alone authored product, tests and verification. Generic helpers only; no app-specific steering or repair code from Codex.",
+  "workflowNotes": "Model-nominated single-agent recipe. Independent outcomes are separate from the inline SUCCESS label and artifact/order workflow signals.",
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "self_preferred",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All balanced. The file is complete and valid. Here's a summary:\n\n---\n\n## \u2705 Snake Game \u2014 Complete\n\n**Delivered:** `index.html` (567 lines, ~17KB, single self-contained offline HTML file)\n\n### Features Implemented\n| Feature | Status |\n|---|---|\n| Canvas-based rendering (30\u00d730 grid) | \u2705 |\n| Arrow keys + WASD controls | \u2705 |\n| 180\u00b0 reversal prevention | \u2705 |\n| Food spawning (avoids snake body) | \u2705 |\n| Score tracking & display | \u2705 |\n| Wall collision \u2192 game over | \u2705 |\n| Self-collision \u2192 game over | \u2705 |\n| Pause/Resume (Space key) | \u2705 |\n| Restart (Enter key + button) | \u2705 |\n| Increasing difficulty (speed up per level) | \u2705 |\n| High score persistence (localStorage) | \u2705 |\n| Start screen with instructions | \u2705 |\n| Game-over overlay with score | \u2705 |\n| Self-verification script \u2192 \"SUCCESS\" status | \u2705 |\n| No external dependencies | \u2705 |\n\n### Files Created\n- **`index.html`** \u2014 The complete game\n- **`PLAN.md`** \u2014 Architecture and requirements checklist\n- **`VERIFY.md`** \u2014 Verification evidence and limitations\n\nThe game runs entirely offline in any standard browser with no network access needed.",
+  "workflowInstructions": "run-preferred.py; research/model-preferred-setups.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 2.54,
+  "wallMinutes": 2.54,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 14,
+  "parentToolCalls": 14,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 1,
+  "modelUsageReported": {
+    "input": 13171,
+    "output": 8919,
+    "cacheRead": 120371,
+    "totalTokens": 142461
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 13381,
+  "parentPeakReportedPromptTokens": 13381,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 13171,
+    "output": 8919,
+    "cacheRead": 120371,
+    "totalTokens": 142461
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 17475,
+  "sha256": "5ce335ad1205a9b31704aaf5b9fdf3e44683be896dc72117e36bba94c6d45ab7",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 0,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 3,
+    "delegations": [],
+    "agentSettled": true,
+    "planArtifact": true,
+    "verificationArtifact": true,
+    "planBeforeNativeHtmlWrite": true,
+    "note": "Artifact/order signals only. Bash-authored writes and actual verification quality require independent transcript assessment.",
+    "controller": "Single Pi session; model-selected self-review, no external reviewer or forced proof",
+    "appliedSettings": {
+      "thinking": "off",
+      "temperature": 0.2,
+      "compaction": {
+        "enabled": true,
+        "reserveTokens": 32768,
+        "keepRecentTokens": 8192
+      },
+      "oneAgent": true,
+      "forcedProof": false
+    },
+    "preferenceSource": "interviews/qwen/informed/answer.json"
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Informed model-selected configuration; multiple workflow/tool/generation controls differ from earlier cohorts. Preferences are hypotheses, not established efficacy."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  }
+}

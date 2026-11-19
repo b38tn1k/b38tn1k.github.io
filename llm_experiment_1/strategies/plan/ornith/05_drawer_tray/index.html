@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer-Organizer Tray Maker</title>
+<style>
+  :root {
+    --bg: #14181f;
+    --panel: #1c222c;
+    --panel2: #232b38;
+    --ink: #e8edf4;
+    --muted: #9aa7b8;
+    --accent: #4da3ff;
+    --accent2: #39d9a0;
+    --warn: #ffb454;
+    --danger: #ff6b6b;
+    --line: #2c3543;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; height: 100%;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--ink);
+    overflow: hidden;
+  }
+  #app { display: flex; height: 100vh; }
+  #sidebar {
+    width: 340px; min-width: 300px; max-width: 45vw;
+    background: var(--panel); border-right: 1px solid var(--line);
+    padding: 18px 18px 40px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  #stage { flex: 1; position: relative; display: flex; flex-direction: column; }
+  #canvasWrap { flex: 1; position: relative; }
+  canvas.preview { width: 100%; height: 100%; display: block; touch-action: none; }
+  h1 { font-size: 16px; margin: 0; letter-spacing: .3px; }
+  .sub { font-size: 11px; color: var(--muted); margin: 0 0 2px; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px;
+       color: var(--muted); margin: 6px 0 2px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .row { display: flex; gap: 10px; }
+  .row > .field { flex: 1; }
+  label { font-size: 12px; color: var(--muted); }
+  input[type="number"] {
+    width: 100%; padding: 7px 9px; font-size: 14px;
+    background: var(--panel2); border: 1px solid var(--line);
+    color: var(--ink); border-radius: 7px; outline: none;
+  }
+  input[type="number"]:focus { border-color: var(--accent); }
+  .unit { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  button {
+    cursor: pointer; border: none; border-radius: 8px;
+    padding: 10px 12px; font-size: 13px; font-weight: 600;
+    background: var(--panel2); color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: #06121f; border: none; }
+  button.primary:disabled { opacity: .4; cursor: not-allowed; }
+  button.ok { background: var(--accent2); color: #04160f; border: none; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btns button { flex: 1; min-width: 96px; }
+  .presets { display: flex; gap: 6px; flex-wrap: wrap; }
+  .presets button { flex: 0 0 auto; padding: 6px 10px; font-size: 12px; }
+  .warn {
+    background: #3a2c17; border: 1px solid var(--warn); color: var(--warn);
+    padding: 8px 10px; border-radius: 8px; font-size: 12px; display: none;
+  }
+  .warn.show { display: block; }
+  .info { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .info b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  th, td { padding: 3px 5px; text-align: left; border-bottom: 1px solid var(--line);
+           font-variant-numeric: tabular-nums; }
+  th { color: var(--muted); font-weight: 500; }
+  .cell-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+  .cell { font-size: 10px; padding: 3px 5px; background: var(--panel2);
+          border: 1px solid var(--line); border-radius: 5px;
+          font-variant-numeric: tabular-nums; }
+  .stat { display: flex; justify-content: space-between;
+          padding: 4px 0; border-bottom: 1px dashed var(--line); }
+  .stat span:last-child { color: var(--ink); font-weight: 600; }
+  #footer { font-size: 10px; color: var(--muted); padding-top: 6px; }
+  .hint { position: absolute; bottom: 10px; left: 12px; font-size: 11px;
+          color: var(--muted); background: rgba(0,0,0,.35); padding: 4px 8px;
+          border-radius: 6px; }
+  #topViewWrap { padding: 4px 0 0; }
+  .tabbar { display: flex; gap: 4px; padding: 8px 12px 0; }
+  .tabbar button { flex: 0 0 auto; padding: 6px 14px; border-radius: 8px 8px 0 0; }
+  .tabbar button.active { background: var(--accent); color: #06121f; border: none; }
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="sidebar">
+    <div>
+      <h1>Drawer Tray Maker</h1>
+      <p class="sub">Rectangular organizer · export printable STL</p>
+    </div>
+
+    <h2>Outer Dimensions</h2>
+    <div class="row">
+      <div class="field"><label>Length (X)</label>
+        <input type="number" id="L" value="180" min="0.1" step="1"></div>
+      <div class="field"><label>Width (Y)</label>
+        <input type="number" id="W" value="120" min="0.1" step="1"></div>
+    </div>
+    <div class="field"><label>Height (Z)</label>
+      <input type="number" id="H" value="30" min="0.1" step="1"></div>
+
+    <h2>Grid</h2>
+    <div class="row">
+      <div class="field"><label>Columns</label>
+        <input type="number" id="cols" value="3" min="1" max="50" step="1"></div>
+      <div class="field"><label>Rows</label>
+        <input type="number" id="rows" value="2" min="1" max="50" step="1"></div>
+    </div>
+
+    <h2>Thickness</h2>
+    <div class="row">
+      <div class="field"><label>Wall</label>
+        <input type="number" id="wall" value="2.4" min="0.1" step="0.1"></div>
+      <div class="field"><label>Floor</label>
+        <input type="number" id="floor" value="2.0" min="0.1" step="0.1"></div>
+    </div>
+
+    <h2>Presets</h2>
+    <div class="presets">
+      <button data-p="180:120:30:3:2:2.4:2.0">Start 3×2</button>
+      <button data-p="240:120:30:5:2:2.4:2.0">Bread 5×2</button>
+      <button data-p="300:200:35:6:3:2.4:2.5">Large 6×3</button>
+      <button data-p="120:120:25:3:3:2.0:2.0">Square 3×3</button>
+    </div>
+
+    <div class="warn" id="warn"></div>
+
+    <div class="btns">
+      <button class="primary" id="exportStl">Download STL</button>
+      <button id="viewStl">View STL</button>
+    </div>
+
+    <h2>Compartment Dimensions</h2>
+    <div class="info">
+      <div class="stat"><span>Inner footprint</span><span id="innerFoot"></span></div>
+      <div class="stat"><span>Inside depth</span><span id="insideDepth"></span></div>
+      <div class="stat"><span>Compartment size</span><span id="compSize"></span></div>
+      <div class="stat"><span>Approx volume</span><span id="vol"></span></div>
+      <div class="stat"><span>Compartments</span><span id="nComp"></span></div>
+    </div>
+    <div class="cell-grid" id="cellGrid"></div>
+
+    <div class="tabbar">
+      <button id="tabTop" class="active">Top view</button>
+      <button id="tabSide">Section</button>
+    </div>
+    <div id="topViewWrap">
+      <canvas id="topView" class="preview"></canvas>
+    </div>
+
+    <div id="footer">Drag to rotate · scroll to zoom · double-click to reset. Units: mm.</div>
+  </aside>
+
+  <div id="stage">
+    <div id="canvasWrap">
+      <canvas id="preview" class="preview"></canvas>
+      <div class="hint">Drag = rotate · Scroll = zoom · DBL-click = reset</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Parameter model ----------
+  const defaults = { L: 180, W: 120, H: 30, cols: 3, rows: 2, wall: 2.4, floor: 2.0 };
+
+  const $ = (id) => document.getElementById(id);
+  function getParams() {
+    return {
+      L: clamp(parseFloat($('L').value) || 0.1, 0.1),
+      W: clamp(parseFloat($('W').value) || 0.1, 0.1),
+      H: clamp(parseFloat($('H').value) || 0.1, 0.1),
+      cols: clamp(Math.floor(parseFloat($('cols').value) || 1), 1, 50),
+      rows: clamp(Math.floor(parseFloat($('rows').value) || 1), 1, 50),
+      wall: clamp(parseFloat($('wall').value) || 0.1, 0.1),
+      floor: clamp(parseFloat($('floor').value) || 0.1, 0.1),
+    };
+  }
+  function setParams(p) {
+    $('L').value = round(p.L); $('W').value = round(p.W); $('H').value = round(p.H);
+    $('cols').value = p.cols; $('rows').value = p.rows;
+    $('wall').value = round(p.wall); $('floor').value = round(p.floor);
+  }
+  function round(v) { const r = Math.round(v * 1000) / 1000; return (r === Math.floor(r)) ? r : r; }
+  function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+  // ---------- Analysis ----------
+  function analyze(p) {
+    const innerL = Math.max(0, p.L - (p.cols + 1) * p.wall);
+    const innerW = Math.max(0, p.W - (p.rows + 1) * p.wall);
+    const cellL = p.cols ? innerL / p.cols : 0;
+    const cellW = p.rows ? innerW / p.rows : 0;
+    const insideDepth = Math.max(0, p.H - p.floor);
+    const compOk = cellL > 0.001 && cellW > 0.001 && insideDepth > 0.001;
+    const volume = p.L * p.W * p.H - p.cols * p.rows * cellL * cellW * insideDepth;
+    return { innerL, innerW, cellL, cellW, insideDepth, compOk, volume };
+  }
+
+  // ---------- Mesh generation ----------
+  // Produces an array of triangles {points:[[x,y,z]x3]}. Coordinates:
+  // X across length, Y across width, Z up from bottom.
+  function buildMesh(p) {
+    const a = p.wall, f = p.floor;
+    const L = p.L, W = p.W, H = p.H;
+    const Lc = p.cols, Rc = p.rows;
+
+    // Compose the tray as a union of axis-aligned boxes (non-overlapping volume).
+    // Union surface is computed by clipping each box face against every other box.
+    // Interior shared faces cancel exactly, leaving a watertight mesh with an
+    // open top (the cavity).
+    const e = 1e-6;
+    // box helper: {x0,x1,y0,y1,z0,z1}
+    function box(x0,x1,y0,y1,z0,z1){ return {x0,x1,y0,y1,z0,z1}; }
+
+    const innerX0 = -L*0.5 + a, innerX1 = L*0.5 - a;
+    const innerY0 = -W*0.5 + a, innerY1 = W*0.5 - a;
+    const boxes = [];
+
+    // Floor plate over inner footprint, thickness f.
+    boxes.push(box(innerX0, innerX1, innerY0, innerY1, 0, f));
+
+    // Four outer wall bands (thickness a), height f..H.
+    boxes.push(box(innerX0, innerX1, innerY0, innerY0 + a, f, H)); // bottom
+    boxes.push(box(innerX0, innerX1, innerY1 - a, innerY1, f, H)); // top
+    boxes.push(box(innerX0, innerX0 + a, innerY0, innerY1, f, H)); // left
+    boxes.push(box(innerX1 - a, innerX1, innerY0, innerY1, f, H)); // right
+
+    // Interior grid walls, thickness a, from floor top to H.
+    const cellL = (L - (Lc + 1) * a) / Lc;
+    const cellW = (W - (Rc + 1) * a) / Rc;
+    const xStart = -L*0.5 + a;  // inner left face
+    const yStart = -W*0.5 + a;  // inner bottom face
+    for (let i = 1; i < Lc; i++) {
+      const cx = xStart + i * (cellL + a);
+      boxes.push(box(cx - a*0.5, cx + a*0.5, innerY0, innerY1, f, H));
+    }
+    for (let i = 1; i < Rc; i++) {
+      const cy = yStart + i * (cellW + a);
+      boxes.push(box(innerX0, innerX1, cy - a*0.5, cy + a*0.5, f, H));
+    }
+
+    // ---- Union surface extraction ----
+    // For each box face, subtract every other box's footprint (projected onto
+    // the face's plane). Whatever polygon remains is on the union boundary and
+    // is triangulated directly.
+    const tris = [];
+    for (const b of boxes) {
+      const faces = [
+        makeFace(b, 1,  'z'), makeFace(b, -1, 'z'),
+        makeFace(b, 1,  'y'), makeFace(b, -1, 'y'),
+        makeFace(b, 1,  'x'), makeFace(b, -1, 'x'),
+      ];
+      for (const face of faces) {
+        let poly = face.pts.slice();
+        for (const o of boxes) {
+          if (o === b) continue;
+          poly = subtractRectFromFace(poly, o, face);
+          if (poly.length === 0) break;
+        }
+        if (poly.length >= 3) addConvexPiece(tris, poly, face.axis, face.sign);
+      }
+    }
+    return tris;
+  }
+
+  // Build a rectangular face (4 corners, ordered CCW when viewed from the
+  // outward side) for box b on constant axis 'axis'. sign +1 -> max plane
+  // (outward normal +axis), -1 -> min plane (outward normal -axis).
+  function makeFace(b, sign, axis) {
+    const loX = b.x0, hiX = b.x1, loY = b.y0, hiY = b.y1, loZ = b.z0, hiZ = b.z1;
+    let corners, fixed;
+    // Corners must be in CCW order when viewed along the outward normal.
+    if (axis === 'x') {
+      fixed = sign > 0 ? hiX : loX;
+      corners = sign > 0
+        ? [[fixed, loY, loZ], [fixed, hiY, loZ], [fixed, hiY, hiZ], [fixed, loY, hiZ]]
+        : [[fixed, hiY, loZ], [fixed, loY, loZ], [fixed, loY, hiZ], [fixed, hiY, hiZ]];
+    } else if (axis === 'y') {
+      fixed = sign > 0 ? hiY : loY;
+      corners = sign > 0
+        ? [[hiX, fixed, loZ], [hiX, fixed, hiZ], [loX, fixed, hiZ], [loX, fixed, loZ]]
+        : [[loX, fixed, loZ], [loX, fixed, hiZ], [hiX, fixed, hiZ], [hiX, fixed, loZ]];
+    } else {
+      fixed = sign > 0 ? hiZ : loZ;
+      corners = sign > 0
+        ? [[loX, loY, fixed], [hiX, loY, fixed], [hiX, hiY, fixed], [loX, hiY, fixed]]
+        : [[hiX, hiY, fixed], [loX, hiY, fixed], [loX, loY, fixed], [hiX, loY, fixed]];
+    }
+    return { pts: corners, axis, sign };
+  }
+
+  // Subtract overlap of box o from a convex polygon face (given as 3D corners).
+  // A point on this face is inside o iff its coordinate along o's axes lies within
+  // [o.min,o.max]. We clip only in the face's 2 varying axes, and only when the
+  // fixed coordinate of the face lies within o's constant-axis range.
+  function subtractRectFromFace(poly, o, face) {
+    const axis = face.axis;
+    const axisIdx = axis === 'x' ? 0 : axis === 'y' ? 1 : 2;
+    const fixedVal = poly[0][axisIdx];
+    // constant-axis extent of o (skip if fixedVal outside o's range)
+    let oMin, oMax;
+    if (axis === 'x') { oMin = o.x0; oMax = o.x1; }
+    else if (axis === 'y') { oMin = o.y0; oMax = o.y1; }
+    else { oMin = o.z0; oMax = o.z1; }
+    if (fixedVal <= oMin + 1e-7 || fixedVal >= oMax - 1e-7) return poly.slice();
+    // varying axes of the face are the two axes != axis
+    const varAxes = axis === 'x' ? [1,2] : axis === 'y' ? [0,2] : [0,1];
+    const varNames = axis === 'x' ? ['y','z'] : axis === 'y' ? ['x','z'] : ['x','y'];
+    // o's extent in varying axes
+    const oMinA = varNames[0]==='x'?o.x0:varNames[0]==='y'?o.y0:o.z0;
+    const oMaxA = varNames[0]==='x'?o.x1:varNames[0]==='y'?o.y1:o.z1;
+    const oMinB = varNames[1]==='x'?o.x0:varNames[1]==='y'?o.y0:o.z0;
+    const oMaxB = varNames[1]==='x'?o.x1:varNames[1]==='y'?o.y1:o.z1;
+    return clipRectOutside(poly, varAxes, oMinA, oMaxA, oMinB, oMaxB);
+  }
+
+  // Clip convex polygon (3D corners) keeping the part OUTSIDE the a-b rectangle
+  // (a,b are the coordinates along varAxes[0], varAxes[1]). Returns list of convex
+  // pieces (decomposition) that represent poly minus the rectangle.
+  function clipRectOutside(poly, varAxes, minA, maxA, minB, maxB) {
+    const getA = p => p[varAxes[0]];
+    const getB = p => p[varAxes[1]];
+    const eps = 1e-7;
+    const left = clipLess(poly, getA, minA + eps);
+    const right = clipGreater(poly, getA, maxA - eps);
+    const middle = clipLess(clipGreater(poly, getA, minA - eps), getA, maxA + eps);
+    const out = [];
+    if (left.length) out.push(left);
+    if (right.length) out.push(right);
+    const midBot = clipLess(middle, getB, minB + eps);
+    if (midBot.length) out.push(midBot);
+    const midTop = clipGreater(middle, getB, maxB - eps);
+    if (midTop.length) out.push(midTop);
+    return out;
+  }
+
+  // Sutherland-Hodgman single half-plane clips (keep convex sub-polygon).
+  function clipLess(poly, getVal, thr) {
+    const out = [];
+    const n = poly.length;
+    for (let i = 0; i < n; i++) {
+      const c = poly[i], nxt = poly[(i+1)%n];
+      const ck = getVal(c) <= thr, nk = getVal(nxt) <= thr;
+      if (ck) out.push(c.slice());
+      if (ck != nk) {
+        const t = (thr - getVal(c)) / (getVal(nxt) - getVal(c));
+        out.push(lerp(c, nxt, t));
+      }
+    }
+    return out;
+  }
+  function clipGreater(poly, getVal, thr) {
+    const out = [];
+    const n = poly.length;
+    for (let i = 0; i < n; i++) {
+      const c = poly[i], nxt = poly[(i+1)%n];
+      const ck = getVal(c) >= thr, nk = getVal(nxt) >= thr;
+      if (ck) out.push(c.slice());
+      if (ck != nk) {
+        const t = (thr - getVal(c)) / (getVal(nxt) - getVal(c));
+        out.push(lerp(c, nxt, t));
+      }
+    }
+    return out;
+  }
+  function lerp(a, b, t) { return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+
+  // Turn a convex polygon (3D, ordered CCW as seen from outward normal) into tris.
+  function addConvexPiece(tris, poly, axis, sign) {
+    const nx = axis==='x' ? sign : 0, ny = axis==='y' ? sign : 0, nz = axis==='z' ? sign : 0;
+    for (let i = 1; i < poly.length; i++) {
+      tris.push({ p: [poly[0], poly[i], poly[i+1]], n: [nx,ny,nz] });
+    }
+  }
+
+  // watertightness check: each undirected edge must appear exactly twice
+  function checkWatertight(tris) {
+    const seen = new Map();
+    for (const t of tris) {
+      const p = t.p;
+      for (let i = 0; i < 3; i++) {
+        const a = p[i], b = p[(i+1)%3];
+        const key = [fmt(a), fmt(b)].sort().join('|');
+        seen.set(key, (seen.get(key) || 0) + 1);
+      }
+    }
+    let bad = 0, total = 0;
+    for (const v of seen.values()) { total++; if (v !== 2) bad++; }
+    return { total, bad };
+  }
+  function fmt(v) { return v[0].toFixed(6)+','+v[1].toFixed(6)+','+v[2].toFixed(6); }
+
+  // ---------- STL export ----------
+  function toBinarySTL(tris) {
+    const n = tris.length;
+    const buf = new ArrayBuffer(84 + n * 50);
+    const view = new DataView(buf);
+    const header = "STL generated by Drawer Tray Maker";
+    for (let i = 0; i < 80; i++) view.setUint8(i, i < header.length ? header.charCodeAt(i) : 0);
+    view.setUint32(80, n, true);
+    let off = 84;
+    for (const t of tris) {
+      const p = t.p;
+      let nx = t.n ? t.n[0] : 0, ny = t.n ? t.n[1] : 0, nz = t.n ? t.n[2] : 0;
+      // normalize stored/derived normal
+      const len = Math.hypot(nx, ny, nz) || 1;
+      nx/=len; ny/=len; nz/=len;
+      view.setFloat32(off, nx, true); off += 4;
+      view.setFloat32(off, ny, true); off += 4;
+      view.setFloat32(off, nz, true); off += 4;
+      for (let i = 0; i < 3; i++) {
+        view.setFloat32(off, p[i][0], true); off += 4;
+        view.setFloat32(off, p[i][1], true); off += 4;
+        view.setFloat32(off, p[i][2], true); off += 4;
+      }
+      view.setUint16(off, 0, true); off += 2;
+    }
+    return new Uint8Array(buf);
+  }
+  function downloadSTL(p, tris) {
+    const bin = toBinarySTL(tris);
+    const blob = new Blob([bin], { type: "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+    const fn = "tray-" + p.L + "x" + p.W + "x" + p.H + "-" + p.cols + "x" + p.rows + ".stl";
+    const a = document.createElement("a");
+    a.href = url; a.download = fn; document.body.appendChild(a); a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // ---------- UI readout ----------
+  function renderInfo(p) {
+    const an = analyze(p);
+    const warn = $('warn');
+    if (!an.compOk) {
+      let msg = "";
+      if (an.cellL <= 0.001 || an.cellW <= 0.001)
+        msg = "⚠ Compartment width ≤ 0 — reduce wall thickness or column/row count.";
+      else msg = "⚠ Inside depth ≤ 0 — increase height or reduce floor thickness.";
+      warn.textContent = msg; warn.classList.add("show");
+    } else {
+      warn.classList.remove("show");
+    }
+
+    $('innerFoot').textContent = an.innerL.toFixed(1) + " × " + an.innerW.toFixed(1) + " mm";
+    $('insideDepth').textContent = an.insideDepth.toFixed(1) + " mm";
+    $('compSize').textContent = an.cellL.toFixed(1) + " × " + an.cellW.toFixed(1) + " mm";
+    $('vol').textContent = (an.volume/1000).toFixed(1) + " cm³";
+    $('nComp').textContent = (p.cols * p.rows) + " cells";
+
+    const grid = $('cellGrid');
+    grid.innerHTML = "";
+    if (an.compOk) {
+      for (let r = 0; r < p.rows; r++) {
+        for (let c = 0; c < p.cols; c++) {
+          const d = document.createElement("div");
+          d.className = "cell";
+          d.textContent = (an.cellL.toFixed(1)) + "×" + (an.cellW.toFixed(1));
+          grid.appendChild(d);
+        }
+      }
+    }
+    $('exportStl').disabled = !an.compOk;
+  }
+
+  // ---------- WebGL preview ----------
+  const glCanvas = $("preview");
+  let gl = glCanvas.getContext("webgl") || glCanvas.getContext("experimental-webgl");
+  let meshTris = [];
+
+  const vsSource = `
+    attribute vec3 aPos;
+    attribute vec3 aNormal;
+    uniform mat4 uProj;
+    uniform mat4 uView;
+    uniform mat3 uNormalMat;
+    varying vec3 vNormal;
+    void main() {
+      gl_Position = uProj * uView * vec4(aPos, 1.0);
+      vNormal = normalize(uNormalMat * aNormal);
+    }`;
+  const fsSource = `
+    precision mediump float;
+    varying vec3 vNormal;
+    uniform vec3 uColor;
+    uniform vec3 uLightDir;
+    void main() {
+      float diff = max(dot(normalize(vNormal), normalize(uLightDir)), 0.0);
+      float amb = 0.35;
+      vec3 col = uColor * (amb + (1.0-amb) * diff);
+      gl_FragColor = vec4(col, 1.0);
+    }`;
+
+  function compile(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+      throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, vsSource));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fsSource));
+  gl.linkProgram(prog); gl.useProgram(prog);
+  const aPos = gl.getAttribLocation(prog, "aPos");
+  const aNormal = gl.getAttribLocation(prog, "aNormal");
+  const uProj = gl.getUniformLocation(prog, "uProj");
+  const uView = gl.getUniformLocation(prog, "uView");
+  const uNormalMat = gl.getUniformLocation(prog, "uNormalMat");
+  const uColor = gl.getUniformLocation(prog, "uColor");
+  const uLightDir = gl.getUniformLocation(prog, "uLightDir");
+
+  // matrices (column-major 4x4)
+  function mat4Perspective(fov, asp, n, f) {
+    const t = Math.tan(fov/2), r = asp;
+    return [
+      1/(r*t),0,0,0,
+      0,1/t,0,0,
+      0,0,(f+n)/(n-f),-1,
+      0,0,(2*f*n)/(n-f),0
+    ];
+  }
+  function mat4LookAt(eye, center, up) {
+    const z = norm(sub(eye, center));
+    const x = norm(cross(up, z));
+    const y = cross(z, x);
+    return [
+      x[0],y[0],z[0],0,
+      x[1],y[1],z[1],0,
+      x[2],y[2],z[2],0,
+      -dot(x,eye),-dot(y,eye),-dot(z,eye),1
+    ];
+  }
+  function sub(a,b){return [a[0]-b[0],a[1]-b[1],a[2]-b[2]];}
+  function add(a,b){return [a[0]+b[0],a[1]+b[1],a[2]+b[2]];}
+  function cross(a,b){return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];}
+  function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+  function norm(a){const l=Math.hypot(a[0],a[1],a[2])||1;return [a[0]/l,a[1]/l,a[2]/l];}
+  function mat4FromAxis(x,y,z){return [x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,0,0,0,1];}
+
+  let rotX = -0.55, rotY = 0.7, zoom = 1;
+  let meshBuf = null, meshCount = 0, meshCenter = [0,0,0], meshSize = 1;
+
+  function buildGLMesh(tris) {
+    // per-triangle flat normal + center offset for centroid view
+    const data = [];
+    let cx=0, cy=0, cz=0, count=0;
+    const minp=[1e9,1e9,1e9], maxp=[-1e9,-1e9,-1e9];
+    for (const t of tris) {
+      const p = t.p;
+      let e1=[p[1][0]-p[0][0],p[1][1]-p[0][1],p[1][2]-p[0][2]];
+      let e2=[p[2][0]-p[0][0],p[2][1]-p[0][1],p[2][2]-p[0][2]];
+      let n=t.n ? norm(t.n) : norm(cross(e1,e2));
+      const c=[(p[0][0]+p[1][0]+p[2][0])/3,(p[0][1]+p[1][1]+p[2][1])/3,(p[0][2]+p[1][2]+p[2][2])/3];
+      cx+=c[0];cy+=c[1];cz+=c[2];count++;
+      for(const v of p){minp[0]=Math.min(minp[0],v[0]);minp[1]=Math.min(minp[1],v[1]);minp[2]=Math.min(minp[2],v[2]);maxp[0]=Math.max(maxp[0],v[0]);maxp[1]=Math.max(maxp[1],v[1]);maxp[2]=Math.max(maxp[2],v[2]);}
+      data.push(c[0],c[1],c[2],n[0],n[1],n[2]);
+    }
+    meshCenter=[cx/count,cy/count,cz/count];
+    const sz=Math.max(maxp[0]-minp[0],maxp[1]-minp[1],maxp[2]-minp[2])||1;
+    meshSize=sz;
+    for(let i=0;i<6;i++) meshCenter[i%3]-=minp[i%3]-sz/2; // center geometry
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+    meshBuf = buf; meshCount = count;
+  }
+
+  function resize() {
+    const wrap = $("canvasWrap");
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    glCanvas.width = Math.floor(wrap.clientWidth * dpr);
+    glCanvas.height = Math.floor(wrap.clientHeight * dpr);
+    gl.viewport(0, 0, glCanvas.width, glCanvas.height);
+    const tw = $("topView");
+    const tWrap = $("topViewWrap");
+    const tdpr = Math.min(window.devicePixelRatio || 1, 2);
+    tw.width = Math.floor(tWrap.clientWidth * tdpr);
+    tw.height = 180 * tdpr;
+  }
+
+  function drawGL(p) {
+    if (!gl) return;
+    gl.clearColor(0.07,0.09,0.12,1); gl.enable(gl.DEPTH_TEST);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    if (!meshBuf) return;
+    const asp = glCanvas.width / glCanvas.height;
+    const proj = mat4Perspective(Math.PI/5, asp, 0.1, 5000);
+    const dist = (meshSize / Math.sin(0.5)) / zoom + meshSize;
+    const eye = [Math.cos(rotY)*Math.cos(rotX)*dist, Math.sin(rotX)*dist, Math.sin(rotY)*Math.cos(rotY)*dist];
+    const view = mat4LookAt(eye, meshCenter, [0,0,1]);
+    const rot = mat4FromAxis(
+      [Math.cos(rotY), 0, Math.sin(rotY)],
+      [-Math.sin(rotY)*Math.sin(rotX), Math.cos(rotX), Math.cos(rotY)*Math.sin(rotX)],
+      [Math.sin(rotY)*Math.cos(rotX)*-1, Math.sin(rotX), -Math.cos(rotY)*Math.cos(rotX)]
+    );
+    // normal matrix = upper-left 3x3 of modelview (rot). rotate meshCenter offset out
+    gl.uniformMatrix4fv(uProj, false, proj);
+    gl.uniformMatrix4fv(uView, false, view);
+    gl.uniformMatrix3fv(uNormalMat, false, rot);
+    gl.uniform3f(uColor, 0.32, 0.62, 0.9);
+    gl.uniform3f(uLightDir, 0.5, 0.7, 1.0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, meshBuf);
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 24, 0);
+    gl.enableVertexAttribArray(aNormal);
+    gl.vertexAttribPointer(aNormal, 3, gl.FLOAT, false, 24, 12);
+    gl.drawArrays(gl.TRIANGLES, 0, meshCount);
+  }
+
+  // ---------- Interaction (drag rotate / zoom) ----------
+  let dragging = false, lastX = 0, lastY = 0;
+  glCanvas.addEventListener("pointerdown", (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; glCanvas.setPointerCapture(e.pointerId); });
+  glCanvas.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    rotY += (e.clientX - lastX) * 0.008;
+    rotX += (e.clientY - lastY) * 0.008;
+    rotX = clamp(rotX, -1.5, 1.5);
+    lastX = e.clientX; lastY = e.clientY;
+    render();
+  });
+  glCanvas.addEventListener("pointerup", () => { dragging = false; });
+  glCanvas.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    zoom *= e.deltaY > 0 ? 0.92 : 1.08;
+    zoom = clamp(zoom, 0.3, 6);
+    render();
+  }, { passive: false });
+  glCanvas.addEventListener("dblclick", () => { rotX = -0.55; rotY = 0.7; zoom = 1; render(); });
+
+  // ---------- Top view (2D canvas) ----------
+  function drawTop(p) {
+    const c = $("topView"); const ctx = c.getContext("2d");
+    const w = c.width, h = c.height;
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = "#0f1319"; ctx.fillRect(0,0,w,h);
+    const pad = 24;
+    const an = analyze(p);
+    const scale = Math.min((w - pad*2)/p.L, (h - pad*2)/p.W);
+    const ox = w/2, oy = h/2;
+    const toX = (x) => ox + x*scale;
+    const toY = (y) => oy - y*scale;
+    // outer outline
+    ctx.strokeStyle = "#4da3ff"; ctx.lineWidth = 2;
+    ctx.strokeRect(toX(-p.L/2), toY(p.W/2), p.L*scale, p.W*scale);
+    ctx.fillStyle = "rgba(77,163,255,0.06)";
+    ctx.fillRect(toX(-p.L/2), toY(p.W/2), p.L*scale, p.W*scale);
+    ctx.fillStyle = "#9aa7b8"; ctx.font = "11px system-ui"; ctx.textAlign = "center";
+    ctx.fillText(p.L.toFixed(0) + " mm", ox, toY(p.W/2) - 8);
+    ctx.save(); ctx.translate(toX(-p.L/2) - 8, oy); ctx.rotate(-Math.PI/2);
+    ctx.fillText(p.W.toFixed(0) + " mm", 0, 0); ctx.restore();
+
+    if (!an.compOk) return;
+    const a = p.wall;
+    const stepL = (a + an.cellL), stepW = (a + an.cellW);
+    // grid walls
+    ctx.strokeStyle = "#39d9a0"; ctx.lineWidth = Math.max(1, a*scale);
+    for (let r = 0; r <= p.rows; r++) {
+      const y = -p.W/2 + r*stepW;
+      ctx.beginPath(); ctx.moveTo(toX(-p.L/2+a), toY(y)); ctx.lineTo(toX(p.L/2-a), toY(y)); ctx.stroke();
+    }
+    for (let cc = 0; cc <= p.cols; cc++) {
+      const x = -p.L/2 + cc*stepL;
+      ctx.beginPath(); ctx.moveTo(toX(x), toY(p.W/2-a)); ctx.lineTo(toX(x), toY(-p.W/2+a)); ctx.stroke();
+    }
+    // per-cell dims
+    ctx.fillStyle = "#cdd6e2"; ctx.font = "10px system-ui"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for (let r = 0; r < p.rows; r++) {
+      for (let cc = 0; cc < p.cols; cc++) {
+        const cxv = -p.L/2 + (cc+0.5)*stepL;
+        const cyv = -p.W/2 + (r+0.5)*stepW;
+        ctx.fillText(an.cellL.toFixed(1)+"×"+an.cellW.toFixed(1), toX(cxv), toY(cyv));
+      }
+    }
+  }
+
+  // ---------- Main render loop ----------
+  let idleTimer = null, autoSpin = 0;
+  function render() {
+    meshTris = buildMesh(getParams());
+    if (meshCount !== meshTris.length) buildGLMesh(meshTris);
+    const p = getParams();
+    renderInfo(p);
+    drawGL(p);
+    drawTop(p);
+  }
+
+  let lastInteract = Date.now();
+  function tick() {
+    if (Date.now() - lastInteract > 2500 && !dragging) {
+      rotY += 0.004;
+      render();
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ---------- Wire up ----------
+  const inputs = ["L","W","H","cols","rows","wall","floor"];
+  inputs.forEach((id) => {
+    $(id).addEventListener("input", () => { lastInteract = Date.now(); render(); });
+  });
+  document.querySelectorAll(".presets button").forEach((b) => {
+    b.addEventListener("click", () => {
+      const [L,W,H,cols,rows,wall,floor] = b.dataset.p.split(":").map(Number);
+      setParams({L,W,H,cols,rows,wall,floor});
+      lastInteract = Date.now(); render();
+    });
+  });
+  $("exportStl").addEventListener("click", () => {
+    const p = getParams();
+    if (!analyze(p).compOk) return;
+    const tris = buildMesh(p);
+    const wc = checkWatertight(tris);
+    downloadSTL(p, tris);
+    if (wc.bad > 0) alert("Exported, but watertightness check found " + wc.bad + " non-manifold edges.");
+  });
+  $("viewStl").addEventListener("click", () => {
+    const p = getParams();
+    if (!analyze(p).compOk) { alert("Fix parameters before viewing STL."); return; }
+    const tris = buildMesh(p);
+    const bin = toBinarySTL(tris);
+    const blob = new Blob([bin], { type: "application/sla" });
+    const url = URL.createObjectURL(blob);
+    window.open("https://3dprintviewer.com/" + url, "_blank");
+  });
+  $("tabTop").addEventListener("click", () => { $("topViewWrap").style.display = ""; $("tabTop").classList.add("active"); $("tabSide").classList.remove("active"); });
+  $("tabSide").addEventListener("click", () => { $("tabTop").classList.remove("active"); $("tabSide").classList.add("active"); });
+
+  window.addEventListener("resize", () => { resize(); render(); });
+
+  // init
+  setParams(defaults);
+  resize();
+  render();
+  lastInteract = Date.now();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

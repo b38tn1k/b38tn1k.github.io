@@ -1,0 +1,5372 @@
+{
+  "score": 74,
+  "grade": "C - product87.5; required timer flow defects and original deadline stop",
+  "rubricScores": {
+    "functionality": 35,
+    "artifact_correctness": 25,
+    "usability": 10,
+    "self_verification": 4,
+    "autonomy": 0
+  },
+  "sha256": "d1c2cb2563c5f249614329512e4f8fff58d9846aeef0b6a8f27fed4cadb3494f",
+  "blockingRequiredDefect": true,
+  "summary": "The local worker fixed the empty-valid statistics path. Exact-source interaction tests still find skipped trial labels and false starts consuming a trial despite retry. Product quality improves85.0\u219287.5 but misses the independentA target.",
+  "strengths": [
+    "A complete normal five-valid-trial run at200/225/250/275/300ms yields mean250ms, best200ms and worst300ms, with five per-trial rows.",
+    "All-false summary statistics now show finite placeholders; five false-start rows contain no NaN/Infinity/undefined attributes.",
+    "Actual Space handling and TestAgain reset work; the app stays self-contained/offline."
+  ],
+  "defects": [
+    "After the first valid trial, the displayed round label advances fromTrial1 toTrial3; subsequent labels reachTrial6 in a five-trial run.",
+    "The retry path consumes false starts as completed trials. Repeated early presses can finish the run without collecting five valid responses."
+  ],
+  "verification": [
+    "Independent source-hashed VM/DOM controlled-scheduler tests executed actual pointer/keyboard handlers and summary/restart DOM on the immutable feedback1 artifact.",
+    "Source comparison confirms only showSummary empty-valid handling changed; no Codex product code or task-specific repair feedback was supplied."
+  ],
+  "verificationConcerns": [
+    "VM/DOM tests do not verify browser layout, hit-testing, focus/default behavior or physical-device timing.",
+    "The local supervisor repeatedly declared completion and chose WAIT; independent tests do not support its all-clear."
+  ],
+  "scopeCompliance": "Passed scoped execution: worker product writes in its own copy; supervisor read-only artifact snapshots and scratch/control writes. No observed successful access to hidden gold/history or other cases. Browser-origin denial retained.",
+  "workflowNotes": "One local feedback prompt delivered. The pre-worker malformed-control/premature-stop segment was preserved and recovered with the exact saved supervisor session and original deadline; worker hadzero prior messages. Generic transport metadata only, no human app diagnoses. Actual model resource use, original pair wall and infrastructure recovery are recorded separately. Joint system was eligible for autonomy credit without human repair guidance, but the original rubric requires a terminal result without a deadline stop. This time-limit result receives autonomy0.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "This assessment applies to immutable feedback1 SHAd1c2cb2563c5f249614329512e4f8fff58d9846aeef0b6a8f27fed4cadb3494f. Recheck hash before final recording if later local feedback changes the app.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Local supervisor/worker rescue of the exact original operator pre-seed with a120-minute shared wall. Codex independently validates outputs but supplies no repair diagnoses/code; product quality is separately normalized from80points. Pair wall and summed concurrent model activity differ. Superseded review-only work and prior human-rescue costs are separate."
+  ],
+  "runStatus": "completed_pending_assessment",
+  "gradingCorrection": {
+    "recordedUTC": "2026-11-18T05:58:44.711318+00:00",
+    "previousScore": 84,
+    "previousAutonomy": 10,
+    "correctedScore": 74,
+    "correctedAutonomy": 0,
+    "reason": "Original strategies/README.md rubric: autonomy requires terminal result without supervisor help or deadline stop. Joint eligibility is not automatic credit."
+  },
+  "title": "Reaction timer",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "local_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Zero external references \u2014 fully self-contained and offline.\n\n## Summary\n\nI repaired the false-start edge case in `index.html`'s `showSummary()` function.\n\n**The defect:** When a user got 5 consecutive false starts, `finish()` called `showSummary([], true)` with an empty `valid` array. Then:\n- `Math.min.apply(null, [])` \u2192 `Infinity`\n- `Math.max.apply(null, [])` \u2192 `-Infinity`\n- `avg([])` and stdev \u2192 `NaN`\n\nThis displayed \"Infinity ms\", \"-Infinity ms\", and \"NaN ms\" in the results panel.\n\n**The fix:** Wrapped the stat computations in an `if (allFalse)` branch. When there are no valid trials, all four stat values (Avg/Best/Worst/Consistency) now render as \"\u2013\" instead of the broken Infinity/-Infinity/NaN values. The per-trial breakdown (all showing \"False start\") is unaffected.\n\n**Verified via the real code** using a Node DOM shim:\n- 5 consecutive false starts \u2192 all stats show \"\u2013\", no NaN/Infinity in DOM \u2713\n- Normal run with valid trials \u2192 correct avg/best/worst/stdev, no NaN/Infinity \u2713 (no regression)\n\nAll other verified behaviors preserved (random wait, false-start detection, 5 trials, continue prompt, Space/click input, Test Again button). The single self-contained offline `index.html` remains fully self-contained with zero external references.",
+  "workflowInstructions": "local-supervised-rescue-plan.json; run-local-supervised.py",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 120.068,
+  "wallMinutes": 120.068,
+  "status": "assessed",
+  "stopReason": "time_limit",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 1154,
+  "parentToolCalls": 22,
+  "childToolCalls": 1132,
+  "toolResultsMarkedError": 16,
+  "modelUsageReported": {
+    "input": 653811,
+    "output": 90861,
+    "cacheRead": 48299443,
+    "totalTokens": 49044115
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 60913,
+  "parentPeakReportedPromptTokens": 16640,
+  "childPeakReportedPromptTokens": 60913,
+  "parentModelUsage": {
+    "input": 9498,
+    "output": 6732,
+    "cacheRead": 246429,
+    "totalTokens": 262659
+  },
+  "childModelUsage": {
+    "input": 644313,
+    "output": 84129,
+    "cacheRead": 48053014,
+    "totalTokens": 48781456
+  },
+  "artifactBytes": 14020,
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 2,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 6,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "ornith-1.5:35b-256k",
+    "supervisorModel": "qwen3.6:35b-a3b",
+    "feedbackCount": 1,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "sup-002",
+        "message": "Behavioral findings after code analysis of index.html (artifact hash 10bc4a64... verified):\n\nCONFIRMED DEFECT: When a user gets 5 consecutive false starts, finish() calls showSummary([], true). Inside showSummary(), Math.min.apply(null, []) returns Infinity and Math.max.apply(null, []) returns -Infinity. statBest shows \"Infinity ms\", statWorst shows \"-Infinity ms\", and avg/stdev compute to NaN displayed as \"NaN ms\".\n\nReproduction: Click/tap 5 times while in the waiting state (before green appears) for all 5 trials. Results panel shows Infinity/-Infinity/NaN values.\nExpected: Stats should display \"-\" or a clear message indicating no valid trials.\n\nAll other brief requirements verified working:\n- Random wait 1000ms-4000ms: OK\n- False-start detection (any click during waiting): OK\n- Five trials (false starts count): OK\n- Results summary Avg/Best/Worst/Consistency + per-trial bars: OK\n- Continue prompt after each trial result: OK\n- Keyboard Space + click/tap input: OK\n- Test Again restart button: OK\n\nNOTE: MAX_FALSE_START constant defined but never used. No behavioral effect.\n\nPRESERVE all verified behavior above. Fix only the empty-valid stats display path.",
+        "reason": "Code analysis confirmed 1 defect and verified working features.",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T03:48:14.011946+00:00",
+        "acceptedUTC": "2026-11-18T03:48:14.011957+00:00",
+        "elapsedSeconds": 1646.799,
+        "workerPID": 37312,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T03:48:14.024089+00:00",
+        "deliveredElapsedSeconds": 1646.799
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 0,
+        "at": "2026-11-18T03:47:18.257693+00:00",
+        "sha256": "10bc4a646bf3d65bae0a8fffdce5ec2867b854e5cd745a6bd80a99e81df0b066",
+        "snapshot": "strategies/reports/local-supervised-rounds/case96/feedback0"
+      },
+      {
+        "feedback": 1,
+        "at": "2026-11-18T03:52:40.708448+00:00",
+        "sha256": "d1c2cb2563c5f249614329512e4f8fff58d9846aeef0b6a8f27fed4cadb3494f",
+        "snapshot": "strategies/reports/local-supervised-rounds/case96/feedback1"
+      }
+    ],
+    "supervisorWakeups": [
+      {
+        "at": "2026-11-18T03:47:18.255256+00:00",
+        "elapsedSeconds": 1591.04,
+        "source": "infrastructure_recovery_metadata",
+        "priorNativeSessionRestored": true
+      },
+      {
+        "at": "2026-11-18T03:53:34.714518+00:00",
+        "elapsedSeconds": 1967.5,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T03:55:04.791493+00:00",
+        "elapsedSeconds": 2057.58,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T03:56:34.805194+00:00",
+        "elapsedSeconds": 2147.59,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T03:58:04.968227+00:00",
+        "elapsedSeconds": 2237.72,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T03:59:35.002046+00:00",
+        "elapsedSeconds": 2327.75,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:01:05.130103+00:00",
+        "elapsedSeconds": 2417.88,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:02:35.132353+00:00",
+        "elapsedSeconds": 2507.88,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:04:05.228281+00:00",
+        "elapsedSeconds": 2597.97,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:05:35.244231+00:00",
+        "elapsedSeconds": 2687.98,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:07:05.318966+00:00",
+        "elapsedSeconds": 2778.06,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:08:35.411798+00:00",
+        "elapsedSeconds": 2868.16,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:10:05.467445+00:00",
+        "elapsedSeconds": 2958.21,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:11:35.524566+00:00",
+        "elapsedSeconds": 3048.27,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:13:05.622734+00:00",
+        "elapsedSeconds": 3138.36,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:14:35.625481+00:00",
+        "elapsedSeconds": 3228.36,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:16:05.744265+00:00",
+        "elapsedSeconds": 3318.48,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:17:35.754979+00:00",
+        "elapsedSeconds": 3408.49,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:19:05.818125+00:00",
+        "elapsedSeconds": 3498.53,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:20:35.949032+00:00",
+        "elapsedSeconds": 3588.66,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:22:05.984672+00:00",
+        "elapsedSeconds": 3678.7,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:23:36.005469+00:00",
+        "elapsedSeconds": 3768.72,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:25:06.104114+00:00",
+        "elapsedSeconds": 3858.82,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T04:26:36.208871+00:00",
+        "elapsedSeconds": 3948.92,
+        "source": "worker_progress_or_clock_metadata"
+      }
+    ],
+    "supervisorYields": [],
+    "supervisorStopRequest": {
+      "at": "2026-11-18T03:53:27.053828+00:00",
+      "id": "sup-004",
+      "action": "stop",
+      "reason": "The worker has completed repairs. Artifact hash d1c2cb25... is verified. The confirmed defect (all-false-start stats showing Infinity/-Infinity/NaN) has been fixed with an allFalse guard in showSummary(). All brief requirements independently verified as passing: random wait (1s-4s), false-start detection, 5 trials, results summary (Avg/Best/Worst/Consistency + per-trial bars), single self-contained offline HTML file. The app is ready for evaluation."
+    },
+    "independentGradeGates": [
+      {
+        "at": "2026-11-18T03:47:41.570281+00:00",
+        "sha256": "10bc4a646bf3d65bae0a8fffdce5ec2867b854e5cd745a6bd80a99e81df0b066",
+        "productScore": 85.0,
+        "blockingRequiredDefect": true,
+        "qa": "reports/local_supervised_ornith_01_reaction_timer.round0.qa.json",
+        "evidence": "Independent exact-source pointer/scheduledcue checks, no findings sent to models."
+      },
+      {
+        "at": "2026-11-18T04:03:01.332759+00:00",
+        "sha256": "d1c2cb2563c5f249614329512e4f8fff58d9846aeef0b6a8f27fed4cadb3494f",
+        "productScore": 87.5,
+        "blockingRequiredDefect": true,
+        "qa": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/reports/local_supervised_ornith_01_reaction_timer.round1.qa.json",
+        "assessment": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/runtime/local-supervised-case96-round1-product-assessment.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "id": "ornith-solo_billion-1",
+      "mode": "solo_billion",
+      "configurationMean": 74.8,
+      "source": "billion_on/ornith/01_reaction_timer/index.html",
+      "report": "billion_on/reports/ornith_01_reaction_timer.report.json",
+      "sha256": "10bc4a646bf3d65bae0a8fffdce5ec2867b854e5cd745a6bd80a99e81df0b066",
+      "score": 80,
+      "grade": "B - normal timing works; false-start and label defects",
+      "rubricScores": {
+        "functionality": 35,
+        "artifact_correctness": 24,
+        "usability": 9,
+        "self_verification": 2,
+        "autonomy": 10
+      },
+      "baselineScope": "No out-of-directory writes found on initial log review",
+      "baselineSteering": 0,
+      "baselineMinutes": 2.9,
+      "baselineActiveMinutes": 3.06,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_ornith_01_reaction_timer/index.html"
+    },
+    "sharedLimitSeconds": 7200
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [
+    {
+      "recordedUTC": "2026-11-18T03:45:44.566240+00:00",
+      "type": "pre_worker_control_infrastructure_recovery",
+      "reason": "Two supervisor feedback payloads were invalid JSON; controller stopped immediately on supervisor STOP without independentA. Worker receivedzero messages and madezero edits. Correct transport metadata/stop semantics and preserve original supervisor session, source, budget and cost.",
+      "firstSegment": "strategies/reports/local-supervised-finals/case96/pre-recovery-v1",
+      "firstSegmentPairMinutes": 3.205,
+      "firstSegmentCosts": {
+        "worker": {
+          "model": "ornith",
+          "role": "worker",
+          "pid": 65470,
+          "assistantUsage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0
+          },
+          "recordedCompactionUsage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0
+          },
+          "recordedCombinedUsage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0
+          },
+          "unreportedCompactions": 0,
+          "activeMinutes": 0.0,
+          "promptCount": 0,
+          "streamingWindows": [],
+          "exitCode": 0
+        },
+        "supervisor": {
+          "model": "qwen",
+          "role": "supervisor",
+          "pid": 65472,
+          "assistantUsage": {
+            "input": 22447,
+            "output": 8842,
+            "cacheRead": 486486,
+            "cacheWrite": 0,
+            "totalTokens": 517775
+          },
+          "recordedCompactionUsage": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0,
+            "totalTokens": 0
+          },
+          "recordedCombinedUsage": {
+            "input": 22447,
+            "output": 8842,
+            "cacheRead": 486486,
+            "cacheWrite": 0,
+            "totalTokens": 517775
+          },
+          "unreportedCompactions": 0,
+          "activeMinutes": 3.205,
+          "promptCount": 1,
+          "streamingWindows": [
+            {
+              "start": 1120662.55293525,
+              "end": 1120663.710654375
+            },
+            {
+              "start": 1120668.239585083,
+              "end": 1120668.245526916
+            },
+            {
+              "start": 1120668.614420583,
+              "end": 1120669.425119083
+            },
+            {
+              "start": 1120670.123721833,
+              "end": 1120670.891169541
+            },
+            {
+              "start": 1120672.961329458,
+              "end": 1120672.999826
+            },
+            {
+              "start": 1120673.679153333,
+              "end": 1120675.202763833
+            },
+            {
+              "start": 1120677.536033708,
+              "end": 1120677.537792583
+            },
+            {
+              "start": 1120678.205627083,
+              "end": 1120710.613537416
+            },
+            {
+              "start": 1120737.815945125,
+              "end": 1120737.84052125
+            },
+            {
+              "start": 1120739.939172583,
+              "end": 1120739.985892375
+            },
+            {
+              "start": 1120741.075805333,
+              "end": 1120741.112809708
+            },
+            {
+              "start": 1120742.436577625,
+              "end": 1120742.443569541
+            },
+            {
+              "start": 1120743.979029,
+              "end": 1120744.020571416
+            },
+            {
+              "start": 1120745.543562291,
+              "end": 1120745.583756625
+            },
+            {
+              "start": 1120746.985439,
+              "end": 1120746.994761875
+            },
+            {
+              "start": 1120772.9789875,
+              "end": 1120773.007873125
+            },
+            {
+              "start": 1120775.273688041,
+              "end": 1120775.278484083
+            },
+            {
+              "start": 1120777.001060583,
+              "end": 1120777.00881
+            },
+            {
+              "start": 1120778.375246958,
+              "end": 1120778.380708833
+            },
+            {
+              "start": 1120779.677888083,
+              "end": 1120779.68440425
+            },
+            {
+              "start": 1120781.071156708,
+              "end": 1120781.078214916
+            },
+            {
+              "start": 1120782.140643125,
+              "end": 1120796.583028125
+            },
+            {
+              "start": 1120798.3287385,
+              "end": 1120798.335098458
+            },
+            {
+              "start": 1120799.389933916,
+              "end": 1120801.326343875
+            },
+            {
+              "start": 1120802.792344666,
+              "end": 1120802.804829166
+            },
+            {
+              "start": 1120804.04626225,
+              "end": 1120804.053538041
+            },
+            {
+              "start": 1120805.926927166,
+              "end": 1120805.93785775
+            },
+            {
+              "start": 1120807.086159958,
+              "end": 1120808.801345875
+            },
+            {
+              "start": 1120809.7320645,
+              "end": 1120819.350638833
+            },
+            {
+              "start": 1120820.590937458,
+              "end": 1120824.8365975
+            },
+            {
+              "start": 1120825.860926791,
+              "end": 1120835.6167385
+            },
+            {
+              "start": 1120843.772546958,
+              "end": 1120843.785051291
+            },
+            {
+              "start": 1120844.795708083,
+              "end": 1120845.707644791
+            },
+            {
+              "start": 1120848.588480291,
+              "end": 1120848.594392791
+            }
+          ],
+          "exitCode": -9
+        }
+      },
+      "originalStartedUTC": "2026-11-18T03:20:47.210519+00:00",
+      "originalDeadlineUTC": "2026-11-18T05:20:47.210519+00:00",
+      "supervisorSession": "strategies/local_supervised_supervisors/qwen_to_ornith/01_reaction_timer/runtime/current/sessions/2026-11-18T03-20-47-435Z_01a1ecab-d84b-7688-9cdd-fffadbd9242d.jsonl",
+      "supervisorSessionSHA256BeforeRecovery": "00e0bfc3e16e0aff55bf04bd476e4a06ceac48fcdd6884b8645374e519266b7d",
+      "workerPriorPromptCount": 0,
+      "deadlineReset": false,
+      "appDiagnosesProvided": false,
+      "newWorkerTransport": "No prior worker conversation exists; new initializedtransport does not discard any worker message. All delivered feedback will share the new workerPID/context.",
+      "genericRecoveryOnly": true
+    }
+  ],
+  "humanSteering": false,
+  "localSupervisorFeedback": 1,
+  "localModelCosts": {
+    "worker": {
+      "model": "ornith",
+      "role": "worker",
+      "pid": 37312,
+      "assistantUsage": {
+        "input": 9498,
+        "output": 6732,
+        "cacheRead": 246429,
+        "cacheWrite": 0,
+        "totalTokens": 262659
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 9498,
+        "output": 6732,
+        "cacheRead": 246429,
+        "cacheWrite": 0,
+        "totalTokens": 262659
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 4.445,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1122310.217537291,
+          "end": 1122311.621905958
+        },
+        {
+          "start": 1122312.697847083,
+          "end": 1122312.701089
+        },
+        {
+          "start": 1122318.164415375,
+          "end": 1122331.811813208
+        },
+        {
+          "start": 1122332.085407916,
+          "end": 1122333.613668625
+        },
+        {
+          "start": 1122334.378302583,
+          "end": 1122342.005460916
+        },
+        {
+          "start": 1122342.711885166,
+          "end": 1122346.182426291
+        },
+        {
+          "start": 1122347.979206541,
+          "end": 1122347.982085625
+        },
+        {
+          "start": 1122348.636513916,
+          "end": 1122350.7738945
+        },
+        {
+          "start": 1122441.311471583,
+          "end": 1122442.944206791
+        },
+        {
+          "start": 1122443.667977416,
+          "end": 1122457.682608208
+        },
+        {
+          "start": 1122458.364236375,
+          "end": 1122459.581456333
+        },
+        {
+          "start": 1122460.49311425,
+          "end": 1122475.008588208
+        },
+        {
+          "start": 1122476.038239916,
+          "end": 1122476.046994916
+        },
+        {
+          "start": 1122477.00250625,
+          "end": 1122490.879718208
+        },
+        {
+          "start": 1122491.931320416,
+          "end": 1122491.934393
+        },
+        {
+          "start": 1122492.784916833,
+          "end": 1122505.930655541
+        },
+        {
+          "start": 1122506.983919708,
+          "end": 1122506.994192458
+        },
+        {
+          "start": 1122507.812927291,
+          "end": 1122537.478273083
+        },
+        {
+          "start": 1122539.313065166,
+          "end": 1122539.317253041
+        },
+        {
+          "start": 1122540.488251791,
+          "end": 1122557.882605083
+        },
+        {
+          "start": 1122559.175064875,
+          "end": 1122559.180314791
+        },
+        {
+          "start": 1122560.010451708,
+          "end": 1122564.954374791
+        },
+        {
+          "start": 1122565.8338785,
+          "end": 1122572.431075083
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "qwen",
+      "role": "supervisor",
+      "pid": 37313,
+      "assistantUsage": {
+        "input": 644313,
+        "output": 84129,
+        "cacheRead": 48053014,
+        "cacheWrite": 0,
+        "totalTokens": 48781456
+      },
+      "recordedCompactionUsage": {
+        "input": 137279,
+        "output": 46508,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 183787
+      },
+      "recordedCombinedUsage": {
+        "input": 781592,
+        "output": 130637,
+        "cacheRead": 48053014,
+        "cacheWrite": 0,
+        "totalTokens": 48965243
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 66.676,
+      "promptCount": 25,
+      "streamingWindows": [
+        {
+          "start": 1120662.55293525,
+          "end": 1120663.710654375
+        },
+        {
+          "start": 1120668.239585083,
+          "end": 1120668.245526916
+        },
+        {
+          "start": 1120668.614420583,
+          "end": 1120669.425119083
+        },
+        {
+          "start": 1120670.123721833,
+          "end": 1120670.891169541
+        },
+        {
+          "start": 1120672.961329458,
+          "end": 1120672.999826
+        },
+        {
+          "start": 1120673.679153333,
+          "end": 1120675.202763833
+        },
+        {
+          "start": 1120677.536033708,
+          "end": 1120677.537792583
+        },
+        {
+          "start": 1120678.205627083,
+          "end": 1120710.613537416
+        },
+        {
+          "start": 1120737.815945125,
+          "end": 1120737.84052125
+        },
+        {
+          "start": 1120739.939172583,
+          "end": 1120739.985892375
+        },
+        {
+          "start": 1120741.075805333,
+          "end": 1120741.112809708
+        },
+        {
+          "start": 1120742.436577625,
+          "end": 1120742.443569541
+        },
+        {
+          "start": 1120743.979029,
+          "end": 1120744.020571416
+        },
+        {
+          "start": 1120745.543562291,
+          "end": 1120745.583756625
+        },
+        {
+          "start": 1120746.985439,
+          "end": 1120746.994761875
+        },
+        {
+          "start": 1120772.9789875,
+          "end": 1120773.007873125
+        },
+        {
+          "start": 1120775.273688041,
+          "end": 1120775.278484083
+        },
+        {
+          "start": 1120777.001060583,
+          "end": 1120777.00881
+        },
+        {
+          "start": 1120778.375246958,
+          "end": 1120778.380708833
+        },
+        {
+          "start": 1120779.677888083,
+          "end": 1120779.68440425
+        },
+        {
+          "start": 1120781.071156708,
+          "end": 1120781.078214916
+        },
+        {
+          "start": 1120782.140643125,
+          "end": 1120796.583028125
+        },
+        {
+          "start": 1120798.3287385,
+          "end": 1120798.335098458
+        },
+        {
+          "start": 1120799.389933916,
+          "end": 1120801.326343875
+        },
+        {
+          "start": 1120802.792344666,
+          "end": 1120802.804829166
+        },
+        {
+          "start": 1120804.04626225,
+          "end": 1120804.053538041
+        },
+        {
+          "start": 1120805.926927166,
+          "end": 1120805.93785775
+        },
+        {
+          "start": 1120807.086159958,
+          "end": 1120808.801345875
+        },
+        {
+          "start": 1120809.7320645,
+          "end": 1120819.350638833
+        },
+        {
+          "start": 1120820.590937458,
+          "end": 1120824.8365975
+        },
+        {
+          "start": 1120825.860926791,
+          "end": 1120835.6167385
+        },
+        {
+          "start": 1120843.772546958,
+          "end": 1120843.785051291
+        },
+        {
+          "start": 1120844.795708083,
+          "end": 1120845.707644791
+        },
+        {
+          "start": 1120848.588480291,
+          "end": 1120848.594392791
+        },
+        {
+          "start": 1122253.92927,
+          "end": 1122253.937245375
+        },
+        {
+          "start": 1122255.966024583,
+          "end": 1122255.978062541
+        },
+        {
+          "start": 1122257.782557625,
+          "end": 1122257.793378291
+        },
+        {
+          "start": 1122259.740887125,
+          "end": 1122259.751142416
+        },
+        {
+          "start": 1122261.655489083,
+          "end": 1122261.6965205
+        },
+        {
+          "start": 1122263.858619,
+          "end": 1122263.86275375
+        },
+        {
+          "start": 1122266.104132125,
+          "end": 1122266.110788541
+        },
+        {
+          "start": 1122267.365188458,
+          "end": 1122267.374993333
+        },
+        {
+          "start": 1122268.662144,
+          "end": 1122268.675652625
+        },
+        {
+          "start": 1122269.962449916,
+          "end": 1122269.971622625
+        },
+        {
+          "start": 1122271.142376208,
+          "end": 1122271.159238583
+        },
+        {
+          "start": 1122272.456045625,
+          "end": 1122272.466623666
+        },
+        {
+          "start": 1122272.985300041,
+          "end": 1122274.546042333
+        },
+        {
+          "start": 1122275.430349583,
+          "end": 1122284.828692416
+        },
+        {
+          "start": 1122285.882322125,
+          "end": 1122288.234096833
+        },
+        {
+          "start": 1122289.971691583,
+          "end": 1122289.982511625
+        },
+        {
+          "start": 1122291.756469625,
+          "end": 1122291.764719875
+        },
+        {
+          "start": 1122293.238463375,
+          "end": 1122299.681533416
+        },
+        {
+          "start": 1122301.263325166,
+          "end": 1122307.140338958
+        },
+        {
+          "start": 1122308.9058415,
+          "end": 1122313.120924541
+        },
+        {
+          "start": 1122314.970956666,
+          "end": 1122319.972987916
+        },
+        {
+          "start": 1122320.924308708,
+          "end": 1122322.457668958
+        },
+        {
+          "start": 1122323.737109583,
+          "end": 1122326.810632041
+        },
+        {
+          "start": 1122358.244707916,
+          "end": 1122358.250118541
+        },
+        {
+          "start": 1122359.272391166,
+          "end": 1122361.11800725
+        },
+        {
+          "start": 1122422.604751333,
+          "end": 1122422.62249125
+        },
+        {
+          "start": 1122423.6409275,
+          "end": 1122424.737342291
+        },
+        {
+          "start": 1122516.556464958,
+          "end": 1122516.565454
+        },
+        {
+          "start": 1122517.950483625,
+          "end": 1122521.511578166
+        },
+        {
+          "start": 1122523.489613541,
+          "end": 1122529.794880583
+        },
+        {
+          "start": 1122532.402079083,
+          "end": 1122532.407374208
+        },
+        {
+          "start": 1122533.533335625,
+          "end": 1122537.666620166
+        },
+        {
+          "start": 1122539.717531,
+          "end": 1122539.725556833
+        },
+        {
+          "start": 1122541.266315875,
+          "end": 1122544.117914291
+        },
+        {
+          "start": 1122590.609786291,
+          "end": 1122590.615736708
+        },
+        {
+          "start": 1122591.58337125,
+          "end": 1122593.598098333
+        },
+        {
+          "start": 1122598.874253666,
+          "end": 1122613.675666791
+        },
+        {
+          "start": 1122615.720337291,
+          "end": 1122615.728978166
+        },
+        {
+          "start": 1122616.82486425,
+          "end": 1122620.186472958
+        },
+        {
+          "start": 1122621.469492083,
+          "end": 1122621.514666333
+        },
+        {
+          "start": 1122622.552939833,
+          "end": 1122626.911420958
+        },
+        {
+          "start": 1122629.222157916,
+          "end": 1122629.23292875
+        },
+        {
+          "start": 1122630.2648395,
+          "end": 1122632.924205125
+        },
+        {
+          "start": 1122633.705588916,
+          "end": 1122634.638998375
+        },
+        {
+          "start": 1122719.2092165,
+          "end": 1122719.218625583
+        },
+        {
+          "start": 1122720.252990416,
+          "end": 1122722.746450666
+        },
+        {
+          "start": 1122723.521565791,
+          "end": 1122723.815366416
+        },
+        {
+          "start": 1122809.142832541,
+          "end": 1122809.148792625
+        },
+        {
+          "start": 1122810.189626416,
+          "end": 1122811.89955525
+        },
+        {
+          "start": 1122812.638463541,
+          "end": 1122813.111612416
+        },
+        {
+          "start": 1122899.317345583,
+          "end": 1122899.323552958
+        },
+        {
+          "start": 1122900.369307666,
+          "end": 1122901.787551333
+        },
+        {
+          "start": 1122902.547557083,
+          "end": 1122902.750589458
+        },
+        {
+          "start": 1122989.331536958,
+          "end": 1122989.341519833
+        },
+        {
+          "start": 1122990.390379041,
+          "end": 1122991.735260583
+        },
+        {
+          "start": 1122992.522085875,
+          "end": 1122992.729448
+        },
+        {
+          "start": 1123079.42729275,
+          "end": 1123079.437473208
+        },
+        {
+          "start": 1123080.502242333,
+          "end": 1123081.864798625
+        },
+        {
+          "start": 1123082.669713083,
+          "end": 1123082.872139875
+        },
+        {
+          "start": 1123169.485776708,
+          "end": 1123169.491638625
+        },
+        {
+          "start": 1123170.5753235,
+          "end": 1123171.93972875
+        },
+        {
+          "start": 1123172.738221375,
+          "end": 1123172.900753791
+        },
+        {
+          "start": 1123259.516184833,
+          "end": 1123259.52785075
+        },
+        {
+          "start": 1123260.596379125,
+          "end": 1123261.924966083
+        },
+        {
+          "start": 1123262.744883458,
+          "end": 1123262.916936208
+        },
+        {
+          "start": 1123349.580687208,
+          "end": 1123349.587135666
+        },
+        {
+          "start": 1123350.689309666,
+          "end": 1123352.051289416
+        },
+        {
+          "start": 1123352.908601375,
+          "end": 1123353.076865791
+        },
+        {
+          "start": 1123439.727964916,
+          "end": 1123439.729348208
+        },
+        {
+          "start": 1123441.966677708,
+          "end": 1123441.980194458
+        },
+        {
+          "start": 1123442.797148958,
+          "end": 1123442.952750375
+        },
+        {
+          "start": 1123529.838288583,
+          "end": 1123529.84592425
+        },
+        {
+          "start": 1123532.025203041,
+          "end": 1123532.034697
+        },
+        {
+          "start": 1123532.845346541,
+          "end": 1123533.010625708
+        },
+        {
+          "start": 1123619.884479375,
+          "end": 1123619.900384583
+        },
+        {
+          "start": 1123621.159377458,
+          "end": 1123622.537314458
+        },
+        {
+          "start": 1123623.350363875,
+          "end": 1123623.524161208
+        },
+        {
+          "start": 1123709.904722875,
+          "end": 1123709.915240708
+        },
+        {
+          "start": 1123712.110090791,
+          "end": 1123712.165265
+        },
+        {
+          "start": 1123712.941175791,
+          "end": 1123713.109007
+        },
+        {
+          "start": 1123800.02378425,
+          "end": 1123800.03117325
+        },
+        {
+          "start": 1123802.253652208,
+          "end": 1123802.266438291
+        },
+        {
+          "start": 1123803.082298708,
+          "end": 1123803.2487665
+        },
+        {
+          "start": 1123890.063654458,
+          "end": 1123890.07055675
+        },
+        {
+          "start": 1123892.3188835,
+          "end": 1123892.326085041
+        },
+        {
+          "start": 1123893.177577916,
+          "end": 1123893.352997208
+        },
+        {
+          "start": 1123980.14177275,
+          "end": 1123980.152967541
+        },
+        {
+          "start": 1123982.425875166,
+          "end": 1123982.47962025
+        },
+        {
+          "start": 1123983.335520958,
+          "end": 1123983.506584625
+        },
+        {
+          "start": 1124070.139753875,
+          "end": 1124070.147412666
+        },
+        {
+          "start": 1124072.358285291,
+          "end": 1124072.364155208
+        },
+        {
+          "start": 1124073.192015583,
+          "end": 1124073.361135083
+        },
+        {
+          "start": 1124160.203968375,
+          "end": 1124160.211644583
+        },
+        {
+          "start": 1124162.428584708,
+          "end": 1124162.481673208
+        },
+        {
+          "start": 1124163.385612791,
+          "end": 1124163.451870583
+        },
+        {
+          "start": 1124250.325936791,
+          "end": 1124250.336156125
+        },
+        {
+          "start": 1124252.58713575,
+          "end": 1124252.646701958
+        },
+        {
+          "start": 1124253.482265625,
+          "end": 1124253.658398833
+        },
+        {
+          "start": 1124340.389361125,
+          "end": 1124340.398646
+        },
+        {
+          "start": 1124342.674039458,
+          "end": 1124342.725749125
+        },
+        {
+          "start": 1124343.527188125,
+          "end": 1124343.695996
+        },
+        {
+          "start": 1124430.390623208,
+          "end": 1124430.4032105
+        },
+        {
+          "start": 1124432.696902333,
+          "end": 1124432.709531791
+        },
+        {
+          "start": 1124480.19217325,
+          "end": 1124480.35613625
+        },
+        {
+          "start": 1124520.35480075,
+          "end": 1124520.361031333
+        },
+        {
+          "start": 1124522.383427333,
+          "end": 1124522.426421
+        },
+        {
+          "start": 1124523.22311475,
+          "end": 1124523.310390916
+        },
+        {
+          "start": 1124610.451093708,
+          "end": 1124610.460213875
+        },
+        {
+          "start": 1124612.463927208,
+          "end": 1124612.508116125
+        },
+        {
+          "start": 1124613.234431125,
+          "end": 1124614.396617
+        },
+        {
+          "start": 1124615.120995375,
+          "end": 1124616.260723083
+        },
+        {
+          "start": 1124617.406561375,
+          "end": 1124617.455391041
+        },
+        {
+          "start": 1124618.480981666,
+          "end": 1124619.903034625
+        },
+        {
+          "start": 1124620.648382541,
+          "end": 1124621.814830708
+        },
+        {
+          "start": 1124622.962330125,
+          "end": 1124623.007979958
+        },
+        {
+          "start": 1124624.043852125,
+          "end": 1124625.140410625
+        },
+        {
+          "start": 1124626.263807208,
+          "end": 1124626.31423775
+        },
+        {
+          "start": 1124627.340282333,
+          "end": 1124628.458841916
+        },
+        {
+          "start": 1124629.645683333,
+          "end": 1124629.659319208
+        },
+        {
+          "start": 1124631.643667541,
+          "end": 1124631.651921041
+        },
+        {
+          "start": 1124632.359515958,
+          "end": 1124633.724429916
+        },
+        {
+          "start": 1124634.494889458,
+          "end": 1124635.646017666
+        },
+        {
+          "start": 1124636.363063041,
+          "end": 1124637.491926125
+        },
+        {
+          "start": 1124638.221959,
+          "end": 1124639.32753675
+        },
+        {
+          "start": 1124640.035465875,
+          "end": 1124641.175839041
+        },
+        {
+          "start": 1124641.909207375,
+          "end": 1124643.067652083
+        },
+        {
+          "start": 1124643.788856,
+          "end": 1124644.9233275
+        },
+        {
+          "start": 1124645.695124875,
+          "end": 1124646.8353585
+        },
+        {
+          "start": 1124647.642647666,
+          "end": 1124648.695171625
+        },
+        {
+          "start": 1124649.440416708,
+          "end": 1124650.565737333
+        },
+        {
+          "start": 1124651.300076041,
+          "end": 1124652.433484166
+        },
+        {
+          "start": 1124653.140668666,
+          "end": 1124654.288357916
+        },
+        {
+          "start": 1124655.977843833,
+          "end": 1124655.988483375
+        },
+        {
+          "start": 1124656.708127375,
+          "end": 1124657.912836
+        },
+        {
+          "start": 1124659.621036458,
+          "end": 1124659.627083166
+        },
+        {
+          "start": 1124661.361905541,
+          "end": 1124661.372193208
+        },
+        {
+          "start": 1124662.547175958,
+          "end": 1124662.596896541
+        },
+        {
+          "start": 1124663.718955166,
+          "end": 1124665.173814541
+        },
+        {
+          "start": 1124666.994215208,
+          "end": 1124667.005140333
+        },
+        {
+          "start": 1124668.154841541,
+          "end": 1124668.205729041
+        },
+        {
+          "start": 1124669.221677125,
+          "end": 1124670.346976166
+        },
+        {
+          "start": 1124671.494010958,
+          "end": 1124671.540001041
+        },
+        {
+          "start": 1124672.530417,
+          "end": 1124673.673656833
+        },
+        {
+          "start": 1124674.834789375,
+          "end": 1124674.883651708
+        },
+        {
+          "start": 1124676.919068041,
+          "end": 1124676.929063083
+        },
+        {
+          "start": 1124678.106651416,
+          "end": 1124678.115293291
+        },
+        {
+          "start": 1124679.199602458,
+          "end": 1124680.353509291
+        },
+        {
+          "start": 1124681.560798583,
+          "end": 1124681.569021791
+        },
+        {
+          "start": 1124683.635778833,
+          "end": 1124683.644303666
+        },
+        {
+          "start": 1124684.919415458,
+          "end": 1124684.9240275
+        },
+        {
+          "start": 1124686.964774666,
+          "end": 1124686.974575208
+        },
+        {
+          "start": 1124688.13994525,
+          "end": 1124688.148033958
+        },
+        {
+          "start": 1124690.242015,
+          "end": 1124690.255119166
+        },
+        {
+          "start": 1124691.443978166,
+          "end": 1124691.453877875
+        },
+        {
+          "start": 1124693.518672625,
+          "end": 1124693.54135225
+        },
+        {
+          "start": 1124694.6946745,
+          "end": 1124694.704019916
+        },
+        {
+          "start": 1124696.796634416,
+          "end": 1124696.806108375
+        },
+        {
+          "start": 1124697.999526583,
+          "end": 1124698.012423333
+        },
+        {
+          "start": 1124700.040237,
+          "end": 1124700.088728
+        },
+        {
+          "start": 1124701.258174,
+          "end": 1124701.271678833
+        },
+        {
+          "start": 1124703.321749791,
+          "end": 1124703.327330125
+        },
+        {
+          "start": 1124704.521065375,
+          "end": 1124704.529005416
+        },
+        {
+          "start": 1124706.726599916,
+          "end": 1124706.739501666
+        },
+        {
+          "start": 1124707.863057791,
+          "end": 1124707.872468916
+        },
+        {
+          "start": 1124709.938279166,
+          "end": 1124709.9493365
+        },
+        {
+          "start": 1124711.127999208,
+          "end": 1124711.137612083
+        },
+        {
+          "start": 1124713.231129333,
+          "end": 1124713.241355375
+        },
+        {
+          "start": 1124714.4208415,
+          "end": 1124714.428051041
+        },
+        {
+          "start": 1124716.503014916,
+          "end": 1124716.563248958
+        },
+        {
+          "start": 1124717.787281333,
+          "end": 1124717.797113125
+        },
+        {
+          "start": 1124719.9391385,
+          "end": 1124719.950865041
+        },
+        {
+          "start": 1124721.165308541,
+          "end": 1124721.173024625
+        },
+        {
+          "start": 1124723.255838541,
+          "end": 1124723.26937625
+        },
+        {
+          "start": 1124724.47415375,
+          "end": 1124724.479770625
+        },
+        {
+          "start": 1124726.592826208,
+          "end": 1124726.603980166
+        },
+        {
+          "start": 1124727.324948791,
+          "end": 1124728.734463583
+        },
+        {
+          "start": 1124729.531132291,
+          "end": 1124730.726557791
+        },
+        {
+          "start": 1124731.908456458,
+          "end": 1124731.959056958
+        },
+        {
+          "start": 1124734.037052916,
+          "end": 1124734.047678833
+        },
+        {
+          "start": 1124734.782032333,
+          "end": 1124735.985180666
+        },
+        {
+          "start": 1124736.73174675,
+          "end": 1124738.038188083
+        },
+        {
+          "start": 1124739.243929875,
+          "end": 1124739.250288208
+        },
+        {
+          "start": 1124741.375667333,
+          "end": 1124741.386448666
+        },
+        {
+          "start": 1124742.155884666,
+          "end": 1124743.342455625
+        },
+        {
+          "start": 1124744.204830708,
+          "end": 1124745.341798666
+        },
+        {
+          "start": 1124746.117752,
+          "end": 1124747.398583166
+        },
+        {
+          "start": 1124748.182727041,
+          "end": 1124749.375839833
+        },
+        {
+          "start": 1124750.101331958,
+          "end": 1124751.310967666
+        },
+        {
+          "start": 1124751.997090541,
+          "end": 1124753.224859041
+        },
+        {
+          "start": 1124755.0401835,
+          "end": 1124755.0505465
+        },
+        {
+          "start": 1124756.854158833,
+          "end": 1124756.865987583
+        },
+        {
+          "start": 1124758.717337666,
+          "end": 1124758.724604291
+        },
+        {
+          "start": 1124759.975662166,
+          "end": 1124760.00194525
+        },
+        {
+          "start": 1124761.096214583,
+          "end": 1124762.342811875
+        },
+        {
+          "start": 1124763.150460875,
+          "end": 1124764.392242
+        },
+        {
+          "start": 1124765.198582875,
+          "end": 1124766.433733166
+        },
+        {
+          "start": 1124767.174274416,
+          "end": 1124768.382119708
+        },
+        {
+          "start": 1124770.197648166,
+          "end": 1124770.20808575
+        },
+        {
+          "start": 1124771.033482041,
+          "end": 1124772.1464065
+        },
+        {
+          "start": 1124772.906890541,
+          "end": 1124774.11263925
+        },
+        {
+          "start": 1124774.869561083,
+          "end": 1124776.059435083
+        },
+        {
+          "start": 1124777.906758625,
+          "end": 1124777.920894666
+        },
+        {
+          "start": 1124778.701015333,
+          "end": 1124779.952167875
+        },
+        {
+          "start": 1124780.763175083,
+          "end": 1124781.914575
+        },
+        {
+          "start": 1124782.690461541,
+          "end": 1124783.944191083
+        },
+        {
+          "start": 1124784.723152458,
+          "end": 1124785.907498583
+        },
+        {
+          "start": 1124786.701470416,
+          "end": 1124787.937029708
+        },
+        {
+          "start": 1124788.7491355,
+          "end": 1124789.987772416
+        },
+        {
+          "start": 1124790.79744525,
+          "end": 1124791.981855291
+        },
+        {
+          "start": 1124792.753002583,
+          "end": 1124793.979669791
+        },
+        {
+          "start": 1124794.795297916,
+          "end": 1124796.001474291
+        },
+        {
+          "start": 1124796.839966791,
+          "end": 1124797.975337791
+        },
+        {
+          "start": 1124798.787090416,
+          "end": 1124799.982956583
+        },
+        {
+          "start": 1124800.806035458,
+          "end": 1124801.973498166
+        },
+        {
+          "start": 1124802.752798,
+          "end": 1124803.96863075
+        },
+        {
+          "start": 1124804.831857208,
+          "end": 1124805.963715791
+        },
+        {
+          "start": 1124806.774616541,
+          "end": 1124807.959678666
+        },
+        {
+          "start": 1124808.821799125,
+          "end": 1124809.980965041
+        },
+        {
+          "start": 1124810.873907916,
+          "end": 1124811.963128541
+        },
+        {
+          "start": 1124812.743710458,
+          "end": 1124814.054184833
+        },
+        {
+          "start": 1124814.8564125,
+          "end": 1124816.094605208
+        },
+        {
+          "start": 1124817.016612875,
+          "end": 1124818.138499916
+        },
+        {
+          "start": 1124818.887180125,
+          "end": 1124820.194902083
+        },
+        {
+          "start": 1124882.619060083,
+          "end": 1124883.768000583
+        },
+        {
+          "start": 1124884.512798875,
+          "end": 1124885.730597458
+        },
+        {
+          "start": 1124886.43682925,
+          "end": 1124887.594988666
+        },
+        {
+          "start": 1124888.311770208,
+          "end": 1124889.457399375
+        },
+        {
+          "start": 1124890.182073083,
+          "end": 1124891.328956125
+        },
+        {
+          "start": 1124892.059476166,
+          "end": 1124893.2132085
+        },
+        {
+          "start": 1124894.018857375,
+          "end": 1124895.069073416
+        },
+        {
+          "start": 1124896.793878416,
+          "end": 1124896.8047405
+        },
+        {
+          "start": 1124898.528815083,
+          "end": 1124898.545026375
+        },
+        {
+          "start": 1124900.245206041,
+          "end": 1124900.254667625
+        },
+        {
+          "start": 1124901.494262916,
+          "end": 1124901.500541416
+        },
+        {
+          "start": 1124902.534422625,
+          "end": 1124903.753330625
+        },
+        {
+          "start": 1124904.974596625,
+          "end": 1124904.982176666
+        },
+        {
+          "start": 1124907.0045655,
+          "end": 1124907.058140416
+        },
+        {
+          "start": 1124907.815717375,
+          "end": 1124908.948125958
+        },
+        {
+          "start": 1124910.652920375,
+          "end": 1124910.663555541
+        },
+        {
+          "start": 1124911.834916625,
+          "end": 1124911.863369541
+        },
+        {
+          "start": 1124913.92309525,
+          "end": 1124913.928408291
+        },
+        {
+          "start": 1124915.115275833,
+          "end": 1124915.165641625
+        },
+        {
+          "start": 1124917.227501958,
+          "end": 1124917.283909916
+        },
+        {
+          "start": 1124917.994001083,
+          "end": 1124919.219727666
+        },
+        {
+          "start": 1124920.028348833,
+          "end": 1124921.188729
+        },
+        {
+          "start": 1124921.912331208,
+          "end": 1124923.084600208
+        },
+        {
+          "start": 1124923.897680791,
+          "end": 1124924.982007583
+        },
+        {
+          "start": 1124925.762499958,
+          "end": 1124926.915520208
+        },
+        {
+          "start": 1124927.648159291,
+          "end": 1124928.844891416
+        },
+        {
+          "start": 1124929.568158166,
+          "end": 1124930.789608958
+        },
+        {
+          "start": 1124931.597656333,
+          "end": 1124932.712217875
+        },
+        {
+          "start": 1124934.415083875,
+          "end": 1124934.421921916
+        },
+        {
+          "start": 1124936.136707708,
+          "end": 1124936.149547333
+        },
+        {
+          "start": 1124936.924470666,
+          "end": 1124938.033385541
+        },
+        {
+          "start": 1124939.790698583,
+          "end": 1124939.80548725
+        },
+        {
+          "start": 1124941.570024125,
+          "end": 1124941.579550083
+        },
+        {
+          "start": 1124942.812597208,
+          "end": 1124942.863216208
+        },
+        {
+          "start": 1124944.934663625,
+          "end": 1124944.989913958
+        },
+        {
+          "start": 1124945.720438291,
+          "end": 1124946.895198583
+        },
+        {
+          "start": 1124947.643929625,
+          "end": 1124948.920581458
+        },
+        {
+          "start": 1124949.728966625,
+          "end": 1124950.798222291
+        },
+        {
+          "start": 1124951.980276875,
+          "end": 1124952.029431541
+        },
+        {
+          "start": 1124954.123883708,
+          "end": 1124954.130328875
+        },
+        {
+          "start": 1124954.906590708,
+          "end": 1124956.061866791
+        },
+        {
+          "start": 1124957.300961208,
+          "end": 1124957.307389125
+        },
+        {
+          "start": 1124959.38187925,
+          "end": 1124959.435218708
+        },
+        {
+          "start": 1124960.271579791,
+          "end": 1124961.422838041
+        },
+        {
+          "start": 1124962.146947375,
+          "end": 1124963.457305
+        },
+        {
+          "start": 1124964.266005666,
+          "end": 1124965.380062833
+        },
+        {
+          "start": 1124966.139965541,
+          "end": 1124967.31968825
+        },
+        {
+          "start": 1124968.155049541,
+          "end": 1124969.340966791
+        },
+        {
+          "start": 1124970.100209125,
+          "end": 1124971.266804916
+        },
+        {
+          "start": 1124972.036293125,
+          "end": 1124973.28910425
+        },
+        {
+          "start": 1124974.044880916,
+          "end": 1124975.280127291
+        },
+        {
+          "start": 1124976.12260075,
+          "end": 1124977.249084166
+        },
+        {
+          "start": 1124978.012781625,
+          "end": 1124979.190634
+        },
+        {
+          "start": 1124979.955207,
+          "end": 1124981.208485375
+        },
+        {
+          "start": 1124981.958958666,
+          "end": 1124983.187294041
+        },
+        {
+          "start": 1124983.950432791,
+          "end": 1124985.187097291
+        },
+        {
+          "start": 1124985.947418583,
+          "end": 1124987.215611166
+        },
+        {
+          "start": 1124988.021596291,
+          "end": 1124989.180824041
+        },
+        {
+          "start": 1124989.955600625,
+          "end": 1124991.202466625
+        },
+        {
+          "start": 1124991.987782833,
+          "end": 1124993.226916125
+        },
+        {
+          "start": 1124994.018729083,
+          "end": 1124995.19957175
+        },
+        {
+          "start": 1124995.940744458,
+          "end": 1124997.167964416
+        },
+        {
+          "start": 1124997.947801208,
+          "end": 1124999.192766791
+        },
+        {
+          "start": 1124999.970429375,
+          "end": 1125001.143907958
+        },
+        {
+          "start": 1125002.389247458,
+          "end": 1125002.441170291
+        },
+        {
+          "start": 1125004.588394208,
+          "end": 1125004.59354375
+        },
+        {
+          "start": 1125005.384480333,
+          "end": 1125006.61555
+        },
+        {
+          "start": 1125008.38503475,
+          "end": 1125008.38842525
+        },
+        {
+          "start": 1125009.166848541,
+          "end": 1125010.3920665
+        },
+        {
+          "start": 1125011.168171625,
+          "end": 1125012.397671041
+        },
+        {
+          "start": 1125014.237188583,
+          "end": 1125014.250159291
+        },
+        {
+          "start": 1125015.052243625,
+          "end": 1125016.28146475
+        },
+        {
+          "start": 1125018.129094541,
+          "end": 1125018.13995575
+        },
+        {
+          "start": 1125018.948832333,
+          "end": 1125020.105672125
+        },
+        {
+          "start": 1125021.914876,
+          "end": 1125021.922067875
+        },
+        {
+          "start": 1125022.681878791,
+          "end": 1125023.925616791
+        },
+        {
+          "start": 1125024.784802791,
+          "end": 1125025.933341666
+        },
+        {
+          "start": 1125026.736504,
+          "end": 1125027.881192291
+        },
+        {
+          "start": 1125028.660277458,
+          "end": 1125029.897978
+        },
+        {
+          "start": 1125030.688295166,
+          "end": 1125031.900822166
+        },
+        {
+          "start": 1125033.712244916,
+          "end": 1125033.72601875
+        },
+        {
+          "start": 1125034.975549583,
+          "end": 1125035.027261
+        },
+        {
+          "start": 1125037.178775333,
+          "end": 1125037.2314365
+        },
+        {
+          "start": 1125039.056805833,
+          "end": 1125039.068211916
+        },
+        {
+          "start": 1125040.952095375,
+          "end": 1125040.966802708
+        },
+        {
+          "start": 1125041.778951875,
+          "end": 1125043.01615075
+        },
+        {
+          "start": 1125044.283351958,
+          "end": 1125044.347281916
+        },
+        {
+          "start": 1125046.476488791,
+          "end": 1125046.529671166
+        },
+        {
+          "start": 1125047.770719458,
+          "end": 1125047.831143583
+        },
+        {
+          "start": 1125049.986902583,
+          "end": 1125050.041479
+        },
+        {
+          "start": 1125107.286269041,
+          "end": 1125107.338061666
+        },
+        {
+          "start": 1125109.424140333,
+          "end": 1125109.4776225
+        },
+        {
+          "start": 1125110.291055833,
+          "end": 1125111.437810125
+        },
+        {
+          "start": 1125112.184369375,
+          "end": 1125113.374635125
+        },
+        {
+          "start": 1125114.180622916,
+          "end": 1125115.320567208
+        },
+        {
+          "start": 1125116.066718833,
+          "end": 1125117.261739458
+        },
+        {
+          "start": 1125118.070207708,
+          "end": 1125119.287420166
+        },
+        {
+          "start": 1125120.491010458,
+          "end": 1125120.538915791
+        },
+        {
+          "start": 1125122.6805645,
+          "end": 1125122.69041325
+        },
+        {
+          "start": 1125123.4994445,
+          "end": 1125124.6359045
+        },
+        {
+          "start": 1125125.381927208,
+          "end": 1125126.5833655
+        },
+        {
+          "start": 1125128.367259625,
+          "end": 1125128.380892458
+        },
+        {
+          "start": 1125130.163450125,
+          "end": 1125130.17762675
+        },
+        {
+          "start": 1125130.975212833,
+          "end": 1125132.212046958
+        },
+        {
+          "start": 1125132.971067583,
+          "end": 1125134.139838333
+        },
+        {
+          "start": 1125134.968518166,
+          "end": 1125136.101321458
+        },
+        {
+          "start": 1125136.837209875,
+          "end": 1125138.00961225
+        },
+        {
+          "start": 1125138.755845916,
+          "end": 1125139.921993583
+        },
+        {
+          "start": 1125141.726613208,
+          "end": 1125141.735852125
+        },
+        {
+          "start": 1125142.545391625,
+          "end": 1125143.668464083
+        },
+        {
+          "start": 1125144.468577541,
+          "end": 1125145.627124708
+        },
+        {
+          "start": 1125146.39607925,
+          "end": 1125147.613046958
+        },
+        {
+          "start": 1125149.417422291,
+          "end": 1125149.426077916
+        },
+        {
+          "start": 1125150.139665958,
+          "end": 1125151.3487455
+        },
+        {
+          "start": 1125152.146341958,
+          "end": 1125153.412840416
+        },
+        {
+          "start": 1125155.200249041,
+          "end": 1125155.209815958
+        },
+        {
+          "start": 1125155.954677291,
+          "end": 1125157.154804
+        },
+        {
+          "start": 1125157.897700625,
+          "end": 1125159.145070333
+        },
+        {
+          "start": 1125159.953627708,
+          "end": 1125161.126062583
+        },
+        {
+          "start": 1125161.928103458,
+          "end": 1125163.148592208
+        },
+        {
+          "start": 1125163.930536791,
+          "end": 1125165.136302291
+        },
+        {
+          "start": 1125165.90260225,
+          "end": 1125167.090010541
+        },
+        {
+          "start": 1125167.885027583,
+          "end": 1125169.047507458
+        },
+        {
+          "start": 1125169.796768,
+          "end": 1125171.023102833
+        },
+        {
+          "start": 1125171.821938958,
+          "end": 1125173.00720125
+        },
+        {
+          "start": 1125173.781000375,
+          "end": 1125174.980941666
+        },
+        {
+          "start": 1125175.764657416,
+          "end": 1125176.948659
+        },
+        {
+          "start": 1125177.748904958,
+          "end": 1125178.906811333
+        },
+        {
+          "start": 1125179.719449541,
+          "end": 1125180.901980583
+        },
+        {
+          "start": 1125181.693364583,
+          "end": 1125182.8759485
+        },
+        {
+          "start": 1125184.1372455,
+          "end": 1125184.188831833
+        },
+        {
+          "start": 1125186.332987541,
+          "end": 1125186.343251708
+        },
+        {
+          "start": 1125187.099625,
+          "end": 1125188.337639458
+        },
+        {
+          "start": 1125189.118085291,
+          "end": 1125190.321824916
+        },
+        {
+          "start": 1125191.106606333,
+          "end": 1125192.324433333
+        },
+        {
+          "start": 1125193.117828666,
+          "end": 1125194.311847208
+        },
+        {
+          "start": 1125195.179364708,
+          "end": 1125196.318955833
+        },
+        {
+          "start": 1125197.112413708,
+          "end": 1125198.308307875
+        },
+        {
+          "start": 1125199.115073083,
+          "end": 1125200.31079425
+        },
+        {
+          "start": 1125201.114326291,
+          "end": 1125202.303664625
+        },
+        {
+          "start": 1125203.060413625,
+          "end": 1125204.250989625
+        },
+        {
+          "start": 1125205.042809916,
+          "end": 1125206.224840083
+        },
+        {
+          "start": 1125207.057233375,
+          "end": 1125208.22143425
+        },
+        {
+          "start": 1125209.016821583,
+          "end": 1125210.242052041
+        },
+        {
+          "start": 1125211.052930333,
+          "end": 1125212.235338291
+        },
+        {
+          "start": 1125213.019026291,
+          "end": 1125214.238933208
+        },
+        {
+          "start": 1125215.037107375,
+          "end": 1125216.235338291
+        },
+        {
+          "start": 1125217.052016125,
+          "end": 1125218.268767125
+        },
+        {
+          "start": 1125219.095378791,
+          "end": 1125220.310194333
+        },
+        {
+          "start": 1125221.589868625,
+          "end": 1125221.597638458
+        },
+        {
+          "start": 1125223.755848541,
+          "end": 1125223.806911833
+        },
+        {
+          "start": 1125224.670709375,
+          "end": 1125225.911515458
+        },
+        {
+          "start": 1125226.746280208,
+          "end": 1125227.953643083
+        },
+        {
+          "start": 1125228.871121458,
+          "end": 1125229.982166375
+        },
+        {
+          "start": 1125230.814630375,
+          "end": 1125232.005703125
+        },
+        {
+          "start": 1125232.800767125,
+          "end": 1125234.10740425
+        },
+        {
+          "start": 1125235.0155585,
+          "end": 1125236.123811625
+        },
+        {
+          "start": 1125236.959807916,
+          "end": 1125238.139823125
+        },
+        {
+          "start": 1125238.951209,
+          "end": 1125240.151946416
+        },
+        {
+          "start": 1125241.016379083,
+          "end": 1125242.191303083
+        },
+        {
+          "start": 1125243.104372958,
+          "end": 1125244.201424041
+        },
+        {
+          "start": 1125245.05239525,
+          "end": 1125246.23378675
+        },
+        {
+          "start": 1125247.016124875,
+          "end": 1125248.244391
+        },
+        {
+          "start": 1125249.14549825,
+          "end": 1125250.282956041
+        },
+        {
+          "start": 1125251.113296458,
+          "end": 1125252.429583
+        },
+        {
+          "start": 1125253.342792791,
+          "end": 1125254.4805235
+        },
+        {
+          "start": 1125327.604270791,
+          "end": 1125328.784976791
+        },
+        {
+          "start": 1125329.632497041,
+          "end": 1125330.742323791
+        },
+        {
+          "start": 1125331.501681166,
+          "end": 1125332.688049375
+        },
+        {
+          "start": 1125333.471092375,
+          "end": 1125334.660365208
+        },
+        {
+          "start": 1125335.37622175,
+          "end": 1125336.557071708
+        },
+        {
+          "start": 1125337.415375166,
+          "end": 1125338.483573916
+        },
+        {
+          "start": 1125339.236364958,
+          "end": 1125340.421733916
+        },
+        {
+          "start": 1125341.116408875,
+          "end": 1125342.337892333
+        },
+        {
+          "start": 1125343.148462666,
+          "end": 1125344.305577833
+        },
+        {
+          "start": 1125345.073288958,
+          "end": 1125346.33011975
+        },
+        {
+          "start": 1125347.138899,
+          "end": 1125348.270965291
+        },
+        {
+          "start": 1125349.047635291,
+          "end": 1125350.218031708
+        },
+        {
+          "start": 1125351.008084208,
+          "end": 1125352.183176583
+        },
+        {
+          "start": 1125353.008223625,
+          "end": 1125354.18799425
+        },
+        {
+          "start": 1125354.994190583,
+          "end": 1125356.171166958
+        },
+        {
+          "start": 1125356.972536666,
+          "end": 1125358.217492833
+        },
+        {
+          "start": 1125358.9765425,
+          "end": 1125360.163821083
+        },
+        {
+          "start": 1125360.966152333,
+          "end": 1125362.109190958
+        },
+        {
+          "start": 1125362.911724583,
+          "end": 1125364.133627625
+        },
+        {
+          "start": 1125364.930067083,
+          "end": 1125366.196755375
+        },
+        {
+          "start": 1125366.951065125,
+          "end": 1125368.119318458
+        },
+        {
+          "start": 1125368.954862333,
+          "end": 1125370.095677458
+        },
+        {
+          "start": 1125370.885362666,
+          "end": 1125372.140577958
+        },
+        {
+          "start": 1125372.925114416,
+          "end": 1125374.154277333
+        },
+        {
+          "start": 1125375.929472583,
+          "end": 1125375.941204041
+        },
+        {
+          "start": 1125376.804332541,
+          "end": 1125377.919850125
+        },
+        {
+          "start": 1125378.718147791,
+          "end": 1125379.924010958
+        },
+        {
+          "start": 1125380.731100541,
+          "end": 1125381.91537675
+        },
+        {
+          "start": 1125382.713443125,
+          "end": 1125383.888823458
+        },
+        {
+          "start": 1125384.724151541,
+          "end": 1125385.90177625
+        },
+        {
+          "start": 1125387.158861708,
+          "end": 1125387.214023583
+        },
+        {
+          "start": 1125389.299375166,
+          "end": 1125389.351649166
+        },
+        {
+          "start": 1125390.145112375,
+          "end": 1125391.349276375
+        },
+        {
+          "start": 1125392.165802708,
+          "end": 1125393.308643333
+        },
+        {
+          "start": 1125394.114151291,
+          "end": 1125395.297204666
+        },
+        {
+          "start": 1125396.106890666,
+          "end": 1125397.329161041
+        },
+        {
+          "start": 1125399.14395875,
+          "end": 1125399.153438833
+        },
+        {
+          "start": 1125399.952726875,
+          "end": 1125401.142871083
+        },
+        {
+          "start": 1125401.939520791,
+          "end": 1125403.125659833
+        },
+        {
+          "start": 1125403.9220305,
+          "end": 1125405.107427791
+        },
+        {
+          "start": 1125405.894859375,
+          "end": 1125407.162030708
+        },
+        {
+          "start": 1125409.00775,
+          "end": 1125409.012689416
+        },
+        {
+          "start": 1125409.832587833,
+          "end": 1125411.003710125
+        },
+        {
+          "start": 1125411.837479041,
+          "end": 1125412.998474208
+        },
+        {
+          "start": 1125413.826055916,
+          "end": 1125415.050964
+        },
+        {
+          "start": 1125415.856031958,
+          "end": 1125417.090688
+        },
+        {
+          "start": 1125417.889534041,
+          "end": 1125419.094828
+        },
+        {
+          "start": 1125419.899007583,
+          "end": 1125421.186381791
+        },
+        {
+          "start": 1125423.043495375,
+          "end": 1125423.05526825
+        },
+        {
+          "start": 1125424.900646083,
+          "end": 1125424.906571833
+        },
+        {
+          "start": 1125425.723617833,
+          "end": 1125426.941228208
+        },
+        {
+          "start": 1125427.835707291,
+          "end": 1125428.980664708
+        },
+        {
+          "start": 1125429.81073925,
+          "end": 1125431.050904666
+        },
+        {
+          "start": 1125431.931070166,
+          "end": 1125433.076322583
+        },
+        {
+          "start": 1125434.918495583,
+          "end": 1125434.929441541
+        },
+        {
+          "start": 1125435.755492333,
+          "end": 1125436.973833166
+        },
+        {
+          "start": 1125438.896889833,
+          "end": 1125438.90440575
+        },
+        {
+          "start": 1125439.754381625,
+          "end": 1125440.949085625
+        },
+        {
+          "start": 1125441.778308583,
+          "end": 1125442.976791375
+        },
+        {
+          "start": 1125443.809888375,
+          "end": 1125445.007082833
+        },
+        {
+          "start": 1125445.846770333,
+          "end": 1125447.09802575
+        },
+        {
+          "start": 1125448.009337625,
+          "end": 1125449.149134916
+        },
+        {
+          "start": 1125450.015182208,
+          "end": 1125451.194862375
+        },
+        {
+          "start": 1125452.027633,
+          "end": 1125453.344893833
+        },
+        {
+          "start": 1125454.168654291,
+          "end": 1125455.367024083
+        },
+        {
+          "start": 1125456.202149833,
+          "end": 1125457.404334333
+        },
+        {
+          "start": 1125458.2568525,
+          "end": 1125459.467026791
+        },
+        {
+          "start": 1125460.317272125,
+          "end": 1125461.514594041
+        },
+        {
+          "start": 1125462.354939041,
+          "end": 1125463.568997375
+        },
+        {
+          "start": 1125464.419220208,
+          "end": 1125465.634365166
+        },
+        {
+          "start": 1125466.52032675,
+          "end": 1125467.680815
+        },
+        {
+          "start": 1125468.529603625,
+          "end": 1125469.733903416
+        },
+        {
+          "start": 1125470.639339291,
+          "end": 1125471.84856
+        },
+        {
+          "start": 1125472.650897708,
+          "end": 1125473.927528541
+        },
+        {
+          "start": 1125474.771002583,
+          "end": 1125475.984236125
+        },
+        {
+          "start": 1125476.812364875,
+          "end": 1125478.02508825
+        },
+        {
+          "start": 1125560.854652666,
+          "end": 1125561.971884541
+        },
+        {
+          "start": 1125562.7871375,
+          "end": 1125563.99569475
+        },
+        {
+          "start": 1125564.80453425,
+          "end": 1125566.031455041
+        },
+        {
+          "start": 1125567.3053405,
+          "end": 1125567.323614875
+        },
+        {
+          "start": 1125569.50983075,
+          "end": 1125569.519090708
+        },
+        {
+          "start": 1125570.248099083,
+          "end": 1125571.514697416
+        },
+        {
+          "start": 1125572.257727708,
+          "end": 1125573.560028125
+        },
+        {
+          "start": 1125574.474294875,
+          "end": 1125575.60815375
+        },
+        {
+          "start": 1125576.62473975,
+          "end": 1125577.588206958
+        },
+        {
+          "start": 1125578.392986583,
+          "end": 1125579.667812083
+        },
+        {
+          "start": 1125580.456019083,
+          "end": 1125581.733227166
+        },
+        {
+          "start": 1125582.533998625,
+          "end": 1125583.745422208
+        },
+        {
+          "start": 1125584.555344875,
+          "end": 1125585.852372
+        },
+        {
+          "start": 1125586.664824375,
+          "end": 1125587.933862333
+        },
+        {
+          "start": 1125588.813257375,
+          "end": 1125590.027258875
+        },
+        {
+          "start": 1125590.81315525,
+          "end": 1125592.063117375
+        },
+        {
+          "start": 1125592.852561,
+          "end": 1125594.164934416
+        },
+        {
+          "start": 1125595.05990375,
+          "end": 1125596.216068375
+        },
+        {
+          "start": 1125597.108689666,
+          "end": 1125598.255728083
+        },
+        {
+          "start": 1125599.041436666,
+          "end": 1125600.27992
+        },
+        {
+          "start": 1125601.101718041,
+          "end": 1125602.317647333
+        },
+        {
+          "start": 1125603.146511583,
+          "end": 1125604.343185375
+        },
+        {
+          "start": 1125605.141508,
+          "end": 1125606.432171333
+        },
+        {
+          "start": 1125607.231134458,
+          "end": 1125608.46458025
+        },
+        {
+          "start": 1125609.282169708,
+          "end": 1125610.530826416
+        },
+        {
+          "start": 1125611.356351666,
+          "end": 1125612.600792083
+        },
+        {
+          "start": 1125613.384204,
+          "end": 1125614.626022375
+        },
+        {
+          "start": 1125615.422091666,
+          "end": 1125616.661965833
+        },
+        {
+          "start": 1125617.472280583,
+          "end": 1125618.725621458
+        },
+        {
+          "start": 1125619.5534405,
+          "end": 1125620.801616833
+        },
+        {
+          "start": 1125621.682551833,
+          "end": 1125622.844276916
+        },
+        {
+          "start": 1125623.66927375,
+          "end": 1125624.912662708
+        },
+        {
+          "start": 1125625.742147541,
+          "end": 1125627.017232875
+        },
+        {
+          "start": 1125627.927340875,
+          "end": 1125629.069474958
+        },
+        {
+          "start": 1125629.902804708,
+          "end": 1125631.165529375
+        },
+        {
+          "start": 1125631.997693166,
+          "end": 1125633.244373708
+        },
+        {
+          "start": 1125634.078476333,
+          "end": 1125635.330484375
+        },
+        {
+          "start": 1125636.222359333,
+          "end": 1125637.459450041
+        },
+        {
+          "start": 1125638.285590583,
+          "end": 1125639.616727208
+        },
+        {
+          "start": 1125640.436309708,
+          "end": 1125641.766943208
+        },
+        {
+          "start": 1125642.5796675,
+          "end": 1125643.837080041
+        },
+        {
+          "start": 1125644.658141,
+          "end": 1125645.906896583
+        },
+        {
+          "start": 1125646.690985625,
+          "end": 1125647.936254583
+        },
+        {
+          "start": 1125648.755097416,
+          "end": 1125650.039445166
+        },
+        {
+          "start": 1125650.864743,
+          "end": 1125652.104825416
+        },
+        {
+          "start": 1125652.924556375,
+          "end": 1125654.166471125
+        },
+        {
+          "start": 1125655.06404925,
+          "end": 1125656.297583041
+        },
+        {
+          "start": 1125657.212175541,
+          "end": 1125658.374802291
+        },
+        {
+          "start": 1125659.26091175,
+          "end": 1125660.506776083
+        },
+        {
+          "start": 1125661.332522166,
+          "end": 1125662.655943833
+        },
+        {
+          "start": 1125663.500935125,
+          "end": 1125664.804159
+        },
+        {
+          "start": 1125665.711740791,
+          "end": 1125666.933820041
+        },
+        {
+          "start": 1125667.757346875,
+          "end": 1125669.097460875
+        },
+        {
+          "start": 1125670.015692791,
+          "end": 1125671.257715
+        },
+        {
+          "start": 1125672.1026175,
+          "end": 1125673.353295125
+        },
+        {
+          "start": 1125674.171859416,
+          "end": 1125675.420622083
+        },
+        {
+          "start": 1125676.259366541,
+          "end": 1125677.507124625
+        },
+        {
+          "start": 1125678.923415291,
+          "end": 1125678.932339791
+        },
+        {
+          "start": 1125680.097001291,
+          "end": 1125681.356337625
+        },
+        {
+          "start": 1125682.147738083,
+          "end": 1125683.436114
+        },
+        {
+          "start": 1125684.28510625,
+          "end": 1125685.621519375
+        },
+        {
+          "start": 1125686.440378,
+          "end": 1125687.696756208
+        },
+        {
+          "start": 1125688.549820875,
+          "end": 1125689.891471041
+        },
+        {
+          "start": 1125690.746223125,
+          "end": 1125691.988456
+        },
+        {
+          "start": 1125692.850566041,
+          "end": 1125694.106766416
+        },
+        {
+          "start": 1125694.984460666,
+          "end": 1125696.271132125
+        },
+        {
+          "start": 1125697.150883541,
+          "end": 1125698.394572375
+        },
+        {
+          "start": 1125699.301375916,
+          "end": 1125700.502866958
+        },
+        {
+          "start": 1125701.347072833,
+          "end": 1125702.693966541
+        },
+        {
+          "start": 1125703.535951291,
+          "end": 1125704.801483541
+        },
+        {
+          "start": 1125705.751387875,
+          "end": 1125707.002459125
+        },
+        {
+          "start": 1125707.901857541,
+          "end": 1125709.16829725
+        },
+        {
+          "start": 1125794.789650666,
+          "end": 1125796.053916666
+        },
+        {
+          "start": 1125796.909493166,
+          "end": 1125798.127474875
+        },
+        {
+          "start": 1125799.047074791,
+          "end": 1125800.185430416
+        },
+        {
+          "start": 1125801.08596225,
+          "end": 1125802.296380208
+        },
+        {
+          "start": 1125803.09294625,
+          "end": 1125804.299512166
+        },
+        {
+          "start": 1125805.098553333,
+          "end": 1125806.353228083
+        },
+        {
+          "start": 1125807.200160666,
+          "end": 1125808.467778666
+        },
+        {
+          "start": 1125809.284867333,
+          "end": 1125810.545770416
+        },
+        {
+          "start": 1125811.369973125,
+          "end": 1125812.630901666
+        },
+        {
+          "start": 1125813.477732083,
+          "end": 1125814.715123208
+        },
+        {
+          "start": 1125815.496795875,
+          "end": 1125816.728323958
+        },
+        {
+          "start": 1125817.5941485,
+          "end": 1125818.919139458
+        },
+        {
+          "start": 1125819.757328416,
+          "end": 1125821.040577833
+        },
+        {
+          "start": 1125821.874815791,
+          "end": 1125823.147123416
+        },
+        {
+          "start": 1125823.974779,
+          "end": 1125825.183217333
+        },
+        {
+          "start": 1125825.986563625,
+          "end": 1125827.201679833
+        },
+        {
+          "start": 1125828.009111458,
+          "end": 1125829.274778458
+        },
+        {
+          "start": 1125830.072412458,
+          "end": 1125831.303962291
+        },
+        {
+          "start": 1125832.158769291,
+          "end": 1125833.391599291
+        },
+        {
+          "start": 1125834.265227208,
+          "end": 1125835.463915541
+        },
+        {
+          "start": 1125836.314204125,
+          "end": 1125837.587429708
+        },
+        {
+          "start": 1125838.422091958,
+          "end": 1125839.651105166
+        },
+        {
+          "start": 1125840.445685666,
+          "end": 1125841.71653775
+        },
+        {
+          "start": 1125842.511641541,
+          "end": 1125843.797645958
+        },
+        {
+          "start": 1125844.710062583,
+          "end": 1125845.9484855
+        },
+        {
+          "start": 1125846.860498458,
+          "end": 1125848.036906916
+        },
+        {
+          "start": 1125848.89505275,
+          "end": 1125850.166432375
+        },
+        {
+          "start": 1125850.973846958,
+          "end": 1125852.300735791
+        },
+        {
+          "start": 1125853.143206333,
+          "end": 1125854.410099666
+        },
+        {
+          "start": 1125855.265500166,
+          "end": 1125856.496305333
+        },
+        {
+          "start": 1125857.350720083,
+          "end": 1125858.637771458
+        },
+        {
+          "start": 1125859.457900958,
+          "end": 1125860.679072708
+        },
+        {
+          "start": 1125861.6047045,
+          "end": 1125862.818407125
+        },
+        {
+          "start": 1125863.655380375,
+          "end": 1125864.905939625
+        },
+        {
+          "start": 1125865.709184875,
+          "end": 1125867.045549791
+        },
+        {
+          "start": 1125867.874316166,
+          "end": 1125869.1518595
+        },
+        {
+          "start": 1125870.103982375,
+          "end": 1125871.222657416
+        },
+        {
+          "start": 1125872.092777166,
+          "end": 1125873.396979708
+        },
+        {
+          "start": 1125874.233652958,
+          "end": 1125875.478105
+        },
+        {
+          "start": 1125876.350645166,
+          "end": 1125877.586777708
+        },
+        {
+          "start": 1125878.4374235,
+          "end": 1125879.703169875
+        },
+        {
+          "start": 1125880.506818958,
+          "end": 1125881.760263875
+        },
+        {
+          "start": 1125882.600127833,
+          "end": 1125883.849202125
+        },
+        {
+          "start": 1125884.694260166,
+          "end": 1125885.989336041
+        },
+        {
+          "start": 1125886.822129875,
+          "end": 1125888.102079291
+        },
+        {
+          "start": 1125888.947153916,
+          "end": 1125890.192009666
+        },
+        {
+          "start": 1125890.997722625,
+          "end": 1125892.270985333
+        },
+        {
+          "start": 1125893.131205666,
+          "end": 1125894.361587958
+        },
+        {
+          "start": 1125895.195803875,
+          "end": 1125896.473477875
+        },
+        {
+          "start": 1125897.345544083,
+          "end": 1125898.522106958
+        },
+        {
+          "start": 1125899.323240625,
+          "end": 1125900.633896291
+        },
+        {
+          "start": 1125901.439722708,
+          "end": 1125902.688411541
+        },
+        {
+          "start": 1125903.589532458,
+          "end": 1125904.794530041
+        },
+        {
+          "start": 1125905.598734666,
+          "end": 1125906.877828583
+        },
+        {
+          "start": 1125907.66350825,
+          "end": 1125908.956367208
+        },
+        {
+          "start": 1125909.839362708,
+          "end": 1125911.110087958
+        },
+        {
+          "start": 1125911.948460875,
+          "end": 1125913.192673666
+        },
+        {
+          "start": 1125914.098844708,
+          "end": 1125915.33048325
+        },
+        {
+          "start": 1125916.191465208,
+          "end": 1125917.486541833
+        },
+        {
+          "start": 1125918.317983333,
+          "end": 1125919.61825675
+        },
+        {
+          "start": 1125920.485557666,
+          "end": 1125921.832060875
+        },
+        {
+          "start": 1125922.68664675,
+          "end": 1125923.979374708
+        },
+        {
+          "start": 1125924.8891725,
+          "end": 1125926.128710583
+        },
+        {
+          "start": 1125926.963448416,
+          "end": 1125928.264548208
+        },
+        {
+          "start": 1125929.130555916,
+          "end": 1125930.428769333
+        },
+        {
+          "start": 1125931.340755083,
+          "end": 1125932.518418375
+        },
+        {
+          "start": 1125933.388764958,
+          "end": 1125934.630678625
+        },
+        {
+          "start": 1125935.485124,
+          "end": 1125936.786231583
+        },
+        {
+          "start": 1125937.69158525,
+          "end": 1125938.95303875
+        },
+        {
+          "start": 1125939.840052541,
+          "end": 1125941.06080725
+        },
+        {
+          "start": 1125941.930275458,
+          "end": 1125943.221089416
+        },
+        {
+          "start": 1125944.112483041,
+          "end": 1125945.444206916
+        },
+        {
+          "start": 1125946.295979166,
+          "end": 1125947.591562166
+        },
+        {
+          "start": 1125948.449661166,
+          "end": 1125949.781142958
+        },
+        {
+          "start": 1125950.638380583,
+          "end": 1125951.925700083
+        },
+        {
+          "start": 1125952.796084375,
+          "end": 1125954.108336
+        },
+        {
+          "start": 1125954.973951791,
+          "end": 1125956.283535833
+        },
+        {
+          "start": 1125957.142239166,
+          "end": 1125958.391330333
+        },
+        {
+          "start": 1125959.277172375,
+          "end": 1125960.52648075
+        },
+        {
+          "start": 1125961.421561958,
+          "end": 1125962.708072208
+        },
+        {
+          "start": 1125963.613293458,
+          "end": 1125964.924803458
+        },
+        {
+          "start": 1125965.82534575,
+          "end": 1125967.13253025
+        },
+        {
+          "start": 1125967.985726333,
+          "end": 1125969.285872166
+        },
+        {
+          "start": 1125970.150758833,
+          "end": 1125971.41164925
+        },
+        {
+          "start": 1125972.317775916,
+          "end": 1125973.607150666
+        },
+        {
+          "start": 1125974.490166291,
+          "end": 1125975.746126791
+        },
+        {
+          "start": 1125976.629960458,
+          "end": 1125977.953415041
+        },
+        {
+          "start": 1125978.837588166,
+          "end": 1125980.157133916
+        },
+        {
+          "start": 1125981.041291791,
+          "end": 1125982.347828666
+        },
+        {
+          "start": 1125983.233691083,
+          "end": 1125984.517201833
+        },
+        {
+          "start": 1125985.356822208,
+          "end": 1125986.64608325
+        },
+        {
+          "start": 1125987.526698291,
+          "end": 1125988.83398825
+        },
+        {
+          "start": 1125989.810602958,
+          "end": 1125991.018159791
+        },
+        {
+          "start": 1125991.895755708,
+          "end": 1125993.15819925
+        },
+        {
+          "start": 1125994.057889291,
+          "end": 1125995.350397833
+        },
+        {
+          "start": 1126046.367989208,
+          "end": 1126047.581770666
+        },
+        {
+          "start": 1126048.413011,
+          "end": 1126049.619122125
+        },
+        {
+          "start": 1126050.426162333,
+          "end": 1126051.601412083
+        },
+        {
+          "start": 1126052.379158,
+          "end": 1126053.567343
+        },
+        {
+          "start": 1126054.425993833,
+          "end": 1126055.543111875
+        },
+        {
+          "start": 1126056.3719075,
+          "end": 1126057.501913083
+        },
+        {
+          "start": 1126058.290762666,
+          "end": 1126059.475264458
+        },
+        {
+          "start": 1126060.263911125,
+          "end": 1126061.413782375
+        },
+        {
+          "start": 1126062.211107583,
+          "end": 1126063.365555958
+        },
+        {
+          "start": 1126064.140299583,
+          "end": 1126065.397159166
+        },
+        {
+          "start": 1126066.175331916,
+          "end": 1126067.315695875
+        },
+        {
+          "start": 1126068.118093791,
+          "end": 1126069.401373666
+        },
+        {
+          "start": 1126070.197001666,
+          "end": 1126071.43544175
+        },
+        {
+          "start": 1126072.18706175,
+          "end": 1126073.394001333
+        },
+        {
+          "start": 1126074.29777825,
+          "end": 1126075.3663365
+        },
+        {
+          "start": 1126076.160197958,
+          "end": 1126077.296625041
+        },
+        {
+          "start": 1126078.099314541,
+          "end": 1126079.248130083
+        },
+        {
+          "start": 1126080.083779458,
+          "end": 1126081.270039166
+        },
+        {
+          "start": 1126082.058385583,
+          "end": 1126083.251655666
+        },
+        {
+          "start": 1126084.040684541,
+          "end": 1126085.256594291
+        },
+        {
+          "start": 1126086.066413791,
+          "end": 1126087.311019666
+        },
+        {
+          "start": 1126088.117306083,
+          "end": 1126089.282151375
+        },
+        {
+          "start": 1126090.06371275,
+          "end": 1126091.216372291
+        },
+        {
+          "start": 1126092.112346291,
+          "end": 1126093.149900416
+        },
+        {
+          "start": 1126093.951026458,
+          "end": 1126095.1907545
+        },
+        {
+          "start": 1126095.985347583,
+          "end": 1126097.219539541
+        },
+        {
+          "start": 1126098.010786833,
+          "end": 1126099.203292208
+        },
+        {
+          "start": 1126100.023427208,
+          "end": 1126101.212998541
+        },
+        {
+          "start": 1126102.03060375,
+          "end": 1126103.1921665
+        },
+        {
+          "start": 1126103.996869375,
+          "end": 1126105.147896625
+        },
+        {
+          "start": 1126105.957500041,
+          "end": 1126107.123859291
+        },
+        {
+          "start": 1126107.923816125,
+          "end": 1126109.082784041
+        },
+        {
+          "start": 1126109.904572458,
+          "end": 1126111.161227375
+        },
+        {
+          "start": 1126111.984890916,
+          "end": 1126113.196207083
+        },
+        {
+          "start": 1126114.025807333,
+          "end": 1126115.257443958
+        },
+        {
+          "start": 1126116.086306,
+          "end": 1126117.24867975
+        },
+        {
+          "start": 1126118.078608666,
+          "end": 1126119.232284541
+        },
+        {
+          "start": 1126120.069366166,
+          "end": 1126121.221175875
+        },
+        {
+          "start": 1126122.052804625,
+          "end": 1126123.255205416
+        },
+        {
+          "start": 1126124.078641916,
+          "end": 1126125.254112333
+        },
+        {
+          "start": 1126126.098326833,
+          "end": 1126127.260532041
+        },
+        {
+          "start": 1126128.090822833,
+          "end": 1126129.255962875
+        },
+        {
+          "start": 1126130.0562105,
+          "end": 1126131.239277208
+        },
+        {
+          "start": 1126132.061693625,
+          "end": 1126133.230114708
+        },
+        {
+          "start": 1126134.095666833,
+          "end": 1126135.294684708
+        },
+        {
+          "start": 1126136.116793916,
+          "end": 1126137.282039166
+        },
+        {
+          "start": 1126138.065864625,
+          "end": 1126139.239673458
+        },
+        {
+          "start": 1126140.082288,
+          "end": 1126141.287500458
+        },
+        {
+          "start": 1126142.586411833,
+          "end": 1126142.641060958
+        },
+        {
+          "start": 1126143.721514041,
+          "end": 1126144.920594083
+        },
+        {
+          "start": 1126145.750279416,
+          "end": 1126146.974001666
+        },
+        {
+          "start": 1126147.784117,
+          "end": 1126148.987857583
+        },
+        {
+          "start": 1126149.838389583,
+          "end": 1126151.0512275
+        },
+        {
+          "start": 1126151.950441583,
+          "end": 1126153.121052041
+        },
+        {
+          "start": 1126154.06705775,
+          "end": 1126155.2002395
+        },
+        {
+          "start": 1126156.06056075,
+          "end": 1126157.28146175
+        },
+        {
+          "start": 1126158.1309925,
+          "end": 1126159.350105416
+        },
+        {
+          "start": 1126160.15211,
+          "end": 1126161.355060291
+        },
+        {
+          "start": 1126162.174508666,
+          "end": 1126163.397312541
+        },
+        {
+          "start": 1126164.303222708,
+          "end": 1126165.479469875
+        },
+        {
+          "start": 1126166.324334,
+          "end": 1126167.504300791
+        },
+        {
+          "start": 1126168.394120916,
+          "end": 1126169.563800791
+        },
+        {
+          "start": 1126170.41492375,
+          "end": 1126171.590427208
+        },
+        {
+          "start": 1126172.461004208,
+          "end": 1126173.739370875
+        },
+        {
+          "start": 1126174.648155875,
+          "end": 1126175.764659583
+        },
+        {
+          "start": 1126176.903448083,
+          "end": 1126177.933046666
+        },
+        {
+          "start": 1126178.810722833,
+          "end": 1126180.068968708
+        },
+        {
+          "start": 1126180.982848,
+          "end": 1126182.171868166
+        },
+        {
+          "start": 1126183.036682333,
+          "end": 1126184.288029583
+        },
+        {
+          "start": 1126185.173154583,
+          "end": 1126186.347180041
+        },
+        {
+          "start": 1126187.167887625,
+          "end": 1126188.381447583
+        },
+        {
+          "start": 1126189.223908208,
+          "end": 1126190.39514825
+        },
+        {
+          "start": 1126191.337092458,
+          "end": 1126192.545898416
+        },
+        {
+          "start": 1126193.433929583,
+          "end": 1126194.734852833
+        },
+        {
+          "start": 1126195.628645166,
+          "end": 1126196.754224083
+        },
+        {
+          "start": 1126197.596668833,
+          "end": 1126198.824423625
+        },
+        {
+          "start": 1126199.678766125,
+          "end": 1126200.927312083
+        },
+        {
+          "start": 1126201.795477416,
+          "end": 1126202.992794833
+        },
+        {
+          "start": 1126203.931329916,
+          "end": 1126205.048792166
+        },
+        {
+          "start": 1126205.930830708,
+          "end": 1126207.217427333
+        },
+        {
+          "start": 1126208.10075575,
+          "end": 1126209.324851291
+        },
+        {
+          "start": 1126210.219941083,
+          "end": 1126211.442941
+        },
+        {
+          "start": 1126212.314438166,
+          "end": 1126213.512968083
+        },
+        {
+          "start": 1126214.39063875,
+          "end": 1126215.631422416
+        },
+        {
+          "start": 1126216.50976425,
+          "end": 1126217.759980708
+        },
+        {
+          "start": 1126218.596186458,
+          "end": 1126219.827224291
+        },
+        {
+          "start": 1126220.706321041,
+          "end": 1126221.935219083
+        },
+        {
+          "start": 1126222.797683833,
+          "end": 1126224.053484916
+        },
+        {
+          "start": 1126224.924725916,
+          "end": 1126226.128327333
+        },
+        {
+          "start": 1126226.9919735,
+          "end": 1126228.214293666
+        },
+        {
+          "start": 1126229.058683833,
+          "end": 1126230.257077833
+        },
+        {
+          "start": 1126231.173081833,
+          "end": 1126232.273820583
+        },
+        {
+          "start": 1126233.074221291,
+          "end": 1126234.26302025
+        },
+        {
+          "start": 1126235.113834875,
+          "end": 1126236.319047666
+        },
+        {
+          "start": 1126237.182603875,
+          "end": 1126238.36343175
+        },
+        {
+          "start": 1126239.260719416,
+          "end": 1126240.399291916
+        },
+        {
+          "start": 1126241.283369958,
+          "end": 1126242.486700333
+        },
+        {
+          "start": 1126243.359773,
+          "end": 1126244.573677458
+        },
+        {
+          "start": 1126245.429041916,
+          "end": 1126246.672320541
+        },
+        {
+          "start": 1126247.55178125,
+          "end": 1126248.799417125
+        },
+        {
+          "start": 1126249.809194625,
+          "end": 1126250.954063458
+        },
+        {
+          "start": 1126251.853056125,
+          "end": 1126253.052718375
+        },
+        {
+          "start": 1126253.939855333,
+          "end": 1126255.248261791
+        },
+        {
+          "start": 1126256.132872,
+          "end": 1126257.393311416
+        },
+        {
+          "start": 1126258.265986875,
+          "end": 1126259.500536416
+        },
+        {
+          "start": 1126260.397770416,
+          "end": 1126261.60234975
+        },
+        {
+          "start": 1126262.459970875,
+          "end": 1126263.696881875
+        },
+        {
+          "start": 1126264.56972475,
+          "end": 1126265.769882291
+        },
+        {
+          "start": 1126266.713580791,
+          "end": 1126267.966304583
+        },
+        {
+          "start": 1126268.819001333,
+          "end": 1126270.0971665
+        },
+        {
+          "start": 1126271.010776041,
+          "end": 1126272.26849075
+        },
+        {
+          "start": 1126273.154714708,
+          "end": 1126274.356976208
+        },
+        {
+          "start": 1126275.280529166,
+          "end": 1126276.478895458
+        },
+        {
+          "start": 1126277.353363291,
+          "end": 1126278.553405958
+        },
+        {
+          "start": 1126279.502981833,
+          "end": 1126280.698113
+        },
+        {
+          "start": 1126281.581325916,
+          "end": 1126282.79790775
+        },
+        {
+          "start": 1126283.71017025,
+          "end": 1126284.976421625
+        },
+        {
+          "start": 1126285.956549916,
+          "end": 1126287.106399208
+        },
+        {
+          "start": 1126288.105691583,
+          "end": 1126289.226322166
+        },
+        {
+          "start": 1126290.141189708,
+          "end": 1126291.373500125
+        },
+        {
+          "start": 1126292.305554041,
+          "end": 1126293.509527375
+        },
+        {
+          "start": 1126294.398267,
+          "end": 1126295.624128958
+        },
+        {
+          "start": 1126296.51869375,
+          "end": 1126297.76711425
+        },
+        {
+          "start": 1126298.684500958,
+          "end": 1126299.998989625
+        },
+        {
+          "start": 1126300.8444145,
+          "end": 1126302.057881958
+        },
+        {
+          "start": 1126302.993103166,
+          "end": 1126304.209377625
+        },
+        {
+          "start": 1126305.207034583,
+          "end": 1126306.37054425
+        },
+        {
+          "start": 1126307.33933825,
+          "end": 1126308.497305625
+        },
+        {
+          "start": 1126358.0185215,
+          "end": 1126359.212680166
+        },
+        {
+          "start": 1126360.216458041,
+          "end": 1126361.188143166
+        },
+        {
+          "start": 1126361.988939291,
+          "end": 1126363.38387325
+        },
+        {
+          "start": 1126364.201116708,
+          "end": 1126365.496241
+        },
+        {
+          "start": 1126366.345936458,
+          "end": 1126367.706116541
+        },
+        {
+          "start": 1126368.502822833,
+          "end": 1126369.93087175
+        },
+        {
+          "start": 1126370.750968208,
+          "end": 1126371.916931125
+        },
+        {
+          "start": 1126372.712610458,
+          "end": 1126373.838866208
+        },
+        {
+          "start": 1126374.628459125,
+          "end": 1126375.787165958
+        },
+        {
+          "start": 1126376.5709575,
+          "end": 1126377.771639708
+        },
+        {
+          "start": 1126378.565336791,
+          "end": 1126379.705988166
+        },
+        {
+          "start": 1126380.526296083,
+          "end": 1126381.716982375
+        },
+        {
+          "start": 1126382.524007333,
+          "end": 1126383.666416625
+        },
+        {
+          "start": 1126384.449971916,
+          "end": 1126385.625942958
+        },
+        {
+          "start": 1126386.411846958,
+          "end": 1126387.560029875
+        },
+        {
+          "start": 1126388.381682208,
+          "end": 1126389.516188541
+        },
+        {
+          "start": 1126390.3103925,
+          "end": 1126391.486446208
+        },
+        {
+          "start": 1126392.351384833,
+          "end": 1126393.440574333
+        },
+        {
+          "start": 1126394.228811291,
+          "end": 1126395.403224666
+        },
+        {
+          "start": 1126396.227156958,
+          "end": 1126397.373975791
+        },
+        {
+          "start": 1126398.197475166,
+          "end": 1126399.342456208
+        },
+        {
+          "start": 1126400.162420125,
+          "end": 1126401.313580416
+        },
+        {
+          "start": 1126402.121946958,
+          "end": 1126403.276991541
+        },
+        {
+          "start": 1126404.07164325,
+          "end": 1126405.265443833
+        },
+        {
+          "start": 1126406.086744375,
+          "end": 1126407.312832875
+        },
+        {
+          "start": 1126408.223094666,
+          "end": 1126409.357765791
+        },
+        {
+          "start": 1126410.156094458,
+          "end": 1126411.302145875
+        },
+        {
+          "start": 1126412.071690208,
+          "end": 1126413.228896166
+        },
+        {
+          "start": 1126414.067795791,
+          "end": 1126415.259795625
+        },
+        {
+          "start": 1126416.090741791,
+          "end": 1126417.255116416
+        },
+        {
+          "start": 1126418.086366208,
+          "end": 1126419.281056
+        },
+        {
+          "start": 1126420.097769875,
+          "end": 1126421.303222125
+        },
+        {
+          "start": 1126422.128587,
+          "end": 1126423.348449666
+        },
+        {
+          "start": 1126424.222412708,
+          "end": 1126425.444879458
+        },
+        {
+          "start": 1126426.347555291,
+          "end": 1126427.467316875
+        },
+        {
+          "start": 1126428.2824755,
+          "end": 1126429.532996
+        },
+        {
+          "start": 1126430.419101791,
+          "end": 1126431.57806525
+        },
+        {
+          "start": 1126432.494998708,
+          "end": 1126433.630309958
+        },
+        {
+          "start": 1126434.471458708,
+          "end": 1126435.636109541
+        },
+        {
+          "start": 1126436.475111416,
+          "end": 1126437.726487958
+        },
+        {
+          "start": 1126438.549086583,
+          "end": 1126439.704219791
+        },
+        {
+          "start": 1126440.531136083,
+          "end": 1126441.741291083
+        },
+        {
+          "start": 1126442.601125708,
+          "end": 1126443.777823166
+        },
+        {
+          "start": 1126444.678262583,
+          "end": 1126445.815837625
+        },
+        {
+          "start": 1126446.726143166,
+          "end": 1126447.864694916
+        },
+        {
+          "start": 1126448.720903,
+          "end": 1126449.899579375
+        },
+        {
+          "start": 1126450.751567916,
+          "end": 1126451.918641541
+        },
+        {
+          "start": 1126452.771223333,
+          "end": 1126453.938617541
+        },
+        {
+          "start": 1126454.8037615,
+          "end": 1126455.967798
+        },
+        {
+          "start": 1126456.825959583,
+          "end": 1126458.015161291
+        },
+        {
+          "start": 1126458.881761125,
+          "end": 1126460.095218
+        },
+        {
+          "start": 1126461.443530208,
+          "end": 1126461.453891541
+        },
+        {
+          "start": 1126462.702991708,
+          "end": 1126463.774405375
+        },
+        {
+          "start": 1126464.6486095,
+          "end": 1126465.775364791
+        },
+        {
+          "start": 1126466.612575708,
+          "end": 1126467.831501416
+        },
+        {
+          "start": 1126468.747727166,
+          "end": 1126469.8506405
+        },
+        {
+          "start": 1126470.711196791,
+          "end": 1126471.886552208
+        },
+        {
+          "start": 1126472.756002791,
+          "end": 1126473.927114125
+        },
+        {
+          "start": 1126474.892168291,
+          "end": 1126475.94507375
+        },
+        {
+          "start": 1126476.776105583,
+          "end": 1126477.9510325
+        },
+        {
+          "start": 1126478.797918666,
+          "end": 1126480.018417166
+        },
+        {
+          "start": 1126480.86773625,
+          "end": 1126482.052394125
+        },
+        {
+          "start": 1126482.877580708,
+          "end": 1126484.051583125
+        },
+        {
+          "start": 1126484.916195,
+          "end": 1126486.124937833
+        },
+        {
+          "start": 1126487.072738333,
+          "end": 1126488.161227958
+        },
+        {
+          "start": 1126489.120934083,
+          "end": 1126490.194737166
+        },
+        {
+          "start": 1126491.04512975,
+          "end": 1126492.210206
+        },
+        {
+          "start": 1126493.061844166,
+          "end": 1126494.268031458
+        },
+        {
+          "start": 1126495.166179833,
+          "end": 1126496.316583208
+        },
+        {
+          "start": 1126497.152684291,
+          "end": 1126498.377506625
+        },
+        {
+          "start": 1126499.230025958,
+          "end": 1126500.454300708
+        },
+        {
+          "start": 1126501.326243583,
+          "end": 1126502.543919916
+        },
+        {
+          "start": 1126503.460406916,
+          "end": 1126504.694510875
+        },
+        {
+          "start": 1126505.562879291,
+          "end": 1126506.88679625
+        },
+        {
+          "start": 1126507.759621416,
+          "end": 1126508.890865916
+        },
+        {
+          "start": 1126509.750951625,
+          "end": 1126510.9714655
+        },
+        {
+          "start": 1126511.856560125,
+          "end": 1126513.089009166
+        },
+        {
+          "start": 1126513.947422958,
+          "end": 1126515.161999
+        },
+        {
+          "start": 1126516.035245041,
+          "end": 1126517.246080583
+        },
+        {
+          "start": 1126518.10994875,
+          "end": 1126519.354972083
+        },
+        {
+          "start": 1126520.224753875,
+          "end": 1126521.462354625
+        },
+        {
+          "start": 1126522.404553,
+          "end": 1126523.508986041
+        },
+        {
+          "start": 1126524.402380208,
+          "end": 1126525.601574833
+        },
+        {
+          "start": 1126526.445468416,
+          "end": 1126527.620265416
+        },
+        {
+          "start": 1126528.49798275,
+          "end": 1126529.71548
+        },
+        {
+          "start": 1126530.57249625,
+          "end": 1126531.800629208
+        },
+        {
+          "start": 1126532.66291275,
+          "end": 1126533.8448765
+        },
+        {
+          "start": 1126534.791954375,
+          "end": 1126535.923814958
+        },
+        {
+          "start": 1126536.841114666,
+          "end": 1126537.998459125
+        },
+        {
+          "start": 1126538.815909291,
+          "end": 1126540.067389375
+        },
+        {
+          "start": 1126540.936902333,
+          "end": 1126542.139735416
+        },
+        {
+          "start": 1126543.0085425,
+          "end": 1126544.201864
+        },
+        {
+          "start": 1126545.079935,
+          "end": 1126546.357583
+        },
+        {
+          "start": 1126547.229558916,
+          "end": 1126548.422443125
+        },
+        {
+          "start": 1126549.382955708,
+          "end": 1126550.575121875
+        },
+        {
+          "start": 1126551.532958791,
+          "end": 1126552.74364775
+        },
+        {
+          "start": 1126553.730712583,
+          "end": 1126554.9431485
+        },
+        {
+          "start": 1126555.886515666,
+          "end": 1126557.122920958
+        },
+        {
+          "start": 1126558.028507791,
+          "end": 1126559.214129416
+        },
+        {
+          "start": 1126560.087050166,
+          "end": 1126561.265075166
+        },
+        {
+          "start": 1126562.181363375,
+          "end": 1126563.475466458
+        },
+        {
+          "start": 1126564.307334666,
+          "end": 1126565.5015745
+        },
+        {
+          "start": 1126566.404471625,
+          "end": 1126567.670788291
+        },
+        {
+          "start": 1126568.560218208,
+          "end": 1126569.827134833
+        },
+        {
+          "start": 1126570.751519041,
+          "end": 1126571.944499541
+        },
+        {
+          "start": 1126572.850387791,
+          "end": 1126574.04698275
+        },
+        {
+          "start": 1126574.981540833,
+          "end": 1126576.275932416
+        },
+        {
+          "start": 1126577.161748416,
+          "end": 1126578.395896166
+        },
+        {
+          "start": 1126579.297829541,
+          "end": 1126580.501073083
+        },
+        {
+          "start": 1126581.487366625,
+          "end": 1126582.630879083
+        },
+        {
+          "start": 1126583.518963541,
+          "end": 1126584.73223
+        },
+        {
+          "start": 1126585.608279958,
+          "end": 1126586.810103458
+        },
+        {
+          "start": 1126587.779772791,
+          "end": 1126588.9244145
+        },
+        {
+          "start": 1126589.834213416,
+          "end": 1126590.986065458
+        },
+        {
+          "start": 1126591.8853075,
+          "end": 1126593.083688583
+        },
+        {
+          "start": 1126593.988170916,
+          "end": 1126595.196499625
+        },
+        {
+          "start": 1126596.093166416,
+          "end": 1126597.285996125
+        },
+        {
+          "start": 1126598.209091208,
+          "end": 1126599.451526958
+        },
+        {
+          "start": 1126600.348814958,
+          "end": 1126601.551930791
+        },
+        {
+          "start": 1126602.476386791,
+          "end": 1126603.760818708
+        },
+        {
+          "start": 1126604.694139458,
+          "end": 1126605.939611833
+        },
+        {
+          "start": 1126606.87102,
+          "end": 1126608.089182625
+        },
+        {
+          "start": 1126609.04298075,
+          "end": 1126610.228657875
+        },
+        {
+          "start": 1126611.184665791,
+          "end": 1126612.363642875
+        },
+        {
+          "start": 1126613.322516541,
+          "end": 1126614.56429525
+        },
+        {
+          "start": 1126615.469577958,
+          "end": 1126616.670669958
+        },
+        {
+          "start": 1126617.636775666,
+          "end": 1126618.827595208
+        },
+        {
+          "start": 1126619.732524291,
+          "end": 1126620.948024708
+        },
+        {
+          "start": 1126621.859166541,
+          "end": 1126623.069967083
+        },
+        {
+          "start": 1126624.085402416,
+          "end": 1126625.214181625
+        },
+        {
+          "start": 1126626.129893375,
+          "end": 1126627.3697855
+        },
+        {
+          "start": 1126628.286843291,
+          "end": 1126629.544145666
+        },
+        {
+          "start": 1126630.537526416,
+          "end": 1126631.680551833
+        },
+        {
+          "start": 1126632.596651041,
+          "end": 1126633.85192675
+        },
+        {
+          "start": 1126634.840692083,
+          "end": 1126636.075035166
+        },
+        {
+          "start": 1126637.089193416,
+          "end": 1126638.229403666
+        },
+        {
+          "start": 1126817.031393041,
+          "end": 1126817.038906166
+        },
+        {
+          "start": 1126818.339856083,
+          "end": 1126819.583456
+        },
+        {
+          "start": 1126820.379629083,
+          "end": 1126821.663394916
+        },
+        {
+          "start": 1126822.452458,
+          "end": 1126823.73753425
+        },
+        {
+          "start": 1126824.596219791,
+          "end": 1126825.9068155
+        },
+        {
+          "start": 1126826.744651625,
+          "end": 1126828.041160125
+        },
+        {
+          "start": 1126828.8904905,
+          "end": 1126830.164588125
+        },
+        {
+          "start": 1126831.021905708,
+          "end": 1126832.286738583
+        },
+        {
+          "start": 1126833.149959125,
+          "end": 1126834.434534791
+        },
+        {
+          "start": 1126835.3066605,
+          "end": 1126836.599375916
+        },
+        {
+          "start": 1126837.461166791,
+          "end": 1126838.754830958
+        },
+        {
+          "start": 1126839.632915458,
+          "end": 1126840.981626958
+        },
+        {
+          "start": 1126841.838485666,
+          "end": 1126843.121203666
+        },
+        {
+          "start": 1126844.00329925,
+          "end": 1126845.311536916
+        },
+        {
+          "start": 1126846.192346875,
+          "end": 1126847.470777583
+        },
+        {
+          "start": 1126848.325771541,
+          "end": 1126849.614622166
+        },
+        {
+          "start": 1126850.474609833,
+          "end": 1126851.771291208
+        },
+        {
+          "start": 1126852.60240925,
+          "end": 1126853.888643708
+        },
+        {
+          "start": 1126854.788553125,
+          "end": 1126856.0695225
+        },
+        {
+          "start": 1126856.947461291,
+          "end": 1126858.287740333
+        },
+        {
+          "start": 1126859.17166675,
+          "end": 1126860.436991458
+        },
+        {
+          "start": 1126861.285417041,
+          "end": 1126862.552358416
+        },
+        {
+          "start": 1126863.437566625,
+          "end": 1126864.730149208
+        },
+        {
+          "start": 1126865.647563875,
+          "end": 1126866.903833541
+        },
+        {
+          "start": 1126867.79689675,
+          "end": 1126869.10036825
+        },
+        {
+          "start": 1126869.928565416,
+          "end": 1126871.210134916
+        },
+        {
+          "start": 1126872.08778275,
+          "end": 1126873.373884
+        },
+        {
+          "start": 1126874.217076333,
+          "end": 1126875.589690416
+        },
+        {
+          "start": 1126876.501661541,
+          "end": 1126877.681125375
+        },
+        {
+          "start": 1126878.655262291,
+          "end": 1126879.806126375
+        },
+        {
+          "start": 1126880.659337666,
+          "end": 1126881.986369083
+        },
+        {
+          "start": 1126882.898797916,
+          "end": 1126884.199220916
+        },
+        {
+          "start": 1126885.092568166,
+          "end": 1126886.371941458
+        },
+        {
+          "start": 1126887.245353208,
+          "end": 1126888.556387791
+        },
+        {
+          "start": 1126889.436944,
+          "end": 1126890.758663916
+        },
+        {
+          "start": 1126891.662272458,
+          "end": 1126892.916064125
+        },
+        {
+          "start": 1126893.808238708,
+          "end": 1126895.067646333
+        },
+        {
+          "start": 1126895.958059791,
+          "end": 1126897.2495295
+        },
+        {
+          "start": 1126898.127491833,
+          "end": 1126899.425728583
+        },
+        {
+          "start": 1126900.362357,
+          "end": 1126901.592025916
+        },
+        {
+          "start": 1126902.497608291,
+          "end": 1126903.793575791
+        },
+        {
+          "start": 1126904.687052791,
+          "end": 1126905.985053416
+        },
+        {
+          "start": 1126906.840308583,
+          "end": 1126908.137805458
+        },
+        {
+          "start": 1126909.043323583,
+          "end": 1126910.336647583
+        },
+        {
+          "start": 1126911.239561375,
+          "end": 1126912.570206958
+        },
+        {
+          "start": 1126913.416600375,
+          "end": 1126914.718623
+        },
+        {
+          "start": 1126915.581665541,
+          "end": 1126916.837409875
+        },
+        {
+          "start": 1126917.748324791,
+          "end": 1126919.054128458
+        },
+        {
+          "start": 1126968.975508541,
+          "end": 1126970.161521791
+        },
+        {
+          "start": 1126971.018801625,
+          "end": 1126972.1969965
+        },
+        {
+          "start": 1126973.062582791,
+          "end": 1126974.221879666
+        },
+        {
+          "start": 1126975.0162665,
+          "end": 1126976.255356708
+        },
+        {
+          "start": 1126977.055877625,
+          "end": 1126978.2806185
+        },
+        {
+          "start": 1126979.069770125,
+          "end": 1126980.300333291
+        },
+        {
+          "start": 1126981.158315125,
+          "end": 1126982.335473541
+        },
+        {
+          "start": 1126983.091274,
+          "end": 1126984.3243975
+        },
+        {
+          "start": 1126985.1425965,
+          "end": 1126986.388442958
+        },
+        {
+          "start": 1126987.188059125,
+          "end": 1126988.415401125
+        },
+        {
+          "start": 1126989.203346083,
+          "end": 1126990.410952708
+        },
+        {
+          "start": 1126991.237417625,
+          "end": 1126992.481758833
+        },
+        {
+          "start": 1126993.292501,
+          "end": 1126994.516369541
+        },
+        {
+          "start": 1126995.310537333,
+          "end": 1126996.511758333
+        },
+        {
+          "start": 1126997.337392416,
+          "end": 1126998.504787791
+        },
+        {
+          "start": 1126999.300003125,
+          "end": 1127000.48661825
+        },
+        {
+          "start": 1127001.307212833,
+          "end": 1127002.512603416
+        },
+        {
+          "start": 1127003.378722958,
+          "end": 1127004.568788708
+        },
+        {
+          "start": 1127005.370271958,
+          "end": 1127006.66627925
+        },
+        {
+          "start": 1127007.412128083,
+          "end": 1127008.655958
+        },
+        {
+          "start": 1127009.419084791,
+          "end": 1127010.604063833
+        },
+        {
+          "start": 1127011.408725416,
+          "end": 1127012.614741458
+        },
+        {
+          "start": 1127013.461570166,
+          "end": 1127014.766858541
+        },
+        {
+          "start": 1127015.554826291,
+          "end": 1127016.807249
+        },
+        {
+          "start": 1127017.713772416,
+          "end": 1127018.92495475
+        },
+        {
+          "start": 1127019.8752155,
+          "end": 1127021.110013416
+        },
+        {
+          "start": 1127021.980206541,
+          "end": 1127023.219261583
+        },
+        {
+          "start": 1127024.113886875,
+          "end": 1127025.337006166
+        },
+        {
+          "start": 1127026.213865916,
+          "end": 1127027.444728333
+        },
+        {
+          "start": 1127028.325889916,
+          "end": 1127029.60130875
+        },
+        {
+          "start": 1127030.473556916,
+          "end": 1127031.721465458
+        },
+        {
+          "start": 1127032.663990333,
+          "end": 1127033.820265666
+        },
+        {
+          "start": 1127035.12172475,
+          "end": 1127035.164201208
+        },
+        {
+          "start": 1127036.354920625,
+          "end": 1127037.545802875
+        },
+        {
+          "start": 1127038.394739666,
+          "end": 1127039.648417333
+        },
+        {
+          "start": 1127040.502594,
+          "end": 1127041.758176666
+        },
+        {
+          "start": 1127042.611687208,
+          "end": 1127043.868076916
+        },
+        {
+          "start": 1127044.729083958,
+          "end": 1127045.97770575
+        },
+        {
+          "start": 1127046.829977875,
+          "end": 1127048.083998166
+        },
+        {
+          "start": 1127048.919812666,
+          "end": 1127050.181533166
+        },
+        {
+          "start": 1127050.995148333,
+          "end": 1127052.205056125
+        },
+        {
+          "start": 1127053.044269291,
+          "end": 1127054.293964125
+        },
+        {
+          "start": 1127055.126604208,
+          "end": 1127056.354291583
+        },
+        {
+          "start": 1127057.200772416,
+          "end": 1127058.477855208
+        },
+        {
+          "start": 1127059.30793825,
+          "end": 1127060.576949125
+        },
+        {
+          "start": 1127061.44180925,
+          "end": 1127062.720880416
+        },
+        {
+          "start": 1127063.574723583,
+          "end": 1127064.80827175
+        },
+        {
+          "start": 1127065.671489291,
+          "end": 1127066.884357875
+        },
+        {
+          "start": 1127067.792979708,
+          "end": 1127069.028694583
+        },
+        {
+          "start": 1127069.883241833,
+          "end": 1127071.178561875
+        },
+        {
+          "start": 1127072.088706083,
+          "end": 1127073.27071125
+        },
+        {
+          "start": 1127074.082859666,
+          "end": 1127075.38000225
+        },
+        {
+          "start": 1127076.226466666,
+          "end": 1127077.494534708
+        },
+        {
+          "start": 1127078.342131708,
+          "end": 1127079.622922125
+        },
+        {
+          "start": 1127080.482950583,
+          "end": 1127081.745355583
+        },
+        {
+          "start": 1127082.636970416,
+          "end": 1127083.875021458
+        },
+        {
+          "start": 1127084.757968625,
+          "end": 1127086.025021083
+        },
+        {
+          "start": 1127086.89106325,
+          "end": 1127088.155765333
+        },
+        {
+          "start": 1127089.018014583,
+          "end": 1127090.275133916
+        },
+        {
+          "start": 1127091.130013375,
+          "end": 1127092.401439833
+        },
+        {
+          "start": 1127093.215993583,
+          "end": 1127094.484914583
+        },
+        {
+          "start": 1127095.312214916,
+          "end": 1127096.576188333
+        },
+        {
+          "start": 1127097.385954333,
+          "end": 1127098.651848333
+        },
+        {
+          "start": 1127099.478410583,
+          "end": 1127100.745521
+        },
+        {
+          "start": 1127101.595763666,
+          "end": 1127102.868600833
+        },
+        {
+          "start": 1127103.725146791,
+          "end": 1127105.006524375
+        },
+        {
+          "start": 1127105.859804083,
+          "end": 1127107.14424025
+        },
+        {
+          "start": 1127108.032067125,
+          "end": 1127109.278795166
+        },
+        {
+          "start": 1127110.182502,
+          "end": 1127111.349265791
+        },
+        {
+          "start": 1127112.208336125,
+          "end": 1127113.465495041
+        },
+        {
+          "start": 1127114.334442375,
+          "end": 1127115.624944333
+        },
+        {
+          "start": 1127116.531930416,
+          "end": 1127117.709970083
+        },
+        {
+          "start": 1127118.682712208,
+          "end": 1127119.807906708
+        },
+        {
+          "start": 1127120.667551458,
+          "end": 1127121.937130208
+        },
+        {
+          "start": 1127122.810011083,
+          "end": 1127124.030267125
+        },
+        {
+          "start": 1127124.9304585,
+          "end": 1127126.159315458
+        },
+        {
+          "start": 1127127.003038416,
+          "end": 1127128.316400791
+        },
+        {
+          "start": 1127129.190419625,
+          "end": 1127130.465543708
+        },
+        {
+          "start": 1127131.38091525,
+          "end": 1127132.542805
+        },
+        {
+          "start": 1127133.394960166,
+          "end": 1127134.666567708
+        },
+        {
+          "start": 1127135.544119666,
+          "end": 1127136.81712875
+        },
+        {
+          "start": 1127137.729232458,
+          "end": 1127138.905947083
+        },
+        {
+          "start": 1127139.763910458,
+          "end": 1127141.048727083
+        },
+        {
+          "start": 1127141.923072833,
+          "end": 1127143.190411916
+        },
+        {
+          "start": 1127143.976934541,
+          "end": 1127145.247316291
+        },
+        {
+          "start": 1127146.227874166,
+          "end": 1127147.406366583
+        },
+        {
+          "start": 1127148.275600041,
+          "end": 1127149.498268125
+        },
+        {
+          "start": 1127150.427314,
+          "end": 1127151.624529208
+        },
+        {
+          "start": 1127152.510417083,
+          "end": 1127153.789300416
+        },
+        {
+          "start": 1127154.68314,
+          "end": 1127155.964712875
+        },
+        {
+          "start": 1127156.860837208,
+          "end": 1127158.09532375
+        },
+        {
+          "start": 1127158.973119541,
+          "end": 1127160.242595791
+        },
+        {
+          "start": 1127161.178652166,
+          "end": 1127162.444358333
+        },
+        {
+          "start": 1127163.257866916,
+          "end": 1127164.52644575
+        },
+        {
+          "start": 1127165.481057041,
+          "end": 1127166.683067708
+        },
+        {
+          "start": 1127167.575271458,
+          "end": 1127168.853418625
+        },
+        {
+          "start": 1127169.8021275,
+          "end": 1127171.067169375
+        },
+        {
+          "start": 1127171.9037615,
+          "end": 1127173.204576666
+        },
+        {
+          "start": 1127174.095784416,
+          "end": 1127175.385662125
+        },
+        {
+          "start": 1127176.254489041,
+          "end": 1127177.538370708
+        },
+        {
+          "start": 1127178.4840455,
+          "end": 1127179.721824875
+        },
+        {
+          "start": 1127180.6159795,
+          "end": 1127181.905350666
+        },
+        {
+          "start": 1127182.784977,
+          "end": 1127184.07913575
+        },
+        {
+          "start": 1127184.9974985,
+          "end": 1127186.279612375
+        },
+        {
+          "start": 1127187.209734333,
+          "end": 1127188.446113
+        },
+        {
+          "start": 1127189.446036625,
+          "end": 1127190.579737041
+        },
+        {
+          "start": 1127191.473278166,
+          "end": 1127192.75123225
+        },
+        {
+          "start": 1127193.609794041,
+          "end": 1127194.866196208
+        },
+        {
+          "start": 1127195.757644375,
+          "end": 1127197.0309335
+        },
+        {
+          "start": 1127197.939449916,
+          "end": 1127199.230281875
+        },
+        {
+          "start": 1127200.140683375,
+          "end": 1127201.416656083
+        },
+        {
+          "start": 1127202.346754125,
+          "end": 1127203.640607916
+        },
+        {
+          "start": 1127204.562246291,
+          "end": 1127205.861984041
+        },
+        {
+          "start": 1127206.738785833,
+          "end": 1127208.03022525
+        },
+        {
+          "start": 1127208.999330291,
+          "end": 1127210.2391365
+        },
+        {
+          "start": 1127211.222376,
+          "end": 1127212.414966958
+        },
+        {
+          "start": 1127213.323853333,
+          "end": 1127214.639654958
+        },
+        {
+          "start": 1127215.541448916,
+          "end": 1127216.825245541
+        },
+        {
+          "start": 1127217.73918575,
+          "end": 1127219.043347125
+        },
+        {
+          "start": 1127219.997726375,
+          "end": 1127221.25966925
+        },
+        {
+          "start": 1127222.1547835,
+          "end": 1127223.445513958
+        },
+        {
+          "start": 1127224.462260333,
+          "end": 1127225.657146791
+        },
+        {
+          "start": 1127226.617300875,
+          "end": 1127227.880201125
+        },
+        {
+          "start": 1127228.803013083,
+          "end": 1127230.099368666
+        },
+        {
+          "start": 1127231.014228958,
+          "end": 1127232.312773583
+        },
+        {
+          "start": 1127233.254434416,
+          "end": 1127234.511093208
+        },
+        {
+          "start": 1127235.427228625,
+          "end": 1127236.715684
+        },
+        {
+          "start": 1127237.693514833,
+          "end": 1127239.015410625
+        },
+        {
+          "start": 1127239.923204291,
+          "end": 1127241.184055958
+        },
+        {
+          "start": 1127242.138712833,
+          "end": 1127243.438049625
+        },
+        {
+          "start": 1127245.403065583,
+          "end": 1127245.410482833
+        },
+        {
+          "start": 1127246.30722025,
+          "end": 1127247.615588458
+        },
+        {
+          "start": 1127249.617725875,
+          "end": 1127249.62374575
+        },
+        {
+          "start": 1127250.495597666,
+          "end": 1127251.816840666
+        },
+        {
+          "start": 1127252.708284041,
+          "end": 1127254.005811875
+        },
+        {
+          "start": 1127254.979805833,
+          "end": 1127256.217616958
+        },
+        {
+          "start": 1127257.157172375,
+          "end": 1127258.473214375
+        },
+        {
+          "start": 1127260.461211125,
+          "end": 1127260.51788275
+        },
+        {
+          "start": 1127261.428355916,
+          "end": 1127262.734061583
+        },
+        {
+          "start": 1127263.670313333,
+          "end": 1127264.978483
+        },
+        {
+          "start": 1127267.000399375,
+          "end": 1127267.007323083
+        },
+        {
+          "start": 1127267.953808666,
+          "end": 1127269.234767541
+        },
+        {
+          "start": 1127737.527417666,
+          "end": 1127738.925427
+        },
+        {
+          "start": 1127792.140651416,
+          "end": 1127793.347476291
+        },
+        {
+          "start": 1127794.118932125,
+          "end": 1127795.331676666
+        },
+        {
+          "start": 1127796.149078083,
+          "end": 1127797.331889833
+        },
+        {
+          "start": 1127798.134708166,
+          "end": 1127799.317444958
+        },
+        {
+          "start": 1127800.1369235,
+          "end": 1127801.393421875
+        },
+        {
+          "start": 1127802.169652458,
+          "end": 1127803.447977875
+        },
+        {
+          "start": 1127804.265403,
+          "end": 1127805.490618875
+        },
+        {
+          "start": 1127806.284187375,
+          "end": 1127807.481106416
+        },
+        {
+          "start": 1127808.245558416,
+          "end": 1127809.433524916
+        },
+        {
+          "start": 1127810.301146666,
+          "end": 1127811.436220875
+        },
+        {
+          "start": 1127812.240286541,
+          "end": 1127813.490582875
+        },
+        {
+          "start": 1127814.309525375,
+          "end": 1127815.494338
+        },
+        {
+          "start": 1127816.249031791,
+          "end": 1127817.475491083
+        },
+        {
+          "start": 1127818.292791791,
+          "end": 1127819.521642083
+        },
+        {
+          "start": 1127820.331440208,
+          "end": 1127821.537309166
+        },
+        {
+          "start": 1127822.331889166,
+          "end": 1127823.599779833
+        },
+        {
+          "start": 1127824.379120708,
+          "end": 1127825.670241666
+        },
+        {
+          "start": 1127826.580438958,
+          "end": 1127827.714477333
+        },
+        {
+          "start": 1127828.627603583,
+          "end": 1127829.715530833
+        },
+        {
+          "start": 1127830.50814625,
+          "end": 1127831.709352708
+        },
+        {
+          "start": 1127832.576072916,
+          "end": 1127833.759138166
+        },
+        {
+          "start": 1127834.544625708,
+          "end": 1127835.787232541
+        },
+        {
+          "start": 1127836.596904958,
+          "end": 1127837.869165458
+        },
+        {
+          "start": 1127838.670902333,
+          "end": 1127839.87946925
+        },
+        {
+          "start": 1127840.64763725,
+          "end": 1127841.859566666
+        },
+        {
+          "start": 1127842.695501625,
+          "end": 1127843.933944791
+        },
+        {
+          "start": 1127844.763564041,
+          "end": 1127845.972253375
+        },
+        {
+          "start": 1127846.85833525,
+          "end": 1127848.041481791
+        },
+        {
+          "start": 1127848.833192791,
+          "end": 1127850.052745708
+        },
+        {
+          "start": 1127850.962866708,
+          "end": 1127852.188900916
+        },
+        {
+          "start": 1127853.001068666,
+          "end": 1127854.1963185
+        },
+        {
+          "start": 1127855.149525083,
+          "end": 1127856.296342125
+        },
+        {
+          "start": 1127857.205754041,
+          "end": 1127858.439256041
+        }
+      ],
+      "exitCode": -9
+    }
+  },
+  "pairWallMinutes": 120.068,
+  "summedModelActiveMinutes": 71.121,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 9498,
+      "output": 6732,
+      "cacheRead": 246429,
+      "totalTokens": 262659
+    },
+    "qwen": {
+      "input": 644313,
+      "output": 84129,
+      "cacheRead": 48053014,
+      "totalTokens": 48781456
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 4.445,
+    "qwen": 66.676
+  },
+  "localProductScore": 87.5,
+  "localProductTargetMet": false,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 137279,
+        "output": 46508,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 183787
+      },
+      "unreportedAttempts": 0
+    }
+  }
+}

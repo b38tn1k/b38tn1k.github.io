@@ -1,0 +1,162 @@
+{
+  "score": 85,
+  "grade": "B - assisted product 97.5; Snake core and pause-loop repair verified",
+  "summary": "One counted prompt removes duplicate animation chains on rapid pause/resume while preserving the Snake game. Independent final-source checks meet the assisted product target.",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 13,
+    "self_verification": 7,
+    "autonomy": 0
+  },
+  "assistedProductTargetMet": true,
+  "strengths": [
+    "Actual buttons, keys and scheduled callbacks verify movement, turns, pause/resume and restart.",
+    "Five rapid pause/resume pairs leave one scheduled animation chain; the frozen seed left six.",
+    "Controlled fixtures verify growth, score and increasing speed, immediate wall/self death, legal departing-tail movement, and a terminal full-board win."
+  ],
+  "defects": [],
+  "verification": [
+    "qa/operator-ornith-snake.cjs passed independently on immutable reports/operator-rounds/case87/round1/index.html and the current final artifact; SHA256 4174c66ed875b44afb6e2b5c53ffaa1e716806a2715bf17a84da481e433d616b.",
+    "State/function exposure supplies collision and food fixtures only; actual algorithms are unmodified. Scheduled game and real keyboard/button handlers are exercised.",
+    "Model verification records RAF/cancel tracking, repeated restarts, a wall run and a pixel-guided food-eating run; VERIFY.md discloses its missing dedicated self-collision/full-board fixtures."
+  ],
+  "verificationConcerns": [
+    "No native browser layout, hit testing, focus, device timing or visual polish check.",
+    "The model corrected several event-target/RAF fixture assumptions during verification. Its self-collision and full-board claims are weaker than the independent fixture checks."
+  ],
+  "scopeCompliance": "OS read/write boundary active; no successful out-of-project write or access to prior benchmark evidence observed. Pi alone authored the application repair and its verification.",
+  "workflowNotes": "One native persistent Pi conversation, 1 of 3 available counted prompts. Finished early after the settled immutable snapshot and current app both passed independent checks. Repair used 18.24 model-active minutes; baseline creation cost is separate.",
+  "humanOrSupervisorSteering": 1,
+  "title": "Snake",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "operator_rescue",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The repair is complete. Summary:\n\n## Diagnosis\nThe game scheduled a new `requestAnimationFrame` chain on every pause/resume and restart without cancelling the previous one, so rapid pause/resume before the next frame let animation chains accumulate (1 \u2192 6 \u2026).\n\n**Root cause:** `togglePause()` on pause never called `cancelAnimationFrame(rafId)`, leaving the pending frame running; combined with `loop()`'s resume, both loops ran. Separately, `loop()` is the sole owner of `rafId` (it assigns `rafId = requestAnimationFrame(loop)` on its last line), so callers must invoke `loop(lastTime)` as a statement \u2014 assigning its return (`undefined`, since an assignment-statement returns nothing) would wipe the id `loop` just set.\n\n## Fix (index.html only, surgical)\n- `togglePause()` pause branch: added `cancelAnimationFrame(rafId);`\n- `start()` and resume keep the plain `loop(lastTime);` (registers exactly one frame, stores its id)\n\nNo game logic touched \u2014 growth, score/speed, wall/self collision, departing-tail, food, and win are preserved.\n\n## Verification (through real handlers + scheduled callbacks)\nWrapped `requestAnimationFrame`/`cancelAnimationFrame` via the native-runtime harness and drove the game through its keyboard handlers. All 8 core chain checks PASS: start=1 chain, 5\u00d7 rapid pause/resume=1 chain (was 6), after advance=1, 3 restarts=1, pause=0 (no accumulation while paused), resume=1. Wall collision and food eating (score reached 3) confirmed preserved.\n\n## Deliverables\n- `index.html` \u2014 fixed, still a single self-contained offline file\n- `VERIFY.md` \u2014 exact checks, root cause, and remaining limitations\n\nThe only noted limitation is a pre-existing cosmetic one: the button label isn't refreshed on restart/resume (behavior is correct, only the label text can be stale) \u2014 left as-is since it's out of scope.",
+  "workflowInstructions": "operator-rescue-plan.json; run-operator-rescue.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 18.24,
+  "wallMinutes": 18.24,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "operator_finished",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 75,
+  "parentToolCalls": 75,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 1,
+  "modelUsageReported": {
+    "input": 17764,
+    "output": 39330,
+    "cacheRead": 2292118,
+    "totalTokens": 2349212
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 55745,
+  "parentPeakReportedPromptTokens": 55745,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 17764,
+    "output": 39330,
+    "cacheRead": 2292118,
+    "totalTokens": 2349212
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 11142,
+  "sha256": "4174c66ed875b44afb6e2b5c53ffaa1e716806a2715bf17a84da481e433d616b",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 5,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 10,
+    "delegations": [],
+    "controller": "Codex operator with one persistent native Pi repair context",
+    "operatorPrompts": 1,
+    "rounds": [
+      {
+        "prompt": 1,
+        "settledUTC": "2026-11-17T17:24:43.576504+00:00",
+        "modelSeconds": 1094.36,
+        "sha256": "4174c66ed875b44afb6e2b5c53ffaa1e716806a2715bf17a84da481e433d616b",
+        "snapshot": "strategies/reports/operator-rounds/case87/round1"
+      }
+    ],
+    "seed": {
+      "id": "ornith-solo_billion-2",
+      "mode": "solo_billion",
+      "configurationMean": 74.8,
+      "source": "billion_on/ornith/02_snake/index.html",
+      "report": "billion_on/reports/ornith_02_snake.report.json",
+      "sha256": "35bccceeff0315cd722b73e91911b90b7b21854994fff62ec5e562394cb722ec",
+      "score": 89,
+      "grade": "B+ provisional - core game passes; runtime self-test absent",
+      "rubricScores": {
+        "functionality": 40,
+        "artifact_correctness": 25,
+        "usability": 12,
+        "self_verification": 2,
+        "autonomy": 10
+      },
+      "baselineScope": "No out-of-directory file writes found on initial log review",
+      "baselineSteering": 0,
+      "baselineMinutes": 1.6,
+      "baselineActiveMinutes": 1.78,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_ornith_02_snake/index.html"
+    },
+    "repairSettings": {
+      "thinking": "off",
+      "billionContext": false,
+      "compaction": {
+        "enabled": true
+      },
+      "forcedProof": false,
+      "singlePersistentAgent": true,
+      "note": "Copied seed configuration is provenance; repair workflow uses corrected standalone Pi profiles, not the original delegation/extension architecture."
+    },
+    "modelActiveMinutes": 18.24,
+    "operatorReviewMinutes": 0.84,
+    "repairElapsedMinutes": 19.08
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Operator-assisted rescue of a selected existing artifact. Baseline creation cost and new repair cost are separate; normalized product quality is not an autonomous100-point grade."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "supervisorAssisted": true,
+  "assistedProductScore": 97.5
+}

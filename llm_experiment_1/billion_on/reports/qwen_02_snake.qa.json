@@ -1,0 +1,18 @@
+{
+  "method": "Exact-source VM with mocked interval scheduler, keyboard events and no-op drawing; no browser",
+  "foodGrowthScore": [
+    4,
+    1
+  ],
+  "pauseTimers": 0,
+  "resumeTimers": 1,
+  "difficulty": {
+    "level": 2,
+    "reportedInterval": 138,
+    "actualScheduledInterval": 150
+  },
+  "reversePrevented": true,
+  "wallDeath": "dead",
+  "selfDeath": "dead",
+  "tailAllowed": true
+}

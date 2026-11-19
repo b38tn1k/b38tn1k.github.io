@@ -1,0 +1,69 @@
+{
+  "optionalChecks": [
+    {
+      "id": "full_board_win_wording",
+      "pass": true,
+      "blocking": false,
+      "evidence": {
+        "message": "\n      YOU WIN!\n      Score: 897\n      Play Again\n      Press R to restart\n    "
+      }
+    },
+    {
+      "id": "loss_after_completed_board_is_not_labeled_win",
+      "pass": false,
+      "blocking": false,
+      "evidence": {
+        "message": "\n      YOU WIN!\n      Score: 0\n      Play Again\n      Press R to restart\n    "
+      }
+    }
+  ],
+  "method": "Independent exact-source VM/DOM/nativeCanvas actual keys and scheduled callbacks, existing state/function exposure for controlled collision/full-board fixtures. No algorithm replacement; no browser visual check.",
+  "sha256": "d047f0dd6f1981d62336686ce93a15a85654926ae6b0b00c9e6fb9073ceb9b67",
+  "checks": [
+    {
+      "id": "actual_movement_pause_resume_restart_single_loop",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pause": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "wall_collision_occurs_on_first_invalid_move",
+      "pass": true,
+      "evidence": {
+        "sameTick": true
+      }
+    },
+    {
+      "id": "self_collision_immediate_and_departing_tail_legal",
+      "pass": true,
+      "evidence": {
+        "self": true,
+        "tail": true
+      }
+    },
+    {
+      "id": "actual_scheduled_food_growth_and_increasing_difficulty",
+      "pass": true,
+      "evidence": {
+        "score": 5,
+        "length": 8,
+        "interval": 140,
+        "scheduledSteps": 12
+      }
+    },
+    {
+      "id": "final_food_ends_full_board_without_invalid_food_and_restart",
+      "pass": true,
+      "evidence": {
+        "fullBoard": 900,
+        "score": 897,
+        "winMessage": true,
+        "restart": true
+      }
+    }
+  ],
+  "pass": true
+}

@@ -1,0 +1,263 @@
+{
+  "score": 84,
+  "grade": "B provisional - painting, history and PNG improve; stale size fields and unresolved reviewer assertion",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 25,
+    "usability": 12,
+    "self_verification": 7,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent native Canvas2D checks pass actual brush dragging/interpolation, top-left painting, eraser transparency, touch-pointer painting, two-step Undo/Redo and Clear/Undo.",
+    "Resize preserves pixels and permits far-corner painting. The real export encodes a valid48x24PNG; actual exported bytes are retained.",
+    "The severe earlier proof painter coordinate clamp and cross-size history failures are not reproduced in this final app."
+  ],
+  "defects": [
+    "Undoing a resize restores the canvas dimensions and pixels but leaves the width/height input fields at the resized values.",
+    "One protected reviewer test fails because it deepStrictEquals a VM-realm array with a host-realm array. Both arrays contain identical zero pixels; this is a reviewer assertion fault, not failed Undo behavior.",
+    "The reviewer still marks passed:true while leaving that invalid assertion in the suite. After three rounds and47.13minutes the controller correctly refuses completion."
+  ],
+  "verification": [
+    "Four of five independent scenarios pass; actual native pixels and PNG bytes establish correct Undo/Redo and export separately from the failing cross-realm assertion.",
+    "Independent driver qa/ralph-v2-early.cjs sets readyState=loading during inline script evaluation, then the standard helper DOMContentLoaded event runs initialization. This avoids treating missing helper metadata as a double-initialization app defect.",
+    "Final protected TAP:17passes,1failure. Actual PNG retained as reports/ralph_ornith_03_pixel_painter.export.png."
+  ],
+  "verificationConcerns": [
+    "Native Canvas2D/VM checks do not establish browser layout/default actions or physical touch compatibility. Scored helper and all candidate source/tests remain unchanged."
+  ],
+  "humanOrSupervisorSteering": 0,
+  "scopeCompliance": "Pi alone authored application, candidate tests, reviewer reproductions and reviews. OS read isolation and forced proof were active. No supervisor product code or task-specific repair hints.",
+  "workflowNotes": "Corrected reporter-v2 main comparison. Product grade and workflow gate are recorded separately; invalid authored/reviewer tests are not automatically application defects.",
+  "title": "Pixel painter",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "ralph",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "I've completed an independent review. Summary:\n\n## Findings\n\n**Application: all requirements met.** The single self-contained offline `index.html` implements:\n- \u2705 Editable canvas size with bounds validation (rejects out-of-range/non-numeric)\n- \u2705 Color palette (16 default swatches + custom color picker + eraser swatch)\n- \u2705 Brush paints the selected color; lines are drawn with Bresenham interpolation for drag\n- \u2705 Eraser clears a cell back to transparent, preserving neighbors\n- \u2705 Undo/redo over history snapshots, with future-stack invalidation on new strokes; both return `false` on empty stacks\n- \u2705 Clear wipes all pixels (pushes history)\n- \u2705 PNG export returns a `data:image/png;base64,` URL and registers a download\n- \u2705 Mouse + touch via pointer events (`pointerdown/move/up`)\n\n**The one failing test is a harness artifact, not an app bug.** Test 7 (`.scratch/review-tests/coverage.test.cjs:61`) fails with `actual: [0,0,0,0]` vs `expected: [0,0,0,0]` under `deepStrictEqual` with `diff: 'simple'`. The two arrays are element-wise identical \u2014 the harness emits a spurious diff on already-equal arrays returned through `evaluate`, while element-wise/boolean comparisons and clean `a.pixel()` comparisons confirm the app correctly restores the blank pre-paint state. I reproduced and verified this in `.scratch/review-tests/` (my artifact-reproduction and verify-artifact-nature tests pass). I classified it as `\"kind\":\"helper\"` per the guidance to distinguish unsupported helper behavior from real app defects.\n\n## Result\n`.ralph/review.json` written with `passed: true` \u2014 every original requirement is supported by a meaningful reproduction, and the only `failures` entry is an honestly-flagged helper artifact (`passed` requires only that app behavior is correct; the failure list is non-empty only because the reviewer's own test hits the documented `deepStrictEqual` artifact, which is not an app defect). I did not weaken any existing or authored test to achieve this.",
+  "workflowInstructions": "run-ralph.py; research/ralph-setup.json",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 47.13,
+  "wallMinutes": 47.13,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "iteration_limit",
+  "exitCode": null,
+  "promptWords": 40,
+  "toolCalls": 396,
+  "parentToolCalls": 396,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 217,
+  "modelUsageReported": {
+    "input": 242806,
+    "output": 86849,
+    "cacheRead": 9462652,
+    "totalTokens": 9792307
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 85184,
+  "parentPeakReportedPromptTokens": 85184,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 242806,
+    "output": 86849,
+    "cacheRead": 9462652,
+    "totalTokens": 9792307
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 15389,
+  "sha256": "8b79c9909794d419320713dd761ccd1ce8e076970db9b45bfecaa0cab9d89511",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 14,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 73,
+    "delegations": [],
+    "controller": "External Ralph-style fresh-process implementation/review loop",
+    "gate": {
+      "passed": false,
+      "iterations": 3,
+      "forcedProofEachImplementation": true
+    },
+    "stages": [
+      {
+        "round": 1,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T17:22:30.834301+00:00",
+        "events": "ralph/ornith/03_pixel_painter/runtime/01-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T17:34:34.776814+00:00",
+        "minutes": 12.07,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 2,
+          "green": 1
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 1,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T17:34:34.800351+00:00",
+        "events": "ralph/ornith/03_pixel_painter/runtime/02-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T17:40:38.520091+00:00",
+        "minutes": 6.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 2,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T17:40:49.663742+00:00",
+        "events": "ralph/ornith/03_pixel_painter/runtime/03-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T17:52:53.369482+00:00",
+        "minutes": 12.06,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 0,
+          "red": 1,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 2,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T17:52:53.392350+00:00",
+        "events": "ralph/ornith/03_pixel_painter/runtime/04-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T17:58:57.576827+00:00",
+        "minutes": 6.07,
+        "reason": "stage_deadline",
+        "exitCode": -9,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "implement",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T17:59:08.945509+00:00",
+        "events": "ralph/ornith/03_pixel_painter/runtime/05-implement/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T18:06:45.308557+00:00",
+        "minutes": 7.61,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 1,
+          "completionRequests": 1,
+          "red": 1,
+          "green": 0
+        },
+        "testExitCode": 1
+      },
+      {
+        "round": 3,
+        "role": "review",
+        "modelLabel": "ornith",
+        "model": "ornith-1.5:35b-256k",
+        "started": "2026-11-16T18:06:45.336383+00:00",
+        "events": "ralph/ornith/03_pixel_painter/runtime/06-review/events.jsonl",
+        "status": "completed",
+        "finished": "2026-11-16T18:09:27.356843+00:00",
+        "minutes": 2.7,
+        "reason": "agent_settled",
+        "exitCode": 143,
+        "proof": {
+          "forcedActivations": 0,
+          "completionRequests": 0,
+          "red": 0,
+          "green": 0
+        },
+        "testExitCode": 1
+      }
+    ],
+    "mandatoryProof": true,
+    "readIsolation": true,
+    "forcedProofEachImplementation": true
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 242806,
+      "output": 86849,
+      "cacheRead": 9462652,
+      "totalTokens": 9792307
+    },
+    "qwen": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    }
+  },
+  "modelWallMinutes": {
+    "ornith": 46.57,
+    "qwen": 0
+  }
+}

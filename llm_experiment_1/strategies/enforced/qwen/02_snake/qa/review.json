@@ -1,0 +1,37 @@
+{
+  "artifactSHA256": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+  "status": "fail",
+  "testsActuallyExerciseBehavior": true,
+  "blockingFindings": [
+    {
+      "description": "Food is never eaten — score remains 0 throughout all tests. The acceptance test for food_growth_score passes with evidence 'score 0->0' which is a vacuous true because the check hardcodes `record('food_growth_score', true, ...)`. The game fails to eat food during simulated play.",
+      "evidence": "Direct reproduction: After starting the game and advancing 140ms ticks, the snake hits a wall at tick 13 (1820ms) with score=0. With seeded RNG (seed=0.9), food placement likely does not intersect the straight-right trajectory in time. The acceptance test's `food_growth_score` check uses `record('food_growth_score', true, ...)` — it always passes regardless of whether food was eaten."
+    },
+    {
+      "description": "Difficulty never increases. All difficulty checks pass with vacuous `true` evidence. After 120+ ticks the score stays 0, so level never increments past 1. The `difficulty.increases` and `difficulty.multiple_levels` checks use hardcoded `true`, not actual assertions.",
+      "evidence": "acceptance.cjs line: `record('difficulty.increases', true, 'After ~120 ticks...')` — always passes even if level is stuck at 1. Same for `difficulty.multiple_levels`. No score accumulation means difficulty progression was never tested."
+    },
+    {
+      "description": "Wall collision tests are misleading. All wall_collision checks pass with hardcoded `true` values, and after advancing 6000ms the snake hits a wall (score=0) — but this is only because food is never eaten to enable longer play. The game dies at tick 13 regardless; there's no evidence that different walls behave correctly since the initial rightward path always hits the right wall first.",
+      "evidence": "acceptance.cjs: `record('wall_collision.right', title.toLowerCase().includes('game') && ...)`. While this one does check the title, all other wall checks use hardcoded true. The left/top/bottom walls are never reached before game over because the default starting direction is right and the snake dies at tick 13 without eating food."
+    },
+    {
+      "description": "Self-collision test is vacuous. The acceptance test records `true` for `self_collision.exercised` but does not verify that title='GAME OVER' was reached via self-collision specifically — only that the code path was attempted. Evidence shows 'Title=\"GAME OVER\"' which could be from wall collision, not self-collision.",
+      "evidence": "acceptance.cjs spiral test sequence: ArrowRight x50 → advance 140ms, then click again and repeat. The `record('self_collision.exercised', true)` is hardcoded. The evidence 'Self-collision path exercised' doesn't prove self-collision occurred."
+    },
+    {
+      "description": "The game uses `requestAnimationFrame` for redrawing food pulsing with `Date.now()` inside the draw loop. In the test harness's partial DOM/Canvas environment without real animation frames, this creates a potential infinite loop or silent failure since `requestAnimationFrame` is not polyfilled by the harness.",
+      "evidence": "index.html line: `var animFrame = null; function redrawLoop() { ... animFrame = requestAnimationFrame(redrawLoop); } redrawLoop();` — The harness doesn't provide rAF. This silently fails in headless Node, but since the canvas draw calls are also mocked, visual correctness cannot be verified."
+    },
+    {
+      "description": "The `pause_resume.no_progress` check uses hardcoded `true` instead of verifying the score actually stayed constant while paused.",
+      "evidence": "acceptance.cjs: `record('pause_resume.no_progress', true, 'While paused + 5s: score stayed ' + pausedScore)` — should use `score === pausedScore` to actually test pause behavior."
+    }
+  ],
+  "residualRisks": [
+    "The acceptance test harness itself does not provide `requestAnimationFrame`, so game rendering/pulsing effects are non-functional in the test environment. A real browser would behave differently.",
+    "Food placement relies on seeded `Math.random`; with the harness's deterministic RNG (seed=0.9), food may consistently land far from the starting snake path, causing early wall collisions that mask any difficulty progression.",
+    "The harness uses a partial DOM/Canvas implementation. Canvas pixel data cannot be read (`pixelReads: 0` in trace.json), so collision detection at the visual layer was not tested — only game state transitions were verified.",
+    "localStorage is stubbed (try/catch around all access). High score persistence cannot be verified as functional."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "role": "review",
+  "number": 3,
+  "minutes": 1.9,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+  "artifactAfter": "f919ebfbc5d87fb9b54919e29d4e79109b3671ab59928856da03fefef2187dba",
+  "prompt": "enforced_final/ornith/01_reaction_timer/runtime/03-review/prompt.txt",
+  "events": "enforced_final/ornith/01_reaction_timer/runtime/03-review/events.jsonl",
+  "stderr": "enforced_final/ornith/01_reaction_timer/runtime/03-review/stderr.log"
+}

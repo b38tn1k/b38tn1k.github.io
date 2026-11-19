@@ -1,0 +1,97 @@
+# Breakout Game with Level Editor — `index.html`
+
+## Summary
+A single self-contained `index.html` file implementing a classic Breakout arcade game with an integrated level editor. No external dependencies, fully offline, supports keyboard + mouse/touch input.
+
+---
+
+## Architecture
+- **Single `<canvas>`** (800×600) for all rendering
+- **State machine** with three modes: `play`, `editor`, `gameover`
+- **No frameworks** — vanilla HTML/CSS/JS, ~300 lines of JS
+- **localStorage** auto-saves last edited level; JSON save/load via text prompt
+
+---
+
+## Modes & Controls
+
+### Play Mode
+| Control | Action |
+|---|---|
+| ← → arrow keys / mouse drag / touch drag | Move paddle left/right |
+| Click / press Space | Launch ball |
+| R | Restart game |
+
+### Editor Mode
+| Control | Action |
+|---|---|
+| Click / drag on grid | Place brick (active color) |
+| Right-click / shift+click on grid | Erase brick |
+| 1–6 keys or click palette swatch | Select brick color |
+| P key | Switch to Play mode |
+
+### Global Buttons (UI toolbar)
+- **Play** — switch to play mode
+- **Editor** — switch to editor mode
+- **Restart** — reset score/lives in play mode
+- **Save Level** — `prompt()` → copy level JSON to clipboard
+- **Load Level** — `prompt()` → paste JSON → apply to grid
+
+---
+
+## Game Mechanics (Play Mode)
+
+| Element | Behavior |
+|---|---|
+| **Paddle** | 100×16px, moves at 8px/frame, clamped to canvas edges |
+| **Ball** | radius 8px, speed 5px/frame, bounces off walls/left paddle/top; lost on bottom wall |
+| **Bricks** | 10 columns × 7 rows (default), 64×24px each with 4px gap and 8px top margin |
+| **Collision** | Ball vs brick: resolve axis by checking overlap direction; ball vs paddle: deflect based on hit offset for angle variation |
+| **Score** | +10 per brick destroyed, displayed top-left |
+| **Lives** | Starts at 3, lose one on ball-bottom-wall contact, game over at 0 |
+| **Auto-reset** | Ball lost → ball reattaches to paddle center, waits for click/space to relaunch; all bricks intact when level cleared (win state shown briefly) |
+
+### Brick Colors (Classic Rows, top→bottom)
+`#E74C3C`, `#E67E22`, `#F1C40F`, `#2ECC71`, `#3498DB`, `#9B59B6`, `#1ABC9C`
+
+---
+
+## Editor Mechanics (Editor Mode)
+
+- Grid overlay: 10 columns × 7 rows of brick slots visible
+- Active color swatch highlighted in palette bar above canvas
+- Click-drag places bricks continuously; right-click/shift+click erases
+- Empty level loads a default pattern (arched bridge shape) so editor isn't blank on first use
+
+### Level JSON Format
+```json
+{
+  "width": 10,
+  "height": 7,
+  "grid": [
+    [1,1,1,1,1,1,1,1,1,1],
+    [0,2,3,2,0,0,2,3,2,0],
+    [0,0,4,5,4,4,5,4,0,0],
+    ...
+  ]
+}
+```
+Each cell = `0` (empty) or `1–7` (brick color index). Dimensions may vary for custom levels.
+
+---
+
+## File Structure
+Single file: `index.html` containing:
+1. `<style>` block — dark theme, toolbar layout, palette styling, canvas border, button styles
+2. `<canvas id="game" width="800" height="600"></canvas>`
+3. Toolbar div (Play / Editor / Restart / Save / Load)
+4. Palette div (color swatches)
+5. `<script>` block with all game logic
+
+---
+
+## Verification Plan
+1. Write the file to this directory
+2. Verify file exists and is non-empty with `wc` and `head`
+3. Validate JSON structure of default level programmatically in the script (ensure grid dimensions match width/height)
+4. Check that no external resources are referenced (all CSS inline, no CDN imports)

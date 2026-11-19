@@ -1,0 +1,38 @@
+{
+  "method": "Exact final source with loading metadata then DOMContentLoaded, real controls, VM/DOM/nativeCanvas2D. No browser layout or GPU verification. No function or app algorithm replaced; the uninvoked nested main is retained.",
+  "sha256": "207871c6024ed6d20bc8edf06066451e4c09c78c0e9eb72248b2d563ed8b3df1",
+  "checks": [
+    {
+      "id": "main_initializes_palette_and_status",
+      "pass": false,
+      "error": "Nested main function is never invoked; palette remains empty",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "ordinary_brush_input_paints_canvas",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  0,\n  0,\n  0,\n  0\n]\n\nshould loosely deep-equal\n\n[\n  255,\n  0,\n  0,\n  255\n]",
+      "actual": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        255,
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "id": "export_button_downloads_PNG",
+      "pass": false,
+      "error": "No export handler is wired",
+      "actual": false,
+      "expected": true
+    }
+  ],
+  "pass": false
+}

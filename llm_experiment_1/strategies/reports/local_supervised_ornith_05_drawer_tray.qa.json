@@ -1,0 +1,59 @@
+{
+  "geometryDiagnostics": [],
+  "method": "Independent actual controls and downloaded STL bytes, bounds, normals/winding, matched edges reconciled for collinear subdivisions, face connectivity and analytical tray-union volume. Exact-source VM/nativeCanvas no browser/GPU/physical print certification. Internal model read only for reported dimensions; STL checked independently.",
+  "sha256": "02fe3902dd4013274dfa66ab81dc14c653406ab060f11ec67576e39e911fbee2",
+  "checks": [
+    {
+      "id": "fractional_wall_is_honored_in_real_UI_and_clearances",
+      "pass": false,
+      "error": "C is not defined"
+    },
+    {
+      "id": "changed_grid_label_matches_controls",
+      "pass": false,
+      "error": "C is not defined"
+    },
+    {
+      "id": "manual_drag_rotates_real_canvas_pixels",
+      "pass": false,
+      "error": "C is not defined"
+    },
+    {
+      "id": "auto_rotation_actually_schedules_and_changes_preview",
+      "pass": false,
+      "error": "C is not defined"
+    },
+    {
+      "id": "real_download_STL_bounds_normals_topology_and_union_volume",
+      "pass": false,
+      "error": "C is not defined"
+    }
+  ],
+  "pass": false,
+  "partialRuntimeObservation": {
+    "sha256": "02fe3902dd4013274dfa66ab81dc14c653406ab060f11ec67576e39e911fbee2",
+    "method": "Partial-runtime observation after generic outer script-error capture; already-registered handlers/RAF continue, as a browser can after script errors. Event exceptions retained. No C/R globals supplied or app algorithms repaired. Not proof of clean startup; exact-source load-error probes are separate.",
+    "startupError": "ReferenceError: C is not defined",
+    "callbackErrors": [
+      "ReferenceError: C is not defined"
+    ],
+    "observations": {
+      "fractionalWallAppliedToModel": 2.5,
+      "wallReadout": "2.4 mm",
+      "realCanvasManualAndAutoRotationStillWork": true,
+      "compartmentTableText": "",
+      "actualExport": {
+        "bytes": 4884,
+        "sha256": "7e2630f9e21f10b8af81ae7e8e15b66a8e47904aafc9f8dd2d2e96ae67608a8d",
+        "dimensions": [
+          180,
+          120,
+          30
+        ],
+        "closedConnectedBoundary": false,
+        "boundaryOrNonmanifoldEdges": 40
+      }
+    },
+    "pass": false
+  }
+}

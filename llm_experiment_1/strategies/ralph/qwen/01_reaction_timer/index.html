@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Time Tester</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 600px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: #888;
+    margin-bottom: 32px;
+  }
+
+  #game-area {
+    position: relative;
+    width: 100%;
+    min-height: 360px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    overflow: hidden;
+  }
+
+  #game-area.waiting {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  #game-area.ready {
+    background: linear-gradient(135deg, #b71c1c 0%, #d32f2f 100%);
+    box-shadow: 0 8px 40px rgba(183,28,28,0.5);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  #game-area.result {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+    box-shadow: 0 8px 40px rgba(27,94,32,0.5);
+  }
+
+  #game-area.false-start {
+    background: linear-gradient(135deg, #e65100 0%, #f57c00 100%);
+    box-shadow: 0 8px 40px rgba(230,81,0,0.5);
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.005); }
+  }
+
+  .icon { font-size: 3rem; margin-bottom: 16px; }
+
+  #status-text {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.4;
+  }
+
+  #timer-display {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    margin-top: 24px;
+    color: #fff;
+  }
+
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #4a6cf7, #6c5ce7);
+    box-shadow: 0 4px 16px rgba(74,108,247,0.4);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 6px 24px rgba(74,108,247,0.5);
+  }
+
+  .btn-small {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  /* Progress dots */
+  #progress-dots {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #333;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .dot.done {
+    background: linear-gradient(135deg, #4caf50, #66bb6a);
+    box-shadow: 0 0 8px rgba(76,175,80,0.5);
+  }
+
+  .dot.current {
+    background: #555;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.2);
+  }
+
+  /* Results panel */
+  #results-panel {
+    display: none;
+    margin-top: 24px;
+    animation: fadeInUp 0.5s ease;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  #results-panel.visible { display: block; }
+
+  .results-card {
+    background: rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: left;
+  }
+
+  .results-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    color: #fff;
+    text-align: center;
+  }
+
+  .trial-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .trial-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
+  .trial-row.failed-trial { color: #ef5350; text-decoration: line-through; }
+
+  .trial-label { color: #aaa; }
+  .trial-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .summary-item {
+    text-align: center;
+    padding: 12px 8px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .summary-item .label {
+    font-size: 0.75rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  .summary-item .value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .summary-item.best .value { color: #66bb6a; }
+  .summary-item.worst .value { color: #ef5350; }
+
+  /* Chart area */
+  #chart-area {
+    margin-top: 16px;
+    width: 100%;
+    height: 120px;
+    position: relative;
+  }
+
+  #chart-canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* State text variants */
+  .waiting-text { color: rgba(255,255,255,0.7); }
+  .ready-text { color: #fff; font-size: 1.6rem; font-weight: 600; }
+  .result-text { color: #fff; }
+  .error-text { color: #ffe0b2; font-size: 1.4rem; font-weight: 500; }
+
+  @media (max-width: 480px) {
+    #app { padding: 16px; }
+    #game-area { min-height: 300px; }
+    .summary-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .summary-item .value { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>⚡ Reaction Timer</h1>
+  <p class="subtitle">Click to test your reflexes — 5 trials, random wait</p>
+
+  <div id="progress-dots"></div>
+
+  <div id="game-area" class="waiting">
+    <div id="icon" class="icon">🎯</div>
+    <div id="status-text">Click to Start</div>
+    <div id="timer-display"></div>
+    <button class="btn btn-primary" id="start-btn">Start Test</button>
+  </div>
+
+  <div id="results-panel">
+    <div class="results-card">
+      <h2>📊 Results Summary</h2>
+      <div id="trials-list"></div>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="label">Avg</div>
+          <div class="value" id="avg-time">—</div>
+        </div>
+        <div class="summary-item best">
+          <div class="label">Best</div>
+          <div class="value" id="best-time">—</div>
+        </div>
+        <div class="summary-item worst">
+          <div class="label">Worst</div>
+          <div class="value" id="worst-time">—</div>
+        </div>
+      </div>
+      <div id="chart-area">
+        <canvas id="chart-canvas"></canvas>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="restart-btn" style="margin-top:20px;">🔄 Try Again</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const TRAIL_COUNT = 5;
+  const MIN_WAIT_MS = 1500;
+  const MAX_WAIT_MS = 6000;
+
+  let state = 'idle';       // idle | waiting | ready | result | done
+  let trialNum = 0;
+  let validTrials = [];
+  let falseStarts = [];
+  let waitTimeout = null;
+  let startTime = 0;
+  let animationFrameId = null;
+
+  // DOM refs
+  const gameArea     = document.getElementById('game-area');
+  const iconEl       = document.getElementById('icon');
+  const statusText   = document.getElementById('status-text');
+  const timerDisplay = document.getElementById('timer-display');
+  const startBtn     = document.getElementById('start-btn');
+  const progressDots = document.getElementById('progress-dots');
+  const resultsPanel = document.getElementById('results-panel');
+  const trialsList   = document.getElementById('trials-list');
+  const avgTime      = document.getElementById('avg-time');
+  const bestTime     = document.getElementById('best-time');
+  const worstTime    = document.getElementById('worst-time');
+  const restartBtn   = document.getElementById('restart-btn');
+  const chartCanvas  = document.getElementById('chart-canvas');
+
+  function createDots() {
+    progressDots.innerHTML = '';
+    for (let i = 0; i < TRAIL_COUNT; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      dot.dataset.index = i;
+      progressDots.appendChild(dot);
+    }
+  }
+
+  function updateDots() {
+    const dots = progressDots.querySelectorAll('.dot');
+    dots.forEach(function(dot, i) {
+      dot.className = 'dot';
+      if (i < validTrials.length) dot.classList.add('done');
+      else if (i === trialNum && state !== 'result' && state !== 'done') dot.classList.add('current');
+    });
+  }
+
+  function setAreaState(cls) {
+    gameArea.className = cls;
+  }
+
+  function renderIcon(name, size) { return '<span class="icon" style="font-size:' + (size||3) + 'rem">' + name + '</span>'; }
+
+  // ---- STATE MACHINE ----
+
+  function startGame() {
+    if (state !== 'idle' && state !== 'done') return;
+    trialNum = 0;
+    validTrials = [];
+    falseStarts = [];
+    resultsPanel.classList.remove('visible');
+    createDots();
+    updateDots();
+    enterWaiting();
+  }
+
+  function enterWaiting() {
+    state = 'waiting';
+    setAreaState('waiting');
+    iconEl.innerHTML = '⏳';
+    statusText.className = 'waiting-text';
+    statusText.textContent = 'Wait for green…';
+    timerDisplay.textContent = '';
+    startBtn.style.display = 'none';
+    updateDots();
+
+    var delay = MIN_WAIT_MS + Math.random() * (MAX_WAIT_MS - MIN_WAIT_MS);
+    waitTimeout = setTimeout(onReady, delay);
+  }
+
+  function onReady() {
+    if (state !== 'waiting') return;
+    state = 'ready';
+    setAreaState('ready');
+    iconEl.innerHTML = '🟢';
+    statusText.className = 'ready-text';
+    statusText.textContent = 'CLICK NOW!';
+    startTime = performance.now();
+  }
+
+  function handleClick() {
+    if (state === 'idle' || state === 'done') {
+      startGame();
+      return;
+    }
+
+    if (state === 'waiting') {
+      // False start!
+      clearTimeout(waitTimeout);
+      state = 'result';
+      falseStarts.push(trialNum + 1);
+      setAreaState('false-start');
+      iconEl.innerHTML = '⚠️';
+      statusText.className = 'error-text';
+      statusText.textContent = 'Too early! Click to retry this trial.';
+      timerDisplay.textContent = '';
+      updateDots();
+      return;
+    }
+
+    if (state === 'result') {
+      // Retry after false start
+      enterWaiting();
+      return;
+    }
+
+    if (state === 'ready') {
+      var elapsed = Math.round(performance.now() - startTime);
+      validTrials.push(elapsed);
+      state = 'result';
+
+      setAreaState('result');
+      iconEl.innerHTML = '⚡';
+      statusText.className = 'result-text';
+      timerDisplay.textContent = elapsed + ' ms';
+
+      if (validTrials.length >= TRAIL_COUNT) {
+        showResults();
+      } else {
+        statusText.textContent = 'Good! Click to continue.';
+        updateDots();
+      }
+      return;
+    }
+  }
+
+  function onAreaClick() { handleClick(); }
+
+  function showResults() {
+    state = 'done';
+    setAreaState('waiting');
+    gameArea.style.display = 'none';
+
+    resultsPanel.classList.add('visible');
+    buildResults();
+  }
+
+  function buildResults() {
+    var html = '';
+    var resultIdx = 0;
+    for (var i = 0; i < TRAIL_COUNT; i++) {
+      if (falseStarts.indexOf(i + 1) !== -1) {
+        html += '<div class="trial-row failed-trial"><span class="trial-label">Trial ' + (i+1) + '</span><span class="trial-value">❌ False start</span></div>';
+      } else {
+        html += '<div class="trial-row"><span class="trial-label">Trial ' + (i+1) + '</span><span class="trial-value">' + validTrials[resultIdx] + ' ms</span></div>';
+        resultIdx++;
+      }
+    }
+    trialsList.innerHTML = html;
+
+    var avg = Math.round(validTrials.reduce(function(a,b){return a+b;},0) / validTrials.length);
+    var best = Math.min.apply(null, validTrials);
+    var worst = Math.max.apply(null, validTrials);
+
+    avgTime.textContent = avg + ' ms';
+    bestTime.textContent = best + ' ms';
+    worstTime.textContent = worst + ' ms';
+
+    // Standard deviation
+    if (validTrials.length > 1) {
+      var mean = validTrials.reduce(function(a,b){return a+b;},0) / validTrials.length;
+      var sqDiffs = validTrials.map(function(t){ return Math.pow(t - mean, 2); });
+      var stdDev = Math.round(Math.sqrt(sqDiffs.reduce(function(a,b){return a+b;},0) / validTrials.length));
+      var stdItem = document.createElement('div');
+      stdItem.className = 'summary-item';
+      stdItem.innerHTML = '<div class="label">Std Dev</div><div class="value" style="color:#42a5f5">' + stdDev + ' ms</div>';
+      // Insert after worst
+      var grid = avgTime.parentElement;
+      grid.insertBefore(stdItem, worstTime.parentElement.nextSibling);
+    }
+
+    drawChart();
+  }
+
+  function drawChart() {
+    var ctx = chartCanvas.getContext('2d');
+    var rect = chartCanvas.parentElement.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    chartCanvas.width = rect.width * dpr;
+    chartCanvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+
+    var w = rect.width;
+    var h = rect.height;
+    var padding = { top: 20, right: 16, bottom: 30, left: 50 };
+    var chartW = w - padding.left - padding.right;
+    var chartH = h - padding.top - padding.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (validTrials.length === 0) return;
+
+    var minVal = Math.min.apply(null, validTrials) - 50;
+    if (minVal < 0) minVal = 0;
+    var maxVal = Math.max.apply(null, validTrials) + 50;
+    var range = maxVal - minVal || 1;
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 1;
+    for (var i = 0; i <= 4; i++) {
+      var y = padding.top + (chartH / 4) * i;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, y);
+      ctx.lineTo(w - padding.right, y);
+      ctx.stroke();
+
+      var labelVal = Math.round(maxVal - (range / 4) * i);
+      ctx.fillStyle = '#666';
+      ctx.font = '10px system-ui';
+      ctx.textAlign = 'right';
+      ctx.fillText(labelVal + 'ms', padding.left - 6, y + 3);
+    }
+
+    // Bars
+    var barW = Math.min(48, chartW / validTrials.length * 0.55);
+    var gap = chartW / (validTrials.length + 1);
+
+    for (var i = 0; i < validTrials.length; i++) {
+      var x = padding.left + gap * (i + 1) - barW / 2;
+      var barH = ((validTrials[i] - minVal) / range) * chartH;
+      var y = padding.top + chartH - barH;
+
+      // Gradient fill
+      var grad = ctx.createLinearGradient(x, y, x, padding.top + chartH);
+      grad.addColorStop(0, '#66bb6a');
+      grad.addColorStop(1, '#43a047');
+      ctx.fillStyle = grad;
+
+      // Rounded top
+      var radius = Math.min(6, barW / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + barW - radius, y);
+      ctx.quadraticCurveTo(x + barW, y, x + barW, y + radius);
+      ctx.lineTo(x + barW, padding.top + chartH);
+      ctx.lineTo(x, padding.top + chartH);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Value label on top
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 12px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText(validTrials[i] + 'ms', x + barW / 2, y - 8);
+
+      // Trial label
+      ctx.fillStyle = '#999';
+      ctx.font = '11px system-ui';
+      ctx.fillText('T' + (i+1), x + barW / 2, padding.top + chartH + 18);
+    }
+
+    // Avg line
+    var avg = validTrials.reduce(function(a,b){return a+b;},0) / validTrials.length;
+    var avgY = padding.top + chartH - ((avg - minVal) / range) * chartH;
+    ctx.strokeStyle = 'rgba(255,193,7,0.7)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6,4]);
+    ctx.beginPath();
+    ctx.moveTo(padding.left, avgY);
+    ctx.lineTo(w - padding.right, avgY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#ffc107';
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillText('avg ' + Math.round(avg) + 'ms', padding.left + 4, avgY - 5);
+  }
+
+  function restart() {
+    if (waitTimeout) clearTimeout(waitTimeout);
+    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    gameArea.style.display = '';
+    gameArea.className = 'waiting';
+    resultsPanel.classList.remove('visible');
+    iconEl.innerHTML = '🎯';
+    statusText.className = '';
+    statusText.textContent = 'Click to Start';
+    timerDisplay.textContent = '';
+    startBtn.style.display = '';
+    state = 'idle';
+  }
+
+  // Events
+  gameArea.addEventListener('click', onAreaClick);
+  startBtn.addEventListener('click', function(e) { e.stopPropagation(); startGame(); });
+  restartBtn.addEventListener('click', restart);
+
+  // Prevent double-tap zoom on mobile
+  gameArea.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    onAreaClick();
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "role": "review",
+  "number": 9,
+  "minutes": 3.63,
+  "reason": "agent_settled",
+  "exitCode": 0,
+  "artifactBefore": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+  "artifactAfter": "d19e79633b993fa106ec908aad7a712582ef5d32e9aa14ddc5299fedfb615ef1",
+  "prompt": "enforced/qwen/02_snake/runtime/09-review/prompt.txt",
+  "events": "enforced/qwen/02_snake/runtime/09-review/events.jsonl",
+  "stderr": "enforced/qwen/02_snake/runtime/09-review/stderr.log"
+}

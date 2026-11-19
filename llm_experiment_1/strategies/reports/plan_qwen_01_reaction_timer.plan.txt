@@ -1,0 +1,65 @@
+# Reaction-Time Tester — Implementation Plan
+
+## Summary
+A single self-contained `index.html` that tests reaction time across 5 trials with polished UX: random wait phase, false-start detection, and a results summary with stats + a mini bar chart. Zero external dependencies; works fully offline.
+
+## Feature Spec
+
+### Game Flow
+1. **Initial screen** — "Tap anywhere to start" centered on screen
+2. **Wait phase** — Screen turns neutral/gray text "WAIT..." (dark background). A random timer fires between **2–7 seconds**.
+3. **Go phase** — Screen flashes green with large **"GO!"** text. User taps immediately; time since go = reaction time recorded.
+4. **Per-trial feedback** — Brief flash showing the reaction time (e.g., "342 ms"), then "Next trial..." before the next wait.
+5. **False start** — If tapped *before* the green flash: screen flashes red with "Too early! Tap to retry" → resets that trial's wait timer (new random 2–7s). Up to **infinite retries per trial**.
+6. **Results screen** — After 5 valid trials, show:
+   - Individual trial times (trials 1–5)
+   - Average, best, worst reaction times
+   - Mini horizontal bar chart (all 5 bars on same scale, normalized to max time)
+   - "Try again" button
+
+### Technical Approach
+- **Timer precision**: `performance.now()` for sub-millisecond accuracy; reported in ms.
+- **Random wait**: `Math.random() * 5000 + 2000` (2–7 seconds), one new value per trial start.
+- **False-start detection**: Global click/tap listener during the "waiting" state only. If active and screen hasn't gone green → false start.
+- **State machine** via simple variable: `idle | waiting | ready | trial-complete | results`
+- **Touch + mouse**: Both `click` and `touchstart` events (with `preventDefault` to avoid double-fire).
+
+### Visual Design (Assumption: Dark Theme)
+| State | Background | Text / Indicator |
+|---|---|---|
+| Idle | Near-black (`#1a1a2e`) | Large centered "Tap anywhere" in muted gray |
+| Waiting | Same dark bg | "WAIT..." in medium gray, small timer icon or subtle pulse animation on the text to indicate active |
+| Ready (GO!) | Bright green (`#00c853`) | Giant white "GO!" centered |
+| False start | Deep red (`#d50000`) | "TOO EARLY!" in white, smaller subtitle |
+| Trial complete | Dark bg | Reaction time displayed large with a label ("287 ms"), then auto-transitions after ~1.2s |
+| Results | Dark bg | White text, colored bars, clean table layout |
+
+### Typography & Layout
+- System font stack (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`)
+- Centered vertically and horizontally via flexbox
+- Font sizes scale relative to viewport using `clamp()` or vmin units
+- Large touch target: entire screen is the button
+
+### Edge Cases & Failure Modes
+- **Rapid tapping**: Debounce by checking current state before processing taps.
+- **Mobile browsers**: Prevent scroll bounce during the test (`touch-action: none`, `overscroll-behavior: none`). Prevent double-fire on mobile (`touchstart` handler checks event phase).
+- **Orientation change**: Flexbox layout adapts automatically; font uses vmin.
+- **RNG quality**: Sufficient for casual testing via `Math.random()`. No CSPRNG needed.
+
+### Results Summary Data
+- Per-trial milliseconds array → computed: mean, min, max, range (max - min), standard deviation
+- Bar chart rendered in CSS-only `<div>` elements (no canvas/SVG dependency) or inline SVG for precision
+
+### Deliverable
+- **One file**: `index.html` in the current directory
+- Contains: HTML + `<style>` block + `<script>` block — fully offline, no CDN links
+- Opens cleanly in any modern browser (Chrome, Firefox, Safari, Edge) with zero setup
+
+## Verification
+1. Open `index.html` in a browser
+2. Tap to start → verify "WAIT..." appears after 2–7s delay
+3. Verify false-start detection (tap during wait → red flash + retry)
+4. Complete 5 trials → verify results screen shows all 5 times + stats + chart
+5. Verify "Try again" resets the entire test
+6. Test on mobile viewport via devtools responsive mode
+

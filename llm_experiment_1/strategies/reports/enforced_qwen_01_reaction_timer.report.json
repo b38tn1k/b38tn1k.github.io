@@ -1,0 +1,242 @@
+{
+  "score": 80,
+  "grade": "B provisional - five valid trials, false-start recovery and summary work; verification workflow failed",
+  "rubricScores": {
+    "functionality": 40,
+    "artifact_correctness": 24,
+    "usability": 13,
+    "self_verification": 3,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent complete flow records 200, 225, 250, 275, 300 ms with average 250, best 200 and worst 300. Five different random wait durations were observed.",
+    "A false start after one valid result preserves that result; retry followed by four more trials produces the correct five-result summary with average 200 ms. Play Again resets cleanly.",
+    "The final page is inline and offline. Public UI calls are connected through actual inline onclick code and document pointerdown listeners."
+  ],
+  "defects": [
+    "The candidate acceptance suite does not execute inline onclick attributes in its DOM shim. Its Retry click leaves the fixture in false-start state, and all later trial/summary assertions cascade from that environment mismatch. The final reviewer handoff is missing, so the protected gate rightly rejects the evidence.",
+    "The document-wide pointerdown listener accepts any pointer button, including right-click, as a reaction or false start. Native input/paint timing and visual polish remain unverified.",
+    "The full run took 46.10 minutes with repeated test/review/repair timeouts. Functional success did not translate into reliable autonomous acceptance."
+  ],
+  "verification": [
+    "reports/enforced_qwen_01_reaction_timer.qa.cjs/.qa.json executes the exact inline onclick attribute code explicitly because linkedom does not compile those attributes, then exercises the real pointerdown listener and exact timer boundaries. No app algorithms are changed.",
+    "Final source hash 635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43; normal and mid-run false-start five-trial sequences both pass."
+  ],
+  "verificationConcerns": [
+    "The candidate's failed five-trial assertion is not independently reproduced when the actual inline handler code is executed. Do not treat that cascade as a demonstrated app failure.",
+    "Partial DOM/timer verification cannot establish actual browser paint latency, background transitions, layout or device event handling. Single trial; combined provider/workflow intervention."
+  ],
+  "scopeCompliance": "Pi alone implemented and repaired the application. Supervisor performed independent checks only; no app-specific hints or edits.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Mandatory stages and repair loops ran, but tests failed and final review evidence was absent. The independent product grade is 80 despite a failed workflow gate; these measure different outcomes. Autonomy receives no credit because required stages repeatedly exhausted their budgets.",
+  "title": "Reaction timer",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "I see that `.scratch/index_new.html` is from a previous agent \u2014 note it has the pop bug (`results.pop()` in retryTrial). Let me write my fixed version there and run tests:",
+  "workflowInstructions": "run-suite.py and config/qwen/agents",
+  "workflowProtocolRevision": 5,
+  "elapsedMinutes": 46.1,
+  "wallMinutes": 46.1,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "repair_limit",
+  "exitCode": 1,
+  "promptWords": 34,
+  "toolCalls": 364,
+  "parentToolCalls": 0,
+  "childToolCalls": 364,
+  "toolResultsMarkedError": 68,
+  "modelUsageReported": {
+    "input": 335122,
+    "output": 124411,
+    "cacheRead": 8579176,
+    "totalTokens": 9038709
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 49091,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 49091,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 335122,
+    "output": 124411,
+    "cacheRead": 8579176,
+    "totalTokens": 9038709
+  },
+  "artifactBytes": 14486,
+  "sha256": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 3,
+      "review": 3,
+      "repair": 2
+    },
+    "rolesCompleted": {
+      "build": 1,
+      "test": 1,
+      "review": 1,
+      "repair": 1
+    },
+    "parentArtifactReads": 13,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "qwen3.6:35b-a3b"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 6,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 2.37,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": null,
+        "artifactAfter": "e069cffd8abee61e8c73078fb9967bd32ecc0006475c0e73b6bbfef8d6530dee",
+        "prompt": "enforced/qwen/01_reaction_timer/runtime/01-build/prompt.txt",
+        "events": "enforced/qwen/01_reaction_timer/runtime/01-build/events.jsonl",
+        "stderr": "enforced/qwen/01_reaction_timer/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 8.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "e069cffd8abee61e8c73078fb9967bd32ecc0006475c0e73b6bbfef8d6530dee",
+        "artifactAfter": "e069cffd8abee61e8c73078fb9967bd32ecc0006475c0e73b6bbfef8d6530dee",
+        "prompt": "enforced/qwen/01_reaction_timer/runtime/02-test/prompt.txt",
+        "events": "enforced/qwen/01_reaction_timer/runtime/02-test/events.jsonl",
+        "stderr": "enforced/qwen/01_reaction_timer/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 5.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "e069cffd8abee61e8c73078fb9967bd32ecc0006475c0e73b6bbfef8d6530dee",
+        "artifactAfter": "e069cffd8abee61e8c73078fb9967bd32ecc0006475c0e73b6bbfef8d6530dee",
+        "prompt": "enforced/qwen/01_reaction_timer/runtime/03-review/prompt.txt",
+        "events": "enforced/qwen/01_reaction_timer/runtime/03-review/events.jsonl",
+        "stderr": "enforced/qwen/01_reaction_timer/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "e069cffd8abee61e8c73078fb9967bd32ecc0006475c0e73b6bbfef8d6530dee",
+        "artifactAfter": "510536912ec5e4ee820b7ec64d334415f9619f7a5a899fc8177483b841f58521",
+        "prompt": "enforced/qwen/01_reaction_timer/runtime/04-repair/prompt.txt",
+        "events": "enforced/qwen/01_reaction_timer/runtime/04-repair/events.jsonl",
+        "stderr": "enforced/qwen/01_reaction_timer/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 5,
+        "minutes": 5.91,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "510536912ec5e4ee820b7ec64d334415f9619f7a5a899fc8177483b841f58521",
+        "artifactAfter": "510536912ec5e4ee820b7ec64d334415f9619f7a5a899fc8177483b841f58521",
+        "prompt": "enforced/qwen/01_reaction_timer/runtime/05-test/prompt.txt",
+        "events": "enforced/qwen/01_reaction_timer/runtime/05-test/events.jsonl",
+        "stderr": "enforced/qwen/01_reaction_timer/runtime/05-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 6,
+        "minutes": 2.24,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "510536912ec5e4ee820b7ec64d334415f9619f7a5a899fc8177483b841f58521",
+        "artifactAfter": "510536912ec5e4ee820b7ec64d334415f9619f7a5a899fc8177483b841f58521",
+        "prompt": "enforced/qwen/01_reaction_timer/runtime/06-review/prompt.txt",
+        "events": "enforced/qwen/01_reaction_timer/runtime/06-review/events.jsonl",
+        "stderr": "enforced/qwen/01_reaction_timer/runtime/06-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 7,
+        "minutes": 2.04,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "510536912ec5e4ee820b7ec64d334415f9619f7a5a899fc8177483b841f58521",
+        "artifactAfter": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+        "prompt": "enforced/qwen/01_reaction_timer/runtime/07-repair/prompt.txt",
+        "events": "enforced/qwen/01_reaction_timer/runtime/07-repair/events.jsonl",
+        "stderr": "enforced/qwen/01_reaction_timer/runtime/07-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 8,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+        "artifactAfter": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+        "prompt": "enforced/qwen/01_reaction_timer/runtime/08-test/prompt.txt",
+        "events": "enforced/qwen/01_reaction_timer/runtime/08-test/events.jsonl",
+        "stderr": "enforced/qwen/01_reaction_timer/runtime/08-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 9,
+        "minutes": 4.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+        "artifactAfter": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+        "prompt": "enforced/qwen/01_reaction_timer/runtime/09-review/prompt.txt",
+        "events": "enforced/qwen/01_reaction_timer/runtime/09-review/events.jsonl",
+        "stderr": "enforced/qwen/01_reaction_timer/runtime/09-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "635a16bda48e63141579ac7c26951533c67b963a715ebefe063e6d969bc31f43",
+      "errors": [
+        "Executable acceptance test did not exit successfully",
+        "Acceptance check missing/failed: five_valid_trials",
+        "Acceptance ledger contains a failed check; every recorded check must pass",
+        "Independent review missing, stale or reports blocking findings",
+        "Independent reviewer did not attest that tests execute application behavior"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": false
+}

@@ -1,0 +1,1 @@
+I have the full source. Let me grab exact line numbers for the key elements I'm referencing.

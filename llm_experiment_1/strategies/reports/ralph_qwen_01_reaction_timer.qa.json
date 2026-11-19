@@ -1,0 +1,36 @@
+{
+  "method": "Exact final source, real start/stage/reset handlers and scheduled cue callbacks with known200/225/250/275/300ms responses. Independent Node VM/DOM/nativeCanvas only; no browser layout or injected app timing hooks.",
+  "sha256": "1ce394660934c50d7b98e64d294c1f505f92c244bd2ab90190d411c34f4fc14e",
+  "checks": [
+    {
+      "id": "normal_five_trial_flow_and_known_mean",
+      "pass": true,
+      "evidence": {
+        "mean": 250,
+        "finished": true
+      }
+    },
+    {
+      "id": "pre_cue_false_start_detected",
+      "pass": true,
+      "evidence": {
+        "detected": true
+      }
+    },
+    {
+      "id": "reset_cancels_pending_cue",
+      "pass": true,
+      "evidence": {
+        "reset": true
+      }
+    },
+    {
+      "id": "false_retry_keeps_five_actual_result_rows",
+      "pass": false,
+      "error": "A false start permanently replaces a valid measurement in the five summary rows",
+      "actual": false,
+      "expected": true
+    }
+  ],
+  "pass": false
+}

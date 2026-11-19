@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Organizer Tray Maker</title>
+<style>
+  :root{
+    --bg:#0f1420; --panel:#171d2b; --panel2:#1e2536; --ink:#e7ecf5;
+    --muted:#8b97ad; --accent:#4da3ff; --accent2:#2b6fd6; --ok:#37d67a;
+    --line:#2a3346; --warn:#ffb547;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--bg); color:var(--ink); height:100vh; display:flex; flex-direction:column;
+  }
+  header{
+    padding:12px 18px; background:linear-gradient(90deg,#16203a,#0f1420);
+    border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px;
+  }
+  header h1{font-size:16px;margin:0;font-weight:600;letter-spacing:.3px}
+  header .sub{font-size:12px;color:var(--muted)}
+  .wrap{flex:1;display:flex;min-height:0}
+  #view{flex:1;position:relative;background:radial-gradient(120% 120% at 30% 10%,#1a2236,#0b0f18 70%)}
+  canvas{display:block;width:100%;height:100%;cursor:grab}
+  canvas:active{cursor:grabbing}
+  .side{
+    width:330px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--line);
+    overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:18px;
+  }
+  .group h2{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+    margin:0 0 10px;font-weight:600}
+  .row{display:flex;gap:10px}
+  .field{flex:1}
+  label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+  .field input,.field select{
+    width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);
+    border-radius:8px;padding:7px 9px;font-size:13px;outline:none;
+  }
+  .field input:focus{border-color:var(--accent)}
+  .unit{color:var(--muted);font-size:10px;margin-left:2px}
+  .readout{
+    background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px;
+    font-size:12px;
+  }
+  .readout .big{font-size:20px;font-weight:600;color:var(--ok)}
+  .readout table{width:100%;border-collapse:collapse;margin-top:8px}
+  .readout td{padding:3px 0;font-size:12px;vertical-align:top}
+  .readout td.k{color:var(--muted)}
+  .readout td.v{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;
+    border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+    border-radius:9px;padding:9px 12px;font-size:13px;font-weight:500;width:100%;
+    transition:.12s;
+  }
+  .btn:hover{border-color:var(--accent);color:#fff}
+  .btn.primary{background:linear-gradient(180deg,var(--accent),var(--accent2));border-color:transparent;color:#04122b;font-weight:600}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btns{display:flex;flex-direction:column;gap:9px}
+  .toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);cursor:pointer}
+  .toggle input{accent-color:var(--accent)}
+  .hint{font-size:11px;color:var(--muted);line-height:1.5}
+  .badge{font-size:10px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);
+    padding:2px 7px;border-radius:20px}
+  #status{position:absolute;left:12px;bottom:12px;font-size:11px;color:var(--muted);
+    background:rgba(10,14,22,.6);padding:5px 9px;border-radius:6px;border:1px solid var(--line)}
+  .err{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--warn);font-size:13px;padding:30px;text-align:center}
+  .err.hidden{display:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Drawer Organizer Tray Maker</h1>
+  <span class="badge">offline · STL export</span>
+  <span class="sub">rectangular compartment tray</span>
+</header>
+<div class="wrap">
+  <div id="view">
+    <canvas id="gl"></canvas>
+    <div id="status">Drag to rotate · scroll to zoom</div>
+    <div id="err" class="err hidden"></div>
+  </div>
+  <div class="side">
+    <div class="group">
+      <h2>Outer Dimensions</h2>
+      <div class="row">
+        <div class="field"><label>Width <span class="unit">mm</span></label>
+          <input id="width" type="number" step="1" min="20" value="180"></div>
+        <div class="field"><label>Depth <span class="unit">mm</span></label>
+          <input id="depth" type="number" step="1" min="20" value="120"></div>
+      </div>
+      <div class="field" style="margin-top:10px"><label>Height <span class="unit">mm</span></label>
+        <input id="height" type="number" step="1" min="10" value="30"></div>
+    </div>
+
+    <div class="group">
+      <h2>Grid Layout</h2>
+      <div class="row">
+        <div class="field"><label>Columns</label>
+          <select id="cols">
+            <option>1</option><option>2</option><option selected>3</option>
+            <option>4</option><option>5</option><option>6</option>
+          </select></div>
+        <div class="field"><label>Rows</label>
+          <select id="rows">
+            <option>1</option><option selected>2</option>
+            <option>3</option><option>4</option><option>5</option>
+          </select></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>Wall &amp; Floor</h2>
+      <div class="row">
+        <div class="field"><label>Wall <span class="unit">mm</span></label>
+          <input id="wall" type="number" step="0.5" min="0.8" value="2.5"></div>
+        <div class="field"><label>Floor <span class="unit">mm</span></label>
+          <input id="floor" type="number" step="0.5" min="0.8" value="2.5"></div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>Clear Compartment</h2>
+      <div class="readout">
+        <div class="big" id="clearBig">—</div>
+        <table>
+          <tr><td class="k">Clear width</td><td class="v" id="cw">—</td></tr>
+          <tr><td class="k">Clear depth</td><td class="v" id="cd">—</td></tr>
+          <tr><td class="k">Clear height</td><td class="v" id="ch">—</td></tr>
+          <tr><td class="k">Compartment count</td><td class="v" id="cnt">—</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="btns">
+        <button class="btn primary" id="download">↓ Export STL (.stl)</button>
+        <label class="toggle"><input type="checkbox" id="autorotate" checked> Auto-rotate preview</label>
+        <label class="toggle"><input type="checkbox" id="wireframe"> Wireframe overlay</label>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2>Notes</h2>
+      <p class="hint">Clear size = interior cavity per compartment (walls &amp; dividers subtracted).
+        Export produces a watertight binary STL ready for any slicer. Print floor-side down for best adhesion.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   Geometry: additive solid of floor + 4 walls + dividers.
+   Each primitive is an axis-aligned box (x0,x1, y0,y1, z0,z1) in mm.
+   Same list drives WebGL render + STL export.
+   ============================================================ */
+function buildTray(p){
+  const boxes = [];
+  const W = p.width, D = p.depth, H = p.height;
+  const wall = p.wall, floor = p.floor;
+
+  // Floor slab (full footprint)
+  boxes.push([0, W, 0, D, 0, floor]);
+
+  // Side walls rising from top of floor to full height
+  boxes.push([0, wall, 0, D, floor, H]);                 // left
+  boxes.push([W - wall, W, 0, D, floor, H]);             // right
+  boxes.push([0, W, 0, wall, floor, H]);                 // front
+  boxes.push([0, W, D - wall, D, floor, H]);             // back
+
+  // Internal dividers. Placed so every compartment is equal width/depth:
+  // clearCompW = (W - (p.cols+1)*wall) / p.cols, then divider i sits at i*(clearCompW+wall).
+  // Use p.cols / p.rows directly so grid counts are always in scope (no undefined refs).
+  const clearCompW = Math.max(0, (W - (p.cols + 1) * wall) / p.cols);
+  const clearCompD = Math.max(0, (D - (p.rows + 1) * wall) / p.rows);
+  // (p.cols-1) dividers perpendicular to X (span full depth)
+  for (let i = 1; i < p.cols; i++){
+    const left = i * (clearCompW + wall);
+    boxes.push([left, left + wall, 0, D, floor, H]);
+  }
+  // (p.rows-1) dividers perpendicular to Y (span full width). Edge-aligned like the
+  // X dividers so each compartment's clear depth equals clearCompD exactly.
+  for (let j = 1; j < p.rows; j++){
+    const top = j * (clearCompD + wall);
+    boxes.push([0, W, top, top + wall, floor, H]);
+  }
+  return boxes;
+}
+
+function params(){
+  const width = clampNum(+document.getElementById("width").value, 20, 1000);
+  const depth = clampNum(+document.getElementById("depth").value, 20, 1000);
+  const height = clampNum(+document.getElementById("height").value, 10, 500);
+  const cols = +document.getElementById("cols").value;
+  const rows = +document.getElementById("rows").value;
+  const wall = clampNum(+document.getElementById("wall").value, 0.8, 40);
+  const floor = clampNum(+document.getElementById("floor").value, 0.8, 40);
+  return {width, depth, height, cols, rows, wall, floor};
+}
+function clampNum(v, lo, hi){ if(!isFinite(v)) return lo; return Math.min(hi, Math.max(lo, v)); }
+
+// Clear (cavity) compartment dimensions
+function clearDims(p){
+  // (cols+1) wall-equivalents across width: 2 side walls + (cols-1) dividers.
+  // Do NOT subtract 2*wall again (already included in the (cols+1) term).
+  const clearW = Math.max(0, (p.width - (p.cols+1)*p.wall) / p.cols);
+  const clearD = Math.max(0, (p.depth - (p.rows+1)*p.wall) / p.rows);
+  const clearH = Math.max(0, p.height - p.floor);
+  return {clearW, clearD, clearH, count: p.cols*p.rows};
+}
+
+/* ============================================================
+   WebGL minimal renderer (no external libs)
+   ============================================================ */
+let gl, program, boxProg, wireProg, boxVbo;
+let rotX = -0.55, rotY = 0.6, zoom = 1;
+let dirty = true;
+
+function initGL(){
+  const canvas = document.getElementById("gl");
+  const errEl = document.getElementById("err");
+  gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+  if(!gl){ errEl.textContent = "WebGL not supported in this browser."; errEl.classList.remove("hidden"); return false; }
+
+  const vsSource = `
+    attribute vec3 aPos;
+    attribute vec3 aNormal;
+    uniform mat4 uProj, uView, uModel;
+    uniform mat3 uNormalMat;
+    varying vec3 vNormal; varying vec3 vWorld;
+    void main(){
+      vec4 wp = uModel * vec4(aPos,1.0);
+      vWorld = wp.xyz;
+      vNormal = normalize(uNormalMat * aNormal);
+      gl_Position = uProj * uView * wp;
+    }`;
+  const fsSource = `
+    precision mediump float;
+    varying vec3 vNormal; varying vec3 vWorld;
+    uniform vec3 uColor; uniform vec3 uLightDir;
+    void main(){
+      vec3 n = normalize(vNormal);
+      float d = max(dot(n, normalize(uLightDir)), 0.0);
+      float fill = max(dot(n, normalize(vec3(-0.6,-0.4,-0.5))), 0.0)*0.3;
+      float amb = 0.45;
+      float light = amb + d*0.75 + fill;
+      vec3 col = uColor * light;
+      gl_FragColor = vec4(col, 1.0);
+    }`;
+  boxVbo = gl.createBuffer();
+
+  program = makeProgram(vsSource, fsSource);
+  if(!program){ errEl.textContent="Failed to compile shader."; errEl.classList.remove("hidden"); return false; }
+
+  // simple wireframe (lines) program
+  wireProg = makeProgram(`
+    attribute vec3 aPos;
+    uniform mat4 uProj,uView,uModel;
+    void main(){ gl_Position = uProj*uView*uModel*vec4(aPos,1.0); }`,
+    `precision mediump float; void main(){ gl_FragColor=vec4(0.7,0.85,1.0,0.6); }`);
+
+  resize();
+  window.addEventListener("resize", ()=>{ dirty=true; });
+  return true;
+}
+
+function makeProgram(vs, fs){
+  const v = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(v, vs); gl.compileShader(v);
+  if(!gl.getShaderParameter(v, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(v));
+  const f = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(f, fs); gl.compileShader(f);
+  if(!gl.getShaderParameter(f, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(f));
+  const p = gl.createProgram();
+  gl.attachShader(p,v); gl.attachShader(p,f); gl.linkProgram(p);
+  if(!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
+  return p;
+}
+
+function resize(){
+  const canvas = document.getElementById("gl");
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = Math.max(2, Math.floor(w*dpr));
+  canvas.height = Math.max(2, Math.floor(h*dpr));
+  if(gl) gl.viewport(0,0,canvas.width,canvas.height);
+  dirty = true;
+}
+
+// mat4 helpers
+const M={
+  ident(){return [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]},
+  mul(a,b){
+    const o=new Array(16);
+    for(let r=0;r<4;r++)for(let c=0;c<4;c++){
+      o[c*4+r]=a[r]*b[c*4]+a[4+r]*b[c*4+1]+a[8+r]*b[c*4+2]+a[12+r]*b[c*4+3];
+    }
+    return o;
+  },
+  persp(fov,asp,near,far){
+    const f=1/Math.tan(fov/2), nf=1/(near-far);
+    return [f/asp,0,0,0, 0,f,0,0, 0,0,(far+near)*nf,-1, 0,0,2*far*near*nf,0];
+  },
+  lookAt(eye,center,up){
+    const z=norm(sub(eye,center));
+    const x=norm(cross(up,z));
+    const y=cross(z,x);
+    return [x[0],y[0],z[0],0,
+            x[1],y[1],z[1],0,
+            x[2],y[2],z[2],0,
+            -dot(x,eye),-dot(y,eye),-dot(z,eye),1];
+  },
+  tx(x,y,z){const m=ident();m[12]=x;m[13]=y;m[14]=z;return m},
+  scale(x,y,z){const m=ident();m[0]=x;m[5]=y;m[10]=z;return m}
+};
+function sub(a,b){return [a[0]-b[0],a[1]-b[1],a[2]-b[2]]}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}
+function norm(a){const m=Math.sqrt(dot(a,a));return m?[a[0]/m,a[1]/m,a[2]/m]:[0,0,0]}
+
+// Build a unit box centered at origin, size (1,1,1); scaled via model matrix.
+function unitBoxVerts(){
+  // 6 faces, 4 verts each, each with outward normal. Non-indexed.
+  const v=[];
+  const pushFace=(a,b,c,d,n)=>{
+    v.push(a[0],a[1],a[2],n[0],n[1],n[2],
+           b[0],b[1],b[2],n[0],n[1],n[2],
+           c[0],c[1],c[2],n[0],n[1],n[2],
+           d[0],d[1],d[2],n[0],n[1],n[2]);
+  };
+  const s=0.5;
+  const P=[[-s,-s,-s],[s,-s,-s],[s,s,-s],[-s,s,-s]]; // back
+  pushFace(P[0],P[1],P[2],P[3],[0,0,-1]);
+  const Q=[[-s,-s,s],[s,-s,s],[s,s,s],[-s,s,s]];    // front
+  pushFace(Q[0],Q[1],Q[2],Q[3],[0,0,1]);
+  pushFace([-s,-s,-s],[-s,-s,s],[-s,s,s],[-s,s,-s],[-1,0,0]);
+  pushFace([s,-s,-s],[s,-s,s],[s,s,s],[s,s,-s],[1,0,0]);
+  pushFace([-s,s,-s],[s,s,-s],[s,s,s],[-s,s,s],[0,1,0]);
+  pushFace([-s,-s,-s],[s,-s,-s],[s,-s,s],[-s,-s,s],[0,-1,0]);
+  return new Float32Array(v);
+}
+let ubo=null;
+function getUnitBox(){ if(!ubo){ubo=unitBoxVerts();gl.bufferData(gl.ARRAY_BUFFER,ubo,gl.STATIC_DRAW);} return ubo; }
+
+function renderScene(boxes){
+  if(!gl) return;
+  const canvas=document.getElementById("gl");
+  gl.clearColor(0,0,0,1);
+  gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  gl.enable(gl.DEPTH_TEST);
+
+  const aspect = canvas.width/canvas.height;
+  const proj = M.persp(45*Math.PI/180, aspect, 0.5, 5000);
+
+  // fit object into view. Tray min-corner is at origin, so its center is (W/2,D/2,H/2).
+  // World-Z is the vertical (tray height) axis -> use up = (0,0,1).
+  const W=Math.max(1e-6,boxesW(boxes)), D=Math.max(1e-6,boxesD(boxes)), Hp=Math.max(1e-6,boxesH(boxes));
+  const diag=Math.sqrt(W*W+D*D+Hp*Hp);
+  const eyeDist = diag*0.9/zoom;
+  const cx=W*0.5, cy=D*0.5, cz=Hp*0.5;
+  const ex = cx + Math.cos(rotY)*Math.cos(rotX)*eyeDist;
+  const ey = cy + Math.sin(rotY)*Math.cos(rotX)*eyeDist;
+  const ez = cz + Math.sin(rotX)*eyeDist;
+  const view = M.lookAt([ex,ey,ez], [cx,cy,cz], [0,0,1]);
+
+  // Upload box geometry (all boxes merged into one buffer)
+  const all=new Float32Array(boxes.length*ubo.length);
+  for(let i=0;i<boxes.length;i++){
+    const b=boxes[i], o=i*ubo.length;
+    const x0=x1=b[0], y0=y1=b[1], z0=z1=b[2];
+    // translate unit box (center s=0.5,size1) to box corner
+    const tx=(b[0]+b[1])/2, ty=(b[2]+b[3])/2, tz=(b[4]+b[5])/2;
+    for(let k=0;k<ubo.length;k+=6){
+      all[o+k]   = ubo[k]  *(b[1]-b[0]) + tx;
+      all[o+k+1] = ubo[k+1]*(b[3]-b[2]) + ty;
+      all[o+k+2] = ubo[k+2]*(b[5]-b[4]) + tz;
+      all[o+k+3]=ubo[k+3]; all[o+k+4]=ubo[k+4]; all[o+k+5]=ubo[k+5];
+    }
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, boxVbo);
+  gl.bufferData(gl.ARRAY_BUFFER, all, gl.DYNAMIC_DRAW);
+
+  gl.useProgram(program);
+  const aPos=gl.getAttribLocation(program,"aPos");
+  const aNormal=gl.getAttribLocation(program,"aNormal");
+  const uProj=gl.getUniformLocation(program,"uProj");
+  const uView=gl.getUniformLocation(program,"uView");
+  const uModel=gl.getUniformLocation(program,"uModel");
+  const uNormalMat=gl.getUniformLocation(program,"uNormalMat");
+  const uColor=gl.getUniformLocation(program,"uColor");
+  const uLightDir=gl.getUniformLocation(program,"uLightDir");
+  gl.bindBuffer(gl.ARRAY_BUFFER, boxVbo);
+  gl.enableVertexAttribArray(aPos);
+  gl.enableVertexAttribArray(aNormal);
+  gl.vertexAttribPointer(aPos,3,gl.FLOAT,false,24,0);
+  gl.vertexAttribPointer(aNormal,3,gl.FLOAT,false,24,12);
+
+  // Vertices are already pre-transformed into world space (box min corner at origin),
+  // so the model matrix is identity (no extra transform).
+  const model = M.ident();
+  gl.uniformMatrix4fv(uProj,false,proj);
+  gl.uniformMatrix4fv(uView,false,view);
+  gl.uniformMatrix4fv(uModel,false, model);
+  gl.uniformMatrix4fv(uNormalMat,false, normalMatrix(model));
+  gl.uniform3f(uColor, 0.36, 0.62, 0.95);
+  gl.uniform3f(uLightDir, 0.5, 0.9, 0.7);
+
+  const count=boxes.length*ubo.length/6;
+  gl.trianglesCount = count;
+  gl.drawArrays(gl.TRIANGLES, 0, count);
+
+  if(document.getElementById("wireframe").checked){
+    gl.disable(gl.DEPTH_TEST);
+    gl.useProgram(wireProg);
+    const wPos=gl.getAttribLocation(wireProg,"aPos");
+    const wProj=gl.getUniformLocation(wireProg,"uProj");
+    const wView=gl.getUniformLocation(wireProg,"uView");
+    const wModel=gl.getUniformLocation(wireProg,"uModel");
+    gl.bindBuffer(gl.ARRAY_BUFFER, boxVbo);
+    gl.enableVertexAttribArray(wPos);
+    gl.vertexAttribPointer(wPos,3,gl.FLOAT,false,24,0);
+    gl.uniformMatrix4fv(wProj,false,proj);
+    gl.uniformMatrix4fv(wView,false,view);
+    gl.uniformMatrix4fv(wModel,false, model);
+    gl.drawArrays(gl.LINES, 0, count);
+    gl.enable(gl.DEPTH_TEST);
+  }
+}
+
+function normalMatrix(m){
+  // upper-left 3x3 inverse transpose (uniform scale => normalize ok)
+  const a=m[0],b=m[1],c=m[2],d=m[4],e=m[5],f=m[6],g=m[8],h=m[9],i=m[10];
+  det=a*(e*i-f*h)-b*(d*i-f*g)+c*(d*h-e*g);
+  const inv=1/det;
+  return [ (e*i-f*h)*inv, (c*h-b*i)*inv, (b*f-c*e)*inv,
+           (f*g-d*i)*inv, (a*i-c*g)*inv, (c*d-a*f)*inv,
+           (d*h-e*g)*inv, (b*g-a*h)*inv, (a*e-b*d)*inv ];
+}
+function boxesW(b){let mx=0;for(const x of b)mx=Math.max(mx,x[1]);return mx;}
+function boxesD(b){let mx=0;for(const x of b)mx=Math.max(mx,x[3]);return mx;}
+function boxesH(b){let mx=0;for(const x of b)mx=Math.max(mx,x[5]);return mx;}
+
+/* ============================================================
+   STL export (binary, watertight = one box = 12 tris)
+   ============================================================ */
+function exportSTL(boxes, p){
+  // One box -> 2 quads per face -> 12 triangles. Winding is corrected so
+  // every facet normal points outward (away from box center): watertight.
+  const quads=[
+    [[0,0,0],[1,0,0],[1,1,0],[0,1,0]],
+    [[0,0,1],[1,0,1],[1,1,1],[0,1,1]],
+    [[0,0,0],[0,0,1],[0,1,1],[0,1,0]],
+    [[1,0,0],[1,0,1],[1,1,1],[1,1,0]],
+    [[0,1,0],[1,1,0],[1,1,1],[0,1,1]],
+    [[0,0,0],[1,0,0],[1,0,1],[0,0,1]]
+  ];
+  const tris=[]; // {n:[x,y,z], v:[[x,y,z]x3]}
+  for(const b of boxes){
+    const x0=b[0],x1=b[1],y0=b[2],y1=b[3],z0=b[4],z1=b[5];
+    const cx=(x0+x1)/2, cy=(y0+y1)/2, cz=(z0+z1)/2;
+    for(const q of quads){
+      const P=q.map(c=>[x0+c[0]*(x1-x0), y0+c[1]*(y1-y0), z0+c[2]*(z1-z0)]);
+      // triangle 1: P0,P1,P2
+      for(const tri of [[P[0],P[1],P[2]],[P[0],P[2],P[3]]]){
+        const n=cross3(sub3(tri[1],tri[0]),sub3(tri[2],tri[0]));
+        // flip if pointing inward (toward box center). dot>0 => points away (outward): keep.
+        if(dot3(n,[cx-tri[0][0],cy-tri[0][1],cz-tri[0][2]])>0){
+          const t=tri[1]; tri[1]=tri[2]; tri[2]=t;
+        }
+        tris.push({n,v:tri});
+      }
+    }
+  }
+  const buf=new ArrayBuffer(80 + 4 + tris.length*50);
+  const u=new Uint8Array(buf);
+  const dv=new DataView(buf);
+  // Build the header from the actual export parameters (not raw DOM values) so it
+  // always reflects the true printed dimensions, e.g. "DrawerTray 180x120x30mm".
+  const fmt=n=> (Number.isInteger(n)? n : (+n.toFixed(2)));
+  const header="DrawerTray "+fmt(p.width)+"x"+fmt(p.depth)+"x"+fmt(p.height)+"mm";
+  for(let i=0;i<header.length&&i<80;i++) u[i]=header.charCodeAt(i);
+  dv.setUint32(80, tris.length, true);
+  let off=84;
+  for(const t of tris){
+    // facet normal = cross(e1,e2) normalized
+    const e1=sub3(t.v[1],t.v[0]), e2=sub3(t.v[2],t.v[0]);
+    const cr=cross3(e1,e2), ln=Math.sqrt(dot3(cr,cr))||1;
+    dv.setFloat32(off, cr[0]/ln, true); off+=4;
+    dv.setFloat32(off, cr[1]/ln, true); off+=4;
+    dv.setFloat32(off, cr[2]/ln, true); off+=4;
+    for(const p of t.v){ dv.setFloat32(off,p[0],true);off+=4; dv.setFloat32(off,p[1],true);off+=4; dv.setFloat32(off,p[2],true);off+=4; }
+    dv.setUint16(off,0,true); off+=2;
+  }
+  return buf;
+}
+function sub3(a,b){return [a[0]-b[0],a[1]-b[1],a[2]-b[2]]}
+function cross3(a,b){return [a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}
+function dot3(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}
+
+function downloadBlob(blob, name){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ a.remove(); URL.revokeObjectURL(url); }, 100);
+}
+
+/* ============================================================
+   UI wiring
+   ============================================================ */
+const inputs=["width","depth","height","cols","rows","wall","floor"];
+function update(){
+  const p=params();
+  const c=clearDims(p);
+  const f=x=> (Math.round(x*100)/100).toFixed(2);
+  document.getElementById("clearBig").textContent = f(c.clearW)+" × "+f(c.clearD)+" × "+f(c.clearH)+" mm";
+  document.getElementById("cw").textContent = f(c.clearW)+" mm";
+  document.getElementById("cd").textContent = f(c.clearD)+" mm";
+  document.getElementById("ch").textContent = f(c.clearH)+" mm";
+  document.getElementById("cnt").textContent = c.count;
+  const boxes=buildTray(p);
+  renderScene(boxes);
+}
+inputs.forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener("input", update);
+  el.addEventListener("change", update);
+});
+document.getElementById("autorotate").addEventListener("change", e=>{ autoRotate=e.target.checked; });
+document.getElementById("wireframe").addEventListener("change", e=>{ dirty=true; });
+document.getElementById("download").addEventListener("click", ()=>{
+  const p=params();
+  if(p.wall*2 > p.width || p.floor > p.height){
+    alert("Wall/floor thickness is too large for the chosen dimensions.");
+    return;
+  }
+  const boxes=buildTray(p);
+  const buf=exportSTL(boxes, p);
+  const blob=new Blob([buf],{type:"application/octet-stream"});
+  const name="drawer_tray_"+p.width+"x"+p.depth+"x"+p.height+"_col"+p.cols+"_row"+p.rows+".stl";
+  downloadBlob(blob, name);
+});
+
+/* ---- interaction: drag rotate, wheel zoom ---- */
+let dragging=false, lastX=0, lastY=0, autoRotate=true;
+const canvas=document.getElementById("gl");
+canvas.addEventListener("mousedown", e=>{ dragging=true; lastX=e.clientX; lastY=e.clientY; });
+window.addEventListener("mouseup", ()=>{ dragging=false; });
+window.addEventListener("mousemove", e=>{
+  if(!dragging) return;
+  rotY += (e.clientX-lastX)*0.008;
+  rotX += (e.clientY-lastY)*0.008;
+  rotX = Math.max(-1.4, Math.min(1.4, rotX));
+  lastX=e.clientX; lastY=e.clientY; dirty=true;
+});
+canvas.addEventListener("wheel", e=>{
+  e.preventDefault();
+  zoom *= e.deltaY<0 ? 1.1 : 0.9;
+  zoom=Math.max(0.2, Math.min(6, zoom));
+  dirty=true;
+}, {passive:false});
+// touch
+let tX=0,tY=0;
+canvas.addEventListener("touchstart", e=>{ if(e.touches.length===1){tX=e.touches[0].clientX;tY=e.touches[0].clientY;} });
+canvas.addEventListener("touchmove", e=>{ if(e.touches.length===1){
+  rotY += (e.touches[0].clientX-tX)*0.008;
+  rotX += (e.touches[0].clientY-tY)*0.008;
+  rotX=Math.max(-1.4,Math.min(1.4,rotX)); tX=e.touches[0].clientX;tY=e.touches[0].clientY; dirty=true;
+}});
+
+function frame(){
+  if(autoRotate && !dragging){ rotY += 0.006; dirty=true; }
+  if(dirty){ update(); dirty=false; }
+  requestAnimationFrame(frame);
+}
+
+function boot(){
+  if(!initGL()) return;
+  getUnitBox();
+  update();
+  frame();
+}
+window.addEventListener("DOMContentLoaded", boot);
+</script>
+</body>
+</html>

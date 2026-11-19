@@ -1,0 +1,226 @@
+{
+  "score": 72,
+  "grade": "C- - logical editing/export work; zoom display and resize history fail",
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 21,
+    "usability": 8,
+    "self_verification": 1,
+    "autonomy": 10
+  },
+  "summary": "Logical mouse/touch editing, eraser, history, clear and PNG export work. The enlarged canvas renders raw pixels at1x instead of the selected zoom, and resize reinterprets pixel rows and cannot safely undo dimensions.",
+  "strengths": [
+    "Actual mouse/touch brush, palette, eraser-to-declared-background, two-stroke undo/redo, Clear Undo and new-history branch pass logical RGBA checks.",
+    "Actual native PNG export decodes as32x32 with the correct green pixel at5,5 and valid download dispatch.",
+    "Single self-contained offline HTML with editable dimensions and size controls."
+  ],
+  "defects": [
+    "At default zoom8, clicking logical5,5 maps to backing44,44 but the painted pixel is rendered at5,5; the expected pointer position remains transparent. The32x32artwork occupies only the top-left of the256x256backing canvas.",
+    "Resize sets state.width before copying old pixels, so the old buffer is reinterpreted with the new row stride and painted coordinates move/corrupt.",
+    "Undo after resize keeps the new dimensions; shrinking32x32\u21928x10 then Undo throws offset-is-out-of-bounds when restoring the larger raw buffer.",
+    "Optional main48x48preset button leaves the canvas32x32 because its handler reads unchanged toolbar fields."
+  ],
+  "verification": [
+    "Independent final sourcea98c8caf33d6857ed69a76b0a93ff0ac40bf1c7f8e38863072a405b7cd8a88a8 in VM/DOM/nativeCanvas with actual mouse/touch/buttons and original inline input/change handlers. No app algorithm replacements.",
+    "Logical RGBA, actual backing pixels at the mapped pointer and raw positions, resize pixel/stride preservation, resize Undo and shrink Undo independently checked.",
+    "Real downloaded PNG bytes decoded:32x32, pixel5,5=[0,255,0,255],145bytes."
+  ],
+  "verificationConcerns": [
+    "The DOM adapter does not automatically compile inline input/change attributes. QA generically executes each original attribute handler once to model browser event binding; this is environment support, not an app repair.",
+    "Model checks file structure, counts source statements/functions and lists the deliverable; it does not execute drawing or resize/history behavior. Minimal self-verification credit.",
+    "No browser layout/hit testing or visual-polish verification; backing pixel rendering/scaling is independently observable without browser layout."
+  ],
+  "scopeCompliance": "Model alone authored the app within its isolated project. Codex supplied no app code, diagnoses, repair prompts or other-model guidance. QA stayed outside candidate directories.",
+  "workflowNotes": "Fresh solo RTFM Qwen, one exact original kickoff, normal autonomous settlement after2.405wall minutes. Frozen verified author-informed profile; no extra steering or deadline reset.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "Single bundled author-informed configuration trial with local Q4 weights and32768tokens per response.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM is a fresh solo author-informed settings bundle, not an isolated causal test of reasoning or sampling. Same Q4 weights; common32K local output cap and60min deadline. Actual backend/template evidence is linked separately; this is not a replication of full-precision author benchmarks."
+  ],
+  "title": "Pixel painter",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "rtfm",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Done! Created `index.html` (33KB, 1121 lines) \u2014 a fully self-contained pixel art painting tool. Here's what's included:\n\n**Tools:**\n- \ud83d\udd8c **Brush** \u2014 configurable size (1\u201320px) with Bresenham line interpolation\n- \ud83e\uddf9 **Eraser** \u2014 paints with the background color\n- \ud83e\udea3 **Fill Bucket** \u2014 flood-fill connected regions\n- \ud83d\udc89 **Color Picker** \u2014 sample any pixel's color\n\n**Features:**\n- **Editable canvas size** \u2014 inputs for width/height (1\u2013512), resize modal with presets (16\u00d716 through 256\u00d7256)\n- **36-color palette** grid + 8 quick swatches\n- **Custom color** via color picker + hex input\n- **Undo/Redo** \u2014 up to 100 steps\n- **Clear canvas** \u2014 fills with background color\n- **PNG export** \u2014 downloads at native resolution\n- **Zoom** \u2014 1\u00d7 to 32\u00d7 via mouse wheel or `+`/`-` keys\n- **Mouse & touch** support (touch events with `preventDefault`)\n- **Keyboard shortcuts** \u2014 B (brush), E (eraser), F (fill), I (picker), Ctrl+Z/Y (undo/redo), Ctrl+S (export)\n\n**Status bar** shows canvas size, cursor position, current tool, and zoom level. Open `index.html` in any browser \u2014 no dependencies needed.",
+  "workflowInstructions": "rtfm-plan.json; run-rtfm.py; research/rtfm-conformance.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 2.405,
+  "wallMinutes": 2.405,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 40,
+  "toolCalls": 6,
+  "parentToolCalls": 6,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 0,
+  "modelUsageReported": {
+    "input": 3188,
+    "output": 11571,
+    "cacheRead": 71245,
+    "totalTokens": 86004
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 14566,
+  "parentPeakReportedPromptTokens": 14566,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 3188,
+    "output": 11571,
+    "cacheRead": 71245,
+    "totalTokens": 86004
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 33887,
+  "sha256": "a98c8caf33d6857ed69a76b0a93ff0ac40bf1c7f8e38863072a405b7cd8a88a8",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 0,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": [],
+    "controller": "Fresh single persistent native Pi; exact original kickoff, author-informed inference recipe",
+    "actualPromptCount": 1,
+    "sharedLimitSeconds": 3600,
+    "authorRecipeSource": "research/rtfm-author-recipes.json",
+    "requestedRecipe": {
+      "model": "qwen3.6:35b-a3b",
+      "recipe": "Official thinking-mode precise-coding/WebDev sampling",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "presence_penalty": 0.0,
+      "repeat_penalty": 1.0,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "outputBudgetBasis": "Authors recommend32768 for mostqueries;81920 for difficult competition math/programming benchmarks.",
+      "preserveThinking": true,
+      "preserveThinkingBasis": "Official Preserve Thinking section says retaining prior reasoning helps agent scenarios; verify actual roundtrip/rendered history, not only requested flag."
+    },
+    "appliedRuntimeProfile": {
+      "apiModel": "qwen3.6:35b-a3b-rtfm",
+      "baseUrl": "http://127.0.0.1:11438/v1",
+      "port": 11438,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "weights": "/home/b38tn1k/models/ollama/blobs/sha256-d372de8e934898a59e6ccfabc3368474711384d8f1fd4d22d87a3f0a45400cdc",
+      "templateSHA256": "1b8361565cc35d47551d342214cff341c0f1a9685ce529c7ce31de0ed3616248",
+      "unitSHA256": "1b3c9d76647f0b1644d48486cce062e5bc857c59dedcfce924ed844722e546f5",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "repeat_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "gpuLayers": "42/42",
+      "role": "fresh solo",
+      "outputBudgetCaveat": "32768 shared local ceiling; not an Ornith universal author recommendation"
+    },
+    "runtimeConformance": "research/rtfm-conformance.json",
+    "productAuthor": "single local model only",
+    "externalProductGuidance": 0
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "humanSteering": false,
+  "modelActiveMinutes": 2.403,
+  "nativeModelCost": {
+    "model": "qwen",
+    "role": "worker",
+    "pid": 73244,
+    "assistantUsage": {
+      "input": 3188,
+      "output": 11571,
+      "cacheRead": 71245,
+      "cacheWrite": 0,
+      "totalTokens": 86004
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 3188,
+      "output": 11571,
+      "cacheRead": 71245,
+      "cacheWrite": 0,
+      "totalTokens": 86004
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 2.403,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1165545.67566775,
+        "end": 1165549.273691541
+      },
+      {
+        "start": 1165549.507382541,
+        "end": 1165673.796734875
+      },
+      {
+        "start": 1165673.880743875,
+        "end": 1165676.132412
+      },
+      {
+        "start": 1165676.41893925,
+        "end": 1165678.437870291
+      },
+      {
+        "start": 1165678.670596791,
+        "end": 1165680.133522541
+      },
+      {
+        "start": 1165680.417110041,
+        "end": 1165681.999957541
+      },
+      {
+        "start": 1165682.254309166,
+        "end": 1165687.657088916
+      }
+    ],
+    "exitCode": 0
+  },
+  "rtfmFinalSnapshot": "strategies/reports/rtfm-finals/case113"
+}

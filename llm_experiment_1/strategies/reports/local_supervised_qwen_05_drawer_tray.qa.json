@@ -1,0 +1,61 @@
+{
+  "sha256": "362deb9d4128f137d8a5ea9454fb7413286aae603b61031db418a58aefcc8cc1",
+  "method": "Exact unmodified inline script syntax and nativeVM/DOM per-script error isolation. No syntax repair, dependency injection, renderer substitute or app algorithm replacement; no browser/GPU test.",
+  "checks": [
+    {
+      "id": "single_file_has_no_external_script_dependencies",
+      "pass": true,
+      "evidence": {
+        "dependencies": []
+      }
+    },
+    {
+      "id": "all_inline_scripts_parse_without_execution",
+      "pass": false,
+      "evidence": {
+        "syntaxErrors": [
+          {
+            "script": 0,
+            "error": "Unexpected token '{'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "later_app_scripts_can_initialize_without_repair",
+      "pass": false,
+      "evidence": {
+        "sha256": "362deb9d4128f137d8a5ea9454fb7413286aae603b61031db418a58aefcc8cc1",
+        "method": "Exact original script strings evaluated independently with a generic outer exception capture, allowing later scripts to attempt execution as in a browser. No source syntax repaired, dependency injected, or app algorithm replaced; no GPU/browser layout test.",
+        "scriptErrors": [
+          {
+            "name": "SyntaxError",
+            "message": "Unexpected token '{'"
+          },
+          {
+            "name": "ReferenceError",
+            "message": "THREE is not defined"
+          }
+        ],
+        "computedReadoutUnchanged": true,
+        "canvasCount": 0,
+        "downloadsAfterActualExportClick": 0
+      }
+    },
+    {
+      "id": "actual_dimension_input_updates_computed_readouts",
+      "pass": false
+    },
+    {
+      "id": "actual_export_control_downloads_STL",
+      "pass": false
+    },
+    {
+      "id": "actual_preview_canvas_constructed",
+      "pass": false
+    }
+  ],
+  "diagnosticReport": "reports/local_supervised_qwen_05_drawer_tray.initial.qa.json",
+  "errorContinuation": "reports/local_supervised_qwen_05_drawer_tray.error-continuation.qa.json",
+  "pass": false
+}

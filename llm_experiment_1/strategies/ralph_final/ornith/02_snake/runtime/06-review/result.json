@@ -1,0 +1,20 @@
+{
+  "round": 3,
+  "role": "review",
+  "modelLabel": "ornith",
+  "model": "ornith-1.5:35b-256k",
+  "started": "2026-11-16T17:19:41.614594+00:00",
+  "events": "ralph_final/ornith/02_snake/runtime/06-review/events.jsonl",
+  "status": "completed",
+  "finished": "2026-11-16T17:22:09.618912+00:00",
+  "minutes": 2.47,
+  "reason": "agent_settled",
+  "exitCode": 143,
+  "proof": {
+    "forcedActivations": 0,
+    "completionRequests": 0,
+    "red": 0,
+    "green": 0
+  },
+  "testExitCode": 1
+}

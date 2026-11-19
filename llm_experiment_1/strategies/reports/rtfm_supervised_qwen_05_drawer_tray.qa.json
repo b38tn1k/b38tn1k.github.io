@@ -1,0 +1,388 @@
+{
+  "method": "Independent exact-source VM/DOM original input/inline/export handlers and actual downloaded ASCII STL bytes, binary button exception, collinear-reconciled topology and upper-wall section measurements. Existing mouse setup invoked conditionally for camera-state test only. No app algorithms replaced, GPU/browser hit testing or physical-print certification.",
+  "sha256": "a38c92f47d2c5f432d261484036441da1c07cd86680305fc35e8214876e89346",
+  "checks": [
+    {
+      "id": "default_inputs_and_offline_source",
+      "pass": true,
+      "evidence": {
+        "defaults": [
+          180,
+          120,
+          30,
+          3,
+          2
+        ],
+        "externalScriptsOrStyles": false
+      }
+    },
+    {
+      "id": "recommended_binary_STL_button_produces_valid_bytes",
+      "pass": true,
+      "evidence": {
+        "bytes": 4884,
+        "triangles": 96
+      }
+    },
+    {
+      "id": "default_actual_ASCII_export_and_requested_outer_dimensions",
+      "pass": true,
+      "evidence": {
+        "bytes": 18313,
+        "bounds": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            180,
+            30,
+            120
+          ],
+          "dimensions": [
+            180,
+            30,
+            120
+          ]
+        }
+      }
+    },
+    {
+      "id": "default_closed_consistent_printable_boundary",
+      "pass": false,
+      "error": "ASCII STL remains nonmanifold/inconsistently wound after collinear edge reconciliation",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "default_displayed_clearances_match_actual_openings",
+      "pass": false,
+      "error": "Displayed compartment width does not match actual exported openings",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "alternate_actual_ASCII_export_and_requested_outer_dimensions",
+      "pass": true,
+      "evidence": {
+        "bytes": 22823,
+        "bounds": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            200,
+            40,
+            100
+          ],
+          "dimensions": [
+            200,
+            40,
+            100
+          ]
+        }
+      }
+    },
+    {
+      "id": "alternate_closed_consistent_printable_boundary",
+      "pass": false,
+      "error": "ASCII STL remains nonmanifold/inconsistently wound after collinear edge reconciliation",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "alternate_displayed_clearances_match_actual_openings",
+      "pass": false,
+      "error": "Displayed compartment width does not match actual exported openings",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "UI_reachable_dense_grid_cannot_export_negative_compartments",
+      "pass": false,
+      "error": "UI-reachable dense/thick configuration exports invalid negative compartment clearance",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "conditional_existing_rotation_handlers_change_camera_state",
+      "pass": true,
+      "evidence": {
+        "changed": true,
+        "scope": "Existing setupMouse invoked conditionally because native VM has no WebGL; this does not prove GPU startup or actual rendering."
+      }
+    },
+    {
+      "id": "actual_WebGL_preview_and_browser_startup",
+      "pass": false,
+      "environmentLimit": true,
+      "evidence": "No GPU/WebGL/browser. No fake renderer substituted; UI/geometry/export components tested separately."
+    }
+  ],
+  "cases": [
+    {
+      "label": "default",
+      "inputs": {
+        "W": 180,
+        "D": 120,
+        "H": 30,
+        "cols": 3,
+        "rows": 2,
+        "wall": 2,
+        "floor": 1.5
+      },
+      "readouts": {
+        "width": 57.3,
+        "depth": 57,
+        "height": 28.5,
+        "count": 6
+      },
+      "mesh": {
+        "format": "ascii",
+        "vertexMatchTolerance": 0.0001,
+        "verticalXPlanes": [
+          0,
+          2,
+          60.3333,
+          62.3333,
+          119.6667,
+          121.6667,
+          178,
+          180
+        ],
+        "verticalYPlanes": [
+          0,
+          1.5,
+          30
+        ],
+        "zLevels": [
+          0,
+          2,
+          60,
+          62,
+          116,
+          118,
+          120
+        ],
+        "bytes": 18313,
+        "triangles": 96,
+        "uniqueVertices": 52,
+        "bounds": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            180,
+            30,
+            120
+          ],
+          "dimensions": [
+            180,
+            30,
+            120
+          ]
+        },
+        "signedVolume": 27207.999999999985,
+        "absoluteVolume": 27207.999999999985,
+        "surfaceArea": 103506,
+        "degenerateTriangles": 0,
+        "nonFiniteTriangles": 0,
+        "normalDisagreements": 0,
+        "missingNormals": 0,
+        "boundaryOrNonmanifoldEdges": 6,
+        "inconsistentWindingEdges": 30,
+        "components": 4,
+        "watertightByMatchingEdges": false
+      },
+      "reconciled": {
+        "analysisBudgetExceeded": false,
+        "tolerance": 0.0001,
+        "triangles": 96,
+        "vertices": 52,
+        "edgesAfterCollinearSplitting": 144,
+        "originalEdgesWithInteriorVertices": 16,
+        "skippedEdges": 0,
+        "boundaryOrNonmanifoldEdges": 26,
+        "inconsistentWindingEdges": 24,
+        "nonmanifoldVertexFans": 0,
+        "faceComponents": 1,
+        "closedConnectedBoundary": false,
+        "limits": "Matches collinear edge subdivisions and local face connectivity; not a general triangle-intersection test or physical-print certification."
+      },
+      "upperWallOpenings": {
+        "sliceHeight": 15.75,
+        "widthPlanes": [
+          0,
+          2,
+          60.3333,
+          62.3333,
+          119.6667,
+          121.6667,
+          178,
+          180
+        ],
+        "depthPlanes": [
+          0,
+          2,
+          60,
+          62,
+          118,
+          120
+        ],
+        "widths": [
+          58.3333,
+          57.333400000000005,
+          56.333299999999994
+        ],
+        "depths": [
+          58,
+          56
+        ],
+        "probeX": 31.16665,
+        "probeZ": 16.44,
+        "note": "Actual horizontal triangle slice intersected along probes inside a compartment, excluding divider end-cap projections. Internal overlapping faces remain visible to separate topology checks."
+      }
+    },
+    {
+      "label": "alternate",
+      "inputs": {
+        "W": 200,
+        "D": 100,
+        "H": 40,
+        "cols": 4,
+        "rows": 3,
+        "wall": 2.5,
+        "floor": 2
+      },
+      "readouts": {
+        "width": 46.9,
+        "depth": 30,
+        "height": 38,
+        "count": 12
+      },
+      "mesh": {
+        "format": "ascii",
+        "vertexMatchTolerance": 0.0001,
+        "verticalXPlanes": [
+          0,
+          2.5,
+          50.625,
+          53.125,
+          100,
+          102.5,
+          149.375,
+          151.875,
+          197.5,
+          200
+        ],
+        "verticalYPlanes": [
+          0,
+          2,
+          40
+        ],
+        "zLevels": [
+          0,
+          2.5,
+          33.75,
+          36.25,
+          66.25,
+          68.75,
+          95,
+          97.5,
+          100
+        ],
+        "bytes": 22823,
+        "triangles": 120,
+        "uniqueVertices": 68,
+        "bounds": {
+          "min": [
+            0,
+            0,
+            0
+          ],
+          "max": [
+            200,
+            40,
+            100
+          ],
+          "dimensions": [
+            200,
+            40,
+            100
+          ]
+        },
+        "signedVolume": 48191.666666666715,
+        "absoluteVolume": 48191.666666666715,
+        "surfaceArea": 142385,
+        "degenerateTriangles": 0,
+        "nonFiniteTriangles": 0,
+        "normalDisagreements": 0,
+        "missingNormals": 0,
+        "boundaryOrNonmanifoldEdges": 6,
+        "inconsistentWindingEdges": 38,
+        "components": 6,
+        "watertightByMatchingEdges": false
+      },
+      "reconciled": {
+        "analysisBudgetExceeded": false,
+        "tolerance": 0.0001,
+        "triangles": 120,
+        "vertices": 68,
+        "edgesAfterCollinearSplitting": 186,
+        "originalEdgesWithInteriorVertices": 16,
+        "skippedEdges": 0,
+        "boundaryOrNonmanifoldEdges": 34,
+        "inconsistentWindingEdges": 32,
+        "nonmanifoldVertexFans": 0,
+        "faceComponents": 1,
+        "closedConnectedBoundary": false,
+        "limits": "Matches collinear edge subdivisions and local face connectivity; not a general triangle-intersection test or physical-print certification."
+      },
+      "upperWallOpenings": {
+        "sliceHeight": 21,
+        "widthPlanes": [
+          0,
+          2.5,
+          50.625,
+          53.125,
+          100,
+          102.5,
+          149.375,
+          151.875,
+          197.5,
+          200
+        ],
+        "depthPlanes": [
+          0,
+          2.5,
+          33.75,
+          36.25,
+          66.25,
+          68.75,
+          97.5,
+          100
+        ],
+        "widths": [
+          48.125,
+          46.875,
+          46.875,
+          45.625
+        ],
+        "depths": [
+          31.25,
+          30,
+          28.75
+        ],
+        "probeX": 26.5625,
+        "probeZ": 13.700000000000001,
+        "note": "Actual horizontal triangle slice intersected along probes inside a compartment, excluding divider end-cap projections. Internal overlapping faces remain visible to separate topology checks."
+      }
+    }
+  ],
+  "pass": false
+}

@@ -1,0 +1,1 @@
+I'll start by exploring the current working directory to understand the context.

@@ -1,0 +1,45 @@
+{
+  "method": "Independent exact-source Node VM/DOM and native Canvas2D checks of actual controls/timers/download bytes. Explicit fixtures observe private game state without replacing algorithms. No browser layout, GPU, focus/default action or physical print verification.",
+  "sha256": "2fc70edf15d78f648be611691baa7664f4081d4158526abed94e263db4bf16dc",
+  "checks": [
+    {
+      "id": "normal_launch_and_keyboard",
+      "pass": true,
+      "evidence": {
+        "moves": true,
+        "keyboard": true
+      }
+    },
+    {
+      "id": "mouse_controls_paddle",
+      "pass": false,
+      "error": "Mouse move never changes paddle position",
+      "actual": 275,
+      "expected": 275
+    },
+    {
+      "id": "actual_json_save_and_paste_load",
+      "pass": true,
+      "evidence": {
+        "savedBytes": 138,
+        "bricks": 1
+      }
+    },
+    {
+      "id": "fixture_score_lives_and_game_over",
+      "pass": true,
+      "evidence": {
+        "score": 10,
+        "lives": 0
+      }
+    },
+    {
+      "id": "fixture_collision_score_and_restart_layout",
+      "pass": false,
+      "error": "Restart does not restore consumed bricks",
+      "actual": 49,
+      "expected": 50
+    }
+  ],
+  "pass": false
+}

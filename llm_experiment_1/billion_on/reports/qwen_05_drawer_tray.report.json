@@ -1,0 +1,304 @@
+{
+  "status": "completed_with_critical_defects",
+  "grade": "F - delivered tray fails initialization and export",
+  "score": 32,
+  "rubricScores": {
+    "functionality": 10,
+    "artifact_correctness": 5,
+    "usability": 5,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "verified": [
+    "Delivered script passes JavaScript parsing",
+    "Exact full-script VM with mocked WebGL/shader success reaches actual geometry builder and throws; actual GPU/visual behavior unverified",
+    "Both actual export paths independently throw during vertex generation",
+    "No external HTTP dependency"
+  ],
+  "criticalDefects": [
+    "makeQuad returns verts:[] rather than computed q vertices; addBoxToGL accesses undefined vertex and initialization fails",
+    "Both export paths fail with the same empty vertex array",
+    "Final compartment labels ignore divider thickness and overstate clear compartment sizes"
+  ],
+  "additionalDefects": [
+    "Binary serializer still allocates80+50*N instead of84+50*N bytes; once vertex generation is fixed it is structurally undersized",
+    "ASCII exporter source lacks proper facet/endfacet framing",
+    "Geometry adds partial-height dividers and separated top ribs; clean manifold/printability not established"
+  ],
+  "verificationConcerns": [
+    "Multiple complete rewrites and repeated failures in validation scripts",
+    "Agent relied on source-string feature checks and reimplemented geometry; did not execute actual delivered initialization/export",
+    "Real compression occurred, with partial/rejected entries, no-op retries and history-rewrite warnings; these do not prove extension caused preexisting code bugs"
+  ],
+  "scopeCompliance": "Filesystem boundary applied from process start; no confirmed out-of-directory writes",
+  "assessment": "Long autonomous run exercised real compression, but ended with a broken deliverable despite claimed validation. No supervisor application hints or fixes were supplied.",
+  "title": "Simple drawer tray generator",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "elapsedMinutes": 40.6,
+  "wallMinutes": 41.41,
+  "promptWords": 65,
+  "toolCalls": 40,
+  "toolResultsMarkedError": 8,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "modelUsageReported": {
+    "input": 836609,
+    "output": 89182,
+    "cacheRead": 963666,
+    "totalTokens": 1889457
+  },
+  "peakReportedPromptTokens": 59900,
+  "assistantTextContainingToolCallMarkup": 0,
+  "artifactBytes": 22517,
+  "sha256": "b67a52a4da1c76fadff8dd02bf56817d40fdb9f354736c0138ae0f9951296038",
+  "billionContext": {
+    "loadedConfirmed": true,
+    "sessionId": "01a1dbcc-1c20-73f5-a9d1-6a068f8949aa",
+    "extensionVersion": "0.1.213",
+    "historyRewriteWarningLines": 12,
+    "compressionOutcomeLines": [
+      "2026-11-14T15:56:12.675 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] [acp-compress-obs] shrink 23% this-fold (~6070/25924 tok) \u00b7 cumulative 23% (~6070/25924 tok) foldPoint=m00014 blocks=1 anchor\u224835 tok (1 active blocks, sys excluded) postCtx\u224819854 \u2192 next-request cache ceiling \u22650%",
+      "2026-11-14T15:56:12.678 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] tool compress executed via plugin (routed by body, #1685) (1650 chars, outcome=partial)",
+      "2026-11-14T15:57:58.289 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] tool compress executed via plugin (routed by body, #1685) (724 chars, outcome=applied, reason=noop)",
+      "2026-11-14T15:59:40.938 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] [acp-compress-obs] shrink 24% this-fold (~5795/23708 tok) \u00b7 cumulative 4% (~1043/23708 tok) foldPoint=m00023 blocks=1 anchor\u2248336 tok (2 active blocks, sys excluded) postCtx\u224822665 \u2192 next-request cache ceiling \u22651%",
+      "2026-11-14T15:59:40.943 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] tool compress executed via plugin (routed by body, #1685) (1828 chars, outcome=partial)",
+      "2026-11-14T16:02:24.425 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] [acp-compress-obs] shrink 5% this-fold (~1381/26582 tok) \u00b7 cumulative 5% (~1381/26582 tok) foldPoint=m00031 blocks=1 anchor\u2248629 tok (3 active blocks, sys excluded) postCtx\u224825201 \u2192 next-request cache ceiling \u22652%",
+      "2026-11-14T16:02:24.427 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] tool compress executed via plugin (routed by body, #1685) (2125 chars, outcome=partial)",
+      "2026-11-14T16:06:37.040 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] tool compress executed via plugin (routed by body, #1685) (2382 chars, outcome=refused, reason=gate:cannot-anchor)",
+      "2026-11-14T16:09:10.632 [info] [sess=01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [v=0.1.213] [acp-compress-obs] shrink 15% this-fold (~7688/50010 tok) \u00b7 cumulative 42% (~20934/50010 tok) foldPoint=m00003 blocks=1 anchor\u22481038 tok (4 active blocks, sys excluded) postCtx\u224829076 \u2192 next-request cache ceiling \u22653%",
+      "2026-11-14T16:10:54.622 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] [acp-compress-obs] shrink 28% this-fold (~7662/27340 tok) \u00b7 cumulative 28% (~7662/27340 tok) foldPoint=m00034 blocks=2 anchor\u22481280 tok (6 active blocks, sys excluded) postCtx\u224819678 \u2192 next-request cache ceiling \u22656%",
+      "2026-11-14T16:10:54.624 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] tool compress executed via plugin (routed by body, #1685) (1271 chars, outcome=applied)",
+      "2026-11-14T16:18:06.461 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] [acp-compress-obs] shrink 10% this-fold (~2434/25375 tok) \u00b7 cumulative 10% (~2434/25375 tok) foldPoint=m00045 blocks=1 anchor\u22481504 tok (7 active blocks, sys excluded) postCtx\u224822941 \u2192 next-request cache ceiling \u22656%",
+      "2026-11-14T16:18:06.464 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] tool compress executed via plugin (routed by body, #1685) (1484 chars, outcome=partial)",
+      "2026-11-14T16:21:24.962 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] [acp-compress-obs] shrink 6% this-fold (~1618/25401 tok) \u00b7 cumulative 6% (~1618/25401 tok) foldPoint=m00063 blocks=1 anchor\u22481541 tok (8 active blocks, sys excluded) postCtx\u224823783 \u2192 next-request cache ceiling \u22656%",
+      "2026-11-14T16:21:24.965 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] tool compress executed via plugin (routed by body, #1685) (1906 chars, outcome=partial)",
+      "2026-11-14T16:23:06.889 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] [acp-compress-obs] shrink 11% this-fold (~2833/26287 tok) \u00b7 cumulative 11% (~2833/26287 tok) foldPoint=m00082 blocks=1 anchor\u22481563 tok (9 active blocks, sys excluded) postCtx\u224823454 \u2192 next-request cache ceiling \u22656%",
+      "2026-11-14T16:23:06.893 [info] [v=0.1.213] [01a1dbcc-1c20-73f5-a9d1-6a068f8949aa] [plugin] tool compress executed via plugin (routed by body, #1685) (1582 chars, outcome=partial)"
+    ],
+    "stats": {
+      "requests": 41,
+      "tokensSaved": 0,
+      "inputTokens": 1800275,
+      "cachedTokens": 963666,
+      "outputTokens": 89182,
+      "cacheSamples": 41,
+      "lastInputTokens": 45585,
+      "compressCreditTokens": 0,
+      "contextTokens": 45585,
+      "retrieveCalls": 0,
+      "retrieveHits": 0,
+      "retrieveMisses": 0,
+      "retrieveDropped": 0,
+      "retrieveDelivered": 0,
+      "storedBytes": 0,
+      "storeBytesSaved": 0,
+      "rangeRestores": 0,
+      "contextTokensSource": "usage",
+      "localInputEstimate": 107653,
+      "contextEstimateTokens": 47499,
+      "contextEstimateCalibrated": true,
+      "lastUsageGradeTokens": 45585,
+      "lastUsagePayloadUpper": 107653,
+      "lastInputTokensSource": "usage",
+      "lastInputTokensOrigin": "http://127.0.0.1:11435",
+      "calibrationRing": {
+        "origin": "http://127.0.0.1:11435",
+        "model": "qwen3.6:35b-a3b",
+        "values": [
+          1.378921709205621,
+          1.440626334519573,
+          1.3657608532822003
+        ]
+      },
+      "calibratedEstimate": 1.3951029656691312,
+      "calibratedEstimateOrigin": "http://127.0.0.1:11435",
+      "calibratedEstimateModel": "qwen3.6:35b-a3b",
+      "pendingFoldUsage": false
+    },
+    "compressionStats": {
+      "tokensCompressed": 35481,
+      "compressionCount": 9,
+      "absorbedTokens": 0,
+      "storedCount": 0,
+      "retrievalCount": 0
+    },
+    "blocks": 9
+  },
+  "limitations": [
+    "No independent real-browser/visual testing; prior browser-origin denial honored.",
+    "Single run per task; differences do not isolate extension effect from sampling variability."
+  ],
+  "compactionEvents": [
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    },
+    {
+      "type": "compaction_start",
+      "reason": "threshold"
+    },
+    {
+      "type": "compaction_end",
+      "reason": "threshold",
+      "aborted": true,
+      "willRetry": false
+    }
+  ]
+}

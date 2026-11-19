@@ -1,0 +1,108 @@
+{
+  "score": 70,
+  "grade": "C provisional - normal timings work; false-start retry is a permanent dead end",
+  "rubricScores": {
+    "functionality": 28,
+    "artifact_correctness": 22,
+    "usability": 8,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "breakdown": {
+    "functionality": 28,
+    "artifact_correctness": 22,
+    "usability": 8,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Exact-source clock/event checks produce 200/210/220/230/240 ms across five normal trials, a correct 220 ms average and five result bars.",
+    "Random wait and early-tap detection execute; mouse activation and the result-page restart work.",
+    "Single offline HTML with no external resources; structured plan and implementation handoff completed."
+  ],
+  "defects": [
+    "A false start sets state to false, but handleTap has no false-state branch. The promised Tap to retry action does nothing, no reset button is available, and waiting ten seconds does not recover the session.",
+    "Feedback says Tap to continue while taps are ignored and the next trial begins automatically after 1.2 seconds."
+  ],
+  "verification": [
+    "Independent final-source VM with actual mouse/control events and deterministic clock in reports/plan_qwen_01_reaction_timer.qa.cjs/.qa.json.",
+    "Final SHA-256 1f2c70ddea460ad661818492d4fc53857dda88f1d8a8b7561b4b56d07f5fb993.",
+    "Pi ran syntax and feature-text checks, which missed the absent false-state handler."
+  ],
+  "verificationConcerns": [
+    "Feature-name/static checks were presented as implementation confirmation; no runtime interaction self-test was recorded.",
+    "No independent browser, visual layout or physical touch-device check."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "The visual-theme questionnaire was cancelled automatically. Qwen selected its own default and completed structured planning plus the standard /plan implement handoff; no design hint supplied.",
+  "runStatus": "completed_pending_assessment",
+  "title": "Reaction timer",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "plan",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Done. Here's what was built:\n\n**`index.html`** \u2014 11.8 KB, fully self-contained offline reaction-time tester featuring:\n\n- **Random wait phase** (2\u20137 seconds) with pulsing \"Wait\u2026\" text on a dark background\n- **False-start detection** \u2014 tapping during the wait triggers a red flash + retry counter\n- **5 trials** tracked with `performance.now()` for sub-millisecond accuracy\n- **Results summary** with:\n  - Animated horizontal bar chart (color-coded: green=best, orange=avg, red=worst)\n  - Best / Average / Worst stat cards\n  - \"Try Again\" button to restart the full test\n- **Polished UX**: smooth color transitions between states, flash-in animations on new content, responsive layout using `clamp()`/`vmin`, touch + mouse support, mobile scroll prevention\n\n**States:** Idle \u2192 Waiting (2\u20137s) \u2192 GO! (tap fast!) \u2192 Feedback \u2192 [repeat \u00d75] \u2192 Results \u2192 Try Again\n\nOpen `index.html` in any browser to play \u2014 no server or dependencies needed.",
+  "workflowInstructions": "run-suite.py and config/qwen/agents",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 3.03,
+  "wallMinutes": 3.03,
+  "status": "assessed",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 13,
+  "parentToolCalls": 13,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 2,
+  "modelUsageReported": {
+    "input": 12558,
+    "output": 8739,
+    "cacheRead": 111540,
+    "totalTokens": 132837
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 17722,
+  "parentPeakReportedPromptTokens": 17722,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 12558,
+    "output": 8739,
+    "cacheRead": 111540,
+    "totalTokens": 132837
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 12114,
+  "sha256": "1f2c70ddea460ad661818492d4fc53857dda88f1d8a8b7561b4b56d07f5fb993",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 2,
+    "questionnairesCancelled": 1,
+    "mechanicalPlanHandoffPrompts": 1,
+    "structuredPlanComplete": true,
+    "implementationHandoff": true,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 1,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": []
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

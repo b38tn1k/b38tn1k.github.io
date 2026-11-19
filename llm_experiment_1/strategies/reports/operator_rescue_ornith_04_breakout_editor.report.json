@@ -1,0 +1,168 @@
+{
+  "score": 73,
+  "grade": "C - assisted product 88.8; custom design still lost after play",
+  "summary": "Two counted prompts repair most controls, JSON roundtrip and win/loss flow, but the shared deadline interrupts the second revision before design preservation is complete. Restart and return-to-editor still lose the user-edited layout, so the assisted product target is not met.",
+  "rubricScores": {
+    "functionality": 35,
+    "artifact_correctness": 24,
+    "usability": 12,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "assistedProductTargetMet": false,
+  "terminalSnapshot": "strategies/reports/operator-finals/case89/index.html",
+  "strengths": [
+    "Actual editor Draw/Erase, opening Play and keyboard/mouse paddle control now work.",
+    "Downloaded JSON round-trips through the real file-input/FileReader path with two custom colors and added brick positions.",
+    "A real controlled brick collision awards score and reaches the win screen on the next frame; three misses update lives 2,1,0 and end the game. Basic restart resets score/lives while bricks remain."
+  ],
+  "defects": [
+    "Required: restart uses the remaining gameplay bricks instead of the complete user-edited design. A custom 21-brick design reduced during play restarts with the reduced set.",
+    "Required: returning from play to the editor restores the starter/default layout, losing custom placements/colors. The win flow can start a new default game, but cannot faithfully replay the edited design.",
+    "The second revision adds design-snapshot helpers but does not finish connecting the play/restart flow before the time cap."
+  ],
+  "verification": [
+    "qa/operator-ornith-breakout.cjs independently tested the immutable terminal copy and current final source; SHA256 5cae12c246ad1f5caf6aeba1f6ca7a3b07ddd9fa6d16de392075c7119bbff1b0. Eight of ten required checks pass; both design-preservation checks fail.",
+    "Controlled game-state fixtures mutate the existing Map in place; actual handlers and scheduled callbacks verify UI/game operation, and exported JSON bytes are loaded via the actual file input.",
+    "Round1 immutable QA documents the initial remaining failures. The final response was interrupted by the shared deadline and therefore has a terminal snapshot, not a fabricated settled round2 snapshot."
+  ],
+  "verificationConcerns": [
+    "VERIFY.md from the first response claims RAF is a no-op; the reference adapter actually schedules callbacks, which independent checks exercised.",
+    "The model spent much of response2 debugging stale/instrumented test copies and VM assumptions; no completed response2 verification of the final app was delivered.",
+    "No native browser layout, hit testing, real touch-device or visual polish check."
+  ],
+  "scopeCompliance": "OS read/write isolation stayed active; no successful out-of-project write or prior benchmark evidence read observed. Pi alone authored all application changes.",
+  "workflowNotes": "One persistent native Pi process/context, 2 of at most3 counted prompts. The 60-minute shared deadline stopped response2 before another settled response; no third prompt or budget extension was issued. Reported model-active repair time56.8min, elapsed60.1min including process cleanup, model-idle gap3.3min. Baseline creation cost remains separate.",
+  "humanOrSupervisorSteering": 2,
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "operator_rescue",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Now update `startPlay` to restore savedDesign:",
+  "workflowInstructions": "operator-rescue-plan.json; run-operator-rescue.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 56.8,
+  "wallMinutes": 56.8,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 47,
+  "toolCalls": 214,
+  "parentToolCalls": 214,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 6,
+  "modelUsageReported": {
+    "input": 70426,
+    "output": 85640,
+    "cacheRead": 16688836,
+    "totalTokens": 16844902
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 134353,
+  "parentPeakReportedPromptTokens": 134353,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 70426,
+    "output": 85640,
+    "cacheRead": 16688836,
+    "totalTokens": 16844902
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 29412,
+  "sha256": "5cae12c246ad1f5caf6aeba1f6ca7a3b07ddd9fa6d16de392075c7119bbff1b0",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 27,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 22,
+    "delegations": [],
+    "controller": "Codex operator with one persistent native Pi repair context",
+    "operatorPrompts": 2,
+    "rounds": [
+      {
+        "prompt": 1,
+        "settledUTC": "2026-11-17T18:24:02.484491+00:00",
+        "modelSeconds": 1773.2,
+        "sha256": "247b16c12a9131f4fb67949f0051b358da44158495465f55e6a22e8c1b423a11",
+        "snapshot": "strategies/reports/operator-rounds/case89/round1"
+      }
+    ],
+    "seed": {
+      "id": "ornith-solo_billion-4",
+      "mode": "solo_billion",
+      "configurationMean": 74.8,
+      "source": "billion_on/ornith/04_breakout_editor/index.html",
+      "report": "billion_on/reports/ornith_04_breakout_editor.report.json",
+      "sha256": "8dfd279dd8b0965bb49d7df2217bb99e3027b76503be0154d72a141968acd883",
+      "score": 64,
+      "grade": "C- - game core improved; save/load and flow broken",
+      "rubricScores": {
+        "functionality": 26,
+        "artifact_correctness": 18,
+        "usability": 8,
+        "self_verification": 2,
+        "autonomy": 10
+      },
+      "baselineScope": "No out-of-directory file writes found on initial log review",
+      "baselineSteering": 0,
+      "baselineMinutes": 4.6,
+      "baselineActiveMinutes": 4.74,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_ornith_04_breakout_editor/index.html"
+    },
+    "repairSettings": {
+      "thinking": "off",
+      "billionContext": false,
+      "compaction": {
+        "enabled": true
+      },
+      "forcedProof": false,
+      "singlePersistentAgent": true,
+      "note": "Copied seed configuration is provenance; repair workflow uses corrected standalone Pi profiles, not the original delegation/extension architecture."
+    },
+    "modelActiveMinutes": 56.8,
+    "operatorReviewMinutes": 3.3,
+    "repairElapsedMinutes": 60.1
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Operator-assisted rescue of a selected existing artifact. Baseline creation cost and new repair cost are separate; normalized product quality is not an autonomous100-point grade."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "supervisorAssisted": true,
+  "assistedProductScore": 88.8
+}

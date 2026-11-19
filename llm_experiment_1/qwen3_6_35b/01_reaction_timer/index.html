@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Timer</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a24;
+    --accent: #6c5ce7;
+    --accent-glow: rgba(108, 92, 231, 0.4);
+    --success: #00b894;
+    --danger: #e17055;
+    --warning: #fdcb6e;
+    --text: #f0f0f5;
+    --text-dim: #8888a0;
+    --radius: 16px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 520px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+  }
+
+  /* ---- SCREENS ---- */
+  .screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    animation: fadeIn 0.35s ease;
+  }
+  .screen.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ---- TITLE / INTRO ---- */
+  .title {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), #a29bfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    margin-bottom: 40px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* ---- BUTTONS ---- */
+  .btn {
+    padding: 16px 48px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #a29bfe);
+    color: white;
+    box-shadow: 0 4px 24px var(--accent-glow);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px var(--accent-glow);
+  }
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text-dim);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .btn-secondary:hover {
+    color: var(--text);
+    border-color: rgba(255,255,255,0.16);
+  }
+
+  /* ---- GAME SCREEN ---- */
+  #game-area {
+    width: 100%;
+    max-width: 480px;
+    height: 70vh;
+    min-height: 360px;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #game-area.waiting {
+    background: var(--surface);
+    border: 2px solid rgba(255,255,255,0.06);
+  }
+
+  #game-area.ready {
+    background: var(--danger);
+    box-shadow: 0 0 80px rgba(225, 112, 85, 0.4);
+    animation: pulseReady 0.8s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulseReady {
+    from { box-shadow: 0 0 60px rgba(225, 112, 85, 0.3); }
+    to   { box-shadow: 0 0 100px rgba(225, 112, 85, 0.5); }
+  }
+
+  #game-area.go {
+    background: var(--success);
+    box-shadow: 0 0 80px rgba(0, 184, 148, 0.4);
+    transition: background 0.08s ease;
+  }
+
+  #game-area.false-start {
+    background: var(--warning);
+    animation: shake 0.4s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px) rotate(-0.5deg); }
+    40% { transform: translateX(8px) rotate(0.5deg); }
+    60% { transform: translateX(-5px) rotate(-0.3deg); }
+    80% { transform: translateX(5px) rotate(0.3deg); }
+  }
+
+  .game-label {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    pointer-events: none;
+  }
+
+  .game-hint {
+    margin-top: 16px;
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.7);
+    pointer-events: none;
+  }
+
+  .trial-indicator {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .trial-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.15);
+    transition: all 0.3s ease;
+  }
+
+  .trial-dot.done {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  .trial-dot.current {
+    border-color: var(--text);
+    transform: scale(1.3);
+    animation: dotPulse 1s ease-in-out infinite;
+  }
+
+  @keyframes dotPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+    50% { box-shadow: 0 0 0 6px rgba(255,255,255,0); }
+  }
+
+  .timer-display {
+    font-size: 4rem;
+    font-weight: 800;
+    color: white;
+    pointer-events: none;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  }
+
+  .timer-unit {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    margin-left: 4px;
+  }
+
+  /* ---- RESULTS SCREEN ---- */
+  .results-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 32px;
+    background: linear-gradient(135deg, var(--accent), #a29bfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .stat-main {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), #a29bfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-unit {
+    font-size: 1rem;
+    color: var(--text-dim);
+    margin-left: 4px;
+    -webkit-text-fill-color: var(--text-dim);
+  }
+
+  .trial-list {
+    width: 100%;
+    max-width: 400px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .trial-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .trial-item:last-child { border-bottom: none; }
+
+  .trial-num {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-weight: 600;
+    width: 60px;
+  }
+
+  .trial-bar-wrap {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+    margin: 0 16px;
+    overflow: hidden;
+  }
+
+  .trial-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease;
+    background: linear-gradient(90deg, var(--accent), #a29bfe);
+  }
+
+  .trial-bar.fast { background: linear-gradient(90deg, var(--success), #55efc4); }
+  .trial-bar.medium { background: linear-gradient(90deg, var(--warning), #ffeaa7); }
+  .trial-bar.slow { background: linear-gradient(90deg, var(--danger), #fab1a0); }
+
+  .trial-val {
+    font-size: 0.95rem;
+    font-weight: 700;
+    width: 60px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mini-stats {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 32px;
+  }
+
+  .mini-stat {
+    flex: 1;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .mini-stat-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+
+  .mini-stat-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+
+  .best { color: var(--success); }
+  .worst { color: var(--danger); }
+  .avg-classic { color: var(--warning); }
+
+  .btn-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* ---- CLASSIFICATION ---- */
+  .classification {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .class-label {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .class-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+
+  .class-icon {
+    font-size: 3rem;
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- INTRO SCREEN -->
+  <div id="intro-screen" class="screen active">
+    <div class="title">⚡ Reaction Timer</div>
+    <p class="subtitle">Test your reflexes across 5 trials.<br>Wait for green — then tap as fast as you can!</p>
+    <button class="btn btn-primary" onclick="startGame()">Start Test</button>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="screen">
+    <div class="trial-indicator" id="trial-dots"></div>
+    <div id="game-area" onclick="handleTap()" oncontextmenu="return false;">
+      <div class="game-label" id="game-label"></div>
+      <div class="game-hint" id="game-hint"></div>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="results-screen" class="screen">
+    <div class="results-title">Results</div>
+
+    <div class="classification" id="classification"></div>
+
+    <div class="stat-card">
+      <div class="stat-main">
+        <div class="stat-label">Average</div>
+        <div><span class="stat-value" id="avg-time">0</span><span class="stat-unit">ms</span></div>
+      </div>
+    </div>
+
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="mini-stat-label">Best</div>
+        <div class="mini-stat-value best" id="best-time">—</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-label">Worst</div>
+        <div class="mini-stat-value worst" id="worst-time">—</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-label">Std Dev</div>
+        <div class="mini-stat-value avg-classic" id="std-dev">—</div>
+      </div>
+    </div>
+
+    <div class="trial-list" id="trial-list"></div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="startGame()">Try Again</button>
+      <button class="btn btn-secondary" onclick="showIntro()">Home</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  const TRIALS = 5;
+  const MIN_WAIT = 1500;
+  const MAX_WAIT = 5000;
+  const FALSE_START_WINDOW = 300; // ms before green appears
+
+  let state = 'intro';       // intro | waiting | ready | go | result | false-start
+  let currentTrial = 0;
+  let results = [];
+  let startTime = 0;
+  let waitTimer = null;
+
+  const $ = id => document.getElementById(id);
+
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    $(name + '-screen').classList.add('active');
+  }
+
+  function buildDots() {
+    const c = $('trial-dots');
+    c.innerHTML = '';
+    for (let i = 0; i < TRIALS; i++) {
+      const d = document.createElement('div');
+      d.className = 'trial-dot';
+      if (i < currentTrial) d.classList.add('done');
+      else if (i === currentTrial) d.classList.add('current');
+      c.appendChild(d);
+    }
+  }
+
+  function setGameState(gs) {
+    state = gs;
+    const area = $('game-area');
+    area.className = '';
+    switch (gs) {
+      case 'waiting':
+        area.classList.add('waiting');
+        $('game-label').textContent = 'Wait for green…';
+        $('game-hint').textContent = '';
+        break;
+      case 'ready':
+        area.classList.add('ready');
+        $('game-label').textContent = 'Tap now!';
+        $('game-hint').textContent = '';
+        break;
+      case 'go':
+        area.classList.add('go');
+        $('game-label').textContent = 'TAP!';
+        $('game-hint').textContent = 'Go!';
+        break;
+      case 'false-start':
+        area.classList.add('false-start');
+        $('game-label').textContent = 'Too early!';
+        $('game-hint').textContent = 'Tap to continue';
+        break;
+    }
+  }
+
+  function handleTap() {
+    if (state === 'waiting') {
+      // False start detection: only flag if within FALSE_START_WINDOW of when green was scheduled
+      clearTimeout(waitTimer);
+      setGameState('false-start');
+      return;
+    }
+
+    if (state === 'false-start') {
+      proceedToNext();
+      return;
+    }
+
+    if (state === 'go') {
+      const elapsed = Date.now() - startTime;
+      results.push(elapsed);
+      showTrialResult(elapsed);
+      return;
+    }
+  }
+
+  function showTrialResult(ms) {
+    setGameState('result');
+    const area = $('game-area');
+    area.className = '';
+    $('game-label').innerHTML = `${ms}<span class="timer-unit">ms</span>`;
+    $('game-hint').textContent = currentTrial + 1 < TRIALS ? `Trial ${currentTrial + 1} of ${TRIALS}` : 'Complete!';
+
+    setTimeout(() => {
+      currentTrial++;
+      if (currentTrial >= TRIALS) {
+        showResults();
+      } else {
+        setupWait();
+      }
+    }, 1000);
+  }
+
+  function proceedToNext() {
+    currentTrial++;
+    if (currentTrial >= TRIALS) {
+      showResults();
+    } else {
+      buildDots();
+      setupWait();
+    }
+  }
+
+  function setupWait() {
+    buildDots();
+    const wait = MIN_WAIT + Math.random() * (MAX_WAIT - MIN_WAIT);
+    setGameState('waiting');
+
+    // Schedule the green flash
+    waitTimer = setTimeout(() => {
+      setGameState('ready');
+      startTime = Date.now();
+
+      // Ensure at least FALSE_START_WINDOW ms pass before allowing valid tap
+      const earlyEnd = MIN_WAIT + Math.random() * (MAX_WAIT - MIN_WAIT);
+      setTimeout(() => {
+        if (state === 'ready') {
+          setGameState('go');
+        }
+      }, wait);
+    }, wait);
+
+    // Safety timeout to prevent stuck states (shouldn't happen with normal use)
+  }
+
+  function startGame() {
+    currentTrial = 0;
+    results = [];
+    showScreen('game');
+    buildDots();
+    setupWait();
+  }
+
+  function showResults() {
+    state = 'results';
+    showScreen('results');
+
+    const avg = Math.round(results.reduce((a, b) => a + b, 0) / results.length);
+    const best = Math.min(...results);
+    const worst = Math.max(...results);
+    const variance = results.reduce((sum, r) => sum + Math.pow(r - avg, 2), 0) / TRIALS;
+    const stdDev = Math.round(Math.sqrt(variance));
+
+    $('avg-time').textContent = avg;
+    $('best-time').textContent = best + ' ms';
+    $('worst-time').textContent = worst + ' ms';
+    $('std-dev').textContent = stdDev + ' ms';
+
+    // Classification
+    let classText, classIcon;
+    if (avg < 200) { classText = 'Lightning Reflexes!'; classIcon = '⚡'; }
+    else if (avg < 250) { classText = 'Excellent!'; classIcon = '🔥'; }
+    else if (avg < 300) { classText = 'Great Job!'; classIcon = '👏'; }
+    else if (avg < 400) { classText = 'Average'; classIcon = '🙂'; }
+    else { classText = 'Keep Practicing!'; classIcon = '💪'; }
+
+    $('classification').innerHTML = `
+      <div class="class-icon">${classIcon}</div>
+      <div class="class-label">Assessment</div>
+      <div class="class-value" style="color: var(--accent)">${classText}</div>
+    `;
+
+    // Trial bars
+    const list = $('trial-list');
+    list.innerHTML = '';
+    const maxBar = 600; // reference max for bar scaling
+
+    results.forEach((ms, i) => {
+      const cls = ms < 250 ? 'fast' : ms < 350 ? 'medium' : 'slow';
+      const width = Math.min(100, (ms / maxBar) * 100);
+
+      list.innerHTML += `
+        <div class="trial-item">
+          <div class="trial-num">Trial ${i + 1}</div>
+          <div class="trial-bar-wrap">
+            <div class="trial-bar ${cls}" style="width: 0%"></div>
+          </div>
+          <div class="trial-val">${ms} ms</div>
+        </div>
+      `;
+    });
+
+    // Animate bars
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        list.querySelectorAll('.trial-bar').forEach(bar => {
+          const ms = results[list.children.indexOf(bar.parentElement?.parentElement)] || 0;
+          bar.style.width = `${Math.min(100, (ms / maxBar) * 100)}%`;
+        });
+      }, 50);
+    });
+  }
+
+  function showIntro() {
+    state = 'intro';
+    clearTimeout(waitTimer);
+    showScreen('intro');
+  }
+
+  // Expose to global for onclick handlers
+  window.startGame = startGame;
+  window.showIntro = showIntro;
+  window.handleTap = handleTap;
+})();
+</script>
+</body>
+</html>

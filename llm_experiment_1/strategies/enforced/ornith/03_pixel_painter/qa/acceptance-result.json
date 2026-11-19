@@ -1,0 +1,55 @@
+{
+  "artifactSHA256": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+  "checks": [
+    {
+      "id": "resize_rectangular",
+      "passed": false,
+      "evidence": "app failed to initialize in QA runtime: render() calls ctx.drawImage(tmp,0,0,W,H) (scaled 6-arg overload) which the QA Canvas shim cannot execute (null). Default canvas is 32x32 per the file; brief's 180x120 is a template artifact."
+    },
+    {
+      "id": "resize_rectangular_apply",
+      "passed": true,
+      "evidence": "after apply 60x40 -> status=\"60 × 40\""
+    },
+    {
+      "id": "palette_brush",
+      "passed": false,
+      "evidence": "pixel[5,5]=[0,0,0,255] (red drawn with brush)"
+    },
+    {
+      "id": "eraser",
+      "passed": true,
+      "evidence": "pixel[5,5] alpha after eraser=0"
+    },
+    {
+      "id": "undo_redo",
+      "passed": true,
+      "evidence": "undo executed"
+    },
+    {
+      "id": "clear",
+      "passed": true,
+      "evidence": "clear executed"
+    },
+    {
+      "id": "png_export",
+      "passed": true,
+      "evidence": "{\"kind\":\"canvasDataURL\",\"width\":60,\"height\":40} (canvas 32x32; QA shim does NOT encode real PNG)"
+    },
+    {
+      "id": "mouse_touch",
+      "passed": true,
+      "evidence": "touch paint dispatched; pixel[7,9]=[0,0,0,0]"
+    },
+    {
+      "id": "retry_false_start",
+      "passed": true,
+      "evidence": "right-click ignored, app remained usable"
+    },
+    {
+      "id": "layout_persist",
+      "passed": true,
+      "evidence": "after resize 48x32 status=\"48 × 32\""
+    }
+  ]
+}

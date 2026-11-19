@@ -1,0 +1,39 @@
+{
+  "method": "Exact-source VM + DOM events and deterministic RAF; only closure-state test seam injected; renderer is a partial Canvas shim, no browser",
+  "startup": "pass",
+  "started": true,
+  "movedHead": {
+    "x": 10,
+    "y": 10
+  },
+  "reversalBlocked": true,
+  "pauseFrozen": true,
+  "resumed": true,
+  "restartDuringLive": {
+    "before": {
+      "x": 12,
+      "y": 10
+    },
+    "after": {
+      "x": 12,
+      "y": 10
+    },
+    "reset": false
+  },
+  "wallCollision": {
+    "gameOver": true,
+    "title": "Game Over"
+  },
+  "restartAfterDeath": true,
+  "selfCollision": true,
+  "tailVacateAllowed": true,
+  "foodAndDifficulty": {
+    "length": 4,
+    "score": 10,
+    "level": 2,
+    "tickMs": 144,
+    "foodNotOnBody": true
+  },
+  "blurPauses": true,
+  "sha256": "c6e2a564de79063abbd6e9b998d2c2f62a5e38a82bc9a3b09995e181e46c3c89"
+}

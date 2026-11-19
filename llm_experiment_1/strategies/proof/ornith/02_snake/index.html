@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Snake</title>
+<style>
+  :root {
+    --bg: #0f1220;
+    --panel: #171a2b;
+    --grid: #1e2238;
+    --snake: #4ade80;
+    --snake-head: #22c55e;
+    --food: #f43f5e;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --accent: #60a5fa;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 16px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+  .scoreboard {
+    display: flex;
+    gap: 24px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 72px;
+  }
+  .stat .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+  .stat .value {
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .board {
+    position: relative;
+  }
+  canvas {
+    background: var(--panel);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    display: block;
+    touch-action: none;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(15,18,32,0.82);
+    border-radius: 12px;
+    text-align: center;
+    padding: 20px;
+  }
+  .overlay.show { display: flex; }
+  .overlay h2 { margin: 0; font-size: 26px; }
+  .overlay p { margin: 0; color: var(--muted); }
+  .btn {
+    margin-top: 6px;
+    background: var(--accent);
+    color: #041024;
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .hint {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.6;
+    max-width: 360px;
+  }
+  kbd {
+    background: #272b41;
+    border: 1px solid #363b57;
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-size: 11px;
+    font-family: inherit;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>SNAKE</h1>
+    <div class="scoreboard">
+      <div class="stat"><span class="label">Score</span><span class="value" id="score">0</span></div>
+      <div class="stat"><span class="label">Best</span><span class="value" id="best">0</span></div>
+      <div class="stat"><span class="label">Level</span><span class="value" id="level">1</span></div>
+    </div>
+    <div class="board">
+      <canvas id="game" width="400" height="400"></canvas>
+      <div class="overlay" id="overlay">
+        <h2 id="overlayTitle">Paused</h2>
+        <p id="overlayText">Press P or Space to resume</p>
+        <button class="btn" id="overlayBtn">Resume</button>
+      </div>
+    </div>
+    <div class="hint">
+      <kbd>&#8593;</kbd> <kbd>&#8594;</kbd> <kbd>&#8595;</kbd> <kbd>&#8592;</kbd> to move &middot;
+      <kbd>P</kbd> pause &middot; <kbd>R</kbd> restart<br>
+      On touch: drag to steer
+    </div>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- Grid configuration -------------------------------------------------
+  var CELL = 20;                 // pixel size of one cell
+  var canvas = document.getElementById("game");
+  var ctx = canvas.getContext("2d");
+  var COLS = canvas.width / CELL; // 20
+  var ROWS = canvas.height / CELL; // 20
+
+  var scoreEl = document.getElementById("score");
+  var bestEl = document.getElementById("best");
+  var levelEl = document.getElementById("level");
+  var overlay = document.getElementById("overlay");
+  var overlayTitle = document.getElementById("overlayTitle");
+  var overlayText = document.getElementById("overlayText");
+  var overlayBtn = document.getElementById("overlayBtn");
+
+  // Tunables for difficulty scaling.
+  var INITIAL_INTERVAL = 120; // ms per step at score 0
+  var MIN_INTERVAL = 55;      // fastest step as difficulty peaks
+  var SCORE_PER_LEVEL = 50;   // points per difficulty level
+
+  var BEST_KEY = "snake_best_score";
+
+  var state = null;
+
+  // ---- Difficulty ---------------------------------------------------------
+  // Returns the tick interval (ms) for a given score. Higher score => smaller
+  // interval => faster / harder. Clamped between MIN_INTERVAL and
+  // INITIAL_INTERVAL.
+  function tickIntervalFor(score) {
+    var levels = Math.floor(score / SCORE_PER_LEVEL);
+    var interval = INITIAL_INTERVAL - levels * 10;
+    if (interval < MIN_INTERVAL) interval = MIN_INTERVAL;
+    if (interval > INITIAL_INTERVAL) interval = INITIAL_INTERVAL;
+    return Math.round(interval);
+  }
+
+  function currentLevel(score) {
+    return Math.floor(score / SCORE_PER_LEVEL) + 1;
+  }
+
+  // ---- Random helper ------------------------------------------------------
+  // Determinism is intentionally left to the environment RNG. We only require
+  // that a non-snake free cell is chosen uniformly.
+  function randInt(n) {
+    return Math.floor(Math.random() * n);
+  }
+
+  function newFood(snake) {
+    var free = [];
+    for (var y = 0; y < ROWS; y++) {
+      for (var x = 0; x < COLS; x++) {
+        var on = false;
+        for (var i = 0; i < snake.length; i++) {
+          if (snake[i].x === x && snake[i].y === y) { on = true; break; }
+        }
+        if (!on) free.push({ x: x, y: y });
+      }
+    }
+    if (free.length === 0) return null; // board full => win
+    return free[randInt(free.length)];
+  }
+
+  function makeInitialSnake() {
+    return [
+      { x: 5, y: 10 },
+      { x: 4, y: 10 },
+      { x: 3, y: 10 },
+    ];
+  }
+
+  function reset() {
+    state = {
+      snake: makeInitialSnake(),
+      direction: "right",
+      nextDirection: "right",
+      food: newFood(makeInitialSnake()),
+      score: 0,
+      gameOver: false,
+      paused: false,
+      started: false,
+    };
+    updateHud();
+    render();
+    hideOverlay();
+    scheduleStep();
+  }
+
+  // ---- Core step ----------------------------------------------------------
+  function step() {
+    if (!state || state.gameOver || state.paused) return;
+
+    var dir = state.nextDirection;
+    var head = state.snake[0];
+    var nx = head.x;
+    var ny = head.y;
+    if (dir === "up") ny--;
+    else if (dir === "down") ny++;
+    else if (dir === "left") nx--;
+    else if (dir === "right") nx++;
+
+    // Wall collision (solid walls).
+    if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) {
+      endGame();
+      return;
+    }
+
+    var movingIntoBody = false;
+    for (var i = 0; i < state.snake.length; i++) {
+      if (state.snake[i].x === nx && state.snake[i].y === ny) {
+        movingIntoBody = true;
+        break;
+      }
+    }
+    // The tail cell will vacate this step unless we are eating; allow the
+    // final escape turn but not a direct collision with the tail's current
+    // position when it moves away.
+    if (movingIntoBody) {
+      endGame();
+      return;
+    }
+
+    var newSnake = [{ x: nx, y: ny }].concat(state.snake);
+
+    if (state.food && nx === state.food.x && ny === state.food.y) {
+      state.score += 10;
+      state.food = newFood(newSnake);
+      if (!state.food) { win(); return; }
+    } else {
+      newSnake.pop(); // move without growing
+    }
+
+    state.snake = newSnake;
+    state.direction = dir;
+    state.started = true;
+    updateHud();
+    render();
+    scheduleStep();
+  }
+
+  function endGame() {
+    state.gameOver = true;
+    var score = state.score;
+    var best = getBest();
+    if (score > best) {
+      setBest(score);
+      best = score;
+    }
+    updateHud();
+    render();
+    showOverlay("Game Over", "Score " + score + " &middot; Best " + best, "Play again");
+  }
+
+  function win() {
+    state.gameOver = true;
+    updateHud();
+    render();
+    showOverlay("You Win!", "You filled the board", "Play again");
+  }
+
+  // ---- Turning ------------------------------------------------------------
+  function setDirection(dir) {
+    if (!state || state.gameOver || state.paused) return;
+    var opposites = { up: "down", down: "up", left: "right", right: "left" };
+    if (opposites[dir] === state.direction) return; // cannot reverse
+    state.nextDirection = dir;
+  }
+
+  // ---- Pause / resume -----------------------------------------------------
+  function togglePause() {
+    if (!state) return;
+    if (state.gameOver) return;
+    state.paused = !state.paused;
+    if (state.paused) {
+      showOverlay("Paused", "Press P or Space to resume", "Resume");
+    } else {
+      hideOverlay();
+      scheduleStep();
+    }
+    updateHud();
+  }
+
+  // ---- Timing / loop ------------------------------------------------------
+  var timerId = null;
+  function scheduleStep() {
+    if (timerId !== null) { clearTimeout(timerId); timerId = null; }
+    if (!state || state.gameOver || state.paused) return;
+    var interval = tickIntervalFor(state.score);
+    timerId = setTimeout(step, interval);
+  }
+
+  // ---- Rendering ----------------------------------------------------------
+  function render() {
+    // Background grid.
+    ctx.fillStyle = getCss("--panel");
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = getCss("--grid");
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var x = CELL; x < canvas.width; x += CELL) {
+      ctx.moveTo(x + 0.5, 0);
+      ctx.lineTo(x + 0.5, canvas.height);
+    }
+    for (var y = CELL; y < canvas.height; y += CELL) {
+      ctx.moveTo(0, y + 0.5);
+      ctx.lineTo(canvas.width, y + 0.5);
+    }
+    ctx.stroke();
+
+    if (!state) return;
+
+    // Food.
+    if (state.food) {
+      ctx.fillStyle = getCss("--food");
+      var fx = state.food.x * CELL;
+      var fy = state.food.y * CELL;
+      roundRect(fx + 3, fy + 3, CELL - 6, CELL - 6, 5);
+      ctx.fill();
+    }
+
+    // Snake.
+    for (var i = state.snake.length - 1; i >= 0; i--) {
+      var c = state.snake[i];
+      ctx.fillStyle = i === 0 ? getCss("--snake-head") : getCss("--snake");
+      roundRect(c.x * CELL + 1, c.y * CELL + 1, CELL - 2, CELL - 2, 5);
+      ctx.fill();
+    }
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arc(x + w - r, y + r, r, -Math.PI / 2, 0);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arc(x + w - r, y + h - r, r, 0, Math.PI / 2);
+    ctx.lineTo(x + r, y + h);
+    ctx.arc(x + r, y + h - r, r, Math.PI / 2, Math.PI);
+    ctx.lineTo(x, y + r);
+    ctx.arc(x + r, y + r, r, Math.PI, Math.PI * 1.5);
+    ctx.closePath();
+  }
+
+  function getCss(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || "#000";
+  }
+
+  // ---- HUD / overlays -----------------------------------------------------
+  function updateHud() {
+    scoreEl.textContent = state ? state.score : 0;
+    bestEl.textContent = getBest();
+    levelEl.textContent = state ? currentLevel(state.score) : 1;
+  }
+
+  function showOverlay(title, text, btnLabel) {
+    overlayTitle.textContent = title;
+    overlayText.textContent = text;
+    overlayBtn.textContent = btnLabel;
+    overlay.classList.add("show");
+  }
+  function hideOverlay() {
+    overlay.classList.remove("show");
+  }
+
+  // ---- Best score persistence --------------------------------------------
+  function getBest() {
+    var v = 0;
+    try { v = parseInt(localStorage.getItem(BEST_KEY) || "0", 10) || 0; } catch (e) {}
+    return v;
+  }
+  function setBest(score) {
+    try { localStorage.setItem(BEST_KEY, String(score)); } catch (e) {}
+  }
+
+  // ---- Input --------------------------------------------------------------
+  var KEYMAP = {
+    ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right",
+    w: "up", s: "down", a: "left", d: "right",
+    W: "up", S: "down", A: "left", D: "right",
+  };
+
+  window.addEventListener("keydown", function (e) {
+    var key = e.key;
+    if (key in KEYMAP) {
+      e.preventDefault();
+      setDirection(KEYMAP[key]);
+      return;
+    }
+    var k = key.toLowerCase();
+    if (k === "p") { e.preventDefault(); togglePause(); return; }
+    if (k === " ") { e.preventDefault(); if (!state || !state.gameOver) togglePause(); return; }
+    if (k === "r") { e.preventDefault(); reset(); return; }
+    if (k === "enter" && state && state.gameOver) { e.preventDefault(); reset(); return; }
+  }, { passive: false });
+
+  // Button tap: resume when paused, restart when game over.
+  overlayBtn.addEventListener("click", function () {
+    if (!state) return;
+    if (state.gameOver) { reset(); return; }
+    if (state.paused) { togglePause(); }
+  });
+
+  // Touch / drag steering.
+  var touchStart = null;
+  canvas.addEventListener("touchstart", function (e) {
+    if (e.touches && e.touches.length) {
+      touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+  }, { passive: true });
+  canvas.addEventListener("touchend", function (e) {
+    if (!touchStart || !state || state.gameOver) { touchStart = null; return; }
+    var t = e.changedTouches && e.changedTouches[0];
+    if (!t) { touchStart = null; return; }
+    var dx = t.clientX - touchStart.x;
+    var dy = t.clientY - touchStart.y;
+    if (Math.abs(dx) < 12 && Math.abs(dy) < 12) { touchStart = null; return; }
+    if (Math.abs(dx) > Math.abs(dy)) {
+      setDirection(dx > 0 ? "right" : "left");
+    } else {
+      setDirection(dy > 0 ? "down" : "up");
+    }
+    touchStart = null;
+  }, { passive: true });
+
+  // ---- Testable API (not part of the game's public contract) --------------
+  // Exposed on window/document purely so automated checks can inspect and
+  // drive the simulation deterministically.
+  window.__snakeState = function () {
+    return {
+      snake: state ? state.snake.map(function (c) { return { x: c.x, y: c.y }; }) : [],
+      direction: state ? state.direction : "right",
+      nextDirection: state ? state.nextDirection : "right",
+      food: state ? state.food : null,
+      score: state ? state.score : 0,
+      gameOver: state ? state.gameOver : false,
+      paused: state ? state.paused : false,
+      cols: COLS,
+      rows: ROWS,
+    };
+  };
+  window.__snakeReset = function (cfg) {
+    cfg = cfg || {};
+    state = {
+      snake: cfg.snake || makeInitialSnake(),
+      direction: cfg.direction || "right",
+      nextDirection: cfg.direction || "right",
+      food: cfg.food || newFood(cfg.snake || makeInitialSnake()),
+      score: cfg.score != null ? cfg.score : 0,
+      gameOver: false,
+      paused: false,
+      started: true,
+    };
+    updateHud();
+    render();
+    hideOverlay();
+    // Note: no auto-scheduled step. The test harness drives stepping explicitly
+    // via window.__snakeStep(), avoiding bootstrap-timer drift.
+  };
+  window.__snakeTickInterval = function (score) {
+    return tickIntervalFor(score == null ? 0 : score);
+  };
+  window.__snakeStep = step;
+  window.__snakeClearTimer = function () {
+    if (timerId !== null) {
+      clearTimeout(timerId);
+      timerId = null;
+    }
+  };
+
+  // ---- Boot ---------------------------------------------------------------
+  reset();
+})();
+</script>
+</body>
+</html>

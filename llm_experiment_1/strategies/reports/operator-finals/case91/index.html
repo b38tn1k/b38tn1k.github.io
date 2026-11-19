@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reaction Timer</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root {
+    --bg: #1a1a2e;
+    --panel: #16213e;
+    --accent-green: #00d4ff;
+    --accent-emerald: #00e876;
+    --accent-red: #ff4757;
+    --text-primary: #eaeaea;
+    --text-secondary: #a0a0b8;
+    --glow-intensity: 0.6;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+  }
+
+  /* ── State classes on body ── */
+  body.state-wait    { background-color: #1a1a2e; }
+  body.state-stimulus { background-color: #004d2e !important; }
+  body.state-early    { background-color: #3d1518 !important; }
+
+  /* ── Main container ── */
+  .container {
+    width: min(90vw, 700px);
+    text-align: center;
+    padding: 2rem;
+  }
+
+  /* ── Header / Title ── */
+  .title {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.4rem;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-emerald));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  /* ── Progress indicators ── */
+  .progress-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-bottom: 2rem;
+  }
+
+  .progress-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 2px solid #2a2a4a;
+    transition: all 0.4s ease;
+  }
+
+  .progress-dot.active {
+    background: var(--accent-green);
+    border-color: var(--accent-emerald);
+    box-shadow: 0 0 10px rgba(0,212,255,0.5);
+  }
+
+  .progress-dot.completed {
+    background: var(--accent-emerald);
+    border-color: var(--accent-emerald);
+  }
+
+  /* ── Status text ── */
+  .status {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: var(--text-secondary);
+    margin-bottom: 1.2rem;
+    min-height: 2em;
+    transition: opacity 0.3s ease;
+  }
+
+  /* ── Big reaction time display ── */
+  .rt-display {
+    font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: clamp(4rem, 12vw, 8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 1rem 0;
+    color: var(--text-primary);
+    text-shadow: 0 0 30px rgba(0,212,255,0.3);
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  body.state-stimulus .rt-display {
+    color: #fff;
+    text-shadow: 0 0 40px rgba(0,232,118,0.6);
+  }
+
+  body.state-early .rt-display {
+    color: var(--accent-red);
+    text-shadow: 0 0 30px rgba(255,71,87,0.4);
+  }
+
+  /* ── Pulse animation (wait phase) ── */
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50%      { opacity: 0.8; transform: scale(1.06); }
+  }
+
+  .pulse-ring {
+    display: inline-block;
+    width: clamp(90px, 20vw, 140px);
+    height: clamp(90px, 20vw, 140px);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%);
+    animation: pulse-glow 2s ease-in-out infinite;
+    margin-bottom: 1rem;
+  }
+
+  /* ── Button styles ── */
+  .btn {
+    display: inline-block;
+    padding: 0.85rem 2.6rem;
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #0f3460, var(--accent-green));
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    letter-spacing: 0.3px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,212,255,0.35);
+  }
+
+  .btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* ── Results panel ── */
+  .results-panel {
+    display: none;
+    background: var(--panel);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    width: min(95vw, 640px);
+    max-width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+    border: 1px solid #2a2a4a;
+  }
+
+  .results-panel.visible {
+    display: block;
+    animation: fade-up 0.5s ease forwards;
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-header {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-emerald));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Stats row ── */
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: clamp(1rem, 4vw, 2.5rem);
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: rgba(0,0,0,0.25);
+    border-radius: 14px;
+    padding: 1rem 1.4rem;
+    min-width: 110px;
+    flex: 1;
+    max-width: 180px;
+    border: 1px solid #2a2a4a;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+  }
+
+  .stat-value {
+    font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--accent-emerald);
+  }
+
+  .stat-value.bad {
+    color: var(--accent-red);
+  }
+
+  /* ── Trial list ── */
+  .trial-list {
+    margin-bottom: 2rem;
+  }
+
+  .trial-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.4rem;
+    font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 0.95rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid transparent;
+    transition: background 0.2s ease;
+  }
+
+  .trial-item:hover {
+    background: rgba(255,255,255,0.06);
+  }
+
+  .trial-item .trial-num {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+
+  .trial-item .trial-time {
+    font-weight: 600;
+  }
+
+  .trial-item.best-trial {
+    border-color: rgba(0,232,118,0.3);
+    color: var(--accent-emerald);
+  }
+
+  .trial-item.worst-trial {
+    border-color: rgba(255,71,87,0.3);
+    color: var(--accent-red);
+  }
+
+  /* ── Bar chart ── */
+  .chart-container {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 14px;
+    border: 1px solid #2a2a4a;
+  }
+
+  .chart-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.8rem;
+    height: clamp(120px, 20vw, 180px);
+  }
+
+  .bar-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    flex: 1;
+    max-width: 60px;
+  }
+
+  .bar-val {
+    font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .bar {
+    width: 100%;
+    border-radius: 6px 6px 2px 2px;
+    background: linear-gradient(to top, var(--accent-green), var(--accent-emerald));
+    transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    min-height: 4px;
+    position: relative;
+  }
+
+  .bar.best {
+    background: linear-gradient(to top, #00e876, #69ff97);
+    box-shadow: 0 0 12px rgba(0,232,118,0.4);
+  }
+
+  .bar.worst {
+    background: linear-gradient(to top, #ff4757, #ff7675);
+    box-shadow: 0 0 12px rgba(255,71,87,0.35);
+  }
+
+  /* ── Clickable game area ── */
+  .game-area {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Utility ── */
+  .hidden { display: none !important; }
+
+  /* ── Responsive tweaks ── */
+  @media (max-width: 480px) {
+    .container { padding: 1.2rem; }
+    .results-panel { padding: 1.5rem 1rem; }
+    .stat-card { min-width: 90px; padding: 0.8rem 1rem; }
+    .chart { gap: 0.5rem; height: 120px; }
+  }
+
+  /* ── Screen flash for stimulus ── */
+  @keyframes screen-flash {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  .flash-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(0,232,118,0.25) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .flash-overlay.on {
+    opacity: 1;
+  }
+</style>
+</head>
+<body class="state-wait">
+
+<div class="flash-overlay" id="flash"></div>
+
+<div class="container">
+  <!-- ── Game Screen ── -->
+  <div id="gameScreen">
+    <h1 class="title">⚡ Reaction Timer</h1>
+    <p class="subtitle">Test how fast you can react — 5 trials, best to worst!</p>
+
+    <div class="progress-row" id="progressRow">
+      <!-- 5 dots injected by JS -->
+    </div>
+
+    <div id="waitingPhase">
+      <div class="pulse-ring"></div>
+      <p class="status" id="statusText">Ready to begin?</p>
+      <button class="btn" id="startBtn">Start Test</button>
+    </div>
+
+    <div id="stimulusPhase" class="hidden">
+      <p class="status" id="stimStatus">Click now!</p>
+    </div>
+
+    <div class="rt-display hidden" id="rtDisplay"></div>
+
+    <button class="btn hidden" id="nextBtn">Next Trial →</button>
+  </div>
+
+  <!-- ── Results Panel ── -->
+  <div class="results-panel" id="resultsPanel">
+    <h2 class="results-header">🏆 Results Summary</h2>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Average</div>
+        <div class="stat-value" id="avgTime">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Best</div>
+        <div class="stat-value" id="bestTime">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Worst</div>
+        <div class="stat-value bad" id="worstTime">—</div>
+      </div>
+    </div>
+
+    <div class="trial-list" id="trialList"></div>
+
+    <div class="chart-container">
+      <div class="chart-title">Trial Comparison</div>
+      <div class="chart" id="chart"></div>
+    </div>
+
+    <div style="margin-top:2rem; text-align:center;">
+      <button class="btn" id="restartBtn">↻  Restart Test</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ── Constants ── */
+  const TOTAL_TRIALS = 5;
+  const MIN_WAIT = 2000;
+  const MAX_WAIT = 5000;
+
+  /* ── DOM refs ── */
+  const body          = document.body;
+  const gameScreen    = document.getElementById("gameScreen");
+  const resultsPanel  = document.getElementById("resultsPanel");
+  const progressRow   = document.getElementById("progressRow");
+  const statusText    = document.getElementById("statusText");
+  const stimStatus    = document.getElementById("stimStatus");
+  const startBtn      = document.getElementById("startBtn");
+  const nextBtn       = document.getElementById("nextBtn");
+  const rtDisplay     = document.getElementById("rtDisplay");
+  const trialList     = document.getElementById("trialList");
+  const chart         = document.getElementById("chart");
+  const avgTime       = document.getElementById("avgTime");
+  const bestTime      = document.getElementById("bestTime");
+  const worstTime     = document.getElementById("worstTime");
+  const restartBtn    = document.getElementById("restartBtn");
+  const flash         = document.getElementById("flash");
+
+  /* ── State ── */
+  let nextTrialNum = 1;    // 1-based index for the NEXT trial to start
+  let results = [];         // array of ms values (0-indexed, length = count)
+  let waitTimeout = null;   // pending setTimeout ref
+  let flashTimeout = null;  // pending flash timeout ref
+  let stimStartTime = 0;    // performance.now() at green flash
+  let phase = "idle";       // idle | waiting | stimulus | result
+
+  /* ── Helpers ── */
+  function show(el)     { el.classList.remove("hidden"); }
+  function hide(el)     { el.classList.add("hidden"); }
+
+  function buildProgress() {
+    progressRow.innerHTML = "";
+    for (let i = 0; i < TOTAL_TRIALS; i++) {
+      const dot = document.createElement("div");
+      dot.className = "progress-dot" + (i === nextTrialNum - 1 ? " active" : "") + (results[i] !== undefined ? " completed" : "");
+      progressRow.appendChild(dot);
+    }
+  }
+
+  /* ── Start a new trial ── */
+  function startTrial() {
+    if (phase === "result") return;
+
+    /* Clear any previous pending timer */
+    clearTimeout(waitTimeout);
+    waitTimeout = null;
+    phase = "waiting";
+    hide(startBtn);
+
+    statusText.textContent = "Wait for green…";
+    body.classList.remove("state-stimulus", "state-early");
+    body.classList.add("state-wait");
+    hide(rtDisplay);
+    stimStatus.classList.add("hidden");
+    flash.classList.remove("on");
+
+    buildProgress();
+
+    /* Random wait 2–5 s */
+    const ms = MIN_WAIT + Math.random() * (MAX_WAIT - MIN_WAIT);
+    waitTimeout = setTimeout(() => {
+      triggerStimulus();
+    }, ms);
+  }
+
+  function triggerStimulus() {
+    phase = "stimulus";
+    stimStartTime = performance.now();
+    body.classList.remove("state-wait");
+    body.classList.add("state-stimulus");
+    flash.classList.add("on");
+    clearTimeout(flashTimeout);
+    flashTimeout = setTimeout(() => flash.classList.remove("on"), 200);
+
+    statusText.textContent = "";
+    document.getElementById("stimulusPhase").classList.remove("hidden");
+    stimStatus.textContent = "Tap!";
+    show(rtDisplay);
+    hide(startBtn);
+    hide(nextBtn);
+    buildProgress();
+  }
+
+  /* ── Record result ── */
+  function recordResult() {
+    phase = "result";
+    const rt = Math.round(performance.now() - stimStartTime);
+    results.push(rt);
+
+    hide(document.getElementById("stimulusPhase"));
+
+    body.classList.remove("state-stimulus");
+    body.classList.add("state-wait");
+    flash.classList.remove("on");
+
+    /* Color-coded RT */
+    let color;
+    if (rt < 200)       color = "#69ff97"; // blazing
+    else if (rt < 350)  color = "#00e876"; // great
+    else if (rt < 500)  color = "#ffd166"; // decent
+    else                color = "#ff4757"; // slow
+
+    rtDisplay.style.color = color;
+    rtDisplay.textContent = rt + " ms";
+
+    buildProgress();
+
+    /* Show next or results — use results.length so exactly TOTAL_TRIALS completes the run */
+    if (results.length < TOTAL_TRIALS) {
+      nextBtn.textContent = "Next Trial →";
+      show(nextBtn);
+    } else {
+      /* Five valid trials completed — immediately show results */
+      clearTimeout(waitTimeout);
+      waitTimeout = null;
+      clearTimeout(flashTimeout);
+      flashTimeout = null;
+      body.classList.remove("state-wait", "state-stimulus");
+      flash.classList.remove("on");
+      hide(nextBtn);
+      hide(startBtn);
+      showResults();
+    }
+  }
+
+  /* ── False start (retries current trial, does NOT consume a measurement) ── */
+  function handleFalseStart() {
+    clearTimeout(waitTimeout);
+    waitTimeout = null;
+    clearTimeout(flashTimeout);
+    flashTimeout = null;
+    phase = "idle";
+    body.classList.remove("state-wait", "state-stimulus", "state-early");
+    body.classList.add("state-early");
+
+    rtDisplay.textContent = "";
+    hide(rtDisplay);
+    hide(document.getElementById("stimulusPhase"));
+    flash.classList.remove("on");
+
+    statusText.textContent = "Too early! Click to try again.";
+    statusText.style.color = "#ff4757";
+    show(startBtn);
+    startBtn.textContent = "Try Again";
+    hide(nextBtn);
+  }
+
+  /* ── Results screen ── */
+  function showResults() {
+    /* Clear all pending timers */
+    clearTimeout(waitTimeout);
+    waitTimeout = null;
+    clearTimeout(flashTimeout);
+    flashTimeout = null;
+    
+    gameScreen.classList.add("hidden");
+    resultsPanel.classList.add("visible");
+
+    const best = Math.min(...results);
+    const worst = Math.max(...results);
+    const avg  = Math.round(results.reduce((a, b) => a + b, 0) / results.length);
+
+    avgTime.textContent   = avg + " ms";
+    bestTime.textContent  = best + " ms";
+    worstTime.textContent = worst + " ms";
+
+    /* Trial list */
+    trialList.innerHTML = "";
+    results.forEach((rt, i) => {
+      const item = document.createElement("div");
+      item.className = "trial-item" + (rt === best ? " best-trial" : "") + (rt === worst ? " worst-trial" : "");
+      item.innerHTML =
+        '<span class="trial-num">Trial ' + (i + 1) + '</span>' +
+        '<span class="trial-time">' + rt + ' ms</span>';
+      trialList.appendChild(item);
+    });
+
+    /* Bar chart */
+    buildChart(best, worst);
+  }
+
+  function buildChart(best, worst) {
+    chart.innerHTML = "";
+    const maxBar = Math.max(...results) * 1.25; // 25% headroom
+
+    results.forEach((rt, i) => {
+      const col = document.createElement("div");
+      col.className = "bar-col";
+
+      const val = document.createElement("span");
+      val.className = "bar-val";
+      val.textContent = rt + "ms";
+
+      const bar = document.createElement("div");
+      bar.className = "bar" + (rt === best ? " best" : "") + (rt === worst ? " worst" : "");
+      const height = Math.max((rt / maxBar) * 100, 4); // min 4 px
+      /* Defer so transition fires */
+      requestAnimationFrame(() => {
+        setTimeout(() => { bar.style.height = height + "%"; }, 50 + i * 80);
+      });
+
+      col.appendChild(val);
+      col.appendChild(bar);
+      chart.appendChild(col);
+    });
+  }
+
+  /* ── Full restart ── */
+  function fullRestart() {
+    /* Clear all pending timers before resetting */
+    clearTimeout(waitTimeout);
+    waitTimeout = null;
+    clearTimeout(flashTimeout);
+    flashTimeout = null;
+    
+    nextTrialNum = 1;
+    results = [];
+    phase = "idle";
+
+    body.classList.remove("state-wait", "state-stimulus", "state-early");
+    flash.classList.remove("on");
+
+    gameScreen.classList.remove("hidden");
+    resultsPanel.classList.remove("visible");
+
+    statusText.textContent = "Ready to begin?";
+    statusText.style.color = "";
+    rtDisplay.textContent = "";
+    hide(rtDisplay);
+    stimStatus.classList.add("hidden");
+    show(startBtn);
+    startBtn.textContent = "Start Test";
+    hide(nextBtn);
+
+    progressRow.innerHTML = "";
+  }
+
+  /* ── Global click handler (body level) — handles waiting→false-start, stimulus→record, idle→start ── */
+  document.addEventListener("click", function (e) {
+    if (phase === "waiting") {
+      handleFalseStart();
+      return;
+    }
+    if (phase === "stimulus" && body.classList.contains("state-stimulus")) {
+      recordResult();
+      return;
+    }
+    if (phase === "idle") {
+      startTrial();
+      return;
+    }
+  });
+
+  startBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (phase === "idle") startTrial();
+  });
+
+  nextBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (phase !== "result") return;
+    showResultsPhase();
+  });
+
+  function showResultsPhase() {
+    /* Clear any lingering timers before entering idle */
+    clearTimeout(waitTimeout);
+    waitTimeout = null;
+    clearTimeout(flashTimeout);
+    flashTimeout = null;
+
+    /* Reset visual + state for next trial */
+    phase = "idle";
+    body.classList.remove("state-wait", "state-stimulus", "state-early");
+    statusText.textContent = "Get ready…";
+    statusText.style.color = "";
+    rtDisplay.textContent = "";
+    hide(rtDisplay);
+    stimStatus.classList.add("hidden");
+    hide(nextBtn);
+    show(startBtn);
+    startBtn.textContent = "Start Trial " + nextTrialNum;
+  }
+
+  /* ── Expose restart button outside the click handler ── */
+  restartBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    fullRestart();
+  });
+
+  /* ── Prevent double-tap zoom on iOS ── */
+  document.addEventListener("touchend", function (e) {
+    if (phase === "idle" || phase === "waiting") {
+      if (!e.target.closest(".btn")) {
+        /* Already handled by click listener; just prevent default on body tap */
+      }
+    }
+  }, { passive: true });
+
+})();
+</script>
+</body>
+</html>

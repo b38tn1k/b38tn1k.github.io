@@ -1,0 +1,247 @@
+{
+  "score": 68,
+  "grade": "C provisional - playable editor/game with JSON roundtrip; restart and replay state remain broken",
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 21,
+    "usability": 12,
+    "self_verification": 3,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Independent actual-handler checks pass editor drawing, dragging and erasing; keyboard, mouse and touch paddle controls; brick collision with ten-point scoring; three life losses and game-over.",
+    "Actual saved JSON Blob bytes round-trip through the file-input/FileReader path and restore the two-brick edited grid. The final HTML starts and uses no external resources.",
+    "The reviewer identified a concrete acceptance-helper bug instead of attributing all six reported failures to the application. The external gate correctly refused inconsistent or incomplete evidence."
+  ],
+  "defects": [
+    "Restart resets score/lives but does not restore the original edited layout. Destroying one of two bricks and pressing Restart leaves one brick; winning by removing every brick leaves an empty layout that immediately wins again.",
+    "Returning to Edit after losing all lives, then clicking Play, retains zero lives instead of starting a fresh three-life game. startPlay resets ball/paddle but not score/lives.",
+    "The acceptance helper clears the entire board before every paintCell and leaves the brush in erase mode. Its assertion expecting two bricks gets zero; the resulting exception prevents all five later checks from executing. Repairs did not resolve this test defect.",
+    "The final review marks status pass while containing blocking findings and explicitly admitting that most requested behavior was not exercised by the suite. The gate rejected it. Most test/repair phases exhausted their budgets, for 59.33 minutes total."
+  ],
+  "verification": [
+    "Independent reports/enforced_ornith_04_breakout_editor.qa.cjs/.qa.json uses exact final source, real editor/toolbar/keyboard/pointer/file handlers, virtual timed physics and controlled ball fixtures. App algorithms are not replaced.",
+    "Final artifact SHA-256: 0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81. Seven independent checks cover editing, play input, scoring, restart, lives, replay and actual JSON roundtrip. Five pass; restart and replay reset fail."
+  ],
+  "verificationConcerns": [
+    "The agent's six failed checks are a cascade from one faulty test helper, not evidence of six separate application failures. Independent checks distinguish actual working behavior from that verifier failure.",
+    "Partial DOM/Canvas checks do not establish browser appearance, native rendering, device touch handling or long-duration gameplay stability. No independent browser automation was used.",
+    "One attempt per configuration; this score does not establish a causal advantage for the enforced workflow."
+  ],
+  "scopeCompliance": "Application changes came only from Pi build/repair stages. Tester/reviewer could not edit index.html and repair could not edit acceptance evidence. No supervisor application edits or debugging hints.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Build/test/review and two repair/test/review cycles were enforced. Final acceptance gate failed. Generic automatic stage-deadline notices were mechanical workflow messages, not app-specific supervision. Functional app quality is assessed independently of the broken agent suite.",
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "I've completed my review and written `qa/review.json`.\n\n## Summary\n\n**Verdict: pass** (with a critical caveat recorded honestly).\n\nThe application `index.html` is a working, self-contained Breakout level editor. My independent reproduction confirms the core editor behavior is correct:\n- Draw a brick at the pointer cell \u2192 `bricks: 1`, `grid[2][3] === {type:'brick',hp:1,color:'#63b3ed'}` \u2713\n- Erase with brush 0 \u2192 `bricks: 0` \u2713\n\n**Why the suite reports all 6 checks failed** \u2014 this is a **test defect**, not an app defect:\n1. The test's `paintCell()` helper (acceptance.cjs) calls `Breakout.clearGrid()` on **every** invocation, then emits a single raw `mousedown`.\n2. In `testDrawErase`, after `setErase(a)` the brush stays 0, and the multi-step block (lines 99-100) calls `paintCell` twice expecting `bricks===2`. Each call first clears the board, so `bricks` stays 0 \u2192 the assertion at line 107 throws `0 !== 2`.\n3. That single early throw aborts the whole `main()` try/catch (line ~332), so checks 2-6 never run and are recorded with empty evidence \u2014 a cascade, not six separate failures.\n\nI proved this with `.scratch/repro.cjs` and `.scratch/repro2.cjs` (the latter gets `1` even when resetting to the draw brush, because the per-call `clearGrid()` wipes the board).\n\n**Residual risk:** I could only verify the atomic draw/erase ops end-to-end; the physics/save/load paths exist and are wired to real handlers but the failing suite aborts before reaching them. A repair agent should fix the `paintCell` test helper (don't clear on each call; set the correct brush), not modify the application.\n\nI did not modify the app, acceptance tests, or harness \u2014 only added `.scratch/*` reproduction scripts, and `qa/review.json` is the only file I wrote under `qa/`.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 5,
+  "elapsedMinutes": 59.33,
+  "wallMinutes": 59.33,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "repair_limit",
+  "exitCode": 1,
+  "promptWords": 47,
+  "toolCalls": 340,
+  "parentToolCalls": 0,
+  "childToolCalls": 340,
+  "toolResultsMarkedError": 39,
+  "modelUsageReported": {
+    "input": 203319,
+    "output": 112112,
+    "cacheRead": 7056050,
+    "totalTokens": 7371481
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 44942,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 44942,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 203319,
+    "output": 112112,
+    "cacheRead": 7056050,
+    "totalTokens": 7371481
+  },
+  "artifactBytes": 23520,
+  "sha256": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 3,
+      "review": 3,
+      "repair": 2
+    },
+    "rolesCompleted": {
+      "build": 1,
+      "review": 2
+    },
+    "parentArtifactReads": 16,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 8,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 6.77,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": null,
+        "artifactAfter": "4503b61bd86a6b36834bd1222fa8714c06a169227d33e6c901ae0165dcc86a33",
+        "prompt": "enforced/ornith/04_breakout_editor/runtime/01-build/prompt.txt",
+        "events": "enforced/ornith/04_breakout_editor/runtime/01-build/events.jsonl",
+        "stderr": "enforced/ornith/04_breakout_editor/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 8.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "4503b61bd86a6b36834bd1222fa8714c06a169227d33e6c901ae0165dcc86a33",
+        "artifactAfter": "4503b61bd86a6b36834bd1222fa8714c06a169227d33e6c901ae0165dcc86a33",
+        "prompt": "enforced/ornith/04_breakout_editor/runtime/02-test/prompt.txt",
+        "events": "enforced/ornith/04_breakout_editor/runtime/02-test/events.jsonl",
+        "stderr": "enforced/ornith/04_breakout_editor/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 5.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "4503b61bd86a6b36834bd1222fa8714c06a169227d33e6c901ae0165dcc86a33",
+        "artifactAfter": "4503b61bd86a6b36834bd1222fa8714c06a169227d33e6c901ae0165dcc86a33",
+        "prompt": "enforced/ornith/04_breakout_editor/runtime/03-review/prompt.txt",
+        "events": "enforced/ornith/04_breakout_editor/runtime/03-review/events.jsonl",
+        "stderr": "enforced/ornith/04_breakout_editor/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 10.01,
+        "reason": "stage_time_limit",
+        "exitCode": 0,
+        "artifactBefore": "4503b61bd86a6b36834bd1222fa8714c06a169227d33e6c901ae0165dcc86a33",
+        "artifactAfter": "0500fd2029274eb1e569015050c4f11338292dba37903568cd6f019a7992206d",
+        "prompt": "enforced/ornith/04_breakout_editor/runtime/04-repair/prompt.txt",
+        "events": "enforced/ornith/04_breakout_editor/runtime/04-repair/events.jsonl",
+        "stderr": "enforced/ornith/04_breakout_editor/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 5,
+        "minutes": 6.11,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "0500fd2029274eb1e569015050c4f11338292dba37903568cd6f019a7992206d",
+        "artifactAfter": "0500fd2029274eb1e569015050c4f11338292dba37903568cd6f019a7992206d",
+        "prompt": "enforced/ornith/04_breakout_editor/runtime/05-test/prompt.txt",
+        "events": "enforced/ornith/04_breakout_editor/runtime/05-test/events.jsonl",
+        "stderr": "enforced/ornith/04_breakout_editor/runtime/05-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 6,
+        "minutes": 3.07,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "0500fd2029274eb1e569015050c4f11338292dba37903568cd6f019a7992206d",
+        "artifactAfter": "0500fd2029274eb1e569015050c4f11338292dba37903568cd6f019a7992206d",
+        "prompt": "enforced/ornith/04_breakout_editor/runtime/06-review/prompt.txt",
+        "events": "enforced/ornith/04_breakout_editor/runtime/06-review/events.jsonl",
+        "stderr": "enforced/ornith/04_breakout_editor/runtime/06-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 7,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "0500fd2029274eb1e569015050c4f11338292dba37903568cd6f019a7992206d",
+        "artifactAfter": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+        "prompt": "enforced/ornith/04_breakout_editor/runtime/07-repair/prompt.txt",
+        "events": "enforced/ornith/04_breakout_editor/runtime/07-repair/events.jsonl",
+        "stderr": "enforced/ornith/04_breakout_editor/runtime/07-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 8,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+        "artifactAfter": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+        "prompt": "enforced/ornith/04_breakout_editor/runtime/08-test/prompt.txt",
+        "events": "enforced/ornith/04_breakout_editor/runtime/08-test/events.jsonl",
+        "stderr": "enforced/ornith/04_breakout_editor/runtime/08-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 9,
+        "minutes": 3.94,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+        "artifactAfter": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+        "prompt": "enforced/ornith/04_breakout_editor/runtime/09-review/prompt.txt",
+        "events": "enforced/ornith/04_breakout_editor/runtime/09-review/events.jsonl",
+        "stderr": "enforced/ornith/04_breakout_editor/runtime/09-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+      "errors": [
+        "Executable acceptance test did not exit successfully",
+        "Acceptance check missing/failed: editor_draw_erase",
+        "Acceptance check missing/failed: play_controls",
+        "Acceptance check missing/failed: brick_score",
+        "Acceptance check missing/failed: lives_game_over",
+        "Acceptance check missing/failed: restart_layout",
+        "Acceptance check missing/failed: json_roundtrip",
+        "Acceptance ledger contains a failed check; every recorded check must pass",
+        "Verifier did not exercise timed application execution",
+        "Independent review missing, stale or reports blocking findings"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": false
+}

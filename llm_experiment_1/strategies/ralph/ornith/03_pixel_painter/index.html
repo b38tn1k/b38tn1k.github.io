@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pixel Painter</title>
+<style>
+  :root{
+    --bg:#1b1c22;
+    --panel:#262730;
+    --panel2:#2f3038;
+    --ink:#e8e8ec;
+    --muted:#9a9aa6;
+    --accent:#4c8dff;
+    --border:#3a3b45;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
+  .app{max-width:980px;margin:0 auto;padding:12px;}
+  h1{font-size:18px;margin:0 0 12px;font-weight:600;letter-spacing:.3px;}
+  .row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:12px;}
+  .controls{gap:10px;}
+  label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px;}
+  input[type=number]{width:72px;background:var(--panel2);border:1px solid var(--border);
+    color:var(--ink);border-radius:6px;padding:6px 8px;font-size:13px;}
+  .toolbtns{display:flex;gap:6px;}
+  button{background:var(--panel2);color:var(--ink);border:1px solid var(--border);
+    border-radius:6px;padding:7px 11px;font-size:13px;cursor:pointer;}
+  button:hover{border-color:var(--accent);}
+  button.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+  button:disabled{opacity:.45;cursor:not-allowed;}
+  .palette{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .swatch{width:24px;height:24px;border-radius:5px;border:2px solid transparent;cursor:pointer;
+    background-size:cover;}
+  .swatch.active{border-color:#fff;box-shadow:0 0 0 2px var(--accent);}
+  .swatch.eraser{background:
+    linear-gradient(45deg,#555 25%,transparent 25%),
+    linear-gradient(-45deg,#555 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#555 75%),
+    linear-gradient(-45deg,transparent 75%,#555 75%);
+    background-size:12px 12px;background-position:0 0,0 6px,6px -6px,-6px 0px;}
+  #canvasWrap{margin-top:12px;overflow:auto;background:var(--panel);
+    border:1px solid var(--border);border-radius:10px;padding:10px;}
+  canvas{background:#121216;border-radius:4px;image-rendering:pixelated;touch-action:none;cursor:crosshair;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field>span{font-size:11px;color:var(--muted);}
+  .hint{font-size:11px;color:var(--muted);margin-top:6px;}
+  .size-err{color:#ff7a7a;font-size:11px;min-height:14px;}
+  .spacer{flex:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>🎨 Pixel Painter</h1>
+
+  <div class="panel controls row">
+    <label class="field">
+      Width
+      <input type="number" id="width" min="1" max="512" value="16">
+    </label>
+    <label class="field">
+      Height
+      <input type="number" id="height" min="1" max="512" value="16">
+    </label>
+    <div class="size-err" id="sizeErr" role="alert"></div>
+    <button id="applySize">Apply Size</button>
+
+    <div class="spacer"></div>
+
+    <div class="toolbtns">
+      <button id="tool-brush" class="active" data-tool="brush">Brush</button>
+      <button id="tool-eraser" data-tool="eraser">Eraser</button>
+    </div>
+  </div>
+
+  <div class="panel controls row" style="margin-top:12px">
+    <span style="font-size:12px;color:var(--muted)">Color</span>
+    <div class="palette" id="palette"></div>
+    <label class="field" style="flex-direction:row;align-items:center;gap:6px">
+      <span style="display:inline-block">Custom</span>
+      <input type="color" id="colorPicker" value="#4c8dff" style="width:42px;height:30px;padding:0;background:none;border:none;">
+    </label>
+  </div>
+
+  <div class="panel controls row" style="margin-top:12px">
+    <button id="undo" disabled>Undo</button>
+    <button id="redo" disabled>Redo</button>
+    <button id="clear">Clear</button>
+    <button id="export">Export PNG</button>
+  </div>
+
+  <div id="canvasWrap">
+    <canvas id="canvas" width="16" height="16"></canvas>
+  </div>
+  <div class="hint">Click or drag on the canvas to paint. Use Brush or Eraser. Export saves your art as a PNG.</div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Config ----------
+  var DEFAULT_PALETTE = [
+    '#000000','#ffffff','#ff0000','#ff8800','#ffe600','#88ff00',
+    '#00ff66','#00dddd','#0088ff','#8833ff','#ff33cc','#884422',
+    '#775533','#cccccc','#888888','#444444'
+  ];
+
+  var MIN_SIZE = 1, MAX_SIZE = 512;
+
+  // ---------- State ----------
+  var width = 16, height = 16;
+  var tool = 'brush';             // 'brush' | 'eraser'
+  var currentColor = DEFAULT_PALETTE[0];
+  var isDrawing = false;
+  var lastCell = null;            // {x,y} of last painted cell (for drag lines)
+
+  // History stacks: arrays of {width,h,pixels} snapshots
+  var past = [];
+  var future = [];
+  var MAX_UNDO = 60;
+
+  // ---------- DOM ----------
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
+  var widthInput = document.getElementById('width');
+  var heightInput = document.getElementById('height');
+  var sizeErr = document.getElementById('sizeErr');
+  var applySizeBtn = document.getElementById('applySize');
+  var brushBtn = document.getElementById('tool-brush');
+  var eraserBtn = document.getElementById('tool-eraser');
+  var paletteEl = document.getElementById('palette');
+  var colorPicker = document.getElementById('colorPicker');
+  var undoBtn = document.getElementById('undo');
+  var redoBtn = document.getElementById('redo');
+  var clearBtn = document.getElementById('clear');
+  var exportBtn = document.getElementById('export');
+  var canvasWrap = document.getElementById('canvasWrap');
+
+  // ---------- Data helpers ----------
+  function makePixels(w,h){ return new Uint8ClampedArray((w||0)*(h||0)*4); }
+
+  function snapshot(){
+    return { width: width, height: height, pixels: Array.from(statePixels) };
+  }
+
+  function loadSnapshot(s){
+    width = s.width; height = s.height;
+    var next = makePixels(width, height);
+    next.set(s.pixels);
+    statePixels = next;
+  }
+
+  // current active pixel buffer
+  var statePixels = makePixels(width, height);
+
+  // ---------- Rendering ----------
+  function buildImageData(){
+    var img = ctx.createImageData(width, height);
+    img.data.set(statePixels);
+    return img;
+  }
+
+  function renderCanvas(){
+    ctx.clearRect(0, 0, width, height);
+    if(width>0 && height>0){
+      ctx.putImageData(buildImageData(), 0, 0);
+    }
+  }
+
+  function resizeCanvasDOM(){
+    canvas.width = width;
+    canvas.height = height;
+  }
+
+  // ---------- History ----------
+  function pushHistory(){
+    past.push(snapshot());
+    if(past.length > MAX_UNDO) past.shift();
+    future = [];
+    syncHistoryButtons();
+  }
+
+  function undo(){
+    if(past.length === 0) return false;
+    future.push(snapshot());
+    loadSnapshot(past.pop());
+    resizeCanvasDOM();
+    renderCanvas();
+    syncHistoryButtons();
+    return true;
+  }
+
+  function redo(){
+    if(future.length === 0) return false;
+    past.push(snapshot());
+    loadSnapshot(future.pop());
+    resizeCanvasDOM();
+    renderCanvas();
+    syncHistoryButtons();
+    return true;
+  }
+
+  function syncHistoryButtons(){
+    undoBtn.disabled = past.length === 0;
+    redoBtn.disabled = future.length === 0;
+  }
+
+  // ---------- Painting ----------
+  function clampCell(x,y){
+    return { x: Math.min(Math.max(0, x|0), width-1), y: Math.min(Math.max(0, y|0), height-1) };
+  }
+
+  function setCell(x, y){
+    var c = clampCell(x, y);
+    var i = (c.y * width + c.x) * 4;
+    if(tool === 'eraser'){
+      statePixels[i] = 0;
+      statePixels[i+1] = 0;
+      statePixels[i+2] = 0;
+      statePixels[i+3] = 0;
+    } else {
+      var col = parseColor(currentColor);
+      statePixels[i]   = col[0];
+      statePixels[i+1] = col[1];
+      statePixels[i+2] = col[2];
+      statePixels[i+3] = 255;
+    }
+  }
+
+  function parseColor(c){
+    if(/^#[0-9a-f]{3}$/i.test(c)){
+      return [
+        parseInt(c.slice(1,2)+c.slice(1,2),16),
+        parseInt(c.slice(2,3)+c.slice(2,3),16),
+        parseInt(c.slice(3,4)+c.slice(3,4),16),
+        255
+      ];
+    }
+    if(/^#[0-9a-f]{6}$/i.test(c)){
+      return [
+        parseInt(c.slice(1,3),16),
+        parseInt(c.slice(3,5),16),
+        parseInt(c.slice(5,7),16),
+        255
+      ];
+    }
+    return [0,0,0,255];
+  }
+
+  // Interpolate cells between last and current (Bresenham line)
+  function paintAt(clientX, clientY){
+    var rect = canvas.getBoundingClientRect();
+    var scale = canvas.width / rect.width;
+    var x = (clientX - rect.left) * scale;
+    var y = (clientY - rect.top) * scale;
+    var cell = clampCell(Math.floor(x), Math.floor(y));
+
+    if(lastCell){
+      line(lastCell.x, lastCell.y, cell.x, cell.y, function(lx,ly){ setCell(lx,ly); });
+    } else {
+      setCell(cell.x, cell.y);
+    }
+    lastCell = cell;
+  }
+
+  // Simple Bresenham line
+  function line(x0,y0,x1,y1,cb){
+    var dx = Math.abs(x1-x0), dy = Math.abs(y1-y0);
+    var sx = x0<x1?1:-1, sy = y0<y1?1:-1;
+    var err = dx-dy;
+    while(true){
+      cb(x0,y0);
+      if(x0===x1 && y0===y1) break;
+      var e2 = 2*err;
+      if(e2>-dy){ err-=dy; x0+=sx; }
+      if(e2<dx){ err+=dx; y0+=sy; }
+    }
+  }
+
+  function stopDrawing(){
+    if(isDrawing){
+      isDrawing = false;
+      lastCell = null;
+      renderCanvas();
+    }
+  }
+
+  // ---------- Pointer handling (mouse + touch) ----------
+  function pointerDown(e){
+    isDrawing = true;
+    lastCell = null;
+    pushHistory();
+    paintAt(e.clientX, e.clientY);
+    renderCanvas();
+    if(e.cancelable) e.preventDefault();
+  }
+
+  function pointerMove(e){
+    if(!isDrawing) return;
+    if(e.cancelable) e.preventDefault();
+    paintAt(e.clientX, e.clientY);
+    renderCanvas();
+  }
+
+  function pointerUp(){
+    stopDrawing();
+  }
+
+  function preventDefaults(){
+    canvas.addEventListener('contextmenu', function(e){ if(e.cancelable) e.preventDefault(); });
+    canvas.addEventListener('dragstart', function(e){ if(e.cancelable) e.preventDefault(); });
+  }
+
+  // ---------- Tools ----------
+  function selectTool(t){
+    tool = t;
+    brushBtn.classList.toggle('active', t === 'brush');
+    eraserBtn.classList.toggle('active', t === 'eraser');
+  }
+
+  // ---------- Palette ----------
+  function buildPalette(){
+    paletteEl.innerHTML = '';
+    DEFAULT_PALETTE.forEach(function(hex){
+      var s = document.createElement('div');
+      s.className = 'swatch';
+      s.style.backgroundColor = hex;
+      s.dataset.color = hex;
+      if(hex === currentColor) s.classList.add('active');
+      s.setAttribute('role','button');
+      s.setAttribute('tabindex','0');
+      s.setAttribute('aria-label','Color '+hex);
+      s.addEventListener('pointerdown', function(e){
+        currentColor = hex;
+        selectTool('brush');
+        refreshPaletteSelection();
+        e.stopPropagation();
+      });
+      paletteEl.appendChild(s);
+    });
+    // eraser entry
+    var er = document.createElement('div');
+    er.className = 'swatch eraser';
+    er.title = 'Eraser';
+    er.dataset.color = '__eraser__';
+    if(tool === 'eraser') er.classList.add('active');
+    er.setAttribute('role','button');
+    er.setAttribute('tabindex','0');
+    er.addEventListener('pointerdown', function(e){
+      selectTool('eraser');
+      refreshPaletteSelection();
+      e.stopPropagation();
+    });
+    paletteEl.appendChild(er);
+  }
+
+  function refreshPaletteSelection(){
+    var sw = paletteEl.querySelectorAll('.swatch');
+    for(var i=0;i<sw.length;i++){
+      var on = (sw[i].dataset.color === currentColor) || (tool==='eraser' && sw[i].dataset.color==='__eraser__');
+      sw[i].classList.toggle('active', !!on);
+    }
+  }
+
+  // ---------- Size handling ----------
+  function parseSize(v){
+    var n = parseInt(v, 10);
+    if(isNaN(n)) return null;
+    return n;
+  }
+
+  function setSize(w,h){
+    var nw = parseSize(w), nh = parseSize(h);
+    if(nw == null || nh == null){
+      showError('Enter whole numbers.');
+      return false;
+    }
+    if(nw < MIN_SIZE || nh < MIN_SIZE || nw > MAX_SIZE || nh > MAX_SIZE){
+      showError('Size must be between '+MIN_SIZE+' and '+MAX_SIZE+'.');
+      return false;
+    }
+    showError('');
+    pushHistory();
+    var old = statePixels, oldW = width, oldH = height;
+    width = nw; height = nh;
+    var next = makePixels(width, height);
+    var copyRows = Math.min(oldH, height);
+    var copyCols = Math.min(oldW, width);
+    for(var y=0;y<copyRows;y++){
+      next.set(old.subarray((y*oldW)*4, (y*oldW)*4 + copyCols*4), y*width*4);
+    }
+    statePixels = next;
+    resizeCanvasDOM();
+    renderCanvas();
+    widthInput.value = width;
+    heightInput.value = height;
+    return true;
+  }
+
+  function showError(msg){ sizeErr.textContent = msg || ''; }
+
+  // ---------- Export ----------
+  function exportPNG(){
+    renderCanvas();
+    var dataURL = canvas.toDataURL('image/png');
+    var a = document.createElement('a');
+    a.href = dataURL;
+    a.download = 'pixel-art.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    return dataURL;
+  }
+
+  // ---------- Clear ----------
+  function clearCanvas(){
+    pushHistory();
+    statePixels = makePixels(width, height);
+    renderCanvas();
+  }
+
+  // ---------- Wire up events ----------
+  function init(){
+    buildPalette();
+    resizeCanvasDOM();
+    renderCanvas();
+    syncHistoryButtons();
+
+    brushBtn.addEventListener('click', function(){ selectTool('brush'); refreshPaletteSelection(); });
+    eraserBtn.addEventListener('click', function(){ selectTool('eraser'); refreshPaletteSelection(); });
+
+    colorPicker.addEventListener('input', function(){
+      currentColor = colorPicker.value;
+      selectTool('brush');
+      refreshPaletteSelection();
+    });
+
+    applySizeBtn.addEventListener('click', function(){ setSize(widthInput.value, heightInput.value); });
+    function onSizeEnter(e){ if(e.key==='Enter'){ setSize(widthInput.value, heightInput.value); } }
+    widthInput.addEventListener('keydown', onSizeEnter);
+    heightInput.addEventListener('keydown', onSizeEnter);
+
+    undoBtn.addEventListener('click', undo);
+    redoBtn.addEventListener('click', redo);
+    clearBtn.addEventListener('click', clearCanvas);
+    exportBtn.addEventListener('click', function(){ exportPNG(); });
+
+    canvas.addEventListener('pointerdown', pointerDown);
+    window.addEventListener('pointermove', pointerMove);
+    window.addEventListener('pointerup', pointerUp);
+
+    preventDefaults();
+  }
+
+  // ---------- Expose for testing ----------
+  window.__pixelPainter = {
+    getState: function(){
+      return {
+        width: width, height: height,
+        tool: tool,
+        currentColor: currentColor,
+        statePixels: Array.from(statePixels)
+      };
+    },
+    __setPixelBuffer: function(w,h,arr){ width=w;height=h;statePixels=Uint8ClampedArray.from?Uint8ClampedArray.from(arr):new Uint8ClampedArray(arr); },
+    __setTool: selectTool,
+    __setColor: function(c){ currentColor=c; },
+    __paintAt: paintAt,
+    __render: renderCanvas,
+    setSize: setSize,
+    undo: undo,
+    redo: redo,
+    clearCanvas: clearCanvas,
+    exportPNG: exportPNG,
+    buildImageData: buildImageData,
+    parseColor: parseColor,
+    __pastLen: function(){ return past.length; },
+    __futureLen: function(){ return future.length; }
+  };
+
+  document.addEventListener('DOMContentLoaded', init);
+  if(document.readyState !== 'loading') init();
+})();
+</script>
+</body>
+</html>

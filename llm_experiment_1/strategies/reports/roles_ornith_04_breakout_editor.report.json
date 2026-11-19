@@ -1,0 +1,206 @@
+{
+  "rubricScores": {
+    "functionality": 31,
+    "artifact_correctness": 20,
+    "usability": 10,
+    "self_verification": 9,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Editor mouse/touch draw and erase, keyboard/mouse/touch paddle control, launch, brick score, win, three-life loss and restart restoration passed independent runtime checks.",
+    "Tester found a genuine paddle midpoint error; developer repaired it and a second tester verified it. Independent center-hit fixture now rebounds vertically."
+  ],
+  "defects": [
+    "Explicit Save and automatic save use the same localStorage key. Editing after Save overwrites the saved version; Load does not restore that earlier layout. No JSON file export is provided.",
+    "Start Editing overlay button enters play mode.",
+    "Shared 60-minute deadline ended the run while UI review was still underway."
+  ],
+  "verificationConcerns": [
+    "Physics repair was demonstrated, but the completed review/repair cycle did not cover persistence semantics."
+  ],
+  "score": 70,
+  "grade": "C provisional - Playable game and tested paddle repair; save/load and shared deadline remain problems",
+  "breakdown": {
+    "functionality": 31,
+    "artifact_correctness": 20,
+    "usability": 10,
+    "self_verification": 9,
+    "autonomy": 0
+  },
+  "verification": [
+    "Independent final-source checks in reports/roles_ornith_04_breakout_editor.qa.json; executable verifier in qa/remaining-*.cjs or the case-specific QA script.",
+    "Final artifact hash checked before assessment; no benchmark application code changed by supervisor."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed.",
+  "workflowNotes": "Role completion is audited from final child metadata as well as foreground tool results; asynchronous chain children are included. Application correctness, workflow adherence and autonomy are separate measures.",
+  "title": "Breakout with level editor",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "roles",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The fix is verified correct. Now a read-only UI review.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 60.27,
+  "wallMinutes": 60.27,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 47,
+  "toolCalls": 214,
+  "parentToolCalls": 24,
+  "childToolCalls": 190,
+  "toolResultsMarkedError": 47,
+  "modelUsageReported": {
+    "input": 174327,
+    "output": 137650,
+    "cacheRead": 5926883,
+    "totalTokens": 6238860
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 67498,
+  "parentPeakReportedPromptTokens": 25782,
+  "childPeakReportedPromptTokens": 67498,
+  "parentModelUsage": {
+    "input": 25114,
+    "output": 4647,
+    "cacheRead": 362761,
+    "totalTokens": 392522
+  },
+  "childModelUsage": {
+    "input": 149213,
+    "output": 133003,
+    "cacheRead": 5564122,
+    "totalTokens": 5846338
+  },
+  "artifactBytes": 27967,
+  "sha256": "5afdbf5f7d2d4a48b100580c80ac061340518337721b1f2fedd2eebf71e9e8e1",
+  "implementationChangesBySupervisor": 0,
+  "humanOrSupervisorSteering": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": false,
+    "implementationHandoff": false,
+    "rolesAttempted": {
+      "developer": 2,
+      "tester": 2,
+      "ui": 1
+    },
+    "rolesCompleted": {
+      "tester": 2,
+      "developer": 2
+    },
+    "parentArtifactReads": 4,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 5,
+    "parentWrites": 0,
+    "delegations": [
+      {
+        "agent": "ui",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 1,
+        "usage": {
+          "input": 10717,
+          "output": 7995,
+          "cacheRead": 3181,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 3
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/04_breakout_editor/artifact-pi/subagents/artifacts/33b1ebc2-cddd-47c4-b25c-ef21ba28342d_ui_0_transcript.jsonl.gz"
+        },
+        "runId": "33b1ebc2-cddd-47c4-b25c-ef21ba28342d",
+        "acceptanceStatus": "rejected"
+      },
+      {
+        "agent": "tester",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 26772,
+          "output": 18002,
+          "cacheRead": 618291,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 45
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/04_breakout_editor/artifact-pi/subagents/artifacts/5ed7b5d8-cc38-44d8-8c60-c47de2a1541a_tester_0_transcript.jsonl.gz"
+        },
+        "runId": "5ed7b5d8-cc38-44d8-8c60-c47de2a1541a",
+        "acceptanceStatus": "attested"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 66831,
+          "output": 56106,
+          "cacheRead": 3743553,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 96
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/04_breakout_editor/artifact-pi/subagents/artifacts/7e99d91b-2faa-40e9-b116-a268699e5707_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "7e99d91b-2faa-40e9-b116-a268699e5707",
+        "acceptanceStatus": "attested"
+      },
+      {
+        "agent": "developer",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 3334,
+          "output": 840,
+          "cacheRead": 9118,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 4
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/04_breakout_editor/artifact-pi/subagents/artifacts/d2e9ed2a-28f9-40eb-9b78-4615e4be0f57_developer_0_transcript.jsonl.gz"
+        },
+        "runId": "d2e9ed2a-28f9-40eb-9b78-4615e4be0f57",
+        "acceptanceStatus": "attested"
+      },
+      {
+        "agent": "tester",
+        "model": "songbird/ornith-1.5:35b-256k:off",
+        "exitCode": 0,
+        "usage": {
+          "input": 41559,
+          "output": 50060,
+          "cacheRead": 1189979,
+          "cacheWrite": 0,
+          "cost": 0,
+          "turns": 45
+        },
+        "artifactPaths": {
+          "transcriptPath": "/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/roles/ornith/04_breakout_editor/artifact-pi/subagents/artifacts/dfd608b5-1858-4b79-9cba-b357fe07a506_tester_0_transcript.jsonl.gz"
+        },
+        "runId": "dfd608b5-1858-4b79-9cba-b357fe07a506",
+        "acceptanceStatus": "attested"
+      }
+    ]
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "method": "Exact final source, actual controls and scheduled timers in independent Node VM/DOM with native Canvas2D. readyState is loading during inline script execution, followed by the helper DOMContentLoaded event; no application algorithm replaced. No browser layout/GPU/default actions or physical testing.",
+  "sha256": "60294dfdd2807dc93358772030074820f91cd8b832aafa0adbbccfa1da030080",
+  "checks": [
+    {
+      "id": "reaction_excludes_random_wait",
+      "pass": false,
+      "error": "Reaction includes the pre-cue waiting period",
+      "actual": 1700,
+      "expected": 200
+    },
+    {
+      "id": "five_actual_trials_and_correct_summary",
+      "pass": false,
+      "error": "Summary averages inflated reaction values",
+      "actual": "1758 ms",
+      "expected": "250 ms"
+    },
+    {
+      "id": "reset_during_wait_cancels_cue",
+      "pass": true,
+      "evidence": {
+        "reset": true
+      }
+    },
+    {
+      "id": "reset_during_intertrial_delay_stays_reset",
+      "pass": false,
+      "error": "Untracked 400ms transition starts a new round after Reset",
+      "actual": "waiting",
+      "expected": "idle"
+    },
+    {
+      "id": "false_start_is_detected",
+      "pass": true,
+      "evidence": {
+        "detected": true,
+        "consumesTrial": true
+      }
+    },
+    {
+      "id": "keyboard_reaction_handler",
+      "pass": true,
+      "evidence": {
+        "keyboard": true
+      }
+    }
+  ],
+  "pass": false
+}

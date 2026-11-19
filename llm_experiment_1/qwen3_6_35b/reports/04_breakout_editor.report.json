@@ -1,0 +1,52 @@
+{
+  "status": "completed_with_critical_defects",
+  "grade": "D - controls work; collision physics broken",
+  "score": 55,
+  "rubricScores": {
+    "functionality": 18,
+    "artifact_correctness": 17,
+    "usability": 8,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "verified": [
+    "Exact-source VM startup",
+    "Keyboard and mouse paddle motion",
+    "Editor draw/erase",
+    "Own-format JSON save/load data round trip"
+  ],
+  "criticalDefects": [
+    "Paddle rebound computes a downward vertical velocity: centered incoming vy5 becomes positive5.25 instead of upward",
+    "Brick-damage lookup always exits after row0 because hitBrick remains truthy; collisions with other rows bounce without damaging bricks"
+  ],
+  "additionalDefects": [
+    "Restart resets score/lives but does not restore the starting layout",
+    "Mouse down edits cells even during play",
+    "Stationary unlaunched ball does not follow moving paddle"
+  ],
+  "verificationConcerns": [
+    "Generated a plausible interface but no recorded real collision/control assertions during self-verification"
+  ],
+  "scopeCompliance": "No out-of-directory file writes found in run",
+  "assessment": "Improved control wiring relative to Ornith, but broken rebounds and indestructible rows prevent a working Breakout game.",
+  "title": "Breakout with level editor",
+  "elapsedMinutes": 3.3,
+  "promptWords": 47,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "toolCalls": 8,
+  "toolResultsMarkedError": 0,
+  "modelUsageReported": {
+    "input": 2484,
+    "output": 13163,
+    "cacheRead": 97142,
+    "totalTokens": 112789
+  },
+  "artifactBytes": 29656,
+  "sha256": "dd85765aadbfc2deb77d3012512482227a09783300842ab2c1f37e1aba9d9899",
+  "assistantTextContainingToolCallMarkup": 0,
+  "limitations": [
+    "Independent browser/visual testing not authorized after prior browser-origin denial; used exact-source VM checks and source review.",
+    "Qwen64K context differs from Ornith256K; not a controlled model-only comparison."
+  ]
+}

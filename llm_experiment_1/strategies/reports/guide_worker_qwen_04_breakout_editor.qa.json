@@ -1,0 +1,30 @@
+{
+  "sha256": "adfb1c8e580f204a93c5c5549c6e7eafb47bc1f16c69b15ca09bc4725f81570c",
+  "method": "Exact-source VM/DOM events, controlled physics states and real JSON Blob text; no browser",
+  "inlineHandlerFixture": "HTML onclick attributes explicitly executed; linkedom does not compile them.",
+  "startup": "pass",
+  "draw": 1,
+  "erase": true,
+  "roundTrip": true,
+  "launch": true,
+  "keyboardPaddle": true,
+  "mousePaddle": true,
+  "hit": {
+    "score": 10,
+    "active": 0,
+    "mode": "won"
+  },
+  "restart": {
+    "score": 0,
+    "lives": 3,
+    "active": 1
+  },
+  "loss": [
+    2,
+    1,
+    0
+  ],
+  "gameOver": "lost",
+  "placeButtonReturnsToEditor": false,
+  "shortLoadRetainsOldCells": true
+}

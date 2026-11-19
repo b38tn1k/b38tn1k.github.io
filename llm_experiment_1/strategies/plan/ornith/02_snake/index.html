@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake</title>
+<style>
+  :root {
+    --bg: #0f1220;
+    --panel: #171b2e;
+    --grid: #1c2138;
+    --snake: #5cf29b;
+    --snake-head: #7effb0;
+    --food: #ff5d73;
+    --text: #e7ecf5;
+    --muted: #8891b0;
+    --accent: #5cc8ff;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100%;
+  }
+  .wrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 16px;
+  }
+  .hud {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .stat {
+    background: var(--panel);
+    border: 1px solid #232a45;
+    border-radius: 12px;
+    padding: 8px 16px;
+    min-width: 78px;
+    text-align: center;
+  }
+  .stat .label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stat .value {
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .stage {
+    position: relative;
+    width: min(92vw, 480px);
+    aspect-ratio: 1 / 1;
+  }
+  canvas {
+    width: 100%;
+    height: 100%;
+    background: var(--panel);
+    border: 2px solid #232a45;
+    border-radius: 14px;
+    display: block;
+    touch-action: none;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgba(10, 13, 26, 0.82);
+    border-radius: 14px;
+    text-align: center;
+    padding: 20px;
+    backdrop-filter: blur(2px);
+  }
+  .overlay.hidden { display: none; }
+  .overlay h1 {
+    margin: 0;
+    font-size: 30px;
+    letter-spacing: 1px;
+  }
+  .overlay p { margin: 0; color: var(--muted); font-size: 14px; }
+  .overlay .big {
+    color: var(--text);
+    font-size: 16px;
+  }
+  .btn {
+    margin-top: 6px;
+    background: var(--accent);
+    color: #06131f;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .help {
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    max-width: 460px;
+    line-height: 1.5;
+  }
+  kbd {
+    background: #22294222;
+    background: #222a45;
+    border: 1px solid #333c60;
+    border-radius: 6px;
+    padding: 1px 7px;
+    font-size: 12px;
+    font-family: inherit;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hud">
+      <div class="stat"><div class="label">Score</div><div class="value" id="score">0</div></div>
+      <div class="stat"><div class="label">Best</div><div class="value" id="best">0</div></div>
+      <div class="stat"><div class="label">Level</div><div class="value" id="level">1</div></div>
+    </div>
+
+    <div class="stage">
+      <canvas id="game" width="480" height="480"></canvas>
+      <div class="overlay" id="overlay">
+        <h1 id="overlay-title">Snake</h1>
+        <p class="big" id="overlay-msg">Eat the food. Don't hit yourself.</p>
+        <div id="overlay-hint" class="help">Press <kbd>Space</kbd> or <kbd>Enter</kbd> to start</div>
+        <button class="btn" id="overlay-btn">Play</button>
+      </div>
+    </div>
+
+    <div class="help">
+      Move: <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> &nbsp;·&nbsp;
+      Pause: <kbd>Space</kbd>/<kbd>P</kbd> &nbsp;·&nbsp; Restart: <kbd>R</kbd>
+    </div>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- Config ----
+  var GRID = 20;                 // cells per side
+  var CANVAS_PX = 480;           // internal canvas resolution
+  var CELL = CANVAS_PX / GRID;   // px per cell
+  var BASE_TICK = 150;           // ms per move at level 1
+  var MIN_TICK = 60;             // fastest possible
+  var STEP_PER_LEVEL = 6;        // ms faster per food eaten
+  var POINTS_PER_FOOD = 10;
+
+  // ---- Elements ----
+  var canvas = document.getElementById("game");
+  var ctx = canvas.getContext("2d");
+  var scoreEl = document.getElementById("score");
+  var bestEl = document.getElementById("best");
+  var levelEl = document.getElementById("level");
+  var overlay = document.getElementById("overlay");
+  var overlayTitle = document.getElementById("overlay-title");
+  var overlayMsg = document.getElementById("overlay-msg");
+  var overlayHint = document.getElementById("overlay-hint");
+  var overlayBtn = document.getElementById("overlay-btn");
+
+  // ---- Game state ----
+  var snake, dir, nextDir, food, score, level;
+  var tickMs, running, paused, gameOver;
+  var lastTick, rafId, acc;
+  var best = Number(localStorage.getItem("snake:best")) || 0;
+
+  function resetState() {
+    snake = [{ x: 9, y: 10 }, { x: 8, y: 10 }, { x: 7, y: 10 }];
+    dir = { x: 1, y: 0 };
+    nextDir = { x: 1, y: 0 };
+    score = 0;
+    level = 1;
+    tickMs = BASE_TICK;
+    running = false;
+    paused = false;
+    gameOver = false;
+    acc = 0;
+    lastTick = 0;
+    placeFood();
+    updateHud();
+  }
+
+  function placeFood() {
+    var cells = [];
+    for (var y = 0; y < GRID; y++) {
+      for (var x = 0; x < GRID; x++) {
+        var onSnake = false;
+        for (var i = 0; i < snake.length; i++) {
+          if (snake[i].x === x && snake[i].y === y) { onSnake = true; break; }
+        }
+        if (!onSnake) cells.push({ x: x, y: y });
+      }
+    }
+    if (cells.length === 0) { // board full = win
+      food = null;
+      win();
+    } else {
+      food = cells[Math.floor(Math.random() * cells.length)];
+    }
+  }
+
+  function updateHud() {
+    scoreEl.textContent = score;
+    bestEl.textContent = best;
+    levelEl.textContent = level;
+  }
+
+  function start() {
+    if (running && !gameOver) return;
+    resetState();
+    running = true;
+    paused = false;
+    hideOverlay();
+    lastTick = performance.now();
+    acc = 0;
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function togglePause() {
+    if (!running || gameOver) return;
+    paused = !paused;
+    if (paused) {
+      pauseOverlay();
+      cancelAnimationFrame(rafId);
+    } else {
+      hideOverlay();
+      lastTick = performance.now();
+      acc = 0;
+      rafId = requestAnimationFrame(loop);
+    }
+  }
+
+  function win() {
+    running = false;
+    showOverlay("You Win!", "You filled the whole board.", "Play again", true);
+  }
+
+  function doGameOver() {
+    gameOver = true;
+    running = false;
+    cancelAnimationFrame(rafId);
+    if (score > best) {
+      best = score;
+      localStorage.setItem("snake:best", String(best));
+    }
+    updateHud();
+    showOverlay("Game Over", "Score: " + score + "   •   Best: " + best, "Play again", true);
+  }
+
+  // ---- Loop ----
+  function loop(ts) {
+    var delta = ts - lastTick;
+    lastTick = ts;
+    acc += delta;
+    while (acc >= tickMs) {
+      acc -= tickMs;
+      step();
+      if (gameOver || !running || food === null) { return; }
+    }
+    draw();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function step() {
+    // lock direction (prevent reversing)
+    dir = nextDir;
+    var head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+    // wall collision
+    if (head.x < 0 || head.y < 0 || head.x >= GRID || head.y >= GRID) {
+      doGameOver();
+      return;
+    }
+
+    // self collision (ignore the tail cell it's about to vacate,
+    // unless we are about to eat, which we handle below)
+    var willEat = food !== null && head.x === food.x && head.y === food.y;
+    var bodyLimit = willEat ? snake.length : snake.length - 1;
+    for (var i = 0; i < bodyLimit; i++) {
+      if (snake[i].x === head.x && snake[i].y === head.y) {
+        doGameOver();
+        return;
+      }
+    }
+
+    snake.unshift(head);
+
+    if (willEat) {
+      score += POINTS_PER_FOOD;
+      // increase difficulty
+      level = Math.floor((score / POINTS_PER_FOOD)) + 1;
+      tickMs = Math.max(MIN_TICK, BASE_TICK - STEP_PER_LEVEL * (level - 1));
+      placeFood();
+    } else {
+      snake.pop();
+    }
+
+    updateHud();
+  }
+
+  // ---- Rendering ----
+  function draw() {
+    ctx.clearRect(0, 0, CANVAS_PX, CANVAS_PX);
+
+    // grid
+    ctx.strokeStyle = "#1c2138";
+    ctx.lineWidth = 1;
+    for (var i = 1; i < GRID; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * CELL, 0);
+      ctx.lineTo(i * CELL, CANVAS_PX);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(0, i * CELL);
+      ctx.lineTo(CANVAS_PX, i * CELL);
+      ctx.stroke();
+    }
+
+    // food
+    if (food) {
+      drawCell(food.x, food.y, "#ff5d73", true);
+    }
+
+    // snake
+    for (var j = snake.length - 1; j >= 0; j--) {
+      var isHead = j === 0;
+      drawCell(snake[j].x, snake[j].y, isHead ? "#7effb0" : "#5cf29b", false);
+    }
+  }
+
+  function drawCell(gx, gy, color, round) {
+    var pad = 1.5;
+    var x = gx * CELL + pad;
+    var y = gy * CELL + pad;
+    var s = CELL - pad * 2;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (round && s > 0) {
+      var r = s * 0.4;
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + s, y, x + s, y + s, r);
+      ctx.arcTo(x + s, y + s, x, y + s, r);
+      ctx.arcTo(x, y + s, x, y, r);
+      ctx.arcTo(x, y, x + s, y, r);
+      ctx.closePath();
+    } else {
+      var rr = s * 0.22;
+      roundRect(x, y, s, s, rr);
+    }
+    ctx.fill();
+  }
+
+  function roundRect(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  // ---- Overlay helpers ----
+  function showOverlay(title, msg, btn, showHint) {
+    overlayTitle.textContent = title;
+    overlayMsg.textContent = msg;
+    overlayBtn.textContent = btn;
+    overlayHint.style.display = showHint ? "block" : "none";
+    overlay.classList.remove("hidden");
+  }
+  function hideOverlay() { overlay.classList.add("hidden"); }
+  function pauseOverlay() {
+    showOverlay("Paused", "Press Space/P to resume", "Resume", false);
+  }
+
+  // ---- Input ----
+  function setDirection(nx, ny) {
+    // prevent 180° reversal relative to current locked direction
+    if (nx === -dir.x && ny === -dir.y) return;
+    nextDir = { x: nx, y: ny };
+  }
+
+  document.addEventListener("keydown", function (e) {
+    var k = e.key.toLowerCase();
+    switch (k) {
+      case "arrowup": case "w":
+        e.preventDefault(); if (running) setDirection(0, -1);
+        return;
+      case "arrowdown": case "s":
+        e.preventDefault(); if (running) setDirection(0, 1);
+        return;
+      case "arrowleft": case "a":
+        e.preventDefault(); if (running) setDirection(-1, 0);
+        return;
+      case "arrowright": case "d":
+        e.preventDefault(); if (running) setDirection(1, 0);
+        return;
+      case " ":
+        e.preventDefault();
+        if (!running) start(); else togglePause();
+        return;
+      case "p":
+        if (running) togglePause();
+        return;
+      case "enter":
+        e.preventDefault();
+        if (!running) start();
+        return;
+      case "r":
+        if (gameOver || !running) start();
+        return;
+    }
+  });
+
+  overlayBtn.addEventListener("click", function () {
+    if (paused && running) { togglePause(); }
+    else { start(); }
+  });
+
+  // auto-pause when the window loses focus
+  window.addEventListener("blur", function () {
+    if (running && !paused && !gameOver) togglePause();
+  });
+
+  // ---- Init ----
+  resetState();
+  draw();
+})();
+</script>
+</body>
+</html>

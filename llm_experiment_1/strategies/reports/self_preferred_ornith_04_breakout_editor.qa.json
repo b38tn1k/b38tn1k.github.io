@@ -1,0 +1,45 @@
+{
+  "method": "Independent final-source VM/DOM/nativeCanvas2D tests. Real handlers, scheduled callbacks, pixels and export bytes. Closure exposure provides existing state/functions for controlled fixtures without replacing app algorithms. No native browser layout, GPU, hit testing or physical-device verification.",
+  "sha256": "ffc27c2767b699c02a8315a6330e80ec30155a81bc947c34490165bb7e34df0c",
+  "checks": [
+    {
+      "id": "actual_editor_and_file_JSON_roundtrip",
+      "pass": true,
+      "evidence": {
+        "drawErase": true,
+        "fileRoundtrip": true
+      }
+    },
+    {
+      "id": "actual_launch_keyboard_mouse_touch_paddle",
+      "pass": false,
+      "error": "Pointer sets paddleTargetDx but loop discards it without applying",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "played_grid_is_cloned_and_play_layout_restarts",
+      "pass": true,
+      "evidence": {
+        "restartFromOriginal": true
+      }
+    },
+    {
+      "id": "controlled_brick_win_and_three_misses",
+      "pass": true,
+      "evidence": {
+        "win": true,
+        "threeLifeLoss": true
+      }
+    },
+    {
+      "id": "touch_editor_and_drawn_pixel",
+      "pass": true,
+      "evidence": {
+        "touchEditor": true,
+        "pixelDrawn": true
+      }
+    }
+  ],
+  "pass": false
+}

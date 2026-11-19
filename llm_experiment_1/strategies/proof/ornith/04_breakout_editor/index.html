@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Breakout + Level Editor</title>
+<style>
+  :root{
+    --bg:#0b0e18; --panel:#141a2b; --ink:#e8ecf5; --muted:#8a93a8;
+    --accent:#4fd1c5; --danger:#e05a5a; --brick:#e05a5a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    background:radial-gradient(120% 140% at 50% 0%, #16203a 0%, var(--bg) 60%);
+    color:var(--ink);
+    font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    display:flex; flex-direction:column; align-items:center;
+    padding:14px; gap:12px; user-select:none; -webkit-user-select:none;
+    touch-action:manipulation;
+  }
+  h1{margin:0;font-size:20px;letter-spacing:.5px;}
+  .sub{color:var(--muted);font-size:12px;}
+  #hud{
+    display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+    font-variant-numeric:tabular-nums;
+  }
+  .stat{
+    background:var(--panel); border:1px solid #22304f; border-radius:10px;
+    padding:8px 14px; min-width:70px; text-align:center;
+  }
+  .stat .k{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+  .stat .v{font-size:20px;font-weight:700;}
+  #wrap{position:relative;}
+  canvas{
+    background:#060a14; border:1px solid #22304f; border-radius:12px;
+    display:block; touch-action:none;
+  }
+  #overlay{
+    position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+    flex-direction:column; gap:10px; text-align:center; padding:16px;
+    background:rgba(6,10,20,.72); border-radius:12px;
+  }
+  #overlay.show{display:flex;}
+  #overlay h2{margin:0;font-size:26px;}
+  #overlay p{margin:0;color:var(--muted);max-width:340px;}
+  .row{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
+  button{
+    font:inherit; color:var(--ink); background:var(--panel);
+    border:1px solid #2c3a5c; border-radius:10px; padding:9px 14px; cursor:pointer;
+    transition:background .12s ease, border-color .12s ease, transform .05s ease;
+  }
+  button:hover{background:#1c2740; border-color:#3b4f7d;}
+  button:active{transform:translateY(1px);}
+  button.primary{background:var(--accent); color:#05221f; border-color:var(--accent); font-weight:700;}
+  button.active{background:#2b3a5e; border-color:var(--accent);}
+  button:disabled{opacity:.45; cursor:default;}
+  .seg{display:inline-flex; background:var(--panel); border:1px solid #22304f; border-radius:10px; padding:4px; gap:4px;}
+  .seg button{border:none; background:transparent; border-radius:8px; padding:7px 12px;}
+  .seg button.active{background:var(--accent); color:#05221f; font-weight:700;}
+  #editor{display:flex; flex-direction:column; gap:10px; align-items:center;}
+  #editor.hidden{display:none;}
+  #play.hidden{display:none;}
+  .hint{color:var(--muted);font-size:12px; text-align:center; max-width:460px;}
+  .mode{font-size:12px;color:var(--muted);}
+  input[type=file]{display:none;}
+  #toast{
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px);
+    background:#1c2740; border:1px solid #3b4f7d; color:var(--ink);
+    padding:9px 16px; border-radius:10px; opacity:0; transition:.25s ease; font-size:13px;
+    pointer-events:none;
+  }
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+  <h1>Breakout <span class="sub">+ Level Editor</span></h1>
+
+  <div id="hud">
+    <div class="stat"><span class="k">Score</span><span class="v" id="score">0</span></div>
+    <div class="stat"><span class="k">Lives</span><span class="v" id="lives">3</span></div>
+    <div class="stat"><span class="k">Level</span><span class="v" id="lvl">—</span></div>
+    <div class="stat"><span class="k">Bricks</span><span class="v" id="remaining">0</span></div>
+  </div>
+
+  <!-- EDITOR -->
+  <div id="editor">
+    <div class="row">
+      <div class="seg" id="toolseg">
+        <button data-tool="draw" class="active">✏️ Draw</button>
+        <button data-tool="erase">🧽 Erase</button>
+      </div>
+      <div class="seg" id="colorseg">
+        <button data-color="#e05a5a" style="background:#e05a5a" class="active"></button>
+        <button data-color="#5aa0e0" style="background:#5aa0e0"></button>
+        <button data-color="#e0b65a" style="background:#e0b65a"></button>
+        <button data-color="#7be07b" style="background:#7be07b"></button>
+      </div>
+    </div>
+    <canvas id="editorCanvas" width="480" height="320"></canvas>
+    <div class="row">
+      <button id="playBtn" class="primary">▶ Play</button>
+      <button id="clearBtn">Clear</button>
+      <button id="saveBtn">💾 Save JSON</button>
+      <button id="loadBtn">📂 Load JSON</button>
+      <button id="demoBtn">✨ Demo</button>
+      <input id="file" type="file" accept="application/json">
+    </div>
+    <p class="hint">Draw or erase bricks by clicking/dragging on the grid. Then press <b>Play</b>. You can also save your layout to a JSON file and load it later.</p>
+  </div>
+
+  <!-- PLAY -->
+  <div id="play" class="hidden">
+    <div id="wrap">
+      <canvas id="canvas" width="480" height="320"></canvas>
+      <div id="overlay">
+        <h2 id="ovTitle">Ready</h2>
+        <p id="ovText">Press Space or click to launch the paddle.</p>
+        <div class="row">
+          <button id="restartBtn" class="primary">↻ Restart</button>
+          <button id="editBtn">✎ Back to Editor</button>
+        </div>
+      </div>
+    </div>
+    <p class="hint">Move the paddle with the <b>← →</b> keys, mouse, or finger. <b>Space</b> / click launches. <b>P</b> pauses.</p>
+  </div>
+
+  <div id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---- Grid model (source of truth) ----
+  const COLS = 12, ROWS = 8;
+  const W = 480, H = 320;
+  const CELL_W = W / COLS, CELL_H = H / ROWS;
+
+  function defaultColors(){ return ['#e05a5a','#5aa0e0','#e0b65a','#7be07b']; }
+  const BRICK_HP = { '1': 1 }; // all bricks are single-hit by default
+
+  function Game(){
+    this.cols = COLS;
+    this.rows = ROWS;
+    this.bricks = [];        // [{x,y,color,hp}]
+    this.tool = 'draw';
+    this.color = defaultColors()[0];
+
+    // play state
+    this.mode = 'editor';    // 'editor' | 'play'
+    this.score = 0;
+    this.lives = 3;
+    this.levelLabel = '—';
+    this.bricksTotal = 0;
+
+    this.paddle = { x: W*0.5 - 45, y: H - 24, w: 90, h: 12, speed: 7 };
+    this.ball = null;
+    this.keys = { left:false, right:false };
+    this.ready = false;      // ball resting on paddle, awaiting launch
+    this.running = false;    // paused / game over / won
+    this.palette = defaultColors();
+  }
+
+  Game._bricks = function(){ return this.bricks.map(b=>({x:b.x,y:b.y,color:b.color,hp:b.hp})); };
+  Game._cols = function(){ return this.cols; };
+  Game._rows = function(){ return this.rows; };
+  Game._tool = function(){ return this.tool; };
+  Game._curColor = function(){ return this.color; };
+
+  Game._setTool = function(t){
+    if(t==='erase'||t==='draw'){ this.tool=t; return this.tool; } return this.tool;
+  };
+  Game._setCell = function(x,y,action){
+    if(action==='erase'){
+      const i=this.bricks.findIndex(b=>b.x===x&&b.y===y);
+      if(i>=0){ this.bricks.splice(i,1); }
+      return this._bricks();
+    }
+    // draw (default): replace existing
+    const i=this.bricks.findIndex(b=>b.x===x&&b.y===y);
+    const rec={ x:x, y:y, color:this.color, hp:1 };
+    if(i>=0){ this.bricks[i]=rec; } else { this.bricks.push(rec); }
+    return this._bricks();
+  };
+
+  Game._save = function(){
+    const out={ version:1, cols:this.cols, rows:this.rows,
+      bricks:this.bricks.map(b=>({x:b.x,y:b.y,color:b.color,hp:b.hp})) };
+    return JSON.stringify(out);
+  };
+
+  Game._load = function(json){
+    if(json==null || json==='' ) return this._save();
+    let obj;
+    try{ obj=JSON.parse(json); }catch(e){ throw e; }
+    if(!obj || typeof obj!=='object') throw new Error('Invalid level JSON');
+    const arr=Array.isArray(obj.bricks)?obj.bricks:[];
+    const out=[];
+    for(const b of arr){
+      const x=Math.round(+b.x), y=Math.round(+b.y);
+      if(Number.isFinite(x)&&Number.isFinite(y)&&x>=0&&x<this.cols&&y>=0&&y<this.rows){
+        out.push({ x:x, y:y, color:(typeof b.color==='string'&&b.color)?b.color:'#e05a5a', hp:Number(b.hp)||1 });
+      }
+    }
+    this.bricks=out;
+    return this._save();
+  };
+
+  // ---- Rendering ----
+  const editorCv = document.getElementById('editorCanvas');
+  const ectx = editorCv.getContext('2d');
+  const cv = document.getElementById('canvas');
+  const ctx = cv.getContext('2d');
+
+  function drawEditorGrid(){
+    ectx.clearRect(0,0,W,H);
+    ectx.fillStyle='#060a14'; ectx.fillRect(0,0,W,H);
+    // grid lines
+    ectx.strokeStyle='#1a2340'; ectx.lineWidth=1;
+    ectx.beginPath();
+    for(let c=1;c<COLS;c++){ ectx.moveTo(c*CELL_W+0.5,0); ectx.lineTo(c*CELL_W+0.5,H); }
+    for(let r=1;r<ROWS;r++){ ectx.moveTo(0,r*CELL_H+0.5); ectx.lineTo(W,r*CELL_H+0.5); }
+    ectx.stroke();
+    // bricks
+    for(const b of game.bricks){
+      paintBrick(ectx, b.x*CELL_W, b.y*CELL_H, CELL_W-2, CELL_H-2, b.color);
+    }
+  }
+
+  function paintBrick(c,x,y,w,h,color){
+    c.fillStyle=color;
+    c.fillRect(x,y,w,h);
+    c.fillStyle='rgba(255,255,255,.18)';
+    c.fillRect(x,y,w,Math.min(4,h*0.3));
+  }
+
+  function drawPlay(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#060a14'; ctx.fillRect(0,0,W,H);
+    // bricks
+    for(const b of game.bricks){
+      paintBrick(ctx, b.x*CELL_W+1, b.y*CELL_H+1, CELL_W-2, CELL_H-2, b.color);
+    }
+    // paddle
+    ctx.fillStyle='#e8ecf5';
+    roundRect(ctx, game.paddle.x, game.paddle.y, game.paddle.w, game.paddle.h, 6);
+    ctx.fill();
+    // ball
+    if(game.ball){
+      ctx.fillStyle='#fff';
+      ctx.beginPath();
+      ctx.arc(game.ball.x, game.ball.y, 6, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  function roundRect(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y);
+    c.arcTo(x+w,y,x+w,y+h,r);
+    c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r);
+    c.arcTo(x,y,x+w,y,r);
+    c.closePath();
+  }
+
+  // ---- HUD ----
+  const elScore=document.getElementById('score');
+  const elLives=document.getElementById('lives');
+  const elLvl=document.getElementById('lvl');
+  const elRem=document.getElementById('remaining');
+  function refreshHUD(){
+    elScore.textContent=String(game.score);
+    elLives.textContent=String(game.lives);
+    elLvl.textContent=game.levelLabel;
+    elRem.textContent=String(game.bricksTotal);
+  }
+
+  // ---- Toast ----
+  let toastTimer=null;
+  const toastEl=document.getElementById('toast');
+  function toast(msg){
+    toastEl.textContent=msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>toastEl.classList.remove('show'),1400);
+  }
+
+  // ---- Overlay ----
+  const overlay=document.getElementById('overlay');
+  const ovTitle=document.getElementById('ovTitle');
+  const ovText=document.getElementById('ovText');
+  function showOverlay(title,text){
+    ovTitle.textContent=title;
+    ovText.textContent=text;
+    overlay.classList.add('show');
+  }
+  function hideOverlay(){ overlay.classList.remove('show'); }
+
+  // ---- Level loading helpers ----
+  function loadLevelFromJSON(json){
+    window.__loadCalled = (window.__loadCalled||0)+1;
+    try{
+      window.__beforeLoad = 1;
+      game._load(json);
+      window.__afterLoad = 1;
+      return true;
+    }catch(e){
+      toast('Failed to load: '+e.message);
+      return false;
+    }
+  }
+
+  function demoLevel(){
+    game.bricks=[];
+    const cols=defaultColors();
+    for(let r=0;r<5;r++){
+      for(let c=0;c<COLS;c++){
+        // leave a couple of gaps for variety
+        if(r===2&&(c===0||c===COLS-1)) continue;
+        game.bricks.push({x:c,y:r,color:cols[r%cols.length],hp:1});
+      }
+    }
+  }
+
+  // ---- Editor interaction ----
+  const game=new Game();
+  for(const k in Game){ game[k]=Game[k]; }
+  game._refreshHud=refreshHUD;
+  window.__game=game; // expose for tests
+
+  let editorPainting=false;
+
+  function editorCellFromEvent(ev){
+    const rect=editorCv.getBoundingClientRect();
+    const sx=editorCv.width/rect.width, sy=editorCv.height/rect.height;
+    let cx,cy;
+    if(ev.touches&&ev.touches.length){ cx=ev.touches[0].clientX; cy=ev.touches[0].clientY; }
+    else if(ev.changedTouches&&ev.changedTouches.length){ cx=ev.changedTouches[0].clientX; cy=ev.changedTouches[0].clientY; }
+    else { cx=ev.clientX; cy=ev.clientY; }
+    const gx=Math.floor(((cx-rect.left)*sx)/CELL_W);
+    const gy=Math.floor(((cy-rect.top)*sy)/CELL_H);
+    if(gx<0||gx>=COLS||gy<0||gy>=ROWS) return null;
+    return {x:gx,y:gy};
+  }
+
+  function editorAt(x,y){
+    if(game.tool==='erase'){ game._setCell(x,y,'erase'); }
+    else { game._setCell(x,y,'draw'); }
+    drawEditorGrid();
+    elRem.textContent=String(game.bricks.length);
+  }
+
+  function editorPointerDown(ev){ ev.preventDefault(); editorPainting=true; const c=editorCellFromEvent(ev); if(c) editorAt(c.x,c.y); }
+  function editorPointerMove(ev){ if(!editorPainting)return; ev.preventDefault(); const c=editorCellFromEvent(ev); if(c) editorAt(c.x,c.y); }
+  function editorPointerUp(){ editorPainting=false; }
+
+  editorCv.addEventListener('mousedown',editorPointerDown);
+  window.addEventListener('mousemove',editorPointerMove);
+  window.addEventListener('mouseup',editorPointerUp);
+  editorCv.addEventListener('touchstart',e=>editorPointerDown(e),{passive:false});
+  editorCv.addEventListener('touchmove',e=>editorPointerMove(e),{passive:false});
+  editorCv.addEventListener('touchend',editorPointerUp);
+
+  // tool + color segments
+  document.getElementById('toolseg').addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-tool]'); if(!btn)return;
+    game._setTool(btn.dataset.tool);
+    for(const b of document.querySelectorAll('#toolseg button')) b.classList.toggle('active', b===btn);
+  });
+  document.getElementById('colorseg').addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-color]'); if(!btn)return;
+    game.color=btn.dataset.color;
+    for(const b of document.querySelectorAll('#colorseg button')) b.classList.toggle('active', b===btn);
+  });
+
+  // editor buttons
+  document.getElementById('clearBtn').addEventListener('click',()=>{ game.bricks=[]; drawEditorGrid(); elRem.textContent='0'; });
+  document.getElementById('demoBtn').addEventListener('click',()=>{ demoLevel(); drawEditorGrid(); elRem.textContent=String(game.bricks.length); toast('Demo level loaded'); });
+
+  document.getElementById('saveBtn').addEventListener('click',()=>{
+    const json=game._save();
+    const blob=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download='breakout-level.json'; a.click();
+    URL.revokeObjectURL(url);
+    toast('Level saved as JSON');
+  });
+
+  document.getElementById('loadBtn').addEventListener('click',()=>{ document.getElementById('file').click(); });
+  document.getElementById('file').addEventListener('change',e=>{
+    const file=e.target.files&&e.target.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{ if(loadLevelFromJSON(reader.result)){ drawEditorGrid(); elRem.textContent=String(game.bricks.length); toast('Level loaded'); } e.target.value=''; };
+    reader.onerror=()=>toast('Could not read file');
+    reader.readAsText(file);
+  });
+
+  // ---- Editor -> Play ----
+  const editorDiv=document.getElementById('editor');
+  const playDiv=document.getElementById('play');
+  const cvWrap=document.getElementById('wrap');
+
+  function enterPlay(levelLabel){
+    game.mode='play';
+    game.levelLabel=levelLabel||'Edit';
+    game.score=0;
+    game.lives=3;
+    game.bricksTotal=Math.max(1,game.bricks.length);
+    // ensure at least one brick to play
+    if(game.bricks.length===0){ demoLevel(); game.bricksTotal=game.bricks.length; }
+    editorDiv.classList.add('hidden');
+    playDiv.classList.remove('hidden');
+    resetPaddle();
+    refreshHUD();
+    showOverlay('Get ready','Press Space or click to launch the paddle.');
+    game.running=true;
+    loop();
+  }
+
+  document.getElementById('playBtn').addEventListener('click',()=>enterPlay('Edit'));
+  document.getElementById('editBtn').addEventListener('click',()=>{
+    game.running=false; game.mode='editor';
+    playDiv.classList.add('hidden'); editorDiv.classList.remove('hidden');
+    hideOverlay(); drawEditorGrid();
+  });
+  document.getElementById('restartBtn').addEventListener('click',()=>{ enterPlay(game.levelLabel); });
+
+  // ---- Play physics ----
+  function launchBall(){
+    if(game.ball) return;
+    const ang=(Math.random()*0.5-0.25)*Math.PI; // -45deg..+45deg from vertical
+    game.ball={ x:game.paddle.x+game.paddle.w/2, y:game.paddle.y-8, vx:SPEED*Math.sin(ang), vy:-SPEED*Math.abs(Math.cos(ang)) };
+    game.ready=false;
+    game.running=false; // ball in play
+  }
+
+  function resetPaddle(){
+    game.paddle.x=W/2-game.paddle.w/2;
+    game.ball=null;
+    game.ready=true;
+    game.running=true;
+  }
+
+  const SPEED=5.2;
+
+  function step(){
+    if(game.mode!=='play'||!game.running&&!(game.ball)) return;
+    // keyboard paddle
+    if(game.keys.left) game.paddle.x-=game.paddle.speed;
+    if(game.keys.right) game.paddle.x+=game.paddle.speed;
+    if(game.paddle.x<0) game.paddle.x=0;
+    if(game.paddle.x+game.paddle.w>W) game.paddle.x=W-game.paddle.w;
+
+    if(!game.ball) return;
+
+    if(game.ready){
+      game.ball.x=game.paddle.x+game.paddle.w/2;
+      game.ball.y=game.paddle.y-game.ball.r||game.paddle.y-6;
+      return;
+    }
+
+    const b=game.ball;
+    b.x+=b.vx; b.y+=b.vy;
+
+    // walls
+    if(b.x<6){ b.x=6; b.vx=-b.vx; }
+    if(b.x>W-6){ b.x=W-6; b.vx=-b.vx; }
+    if(b.y<6){ b.y=6; b.vy=-b.vy; }
+
+    // paddle
+    const px=game.paddle.x, py=game.paddle.y, pw=game.paddle.w, ph=game.paddle.h;
+    if(b.vy>0 && b.y+6>=py && b.y+6<=py+ph+12 && b.x>=px-6 && b.x<=px+pw+6){
+      b.y=py-6;
+      const hit=(b.x-(px+pw/2))/(pw/2); // -1..1
+      const angle=hit*(Math.PI/3); // up to 60deg
+      const sp=SPEED;
+      b.vx=sp*Math.sin(angle);
+      b.vy=-sp*Math.abs(Math.cos(angle));
+    }
+
+    // bricks
+    let hitBrick=false;
+    for(let i=game.bricks.length-1;i>=0;i--){
+      const g=game.bricks[i];
+      const gx=g.x*CELL_W, gy=g.y*CELL_H;
+      if(b.x+6>gx && b.x-6<gx+CELL_W && b.y+6>gy && b.y-6<gy+CELL_H){
+        // resolve axis by smallest overlap
+        const overlapL=(b.x+6)-gx, overlapR=(gx+CELL_W)-(b.x-6);
+        const overlapT=(b.y+6)-gy, overlapB=(gy+CELL_H)-(b.y-6);
+        const ox=Math.min(overlapL,overlapR), oy=Math.min(overlapT,overlapB);
+        if(ox<oy){ b.vx=-b.vx; } else { b.vy=-b.vy; }
+        game.bricks.splice(i,1);
+        game.score+=10;
+        if(game.bricksTotal>0) game.bricksTotal--;
+        hitBrick=true;
+        break;
+      }
+    }
+
+    // lost ball
+    if(b.y> H+20){
+      game.lives--;
+      game.ball=null;
+      if(game.lives<=0){
+        game.over=true;
+        game.running=true;
+        showOverlay('Game over','Final score: '+game.score+'. Press Restart to try again.');
+      } else {
+        resetPaddle();
+        showOverlay('Missed!','Lives left: '+game.lives+'. Press Space or click to launch.');
+      }
+      refreshHUD();
+      return;
+    }
+
+    // win
+    if(game.bricks.length===0){
+      game.won=true;
+      game.running=true;
+      game.bricksTotal = 0;
+      showOverlay('You win!','Score: '+game.score+'. Press Restart to play again.');
+    }
+
+    refreshHUD();
+  }
+
+  // Test hook: mark a game-over state and show the overlay.
+  game._setGameOver=function(){ game.over=true; game.running=true; showOverlay('Game over','Final score: '+game.score+'. Press Restart to try again.'); refreshHUD(); };
+
+  function loop(){
+    if(game.mode!=='play') return;
+    step();
+    drawPlay();
+    if(game.mode==='play'){
+      requestAnimationFrame(loop);
+    }
+  }
+
+  // Launch / pause handling while running (overlay states)
+  function tryLaunch(){
+    if(game.mode!=='play') return;
+    if(game.ball===null && game.ready){ launchBall(); }
+    else if(game.running && (game.over||game.won)){
+      // restart
+      enterPlay(game.levelLabel);
+    }
+  }
+
+  function launchFromPaddle(){ if(game.ready) launchBall(); }
+
+  // ---- Play input ----
+  window.addEventListener('keydown',e=>{
+    if(game.mode!=='play') return;
+    if(e.code==='ArrowLeft'){ game.keys.left=true; e.preventDefault(); }
+    else if(e.code==='ArrowRight'){ game.keys.right=true; e.preventDefault(); }
+    else if(e.code==='Space'){ e.preventDefault(); if(game.ready) launchBall(); else if(game.over||game.won) enterPlay(game.levelLabel); }
+    else if(e.key==='p'||e.key==='P'){
+      if(game.running && !game.over && !game.won){ game.running=false; showOverlay('Paused','Press P or click to resume.'); }
+      else if(!game.running){ game.running=false; } // ball in play but paused; keep ball
+    }
+  });
+  window.addEventListener('keyup',e=>{
+    if(game.mode!=='play') return;
+    if(e.code==='ArrowLeft') game.keys.left=false;
+    else if(e.code==='ArrowRight') game.keys.right=false;
+  });
+
+  // mouse / touch control of paddle + launch on canvas
+  cv.addEventListener('mousemove',e=>{
+    if(game.mode!=='play'||!cvWrap.classList.contains('')) return;
+    // always allow mouse move when playing (overlay is transparent)
+    const rect=cv.getBoundingClientRect();
+    const sx=cv.width/rect.width;
+    let mx=(e.clientX-rect.left)*sx;
+    game.paddle.x=Math.max(0,Math.min(W-game.paddle.w, mx-game.paddle.w/2));
+  });
+  cv.addEventListener('pointerdown',e=>{
+    if(game.mode!=='play') return;
+    const rect=cv.getBoundingClientRect();
+    const sx=cv.width/rect.width;
+    let mx=(e.clientX-rect.left)*sx;
+    game.paddle.x=Math.max(0,Math.min(W-game.paddle.w, mx-game.paddle.w/2));
+    e.preventDefault();
+    if(game.ready) launchBall();
+    else if(game.over||game.won) enterPlay(game.levelLabel);
+    else if(!game.running){ game.running=false; } // resume paused
+  });
+
+  // ---- Init ----
+  game.mode='editor';
+  drawEditorGrid();
+  elRem.textContent='0';
+  refreshHUD();
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pixel Painter</title>
+<style>
+  :root {
+    --bg: #1e1e24;
+    --panel: #2a2a35;
+    --panel2: #33333f;
+    --accent: #6c8cff;
+    --accent2: #4a63d6;
+    --text: #e8e8f0;
+    --muted: #9a9aa8;
+    --border: #3d3d4a;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    touch-action: none;
+  }
+  #app {
+    display: flex; flex-direction: column; height: 100%;
+  }
+  header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 12px; background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  header h1 {
+    font-size: 16px; margin: 0; font-weight: 600;
+    background: linear-gradient(90deg,#6c8cff,#c26cff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .spacer { flex: 1; }
+  .toolbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  button, select, input[type=number] {
+    background: var(--panel2); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 10px; font-size: 13px; cursor: pointer;
+    font-family: inherit;
+  }
+  button:hover { background: #3d3d4a; }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--accent2); border-color: var(--accent2); }
+  button.primary:hover { background: var(--accent); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .field { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); }
+  .field input[type=number] { width: 48px; padding: 4px 6px; text-align: center; }
+  select { padding: 5px 8px; }
+
+  #canvasWrap {
+    flex: 1; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background:
+      linear-gradient(45deg,#25252c 25%,transparent 25%),
+      linear-gradient(-45deg,#25252c 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#25252c 75%),
+      linear-gradient(-45deg,transparent 75%,#25252c 75%);
+    background-size: 20px 20px;
+    background-position: 0 0,0 10px,10px -10px,10px 0;
+    background-color: #1a1a1f;
+  }
+  #canvas {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    box-shadow: 0 0 0 1px var(--border), 0 4px 20px rgba(0,0,0,0.4);
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  #palette {
+    background: var(--panel); border-top: 1px solid var(--border);
+    padding: 8px 12px; display: flex; gap: 10px;
+    align-items: flex-start; flex-wrap: wrap;
+  }
+  .palette-section { display: flex; align-items: center; gap: 8px; }
+  .palette-section .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  #swatches { display: flex; flex-wrap: wrap; gap: 4px; max-width: 420px; }
+  .swatch {
+    width: 22px; height: 22px; border-radius: 4px; cursor: pointer;
+    border: 2px solid transparent; padding: 0;
+  }
+  .swatch:hover { transform: scale(1.12); }
+  .swatch.active { border-color: #fff; box-shadow: 0 0 0 2px var(--accent); }
+  .swatch.wipe { background: linear-gradient(45deg,transparent 40%,#fff 40%,#fff 60%,transparent 60%),linear-gradient(-45deg,transparent 40%,#fff 40%,#fff 60%,transparent 60%); }
+  #currentColorBox {
+    width: 34px; height: 34px; border-radius: 6px;
+    border: 2px solid var(--border); cursor: pointer; padding: 0;
+  }
+  #colorInput { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+  .brush-size { display: flex; align-items: center; gap: 6px; }
+  .brush-size input[type=range] { width: 80px; }
+
+  #status {
+    background: var(--panel); border-top: 1px solid var(--border);
+    padding: 4px 12px; font-size: 11px; color: var(--muted);
+    display: flex; gap: 16px;
+  }
+  .hint { font-size: 11px; color: var(--muted); }
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    display: none; align-items: center; justify-content: center; z-index: 100;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    padding: 20px; width: 320px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  .modal h2 { margin: 0 0 14px; font-size: 16px; }
+  .modal .row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .modal .row label { font-size: 13px; width: 70px; color: var(--muted); }
+  .modal .row input { flex: 1; }
+  .modal .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>◼ Pixel Painter</h1>
+    <div class="toolbar">
+      <div class="field">
+        W <input type="number" id="width" value="32" min="1" max="512">
+        H <input type="number" id="height" value="32" min="1" max="512">
+        <button id="resizeBtn">Apply</button>
+      </div>
+      <span class="spacer"></span>
+      <select id="tool" title="Tool">
+        <option value="brush">🖌 Brush</option>
+        <option value="eraser">🧽 Eraser</option>
+        <option value="fill">🪣 Fill</option>
+      </select>
+      <div class="brush-size field">
+        Brush <input type="range" id="brushSize" min="1" max="8" value="1">
+        <span id="brushSizeVal">1</span>
+      </div>
+      <button id="undoBtn" title="Undo (Ctrl+Z)">↶ Undo</button>
+      <button id="redoBtn" title="Redo (Ctrl+Y / Ctrl+Shift+Z)">↷ Redo</button>
+      <button id="clearBtn">🗑 Clear</button>
+      <button id="exportBtn" class="primary">⬇ Export PNG</button>
+    </div>
+  </header>
+
+  <div id="canvasWrap">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div id="palette">
+    <div class="palette-section">
+      <span class="label">Current</span>
+      <button id="currentColorBox" title="Click to pick a color"></button>
+      <input type="color" id="colorInput" value="#000000">
+    </div>
+    <div class="palette-section">
+      <span class="label">Palette</span>
+      <div id="swatches"></div>
+    </div>
+    <div class="palette-section">
+      <span class="label">Grayscale</span>
+      <div id="graySwatches"></div>
+    </div>
+  </div>
+
+  <div id="status">
+    <span id="statusSize">32 × 32</span>
+    <span id="statusPos">0, 0</span>
+    <span class="hint">Click/drag to draw · Right-click drags to erase · Ctrl+Z undo · Scroll to zoom · Double-click to fill</span>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2>Resize Canvas</h2>
+    <div class="row"><label>Width</label><input type="number" id="modalWidth" min="1" max="512"></div>
+    <div class="row"><label>Height</label><input type="number" id="modalHeight" min="1" max="512"></div>
+    <div class="actions">
+      <button id="cancelResize">Cancel</button>
+      <button id="confirmResize" class="primary">Resize</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d", { alpha: false });
+  const wrap = document.getElementById("canvasWrap");
+
+  // ---- State ----
+  let cols = 32, rows = 32;
+  let pxData = null;        // Uint8ClampedArray RGBA of the artwork
+  let zoom = 12;            // pixels per cell
+  let currentColor = "#000000";
+  let tool = "brush";
+  let brushSize = 1;        // radius in cells (0 => 1px)
+  let drawing = false;
+  let lastCell = null;
+
+  // history: array of base64/ArrayBuffer snapshots (RGBA)
+  let history = [];
+  let histIndex = -1;
+  const MAX_HISTORY = 60;
+
+  // ---- Color helpers ----
+  function hexToRgb(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255, 255];
+  }
+  function rgbToHex(r, g, b) {
+    return "#" + [r, g, b].map(x => x.toString(16).padStart(2, "0")).join("");
+  }
+
+  // ---- Palette ----
+  const PALETTE = [
+    "#000000","#2b2b2b","#5c5c5c","#8a8a8a","#c0c0c0","#ffffff",
+    "#8b1a1a","#e63946","#ff6b6b","#ff9f1c","#ffd166","#fff3b0",
+    "#2a9d8f","#43aa8b","#90be6d","#c7f67e","#1d3557","#4a90d9",
+    "#5a7fc7","#a0c4ff","#7b2cbf","#c77dff","#ff5db6","#ff8fab",
+    "#6f4e37","#a9744f","#d9a066","#8b5a2b"
+  ];
+
+  function buildSwatches(container, extra) {
+    container.innerHTML = "";
+    PALETTE.forEach(c => {
+      const b = document.createElement("button");
+      b.className = "swatch";
+      b.style.background = c;
+      b.dataset.color = c;
+      b.addEventListener("click", () => setColor(c));
+      container.appendChild(b);
+    });
+    if (extra) {
+      const w = document.createElement("button");
+      w.className = "swatch wipe";
+      w.title = "Wipe / transparent";
+      w.addEventListener("click", () => setColor("#000000", true));
+      container.appendChild(w);
+    }
+  }
+
+  function setColor(hex, wipe) {
+    currentColor = hex;
+    if (wipe) currentColor = null; // transparent
+    document.getElementById("colorInput").value = hex || "#000000";
+    document.getElementById("currentColorBox").style.background =
+      wipe ? "linear-gradient(45deg,transparent 45%,#333 45%,#333 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,#333 45%,#333 55%,transparent 55%)" : hex;
+    document.querySelectorAll(".swatch").forEach(s => {
+      s.classList.toggle("active", s.dataset.color === hex && !wipe);
+    });
+  }
+
+  // ---- Canvas setup ----
+  function makePixels() {
+    return new Uint8ClampedArray(cols * rows * 4);
+  }
+
+  function setPixel(x, y, rgba) {
+    if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+    const i = (y * cols + x) * 4;
+    pxData[i] = rgba[0];
+    pxData[i + 1] = rgba[1];
+    pxData[i + 2] = rgba[2];
+    pxData[i + 3] = rgba[3];
+  }
+
+  function getPixel(x, y) {
+    const i = (y * cols + x) * 4;
+    return [pxData[i], pxData[i + 1], pxData[i + 2], pxData[i + 3]];
+  }
+
+  function render() {
+    canvas.width = cols;
+    canvas.height = rows;
+    canvas.style.width = (cols * zoom) + "px";
+    canvas.style.height = (rows * zoom) + "px";
+    const img = ctx.createImageData(cols, rows);
+    img.data.set(pxData);
+    ctx.putImageData(img, 0, 0);
+    document.getElementById("statusSize").textContent = cols + " × " + rows;
+  }
+
+  function clearCanvas() {
+    pxData = makePixels();
+  }
+
+  // ---- History ----
+  function snapshot() {
+    // trim redo tail
+    history = history.slice(0, histIndex + 1);
+    history.push(new Uint8Array(pxData));
+    if (history.length > MAX_HISTORY) history.shift();
+    histIndex = history.length - 1;
+    updateHistButtons();
+  }
+  function restoreSnapshot(idx) {
+    pxData = new Uint8ClampedArray(history[idx]);
+    render();
+  }
+  function undo() { if (histIndex > 0) { restoreSnapshot(histIndex - 1); histIndex--; updateHistButtons(); } }
+  function redo() { if (histIndex < history.length - 1) { restoreSnapshot(histIndex + 1); histIndex++; updateHistButtons(); } }
+  function updateHistButtons() {
+    document.getElementById("undoBtn").disabled = histIndex <= 0;
+    document.getElementById("redoBtn").disabled = histIndex >= history.length - 1;
+  }
+
+  // ---- Drawing ----
+  function applyBrush(cx, cy) {
+    const r = brushSize; // extra cells in each direction (0 => single pixel)
+    const rgba = currentColor === null ? [0, 0, 0, 0] : hexToRgb(currentColor);
+    for (let dy = -r; dy <= r; dy++) {
+      for (let dx = -r; dx <= r; dx++) {
+        setPixel(cx + dx, cy + dy, rgba);
+      }
+    }
+  }
+
+  // Bresenham line for smooth drag strokes
+  function line(x0, y0, x1, y1) {
+    let dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+    let sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+    let err = dx - dy;
+    for (;;) {
+      applyBrush(x0, y0);
+      if (x0 === x1 && y0 === y1) break;
+      let e2 = 2 * err;
+      if (e2 > -dy) { err -= dy; x0 += sx; }
+      if (e2 < dx) { err += dx; y0 += sy; }
+    }
+  }
+
+  // Flood fill (scanline)
+  function fill(sx, sy) {
+    const target = getPixel(sx, sy);
+    const fillC = currentColor === null ? [0, 0, 0, 0] : hexToRgb(currentColor);
+    if (target[0] === fillC[0] && target[1] === fillC[1] &&
+        target[2] === fillC[2] && target[3] === fillC[3]) return;
+    const stack = [[sx, sy]];
+    while (stack.length) {
+      const [x, y] = stack.pop();
+      if (x < 0 || y < 0 || x >= cols || y >= rows) continue;
+      const t = getPixel(x, y);
+      if (t[0] !== target[0] || t[1] !== target[1] || t[2] !== target[2] || t[3] !== target[3]) continue;
+      // walk row left
+      let lx = x;
+      while (lx > 0) { const p = getPixel(lx - 1, y); if (!sameColor(p, target)) break; lx--; }
+      // walk row right
+      let rx = x;
+      while (rx < cols - 1) { const p = getPixel(rx + 1, y); if (!sameColor(p, target)) break; rx++; }
+      for (let px = lx; px <= rx; px++) {
+        setPixel(px, y, fillC);
+        if (y > 0) { const p = getPixel(px, y - 1); if (sameColor(p, target)) stack.push([px, y - 1]); }
+        if (y < rows - 1) { const p = getPixel(px, y + 1); if (sameColor(p, target)) stack.push([px, y + 1]); }
+      }
+    }
+  }
+  function sameColor(a, b) {
+    return a[0] === b[0] && a[1] === b[1] && a[2] === b[2] && a[3] === b[3];
+  }
+
+  function toolAt(cx, cy) {
+    if (tool === "eraser") {
+      const r = brushSize;
+      for (let dy = -r; dy <= r; dy++)
+        for (let dx = -r; dx <= r; dx++) setPixel(cx + dx, cy + dy, [0, 0, 0, 0]);
+    } else if (tool === "fill") {
+      fill(cx, cy);
+    } else {
+      applyBrush(cx, cy);
+    }
+  }
+
+  // ---- Coordinate mapping ----
+  function eventToCell(evt) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = cols / rect.width;
+    const scaleY = rows / rect.height;
+    let clientX, clientY;
+    if (evt.touches && evt.touches.length) {
+      clientX = evt.touches[0].clientX; clientY = evt.touches[0].clientY;
+    } else if (evt.changedTouches && evt.changedTouches.length) {
+      clientX = evt.changedTouches[0].clientX; clientY = evt.changedTouches[0].clientY;
+    } else {
+      clientX = evt.clientX; clientY = evt.clientY;
+    }
+    const x = Math.min(cols - 1, Math.max(0, Math.floor((clientX - rect.left) * scaleX)));
+    const y = Math.min(rows - 1, Math.max(0, Math.floor((clientY - rect.top) * scaleY)));
+    return { x, y };
+  }
+
+  // ---- Pointer events (unified mouse + touch) ----
+  let ignoreMove = false;
+
+  function down(evt) {
+    if (evt.button === 2) { // right click => erase
+      tool = "eraser";
+      document.getElementById("tool").value = "eraser";
+    }
+    evt.preventDefault();
+    if (!drawing) { snapshot(); drawing = true; }
+    const { x, y } = eventToCell(evt);
+    lastCell = { x, y };
+    if (tool === "fill" && evt.button !== 2) {
+      toolAt(x, y); render();
+      // don't keep drawing; fill is single action
+      drawing = false; lastCell = null;
+      return;
+    }
+    toolAt(x, y);
+    render();
+  }
+
+  function move(evt) {
+    const { x, y } = eventToCell(evt);
+    document.getElementById("statusPos").textContent = x + ", " + y;
+    if (!drawing || lastCell === null) return;
+    evt.preventDefault();
+    line(lastCell.x, lastCell.y, x, y);
+    lastCell = { x, y };
+    render();
+  }
+
+  function up() {
+    if (drawing) { drawing = false; lastCell = null; }
+    if (tool === "eraser") {
+      document.getElementById("tool").value = "brush";
+      tool = "brush";
+    }
+  }
+
+  function onDblClick(evt) {
+    evt.preventDefault();
+    const { x, y } = eventToCell(evt);
+    snapshot();
+    toolAt(x, y);
+    render();
+  }
+
+  canvas.addEventListener("mousedown", down);
+  window.addEventListener("mousemove", move);
+  window.addEventListener("mouseup", up);
+  canvas.addEventListener("contextmenu", e => e.preventDefault());
+  canvas.addEventListener("dblclick", onDblClick);
+
+  canvas.addEventListener("touchstart", down, { passive: false });
+  canvas.addEventListener("touchmove", move, { passive: false });
+  canvas.addEventListener("touchend", up);
+
+  // ---- Zoom with scroll ----
+  wrap.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    if (e.shiftKey) return;
+    if (e.deltaY < 0) zoom = Math.min(64, zoom + 2);
+    else zoom = Math.max(1, zoom - 2);
+    render();
+  }, { passive: false });
+
+  // ---- Controls ----
+  document.getElementById("tool").addEventListener("change", e => { tool = e.target.value; });
+  const brushSizeInput = document.getElementById("brushSize");
+  const brushSizeVal = document.getElementById("brushSizeVal");
+  brushSizeInput.addEventListener("input", e => {
+    brushSize = parseInt(e.target.value, 10) - 1;
+    brushSizeVal.textContent = e.target.value;
+  });
+
+  document.getElementById("currentColorBox").addEventListener("click", () => {
+    document.getElementById("colorInput").click();
+  });
+  document.getElementById("colorInput").addEventListener("input", e => {
+    setColor(e.target.value);
+  });
+
+  buildSwatches(document.getElementById("swatches"));
+  buildSwatches(document.getElementById("graySwatches"), true);
+
+  // Resize modal
+  const modalBg = document.getElementById("modalBg");
+  document.getElementById("resizeBtn").addEventListener("click", () => {
+    document.getElementById("modalWidth").value = document.getElementById("width").value;
+    document.getElementById("modalHeight").value = document.getElementById("height").value;
+    modalBg.classList.add("show");
+  });
+  document.getElementById("cancelResize").addEventListener("click", () => modalBg.classList.remove("show"));
+  document.getElementById("modalBg").addEventListener("click", e => {
+    if (e.target === modalBg) modalBg.classList.remove("show");
+  });
+  document.getElementById("confirmResize").addEventListener("click", () => {
+    applyResize();
+    modalBg.classList.remove("show");
+  });
+
+  function applyResize() {
+    let w = parseInt(document.getElementById("width").value, 10);
+    let h = parseInt(document.getElementById("height").value, 10);
+    w = Math.min(512, Math.max(1, w || 1));
+    h = Math.min(512, Math.max(1, h || 1));
+    document.getElementById("width").value = w;
+    document.getElementById("height").value = h;
+    resizeCanvasTo(w, h);
+  }
+
+  function resizeCanvasTo(w, h) {
+    snapshot();
+    const old = new Uint8Array(pxData);
+    const oldCols = cols, oldRows = rows;
+    cols = w; rows = h;
+    const np = makePixels();
+    // center preserve
+    const ox = Math.floor((w - oldCols) / 2);
+    const oy = Math.floor((h - oldRows) / 2);
+    for (let y = 0; y < oldRows; y++) {
+      for (let x = 0; x < oldCols; x++) {
+        const sx = x + ox, sy = y + oy;
+        if (sx >= 0 && sy >= 0 && sx < w && sy < h) {
+          const si = (y * oldCols + x) * 4, di = (sy * cols + sx) * 4;
+          np[di] = old[si]; np[di+1] = old[si+1]; np[di+2] = old[si+2]; np[di+3] = old[si+3];
+        }
+      }
+    }
+    pxData = np;
+    render();
+  }
+
+  document.getElementById("clearBtn").addEventListener("click", () => {
+    if (pxData.every(v => v === 0)) return;
+    snapshot();
+    clearCanvas();
+    render();
+  });
+
+  document.getElementById("undoBtn").addEventListener("click", undo);
+  document.getElementById("redoBtn").addEventListener("click", redo);
+
+  // ---- Export ----
+  document.getElementById("exportBtn").addEventListener("click", () => {
+    const tmp = document.createElement("canvas");
+    tmp.width = cols; tmp.height = rows;
+    const tc = tmp.getContext("2d");
+    const img = tc.createImageData(cols, rows);
+    img.data.set(pxData);
+    tc.putImageData(img, 0, 0);
+    const link = document.createElement("a");
+    link.download = "pixel-art-" + cols + "x" + rows + ".png";
+    link.href = tmp.toDataURL("image/png");
+    link.click();
+  });
+
+  // ---- Keyboard shortcuts ----
+  window.addEventListener("keydown", e => {
+    if (e.target.tagName === "INPUT") return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") {
+      e.preventDefault(); if (e.shiftKey) redo(); else undo();
+    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") {
+      e.preventDefault(); redo();
+    } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+      e.preventDefault(); document.getElementById("exportBtn").click();
+    } else if (e.key === "b") { tool = "brush"; document.getElementById("tool").value = "brush"; }
+    else if (e.key === "e") { tool = "eraser"; document.getElementById("tool").value = "eraser"; }
+    else if (e.key === "g") { tool = "fill"; document.getElementById("tool").value = "fill"; }
+  });
+
+  // ---- Init ----
+  function init() {
+    pxData = makePixels();
+    render();
+    setColor("#000000");
+    snapshot();
+    updateHistButtons();
+  }
+  init();
+})();
+</script>
+</body>
+</html>

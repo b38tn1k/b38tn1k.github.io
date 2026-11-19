@@ -1,0 +1,3562 @@
+{
+  "score": 80,
+  "grade": "B- - tail collision repaired; restart scheduling remains defective and pair times out",
+  "rubricScores": {
+    "functionality": 37,
+    "artifact_correctness": 25,
+    "usability": 13,
+    "self_verification": 5,
+    "autonomy": 0
+  },
+  "blockingRequiredDefect": true,
+  "summary": "Legal movement into the vacating tail is repaired, while repeated running restarts still create concurrent tick intervals and accelerate play. The supervisor found no further issue and repeatedly yielded despite not_accepted status; the unchanged120minute deadline ends the pair with two feedback slots unused.",
+  "strengths": [
+    "Actual keyboard start, movement, pause/resume, score/difficulty increases, wall/body collision and nativeCanvas head pixels pass.",
+    "Vacating-tail behavior passes a reachable actual food-growth and Up/Left/Down turn sequence, rather than relying only on an artificial body arrangement or a copied collision predicate.",
+    "Rapid Up/Left and Up/Left/Down inputs do not reverse into the actual neck. Full-board food search terminates; no separate win-screen requirement was added.",
+    "The product remains a self-contained offline file and source changes are limited to food-aware self-collision limits."
+  ],
+  "defects": [
+    "Required restart behavior remains defective: threeRpresses while running leave four tick intervals. The actual scheduler moves four cells in155ms rather than one, accelerating gameplay after restarting."
+  ],
+  "verification": [
+    "Independent exact final8604c2b8c82243747954d39d55ed46bd2b4b6e9d8c74b1f9954f6b0086042087 via actual keyboard/buttons, nativeCanvas pixels and scheduled interval/RAF callbacks. Controlled food/body input fixtures call existing game logic without replacing algorithms.",
+    "The initial and final independent suites reproduce the restart acceleration. The tail fix, rapid-input guard, wall/body collisions, growth/scoring/difficulty and full-board termination pass. Final artifact is unchanged from the first settled repair."
+  ],
+  "verificationConcerns": [
+    "Supervisor first reproduced the tail defect using a copied collision loop. It later exercised actual app boot/start, pause/resume and wall game-over via the generic runtime, and observed one successful food/score path at seed12after eleven zero-score runs. Copied repaired-loop cases also pass, but those are not whole-game tail integration tests.",
+    "Worker verification was primarily syntax/HTML/source inspection. Joint runtime coverage improves final self-verification credit to5, but no actual repeated running-restart regression was tested by the local actors. Claims of covering all brief requirements exceed that coverage.",
+    "Supervisor chose73WAITyields and received72same-context metadata wakeups, explicitly observing workeridle and independentAcceptance not_accepted. It stated no new supported finding and waited for an idle-worker artifact change or expiry. Native transport was healthy; no Codex diagnosis or process redirect was injected into the frozen model-only trial.",
+    "Read-scope probes for generic helper directories outside the whitelist were denied; no hidden app/history/gold content was read. Shared runtime/canvas/STL helpers contain generic facilities only.",
+    "Six recovered supervisor UND_ERR_SOCKET errors and72voluntary abort records are distinct; worker had no provider errors. Failed partial-stream usage is unknown. No browser layout/hit testing or physical-input-latency proof."
+  ],
+  "scopeCompliance": "Worker alone authored the collision repair. Supervisor wrote scratch/control files and inspected consistent snapshots; scopes blocked outside-history reads. Codex wrote only private independent QA/controller/report artifacts and supplied no product code, diagnoses or repair prompts.",
+  "workflowNotes": "RTFM Ornith-supervised Qwen Snake, one counted repair prompt,120.003pairwallminutes and46.383summed actor-activity minutes. The first repair settled quickly; the remaining pair lifetime was predominantly a voluntary supervisor WAIT loop. Two unused feedback slots are disclosed; the ceiling is not treated as a quota. Deadline autonomy is0 under the unchanged rubric. The provisional87checkpoint becomes80because final self-verification rises2to5while deadline autonomy falls10to0; product quality remains93.75and blocked by restart scheduling.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "One valid paired attempt on the exact frozen RTFM solo source; no outcome-based rerun or concealed budget reset.",
+    "A normalized product score above90does not qualify while a required behavior remains blocked. The actual app improves over its solo seed, while the joint workflow times out.",
+    "Model activity includes native turns/tool waits and differs from pair wall or GPU busy time. Recorded tokens include cached prefixes; baseline creation and new rescue costs are separate.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM author-profile cross-model rescue of the exact frozen solo app. Solo creation and incremental repair costs are separate; already-qualified baselines may remain unchanged with zero feedback and no improvement claim. A120-minute shared wall includes both actors and review waits; Codex grades but supplies no repair diagnoses/code. Product quality is normalized from80points. Pair wall differs from summed concurrent model activity."
+  ],
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "rtfm_supervised",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "**Fix applied and verified.** Here's the summary:\n\n### Bug\nIn `tick()`, the self-collision loop iterated over all segments including the tail (`snake[snake.length-1]`). When the snake wasn't eating, the tail would be popped that same tick, but the collision check ran *before* the pop \u2014 causing a false game-over when the head moved into the tail's just-vacated cell (a legal move in tight loops).\n\n### Fix\nAdded `eating` detection before the collision check:\n- **When eating food** \u2192 tail won't be popped \u2192 check all `snake.length` segments (tail must be checked)\n- **When not eating** \u2192 tail will be popped \u2192 check only `snake.length - 1` segments (exclude tail)\n\n### Verification\n- \u2705 JS syntax valid\n- \u2705 HTML structure complete\n- \u2705 Wall collision unchanged (head outside 0..GRID-1)\n- \u2705 Food spawning unchanged (avoids occupied cells)\n- \u2705 Scoring, level/speed, pause, restart, localStorage all preserved\n- \u2705 Edge case: single-segment snake (`collisionLimit = 0`, no false collisions)",
+  "workflowInstructions": "rtfm-supervised-plan.json; run-rtfm-supervised-control-v2.py",
+  "workflowProtocolRevision": 2,
+  "elapsedMinutes": 120.003,
+  "wallMinutes": 120.003,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 199,
+  "parentToolCalls": 12,
+  "childToolCalls": 187,
+  "toolResultsMarkedError": 6,
+  "modelUsageReported": {
+    "input": 90498,
+    "output": 63373,
+    "cacheRead": 17322981,
+    "totalTokens": 17476852
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 139839,
+  "parentPeakReportedPromptTokens": 13504,
+  "childPeakReportedPromptTokens": 139839,
+  "parentModelUsage": {
+    "input": 10713,
+    "output": 2920,
+    "cacheRead": 101262,
+    "totalTokens": 114895
+  },
+  "childModelUsage": {
+    "input": 79785,
+    "output": 60453,
+    "cacheRead": 17221719,
+    "totalTokens": 17361957
+  },
+  "artifactBytes": 17709,
+  "sha256": "8604c2b8c82243747954d39d55ed46bd2b4b6e9d8c74b1f9954f6b0086042087",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 4,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": false,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-rtfm"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": [],
+    "controller": "Two persistent concurrent native Pi contexts; local supervisor alone guides worker",
+    "workerModel": "qwen3.6:35b-a3b",
+    "supervisorModel": "ornith-1.5:35b-256k",
+    "feedbackCount": 1,
+    "feedback": [
+      {
+        "number": 1,
+        "id": "supv122-snake-001-feedback",
+        "message": "DEFECT (self-collision) - verify against the original brief (\"wall and self collisions\"):\n\nIn tick() the self-collision check loops over EVERY segment of the snake, including the tail segment (snake[snake.length-1]). This check runs BEFORE the head is unshifted and BEFORE the tail is popped. So when the snake is NOT eating and the head moves into the cell that the tail currently occupies (a cell that will be vacated this same tick because snake.pop() runs in the else branch), the game wrongly reports a self-collision and calls endGame().\n\nWhy it is a real defect: in normal snake movement the tail advances one cell every tick the snake does not grow. Moving the head into the tail's just-vacated cell is legal play, e.g. rotating clockwise/counterclockwise around a tight loop or spiral. The current code terminates the game on that legal move.\n\nEvidence: faithful reproduction of the exact tick collision loop (see .scratch/repro_tail_collision.js) with a snake traversing a closed 2x2 loop:\n  snake = [head(1,1), (1,0), (2,0), tail(2,1)]\n  moving right -> head target (2,1) == tail current cell\n  app's self-collision check returns true (endGame) even though the tail pops that tick, leaving a valid snake [(2,1),(1,1),(1,0),(2,0)].\n\nExpected behavior: the head moving into the tail's current cell should NOT end the game when the tail is about to move away that tick (i.e. when the snake is not eating food). The collision check should exclude the tail segment that will be removed this tick (compare against snake[0..length-2]) OR run the check after accounting for the pop. Only a genuine body collision should end the game.\n\nDo not change: wall collision (head outside 0..GRID-1), food spawning on occupied cells, scoring, level/speed difficulty, pause, restart, localStorage high score. These currently behave correctly and should be preserved.\n",
+        "reason": "First repair request: deterministic self-collision defect in tick() verified against the immutable hashed artifact 70e579fc...b1a88 (hash confirmed).",
+        "interrupt": true,
+        "proposedUTC": "2026-11-18T22:27:47.300270+00:00",
+        "acceptedUTC": "2026-11-18T22:27:47.300288+00:00",
+        "elapsedSeconds": 218.335,
+        "workerPID": 20959,
+        "interrupted": false,
+        "deliveredUTC": "2026-11-18T22:27:47.349063+00:00",
+        "deliveredElapsedSeconds": 218.335
+      }
+    ],
+    "rounds": [
+      {
+        "feedback": 1,
+        "at": "2026-11-18T22:29:46.469671+00:00",
+        "sha256": "8604c2b8c82243747954d39d55ed46bd2b4b6e9d8c74b1f9954f6b0086042087",
+        "snapshot": "strategies/reports/rtfm-supervised-rounds/case122/feedback1"
+      }
+    ],
+    "supervisorWakeups": [
+      {
+        "at": "2026-11-18T22:29:48.563442+00:00",
+        "elapsedSeconds": 339.6,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:36:50.999026+00:00",
+        "elapsedSeconds": 762.04,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:39:06.734724+00:00",
+        "elapsedSeconds": 897.77,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:40:36.754852+00:00",
+        "elapsedSeconds": 987.79,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:42:06.785790+00:00",
+        "elapsedSeconds": 1077.82,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:43:36.935661+00:00",
+        "elapsedSeconds": 1167.97,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:45:07.037006+00:00",
+        "elapsedSeconds": 1258.06,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:46:37.134651+00:00",
+        "elapsedSeconds": 1348.16,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:48:07.137561+00:00",
+        "elapsedSeconds": 1438.16,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:49:37.175825+00:00",
+        "elapsedSeconds": 1528.2,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:51:07.284576+00:00",
+        "elapsedSeconds": 1618.31,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:52:37.354485+00:00",
+        "elapsedSeconds": 1708.38,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:54:07.430619+00:00",
+        "elapsedSeconds": 1798.45,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:55:37.463628+00:00",
+        "elapsedSeconds": 1888.49,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:57:07.467089+00:00",
+        "elapsedSeconds": 1978.49,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T22:58:37.489724+00:00",
+        "elapsedSeconds": 2068.51,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:00:07.558638+00:00",
+        "elapsedSeconds": 2158.58,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:01:37.567250+00:00",
+        "elapsedSeconds": 2248.59,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:03:07.614320+00:00",
+        "elapsedSeconds": 2338.63,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:04:37.704886+00:00",
+        "elapsedSeconds": 2428.72,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:06:07.837643+00:00",
+        "elapsedSeconds": 2518.86,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:07:37.803043+00:00",
+        "elapsedSeconds": 2608.86,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:09:07.892967+00:00",
+        "elapsedSeconds": 2698.95,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:10:37.967833+00:00",
+        "elapsedSeconds": 2789.02,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:12:08.097015+00:00",
+        "elapsedSeconds": 2879.15,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:13:38.195869+00:00",
+        "elapsedSeconds": 2969.25,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:15:08.301884+00:00",
+        "elapsedSeconds": 3059.36,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:16:38.343834+00:00",
+        "elapsedSeconds": 3149.4,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:18:08.457075+00:00",
+        "elapsedSeconds": 3239.52,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:19:38.508690+00:00",
+        "elapsedSeconds": 3329.56,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:21:08.654330+00:00",
+        "elapsedSeconds": 3419.71,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:22:38.662497+00:00",
+        "elapsedSeconds": 3509.72,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:24:08.795115+00:00",
+        "elapsedSeconds": 3599.86,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:25:38.879068+00:00",
+        "elapsedSeconds": 3689.94,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:27:09.003073+00:00",
+        "elapsedSeconds": 3780.06,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:28:39.053400+00:00",
+        "elapsedSeconds": 3870.11,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:30:09.123464+00:00",
+        "elapsedSeconds": 3960.17,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:31:39.148540+00:00",
+        "elapsedSeconds": 4050.21,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:33:09.301240+00:00",
+        "elapsedSeconds": 4140.36,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:34:39.399240+00:00",
+        "elapsedSeconds": 4230.46,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:36:09.523992+00:00",
+        "elapsedSeconds": 4320.58,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:37:39.681057+00:00",
+        "elapsedSeconds": 4410.73,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:39:09.756928+00:00",
+        "elapsedSeconds": 4500.82,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:40:39.812022+00:00",
+        "elapsedSeconds": 4590.87,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:42:09.822391+00:00",
+        "elapsedSeconds": 4680.88,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:43:39.900902+00:00",
+        "elapsedSeconds": 4770.96,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:45:09.994151+00:00",
+        "elapsedSeconds": 4861.06,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:46:40.142351+00:00",
+        "elapsedSeconds": 4951.21,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:48:10.152976+00:00",
+        "elapsedSeconds": 5041.22,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:49:40.211950+00:00",
+        "elapsedSeconds": 5131.28,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:51:10.369997+00:00",
+        "elapsedSeconds": 5221.43,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:52:40.506642+00:00",
+        "elapsedSeconds": 5311.58,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:54:10.556148+00:00",
+        "elapsedSeconds": 5401.63,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:55:40.565139+00:00",
+        "elapsedSeconds": 5491.64,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:57:10.630867+00:00",
+        "elapsedSeconds": 5581.71,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-18T23:58:40.648004+00:00",
+        "elapsedSeconds": 5671.73,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:00:10.724278+00:00",
+        "elapsedSeconds": 5761.8,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:01:40.831017+00:00",
+        "elapsedSeconds": 5851.91,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:03:10.842177+00:00",
+        "elapsedSeconds": 5941.92,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:04:40.852003+00:00",
+        "elapsedSeconds": 6031.93,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:06:10.918534+00:00",
+        "elapsedSeconds": 6122.0,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:07:40.997713+00:00",
+        "elapsedSeconds": 6212.08,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:09:11.120041+00:00",
+        "elapsedSeconds": 6302.2,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:10:41.162881+00:00",
+        "elapsedSeconds": 6392.25,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:12:11.250133+00:00",
+        "elapsedSeconds": 6482.33,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:13:41.283899+00:00",
+        "elapsedSeconds": 6572.35,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:15:11.409732+00:00",
+        "elapsedSeconds": 6662.47,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:16:41.550475+00:00",
+        "elapsedSeconds": 6752.61,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:18:11.680144+00:00",
+        "elapsedSeconds": 6842.74,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:19:41.806401+00:00",
+        "elapsedSeconds": 6932.87,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:21:11.872171+00:00",
+        "elapsedSeconds": 7022.94,
+        "source": "worker_progress_or_clock_metadata"
+      },
+      {
+        "at": "2026-11-19T00:22:41.886882+00:00",
+        "elapsedSeconds": 7112.95,
+        "source": "worker_progress_or_clock_metadata"
+      }
+    ],
+    "supervisorYields": [
+      {
+        "at": "2026-11-18T22:29:47.605479+00:00",
+        "id": "supv122-snake-002-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:36:50.362080+00:00",
+        "id": "supv122-snake-003-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:39:05.783723+00:00",
+        "id": "supv122-snake-004-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:39:35.880607+00:00",
+        "id": "supv122-snake-005-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:41:30.506310+00:00",
+        "id": "supv122-snake-006-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:42:27.233763+00:00",
+        "id": "supv122-snake-007-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:44:12.580852+00:00",
+        "id": "supv122-snake-008-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:45:39.136520+00:00",
+        "id": "supv122-snake-009-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:46:58.401352+00:00",
+        "id": "supv122-snake-010-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:48:28.862546+00:00",
+        "id": "supv122-snake-011-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:49:53.618629+00:00",
+        "id": "supv122-snake-012-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:51:28.371853+00:00",
+        "id": "supv122-snake-013-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:52:53.486634+00:00",
+        "id": "supv122-snake-014-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:54:24.253893+00:00",
+        "id": "supv122-snake-015-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:56:26.833486+00:00",
+        "id": "supv122-snake-016-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:57:48.719629+00:00",
+        "id": "supv122-snake-017-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T22:59:12.037299+00:00",
+        "id": "supv122-snake-018-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:00:29.255875+00:00",
+        "id": "supv122-snake-019-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:01:57.564360+00:00",
+        "id": "supv122-snake-020-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:03:27.419277+00:00",
+        "id": "supv122-snake-021-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:04:57.706281+00:00",
+        "id": "supv122-snake-022-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:06:27.880049+00:00",
+        "id": "supv122-snake-023-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:07:57.985402+00:00",
+        "id": "supv122-snake-024-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:09:28.209192+00:00",
+        "id": "supv122-snake-025-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:10:58.351925+00:00",
+        "id": "supv122-snake-026-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:12:28.643171+00:00",
+        "id": "supv122-snake-027-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:13:58.788822+00:00",
+        "id": "supv122-snake-028-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:15:29.092110+00:00",
+        "id": "supv122-snake-029-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:16:59.305387+00:00",
+        "id": "supv122-snake-030-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:18:29.608237+00:00",
+        "id": "supv122-snake-031-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:19:59.576258+00:00",
+        "id": "supv122-snake-032-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:21:30.221541+00:00",
+        "id": "supv122-snake-033-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:23:00.328726+00:00",
+        "id": "supv122-snake-034-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:24:30.268752+00:00",
+        "id": "supv122-snake-035-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:26:00.498948+00:00",
+        "id": "supv122-snake-036-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:27:31.427367+00:00",
+        "id": "supv122-snake-037-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:29:00.977864+00:00",
+        "id": "supv122-snake-038-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:30:31.092449+00:00",
+        "id": "supv122-snake-039-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:32:01.426639+00:00",
+        "id": "supv122-snake-040-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:33:31.663430+00:00",
+        "id": "supv122-snake-041-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:35:01.575414+00:00",
+        "id": "supv122-snake-042-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:36:32.057787+00:00",
+        "id": "supv122-snake-043-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:38:02.059876+00:00",
+        "id": "supv122-snake-044-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:39:32.334838+00:00",
+        "id": "supv122-snake-045-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:41:02.528109+00:00",
+        "id": "supv122-snake-046-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:42:32.868988+00:00",
+        "id": "supv122-snake-047-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:44:02.862651+00:00",
+        "id": "supv122-snake-048-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:45:33.259356+00:00",
+        "id": "supv122-snake-049-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:47:03.312190+00:00",
+        "id": "supv122-snake-050-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:48:33.560246+00:00",
+        "id": "supv122-snake-051-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:50:03.671123+00:00",
+        "id": "supv122-snake-052-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:51:33.854198+00:00",
+        "id": "supv122-snake-053-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:53:04.063000+00:00",
+        "id": "supv122-snake-054-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:54:34.265963+00:00",
+        "id": "supv122-snake-055-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:56:04.369907+00:00",
+        "id": "supv122-snake-056-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:57:34.825897+00:00",
+        "id": "supv122-snake-057-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-18T23:59:04.800941+00:00",
+        "id": "supv122-snake-058-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:00:34.801459+00:00",
+        "id": "supv122-snake-059-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:02:05.066432+00:00",
+        "id": "supv122-snake-060-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:03:35.378330+00:00",
+        "id": "supv122-snake-061-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:05:05.363426+00:00",
+        "id": "supv122-snake-062-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:06:35.576621+00:00",
+        "id": "supv122-snake-063-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:08:05.461793+00:00",
+        "id": "supv122-snake-064-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:09:35.867045+00:00",
+        "id": "supv122-snake-065-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:11:05.854149+00:00",
+        "id": "supv122-snake-066-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:12:36.200940+00:00",
+        "id": "supv122-snake-067-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:14:06.481295+00:00",
+        "id": "supv122-snake-068-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:15:36.689900+00:00",
+        "id": "supv122-snake-069-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:17:06.828926+00:00",
+        "id": "supv122-snake-070-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:18:37.075290+00:00",
+        "id": "supv122-snake-071-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:20:07.247360+00:00",
+        "id": "supv122-snake-072-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:21:37.352980+00:00",
+        "id": "supv122-snake-073-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      },
+      {
+        "at": "2026-11-19T00:23:07.143848+00:00",
+        "id": "supv122-snake-074-wait",
+        "pid": 20960,
+        "source": "supervisor_WAIT_control",
+        "workerFeedbackConsumed": false
+      }
+    ],
+    "supervisorStopRequest": null,
+    "independentGradeGates": [
+      {
+        "at": "2026-11-18T22:31:28.963665+00:00",
+        "sha256": "8604c2b8c82243747954d39d55ed46bd2b4b6e9d8c74b1f9954f6b0086042087",
+        "productScore": 93.75,
+        "blockingRequiredDefect": true,
+        "qa": "reports/rtfm_supervised_qwen_02_snake.round1.qa.json"
+      }
+    ],
+    "productAuthor": "worker only",
+    "seed": {
+      "sha256": "70e579fcd652cd3260a76bb17765b431c87e35e3f25601d82cd7d07d5f5b1a88",
+      "baselineScore": 84,
+      "baselineRubricScores": {
+        "functionality": 35,
+        "artifact_correctness": 25,
+        "usability": 13,
+        "self_verification": 1,
+        "autonomy": 10
+      },
+      "baselineProductScore": 91.25,
+      "baselineTargetMet": false,
+      "baselineReport": "strategies/reports/rtfm_qwen_02_snake.report.json",
+      "creationCost": {
+        "model": "qwen",
+        "role": "worker",
+        "pid": 62484,
+        "assistantUsage": {
+          "input": 2921,
+          "output": 6942,
+          "cacheRead": 47651,
+          "cacheWrite": 0,
+          "totalTokens": 57514
+        },
+        "recordedCompactionUsage": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "totalTokens": 0
+        },
+        "recordedCombinedUsage": {
+          "input": 2921,
+          "output": 6942,
+          "cacheRead": 47651,
+          "cacheWrite": 0,
+          "totalTokens": 57514
+        },
+        "unreportedCompactions": 0,
+        "activeMinutes": 1.476,
+        "promptCount": 1,
+        "streamingWindows": [
+          {
+            "start": 1165297.960738208,
+            "end": 1165301.743102875
+          },
+          {
+            "start": 1165301.966635833,
+            "end": 1165369.764761083
+          },
+          {
+            "start": 1165369.840031,
+            "end": 1165371.915706333
+          },
+          {
+            "start": 1165372.192994625,
+            "end": 1165373.706765791
+          },
+          {
+            "start": 1165373.922211166,
+            "end": 1165376.779180375
+          },
+          {
+            "start": 1165377.016562791,
+            "end": 1165379.00088525
+          },
+          {
+            "start": 1165379.229264166,
+            "end": 1165384.595607916
+          }
+        ],
+        "exitCode": 0
+      },
+      "sourceCase": 112,
+      "sourceFolder": "rtfm/qwen/02_snake",
+      "frozenArtifact": "strategies/reports/initial-artifacts/rtfm_supervised_qwen_02_snake/index.html",
+      "frozenUTC": "2026-11-18T16:13:22.818932+00:00"
+    },
+    "sharedLimitSeconds": 7200,
+    "authorProfiles": "research/rtfm-runtime-profiles.json",
+    "runtimeConformance": "research/rtfm-supervised-conformance.json",
+    "sourceRTFMSoloCase": 112
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "infrastructureRecoveries": [],
+  "humanSteering": false,
+  "localSupervisorFeedback": 1,
+  "localModelCosts": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 20959,
+      "assistantUsage": {
+        "input": 10713,
+        "output": 2920,
+        "cacheRead": 101262,
+        "cacheWrite": 0,
+        "totalTokens": 114895
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 10713,
+        "output": 2920,
+        "cacheRead": 101262,
+        "cacheWrite": 0,
+        "totalTokens": 114895
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 1.985,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1189480.423117041,
+          "end": 1189487.892408708
+        },
+        {
+          "start": 1189487.961261083,
+          "end": 1189490.023545458
+        },
+        {
+          "start": 1189490.134860791,
+          "end": 1189530.527594041
+        },
+        {
+          "start": 1189530.62747975,
+          "end": 1189534.807731875
+        },
+        {
+          "start": 1189534.896080083,
+          "end": 1189539.441223416
+        },
+        {
+          "start": 1189539.566825916,
+          "end": 1189544.3861285
+        },
+        {
+          "start": 1189544.516050041,
+          "end": 1189558.790789375
+        },
+        {
+          "start": 1189559.061234,
+          "end": 1189563.44797775
+        },
+        {
+          "start": 1189563.556202083,
+          "end": 1189566.579031791
+        },
+        {
+          "start": 1189566.819871541,
+          "end": 1189576.478142
+        },
+        {
+          "start": 1189576.786834333,
+          "end": 1189597.74465
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 20960,
+      "assistantUsage": {
+        "input": 79785,
+        "output": 60453,
+        "cacheRead": 17221719,
+        "cacheWrite": 0,
+        "totalTokens": 17361957
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 79785,
+        "output": 60453,
+        "cacheRead": 17221719,
+        "cacheWrite": 0,
+        "totalTokens": 17361957
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 44.398,
+      "promptCount": 73,
+      "streamingWindows": [
+        {
+          "start": 1189262.384683291,
+          "end": 1189266.265496833
+        },
+        {
+          "start": 1189266.493440291,
+          "end": 1189268.332730291
+        },
+        {
+          "start": 1189268.398419833,
+          "end": 1189271.904921333
+        },
+        {
+          "start": 1189272.1136495,
+          "end": 1189408.636240625
+        },
+        {
+          "start": 1189408.915218125,
+          "end": 1189426.441318708
+        },
+        {
+          "start": 1189426.669668875,
+          "end": 1189430.564876083
+        },
+        {
+          "start": 1189430.889371625,
+          "end": 1189445.695622166
+        },
+        {
+          "start": 1189445.81659825,
+          "end": 1189448.872773375
+        },
+        {
+          "start": 1189449.120941916,
+          "end": 1189450.857935666
+        },
+        {
+          "start": 1189451.2760245,
+          "end": 1189470.855568083
+        },
+        {
+          "start": 1189471.13602175,
+          "end": 1189480.098594541
+        },
+        {
+          "start": 1189480.206094166,
+          "end": 1189488.627624541
+        },
+        {
+          "start": 1189492.017801083,
+          "end": 1189514.729622208
+        },
+        {
+          "start": 1189515.102779333,
+          "end": 1189521.226487541
+        },
+        {
+          "start": 1189521.560213583,
+          "end": 1189526.139929416
+        },
+        {
+          "start": 1189526.483067791,
+          "end": 1189566.248275625
+        },
+        {
+          "start": 1189566.63491075,
+          "end": 1189571.678247625
+        },
+        {
+          "start": 1189572.021172541,
+          "end": 1189600.354870333
+        },
+        {
+          "start": 1189600.362880875,
+          "end": 1189600.363962083
+        },
+        {
+          "start": 1189601.488065833,
+          "end": 1189603.6698505
+        },
+        {
+          "start": 1189603.980938125,
+          "end": 1189625.801466333
+        },
+        {
+          "start": 1189626.163018458,
+          "end": 1189637.39808
+        },
+        {
+          "start": 1189637.733552375,
+          "end": 1189671.551444583
+        },
+        {
+          "start": 1189671.562252291,
+          "end": 1189671.563221916
+        },
+        {
+          "start": 1189673.817018458,
+          "end": 1189721.940751
+        },
+        {
+          "start": 1189721.956819625,
+          "end": 1189721.957447958
+        },
+        {
+          "start": 1189724.15529675,
+          "end": 1189734.748563666
+        },
+        {
+          "start": 1189735.162196791,
+          "end": 1189744.989746125
+        },
+        {
+          "start": 1189745.189417666,
+          "end": 1189747.998861291
+        },
+        {
+          "start": 1189748.369887,
+          "end": 1189805.064154208
+        },
+        {
+          "start": 1189805.279505208,
+          "end": 1189810.517860916
+        },
+        {
+          "start": 1189811.173510916,
+          "end": 1189820.057853791
+        },
+        {
+          "start": 1189820.66965025,
+          "end": 1189829.448819625
+        },
+        {
+          "start": 1189830.032673541,
+          "end": 1189844.279330916
+        },
+        {
+          "start": 1189844.510494458,
+          "end": 1189849.114961708
+        },
+        {
+          "start": 1189849.732243875,
+          "end": 1189858.276044125
+        },
+        {
+          "start": 1189858.284169708,
+          "end": 1189858.285920875
+        },
+        {
+          "start": 1189860.509545375,
+          "end": 1189865.153944708
+        },
+        {
+          "start": 1189865.897358,
+          "end": 1189898.922057875
+        },
+        {
+          "start": 1189898.933983625,
+          "end": 1189898.935318
+        },
+        {
+          "start": 1189901.169823666,
+          "end": 1189905.894006791
+        },
+        {
+          "start": 1189914.332564125,
+          "end": 1189971.953131958
+        },
+        {
+          "start": 1189971.963347375,
+          "end": 1189971.964504666
+        },
+        {
+          "start": 1189974.214960041,
+          "end": 1189978.983013666
+        },
+        {
+          "start": 1189979.736323708,
+          "end": 1189986.749364166
+        },
+        {
+          "start": 1189986.994633291,
+          "end": 1189991.658826083
+        },
+        {
+          "start": 1189993.931918291,
+          "end": 1190023.1106
+        },
+        {
+          "start": 1190023.119350375,
+          "end": 1190023.12114675
+        },
+        {
+          "start": 1190023.997261833,
+          "end": 1190026.099866791
+        },
+        {
+          "start": 1190026.464647958,
+          "end": 1190158.531406375
+        },
+        {
+          "start": 1190158.538438666,
+          "end": 1190158.540071125
+        },
+        {
+          "start": 1190159.741742291,
+          "end": 1190161.595398583
+        },
+        {
+          "start": 1190162.001500666,
+          "end": 1190188.628626583
+        },
+        {
+          "start": 1190188.635525083,
+          "end": 1190188.636725125
+        },
+        {
+          "start": 1190249.754644625,
+          "end": 1190251.6951635
+        },
+        {
+          "start": 1190252.085559666,
+          "end": 1190303.2545905
+        },
+        {
+          "start": 1190303.260962,
+          "end": 1190303.262001125
+        },
+        {
+          "start": 1190339.807037333,
+          "end": 1190344.150191083
+        },
+        {
+          "start": 1190344.591607916,
+          "end": 1190359.981210666
+        },
+        {
+          "start": 1190359.989916625,
+          "end": 1190359.991026208
+        },
+        {
+          "start": 1190429.942539625,
+          "end": 1190435.814120333
+        },
+        {
+          "start": 1190436.273949916,
+          "end": 1190465.325886916
+        },
+        {
+          "start": 1190465.332296875,
+          "end": 1190465.333158833
+        },
+        {
+          "start": 1190520.04113275,
+          "end": 1190529.55450425
+        },
+        {
+          "start": 1190530.004964416,
+          "end": 1190551.874024375
+        },
+        {
+          "start": 1190551.885442916,
+          "end": 1190551.887155
+        },
+        {
+          "start": 1190610.1442605,
+          "end": 1190617.930817083
+        },
+        {
+          "start": 1190618.392656291,
+          "end": 1190631.138656875
+        },
+        {
+          "start": 1190631.149150541,
+          "end": 1190631.150299916
+        },
+        {
+          "start": 1190700.148083375,
+          "end": 1190704.717889541
+        },
+        {
+          "start": 1190705.123507875,
+          "end": 1190721.599088125
+        },
+        {
+          "start": 1190721.609175708,
+          "end": 1190721.610504875
+        },
+        {
+          "start": 1190790.194206458,
+          "end": 1190794.844303
+        },
+        {
+          "start": 1190795.264711416,
+          "end": 1190806.354771541
+        },
+        {
+          "start": 1190806.367424958,
+          "end": 1190806.368385375
+        },
+        {
+          "start": 1190880.38451925,
+          "end": 1190888.132174166
+        },
+        {
+          "start": 1190888.886756625,
+          "end": 1190901.107650083
+        },
+        {
+          "start": 1190901.121570458,
+          "end": 1190901.123441208
+        },
+        {
+          "start": 1190970.370305291,
+          "end": 1190974.596705791
+        },
+        {
+          "start": 1190975.055359833,
+          "end": 1190986.222028958
+        },
+        {
+          "start": 1190986.231103125,
+          "end": 1190986.233006125
+        },
+        {
+          "start": 1191060.440783666,
+          "end": 1191065.348215875
+        },
+        {
+          "start": 1191065.833030333,
+          "end": 1191076.987577958
+        },
+        {
+          "start": 1191076.992859708,
+          "end": 1191076.99361925
+        },
+        {
+          "start": 1191150.53287325,
+          "end": 1191155.391869125
+        },
+        {
+          "start": 1191155.826938291,
+          "end": 1191171.236533333
+        },
+        {
+          "start": 1191171.716138458,
+          "end": 1191199.567642791
+        },
+        {
+          "start": 1191199.578994916,
+          "end": 1191199.580181583
+        },
+        {
+          "start": 1191240.519890666,
+          "end": 1191242.815383916
+        },
+        {
+          "start": 1191243.2947525,
+          "end": 1191264.771058583
+        },
+        {
+          "start": 1191265.242731875,
+          "end": 1191281.454596333
+        },
+        {
+          "start": 1191281.464982916,
+          "end": 1191281.466559125
+        },
+        {
+          "start": 1191330.559300375,
+          "end": 1191335.53519075
+        },
+        {
+          "start": 1191336.008615625,
+          "end": 1191364.770612041
+        },
+        {
+          "start": 1191364.782678375,
+          "end": 1191364.783819958
+        },
+        {
+          "start": 1191420.638442041,
+          "end": 1191425.60632075
+        },
+        {
+          "start": 1191426.18376975,
+          "end": 1191441.989004833
+        },
+        {
+          "start": 1191441.999482458,
+          "end": 1191442.000728125
+        },
+        {
+          "start": 1191510.627034166,
+          "end": 1191515.93611
+        },
+        {
+          "start": 1191516.695342333,
+          "end": 1191530.296713708
+        },
+        {
+          "start": 1191530.304426625,
+          "end": 1191530.306244708
+        },
+        {
+          "start": 1191600.6654115,
+          "end": 1191605.758407291
+        },
+        {
+          "start": 1191606.216066208,
+          "end": 1191620.151921
+        },
+        {
+          "start": 1191620.160126666,
+          "end": 1191620.162748541
+        },
+        {
+          "start": 1191690.760068916,
+          "end": 1191695.876380625
+        },
+        {
+          "start": 1191696.383706875,
+          "end": 1191710.437981208
+        },
+        {
+          "start": 1191710.449287541,
+          "end": 1191710.450944208
+        },
+        {
+          "start": 1191780.917974958,
+          "end": 1191786.044002083
+        },
+        {
+          "start": 1191786.519932083,
+          "end": 1191800.6267175
+        },
+        {
+          "start": 1191800.636293375,
+          "end": 1191800.637959291
+        },
+        {
+          "start": 1191870.902582583,
+          "end": 1191876.092662166
+        },
+        {
+          "start": 1191876.647735666,
+          "end": 1191890.7545645
+        },
+        {
+          "start": 1191890.7658575,
+          "end": 1191890.767698875
+        },
+        {
+          "start": 1191961.00588675,
+          "end": 1191966.217642666
+        },
+        {
+          "start": 1191966.696050083,
+          "end": 1191980.978110625
+        },
+        {
+          "start": 1191980.983594625,
+          "end": 1191980.984726416
+        },
+        {
+          "start": 1192051.126485291,
+          "end": 1192056.278005416
+        },
+        {
+          "start": 1192056.870257375,
+          "end": 1192071.121270916
+        },
+        {
+          "start": 1192071.124912833,
+          "end": 1192071.126339791
+        },
+        {
+          "start": 1192141.211515208,
+          "end": 1192146.491140083
+        },
+        {
+          "start": 1192146.945067916,
+          "end": 1192161.413197
+        },
+        {
+          "start": 1192161.427600625,
+          "end": 1192161.429445958
+        },
+        {
+          "start": 1192231.312830666,
+          "end": 1192236.600049708
+        },
+        {
+          "start": 1192237.055526375,
+          "end": 1192251.55947975
+        },
+        {
+          "start": 1192251.575644458,
+          "end": 1192251.577578583
+        },
+        {
+          "start": 1192321.41720975,
+          "end": 1192326.709215916
+        },
+        {
+          "start": 1192327.21016725,
+          "end": 1192341.862892916
+        },
+        {
+          "start": 1192341.875415041,
+          "end": 1192341.877456916
+        },
+        {
+          "start": 1192411.461149833,
+          "end": 1192416.874335583
+        },
+        {
+          "start": 1192417.425178333,
+          "end": 1192432.076403041
+        },
+        {
+          "start": 1192432.09267675,
+          "end": 1192432.094869833
+        },
+        {
+          "start": 1192501.6029805,
+          "end": 1192507.012439583
+        },
+        {
+          "start": 1192507.560287958,
+          "end": 1192522.379545958
+        },
+        {
+          "start": 1192522.389117291,
+          "end": 1192522.390824458
+        },
+        {
+          "start": 1192591.713380208,
+          "end": 1192597.038987875
+        },
+        {
+          "start": 1192597.527909958,
+          "end": 1192612.348040208
+        },
+        {
+          "start": 1192612.360956458,
+          "end": 1192612.360977375
+        },
+        {
+          "start": 1192681.841650416,
+          "end": 1192687.303812583
+        },
+        {
+          "start": 1192687.845556916,
+          "end": 1192702.994019375
+        },
+        {
+          "start": 1192703.007173208,
+          "end": 1192703.009023041
+        },
+        {
+          "start": 1192771.822744541,
+          "end": 1192777.293995083
+        },
+        {
+          "start": 1192778.033327333,
+          "end": 1192793.102113166
+        },
+        {
+          "start": 1192793.111424875,
+          "end": 1192793.113526
+        },
+        {
+          "start": 1192861.92639975,
+          "end": 1192867.469585083
+        },
+        {
+          "start": 1192867.966044833,
+          "end": 1192883.041595
+        },
+        {
+          "start": 1192883.053188875,
+          "end": 1192883.054789541
+        },
+        {
+          "start": 1192952.007752791,
+          "end": 1192957.505558791
+        },
+        {
+          "start": 1192958.103549583,
+          "end": 1192973.272144
+        },
+        {
+          "start": 1192973.281219833,
+          "end": 1192973.282853333
+        },
+        {
+          "start": 1193042.856055083,
+          "end": 1193048.371057458
+        },
+        {
+          "start": 1193048.967994791,
+          "end": 1193064.199596833
+        },
+        {
+          "start": 1193064.210744625,
+          "end": 1193064.211986166
+        },
+        {
+          "start": 1193132.269264583,
+          "end": 1193137.835093333
+        },
+        {
+          "start": 1193138.470942833,
+          "end": 1193153.749470916
+        },
+        {
+          "start": 1193153.763516875,
+          "end": 1193153.764989708
+        },
+        {
+          "start": 1193222.295925458,
+          "end": 1193227.942364916
+        },
+        {
+          "start": 1193228.515927541,
+          "end": 1193243.864308375
+        },
+        {
+          "start": 1193243.872858041,
+          "end": 1193243.874605625
+        },
+        {
+          "start": 1193312.410532333,
+          "end": 1193317.920406416
+        },
+        {
+          "start": 1193318.727561791,
+          "end": 1193334.198997625
+        },
+        {
+          "start": 1193334.212166375,
+          "end": 1193334.214135458
+        },
+        {
+          "start": 1193402.505881125,
+          "end": 1193408.135156666
+        },
+        {
+          "start": 1193408.636969166,
+          "end": 1193424.436600625
+        },
+        {
+          "start": 1193424.449640916,
+          "end": 1193424.451614666
+        },
+        {
+          "start": 1193492.551378208,
+          "end": 1193498.201360958
+        },
+        {
+          "start": 1193498.737729291,
+          "end": 1193514.348475666
+        },
+        {
+          "start": 1193514.362043375,
+          "end": 1193514.363391833
+        },
+        {
+          "start": 1193582.867093291,
+          "end": 1193588.617140458
+        },
+        {
+          "start": 1193589.181911125,
+          "end": 1193604.831159208
+        },
+        {
+          "start": 1193604.847318333,
+          "end": 1193604.847348875
+        },
+        {
+          "start": 1193672.838228625,
+          "end": 1193678.580142291
+        },
+        {
+          "start": 1193679.128524416,
+          "end": 1193694.833515333
+        },
+        {
+          "start": 1193694.847481291,
+          "end": 1193694.847505083
+        },
+        {
+          "start": 1193762.958576875,
+          "end": 1193768.750087208
+        },
+        {
+          "start": 1193769.325805958,
+          "end": 1193785.108656833
+        },
+        {
+          "start": 1193785.116413166,
+          "end": 1193785.117460291
+        },
+        {
+          "start": 1193852.994279708,
+          "end": 1193858.786115583
+        },
+        {
+          "start": 1193859.333882916,
+          "end": 1193875.302360125
+        },
+        {
+          "start": 1193875.302531791,
+          "end": 1193875.302549166
+        },
+        {
+          "start": 1193943.141718833,
+          "end": 1193948.961231291
+        },
+        {
+          "start": 1193949.589900958,
+          "end": 1193965.643697625
+        },
+        {
+          "start": 1193965.65587375,
+          "end": 1193965.65726925
+        },
+        {
+          "start": 1194033.13492375,
+          "end": 1194038.937982041
+        },
+        {
+          "start": 1194039.523588125,
+          "end": 1194055.637634916
+        },
+        {
+          "start": 1194055.652038,
+          "end": 1194055.654269875
+        },
+        {
+          "start": 1194123.288625541,
+          "end": 1194129.15422325
+        },
+        {
+          "start": 1194129.867320541,
+          "end": 1194146.034712666
+        },
+        {
+          "start": 1194146.048660541,
+          "end": 1194146.05038225
+        },
+        {
+          "start": 1194213.393122375,
+          "end": 1194219.250794541
+        },
+        {
+          "start": 1194219.849613083,
+          "end": 1194236.088146083
+        },
+        {
+          "start": 1194236.100467625,
+          "end": 1194236.102295958
+        },
+        {
+          "start": 1194303.722491916,
+          "end": 1194309.341055208
+        },
+        {
+          "start": 1194310.009503041,
+          "end": 1194326.3365585
+        },
+        {
+          "start": 1194326.351960166,
+          "end": 1194326.35385025
+        },
+        {
+          "start": 1194393.46921075,
+          "end": 1194399.382909875
+        },
+        {
+          "start": 1194400.020406083,
+          "end": 1194416.447700416
+        },
+        {
+          "start": 1194416.465160583,
+          "end": 1194416.465202791
+        },
+        {
+          "start": 1194483.615373916,
+          "end": 1194489.5662125
+        },
+        {
+          "start": 1194490.177885625,
+          "end": 1194506.642568291
+        },
+        {
+          "start": 1194506.652077541,
+          "end": 1194506.653356916
+        },
+        {
+          "start": 1194573.7421785,
+          "end": 1194579.725769791
+        },
+        {
+          "start": 1194580.327024041,
+          "end": 1194596.852233791
+        },
+        {
+          "start": 1194596.867475583,
+          "end": 1194596.869196958
+        },
+        {
+          "start": 1194663.833973,
+          "end": 1194669.794122375
+        },
+        {
+          "start": 1194670.394339416,
+          "end": 1194687.05561375
+        },
+        {
+          "start": 1194687.06009125,
+          "end": 1194687.060142416
+        },
+        {
+          "start": 1194753.811001791,
+          "end": 1194759.855418416
+        },
+        {
+          "start": 1194760.482543416,
+          "end": 1194777.160146916
+        },
+        {
+          "start": 1194777.170256666,
+          "end": 1194777.17205575
+        },
+        {
+          "start": 1194844.073300666,
+          "end": 1194850.185445875
+        },
+        {
+          "start": 1194850.884147791,
+          "end": 1194867.616859958
+        },
+        {
+          "start": 1194867.635748708,
+          "end": 1194867.635780208
+        },
+        {
+          "start": 1194933.932441208,
+          "end": 1194940.030573291
+        },
+        {
+          "start": 1194940.7111705,
+          "end": 1194957.592531416
+        },
+        {
+          "start": 1194957.605001041,
+          "end": 1194957.606701541
+        },
+        {
+          "start": 1195023.966062458,
+          "end": 1195030.05689825
+        },
+        {
+          "start": 1195030.651841333,
+          "end": 1195047.593602333
+        },
+        {
+          "start": 1195047.606362083,
+          "end": 1195047.608502708
+        },
+        {
+          "start": 1195114.080855333,
+          "end": 1195120.234721208
+        },
+        {
+          "start": 1195120.8143145,
+          "end": 1195137.860505375
+        },
+        {
+          "start": 1195137.871751958,
+          "end": 1195137.874103583
+        },
+        {
+          "start": 1195204.15921325,
+          "end": 1195210.354624791
+        },
+        {
+          "start": 1195210.999916166,
+          "end": 1195228.1715665
+        },
+        {
+          "start": 1195228.17851875,
+          "end": 1195228.1832805
+        },
+        {
+          "start": 1195294.09286875,
+          "end": 1195300.317810583
+        },
+        {
+          "start": 1195301.040123958,
+          "end": 1195318.15748325
+        },
+        {
+          "start": 1195318.173022041,
+          "end": 1195318.174839416
+        },
+        {
+          "start": 1195384.188239,
+          "end": 1195390.404810166
+        },
+        {
+          "start": 1195391.153880958,
+          "end": 1195408.37107225
+        },
+        {
+          "start": 1195408.38326775,
+          "end": 1195408.385062125
+        },
+        {
+          "start": 1195474.287796583,
+          "end": 1195480.504832208
+        },
+        {
+          "start": 1195481.121178333,
+          "end": 1195498.257014791
+        },
+        {
+          "start": 1195498.271544375,
+          "end": 1195498.273902875
+        },
+        {
+          "start": 1195564.41071525,
+          "end": 1195570.642323333
+        },
+        {
+          "start": 1195571.297246416,
+          "end": 1195588.66268825
+        },
+        {
+          "start": 1195588.673835916,
+          "end": 1195588.675408041
+        },
+        {
+          "start": 1195654.473966583,
+          "end": 1195660.706648
+        },
+        {
+          "start": 1195661.356534125,
+          "end": 1195678.650497458
+        },
+        {
+          "start": 1195678.664783333,
+          "end": 1195678.6663245
+        },
+        {
+          "start": 1195744.573574416,
+          "end": 1195750.842923791
+        },
+        {
+          "start": 1195751.4768125,
+          "end": 1195768.997996125
+        },
+        {
+          "start": 1195769.016713833,
+          "end": 1195769.019000166
+        },
+        {
+          "start": 1195834.579082291,
+          "end": 1195840.894240625
+        },
+        {
+          "start": 1195841.563813458,
+          "end": 1195859.257258375
+        },
+        {
+          "start": 1195859.259589375,
+          "end": 1195859.261256208
+        },
+        {
+          "start": 1195924.748534,
+          "end": 1195931.068780125
+        },
+        {
+          "start": 1195931.800855875,
+          "end": 1195949.465897625
+        },
+        {
+          "start": 1195949.48045725,
+          "end": 1195949.482544
+        },
+        {
+          "start": 1196014.903254833,
+          "end": 1196021.20312325
+        },
+        {
+          "start": 1196021.871095166,
+          "end": 1196039.604938291
+        },
+        {
+          "start": 1196039.619068083,
+          "end": 1196039.621721416
+        },
+        {
+          "start": 1196105.004066541,
+          "end": 1196111.402584083
+        },
+        {
+          "start": 1196112.061670791,
+          "end": 1196129.851365791
+        },
+        {
+          "start": 1196129.865603333,
+          "end": 1196129.866996791
+        },
+        {
+          "start": 1196195.076913125,
+          "end": 1196201.462105666
+        },
+        {
+          "start": 1196202.136972333,
+          "end": 1196220.023587875
+        },
+        {
+          "start": 1196220.036662791,
+          "end": 1196220.038408958
+        },
+        {
+          "start": 1196285.210583166,
+          "end": 1196291.610631125
+        },
+        {
+          "start": 1196292.37758675,
+          "end": 1196310.12937475
+        },
+        {
+          "start": 1196310.142192875,
+          "end": 1196310.144202875
+        },
+        {
+          "start": 1196375.187824916,
+          "end": 1196381.440314
+        },
+        {
+          "start": 1196382.074872333,
+          "end": 1196399.920310833
+        },
+        {
+          "start": 1196399.934777833,
+          "end": 1196399.937814958
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "pairWallMinutes": 120.003,
+  "summedModelActiveMinutes": 46.383,
+  "modelUsageByModel": {
+    "ornith": {
+      "input": 79785,
+      "output": 60453,
+      "cacheRead": 17221719,
+      "totalTokens": 17361957
+    },
+    "qwen": {
+      "input": 10713,
+      "output": 2920,
+      "cacheRead": 101262,
+      "totalTokens": 114895
+    }
+  },
+  "modelWallMinutes": {
+    "qwen": 1.985,
+    "ornith": 44.398
+  },
+  "localProductScore": 93.8,
+  "localProductTargetMet": false,
+  "nativeCompactionByRole": {
+    "worker": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    },
+    "supervisor": {
+      "reportedUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "unreportedAttempts": 0
+    }
+  },
+  "localProductScoreExact": 93.75,
+  "attemptNumber": 1,
+  "priorInfrastructureInvalidAttempts": [],
+  "baselineAlreadyA": false,
+  "baselineScore": 84,
+  "baselineProductScore": 91.25,
+  "baselineTargetMet": false,
+  "baselineReport": "strategies/reports/rtfm_qwen_02_snake.report.json",
+  "baselineCreationCost": {
+    "model": "qwen",
+    "role": "worker",
+    "pid": 62484,
+    "assistantUsage": {
+      "input": 2921,
+      "output": 6942,
+      "cacheRead": 47651,
+      "cacheWrite": 0,
+      "totalTokens": 57514
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 2921,
+      "output": 6942,
+      "cacheRead": 47651,
+      "cacheWrite": 0,
+      "totalTokens": 57514
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 1.476,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1165297.960738208,
+        "end": 1165301.743102875
+      },
+      {
+        "start": 1165301.966635833,
+        "end": 1165369.764761083
+      },
+      {
+        "start": 1165369.840031,
+        "end": 1165371.915706333
+      },
+      {
+        "start": 1165372.192994625,
+        "end": 1165373.706765791
+      },
+      {
+        "start": 1165373.922211166,
+        "end": 1165376.779180375
+      },
+      {
+        "start": 1165377.016562791,
+        "end": 1165379.00088525
+      },
+      {
+        "start": 1165379.229264166,
+        "end": 1165384.595607916
+      }
+    ],
+    "exitCode": 0
+  },
+  "incrementalRepairCost": {
+    "worker": {
+      "model": "qwen",
+      "role": "worker",
+      "pid": 20959,
+      "assistantUsage": {
+        "input": 10713,
+        "output": 2920,
+        "cacheRead": 101262,
+        "cacheWrite": 0,
+        "totalTokens": 114895
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 10713,
+        "output": 2920,
+        "cacheRead": 101262,
+        "cacheWrite": 0,
+        "totalTokens": 114895
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 1.985,
+      "promptCount": 1,
+      "streamingWindows": [
+        {
+          "start": 1189480.423117041,
+          "end": 1189487.892408708
+        },
+        {
+          "start": 1189487.961261083,
+          "end": 1189490.023545458
+        },
+        {
+          "start": 1189490.134860791,
+          "end": 1189530.527594041
+        },
+        {
+          "start": 1189530.62747975,
+          "end": 1189534.807731875
+        },
+        {
+          "start": 1189534.896080083,
+          "end": 1189539.441223416
+        },
+        {
+          "start": 1189539.566825916,
+          "end": 1189544.3861285
+        },
+        {
+          "start": 1189544.516050041,
+          "end": 1189558.790789375
+        },
+        {
+          "start": 1189559.061234,
+          "end": 1189563.44797775
+        },
+        {
+          "start": 1189563.556202083,
+          "end": 1189566.579031791
+        },
+        {
+          "start": 1189566.819871541,
+          "end": 1189576.478142
+        },
+        {
+          "start": 1189576.786834333,
+          "end": 1189597.74465
+        }
+      ],
+      "exitCode": 0
+    },
+    "supervisor": {
+      "model": "ornith",
+      "role": "supervisor",
+      "pid": 20960,
+      "assistantUsage": {
+        "input": 79785,
+        "output": 60453,
+        "cacheRead": 17221719,
+        "cacheWrite": 0,
+        "totalTokens": 17361957
+      },
+      "recordedCompactionUsage": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "totalTokens": 0
+      },
+      "recordedCombinedUsage": {
+        "input": 79785,
+        "output": 60453,
+        "cacheRead": 17221719,
+        "cacheWrite": 0,
+        "totalTokens": 17361957
+      },
+      "unreportedCompactions": 0,
+      "activeMinutes": 44.398,
+      "promptCount": 73,
+      "streamingWindows": [
+        {
+          "start": 1189262.384683291,
+          "end": 1189266.265496833
+        },
+        {
+          "start": 1189266.493440291,
+          "end": 1189268.332730291
+        },
+        {
+          "start": 1189268.398419833,
+          "end": 1189271.904921333
+        },
+        {
+          "start": 1189272.1136495,
+          "end": 1189408.636240625
+        },
+        {
+          "start": 1189408.915218125,
+          "end": 1189426.441318708
+        },
+        {
+          "start": 1189426.669668875,
+          "end": 1189430.564876083
+        },
+        {
+          "start": 1189430.889371625,
+          "end": 1189445.695622166
+        },
+        {
+          "start": 1189445.81659825,
+          "end": 1189448.872773375
+        },
+        {
+          "start": 1189449.120941916,
+          "end": 1189450.857935666
+        },
+        {
+          "start": 1189451.2760245,
+          "end": 1189470.855568083
+        },
+        {
+          "start": 1189471.13602175,
+          "end": 1189480.098594541
+        },
+        {
+          "start": 1189480.206094166,
+          "end": 1189488.627624541
+        },
+        {
+          "start": 1189492.017801083,
+          "end": 1189514.729622208
+        },
+        {
+          "start": 1189515.102779333,
+          "end": 1189521.226487541
+        },
+        {
+          "start": 1189521.560213583,
+          "end": 1189526.139929416
+        },
+        {
+          "start": 1189526.483067791,
+          "end": 1189566.248275625
+        },
+        {
+          "start": 1189566.63491075,
+          "end": 1189571.678247625
+        },
+        {
+          "start": 1189572.021172541,
+          "end": 1189600.354870333
+        },
+        {
+          "start": 1189600.362880875,
+          "end": 1189600.363962083
+        },
+        {
+          "start": 1189601.488065833,
+          "end": 1189603.6698505
+        },
+        {
+          "start": 1189603.980938125,
+          "end": 1189625.801466333
+        },
+        {
+          "start": 1189626.163018458,
+          "end": 1189637.39808
+        },
+        {
+          "start": 1189637.733552375,
+          "end": 1189671.551444583
+        },
+        {
+          "start": 1189671.562252291,
+          "end": 1189671.563221916
+        },
+        {
+          "start": 1189673.817018458,
+          "end": 1189721.940751
+        },
+        {
+          "start": 1189721.956819625,
+          "end": 1189721.957447958
+        },
+        {
+          "start": 1189724.15529675,
+          "end": 1189734.748563666
+        },
+        {
+          "start": 1189735.162196791,
+          "end": 1189744.989746125
+        },
+        {
+          "start": 1189745.189417666,
+          "end": 1189747.998861291
+        },
+        {
+          "start": 1189748.369887,
+          "end": 1189805.064154208
+        },
+        {
+          "start": 1189805.279505208,
+          "end": 1189810.517860916
+        },
+        {
+          "start": 1189811.173510916,
+          "end": 1189820.057853791
+        },
+        {
+          "start": 1189820.66965025,
+          "end": 1189829.448819625
+        },
+        {
+          "start": 1189830.032673541,
+          "end": 1189844.279330916
+        },
+        {
+          "start": 1189844.510494458,
+          "end": 1189849.114961708
+        },
+        {
+          "start": 1189849.732243875,
+          "end": 1189858.276044125
+        },
+        {
+          "start": 1189858.284169708,
+          "end": 1189858.285920875
+        },
+        {
+          "start": 1189860.509545375,
+          "end": 1189865.153944708
+        },
+        {
+          "start": 1189865.897358,
+          "end": 1189898.922057875
+        },
+        {
+          "start": 1189898.933983625,
+          "end": 1189898.935318
+        },
+        {
+          "start": 1189901.169823666,
+          "end": 1189905.894006791
+        },
+        {
+          "start": 1189914.332564125,
+          "end": 1189971.953131958
+        },
+        {
+          "start": 1189971.963347375,
+          "end": 1189971.964504666
+        },
+        {
+          "start": 1189974.214960041,
+          "end": 1189978.983013666
+        },
+        {
+          "start": 1189979.736323708,
+          "end": 1189986.749364166
+        },
+        {
+          "start": 1189986.994633291,
+          "end": 1189991.658826083
+        },
+        {
+          "start": 1189993.931918291,
+          "end": 1190023.1106
+        },
+        {
+          "start": 1190023.119350375,
+          "end": 1190023.12114675
+        },
+        {
+          "start": 1190023.997261833,
+          "end": 1190026.099866791
+        },
+        {
+          "start": 1190026.464647958,
+          "end": 1190158.531406375
+        },
+        {
+          "start": 1190158.538438666,
+          "end": 1190158.540071125
+        },
+        {
+          "start": 1190159.741742291,
+          "end": 1190161.595398583
+        },
+        {
+          "start": 1190162.001500666,
+          "end": 1190188.628626583
+        },
+        {
+          "start": 1190188.635525083,
+          "end": 1190188.636725125
+        },
+        {
+          "start": 1190249.754644625,
+          "end": 1190251.6951635
+        },
+        {
+          "start": 1190252.085559666,
+          "end": 1190303.2545905
+        },
+        {
+          "start": 1190303.260962,
+          "end": 1190303.262001125
+        },
+        {
+          "start": 1190339.807037333,
+          "end": 1190344.150191083
+        },
+        {
+          "start": 1190344.591607916,
+          "end": 1190359.981210666
+        },
+        {
+          "start": 1190359.989916625,
+          "end": 1190359.991026208
+        },
+        {
+          "start": 1190429.942539625,
+          "end": 1190435.814120333
+        },
+        {
+          "start": 1190436.273949916,
+          "end": 1190465.325886916
+        },
+        {
+          "start": 1190465.332296875,
+          "end": 1190465.333158833
+        },
+        {
+          "start": 1190520.04113275,
+          "end": 1190529.55450425
+        },
+        {
+          "start": 1190530.004964416,
+          "end": 1190551.874024375
+        },
+        {
+          "start": 1190551.885442916,
+          "end": 1190551.887155
+        },
+        {
+          "start": 1190610.1442605,
+          "end": 1190617.930817083
+        },
+        {
+          "start": 1190618.392656291,
+          "end": 1190631.138656875
+        },
+        {
+          "start": 1190631.149150541,
+          "end": 1190631.150299916
+        },
+        {
+          "start": 1190700.148083375,
+          "end": 1190704.717889541
+        },
+        {
+          "start": 1190705.123507875,
+          "end": 1190721.599088125
+        },
+        {
+          "start": 1190721.609175708,
+          "end": 1190721.610504875
+        },
+        {
+          "start": 1190790.194206458,
+          "end": 1190794.844303
+        },
+        {
+          "start": 1190795.264711416,
+          "end": 1190806.354771541
+        },
+        {
+          "start": 1190806.367424958,
+          "end": 1190806.368385375
+        },
+        {
+          "start": 1190880.38451925,
+          "end": 1190888.132174166
+        },
+        {
+          "start": 1190888.886756625,
+          "end": 1190901.107650083
+        },
+        {
+          "start": 1190901.121570458,
+          "end": 1190901.123441208
+        },
+        {
+          "start": 1190970.370305291,
+          "end": 1190974.596705791
+        },
+        {
+          "start": 1190975.055359833,
+          "end": 1190986.222028958
+        },
+        {
+          "start": 1190986.231103125,
+          "end": 1190986.233006125
+        },
+        {
+          "start": 1191060.440783666,
+          "end": 1191065.348215875
+        },
+        {
+          "start": 1191065.833030333,
+          "end": 1191076.987577958
+        },
+        {
+          "start": 1191076.992859708,
+          "end": 1191076.99361925
+        },
+        {
+          "start": 1191150.53287325,
+          "end": 1191155.391869125
+        },
+        {
+          "start": 1191155.826938291,
+          "end": 1191171.236533333
+        },
+        {
+          "start": 1191171.716138458,
+          "end": 1191199.567642791
+        },
+        {
+          "start": 1191199.578994916,
+          "end": 1191199.580181583
+        },
+        {
+          "start": 1191240.519890666,
+          "end": 1191242.815383916
+        },
+        {
+          "start": 1191243.2947525,
+          "end": 1191264.771058583
+        },
+        {
+          "start": 1191265.242731875,
+          "end": 1191281.454596333
+        },
+        {
+          "start": 1191281.464982916,
+          "end": 1191281.466559125
+        },
+        {
+          "start": 1191330.559300375,
+          "end": 1191335.53519075
+        },
+        {
+          "start": 1191336.008615625,
+          "end": 1191364.770612041
+        },
+        {
+          "start": 1191364.782678375,
+          "end": 1191364.783819958
+        },
+        {
+          "start": 1191420.638442041,
+          "end": 1191425.60632075
+        },
+        {
+          "start": 1191426.18376975,
+          "end": 1191441.989004833
+        },
+        {
+          "start": 1191441.999482458,
+          "end": 1191442.000728125
+        },
+        {
+          "start": 1191510.627034166,
+          "end": 1191515.93611
+        },
+        {
+          "start": 1191516.695342333,
+          "end": 1191530.296713708
+        },
+        {
+          "start": 1191530.304426625,
+          "end": 1191530.306244708
+        },
+        {
+          "start": 1191600.6654115,
+          "end": 1191605.758407291
+        },
+        {
+          "start": 1191606.216066208,
+          "end": 1191620.151921
+        },
+        {
+          "start": 1191620.160126666,
+          "end": 1191620.162748541
+        },
+        {
+          "start": 1191690.760068916,
+          "end": 1191695.876380625
+        },
+        {
+          "start": 1191696.383706875,
+          "end": 1191710.437981208
+        },
+        {
+          "start": 1191710.449287541,
+          "end": 1191710.450944208
+        },
+        {
+          "start": 1191780.917974958,
+          "end": 1191786.044002083
+        },
+        {
+          "start": 1191786.519932083,
+          "end": 1191800.6267175
+        },
+        {
+          "start": 1191800.636293375,
+          "end": 1191800.637959291
+        },
+        {
+          "start": 1191870.902582583,
+          "end": 1191876.092662166
+        },
+        {
+          "start": 1191876.647735666,
+          "end": 1191890.7545645
+        },
+        {
+          "start": 1191890.7658575,
+          "end": 1191890.767698875
+        },
+        {
+          "start": 1191961.00588675,
+          "end": 1191966.217642666
+        },
+        {
+          "start": 1191966.696050083,
+          "end": 1191980.978110625
+        },
+        {
+          "start": 1191980.983594625,
+          "end": 1191980.984726416
+        },
+        {
+          "start": 1192051.126485291,
+          "end": 1192056.278005416
+        },
+        {
+          "start": 1192056.870257375,
+          "end": 1192071.121270916
+        },
+        {
+          "start": 1192071.124912833,
+          "end": 1192071.126339791
+        },
+        {
+          "start": 1192141.211515208,
+          "end": 1192146.491140083
+        },
+        {
+          "start": 1192146.945067916,
+          "end": 1192161.413197
+        },
+        {
+          "start": 1192161.427600625,
+          "end": 1192161.429445958
+        },
+        {
+          "start": 1192231.312830666,
+          "end": 1192236.600049708
+        },
+        {
+          "start": 1192237.055526375,
+          "end": 1192251.55947975
+        },
+        {
+          "start": 1192251.575644458,
+          "end": 1192251.577578583
+        },
+        {
+          "start": 1192321.41720975,
+          "end": 1192326.709215916
+        },
+        {
+          "start": 1192327.21016725,
+          "end": 1192341.862892916
+        },
+        {
+          "start": 1192341.875415041,
+          "end": 1192341.877456916
+        },
+        {
+          "start": 1192411.461149833,
+          "end": 1192416.874335583
+        },
+        {
+          "start": 1192417.425178333,
+          "end": 1192432.076403041
+        },
+        {
+          "start": 1192432.09267675,
+          "end": 1192432.094869833
+        },
+        {
+          "start": 1192501.6029805,
+          "end": 1192507.012439583
+        },
+        {
+          "start": 1192507.560287958,
+          "end": 1192522.379545958
+        },
+        {
+          "start": 1192522.389117291,
+          "end": 1192522.390824458
+        },
+        {
+          "start": 1192591.713380208,
+          "end": 1192597.038987875
+        },
+        {
+          "start": 1192597.527909958,
+          "end": 1192612.348040208
+        },
+        {
+          "start": 1192612.360956458,
+          "end": 1192612.360977375
+        },
+        {
+          "start": 1192681.841650416,
+          "end": 1192687.303812583
+        },
+        {
+          "start": 1192687.845556916,
+          "end": 1192702.994019375
+        },
+        {
+          "start": 1192703.007173208,
+          "end": 1192703.009023041
+        },
+        {
+          "start": 1192771.822744541,
+          "end": 1192777.293995083
+        },
+        {
+          "start": 1192778.033327333,
+          "end": 1192793.102113166
+        },
+        {
+          "start": 1192793.111424875,
+          "end": 1192793.113526
+        },
+        {
+          "start": 1192861.92639975,
+          "end": 1192867.469585083
+        },
+        {
+          "start": 1192867.966044833,
+          "end": 1192883.041595
+        },
+        {
+          "start": 1192883.053188875,
+          "end": 1192883.054789541
+        },
+        {
+          "start": 1192952.007752791,
+          "end": 1192957.505558791
+        },
+        {
+          "start": 1192958.103549583,
+          "end": 1192973.272144
+        },
+        {
+          "start": 1192973.281219833,
+          "end": 1192973.282853333
+        },
+        {
+          "start": 1193042.856055083,
+          "end": 1193048.371057458
+        },
+        {
+          "start": 1193048.967994791,
+          "end": 1193064.199596833
+        },
+        {
+          "start": 1193064.210744625,
+          "end": 1193064.211986166
+        },
+        {
+          "start": 1193132.269264583,
+          "end": 1193137.835093333
+        },
+        {
+          "start": 1193138.470942833,
+          "end": 1193153.749470916
+        },
+        {
+          "start": 1193153.763516875,
+          "end": 1193153.764989708
+        },
+        {
+          "start": 1193222.295925458,
+          "end": 1193227.942364916
+        },
+        {
+          "start": 1193228.515927541,
+          "end": 1193243.864308375
+        },
+        {
+          "start": 1193243.872858041,
+          "end": 1193243.874605625
+        },
+        {
+          "start": 1193312.410532333,
+          "end": 1193317.920406416
+        },
+        {
+          "start": 1193318.727561791,
+          "end": 1193334.198997625
+        },
+        {
+          "start": 1193334.212166375,
+          "end": 1193334.214135458
+        },
+        {
+          "start": 1193402.505881125,
+          "end": 1193408.135156666
+        },
+        {
+          "start": 1193408.636969166,
+          "end": 1193424.436600625
+        },
+        {
+          "start": 1193424.449640916,
+          "end": 1193424.451614666
+        },
+        {
+          "start": 1193492.551378208,
+          "end": 1193498.201360958
+        },
+        {
+          "start": 1193498.737729291,
+          "end": 1193514.348475666
+        },
+        {
+          "start": 1193514.362043375,
+          "end": 1193514.363391833
+        },
+        {
+          "start": 1193582.867093291,
+          "end": 1193588.617140458
+        },
+        {
+          "start": 1193589.181911125,
+          "end": 1193604.831159208
+        },
+        {
+          "start": 1193604.847318333,
+          "end": 1193604.847348875
+        },
+        {
+          "start": 1193672.838228625,
+          "end": 1193678.580142291
+        },
+        {
+          "start": 1193679.128524416,
+          "end": 1193694.833515333
+        },
+        {
+          "start": 1193694.847481291,
+          "end": 1193694.847505083
+        },
+        {
+          "start": 1193762.958576875,
+          "end": 1193768.750087208
+        },
+        {
+          "start": 1193769.325805958,
+          "end": 1193785.108656833
+        },
+        {
+          "start": 1193785.116413166,
+          "end": 1193785.117460291
+        },
+        {
+          "start": 1193852.994279708,
+          "end": 1193858.786115583
+        },
+        {
+          "start": 1193859.333882916,
+          "end": 1193875.302360125
+        },
+        {
+          "start": 1193875.302531791,
+          "end": 1193875.302549166
+        },
+        {
+          "start": 1193943.141718833,
+          "end": 1193948.961231291
+        },
+        {
+          "start": 1193949.589900958,
+          "end": 1193965.643697625
+        },
+        {
+          "start": 1193965.65587375,
+          "end": 1193965.65726925
+        },
+        {
+          "start": 1194033.13492375,
+          "end": 1194038.937982041
+        },
+        {
+          "start": 1194039.523588125,
+          "end": 1194055.637634916
+        },
+        {
+          "start": 1194055.652038,
+          "end": 1194055.654269875
+        },
+        {
+          "start": 1194123.288625541,
+          "end": 1194129.15422325
+        },
+        {
+          "start": 1194129.867320541,
+          "end": 1194146.034712666
+        },
+        {
+          "start": 1194146.048660541,
+          "end": 1194146.05038225
+        },
+        {
+          "start": 1194213.393122375,
+          "end": 1194219.250794541
+        },
+        {
+          "start": 1194219.849613083,
+          "end": 1194236.088146083
+        },
+        {
+          "start": 1194236.100467625,
+          "end": 1194236.102295958
+        },
+        {
+          "start": 1194303.722491916,
+          "end": 1194309.341055208
+        },
+        {
+          "start": 1194310.009503041,
+          "end": 1194326.3365585
+        },
+        {
+          "start": 1194326.351960166,
+          "end": 1194326.35385025
+        },
+        {
+          "start": 1194393.46921075,
+          "end": 1194399.382909875
+        },
+        {
+          "start": 1194400.020406083,
+          "end": 1194416.447700416
+        },
+        {
+          "start": 1194416.465160583,
+          "end": 1194416.465202791
+        },
+        {
+          "start": 1194483.615373916,
+          "end": 1194489.5662125
+        },
+        {
+          "start": 1194490.177885625,
+          "end": 1194506.642568291
+        },
+        {
+          "start": 1194506.652077541,
+          "end": 1194506.653356916
+        },
+        {
+          "start": 1194573.7421785,
+          "end": 1194579.725769791
+        },
+        {
+          "start": 1194580.327024041,
+          "end": 1194596.852233791
+        },
+        {
+          "start": 1194596.867475583,
+          "end": 1194596.869196958
+        },
+        {
+          "start": 1194663.833973,
+          "end": 1194669.794122375
+        },
+        {
+          "start": 1194670.394339416,
+          "end": 1194687.05561375
+        },
+        {
+          "start": 1194687.06009125,
+          "end": 1194687.060142416
+        },
+        {
+          "start": 1194753.811001791,
+          "end": 1194759.855418416
+        },
+        {
+          "start": 1194760.482543416,
+          "end": 1194777.160146916
+        },
+        {
+          "start": 1194777.170256666,
+          "end": 1194777.17205575
+        },
+        {
+          "start": 1194844.073300666,
+          "end": 1194850.185445875
+        },
+        {
+          "start": 1194850.884147791,
+          "end": 1194867.616859958
+        },
+        {
+          "start": 1194867.635748708,
+          "end": 1194867.635780208
+        },
+        {
+          "start": 1194933.932441208,
+          "end": 1194940.030573291
+        },
+        {
+          "start": 1194940.7111705,
+          "end": 1194957.592531416
+        },
+        {
+          "start": 1194957.605001041,
+          "end": 1194957.606701541
+        },
+        {
+          "start": 1195023.966062458,
+          "end": 1195030.05689825
+        },
+        {
+          "start": 1195030.651841333,
+          "end": 1195047.593602333
+        },
+        {
+          "start": 1195047.606362083,
+          "end": 1195047.608502708
+        },
+        {
+          "start": 1195114.080855333,
+          "end": 1195120.234721208
+        },
+        {
+          "start": 1195120.8143145,
+          "end": 1195137.860505375
+        },
+        {
+          "start": 1195137.871751958,
+          "end": 1195137.874103583
+        },
+        {
+          "start": 1195204.15921325,
+          "end": 1195210.354624791
+        },
+        {
+          "start": 1195210.999916166,
+          "end": 1195228.1715665
+        },
+        {
+          "start": 1195228.17851875,
+          "end": 1195228.1832805
+        },
+        {
+          "start": 1195294.09286875,
+          "end": 1195300.317810583
+        },
+        {
+          "start": 1195301.040123958,
+          "end": 1195318.15748325
+        },
+        {
+          "start": 1195318.173022041,
+          "end": 1195318.174839416
+        },
+        {
+          "start": 1195384.188239,
+          "end": 1195390.404810166
+        },
+        {
+          "start": 1195391.153880958,
+          "end": 1195408.37107225
+        },
+        {
+          "start": 1195408.38326775,
+          "end": 1195408.385062125
+        },
+        {
+          "start": 1195474.287796583,
+          "end": 1195480.504832208
+        },
+        {
+          "start": 1195481.121178333,
+          "end": 1195498.257014791
+        },
+        {
+          "start": 1195498.271544375,
+          "end": 1195498.273902875
+        },
+        {
+          "start": 1195564.41071525,
+          "end": 1195570.642323333
+        },
+        {
+          "start": 1195571.297246416,
+          "end": 1195588.66268825
+        },
+        {
+          "start": 1195588.673835916,
+          "end": 1195588.675408041
+        },
+        {
+          "start": 1195654.473966583,
+          "end": 1195660.706648
+        },
+        {
+          "start": 1195661.356534125,
+          "end": 1195678.650497458
+        },
+        {
+          "start": 1195678.664783333,
+          "end": 1195678.6663245
+        },
+        {
+          "start": 1195744.573574416,
+          "end": 1195750.842923791
+        },
+        {
+          "start": 1195751.4768125,
+          "end": 1195768.997996125
+        },
+        {
+          "start": 1195769.016713833,
+          "end": 1195769.019000166
+        },
+        {
+          "start": 1195834.579082291,
+          "end": 1195840.894240625
+        },
+        {
+          "start": 1195841.563813458,
+          "end": 1195859.257258375
+        },
+        {
+          "start": 1195859.259589375,
+          "end": 1195859.261256208
+        },
+        {
+          "start": 1195924.748534,
+          "end": 1195931.068780125
+        },
+        {
+          "start": 1195931.800855875,
+          "end": 1195949.465897625
+        },
+        {
+          "start": 1195949.48045725,
+          "end": 1195949.482544
+        },
+        {
+          "start": 1196014.903254833,
+          "end": 1196021.20312325
+        },
+        {
+          "start": 1196021.871095166,
+          "end": 1196039.604938291
+        },
+        {
+          "start": 1196039.619068083,
+          "end": 1196039.621721416
+        },
+        {
+          "start": 1196105.004066541,
+          "end": 1196111.402584083
+        },
+        {
+          "start": 1196112.061670791,
+          "end": 1196129.851365791
+        },
+        {
+          "start": 1196129.865603333,
+          "end": 1196129.866996791
+        },
+        {
+          "start": 1196195.076913125,
+          "end": 1196201.462105666
+        },
+        {
+          "start": 1196202.136972333,
+          "end": 1196220.023587875
+        },
+        {
+          "start": 1196220.036662791,
+          "end": 1196220.038408958
+        },
+        {
+          "start": 1196285.210583166,
+          "end": 1196291.610631125
+        },
+        {
+          "start": 1196292.37758675,
+          "end": 1196310.12937475
+        },
+        {
+          "start": 1196310.142192875,
+          "end": 1196310.144202875
+        },
+        {
+          "start": 1196375.187824916,
+          "end": 1196381.440314
+        },
+        {
+          "start": 1196382.074872333,
+          "end": 1196399.920310833
+        },
+        {
+          "start": 1196399.934777833,
+          "end": 1196399.937814958
+        }
+      ],
+      "exitCode": 0
+    }
+  },
+  "artifactChangedFromSeed": true,
+  "productDelta": 2.5,
+  "newlyReachedAQuality": false
+}

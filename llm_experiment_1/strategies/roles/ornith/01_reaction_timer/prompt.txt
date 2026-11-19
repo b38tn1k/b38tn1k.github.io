@@ -1,0 +1,1 @@
+Build a polished reaction-time tester with a random wait, false-start detection, five trials, and a results summary. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.

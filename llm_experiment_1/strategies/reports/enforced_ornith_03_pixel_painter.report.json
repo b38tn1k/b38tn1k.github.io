@@ -1,0 +1,245 @@
+{
+  "score": 52,
+  "grade": "D provisional - basic drawing and history work; palette colors and larger canvases fail",
+  "rubricScores": {
+    "functionality": 24,
+    "artifact_correctness": 13,
+    "usability": 12,
+    "self_verification": 3,
+    "autonomy": 0
+  },
+  "strengths": [
+    "The final single offline HTML starts. Independent actual-handler checks pass mouse/touch painting, erasing, clear, two-step Undo/Redo and undoing an erase or clear.",
+    "A three-digit custom hex color paints red correctly. PNG export dispatch uses the requested logical canvas dimensions and download name; actual PNG encoding remains unverified.",
+    "Build, initial tester and initial reviewer all reached normal handoffs. The final reviewer rejected the app rather than accepting the developer's completion claim."
+  ],
+  "defects": [
+    "hexToRgba accepts eight-digit and three/four-digit hex but omits the normal six-digit format used by every palette swatch and the native color input. Selecting the red #c0392b swatch paints opaque black. Direct observation of the unchanged parser confirms #ff0000 becomes [0,0,0,255].",
+    "applySize allocates newPixels() before updating W and H. Enlarging 32x32 to 60×40 leaves a 4,096-value buffer instead of 9,600, so the far part of the enlarged canvas cannot retain painting.",
+    "History stores only pixel arrays, not canvas dimensions. Undo after resizing 32×32 to 16×16 leaves W/H at 16 instead of restoring the previous canvas state.",
+    "Repair introduced a prototype-wide input.value override while chasing a supposed DOM value problem. The final reviewer also attributed black painting to that override; independent checks identify the missing six-digit parser branch as the direct cause. Three-digit color input works in the same exact source/runtime.",
+    "The acceptance suite retained a hardcoded failed resize assertion and a stale claim that the repaired app still calls unsupported scaled drawImage, although the final renderer uses putImageData. Several other checks assert only that a handler ran. Both repair stages and later testers exhausted their stage limits; the gate remained failed after 51.36 minutes."
+  ],
+  "verification": [
+    "Independent reports/enforced_ornith_03_pixel_painter.qa.cjs/.qa.json exercises actual UI events, pixel outcomes, two-step history, resized backing-buffer length, touch paint and export dispatch. No application algorithms are substituted.",
+    "Final artifact SHA-256 is 1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869. All 294 observed native tool calls are preserved; no assistant text containing tool-call markup was observed in this attempt."
+  ],
+  "verificationConcerns": [
+    "The supplied Canvas kit cannot handle general scaled drawImage. The initial renderer used that valid browser API; the repair changed rendering to fit the kit. Do not count the initial mock limitation as an application startup defect.",
+    "The final reviewer correctly observed black drawing and stale test evidence but supplied an incorrect root-cause diagnosis. Candidate reviews are not independent grading truth.",
+    "Browser layout, actual native color-picker input behavior, real PNG encoding and native Canvas rendering remain unverified. Scores are provisional and this is one attempt."
+  ],
+  "scopeCompliance": "Application implementation and repairs came only from Pi. Tester/reviewer application writes and repair acceptance-test writes were OS-blocked. No supervisor app changes or application-specific hints.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "First completed final-procedure attempt. Mandatory build/test/review and both repair/retest/review rounds ran. Protected gate rejected remaining failures. Automatic generic deadline notices are recorded separately from human application guidance. Enforcement improved workflow coverage but did not repair the core color/resize defects.",
+  "title": "Pixel painter",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "enforced",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "Review written. Summary:\n\n**Status: `fail`**\n\nI ran the acceptance harness against the exact source in `.scratch/` (offline, Node VM \u2014 no browser) and produced ground-truth evidence.\n\n**Key findings:**\n\n1. **App loads cleanly with zero console errors** \u2014 contradicts the acceptance test's written claim that `render()` calls a scaled 6-arg `drawImage` that the QA shim rejects. The delivered `index.html` uses `createImageData` + `putImageData` (no scaled `drawImage`).\n\n2. **Real defect: color selection is broken.** The app's `wrapAccessor()` monkey-patch on `HTMLInputElement.prototype.value` returns a stale value during dispatched `input`/`change` events. Probe evidence: assigning `#ff0000` then painting yields `pixel[5,5] = [0,0,0,255]` (black), and the hex field similarly reads `#000000` after being set to `#00ff00`. A plain (un-wrapped) input in the same runtime works correctly, proving the defect is in the app's wrapper, not the runtime.\n\n3. **The acceptance test's own failure narrative is wrong** for this artifact: it attributes both failures to an unmodeled scaled `drawImage` overload that doesn't exist in the delivered file. `resize_rectangular` is asserted `false` by construction (hardcoded), and `palette_brush` fails for the color defect \u2014 not an environment limitation.\n\n**What works** (executed without throwing in the probe): eraser, undo, clear, touch paint, resize (status updates, canvas backing size matches), PNG export dispatch.\n\nI did not modify the app, the acceptance test, or any config. `qa/review.json` is the required handoff; concrete evidence paths are cited so a repair agent can act (remove the `wrapAccessor` override so `this.value` reflects the typed color).",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 5,
+  "elapsedMinutes": 51.36,
+  "wallMinutes": 51.36,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "repair_limit",
+  "exitCode": 1,
+  "promptWords": 40,
+  "toolCalls": 294,
+  "parentToolCalls": 0,
+  "childToolCalls": 294,
+  "toolResultsMarkedError": 29,
+  "modelUsageReported": {
+    "input": 223977,
+    "output": 86268,
+    "cacheRead": 7200925,
+    "totalTokens": 7511170
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 46304,
+  "parentPeakReportedPromptTokens": 0,
+  "childPeakReportedPromptTokens": 46304,
+  "parentModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "childModelUsage": {
+    "input": 223977,
+    "output": 86268,
+    "cacheRead": 7200925,
+    "totalTokens": 7511170
+  },
+  "artifactBytes": 26629,
+  "sha256": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {
+      "build": 1,
+      "test": 3,
+      "review": 3,
+      "repair": 2
+    },
+    "rolesCompleted": {
+      "build": 1,
+      "test": 1,
+      "review": 3
+    },
+    "parentArtifactReads": 13,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [
+      "ornith-1.5:35b-256k"
+    ],
+    "delegationCalls": 0,
+    "parentWrites": 0,
+    "delegations": [],
+    "mechanicalStageDeadlineNotices": 6,
+    "controller": "External sequential stage controller; every model stage has a fresh Pi RPC context",
+    "stages": [
+      {
+        "role": "build",
+        "number": 1,
+        "minutes": 3.99,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": null,
+        "artifactAfter": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+        "prompt": "enforced/ornith/03_pixel_painter/runtime/01-build/prompt.txt",
+        "events": "enforced/ornith/03_pixel_painter/runtime/01-build/events.jsonl",
+        "stderr": "enforced/ornith/03_pixel_painter/runtime/01-build/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 2,
+        "minutes": 6.16,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+        "artifactAfter": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+        "prompt": "enforced/ornith/03_pixel_painter/runtime/02-test/prompt.txt",
+        "events": "enforced/ornith/03_pixel_painter/runtime/02-test/events.jsonl",
+        "stderr": "enforced/ornith/03_pixel_painter/runtime/02-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 3,
+        "minutes": 1.46,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+        "artifactAfter": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+        "prompt": "enforced/ornith/03_pixel_painter/runtime/03-review/prompt.txt",
+        "events": "enforced/ornith/03_pixel_painter/runtime/03-review/events.jsonl",
+        "stderr": "enforced/ornith/03_pixel_painter/runtime/03-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 4,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "829c1a1dfc43e654ed1ff1eadc3d3278982e9f5f61f4e860974a46e17c59275e",
+        "artifactAfter": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "prompt": "enforced/ornith/03_pixel_painter/runtime/04-repair/prompt.txt",
+        "events": "enforced/ornith/03_pixel_painter/runtime/04-repair/events.jsonl",
+        "stderr": "enforced/ornith/03_pixel_painter/runtime/04-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 5,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "artifactAfter": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "prompt": "enforced/ornith/03_pixel_painter/runtime/05-test/prompt.txt",
+        "events": "enforced/ornith/03_pixel_painter/runtime/05-test/events.jsonl",
+        "stderr": "enforced/ornith/03_pixel_painter/runtime/05-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 6,
+        "minutes": 3.66,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "artifactAfter": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "prompt": "enforced/ornith/03_pixel_painter/runtime/06-review/prompt.txt",
+        "events": "enforced/ornith/03_pixel_painter/runtime/06-review/events.jsonl",
+        "stderr": "enforced/ornith/03_pixel_painter/runtime/06-review/stderr.log"
+      },
+      {
+        "role": "repair",
+        "number": 7,
+        "minutes": 10.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "artifactAfter": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "prompt": "enforced/ornith/03_pixel_painter/runtime/07-repair/prompt.txt",
+        "events": "enforced/ornith/03_pixel_painter/runtime/07-repair/events.jsonl",
+        "stderr": "enforced/ornith/03_pixel_painter/runtime/07-repair/stderr.log"
+      },
+      {
+        "role": "test",
+        "number": 8,
+        "minutes": 6.1,
+        "reason": "stage_time_limit",
+        "exitCode": -9,
+        "artifactBefore": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "artifactAfter": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "prompt": "enforced/ornith/03_pixel_painter/runtime/08-test/prompt.txt",
+        "events": "enforced/ornith/03_pixel_painter/runtime/08-test/events.jsonl",
+        "stderr": "enforced/ornith/03_pixel_painter/runtime/08-test/stderr.log"
+      },
+      {
+        "role": "review",
+        "number": 9,
+        "minutes": 3.67,
+        "reason": "agent_settled",
+        "exitCode": 0,
+        "artifactBefore": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "artifactAfter": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+        "prompt": "enforced/ornith/03_pixel_painter/runtime/09-review/prompt.txt",
+        "events": "enforced/ornith/03_pixel_painter/runtime/09-review/events.jsonl",
+        "stderr": "enforced/ornith/03_pixel_painter/runtime/09-review/stderr.log"
+      }
+    ],
+    "gate": {
+      "passed": false,
+      "artifactSHA256": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+      "errors": [
+        "Executable acceptance test did not exit successfully",
+        "Acceptance check missing/failed: resize_rectangular",
+        "Acceptance check missing/failed: palette_brush",
+        "Acceptance ledger contains a failed check; every recorded check must pass",
+        "Verifier did not trace loading the actual page and interacting with its controls",
+        "Independent review missing, stale or reports blocking findings"
+      ],
+      "stl": null,
+      "limits": [
+        "Partial DOM/Canvas startup and agent-authored acceptance tests; not independent browser/visual verification.",
+        "Completed stages and passing checks do not establish an A grade. Independent assessment follows separately."
+      ]
+    }
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ],
+  "calibration": false
+}

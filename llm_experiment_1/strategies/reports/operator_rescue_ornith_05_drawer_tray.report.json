@@ -1,0 +1,161 @@
+{
+  "score": 51,
+  "grade": "D - assisted product 61.2; delivered tray unchanged",
+  "summary": "The shared deadline ends the first response after geometry experiments in scratch files. Delivered index.html is byte-identical to its frozen seed; the known dimension, grid-label, auto-rotation and solid-export defects remain. The assisted product target is not met.",
+  "rubricScores": {
+    "functionality": 25,
+    "artifact_correctness": 17,
+    "usability": 7,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "assistedProductTargetMet": false,
+  "terminalSnapshot": "strategies/reports/operator-finals/case90/index.html",
+  "strengths": [
+    "The offline page initializes; actual manual pointer dragging changes preview rotation and native rendered pixels.",
+    "The download is a finite, correctly sized binary STL with the requested outside bounds and consistent stored normals/winding. These structural checks do not establish a valid solid.",
+    "Final HTML exactly matches the frozen seed SHA; product points are held at the baseline values rather than implying a quality change without a source change."
+  ],
+  "defects": [
+    "Required: fractional wall/floor inputs are truncated. Valid wall2.5mm and floor2.25mm settings are applied as2mm.",
+    "Required: exported compartment openings are uneven and disagree with the readouts. Measured column openings56.3333/55.3334/60.3333mm and row openings56/58mm do not match the requested equal cells.",
+    "Required: STL retains intersecting/internal box-shell surfaces. Forty edge segments remain nonmanifold after reconciling collinear subdivisions; volume103680mm\u00b3 differs from the requested tray-union117281.25mm\u00b3 for the tested controls.",
+    "The visible grid label remains3\u00d72 after changing to4\u00d73. The advertised auto-rotate toggle schedules no callback; manual rotation works."
+  ],
+  "verification": [
+    "qa/operator-ornith-tray.cjs independently checks current source and reports/operator-finals/case90/index.html; SHA256 dc64030bd81c24da3279800f3b3304d0d36f921d243059f8190b758f9dc01356, identical to the original frozen seed.",
+    "Actual controls, nativeCanvas pixels and downloaded STL bytes were used. Independent geometry diagnostics include bounds, finite coordinates, normals, analytical volume, wall/opening planes and edge/face connectivity.",
+    "qa/stl-topology.cjs was calibrated on closed, valid collinear-subdivision, open, point-contact and duplicate-face fixtures. Failure here is not merely a raw T-junction edge-count artifact."
+  ],
+  "verificationConcerns": [
+    "The model produced multiple failed geometry prototypes but integrated no repair into the delivered HTML before the deadline. There is no settled response or completed final verification.",
+    "Some model reasoning treated an open tray cavity as requiring open material-boundary edges. A hollow open-top tray can still have a closed boundary around its wall/floor material; independent checks assess that boundary.",
+    "No browser layout/GPU/device verification or physical-print certification."
+  ],
+  "scopeCompliance": "Current rescue OS read/write isolation remained active; no successful out-of-project write or reading of prior benchmark evidence observed. Pi alone authored scratch prototypes; Codex supplied no app code. The historical original-seed write/intervention caveat remains unchanged in seed provenance.",
+  "workflowNotes": "One counted prompt in one native Pi context. Its first response consumes the shared deadline without settling, so unused prompt slots do not extend the cap. Model-active repair time60.0min; elapsed60.1min includes process cleanup. No extra repair attempt or budget was added. Baseline creation cost is separate.",
+  "humanOrSupervisorSteering": 1,
+  "title": "Simple drawer tray generator",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "operator_rescue",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "comp=0 vol=0 \u2014 the surface dedup removed everything (all faces were \"removed\"). The same-normal dedup with `areaA>=areaB` removes faces but the loop logic is broken. Let me debug by checking how many faces remain.",
+  "workflowInstructions": "operator-rescue-plan.json; run-operator-rescue.py",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 60.0,
+  "wallMinutes": 60.0,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 65,
+  "toolCalls": 134,
+  "parentToolCalls": 134,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 7,
+  "modelUsageReported": {
+    "input": 76412,
+    "output": 90262,
+    "cacheRead": 8488996,
+    "totalTokens": 8655670
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 132896,
+  "parentPeakReportedPromptTokens": 132896,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 76412,
+    "output": 90262,
+    "cacheRead": 8488996,
+    "totalTokens": 8655670
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 19249,
+  "sha256": "dc64030bd81c24da3279800f3b3304d0d36f921d243059f8190b758f9dc01356",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 1,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 41,
+    "delegations": [],
+    "controller": "Codex operator with one persistent native Pi repair context",
+    "operatorPrompts": 1,
+    "rounds": [],
+    "seed": {
+      "id": "ornith-solo_billion-5",
+      "mode": "solo_billion",
+      "configurationMean": 74.8,
+      "source": "billion_on/ornith/05_drawer_tray/index.html",
+      "report": "billion_on/reports/ornith_05_drawer_tray.report.json",
+      "sha256": "dc64030bd81c24da3279800f3b3304d0d36f921d243059f8190b758f9dc01356",
+      "score": 60,
+      "grade": "C- - binary export works; maker dimensions unreliable",
+      "rubricScores": {
+        "functionality": 25,
+        "artifact_correctness": 17,
+        "usability": 7,
+        "self_verification": 3,
+        "autonomy": 8
+      },
+      "baselineScope": "Failed before intervention: repeated/tmp test writes. Supervisor stopped process, applied tested OS filesystem boundary, resumed same session with scope-only reminder. No app code or geometry hint supplied.",
+      "baselineSteering": 1,
+      "baselineMinutes": 15.9,
+      "baselineActiveMinutes": 4.19,
+      "frozenArtifact": "strategies/reports/initial-artifacts/operator_rescue_ornith_05_drawer_tray/index.html"
+    },
+    "repairSettings": {
+      "thinking": "off",
+      "billionContext": false,
+      "compaction": {
+        "enabled": true
+      },
+      "forcedProof": false,
+      "singlePersistentAgent": true,
+      "note": "Copied seed configuration is provenance; repair workflow uses corrected standalone Pi profiles, not the original delegation/extension architecture."
+    },
+    "modelActiveMinutes": 60.0,
+    "operatorReviewMinutes": 0.1,
+    "repairElapsedMinutes": 60.1
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Operator-assisted rescue of a selected existing artifact. Baseline creation cost and new repair cost are separate; normalized product quality is not an autonomous100-point grade."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "supervisorAssisted": true,
+  "assistedProductScore": 61.2
+}

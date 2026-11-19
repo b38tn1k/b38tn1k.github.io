@@ -1,0 +1,1 @@
+I keep misreading — the "start" line never appears because the very first `makeTray` call hangs. All my invert probes were actually stalled inside makeTray's union, then never reached the invert. Let me make makeTray itself fully instrumented from the union call.

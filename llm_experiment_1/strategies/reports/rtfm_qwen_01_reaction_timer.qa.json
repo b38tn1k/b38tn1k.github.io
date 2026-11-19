@@ -1,0 +1,58 @@
+{
+  "method": "Independent exact-source VM/DOM actual onclick handlers, scheduled random cues and deterministic performance clock. Read-only closure state exposure, no algorithm replacement. No browser layout/hit testing or physical reaction-latency verification.",
+  "sha256": "0821df522caa98a61d6c58d988145b7828c3002c9f4e86e1e8cb34d306011330",
+  "checks": [
+    {
+      "id": "five_actual_responses_correct_summary_and_replay",
+      "pass": true,
+      "evidence": {
+        "mean": 250,
+        "best": 200,
+        "worst": 300,
+        "rows": 5,
+        "replay": true
+      }
+    },
+    {
+      "id": "displayed_trial_numbers_are_one_through_five",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  'Trial 2 of 5',\n  'Trial 3 of 5',\n  'Trial 4 of 5',\n  'Trial 5 of 5',\n  'Trial 6 of 5'\n]\n\nshould loosely deep-equal\n\n[\n  'Trial 1 of 5',\n  'Trial 2 of 5',\n  'Trial 3 of 5',\n  'Trial 4 of 5',\n  'Trial 5 of 5'\n]",
+      "actual": [
+        "Trial 2 of 5",
+        "Trial 3 of 5",
+        "Trial 4 of 5",
+        "Trial 5 of 5",
+        "Trial 6 of 5"
+      ],
+      "expected": [
+        "Trial 1 of 5",
+        "Trial 2 of 5",
+        "Trial 3 of 5",
+        "Trial 4 of 5",
+        "Trial 5 of 5"
+      ]
+    },
+    {
+      "id": "false_start_retry_preserves_current_trial",
+      "pass": false,
+      "error": "Retry advances trial despite claiming to retry the same trial",
+      "actual": 2,
+      "expected": 1
+    },
+    {
+      "id": "repeated_false_starts_still_require_five_valid_measurements",
+      "pass": false,
+      "error": "Seven false-start retries allow a one-response final summary",
+      "actual": 1,
+      "expected": 5
+    },
+    {
+      "id": "single_file_offline",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "pass": false
+}

@@ -1,0 +1,51 @@
+# Drawer-Organizer Tray Maker Tool
+
+## Summary
+A single, self-contained, offline `index.html` that lets the user design a rectangular drawer-organizer tray: edit outer length/width/height, row/column counts, wall thickness, and floor thickness; see live compartment dimensions and a rotatable 3D preview; and export a printable STL. No network, no CDN, no external assets.
+
+## Key Design Decisions (assumptions)
+- **3D rendering: hand-rolled WebGL**, not a vendored library. Rationale: truly offline, keeps the file small (~25–40 KB), and a shallow-rotatable tray is simple to render with flat-shaded box meshes and a fixed directional + ambient light. The preview is draggable to rotate (orbit about X/Y) and auto-orbits when idle. This is the chosen default since the questionnaire was cancelled and the user asked me to finish autonomously.
+- **Geometry model: "outer walls + floor" tray.** The tray is a base plate (floor) spanning the full inner footprint, plus four outer side walls of thickness `wallThk`, plus interior grid walls subdividing the compartments into `rows × cols`. Compartments are open at the top.
+- **Compartments = outer size minus wall thickness**, each of size `(outerW - (cols+1)*wallThk)/cols` by `(outerH - (rows+1)*wallThk)/rows`, uniform per axis.
+- **Inside depth = height − floorThk**; floor covers the full inner footprint under all compartments.
+- **Units**: all inputs in millimeters; STL exported in mm (standard for slicers, no scaling).
+- **Default start**: 180 × 120 × 30 mm, 3 cols × 2 rows.
+
+## Geometry / Validation Rules
+- Validate all inputs on change; clamp invalid values (0.1 mm min).
+- If `wallThk * (count+1) >= outerDim` for an axis (compartments would be ≤ 0), show a clear warning ("Compartments too small for current dimensions/thickness") and disable STL export until resolved. Same guard for the floor: `height − floorThk > 0`.
+- Round displayed compartment dimensions to 2 decimals (mm).
+
+## Interface & Behavior
+- **Left panel — Controls** (number inputs, live-updating):
+  - Outer Width (mm) — "length" axis
+  - Outer Depth (mm) — "width" axis
+  - Outer Height (mm)
+  - Rows | Columns
+  - Wall thickness (mm)
+  - Floor thickness (mm)
+  - Presets: "Start (180×120×30, 3×2)" and a couple of quick ones (e.g., "Bread slice 5×2").
+- **Right panel — Preview**: WebGL canvas showing the tray, drag to rotate, scroll/pinch to zoom, double-click to reset view. Auto-orbit when idle.
+- **Compartment readout**: a live table/list showing each compartment's length × depth × depth (mm), plus summary: inner footprint, inside depth, part volume (approx), and wall/floor counts. A small 2D top-view canvas marks each compartment with its dims.
+- **Export**:
+  - "Download STL" — writes `tray.stl` (binary STL, compact).
+  - "View STL" — opens the generated STL in a browser STL viewer tab to sanity-check before slicing (optional convenience; degrades gracefully if blocked).
+  - Filename reflects dimensions: `tray-180x120x30-3x2.stl`.
+
+## STL Generation (client-side)
+- Build a closed, manifold, outward-oriented triangular mesh for: floor plate, 4 outer walls, and interior grid walls, unioned into one vertex/element list.
+- Ensure every shared edge is shared by exactly two triangles with opposite winding (watertight); no interior faces on open tops.
+- Binary STL: 80-byte header + 4-byte triangle count + 50 bytes/triangle.
+
+## File Layout
+- Single `index.html` with inline `<style>` and inline `<script>`. No other files. Everything (WebGL setup, mesh generation, STL export, drag controls) is self-contained.
+
+## Testing / Verification
+- Open the file locally (`file://`) with no server; confirm the UI renders, no console errors.
+- Interact: drag to rotate, zoom, change each control and confirm live recompute of compartment sizes and the warning behavior at extreme values.
+- Export STL and validate programmatically: correct triangle count, header byte count, and that the file loads (binary parse + triangle count sanity).
+- Confirm geometric watertightness by a validator that counts unique directed edges and asserts each undirected edge appears exactly twice.
+- Cross-check a sample export with `python3 -c "import struct; f=open('tray.stl','rb'); h=struct.unpack('<16xI', f.read(80)); print(f'triangles={h[0]}')"` matches the in-app triangle count.
+
+## Out of Scope
+- No parametric solids kernel (CSG), no network/CDN, no SVG/STEP export, no multiple trays or nesting.

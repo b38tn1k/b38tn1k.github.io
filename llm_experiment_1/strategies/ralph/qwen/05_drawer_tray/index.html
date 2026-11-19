@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Organizer Tray Maker</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --panel: #16213e;
+    --input-bg: #0f3460;
+    --text: #e2e8f0;
+    --accent: #e94560;
+    --accent2: #533483;
+    --border: #2a3a5c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: linear-gradient(135deg, var(--panel), var(--accent2));
+    padding: 16px 24px;
+    border-bottom: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  header h1 { font-size: 1.3rem; font-weight: 600; }
+  header .badge {
+    background: var(--accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+  }
+  .main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  .controls-panel {
+    width: 380px;
+    min-width: 380px;
+    background: var(--panel);
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .control-section {
+    background: rgba(15, 52, 96, 0.4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .control-section h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .control-section h3::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    width: 90px; font-size: 0.82rem; color: #a0aec0; flex-shrink: 0;
+  }
+  .field input[type="range"] { flex: 1; accent-color: var(--accent); height: 6px; cursor: pointer; }
+  .field input[type="number"] {
+    width: 72px; background: var(--input-bg); border: 1px solid var(--border);
+    color: var(--text); padding: 5px 8px; border-radius: 4px; font-size: 0.85rem; text-align: right;
+  }
+  .field input[type="number"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(233,69,96,0.2); }
+  .field .unit { font-size: 0.75rem; color: #718096; width: 28px; }
+  .compartment-info {
+    background: rgba(233, 69, 96, 0.1); border: 1px solid rgba(233, 69, 96, 0.3);
+    border-radius: 8px; padding: 14px;
+  }
+  .compartment-info h3 {
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+  }
+  .compartment-info h3::before { content: ''; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; display: inline-block; }
+  .grid-info {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; font-size: 0.82rem;
+  }
+  .grid-info .label { color: #a0aec0; }
+  .grid-info .value { text-align: right; font-family: 'SF Mono', monospace; color: var(--accent); font-weight: 600; }
+  .total-volume {
+    grid-column: 1 / -1; padding-top: 6px; margin-top: 4px; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; font-size: 0.78rem;
+  }
+  .volume-value { color: #48bb78; font-weight: 600; }
+  .canvas-container { flex: 1; position: relative; overflow: hidden; }
+  #canvas3d { width: 100%; height: 100%; display: block; background: #111; }
+  .canvas-overlay {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; background: rgba(22,33,62,0.9); padding: 8px 14px;
+    border-radius: 8px; border: 1px solid var(--border);
+  }
+  .canvas-overlay button {
+    background: var(--input-bg); border: 1px solid var(--border); color: var(--text);
+    padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s;
+  }
+  .canvas-overlay button:hover { background: var(--accent); border-color: var(--accent); }
+  .canvas-overlay button.primary { background: var(--accent); border-color: var(--accent); font-weight: 600; }
+  .rotate-hint {
+    position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
+    background: rgba(22,33,62,0.7); padding: 4px 12px; border-radius: 5px;
+    font-size: 0.7rem; color: #718096; pointer-events: none;
+  }
+  .topo-toggle {
+    position: absolute; top: 16px; left: 16px; display: flex; gap: 4px;
+  }
+  .topo-toggle button {
+    background: rgba(22,33,62,0.9); border: 1px solid var(--border); color: var(--text);
+    padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s;
+  }
+  .topo-toggle button.active { background: var(--accent); border-color: var(--accent); }
+  @media (max-width: 800px) {
+    .main-layout { flex-direction: column; }
+    .controls-panel { width: 100%; min-width: unset; max-height: 45vh; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>&#x1F9F4; Drawer Organizer Tray Maker</h1>
+  <span class="badge">STL Export Ready</span>
+</header>
+
+<div class="main-layout">
+  <div class="controls-panel" id="controlsPanel">
+    <!-- Outer Dimensions -->
+    <div class="control-section">
+      <h3>Outer Dimensions</h3>
+      <div class="field">
+        <label>Width (X)</label>
+        <input type="range" id="widthSlider" min="60" max="400" value="180" step="1">
+        <input type="number" id="widthNum" min="60" max="400" value="180" step="1">
+        <span class="unit">mm</span>
+      </div>
+      <div class="field">
+        <label>Depth (Y)</label>
+        <input type="range" id="depthSlider" min="40" max="300" value="120" step="1">
+        <input type="number" id="depthNum" min="40" max="300" value="120" step="1">
+        <span class="unit">mm</span>
+      </div>
+      <div class="field">
+        <label>Height (Z)</label>
+        <input type="range" id="heightSlider" min="10" max="100" value="30" step="1">
+        <input type="number" id="heightNum" min="10" max="100" value="30" step="1">
+        <span class="unit">mm</span>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="control-section">
+      <h3>Grid Layout</h3>
+      <div class="field">
+        <label>Columns (X)</label>
+        <input type="range" id="colsSlider" min="1" max="12" value="3" step="1">
+        <input type="number" id="colsNum" min="1" max="12" value="3" step="1">
+        <span class="unit">#</span>
+      </div>
+      <div class="field">
+        <label>Rows (Y)</label>
+        <input type="range" id="rowsSlider" min="1" max="8" value="2" step="1">
+        <input type="number" id="rowsNum" min="1" max="8" value="2" step="1">
+        <span class="unit">#</span>
+      </div>
+    </div>
+
+    <!-- Thickness -->
+    <div class="control-section">
+      <h3>Wall &amp; Floor</h3>
+      <div class="field">
+        <label>Wall Thick.</label>
+        <input type="range" id="wallSlider" min="1" max="10" value="3" step="0.5">
+        <input type="number" id="wallNum" min="1" max="10" value="3" step="0.5">
+        <span class="unit">mm</span>
+      </div>
+      <div class="field">
+        <label>Floor Thick.</label>
+        <input type="range" id="floorSlider" min="1" max="10" value="3" step="0.5">
+        <input type="number" id="floorNum" min="1" max="10" value="3" step="0.5">
+        <span class="unit">mm</span>
+      </div>
+    </div>
+
+    <!-- Compartment Dimensions -->
+    <div class="compartment-info">
+      <h3>Compartment Dimensions</h3>
+      <div class="grid-info">
+        <span class="label">Width (inner):</span>
+        <span class="value" id="compW">— mm</span>
+        <span class="label">Depth (inner):</span>
+        <span class="value" id="compD">— mm</span>
+        <span class="label">Height (cavity):</span>
+        <span class="value" id="compH">— mm</span>
+        <div class="total-volume">
+          <span>Per-compartment vol:</span>
+          <span class="volume-value" id="innerVol">— mL</span>
+        </div>
+        <div class="total-volume">
+          <span>Total inner vol:</span>
+          <span class="volume-value" id="totalVol">— mL</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STL Export -->
+    <div style="text-align:center; padding: 8px 0;">
+      <button class="primary" onclick="exportSTL()" style="background:linear-gradient(135deg,#e94560,#c73e54);color:white;border:none;padding:12px 36px;border-radius:8px;cursor:pointer;font-size:1rem;font-weight:600;">&#x2B07; Export Printable STL</button>
+    </div>
+  </div>
+
+  <div class="canvas-container">
+    <canvas id="canvas3d"></canvas>
+    <div class="rotate-hint">&#x1F5B7;&#xFE0F; Drag to rotate · Scroll to zoom</div>
+    <div class="topo-toggle">
+      <button id="btnSolid" class="active" onclick="setView('solid')">Solid</button>
+      <button id="btnWireframe" onclick="setView('wireframe')">Wire</button>
+    </div>
+    <div class="canvas-overlay">
+      <button onclick="resetCamera()">Reset View</button>
+      <button onclick="exportSTL()">&#x1F4E6; Export STL</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   Drawer Organizer Tray Maker — Single-file offline application.
+   No external dependencies whatsoever. All rendering uses raw WebGL.
+   ================================================================ */
+
+// ====== State ======
+const state = { outerW:180, outerD:120, outerH:30, cols:3, rows:2, wallThick:3, floorThick:3 };
+let currentView = 'solid';
+let cameraAngleX = 0.6, cameraAngleY = -0.7, cameraDist = 320;
+let dragging = false, lastMouseX=0, lastMouseY=0;
+
+// ====== DOM refs & sync helpers ======
+const canvas = document.getElementById('canvas3d');
+const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+
+function bindSync(sliderId, numId, key, max) {
+  const s = document.getElementById(sliderId), n = document.getElementById(numId);
+  s.addEventListener('input', () => { n.value = s.value; state[key] = parseFloat(s.value); updateCompInfo(); });
+  n.addEventListener('input', () => {
+    let v = parseFloat(n.value); if (isNaN(v)) return;
+    s.value = v; state[key] = v; updateCompInfo();
+  });
+  n.addEventListener('change', () => {
+    let v = parseFloat(n.value); if (isNaN(v)) return;
+    v = Math.max(parseFloat(s.min), Math.min(max, v));
+    s.value = v; n.value = v; state[key] = v; updateCompInfo();
+  });
+}
+
+bindSync('widthSlider','widthNum','outerW', 400);
+bindSync('depthSlider','depthNum','outerD', 300);
+bindSync('heightSlider','heightNum','outerH', 100);
+bindSync('colsSlider','colsNum','cols', 12);
+bindSync('rowsSlider','rowsNum','rows', 8);
+bindSync('wallSlider','wallNum','wallThick', 10);
+bindSync('floorSlider','floorNum','floorThick', 10);
+
+// ====== Compartment info display ======
+function updateCompInfo() {
+  const {outerW,outerD,outerH,cols:ci,rows:ri,wallThick:wt,floorThick:ft} = state;
+  const innerW = Math.max(0, outerW - 2*wt);
+  const innerD = Math.max(0, outerD - 2*wt);
+  const cavityH = Math.max(0, outerH - ft);
+  const perW = ci > 1 ? (innerW - (ci-1)*wt)/ci : innerW;
+  const perD = ri > 1 ? (innerD - (ri-1)*wt)/ri : innerD;
+  document.getElementById('compW').textContent = perW.toFixed(1) + ' mm';
+  document.getElementById('compD').textContent = perD.toFixed(1) + ' mm';
+  document.getElementById('compH').textContent = cavityH.toFixed(1) + ' mm';
+  document.getElementById('innerVol').textContent = (perW * perD * cavityH / 1000).toFixed(1) + ' mL';
+  document.getElementById('totalVol').textContent = (innerW * innerD * cavityH / 1000).toFixed(1) + ' mL';
+}
+
+// ====== Camera controls ======
+function resetCamera() { cameraAngleX=0.6; cameraAngleY=-0.7; cameraDist=320; }
+
+canvas.addEventListener('mousedown', e => { dragging=true; lastMouseX=e.clientX; lastMouseY=e.clientY; });
+window.addEventListener('mouseup', ()=>{dragging=false;});
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  const dx = e.clientX-lastMouseX, dy = e.clientY-lastMouseY;
+  cameraAngleY += dx*0.008; cameraAngleX += dy*0.008;
+  cameraAngleX = Math.max(-Math.PI/2+0.01, Math.min(Math.PI/2-0.01, cameraAngleX));
+  lastMouseX=e.clientX; lastMouseY=e.clientY;
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  cameraDist += e.deltaY*0.5;
+  cameraDist = Math.max(80, Math.min(1200, cameraDist));
+}, {passive:false});
+
+// Touch support
+canvas.addEventListener('touchstart', e=>{ if(e.touches.length===1){dragging=true;lastMouseX=e.touches[0].clientX;lastMouseY=e.touches[0].clientY;}},{passive:true});
+canvas.addEventListener('touchmove', e=>{
+  if(!dragging||e.touches.length!==1) return;
+  const dx=e.touches[0].clientX-lastMouseX, dy=e.touches[0].clientY-lastMouseY;
+  cameraAngleY+=dx*0.008; cameraAngleX+=dy*0.008;
+  cameraAngleX=Math.max(-Math.PI/2+0.01,Math.min(Math.PI/2-0.01,cameraAngleX));
+  lastMouseX=e.touches[0].clientX; lastMouseY=e.touches[0].clientY;
+},{passive:true});
+canvas.addEventListener('touchend', ()=>{dragging=false;});
+
+function setView(mode) {
+  currentView = mode;
+  document.getElementById('btnSolid').classList.toggle('active', mode==='solid');
+  document.getElementById('btnWireframe').classList.toggle('active', mode==='wireframe');
+}
+
+// ====== WebGL initialization & shaders ======
+const vertSrc = `
+attribute vec3 aPos;
+uniform mat4 uMVP, uModel;
+uniform mat3 uNormalMat;
+varying vec3 vNorm, vWorldPos;
+void main(){
+  vec4 wp=uModel*vec4(aPos,1.0);
+  vWorldPos=wp.xyz; vNorm=normalize(uNormalMat*aPos);
+  gl_Position=uMVP*vec4(aPos,1.0);
+}`;
+
+const fragSolid = `precision mediump float;
+varying vec3 vNorm,vWorldPos;
+uniform vec3 uColor,uLightDir[2];
+void main(){
+  vec3 n=normalize(vNorm);
+  float d=max(dot(n,uLightDir[0]),0.0)*0.72+max(dot(n,uLightDir[1]),0.0)*0.35+0.28;
+  gl_FragColor=vec4(uColor*d,1.0);
+}`;
+
+const fragWire = `precision mediump float;
+varying vec3 vNorm,vWorldPos;
+uniform vec3 uColor;
+void main(){ gl_FragColor=vec4(uColor*0.8,1.0); }`;
+
+function compile(src,type){
+  const s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
+  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+  return s;
+}
+function link(vs,fs){
+  const p=gl.createProgram(); gl.attachShader(p,vs); gl.attachShader(p,fs); gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
+  return p;
+}
+
+const vs = compile(vertSrc, gl.VERTEX_SHADER);
+const progSolid = link(vs, compile(fragSolid, gl.FRAGMENT_SHADER));
+const progWire = link(vs, compile(fragWire, gl.FRAGMENT_SHADER));
+
+// ====== Matrix math (no external deps) ======
+function mat4Perspective(fov,asp,n,f){
+  const t=Math.tan(fov/2),nf=1/(n-f);
+  return new Float32Array([1/(asp*t),0,0,0, 0,1/t,0,0, 0,0,(f+n)*nf,-1, 0,0,2*f*n*nf,0]);
+}
+function mat4LookAt(eye,ctr,up){
+  let zx=eye[0]-ctr[0],zy=eye[1]-ctr[1],zz=eye[2]-ctr[2];
+  let l=1/Math.sqrt(zx*zx+zy*zy+zz*zz); const fz=[zx*l,zy*l,zz*l];
+  let sx=up[1]*fz[2]-up[2]*fz[1],sy=up[2]*fz[0]-up[0]*fz[2],sz=up[0]*fz[1]-up[1]*fz[0];
+  l=1/Math.sqrt(sx*sx+sy*sy+sz*sz); const fs=[sx*l,sy*l,sz*l];
+  return new Float32Array([fs[0],-fz[0],(up[0]*fz[1]-up[1]*fz[0])/(l),0, fs[1],-fz[1],(up[1]*fz[2]-up[2]*fz[0])/(l),0, fs[2],-fz[2],(up[2]*fz[0]-up[0]*fz[2])/(l),0, -(fs[0]*eye[0]+fs[1]*eye[1]+fs[2]*eye[2]),-( -fs[0]*ctr[0]-fs[1]*ctr[1]-fs[2]*ctr[2] ),0,1]);
+}
+function mat4Mul(a,b){
+  const o=new Float32Array(16);
+  for(let i=0;i<4;i++)for(let j=0;j<4;j++){let s=0;for(let k=0;k<4;k++)s+=a[i+k*4]*b[k+j*4];o[i+j*4]=s;}
+  return o;
+}
+function mat4Trans(x,y,z){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,x,y,z,1]);}
+function mat4Scale(sx,sy,sz){return new Float32Array([sx,0,0,0,0,sy,0,0,0,0,sz,0,0,0,0,1]);}
+function mat3FromMat4(m){return new Float32Array([m[0],m[1],m[2],m[4],m[5],m[6],m[8],m[9],m[10]]);}
+
+// ====== Box geometry builder (solid box = 6 faces, 12 triangles) ======
+function makeBox(w,h,d){
+  // w=X-extent, h=Y-height, d=Z-depth, centered at origin
+  const hw=w/2, hh=h/2, hd=d/2;
+  const V=[],N=[],I=[];
+  function face(nx,ny,nz,v0,v1,v2,v3){
+    const s=V.length/3;
+    V.push(v0[0],v0[1],v0[2],v1[0],v1[1],v1[2],v2[0],v2[1],v2[2],v3[0],v3[1],v3[2]);
+    N.push(nx,ny,nz,nx,ny,nz,nx,ny,nz,nx,ny,nz);
+    I.push(s,s+2,s+1,s,s+3,s+2);
+  }
+  // +Y top
+  face(0,1,0,[-hw,hh,-hd],[hw,hh,-hd],[hw,hh,hd],[-hw,hh,hd]);
+  // -Y bottom
+  face(0,-1,0,[-hw,-hh,hd],[hw,-hh,hd],[hw,-hh,-hd],[-hw,-hh,-hd]);
+  // +X right
+  face(1,0,0,[hw,hh,-hd],[hw,-hh,-hd],[hw,-hh,hd],[hw,hh,hd]);
+  // -X left
+  face(-1,0,0,[-hw,hh,hd],[-hw,-hh,hd],[-hw,-hh,-hd],[-hw,hh,-hd]);
+  // +Z front
+  face(0,0,1,[-hw,hh,hd],[hw,hh,hd],[hw,-hh,hd],[-hw,-hh,hd]);
+  // -Z back
+  face(0,0,-1,[hw,hh,-hd],[-hw,hh,-hd],[-hw,-hh,-hd],[hw,-hh,-hd]);
+  return {verts:new Float32Array(V),norms:new Float32Array(N),idx:new Uint16Array(I)};
+}
+
+// ====== Tray geometry: separate parts for walls, floor & dividers ======
+function getTrayGeometry(){
+  const o=state, boxes=[];
+  const {outerW,outerD,outerH,cols:nc,rows:nr,wallThick:wt,floorThick:ft}=o;
+  const innerW=Math.max(0,outerW-2*wt), innerD=Math.max(0,outerD-2*wt);
+  const cavityH=Math.max(0,outerH-ft);
+  if(innerW<=0||innerD<=0||cavityH<=0) return boxes;
+
+  function addBox(w,h,d,cx,cy,cz,color){
+    const b=makeBox(w,h,d); b.offset=[cx,cy,cz]; b.color=color; boxes.push(b);
+  }
+
+  // Color palette
+  const wallColor=[0.65,0.75,0.85], divColor=[0.55,0.62,0.72];
+
+  // Floor (bottom plate)
+  addBox(outerW, ft, outerD, 0, -outerH/2+ft/2, 0, wallColor);
+
+  // 4 walls
+  const wallTop=outerH/2;
+  addBox(outerW, cavityH, wt, 0, -ft+cavityH/2, outerD/2-wt/2, wallColor);   // front (+Z)
+  addBox(outerW, cavityH, wt, 0, -ft+cavityH/2, -outerD/2+wt/2, wallColor);  // back (-Z)
+  addBox(wt, cavityH, outerD, -outerW/2+wt/2, -ft+cavityH/2, 0, wallColor);   // left (-X)
+  addBox(wt, cavityH, outerD, outerW/2-wt/2, -ft+cavityH/2, 0, wallColor);    // right (+X)
+
+  // Vertical dividers (parallel to Z axis): cols-1 count
+  const vertSpacing = innerW / nc;
+  for(let ci=1; ci<nc; ci++){
+    addBox(wt, cavityH, innerD, -innerW/2+ci*vertSpacing, -ft+cavityH/2, 0, divColor);
+  }
+  // Horizontal dividers (parallel to X axis): rows-1 count
+  const horizSpacing = innerD / nr;
+  for(let ri=1; ri<nr; ri++){
+    addBox(innerW, cavityH, wt, 0, -ft+cavityH/2, -innerD/2+ri*horizSpacing, divColor);
+  }
+}
+
+// ====== Rendering loop ======
+let posBufs=[], idxBufs=[];
+
+function rebuildBuffers(){
+  for(let i=0;i<posBufs.length;i++){if(posBufs[i])gl.deleteBuffer(posBufs[i]);if(idxBufs[i])gl.deleteBuffer(idxBufs[i]);}
+  posBufs.length=0; idxBufs.length=0;
+  const geo=getTrayGeometry();
+  for(const g of geo){
+    posBufs.push(allocBuffer(g.verts));
+    idxBufs.push(allocIdx(g.idx));
+  }
+}
+
+function allocBuffer(data){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);return b;}
+function allocIdx(data){const b=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,data,gl.STATIC_DRAW);return b;}
+
+function resize(){
+  const r=canvas.parentElement, dpr=window.devicePixelRatio||1;
+  canvas.width=r.clientWidth*dpr; canvas.height=r.clientHeight*dpr;
+  gl.viewport(0,0,canvas.width,canvas.height);
+}
+
+function fullRender(){
+  resize(); gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+
+  const aspect=canvas.width/canvas.height;
+  const eyeX=cameraDist*Math.cos(cameraAngleX)*Math.sin(cameraAngleY);
+  const eyeY=cameraDist*Math.sin(cameraAngleX);
+  const eyeZ=cameraDist*Math.cos(cameraAngleX)*Math.cos(cameraAngleY);
+
+  const viewMat=mat4LookAt([eyeX,eyeY,eyeZ],[0,0,0],[0,1,0]);
+  const projMat=mat4Perspective(Math.PI/4,aspect,1,2000);
+  const vpMat=mat4Mul(projMat,viewMat);
+
+  const l1=[0.4,0.7,0.5], l2=[-0.3,-0.2,0.6];
+  // Normalize lights inline
+  let ll=Math.sqrt(l1[0]**2+l1[1]**2+l1[2]**2); if(ll>0){l1=l1.map(v=>v/ll);}
+  ll=Math.sqrt(l2[0]**2+l2[1]**2+l2[2]**2); if(ll>0){l2=l2.map(v=>v/ll);}
+
+  const prog = currentView==='solid'?progSolid:progWire;
+  gl.useProgram(prog);
+
+  // Uniform locations (caching per program)
+  const uMVP=gl.getUniformLocation(prog,'uMVP'), uModel=gl.getUniformLocation(prog,'uModel');
+  const uNorm=gl.getUniformLocation(prog,'uNormalMat'), uCol=gl.getUniformLocation(prog,'uColor');
+  const uL1=gl.getUniformLocation(prog,'uLightDir'), aPos=gl.getAttribLocation(prog,'aPos');
+
+  const geo=getTrayGeometry();
+  for(let i=0;i<geo.length;i++){
+    const model=mat4Trans(geo[i].offset[0],geo[i].offset[1],geo[i].offset[2]);
+    const mvp=mat4Mul(vpMat,model);
+    gl.uniformMatrix4fv(uMVP,false,mvp);
+    gl.uniformMatrix4fv(uModel,false,model);
+    gl.uniformMatrix3fv(uNorm,false,mat3FromMat4(model));
+    gl.uniform3fv(uCol,geo[i].color);
+    gl.uniform3fv(uL1,new Float32Array([...l1,...l2]));
+
+    gl.bindBuffer(gl.ARRAY_BUFFER,posBufs[i]);
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos,3,gl.FLOAT,false,0,0);
+
+    if(currentView==='wireframe'){
+      // Wireframe: extract edges and draw as lines
+      const {verts,idx}=geo[i];
+      const edgeSet=new Set(), lineVerts=[];
+      for(let j=0;j<idx.length;j+=3){
+        const a=idx[j],b=idx[j+1],c=idx[j+2];
+        [[a,b],[b,c],[c,a]].forEach(([u,v])=>{
+          const key=Math.min(u,v)+'-'+Math.max(u,v);
+          if(!edgeSet.has(key)){edgeSet.add(key);
+            lineVerts.push(verts[u*3],verts[u*3+1],verts[u*3+2]);
+            lineVerts.push(verts[v*3],verts[v*3+1],verts[v*3+2]);}
+        });
+      }
+      const lb=allocBuffer(new Float32Array(lineVerts));
+      gl.bindBuffer(gl.ARRAY_BUFFER,lb);
+      gl.drawArrays(gl.LINES,0,lineVerts.length/3);
+      gl.deleteBuffer(lb);
+    } else {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,idxBufs[i]);
+      gl.drawElements(gl.TRIANGLES,geo[i].idx.length,gl.UNSIGNED_SHORT,0);
+    }
+  }
+
+  requestAnimationFrame(fullRender);
+}
+
+// ====== STL Export (binary format for smaller files) ======
+function exportSTL(){
+  const geo=getTrayGeometry();
+  // Count triangles first for binary header
+  let triCount=0;
+  for(const g of geo){triCount+=g.idx.length/3;}
+
+  const binSize = 84 + triCount * 50; // STL binary format size
+  const buf = new ArrayBuffer(binSize);
+  const view = new DataView(buf);
+  let offset = 0;
+
+  // Header (80 bytes)
+  const header = 'solid drawer_organizer_tray';
+  for(let i=0;i<80;i++) view.setUint8(offset+i, i<header.length?header.charCodeAt(i):0);
+  offset += 80;
+
+  // Number of triangles
+  view.setUint32(offset, triCount, true); offset += 4;
+
+  for(const g of geo){
+    const ox=g.offset[0], oy=g.offset[1], oz=g.offset[2];
+    for(let j=0;j<g.idx.length;j+=3){
+      const a=g.idx[j],b=g.idx[j+1],c=g.idx[j+2];
+      // Vertices
+      const ax=g.verts[a*3]+ox, ay=g.verts[a*3+1]+oy, az=g.verts[a*3+2]+oz;
+      const bx_=g.verts[b*3]+ox, by_=g.verts[b*3+1]+oy, bz_=g.verts[b*3+2]+oz;
+      const cx_=g.verts[c*3]+ox, cy_=g.verts[c*3+1]+oy, cz_=g.verts[c*3+2]+oz;
+      // Normal via cross product
+      const ex1=bx_-ax,ey1=by_-ay,ez1=bz_-az;
+      const ex2=cx_-ax,ey2=cy_-ay,ez2=cz_-az;
+      let nx_=ey1*ez2-ez1*ey2, ny_=ez1*ex2-ex1*ez2, nz_=ex1*ey2-ey1*ex2;
+      let nl=Math.sqrt(nx_**2+ny_**2+nz_**2);
+      if(nl>0){nx_/=nl;ny_/=nl;nz_/=nl;}
+      // Write facet
+      view.setFloat32(offset,nx_,true);offset+=4;
+      view.setFloat32(offset,ny_,true);offset+=4;
+      view.setFloat32(offset,nz_,true);offset+=4;
+      [ax,ay,az,bx_,by_,bz_,cx_,cy_,cz_].forEach(v=>{view.setFloat32(offset,v,true);offset+=4;});
+      view.setUint16(offset,0,true);offset+=2; // attribute byte count
+    }
+  }
+
+  const blob=new Blob([buf],{type:'application/octet-stream'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='drawer_organizer_tray.stl';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{document.body.removeChild(a); URL.revokeObjectURL(url);},200);
+}
+
+// ====== Init ======
+resize(); gl.enable(gl.DEPTH_TEST); gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK);
+updateCompInfo();
+requestAnimationFrame(fullRender);
+</script>
+
+</body>
+</html>

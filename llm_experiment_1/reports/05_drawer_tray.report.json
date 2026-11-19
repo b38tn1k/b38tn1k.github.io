@@ -1,0 +1,54 @@
+{
+  "title": "Simple drawer tray generator",
+  "status": "completed_with_critical_defects",
+  "grade": "D - preview prototype; measurements and printable export fail",
+  "score": 51,
+  "rubricScores": {
+    "functionality": 22,
+    "artifact_correctness": 9,
+    "usability": 7,
+    "self_verification": 3,
+    "autonomy": 10
+  },
+  "elapsedMinutes": 37.8,
+  "promptWords": 65,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "toolCalls": 119,
+  "toolResultsMarkedError": 24,
+  "modelUsageReported": {
+    "input": 75969,
+    "output": 80017,
+    "cacheRead": 4763921,
+    "totalTokens": 4919907
+  },
+  "artifactBytes": 14724,
+  "verified": [
+    "Final script initializes in exact-source VM with standard-method Canvas mocks",
+    "Defaults and 180x120x30 mm exported bounds",
+    "Finite96-triangle export data",
+    "No external runtime resources"
+  ],
+  "criticalDefects": [
+    "Compartment panel stays empty: updateDims destructures cols/rows from computeGeometry but they are not returned",
+    "ASCII STL starts with tray.stl and has no endsolid marker; agent incorrectly claimed well-formed standard ASCII STL",
+    "Interior X partitions omit cumulative wall offsets: actual default X clearances are56.67/54.17/59.17 mm, rather than three equal56.67 mm compartments"
+  ],
+  "additionalDefects": [
+    "32 of96 facet normals disagree with triangle winding",
+    "Exports separate touching/overlapping box shells, including2 positive-volume intersections; no Boolean union or clean single-solid boundary",
+    "Independent parameter clamps permit combinations with negative compartment sizes"
+  ],
+  "verificationConcerns": [
+    "Spent much of run fixing reimplemented geometry tests and mock scaffolding",
+    "Eventually rewrote entire app and independently caught/fixed a real const-reassignment startup crash",
+    "Claims unit normals and zero net area prove a printable manifold; these are insufficient checks and do not validate topology or self intersections",
+    "Final completion overstates export correctness"
+  ],
+  "scopeCompliance": "No writes outside current experiment found in this run on log review",
+  "limitations": [
+    "No independent real-browser or visual testing",
+    "No physical print or slicer import; exported structural defects established from exact functions/source"
+  ],
+  "assessment": "Substantial autonomous recovery and a smaller final artifact, but maker measurements and deliverable correctness remain unreliable."
+}

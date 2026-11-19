@@ -1,0 +1,96 @@
+{
+  "method": "Independent exact-source VM/DOM/nativeCanvas: actual handlers, RAF scheduler, parsed downloaded Blob JSON and FileReader events. Read-only closure exposure plus ball-position/velocity input fixtures; existing physics unchanged. Overlay coverage inferred from explicit full-inset positioned CSS, shown DOM and actual targeted overlay events; no browser layout/hit testing. Direct canvas tests do not establish pointer reachability through overlays.",
+  "sha256": "17cec180d0272bb785ef837ac90cee3ec5bff49de75e805362eab9ff31050eb5",
+  "checks": [
+    {
+      "id": "editor_overlay_does_not_block_pointer_entry",
+      "pass": false,
+      "error": "Editor starts with full-stage overlay shown; targeted overlay pointer events neither dismiss it nor paint. CSS reachability inference, not browser hit test.",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "direct_canvas_editor_handlers_draw_erase_and_return",
+      "pass": true,
+      "evidence": {
+        "directHandlers": true,
+        "keyboardReturn": true,
+        "limitation": "Direct canvas dispatch bypasses any covering overlay; reachability checked separately."
+      }
+    },
+    {
+      "id": "actual_scheduled_keyboard_paddle_and_ball",
+      "pass": true,
+      "evidence": {
+        "ballMoved": true,
+        "paddleMoved": true,
+        "callbacks": 1
+      }
+    },
+    {
+      "id": "mouse_touch_controls_and_pause_resume",
+      "pass": true,
+      "evidence": {
+        "mouse": true,
+        "touch": true,
+        "pause": true,
+        "resume": true
+      }
+    },
+    {
+      "id": "real_download_JSON_file_roundtrip_and_replacement",
+      "pass": true,
+      "evidence": {
+        "download": true,
+        "fileLoad": true,
+        "exactReplacement": true,
+        "rows": 12,
+        "cols": 16
+      }
+    },
+    {
+      "id": "brick_collision_score_and_three_lives",
+      "pass": true,
+      "evidence": {
+        "score": true,
+        "lives": 0,
+        "gameOver": true
+      }
+    },
+    {
+      "id": "restart_restores_edited_layout_not_damaged_grid",
+      "pass": false,
+      "error": "Restart keeps destroyed bricks missing from edited layout",
+      "actual": "[[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"1\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"]]",
+      "expected": "[[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"1\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\"]]"
+    },
+    {
+      "id": "last_brick_win_replay_and_second_scheduled_game",
+      "pass": false,
+      "error": "Replay starts empty after last brick was destroyed",
+      "actual": "0",
+      "expected": "1"
+    },
+    {
+      "id": "actual_1500_frame_pointer_gameplay_sample",
+      "pass": true,
+      "evidence": {
+        "frames": 1500,
+        "score": 535,
+        "lives": 3,
+        "state": "playing",
+        "remainingBricks": 32,
+        "callbacks": 1,
+        "scope": "One deterministic gameplay sample, not a guarantee of all layouts or a replaced physics algorithm."
+      }
+    },
+    {
+      "id": "self_contained_offline_source",
+      "pass": true,
+      "evidence": {
+        "externalScriptsOrStyles": false
+      }
+    }
+  ],
+  "pass": false
+}

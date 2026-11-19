@@ -1,0 +1,77 @@
+{
+  "method": "Exact-source VM with corrected partial DOM/Canvas kit; real handlers, timed state transitions and controlled collision fixtures. Application algorithms are not replaced. Browser appearance and native rendering remain unverified.",
+  "sha256": "543175e17dc77dd9cefde3765ba1aecafbb8a780fc094d45aa748d5d12d1885b",
+  "checks": [
+    {
+      "id": "startup",
+      "pass": true,
+      "evidence": [
+        {
+          "id": "startBtn",
+          "text": "Play",
+          "disabled": false
+        },
+        {
+          "id": "pauseBtn",
+          "text": "Pause (Space)",
+          "disabled": false
+        },
+        {
+          "id": "restartBtn",
+          "text": "Restart",
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "id": "timed_movement_pause_resume_restart",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pause": true,
+        "resume": true,
+        "restart": true
+      }
+    },
+    {
+      "id": "growth_score_difficulty",
+      "pass": true,
+      "evidence": {
+        "length": 4,
+        "score": 50,
+        "level": 2,
+        "speed": 7.4
+      }
+    },
+    {
+      "id": "wall_collision",
+      "pass": true,
+      "evidence": {
+        "overlay": "Game Over"
+      }
+    },
+    {
+      "id": "no_reverse",
+      "pass": false,
+      "error": "true == false"
+    },
+    {
+      "id": "recent_body_self_collision",
+      "pass": false,
+      "error": "Should collide with recent body at(10,8); snake before move:[{\"x\":10,\"y\":9},{\"x\":11,\"y\":9},{\"x\":11,\"y\":8},{\"x\":10,\"y\":8},{\"x\":9,\"y\":8},{\"x\":8,\"y\":8}], after:[{\"x\":10,\"y\":8},{\"x\":10,\"y\":9},{\"x\":11,\"y\":9},{\"x\":11,\"y\":8},{\"x\":10,\"y\":8},{\"x\":9,\"y\":8}]"
+    },
+    {
+      "id": "food_excludes_new_head",
+      "pass": false,
+      "error": "Food was placed on the head just added by eating"
+    },
+    {
+      "id": "vacating_tail_allowed",
+      "pass": true,
+      "evidence": {
+        "head": "{\"x\":4,\"y\":5}"
+      }
+    }
+  ],
+  "pass": false
+}

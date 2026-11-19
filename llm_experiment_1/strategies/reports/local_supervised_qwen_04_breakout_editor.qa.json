@@ -1,0 +1,107 @@
+{
+  "optionalChecks": [
+    {
+      "id": "editor_blank_margin_click_safe",
+      "pass": false,
+      "blocking": false,
+      "evidence": {
+        "error": "Cannot read properties of null (reading 'r')",
+        "laterDrawWorks": true
+      }
+    },
+    {
+      "id": "editor_instructions_follow_mode",
+      "pass": true,
+      "blocking": false,
+      "evidence": {
+        "mode": "editor",
+        "hint": "Click/drag to draw \u00b7 Right-click or erase tool to remove"
+      }
+    }
+  ],
+  "method": "Independent exact-source DOM/nativeCanvas real controls, scheduler, file-loader events and parsed downloaded JSON. State fixtures supply inputs only; algorithms unchanged. No browser layout/hit testing.",
+  "sha256": "d67ad36e32e27444b6e6bc050786be62ea682d3f9518c68e821dc8acfba0f131",
+  "checks": [
+    {
+      "id": "actual_return_control_after_play_reopens_editor_and_paints",
+      "pass": true,
+      "evidence": {
+        "editor": true
+      }
+    },
+    {
+      "id": "actual_scheduled_game_continues_after_editor_return_and_replay",
+      "pass": false,
+      "error": "Second game has no scheduled movement",
+      "actual": {
+        "paddleMoved": false,
+        "ballMoved": false,
+        "pendingCallbacks": false
+      },
+      "expected": {
+        "paddleMoved": true,
+        "ballMoved": true,
+        "pendingCallbacks": true
+      }
+    },
+    {
+      "id": "short_JSON_replaces_old_cells_instead_of_merging",
+      "pass": true,
+      "evidence": {
+        "exactReplacement": true
+      }
+    },
+    {
+      "id": "real_JSON_download_and_file_roundtrip",
+      "pass": true,
+      "evidence": {
+        "roundtrip": true
+      }
+    },
+    {
+      "id": "actual_keyboard_mouse_launch_and_three_lives",
+      "pass": true,
+      "evidence": {
+        "controls": true,
+        "lives": 3,
+        "restart": true
+      }
+    },
+    {
+      "id": "actual_custom_editor_draw_and_erase",
+      "pass": true,
+      "evidence": {
+        "draw": true,
+        "erase": true
+      }
+    },
+    {
+      "id": "custom_design_survives_repeated_restart_and_return_to_editor",
+      "pass": true,
+      "evidence": {
+        "restarts": 2,
+        "originalDesign": true,
+        "returnAndEdit": true
+      }
+    },
+    {
+      "id": "last_brick_win_and_actual_replay_restore_design",
+      "pass": true,
+      "evidence": {
+        "lastBrickWin": true,
+        "replay": true
+      }
+    },
+    {
+      "id": "actual_win_and_loss_both_return_to_preserved_editor",
+      "pass": true,
+      "evidence": {
+        "winEditor": true,
+        "lossEditor": true,
+        "preservedDesign": true
+      }
+    }
+  ],
+  "pass": false,
+  "supplemental": "reports/local_supervised_qwen_04_breakout_editor.scheduled-play.qa.json"
+}

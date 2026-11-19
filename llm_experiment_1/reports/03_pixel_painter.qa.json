@@ -1,0 +1,23 @@
+{
+  "method": "Exact-source startup in Node VM; canvas stub uses actual API method names, no putData extension. Not real browser testing.",
+  "syntaxValid": true,
+  "sha256": "738cfd7f0296ea60be299562c625333f71c2b8601ee220ac4036c848c1694041",
+  "startupError": {
+    "name": "TypeError",
+    "message": "ctx.putData is not a function",
+    "stack": [
+      "evalmachine.<anonymous>:57",
+      "      ctx.putData(prevData, 0, 0);",
+      "          ^",
+      "",
+      "TypeError: ctx.putData is not a function",
+      "    at resizeCanvas (evalmachine.<anonymous>:57:11)"
+    ]
+  },
+  "sourceDefects": [
+    "resizeCanvas calls ctx.putData rather than CanvasRenderingContext2D.putImageData; initial resize from default 300x150 to32x32 takes this branch",
+    "Brush/eraser startDraw does not push history; ordinary strokes are not individual undoable actions",
+    "Clear confirmation replaces modalOk.onclick and sets it to null; openSizeModal does not restore its resize handler"
+  ],
+  "externalRuntimeResources": false
+}

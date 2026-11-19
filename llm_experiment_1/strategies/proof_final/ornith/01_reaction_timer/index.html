@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Reaction Time Tester</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --panel: #161b22;
+    --ink: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --ready: #58a6ff;
+    --waiting: #e3b341;
+    --stimulated: #3fb950;
+    --falsestart: #f85149;
+    --line: #30363d;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(1200px 800px at 50% -10%, #1a2230 0%, var(--bg) 60%);
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  header {
+    text-align: center;
+    padding: 32px 20px 8px;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    color: var(--muted);
+    margin-top: 6px;
+    font-size: 14px;
+  }
+  #stage {
+    margin-top: 24px;
+    width: min(720px, 92vw);
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background 0.12s ease, box-shadow 0.12s ease;
+    position: relative;
+  }
+  #stage.interactive { box-shadow: 0 0 0 2px var(--accent), 0 20px 60px rgba(0,0,0,0.45); }
+  #stage.waiting { background: rgba(227,179,65,0.10); }
+  #stage.stimulated { background: rgba(63,185,80,0.16); }
+  #stage.falsestart { background: rgba(248,81,73,0.12); }
+  .status {
+    font-size: clamp(13px, 2.4vw, 15px);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .message {
+    font-size: clamp(26px, 6vw, 52px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .hint {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 22px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--muted);
+    background: rgba(255,255,255,0.02);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
+  #stage.waiting .dot { background: var(--waiting); }
+  #stage.stimulated .dot { background: var(--stimulated); }
+  #stage.falsestart .dot { background: var(--falsestart); }
+  #stage.ready .dot, #stage.done .dot { background: var(--ready); }
+  .meta {
+    display: flex;
+    gap: 26px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .meta div { text-align: center; }
+  .meta .k { display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .meta .v { display: block; font-size: 22px; font-weight: 600; }
+  #summary {
+    width: min(720px, 92vw);
+    margin: 26px 0 40px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    display: none;
+  }
+  #summary.show { display: block; }
+  #summary h2 { margin: 0 0 4px; font-size: 20px; }
+  .rating {
+    font-size: 15px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    display: inline-block;
+    margin: 8px 0 16px;
+    font-weight: 600;
+  }
+  .rating.fast { background: rgba(63,185,80,0.16); color: #7ee787; }
+  .rating.average { background: rgba(227,179,65,0.16); color: #e3b341; }
+  .rating.slow { background: rgba(248,81,73,0.16); color: #ff9b93; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.best td { color: #7ee787; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .stat .k { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .stat .v { font-size: 26px; font-weight: 700; margin-top: 4px; }
+  .stat .v small { font-size: 14px; font-weight: 500; color: var(--muted); }
+  button.restart {
+    margin-top: 6px;
+    background: var(--accent);
+    color: #08111f;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.12s ease;
+  }
+  button.restart:hover { filter: brightness(1.08); }
+  footer { color: var(--muted); font-size: 12px; padding: 0 0 30px; }
+  .kbd { font-family: monospace; background: rgba(255,255,255,0.08); padding: 1px 6px; border-radius: 5px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Reaction Time Tester</h1>
+    <div class="subtitle">Watch the color. Click (or press <span class="kbd">Space</span>) the instant it changes.</div>
+  </header>
+
+  <div id="stage" class="ready" role="button" tabindex="0" aria-label="Reaction time play area">
+    <div class="status" id="status">Ready</div>
+    <div class="message" id="message">Tap to start</div>
+    <div class="hint" id="hint">5 trials &middot; random wait between 1 and 5 seconds</div>
+    <span class="pill"><span class="dot"></span><span id="pillText">Trial 1 of 5</span></span>
+  </div>
+
+  <div class="meta">
+    <div><span class="k">Last</span><span class="v" id="mLast">—</span></div>
+    <div><span class="k">Best</span><span class="v" id="mBest">—</span></div>
+    <div><span class="k">Average</span><span class="v" id="mAvg">—</span></div>
+  </div>
+
+  <div id="summary">
+    <h2>Results</h2>
+    <div class="rating" id="rating">—</div>
+    <div class="stats">
+      <div class="stat"><div class="k">Average</div><div class="v" id="sAvg">—</div></div>
+      <div class="stat"><div class="k">Fastest</div><div class="v" id="sMin">—</div></div>
+      <div class="stat"><div class="k">Slowest</div><div class="v" id="sMax">—</div></div>
+    </div>
+    <table>
+      <thead>
+        <tr><th class="num">#</th><th class="num">Time (ms)</th><th class="num">Verdict</th></tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <button class="restart" id="restart">Play again</button>
+  </div>
+
+  <footer>Best measured over 5 attempts. Not a clinical assessment.</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---- Seeded PRNG (Mulberry32) so waits are reproducible & testable ----
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  var seed = (typeof window !== "undefined" && window.__seed != null)
+    ? (window.__seed | 0)
+    : (new Date().getTime() ^ (Math.random() * 0xFFFFFFFF)) | 0;
+  var rng = mulberry32(seed);
+
+  const MIN_WAIT = 1000;
+  const MAX_WAIT = 5000;
+  const TOTAL_TRIALS = 5;
+
+  var el = {
+    stage: document.getElementById("stage"),
+    status: document.getElementById("status"),
+    message: document.getElementById("message"),
+    hint: document.getElementById("hint"),
+    pill: document.getElementById("pillText"),
+    summary: document.getElementById("summary"),
+    rows: document.getElementById("rows"),
+    rating: document.getElementById("rating"),
+    sAvg: document.getElementById("sAvg"),
+    sMin: document.getElementById("sMin"),
+    sMax: document.getElementById("sMax"),
+    restart: document.getElementById("restart"),
+    mLast: document.getElementById("mLast"),
+    mBest: document.getElementById("mBest"),
+    mAvg: document.getElementById("mAvg")
+  };
+
+  var state = "ready";
+  var trial = 1;
+  var falseStarts = 0;
+  var rts = [];
+  var waitEnd = 0;
+  var stimulated = false;
+  var timerId = null;
+
+  var app = {
+    get state() { return state; },
+    get trial() { return trial; },
+    get falseStarts() { return falseStarts; },
+    get rts() { return rts; },
+    get waitEnd() { return waitEnd; },
+    get stimulated() { return stimulated; },
+    get lastRT() { return rts.length ? rts[rts.length - 1] : null; },
+
+    summary: function () {
+      var count = rts.length;
+      if (count === 0) {
+        return { count: 0, rts: [], mean: 0, min: 0, max: 0, rating: "n/a" };
+      }
+      var sum = 0, mn = rts[0], mx = rts[0];
+      for (var i = 0; i < count; i++) {
+        sum += rts[i];
+        if (rts[i] < mn) mn = rts[i];
+        if (rts[i] > mx) mx = rts[i];
+      }
+      var mean = Math.round(sum / count);
+      return {
+        count: count,
+        rts: rts.slice(),
+        mean: mean,
+        min: mn,
+        max: mx,
+        rating: ratingFor(mean)
+      };
+    }
+  };
+  window.app = app;
+
+  function ratingFor(mean) {
+    if (mean < 220) return "fast";
+    if (mean <= 300) return "average";
+    return "slow";
+  }
+
+  function fmt(ms) { return Math.round(ms) + " ms"; }
+
+  function render() {
+    el.pill.textContent = "Trial " + trial + " of " + TOTAL_TRIALS;
+    el.stage.className = state;
+    el.summary.classList.toggle("show", state === "done");
+
+    if (state === "ready") {
+      el.status.textContent = "Ready";
+      el.message.textContent = "Tap to start";
+      el.hint.textContent = TOTAL_TRIALS + " trials · random wait between 1 and 5 seconds";
+    } else if (state === "waiting") {
+      el.status.textContent = "Wait for it…";
+      el.message.textContent = "Click when it turns green";
+      el.hint.textContent = "Don't jump the gun — a false start resets this trial.";
+    } else if (state === "stimulated") {
+      el.status.textContent = "Now!";
+      el.message.textContent = "Click now!";
+      el.hint.textContent = "As fast as you can.";
+    } else if (state === "result") {
+      el.status.textContent = "Trial " + trial + " complete";
+      el.message.textContent = app.lastRT + " ms";
+      el.hint.textContent = "Click to " + (trial > TOTAL_TRIALS ? "see results" : "start next trial");
+    } else if (state === "falsestart") {
+      el.status.textContent = "Too early!";
+      el.message.textContent = "False start";
+      el.hint.textContent = "Click to re-arm this trial.";
+    } else if (state === "done") {
+      el.status.textContent = "All done";
+      el.message.textContent = "Results below";
+      el.hint.textContent = "";
+      renderSummary();
+    }
+    updateMeta();
+  }
+
+  function updateMeta() {
+    el.mLast.textContent = app.lastRT != null ? app.lastRT + " ms" : "—";
+    if (rts.length) {
+      el.mBest.textContent = Math.min.apply(null, rts) + " ms";
+      var sum = 0; for (var i = 0; i < rts.length; i++) sum += rts[i];
+      el.mAvg.textContent = Math.round(sum / rts.length) + " ms";
+    } else {
+      el.mBest.textContent = "—";
+      el.mAvg.textContent = "—";
+    }
+  }
+
+  function renderSummary() {
+    var s = app.summary();
+    el.rating.textContent = s.count ? s.rating.charAt(0).toUpperCase() + s.rating.slice(1) : "No valid trials";
+    el.rating.className = "rating " + (s.count ? s.rating : "average");
+    el.sAvg.textContent = s.count ? s.mean + " ms" : "—";
+    el.sMin.textContent = s.count ? s.min + " ms" : "—";
+    el.sMax.textContent = s.count ? s.max + " ms" : "—";
+    el.rows.innerHTML = "";
+    for (var i = 0; i < s.rts.length; i++) {
+      var best = (s.rts[i] === s.min);
+      var tr = document.createElement("tr");
+      if (best) tr.className = "best";
+      var verdict = verdictFor(s.rts[i]);
+      tr.innerHTML =
+        "<td class='num'>" + (i + 1) + "</td>" +
+        "<td class='num'>" + s.rts[i] + " ms</td>" +
+        "<td class='num'>" + verdict + "</td>";
+      el.rows.appendChild(tr);
+    }
+  }
+
+  function verdictFor(ms) {
+    if (ms < 200) return "Excellent";
+    if (ms < 250) return "Fast";
+    if (ms <= 300) return "Average";
+    return "Slow";
+  }
+
+  function finishTrial() {
+    var rt = Date.now() - waitEnd;
+    if (rt < 0) rt = 0;
+    rts.push(rt);
+    state = "result";
+    render();
+  }
+
+  function scheduleWait() {
+    state = "waiting";
+    var delay = Math.floor(rng() * (MAX_WAIT - MIN_WAIT) + MIN_WAIT);
+    waitEnd = Date.now() + delay;
+    stimulated = false;
+    clearTimer();
+    timerId = setTimeout(function () {
+      stimulated = true;
+      state = "stimulated";
+      render();
+    }, delay);
+    render();
+  }
+
+  function clearTimer() {
+    if (timerId != null) { clearTimeout(timerId); timerId = null; }
+  }
+
+  function handleClick() {
+    switch (state) {
+      case "ready":
+        state = "waiting";
+        scheduleWait();
+        break;
+      case "waiting":
+        if (!stimulated) {
+          falseStarts++;
+          clearTimer();
+          state = "falsestart";
+          render();
+        } else {
+          finishTrial();
+        }
+        break;
+      case "stimulated":
+        finishTrial();
+        break;
+      case "falsestart":
+        // re-arm the same trial number with a fresh random wait
+        scheduleWait();
+        break;
+      case "result":
+        if (trial >= TOTAL_TRIALS) {
+          trial++;
+          state = "done";
+          render();
+        } else {
+          trial++;
+          scheduleWait();
+        }
+        break;
+      case "done":
+        reset();
+        break;
+    }
+  }
+
+  function reset() {
+    clearTimer();
+    trial = 1;
+    falseStarts = 0;
+    rts = [];
+    stimulated = false;
+    state = "ready";
+    render();
+  }
+
+  el.stage.addEventListener("click", handleClick);
+  el.stage.addEventListener("keydown", function (e) {
+    if (e.key === " " || e.key === "Enter") { e.preventDefault(); handleClick(); }
+  });
+  el.restart.addEventListener("click", reset);
+
+  render();
+})();
+</script>
+</body>
+</html>

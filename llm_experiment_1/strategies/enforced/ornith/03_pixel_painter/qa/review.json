@@ -1,0 +1,25 @@
+{
+  "artifactSHA256": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+  "status": "fail",
+  "testsActuallyExerciseBehavior": true,
+  "blockingFindings": [
+    {
+      "description": "Color selection is broken: the color-picker input and hex field cannot change the active painting color. The app's wrapAccessor() monkey-patch on HTMLInputElement.prototype.value reads a stale value during dispatched input/change events. Observed: assigning colorInput.value='#ff0000' then dispatching an 'input' event results in the handler reading this.value='[object HTMLInputElement]'/'#000000' (stale initial value), so hexToRgba('#ff0000') is never computed and the brush paints with the initial black color. Ground-truth probe (.scratch/probe.cjs): 'color after input: #000000' and after brush paint 'pixel[5,5]= [ 0, 0, 0, 255 ]' (black, not red). The hex field is equally broken: 'hex during handler: #000000' after setting '#00ff00'.",
+      "evidence": ".scratch/probe.cjs outputs 'color after input: #000000' and 'after brush pixel[5,5]: [ 0, 0, 0, 255 ]'; .scratch/hex.cjs outputs 'hex during handler: #000000' after hexInput.value='#00ff00'; .scratch/wrap2.cjs proves the wrapped getter/setter return the initial value '#000000' during a dispatched event while lastColorValue is also '#000000'."
+    },
+    {
+      "description": "The root cause is an unnecessary and harmful value accessor override. A plain (un-wrapped) input[type=color]/input[type=text] in the SAME runtime correctly persists assigned values and returns the correct value during an input event (.scratch/plain.cjs: 'plain text during handler: changed' and 'color input during handler (no wrapper): #aabbcc'). Therefore the defect lives in the app's wrapAccessor (index.html, the try{} block defining proto value get/set right above setColor), not in the runtime. A real browser's input.value during an input event reliably reflects the typed value, so this wrapper is both unnecessary in-browser and actively destructive under the QA shim. Color picker, a core brief requirement ('color palette', brush color selection), is non-functional.",
+      "evidence": ".scratch/plain.cjs: 'plain text during handler: changed (assigned changed)' and 'color input during handler (no wrapper): #aabbcc'. The app's wrapAccessor overrides proto.value with a getter that calls the (stale-returning) original getter and a setter that stores into a module var 'lastColorValue' which also ends up '#000000'. Location: index.html, the try{ function wrapAccessor(el){...} wrapAccessor(colorInput); wrapAccessor(hexInput); } block above function setColor."
+    },
+    {
+      "description": "The QA acceptance test's written explanation of its two failing checks (resize_rectangular, palette_brush) is factually WRONG for the delivered artifact and would mislead a repair agent. acceptance.cjs repeatedly claims 'render() calls ctx.drawImage(tmp,0,0,W,H) (scaled 6-arg overload) which the QA Canvas shim cannot execute'. The current index.html uses ctx.createImageData + ctx.putImageData (no scaled drawImage anywhere) and loads with ZERO console errors in the QA runtime (.scratch/ground.cjs: 'LOADED OK', 'errors: []'). Every functional handler is reachable. The two real failures are: (1) palette_brush fails because of the color-selection defect above, and (2) resize_rectangular is asserted to always be false by construction (record() is called with a hardcoded 'false' argument and never re-checked). Neither failure is the 'scaled drawImage overload' the comments attribute it to.",
+      "evidence": "grep of index.html shows no drawImage; render() uses createImageData/W and ctx.putImageData(img,0,0) (index.html render()). .scratch/ground.cjs: 'LOADED OK' / 'errors: []'. acceptance.cjs: record('resize_rectangular', false, `...`) hardcodes false; record('palette_brush', brushAttempt.ok && pixelFn('canvas',5,5)[0]>=250, ...). Probe shows pixel[5,5][0]=0 (black), not >=250."
+    }
+  ],
+  "residualRisks": [
+    "QA runtime is not a real browser: it does not encode a real PNG (toDataURL returns 'data:image/png;base64,QA_NOT_REAL_PNG'), so png_export only proves the download/control path dispatches, not actual PNG bytes.",
+    "The QA Canvas shim models putImageData and createImageData but not the scaled 6-arg drawImage overload; the app's resizeCanvasToFit()/render() avoid drawImage and use putImageData, which is why it loads cleanly here. Behavior under a real browser (getBoundingClientRect/canvas CSS scaling for mouse-touch coordinate mapping) is unverified by this runtime.",
+    "Brush 'paint' color correctness could not be validated beyond the black-color artifact because the color-selection path is the defect; once the wrapper is removed, brush/eraser/fill/undo/redo/clear/resize/export all executed without throwing in the probe.",
+    "Review performed in an offline Node VM; no browser or real PNG encoder was available (consistent with the exact-source, no-browser method)."
+  ]
+}

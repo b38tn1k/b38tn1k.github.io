@@ -1,0 +1,83 @@
+{
+  "method": "Independent actual-source VM, real mouse/touch/palette/history/resize/export handlers, pixel-buffer assertions and observed scoped state. No replacement application algorithms. Partial Canvas does not encode PNG or prove browser layout.",
+  "sha256": "1a4b2a9f5408bbe14ba81567115a13c982998b72bc55099bc1698560bffd8869",
+  "checks": [
+    {
+      "id": "startup",
+      "pass": true,
+      "evidence": {
+        "canvas": [
+          32,
+          32
+        ]
+      }
+    },
+    {
+      "id": "palette_actual_red",
+      "pass": false,
+      "error": "Expected values to be loosely deep-equal:\n\n[\n  0,\n  0,\n  0,\n  255\n]\n\nshould loosely deep-equal\n\n[\n  192,\n  57,\n  43,\n  255\n]"
+    },
+    {
+      "id": "six_digit_hex_conversion",
+      "pass": false,
+      "error": "'[0,0,0,255]' == '[255,0,0,255]'"
+    },
+    {
+      "id": "custom_color_three_digit",
+      "pass": true,
+      "evidence": {
+        "pixel": [
+          255,
+          0,
+          0,
+          255
+        ]
+      }
+    },
+    {
+      "id": "resize_larger_and_paint_far_corner",
+      "pass": false,
+      "error": "pixel buffer 4096, expected 9600"
+    },
+    {
+      "id": "resize_undo_dimensions",
+      "pass": false,
+      "error": "16 == 32"
+    },
+    {
+      "id": "two_step_history_eraser_clear",
+      "pass": true,
+      "evidence": {
+        "undo": 2,
+        "redo": 2,
+        "eraser": true,
+        "clear": true
+      }
+    },
+    {
+      "id": "touch_paint",
+      "pass": true,
+      "evidence": {
+        "pixel": [
+          0,
+          0,
+          0,
+          255
+        ]
+      }
+    },
+    {
+      "id": "png_dispatch_dimensions",
+      "pass": true,
+      "evidence": {
+        "dispatch": {
+          "kind": "canvasDataURL",
+          "width": 48,
+          "height": 24
+        },
+        "nativePNGBytesUnverified": true
+      }
+    }
+  ],
+  "pass": false
+}

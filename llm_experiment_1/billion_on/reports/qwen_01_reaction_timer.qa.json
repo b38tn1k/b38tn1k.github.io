@@ -1,0 +1,19 @@
+{
+  "method": "Exact-source controlled-clock VM with minimal DOM tree; no browser",
+  "firstBadge": "Trial 2 / 5",
+  "falseStart": {
+    "state": "false-start",
+    "contentDisplay": "none",
+    "continueButtonExists": true
+  },
+  "summary": {
+    "avg": "220ms",
+    "best": "200ms",
+    "worst": "240ms"
+  },
+  "restart": {
+    "areaDisplay": "",
+    "contentDisplay": "none",
+    "startButtonExists": true
+  }
+}

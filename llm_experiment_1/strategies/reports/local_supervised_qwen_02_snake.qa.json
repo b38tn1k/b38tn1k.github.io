@@ -1,0 +1,59 @@
+{
+  "optionalChecks": [
+    {
+      "id": "actual_new_resume_button",
+      "pass": true,
+      "blocking": false,
+      "evidence": {
+        "paused": true,
+        "resumed": true
+      }
+    }
+  ],
+  "method": "Independent exact-source VM/DOM/nativeCanvas actual keys and scheduled callbacks, existing state/function exposure for controlled collision/full-board fixtures. No algorithm replacement; no browser visual check.",
+  "sha256": "82cc110bd050f836b382c1c6b426b2afc8f900e3615680a04763a4a83abf594c",
+  "checks": [
+    {
+      "id": "actual_movement_pause_resume_restart_single_loop",
+      "pass": true,
+      "evidence": {
+        "movement": true,
+        "pause": true,
+        "restart": true,
+        "transientUITimersDrained": true
+      }
+    },
+    {
+      "id": "wall_collision_occurs_on_first_invalid_move",
+      "pass": false,
+      "error": "'running' == 'gameover'",
+      "actual": "running",
+      "expected": "gameover"
+    },
+    {
+      "id": "self_collision_immediate_and_departing_tail_legal",
+      "pass": false,
+      "error": "'running' == 'gameover'",
+      "actual": "running",
+      "expected": "gameover"
+    },
+    {
+      "id": "actual_scheduled_food_growth_and_increasing_difficulty",
+      "pass": true,
+      "evidence": {
+        "score": 5,
+        "length": 8,
+        "interval": 140,
+        "scheduledSteps": 12
+      }
+    },
+    {
+      "id": "final_food_ends_full_board_without_invalid_food_and_restart",
+      "pass": false,
+      "error": "Full board remains running",
+      "actual": "running",
+      "expected": "running"
+    }
+  ],
+  "pass": false
+}

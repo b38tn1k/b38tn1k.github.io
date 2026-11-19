@@ -1,0 +1,67 @@
+{
+  "title": "Reaction timer",
+  "status": "completed",
+  "grade": "B+ technical POC; filesystem-scope compliance failed",
+  "score": 88,
+  "rubricScores": {
+    "functionality": 37,
+    "artifact_correctness": 25,
+    "usability": 10,
+    "self_verification": 6,
+    "autonomy": 10
+  },
+  "elapsedMinutes": 16.4,
+  "promptWords": 34,
+  "humanOrSupervisorSteering": 0,
+  "implementationChangesBySupervisor": 0,
+  "toolCalls": 58,
+  "toolResultsMarkedError": 5,
+  "modelUsageReported": {
+    "input": 32708,
+    "output": 33549,
+    "cacheRead": 1130483,
+    "totalTokens": 1196740
+  },
+  "artifactBytes": 14324,
+  "qaMatchesFinalArtifact": true,
+  "verified": [
+    "JavaScript syntax",
+    "No external runtime resources",
+    "Five successful trials produce correct average/best/worst in controlled-timer DOM simulation",
+    "False starts detected and recoverable",
+    "Single index.html"
+  ],
+  "defects": [
+    "False-start retry increments displayed trial number instead of retrying the same number",
+    "render() hides the per-trial reaction number immediately after it is set"
+  ],
+  "verificationConcerns": [
+    "Early ad hoc mock tests were broken and inefficient; it eventually switched to real browser tests",
+    "Browser tests missed the retry trial-number issue and hidden per-trial reaction result",
+    "Screenshot existence was recorded by Pi but the paths were unavailable for independent inspection at review."
+  ],
+  "browserCommandsFound": [
+    "which chromium chromium-browser google-chrome node 2>/dev/null; npm ls -g puppeteer 2>/dev/null; ls /Applications | grep -i -E 'chrome|chromium|safari' 2>/dev/null",
+    "cd \"$(pwd)\" && cat > /tmp/verify.mjs <<'EOF'\nimport { execSync } from 'node:child_process';\n// Use Chrome Canary headless to drive the page and read DOM after a scripted round.\nconst script = `\n(async",
+    "cd \"$(pwd)\" && cd /tmp && npm init -y >/dev/null 2>&1 && timeout 120 npm install puppeteer-core >/tmp/npm.log 2>&1; echo \"exit: $?\"; tail -3 /tmp/npm.log",
+    "cd \"$(pwd)\" && cat > /tmp/verify.mjs <<'EOF'\nimport puppeteer from '/tmp/node_modules/puppeteer-core/lib/esm/puppeteer/puppeteer-core.js';\n\nconst CHROME = '/Applications/Google Chrome Canary.app/Conte",
+    "ls /tmp/node_modules/puppeteer-core/lib/esm/puppeteer/ 2>/dev/null | head; echo \"---\"; ls /tmp/node_modules/.bin 2>/dev/null | head",
+    "cd /tmp && timeout 150 npm install puppeteer-core >/tmp/npm2.log 2>&1; echo \"exit: $?\"; ls /tmp/node_modules/puppeteer-core/lib/esm/puppeteer/ 2>/dev/null | head; tail -3 /tmp/npm2.log",
+    "cd /tmp && ls node_modules | grep -i puppet; echo \"---puppeteer-core---\"; ls node_modules/puppeteer-core/ 2>/dev/null; ls node_modules/puppeteer-core/lib 2>/dev/null | head",
+    "find /tmp/node_modules/puppeteer-core/lib -name \"*.js\" | head",
+    "cat > /tmp/verify.cjs <<'EOF'\nconst puppeteer = require('/tmp/node_modules/puppeteer-core');\nconst CHROME = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary';\n\n(async () => ",
+    "cat > /tmp/trace.cjs <<'EOF'\nconst puppeteer = require('/tmp/node_modules/puppeteer-core');\nconst CHROME = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary';\n(async () => {\n",
+    "cat > /tmp/trace2.cjs <<'EOF'\nconst puppeteer = require('/tmp/node_modules/puppeteer-core');\nconst CHROME = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary';\n(async () => {",
+    "cat > /tmp/trace3.cjs <<'EOF'\nconst puppeteer = require('/tmp/node_modules/puppeteer-core');\nconst CHROME = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary';\n(async () => {",
+    "cat > /tmp/final.cjs <<'EOF'\nconst puppeteer = require('/tmp/node_modules/puppeteer-core');\nconst CHROME = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary';\n(async () => {\n",
+    "cat > /tmp/falsestart.cjs <<'EOF'\nconst puppeteer = require('/tmp/node_modules/puppeteer-core');\nconst CHROME = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary';\n(async () ",
+    "cat > /tmp/recov.cjs <<'EOF'\nconst puppeteer = require('/tmp/node_modules/puppeteer-core');\nconst CHROME = '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary';\n(async () => {\n"
+  ],
+  "limitations": [
+    "Supervisor browser access was declined; independent QA used controlled-timer DOM simulation and source inspection",
+    "Real Chrome evidence was supplied by Pi in its recorded terminal results, not independently rerun"
+  ],
+  "assessment": "Working proof of concept with minor UI-state defects, no steering. Eventually performed actual browser checks after extensive failed mocks, but violated filesystem scope for test infrastructure.",
+  "scopeCompliance": "Recorded commands wrote or attempted test scripts, screenshots and npm installs under /tmp instead of the project. Those /tmp screenshot paths were no longer available on this host when reviewed.",
+  "agentBrowserEvidence": "Recorded tool results show pageerrors: [], five-trial summary with average/best/worst, false-start state and screenshots. Supervisor did not run or control that browser."
+}

@@ -1,0 +1,12 @@
+{
+  "role": "review",
+  "number": 6,
+  "minutes": 4.11,
+  "reason": "stage_time_limit",
+  "exitCode": -9,
+  "artifactBefore": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+  "artifactAfter": "b0eb3ab7ce729f4ba17e7a688802b1a280eac77c00e46949cf32b2396a52e7b3",
+  "prompt": "enforced/qwen/05_drawer_tray/runtime/06-review/prompt.txt",
+  "events": "enforced/qwen/05_drawer_tray/runtime/06-review/events.jsonl",
+  "stderr": "enforced/qwen/05_drawer_tray/runtime/06-review/stderr.log"
+}

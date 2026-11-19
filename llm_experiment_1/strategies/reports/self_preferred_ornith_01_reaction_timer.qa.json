@@ -1,0 +1,37 @@
+{
+  "method": "Independent final-source VM/DOM/nativeCanvas2D tests. Real handlers, scheduled callbacks, pixels and export bytes. Closure exposure provides existing state/functions for controlled fixtures without replacing app algorithms. No native browser layout, GPU, hit testing or physical-device verification.",
+  "sha256": "e6785206d971d1469cc5d421e2b90506245aa1ea0b99cf0ee230511ecf51b7de",
+  "checks": [
+    {
+      "id": "ordinary_start_button_waits_without_false_start",
+      "pass": false,
+      "error": "'result' == 'waiting'",
+      "actual": "result",
+      "expected": "waiting"
+    },
+    {
+      "id": "stage_start_schedules_a_green_cue",
+      "pass": false,
+      "error": "enterWaiting() is declared but never called; normal flow schedules no cue",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "pre_cue_tap_detects_false_start",
+      "pass": true,
+      "evidence": {
+        "detected": true
+      }
+    },
+    {
+      "id": "five_trial_helper_is_not_UI_verification",
+      "pass": true,
+      "evidence": {
+        "isolatedCore": true,
+        "mean": 250,
+        "note": "Diagnostic only: helpers bypass the missing real cue scheduler."
+      }
+    }
+  ],
+  "pass": false
+}

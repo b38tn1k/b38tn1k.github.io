@@ -1,0 +1,89 @@
+{% raw %}
+<style data-ant-farm-style>
+/* Only benchmark widgets. The page typography, layout and theme are Jekyll's. */
+.lab-report{--text:var(--fg);--muted:var(--dim);--line:var(--rule);color:var(--fg)}
+.lab-report [hidden]{display:none!important}
+.lab-report section{margin:1.5rem 0}
+.lab-report .report-copy,.lab-report .muted{max-width:76ch}
+.lab-report .muted,.lab-report .eyebrow{color:var(--dim);font-size:.8rem}
+.lab-report details{margin:.7rem 0}
+.lab-report summary{cursor:pointer;color:var(--link);padding:.25rem 0}
+.lab-report summary:hover{text-decoration:underline;text-underline-offset:.15em}
+.lab-report .configuration-key{font-size:.8rem}
+.lab-report .configuration-key>div{display:grid;grid-template-columns:20ch 1fr;gap:1ch;margin:.6rem 0}
+.lab-report .configuration-key dt{font-weight:bold}.lab-report .configuration-key dd{margin:0}
+.lab-report .model-table-title{font-size:1rem;margin:1rem 0 .5rem}
+.lab-report .table-wrap{overflow-x:auto;max-width:100%;margin:1rem 0 1.5rem}
+.lab-report table{font-size:13px;font-variant-numeric:tabular-nums}
+.lab-report .split-matrix{table-layout:fixed;width:100%;min-width:0}
+.lab-report .split-matrix .project-column{width:14%}
+.lab-report .split-matrix th,.lab-report .split-matrix td{text-align:center;white-space:normal;padding:.6rem .3rem}
+.lab-report .split-matrix .project-title{text-align:left;position:sticky;left:0;background:var(--bg);z-index:1;padding-left:.7rem}
+.lab-report .split-matrix thead .project-title{background:var(--panel);z-index:2}
+.lab-report .split-matrix thead th{font-size:12px;font-weight:normal}
+.lab-report .project-index{display:block;color:var(--dim);font-size:11px;font-weight:normal;margin-bottom:.2rem}
+.lab-report .matrix-cell{display:flex;align-items:center;justify-content:center;gap:.2rem;min-height:82px}
+.lab-report .matrix-score{display:flex;flex-direction:column;align-items:center;gap:.2rem;min-width:64px;border:0;background:none;padding:.2rem;color:inherit}
+.lab-report .matrix-score:hover .grade{border-color:currentColor}
+.lab-report .grade,.lab-report .score-chip{display:inline-flex;align-items:center;justify-content:center;min-width:46px;min-height:34px;padding:.25rem .5rem;border:1px solid #444;border-radius:2px;background:#181818;color:#b8b8b8;font-family:inherit;font-size:18px;font-weight:700;line-height:1.2;text-decoration:none}
+.lab-report .grade-inline,.lab-report .score-chip{min-width:0;min-height:0;font-size:.85em;padding:.18em .45em;vertical-align:baseline}
+.lab-report .grade.good,.lab-report .good .grade,.lab-report .score-chip.good{color:#a3d9af;background:#102a1b;border-color:#28543a}
+.lab-report .grade.mid,.lab-report .mid .grade,.lab-report .score-chip.mid{color:#ebcd89;background:#30250f;border-color:#665021}
+.lab-report .grade.bad,.lab-report .bad .grade,.lab-report .score-chip.bad{color:#f0aaa4;background:#341a1a;border-color:#6b3737}
+.lab-report .matrix-number{font-size:13px}.lab-report .matrix-score small{font-size:11px;color:var(--dim)}
+.lab-report .matrix-open{padding:.4rem;font-size:17px;text-decoration:none}
+.lab-report .sort-column{font:inherit;text-align:left;border:0;background:none;color:inherit;white-space:nowrap;padding:.3rem 0;min-height:34px}
+.lab-report .sort-column span{color:var(--dim)}
+.lab-report th[aria-sort=ascending],.lab-report th[aria-sort=descending]{text-decoration:underline;text-underline-offset:.2em}
+.lab-report .usage-table{font-size:.8rem}.lab-report .usage-table table{min-width:700px}
+.lab-report button,.lab-report input,.lab-report select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--rule);border-radius:0;padding:.4rem .6rem;min-height:38px}
+.lab-report button{cursor:pointer}.lab-report button:hover{border-color:var(--link)}
+.lab-report .controls{display:flex;flex-wrap:wrap;align-items:end;gap:1rem;margin:1.5rem 0 1rem}
+.lab-report label{display:flex;flex-direction:column;gap:.3rem;font-size:.8rem;color:var(--dim)}
+.lab-report label.search{flex:1;min-width:180px}.lab-report #count{font-size:.8rem;color:var(--dim)}
+.lab-report .card{display:block;padding:1.3rem 0;border-top:1px solid var(--rule);scroll-margin-top:1rem}
+.lab-report .card h3{margin:.5rem 0}.lab-report .card .finding{max-width:85ch;font-size:.85rem}
+.lab-report .grade-row{display:flex;align-items:center;gap:1rem;margin:1rem 0}
+.lab-report .grade-row .grade{font-size:24px;min-width:60px;min-height:44px}
+.lab-report .grade-row small{display:block;font-size:.8rem;color:var(--dim)}
+.lab-report .badges{display:flex;flex-wrap:wrap;gap:.4rem;margin:.7rem 0}
+.lab-report .badge{font-size:.7rem;color:var(--dim);border:1px solid var(--rule);padding:.15rem .4rem}
+.lab-report nav,.lab-report .data-links{display:flex;flex-wrap:wrap;font-size:.8rem;margin:1rem 0;gap:.5rem 1.2rem}
+.lab-report .card details{font-size:.85rem;max-width:90ch}
+.lab-report .card details p,.lab-report .card details li,.lab-report .modal-body p,.lab-report .modal-body li{overflow-wrap:anywhere}
+.lab-report .rubric{font-size:.8rem;max-width:60ch}.lab-report .rubric td{text-align:right}
+.lab-report .note{font-size:.8rem;color:var(--dim)}
+.lab-report .scorecard-modal{position:fixed;inset:0;z-index:100;background:#000c;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.lab-report .modal-panel{width:min(950px,100%);max-height:calc(100dvh - 3rem);overflow:auto;background:var(--panel);border:1px solid var(--rule);padding:1.5rem}
+.lab-report .modal-header{display:flex;align-items:start;justify-content:space-between;gap:1rem;margin:0}
+.lab-report .modal-header h2{margin:.5rem 0 0;font-size:1.2rem}.lab-report .modal-header button{flex-shrink:0;font-size:.8rem}
+.lab-report .modal-panel nav{border-bottom:1px solid var(--rule);padding-bottom:1rem}.lab-report .modal-body{font-size:.85rem}
+@media(max-width:650px){.lab-report .configuration-key>div{grid-template-columns:1fr;gap:.1rem}.lab-report .scorecard-modal{padding:.5rem}.lab-report .modal-panel{padding:1rem;max-height:calc(100dvh - 1rem)}.lab-report label{flex:1;min-width:130px}}
+
+/* Transcript records are readable without widening the report. */
+.lab-report .interview-transcript{margin:.65rem 0}.lab-report .interview-transcript pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:32rem;overflow:auto;font-size:.8rem;line-height:1.5;padding:1rem;border:1px solid var(--rule)}.lab-report .interview-transcript code{white-space:inherit}
+
+/* Compact comparison: fit all configurations to the report width. */
+.lab-report .split-matrix th,.lab-report .split-matrix td{padding:.3rem .1rem;overflow-wrap:anywhere}
+.lab-report .split-matrix .project-title{padding-left:.3rem;font-size:11px;line-height:1.35}
+.lab-report .split-matrix thead th{font-size:10px;line-height:1.35}
+.lab-report .matrix-cell{position:relative;min-height:68px;gap:0}
+.lab-report .matrix-score{min-width:0;width:100%;min-height:0;padding:.1rem 0;border:0;background:none;font-size:11px;line-height:1.25;gap:.16rem}
+.lab-report .matrix-score .grade{min-width:30px;min-height:26px;padding:.15rem .25rem;font-size:15px}
+.lab-report .matrix-number{font-size:11px;white-space:nowrap}
+.lab-report .matrix-score small{font-size:10px;white-space:nowrap}
+.lab-report .matrix-open{position:absolute;right:0;top:0;padding:.05rem;font-size:13px;line-height:1.3}
+.lab-report .project-index{font-size:9px;margin-bottom:.1rem}
+@media(max-width:700px){.lab-report .split-matrix{min-width:680px}}
+
+.lab-report .matrix-score .assisted-grade{min-width:0;min-height:0;padding:.15rem .2rem;font-size:9px;line-height:1.2}
+
+.lab-report .matrix-score[data-focus*="-local_supervised-"] .matrix-number,.lab-report .matrix-score[data-focus*="-local_supervised-"] small{white-space:normal;overflow-wrap:anywhere}
+
+/* Keep the app-only target badge inside the existing compact row height. */
+.lab-report .matrix-score.has-product-result{gap:1px;line-height:1.1;padding:0}
+.lab-report .matrix-score .product-result{display:flex;align-items:center;justify-content:center;gap:3px;font-size:9px;line-height:11px;white-space:nowrap;color:var(--dim)}
+.lab-report .matrix-score .product-result .assisted-grade{display:inline-flex;align-items:center;justify-content:center;min-width:12px;min-height:11px;height:11px;padding:0 2px;border-radius:2px;font-size:9px;line-height:9px}
+
+</style>
+{% endraw %}

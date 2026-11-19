@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Reaction Timer</title>
+<style>
+  :root{
+    --bg:#0f1220; --panel:#1a1f36; --ink:#e9ecf5; --muted:#8b93b0;
+    --good:#2fe08a; --warn:#ffb347; --bad:#ff6b6b; --accent:#6c8cff;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:radial-gradient(120% 120% at 50% 0%, #171b33 0%, var(--bg) 60%);
+    color:var(--ink); display:flex; align-items:center; justify-content:center;
+    min-height:100%; -webkit-tap-highlight-color:transparent;
+  }
+  .wrap{width:min(720px,92vw)}
+  .app{
+    background:var(--panel); border:1px solid rgba(255,255,255,.06);
+    border-radius:20px; box-shadow:0 30px 80px rgba(0,0,0,.45);
+    overflow:hidden;
+  }
+  .head{padding:20px 24px; border-bottom:1px solid rgba(255,255,255,.06)}
+  .head h1{margin:0; font-size:20px; letter-spacing:.2px}
+  .head p{margin:4px 0 0; font-size:13px; color:var(--muted)}
+  .stage{
+    position:relative; min-height:320px; display:flex; align-items:center;
+    justify-content:center; text-align:center; padding:32px 24px; cursor:pointer;
+    user-select:none; transition:background .15s ease;
+  }
+  .stage .big{font-size:44px; font-weight:700; line-height:1.1}
+  .stage .sub{margin-top:8px; font-size:15px; color:var(--ink); opacity:.92}
+  .stage .hint{margin-top:22px; font-size:13px; color:var(--ink); opacity:.6}
+  .stage.waiting{background:linear-gradient(180deg,#2461ff,#1a4bd6)}
+  .stage.ready{background:linear-gradient(180deg,#12c074,#0e9a5d)}
+  .stage.result{background:linear-gradient(180deg,#2461ff,#1a4bd6)}
+  .stage.falsestart{background:linear-gradient(180deg,#ff7a45,#ef4f6b)}
+  .stage.done{background:linear-gradient(180deg,#12c074,#0e9a5d)}
+  .footer{padding:16px 24px; border-top:1px solid rgba(255,255,255,.06); display:flex; align-items:center; justify-content:space-between; gap:12px}
+  .progress{font-size:13px; color:var(--muted)}
+  .progress b{color:var(--ink)}
+  button{
+    font:inherit; cursor:pointer; border:none; border-radius:12px; padding:11px 18px;
+    background:var(--accent); color:white; font-weight:600; transition:filter .15s ease;
+  }
+  button:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.4; cursor:default; filter:none}
+  button.ghost{background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,.14); font-weight:600}
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:14px 24px 0}
+  .stat{background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); border-radius:12px; padding:12px; text-align:center}
+  .stat .v{font-size:22px; font-weight:700; font-variant-numeric:tabular-nums}
+  .stat .l{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-top:4px}
+  table{width:100%; border-collapse:collapse; margin:14px 24px 0; font-size:14px}
+  th,td{text-align:left; padding:8px 10px; border-bottom:1px solid rgba(255,255,255,.07)}
+  th{color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.5px}
+  td.num{text-align:right; font-variant-numeric:tabular-nums}
+  tr.best td{color:var(--good)}
+  tr.worst td{color:var(--bad)}
+  tr.falsestart td{color:var(--bad); opacity:.75}
+  .chip{display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600}
+  .chip.fast{background:rgba(47,224,138,.15); color:var(--good)}
+  .chip.normal{background:rgba(108,140,255,.18); color:#a9baff}
+  .chip.slow{background:rgba(255,179,71,.18); color:var(--warn)}
+  .results-head{display:flex; align-items:center; justify-content:space-between; margin:14px 24px 0}
+  .results-head h2{margin:0; font-size:16px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="app">
+      <div class="head">
+        <h1>Reaction Timer</h1>
+        <p>Watch for the green screen, then click as fast as you can. Five trials; the false starts don't count, only your real reactions.</p>
+      </div>
+
+      <div id="stage" class="stage waiting" role="button" tabindex="0" aria-live="polite">
+        <div>
+          <div class="big" id="stageBig">Ready to play?</div>
+          <div class="sub" id="stageSub">Click <b>Start</b> to begin.</div>
+          <div class="hint" id="stageHint">React on the colour change, not on a guess.</div>
+        </div>
+      </div>
+
+      <div id="liveStats" class="stats" hidden>
+        <div class="stat"><div class="v" id="statBest">–</div><div class="l">Best</div></div>
+        <div class="stat"><div class="v" id="statAvg">–</div><div class="l">Average</div></div>
+        <div class="stat"><div class="v" id="statLast">–</div><div class="l">Last</div></div>
+        <div class="stat"><div class="v" id="statDone">0/5</div><div class="l">Trials</div></div>
+      </div>
+
+      <table id="resultsTable" class="results" hidden>
+        <thead><tr><th>Trial</th><th>Result</th><th class="num">Time</th></tr></thead>
+        <tbody id="resultsBody"></tbody>
+      </table>
+
+      <div class="results-head" id="resultsHead" hidden>
+        <h2>Results</h2>
+        <span id="summaryLine" class="sub"></span>
+      </div>
+
+      <div class="footer">
+        <div class="progress" id="progress">Not started · <b>5</b> trials left</div>
+        <button id="start" type="button">Start</button>
+        <button id="reset" class="ghost" type="button">Reset</button>
+      </div>
+    </div>
+  </div>
+
+<!-- Reaction engine (inlined, no external deps) -->
+<script>
+(function (root, factory) {
+  var api = factory();
+  if (typeof module === "object" && typeof module.exports === "maining") {
+    module.exports = api;
+  } else {
+    root.ReactionEngine = api;
+  }
+})(typeof self !== "undefined" ? self : this, function () {
+  "use strict";
+
+  var TRIALS = 5;
+  var MIN_WAIT = 800;
+  var MAX_WAIT = 3000;
+  var FALSE_START_THRESHOLD = 100;
+
+  function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+
+  function isValidReaction(ms) { return ms >= FALSE_START_THRESHOLD; }
+
+  function categorize(ms) {
+    if (ms < 200) return "fast";
+    if (ms < 300) return "normal";
+    return "slow";
+  }
+
+  function createGame(options) {
+    options = options || {};
+    var maxTrials = clamp(options.maxTrials | 0, 1, 99);
+    return {
+      state: "idle",
+      maxTrials: maxTrials,
+      current: 0,
+      waitMs: 0,
+      targetAt: 0,
+      results: [],
+      random: options.random || Math.random
+    };
+  }
+
+  function trialCount(game) { return game.results.length; }
+
+  function validResults(game) {
+    return game.results.filter(function (r) { return !r.isFalseStart; });
+  }
+
+  function best(game) {
+    var v = validResults(game);
+    return v.length ? Math.min.apply(null, v.map(function (r) { return r.reactionMs; })) : null;
+  }
+
+  function worst(game) {
+    var v = validResults(game);
+    return v.length ? Math.max.apply(null, v.map(function (r) { return r.reactionMs; })) : null;
+  }
+
+  function average(game) {
+    var v = validResults(game);
+    if (!v.length) return null;
+    var sum = v.reduce(function (a, r) { return a + r.reactionMs; }, 0);
+    return Math.round(sum / v.length);
+  }
+
+  function startTrial(game) {
+    game.waitMs = MIN_WAIT + Math.floor(game.random() * (MAX_WAIT - MIN_WAIT));
+    game.state = "waiting";
+    return game;
+  }
+
+  function awake(game, now) {
+    if (game.state !== "waiting") return game;
+    game.targetAt = now;
+    game.state = "ready";
+    return game;
+  }
+
+  function react(game, now) {
+    if (game.state === "ready") {
+      var raw = now - game.targetAt;
+      var reactionMs = Math.max(0, Math.round(raw));
+      var isFalseStart = reactionMs < FALSE_START_THRESHOLD;
+      var category = isValidReaction(reactionMs) ? categorize(reactionMs) : null;
+      var trial = {
+        index: game.current + 1,
+        reactionMs: reactionMs,
+        isFalseStart: isFalseStart,
+        category: category
+      };
+      game.results.push(trial);
+      game.current += 1;
+      game.state = isFalseStart ? "falsestart" : "result";
+      return {
+        outcome: isFalseStart ? "falsestart" : "result",
+        reactionMs: reactionMs,
+        isFalseStart: isFalseStart,
+        category: category,
+        isFast: !isFalseStart && reactionMs < 200,
+        trial: trial
+      };
+    }
+    return { outcome: "ignored" };
+  }
+
+  function nextTrial(game) {
+    if (game.current >= game.maxTrials) {
+      game.state = "done";
+      return game;
+    }
+    return startTrial(game);
+  }
+
+  function remaining(game) { return clamp(game.maxTrials - game.current, 0, game.maxTrials); }
+
+  return {
+    TRIALS: TRIALS,
+    FALSE_START_THRESHOLD: FALSE_START_THRESHOLD,
+    MIN_WAIT: MIN_WAIT,
+    MAX_WAIT: MAX_WAIT,
+    clamp: clamp,
+    isValidReaction: isValidReaction,
+    categorize: categorize,
+    createGame: createGame,
+    trialCount: trialCount,
+    validResults: validResults,
+    best: best,
+    worst: worst,
+    average: average,
+    startTrial: startTrial,
+    awake: awake,
+    react: react,
+    nextTrial: nextTrial,
+    remaining: remaining
+  };
+});
+
+(function(){
+  "use strict";
+
+  var STAGE = document.getElementById("stage");
+  var BIG = document.getElementById("stageBig");
+  var SUB = document.getElementById("stageSub");
+  var HINT = document.getElementById("stageHint");
+  var LIVE = document.getElementById("liveStats");
+  var S_BEST = document.getElementById("statBest");
+  var S_AVG = document.getElementById("statAvg");
+  var S_LAST = document.getElementById("statLast");
+  var S_DONE = document.getElementById("statDone");
+  var PROGRESS = document.getElementById("progress");
+  var START_BTN = document.getElementById("start");
+  var RESET_BTN = document.getElementById("reset");
+  var RESULTS_TABLE = document.getElementById("resultsTable");
+  var RESULTS_BODY = document.getElementById("resultsBody");
+  var RESULTS_HEAD = document.getElementById("resultsHead");
+  var SUMMARY = document.getElementById("summaryLine");
+
+  var TRIALS = 5;
+  var state = ReactionEngine.createGame({ maxTrials: TRIALS });
+  var timerId = null;
+  var finished = false;
+
+  function fmt(ms){ return (ms == null ? "–" : ms + " ms"); }
+
+  function setStage(cls, big, sub, hint){
+    STAGE.className = "stage " + cls;
+    BIG.textContent = big;
+    SUB.innerHTML = sub;
+    HINT.textContent = hint || "";
+  }
+
+  function refreshLive(){
+    LIVE.hidden = false;
+    S_BEST.textContent = fmt(ReactionEngine.best(state));
+    S_AVG.textContent = fmt(ReactionEngine.average(state));
+    var last = state.results[state.results.length - 1];
+    S_LAST.textContent = fmt(last ? last.reactionMs : null);
+    S_DONE.textContent = state.results.length + "/" + TRIALS;
+    var left = TRIALS - state.results.length;
+    PROGRESS.innerHTML = (left <= 0 ? "Finished · " : (state.current + "/") + (state.results.length) + " · ") +
+      "<b>" + Math.max(0, left) + "</b> trials left";
+  }
+
+  function renderResults(){
+    RESULTS_TABLE.hidden = false;
+    RESULTS_HEAD.hidden = false;
+    RESULTS_BODY.innerHTML = "";
+    state.results.forEach(function(r, i){
+      var tr = document.createElement("tr");
+      if (!r.isFalseStart){
+        if (r.reactionMs === ReactionEngine.best(state)) tr.className = "best";
+        if (r.reactionMs === ReactionEngine.worst(state)) tr.className = "worst";
+      } else {
+        tr.className = "falsestart";
+      }
+      var resultCell;
+      if (r.isFalseStart){
+        resultCell = "<span class='chip bad'>False start</span>";
+      } else {
+        resultCell = "<span class='chip " + r.category + "'>" + r.category + "</span>";
+      }
+      tr.innerHTML = "<td>" + (i + 1) + "</td><td>" + resultCell + "</td><td class='num'>" + fmt(r.reactionMs) + "</td>";
+      RESULTS_BODY.appendChild(tr);
+    });
+    var b = ReactionEngine.best(state);
+    var a = ReactionEngine.average(state);
+    var w = ReactionEngine.worst(state);
+    SUMMARY.innerHTML = "Best <b>" + fmt(b) + "</b> · Average <b>" + fmt(a) + "</b>";
+  }
+
+  function scheduleGreen(){
+    if (timerId) clearTimeout(timerId);
+    timerId = setTimeout(function(){
+      timerId = null;
+      var t0 = performance.now();
+      state = ReactionEngine.awake(state, t0);        // waiting -> ready; sets targetAt
+      setStage("ready", "CLICK NOW!", "Now — click as soon as you see green.", "");
+    }, state.waitMs);
+  }
+
+  function begin(){
+    if (state.state === "done" || finished) return;
+    if (state.state === "result" || state.state === "falsestart"){
+      // continue to next trial
+    }
+    finished = false;
+    state = ReactionEngine.startTrial(state);       // schedule random wait
+    setStage("waiting", "Wait for green…", "Get ready. Click will count as a false start.", "Focus on the colour, not the clock.");
+    refreshLive();
+    scheduleGreen();
+  }
+
+  function handleStageClick(){
+    var t0 = performance.now();
+    var resp = ReactionEngine.react(state, t0);
+    if (resp.outcome === "falsestart"){
+      if (timerId){ clearTimeout(timerId); timerId = null; }
+      setStage("falsestart", "Too early!", "That was a false start — it won't count. Press Start for the next trial.", "Try to stay still until it turns green.");
+      refreshLive();
+      // move on to the next trial
+      state = ReactionEngine.nextTrial(state);
+      if (state.state === "done"){ finish(); } else { begin(); }
+      return;
+    }
+    if (resp.outcome === "result"){
+      if (timerId){ clearTimeout(timerId); timerId = null; }
+      setStage("result", resp.reactionMs + " ms!", resp.category + " reaction.", resp.isFast ? "Nice and quick!" : "Keep your eye on the colour.");
+      refreshLive();
+      state = ReactionEngine.nextTrial(state);
+      if (state.state === "done"){ finish(); }
+      else { begin(); }
+      return;
+    }
+    // "ignored"
+  }
+
+  function finish(){
+    finished = true;
+    if (timerId){ clearTimeout(timerId); timerId = null; }
+    START_BTN.disabled = true;
+    setStage("done", "Done! 🎉", "Here's how you did across all " + TRIALS + " trials.", "Press Reset to play again.");
+    renderResults();
+    refreshLive();
+  }
+
+  function reset(){
+    if (timerId){ clearTimeout(timerId); timerId = null; }
+    finished = false;
+    START_BTN.disabled = false;
+    state = ReactionEngine.createGame({ maxTrials: TRIALS });
+    LIVE.hidden = true; RESULTS_TABLE.hidden = true; RESULTS_HEAD.hidden = true;
+    START_BTN.disabled = false;
+    setStage("waiting", "Ready to play?", "Click <b>Start</b> to begin.", "React on the colour change, not on a guess.");
+    PROGRESS.innerHTML = "Not started · <b>" + TRIALS + "</b> trials left";
+  }
+
+  // Event wiring
+  STAGE.addEventListener("click", handleStageClick);
+  START_BTN.addEventListener("click", begin);
+  RESET_BTN.addEventListener("click", reset);
+  STAGE.addEventListener("keydown", function(e){
+    if (e.key === "Enter" || e.key === " " || e.code === "Space"){
+      e.preventDefault();
+      if (document.activeElement === STAGE) handleStageClick();
+      else begin();
+    }
+  });
+
+  reset();
+})();
+</script>
+</body>
+</html>
+

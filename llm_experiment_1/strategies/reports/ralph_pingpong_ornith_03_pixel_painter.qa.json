@@ -1,0 +1,50 @@
+{
+  "method": "Exact final source in Node VM/DOM/native Canvas2D. Closure instrumentation exposes existing state/functions only for controlled fixtures; no application algorithm replaced. Actual input handlers used for interaction checks. Not browser layout, GPU or default actions.",
+  "sha256": "bfc5416eb92e174c1b993e34c3297f68d80493750d9078343d4211ddd0b0fcfe",
+  "checks": [
+    {
+      "id": "brush_updates_real_canvas",
+      "pass": false,
+      "error": "Paint updates internal grid but not visible Canvas2D",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "two_stroke_undo_redo",
+      "pass": true,
+      "evidence": {
+        "undo": 2,
+        "redo": 2
+      }
+    },
+    {
+      "id": "clear_undo",
+      "pass": true,
+      "evidence": {
+        "restored": true
+      }
+    },
+    {
+      "id": "touch_paints",
+      "pass": false,
+      "error": "The expression evaluated to a falsy value:\n\n  assert(red(px(a,3,3)))\n",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "resize_preserves_pixels_and_png_download",
+      "pass": false,
+      "error": "Resize discarded overlapping artwork",
+      "actual": false,
+      "expected": true
+    },
+    {
+      "id": "export_button_dispatches_download",
+      "pass": false,
+      "error": "Handler only returns data URL, never clicks a download link",
+      "actual": 0,
+      "expected": true
+    }
+  ],
+  "pass": false
+}

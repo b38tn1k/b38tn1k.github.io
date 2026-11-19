@@ -1,0 +1,37 @@
+{
+  "method": "Exact-source controlled-clock VM with minimal DOM; no real browser",
+  "readyState": {
+    "state": "ready",
+    "currentTrial": 0,
+    "results": []
+  },
+  "readyLabel": "Tap now!",
+  "tapWhenToldTapNow": {
+    "state": "ready",
+    "currentTrial": 0,
+    "results": []
+  },
+  "firstRecordedMs": 3470,
+  "completed": {
+    "state": "results",
+    "currentTrial": 5,
+    "results": [
+      3470,
+      3470,
+      3470,
+      3470,
+      3470
+    ]
+  },
+  "average": 3470,
+  "barAnimationError": "list.children.indexOf is not a function",
+  "fiveFalseStarts": {
+    "state": {
+      "state": "results",
+      "currentTrial": 5,
+      "results": []
+    },
+    "average": null,
+    "best": "Infinity ms"
+  }
+}

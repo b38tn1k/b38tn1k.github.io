@@ -1,0 +1,92 @@
+{
+  "method": "Independent exact syntax/dependency checks plus unchanged app geometry, update/export functions and original DOM input/export listener statements, actual embedded computational libraries and actual STL Blob bytes. Full WebGL startup/rendering/layout are unsupported and explicitly unverified; no fake renderer or app algorithm used.",
+  "sha256": "362deb9d4128f137d8a5ea9454fb7413286aae603b61031db418a58aefcc8cc1",
+  "startup": {
+    "loaded": false,
+    "unsupportedWebGL": false,
+    "error": "strategies/reports/local-supervised-finals/case105/index.html:script0:6\nfunction acos2(v){return max(-1,min(1,v));}Quaternion.slerpQuaternions(qA,qB,out,t){out.slerp(qB,t);return out;}\n                                                                                   ^\n\nSyntaxError: Unexpected token '{'\n    at new Script (node:vm:117:7)\n    at createScript (node:vm:269:10)\n    at Object.runInContext (node:vm:300:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:30\n    at Array.forEach (<anonymous>)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/runtime.cjs:26:10)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/enforced-harness/runtime.cjs:17:14)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/proof-harness/runtime.cjs:6:15)\n    at Object.load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/proof-harness/runtime-v2.cjs:6:15)\n    at load (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/native-runtime.cjs:19:15)",
+    "stackTruncated": false
+  },
+  "checks": [
+    {
+      "id": "single_file_has_no_external_script_dependencies",
+      "pass": true,
+      "evidence": {
+        "dependencies": []
+      }
+    },
+    {
+      "id": "all_inline_scripts_parse_without_execution",
+      "pass": false,
+      "evidence": {
+        "syntaxErrors": [
+          {
+            "script": 0,
+            "error": "Unexpected token '{'"
+          }
+        ]
+      }
+    },
+    {
+      "id": "exact_source_offline_VM_startup",
+      "pass": false,
+      "environmentLimit": false,
+      "error": "Unexpected token '{'"
+    },
+    {
+      "id": "default_actual_preview_geometry_valid",
+      "pass": false,
+      "error": "evalmachine.<anonymous>:6\nfunction acos2(v){return max(-1,min(1,v));}Quaternion.slerpQuaternions(qA,qB,out,t){out.slerp(qB,t);return out;}\n                                                                                   ^\n\nSyntaxError: Unexpected token '{'\n    at new Script (node:vm:117:7)\n    at createScript (node:vm:269:10)\n    at Object.runInContext (node:vm:300:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:7:73\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:11:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)"
+    },
+    {
+      "id": "default_real_STL_export_available",
+      "pass": false,
+      "error": "evalmachine.<anonymous>:6\nfunction acos2(v){return max(-1,min(1,v));}Quaternion.slerpQuaternions(qA,qB,out,t){out.slerp(qB,t);return out;}\n                                                                                   ^\n\nSyntaxError: Unexpected token '{'\n    at new Script (node:vm:117:7)\n    at createScript (node:vm:269:10)\n    at Object.runInContext (node:vm:300:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:7:73\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:11:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)"
+    },
+    {
+      "id": "default_actual_input_and_bound_export_handlers",
+      "pass": false,
+      "evidence": {},
+      "error": "evalmachine.<anonymous>:6\nfunction acos2(v){return max(-1,min(1,v));}Quaternion.slerpQuaternions(qA,qB,out,t){out.slerp(qB,t);return out;}\n                                                                                   ^\n\nSyntaxError: Unexpected token '{'\n    at new Script (node:vm:117:7)\n    at createScript (node:vm:269:10)\n    at Object.runInContext (node:vm:300:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:5:73\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:13:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)"
+    },
+    {
+      "id": "alternate_actual_preview_geometry_valid",
+      "pass": false,
+      "error": "evalmachine.<anonymous>:6\nfunction acos2(v){return max(-1,min(1,v));}Quaternion.slerpQuaternions(qA,qB,out,t){out.slerp(qB,t);return out;}\n                                                                                   ^\n\nSyntaxError: Unexpected token '{'\n    at new Script (node:vm:117:7)\n    at createScript (node:vm:269:10)\n    at Object.runInContext (node:vm:300:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:7:73\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:11:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)"
+    },
+    {
+      "id": "alternate_real_STL_export_available",
+      "pass": false,
+      "error": "evalmachine.<anonymous>:6\nfunction acos2(v){return max(-1,min(1,v));}Quaternion.slerpQuaternions(qA,qB,out,t){out.slerp(qB,t);return out;}\n                                                                                   ^\n\nSyntaxError: Unexpected token '{'\n    at new Script (node:vm:117:7)\n    at createScript (node:vm:269:10)\n    at Object.runInContext (node:vm:300:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:7:73\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:11:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)"
+    },
+    {
+      "id": "alternate_actual_input_and_bound_export_handlers",
+      "pass": false,
+      "evidence": {},
+      "error": "evalmachine.<anonymous>:6\nfunction acos2(v){return max(-1,min(1,v));}Quaternion.slerpQuaternions(qA,qB,out,t){out.slerp(qB,t);return out;}\n                                                                                   ^\n\nSyntaxError: Unexpected token '{'\n    at new Script (node:vm:117:7)\n    at createScript (node:vm:269:10)\n    at Object.runInContext (node:vm:300:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:5:73\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:13:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)"
+    },
+    {
+      "id": "actual_Orbit_callback_changes_camera",
+      "pass": false,
+      "environmentLimit": false
+    }
+  ],
+  "diagnostics": {
+    "backend": {
+      "sha256": "362deb9d4128f137d8a5ea9454fb7413286aae603b61031db418a58aefcc8cc1",
+      "method": "Conditional exact AST-extracted app geometry/export functions with the actual embedded dependency scripts evaluated in original order. No computational dependency or app algorithm substituted. DOM download/status transport is a fixture; no full offline startup/UI wiring/GPU rendering credit.",
+      "error": "evalmachine.<anonymous>:6\nfunction acos2(v){return max(-1,min(1,v));}Quaternion.slerpQuaternions(qA,qB,out,t){out.slerp(qB,t);return out;}\n                                                                                   ^\n\nSyntaxError: Unexpected token '{'\n    at new Script (node:vm:117:7)\n    at createScript (node:vm:269:10)\n    at Object.runInContext (node:vm:300:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:7:73\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-backend.cjs:11:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)"
+    },
+    "components": {
+      "sha256": "362deb9d4128f137d8a5ea9454fb7413286aae603b61031db418a58aefcc8cc1",
+      "method": "Conditional exact app geometry/update/export functions and original input/export listener statements, actual HTML DOM and actual embedded Three/Orbit/CSG. Only GPU renderer creation is not executed: no renderer or app algorithm substituted. Real Orbit controls use a DOM canvas with generic dimension/pointer-capture metadata. GPU rendering/full startup/layout remain unverified.",
+      "cases": [],
+      "error": "evalmachine.<anonymous>:6\nfunction acos2(v){return max(-1,min(1,v));}Quaternion.slerpQuaternions(qA,qB,out,t){out.slerp(qB,t);return out;}\n                                                                                   ^\n\nSyntaxError: Unexpected token '{'\n    at new Script (node:vm:117:7)\n    at createScript (node:vm:269:10)\n    at Object.runInContext (node:vm:300:10)\n    at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:5:73\n    at Object.<anonymous> (/Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/operator-qwen-tray-components.cjs:13:154)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)"
+    }
+  },
+  "pass": false,
+  "verificationConcerns": [
+    "No GPU/browser visual, layout, hit-testing or physical-print certification.",
+    "Component harness skips renderer creation; it does not prove full-browser startup, but real component exceptions/output defects are independently observable."
+  ]
+}

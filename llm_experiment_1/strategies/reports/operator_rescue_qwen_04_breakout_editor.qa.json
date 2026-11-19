@@ -1,0 +1,91 @@
+{
+  "optionalChecks": [
+    {
+      "id": "editor_blank_margin_click_safe",
+      "pass": false,
+      "blocking": false,
+      "evidence": {
+        "error": "Cannot read properties of null (reading 'r')",
+        "laterDrawWorks": true
+      }
+    },
+    {
+      "id": "editor_instructions_follow_mode",
+      "pass": false,
+      "blocking": false,
+      "evidence": {
+        "mode": "editor",
+        "hint": "← → / A D to move · Click/tap to launch ball"
+      }
+    }
+  ],
+  "method": "Independent exact-source DOM/nativeCanvas real controls, scheduler, file-loader events and parsed downloaded JSON. State fixtures supply inputs only; algorithms unchanged. No browser layout/hit testing.",
+  "sha256": "6ed820b55a08dd10e4b2ae866c42ccd69ad4ecddc27c720807a45f793260c073",
+  "checks": [
+    {
+      "id": "play_then_place_returns_to_editor_and_paints",
+      "pass": true,
+      "evidence": {
+        "editor": true
+      }
+    },
+    {
+      "id": "short_JSON_replaces_old_cells_instead_of_merging",
+      "pass": true,
+      "evidence": {
+        "exactReplacement": true
+      }
+    },
+    {
+      "id": "real_JSON_download_and_file_roundtrip",
+      "pass": true,
+      "evidence": {
+        "roundtrip": true
+      }
+    },
+    {
+      "id": "actual_keyboard_mouse_launch_and_three_lives",
+      "pass": true,
+      "evidence": {
+        "controls": true,
+        "lives": 3,
+        "restart": true
+      }
+    },
+    {
+      "id": "actual_custom_editor_draw_and_erase",
+      "pass": true,
+      "evidence": {
+        "draw": true,
+        "erase": true
+      }
+    },
+    {
+      "id": "custom_design_survives_repeated_restart_and_return_to_editor",
+      "pass": true,
+      "evidence": {
+        "restarts": 2,
+        "originalDesign": true,
+        "returnAndEdit": true
+      }
+    },
+    {
+      "id": "last_brick_win_and_actual_replay_restore_design",
+      "pass": true,
+      "evidence": {
+        "lastBrickWin": true,
+        "replay": true
+      }
+    },
+    {
+      "id": "actual_win_and_loss_both_return_to_preserved_editor",
+      "pass": true,
+      "evidence": {
+        "winEditor": true,
+        "lossEditor": true,
+        "preservedDesign": true
+      }
+    }
+  ],
+  "pass": true
+}

@@ -1,0 +1,55 @@
+{
+  "method": "Exact-source VM, linkedom events, deterministic random wait and clock; no browser",
+  "startup": "pass",
+  "initial": "Ready. Click to start.",
+  "waiting": "Trial 1 of 5. Wait for the green light.",
+  "trials": [
+    {
+      "go": "Go!",
+      "measured": "200",
+      "status": "You reacted in 200 milliseconds."
+    },
+    {
+      "go": "Go!",
+      "measured": "210",
+      "status": "You reacted in 210 milliseconds."
+    },
+    {
+      "go": "Go!",
+      "measured": "220",
+      "status": "You reacted in 220 milliseconds."
+    },
+    {
+      "go": "Go!",
+      "measured": "230",
+      "status": "You reacted in 230 milliseconds."
+    },
+    {
+      "go": "Go!",
+      "measured": "240",
+      "status": "You reacted in 240 milliseconds."
+    }
+  ],
+  "summary": {
+    "average": "220 ms",
+    "min": "200 ms",
+    "max": "240 ms",
+    "rows": 5,
+    "status": "Results. Average 220 milliseconds, fastest 200, slowest 240."
+  },
+  "restart": "Ready. Click to start.",
+  "falseStart": "Too early, false start.",
+  "retry": "Trial 2 of 5. Wait for the green light.",
+  "afterOneFalseStart": {
+    "summaryRows": 4,
+    "average": "200 ms",
+    "status": "Results. Average 200 milliseconds, fastest 200, slowest 200."
+  },
+  "expectedNormal": {
+    "average": "220 ms",
+    "min": "200 ms",
+    "max": "240 ms",
+    "rows": 5
+  },
+  "sha256": "e105f2105a937f5251b9eefaf35ce6005c04dd22a398cfcf94561d6fc26c66ed"
+}

@@ -1,0 +1,133 @@
+{
+  "score": 14,
+  "grade": "F provisional - Tray misses defaults and cannot export the requested geometry",
+  "summary": "Tray misses defaults and cannot export the requested geometry",
+  "rubricScores": {
+    "functionality": 3,
+    "artifact_correctness": 6,
+    "usability": 3,
+    "self_verification": 2,
+    "autonomy": 0
+  },
+  "strengths": [
+    "Inline offline page, parameter validation and embedded MIT CSG library are delivered."
+  ],
+  "defects": [
+    "All dimension fields start empty; no default values or initialization assignments exist. Initial render reports invalid width.",
+    "After entering valid180\u00d7120\u00d730mm,2columns/3rows parameters, the real render/export path throws Cannot read properties of null (reading flip).",
+    "The boolean operation subtract(void.inverse()) keeps an intersection with the void, rather than carving it. Even the1\u00d71diagnostic produces a174\u00d730\u00d7118mm solid instead of the180\u00d730\u00d7120mm tray.",
+    "Compartment readouts omit internal wall thickness: width87 instead of85.5mm for two columns.",
+    "Renderer treats triangle indices as vertex arrays, projecting undefined coordinates. No usable rotatable preview is demonstrated.",
+    "The60-minute budget ends during further engine repair, without a final verification artifact."
+  ],
+  "verification": [
+    "0/4 independent scenario checks pass. qa/nominated-middle.cjs and reports/self_preferred_ornith_05_drawer_tray.qa.json.",
+    "Independent frozen-source VM/DOM/nativeCanvas2D; actual controls and output bytes, controlled state fixtures exposing existing functions only. No browser layout/GPU/default actions or physical printing. Qwen Snake receives the standard CanvasRenderingContext2D brand global solely for its instanceof check; the adapter otherwise omits this browser class. No game logic replaced."
+  ],
+  "verificationConcerns": [
+    "Source/runtime checks do not establish native browser rendering or physical printability.",
+    "The missing CanvasRenderingContext2D global in the independent adapter is supplied for the Snake brand check and is not counted as an app defect. No application algorithm is replaced."
+  ],
+  "humanOrSupervisorSteering": 0,
+  "scopeCompliance": "Pi alone authored product, tests and verification. Generic helpers only; no app-specific steering or repair code from Codex.",
+  "workflowNotes": "Model-nominated single-agent recipe. Independent outcomes are separate from the inline SUCCESS label and artifact/order workflow signals.",
+  "title": "Simple drawer tray generator",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "self_preferred",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "CSG subtraction and union both crash on containment (empty Node \u2192 `invert` on null plane). I'll abandon CSG and implement an exact box-union via grid decomposition + boundary extraction \u2014 guaranteed watertight for axis-aligned boxes.",
+  "workflowInstructions": "run-preferred.py; research/model-preferred-setups.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 60.1,
+  "wallMinutes": 60.1,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "time_limit",
+  "exitCode": -9,
+  "promptWords": 65,
+  "toolCalls": 136,
+  "parentToolCalls": 136,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 12,
+  "modelUsageReported": {
+    "input": 94485,
+    "output": 97005,
+    "cacheRead": 7332550,
+    "totalTokens": 7524040
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 94893,
+  "parentPeakReportedPromptTokens": 94893,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 94485,
+    "output": 97005,
+    "cacheRead": 7332550,
+    "totalTokens": 7524040
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 35134,
+  "sha256": "1ef867aabee4357e87d0692c363292dff7e89d00d04b454380513637f07e9e56",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": false,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 2,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 22,
+    "delegations": [],
+    "agentSettled": false,
+    "planArtifact": true,
+    "verificationArtifact": false,
+    "planBeforeNativeHtmlWrite": true,
+    "note": "Artifact/order signals only. Bash-authored writes and actual verification quality require independent transcript assessment.",
+    "controller": "Single Pi session; model-selected self-review, no external reviewer or forced proof",
+    "appliedSettings": {
+      "thinking": "high",
+      "temperature": null,
+      "compaction": {
+        "enabled": true
+      },
+      "oneAgent": true,
+      "forcedProof": false
+    },
+    "preferenceSource": "interviews/ornith/informed/answer.json"
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "Informed model-selected configuration; multiple workflow/tool/generation controls differ from earlier cohorts. Preferences are hypotheses, not established efficacy."
+  ],
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  }
+}

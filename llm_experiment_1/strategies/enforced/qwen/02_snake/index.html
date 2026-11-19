@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake Game</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  #game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  #hud {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 502px;
+    padding: 8px 4px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  #hud span { min-width: 100px; text-align: center; }
+
+  #score, #level, #best { color: #0f0; text-shadow: 0 0 6px #0f04; }
+  #best { color: #ff0; text-shadow: 0 0 6px #ff04; }
+  #status-bar { color: #88f; font-size: 15px; min-width: 120px; }
+
+  canvas {
+    border: 2px solid #333;
+    border-radius: 4px;
+    background: #0f0f23;
+    display: block;
+    box-shadow: 0 0 30px rgba(0,180,80,0.15);
+  }
+
+  .canvas-container { position: relative; display: inline-block; width: 500px; height: 500px; }
+
+  #overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  #overlay.visible { opacity: 1; pointer-events: auto; }
+  #overlay.hidden   { opacity: 0; pointer-events: none; }
+
+  #ov-title {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-shadow: 0 0 12px currentColor;
+  }
+
+  .green { color: #0f0; }
+  .yellow { color: #ff0; }
+  .red   { color: #f55; }
+
+  #controls-hint {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  #startBtn {
+    padding: 10px 28px;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #0f0, #0a0);
+    color: #111;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(0,255,0,0.25);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  #startBtn:hover { transform: scale(1.05); box-shadow: 0 6px 18px rgba(0,255,0,0.35); }
+  #startBtn:active { transform: scale(0.97); }
+</style>
+</head>
+<body>
+
+<div id="game-wrapper">
+  <div id="hud">
+    <span>Score: <span id="score">0</span></span>
+    <span id="status-bar"></span>
+    <span>Best: <span id="best">0</span></span>
+  </div>
+
+  <div class="canvas-container" id="canvas-box">
+    <canvas id="game" width="500" height="500"></canvas>
+    <div id="overlay" class="visible">
+      <div class="green" id="ov-title">SNAKE</div>
+      <button id="startBtn">START GAME</button>
+    </div>
+  </div>
+
+  <div id="controls-hint">
+    <strong>Arrow keys</strong> or <strong>WASD</strong> to move &nbsp;|&nbsp;
+    <strong>Space</strong> to pause/resume &nbsp;|&nbsp;
+    <strong>R</strong> to restart
+  </div>
+
+  <div id="hud2" style="width:100%;max-width:502px;">
+    <span>&nbsp;</span>
+    <span>Level: <span id="level">1</span></span>
+    <span>&nbsp;</span>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ── Constants ───────────────────────────────────────────────
+  var COLS          = 25;
+  var ROWS          = 25;
+  var BASE_SPEED    = 140;   // ms per tick at level 1
+  var SPEED_STEP    = 8;     // ms faster per level
+  var MIN_SPEED     = 55;    // fastest possible tick
+  var POINTS_PER_FOOD = 10;
+  var LEVEL_THRESHOLD = 50;
+
+  // Directions
+  var UP    = { x:  0, y: -1 };
+  var DOWN  = { x:  0, y:  1 };
+  var LEFT  = { x: -1, y:  0 };
+  var RIGHT = { x:  1, y:  0 };
+
+  // ── DOM refs ────────────────────────────────────────────────
+  var canvas   = document.getElementById("game");
+  var ctx      = canvas.getContext("2d");
+  var scoreEl  = document.getElementById("score");
+  var levelEl  = document.getElementById("level");
+  var bestEl   = document.getElementById("best");
+  var statusEl = document.getElementById("status-bar");
+  var overlay  = document.getElementById("overlay");
+  var oTitle   = document.getElementById("ov-title");
+  var btn      = document.getElementById("startBtn");
+
+  // ── Game state ──────────────────────────────────────────────
+  var snake, direction, nextDirection, food;
+  var score, level, highScore;
+  var gameState;   // "idle" | "playing" | "paused" | "dead"
+  var tickTimer = null;
+
+  // ── Helpers ─────────────────────────────────────────────────
+  function speed() {
+    return Math.max(MIN_SPEED, BASE_SPEED - (level - 1) * SPEED_STEP);
+  }
+
+  function randCell() {
+    var x = Math.floor(Math.random() * COLS);
+    var y = Math.floor(Math.random() * ROWS);
+    return { x: x, y: y };
+  }
+
+  function isOnSnake(x, y) {
+    for (var i = 0; i < snake.length; i++) {
+      if (snake[i].x === x && snake[i].y === y) return true;
+    }
+    return false;
+  }
+
+  function placeFood() {
+    // First try random placement
+    var attempts = 0;
+    do {
+      food = randCell();
+      attempts++;
+    } while ((isOnSnake(food.x, food.y) || food.x < 0 || food.y < 0 || food.x >= COLS || food.y >= ROWS) && attempts < 1000);
+
+    // If random placement keeps hitting snake, use deterministic fallback (scan spiral)
+    if (attempts >= 1000) {
+      var cx = Math.floor(COLS / 2);
+      var cy = Math.floor(ROWS / 2);
+      var maxR = Math.min(COLS, ROWS);
+      for (var r = 0; r < maxR; r++) {
+        for (var d = 0; d < 4; d++) {
+          var angle;
+          if (d === 0) angle = (r * 2.39996 + r) % (Math.PI * 2);
+          else if (d === 1) angle = (r * 2.39996 + r + Math.PI / 2) % (Math.PI * 2);
+          else if (d === 2) angle = (r * 2.39996 + r + Math.PI) % (Math.PI * 2);
+          else angle = (r * 2.39996 + r + Math.PI * 1.5) % (Math.PI * 2);
+          var tx = Math.round(cx + r * Math.cos(angle));
+          var ty = Math.round(cy + r * Math.sin(angle));
+          if (tx >= 0 && tx < COLS && ty >= 0 && ty < ROWS && !isOnSnake(tx, ty)) {
+            food = { x: tx, y: ty };
+            return;
+          }
+        }
+      }
+      // Final fallback: first free cell scanning row by row
+      for (var ry = 0; ry < ROWS; ry++) {
+        for (var rx = 0; rx < COLS; rx++) {
+          if (!isOnSnake(rx, ry)) { food = { x: rx, y: ry }; return; }
+        }
+      }
+    }
+  }
+
+  function getHighScore() {
+    try { return parseInt(localStorage.getItem("snake_hi"), 10) || 0; } catch (_) { return 0; }
+  }
+
+  function setHighScore(s) {
+    try { localStorage.setItem("snake_hi", String(s)); } catch (_) {}
+  }
+
+  // ── Init / Reset ────────────────────────────────────────────
+  function init() {
+    var cx = Math.floor(COLS / 2);
+    var cy = Math.floor(ROWS / 2);
+    snake = [
+      { x: cx,     y: cy },
+      { x: cx - 1, y: cy },
+      { x: cx - 2, y: cy }
+    ];
+    direction       = RIGHT;
+    nextDirection   = RIGHT;
+    score           = 0;
+    level           = 1;
+    highScore       = getHighScore();
+    gameState       = "idle";
+    placeFood();
+
+    scoreEl.textContent  = "0";
+    levelEl.textContent  = "1";
+    bestEl.textContent   = String(highScore);
+    statusEl.textContent = "";
+    btn.textContent      = "START GAME";
+
+    showOverlay("SNAKE");
+    draw();
+  }
+
+  function startGame() {
+    gameState = "playing";
+    hideOverlay();
+    scheduleTick();
+  }
+
+  function togglePause() {
+    if (gameState === "playing") {
+      gameState = "paused";
+      statusEl.textContent = "PAUSED";
+      cancelTick();
+      showOverlay("PAUSED");
+    } else if (gameState === "paused") {
+      gameState = "playing";
+      statusEl.textContent = "";
+      hideOverlay();
+      scheduleTick();
+    }
+  }
+
+  function die() {
+    gameState = "dead";
+    cancelTick();
+    if (score > highScore) { highScore = score; setHighScore(highScore); bestEl.textContent = String(highScore); }
+    showOverlay("GAME OVER");
+    btn.textContent = "PLAY AGAIN";
+  }
+
+  // ── Tick / Movement ─────────────────────────────────────────
+  function tick() {
+    direction = nextDirection;
+
+    var head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
+
+    // Wall collision
+    if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) {
+      die();
+      return;
+    }
+
+    // Self collision
+    for (var i = 0; i < snake.length; i++) {
+      if (snake[i].x === head.x && snake[i].y === head.y) {
+        die();
+        return;
+      }
+    }
+
+    snake.unshift(head);
+
+    // Eat food?
+    if (head.x === food.x && head.y === food.y) {
+      score += POINTS_PER_FOOD;
+      scoreEl.textContent = String(score);
+
+      var newLevel = Math.floor(score / LEVEL_THRESHOLD) + 1;
+      if (newLevel !== level) {
+        level = newLevel;
+        levelEl.textContent = String(level);
+        cancelTick();
+        scheduleTick();
+      }
+
+      placeFood();
+    } else {
+      snake.pop();
+    }
+
+    draw();
+  }
+
+  function scheduleTick() {
+    cancelTick();
+    tickTimer = setInterval(tick, speed());
+  }
+
+  function cancelTick() {
+    if (tickTimer !== null) { clearInterval(tickTimer); tickTimer = null; }
+  }
+
+  // ── Input ───────────────────────────────────────────────────
+  function setDirection(dirName) {
+    var map = {
+      ArrowUp: UP, w: UP, W: UP,
+      ArrowDown: DOWN, s: DOWN, S: DOWN,
+      ArrowLeft: LEFT, a: LEFT, A: LEFT,
+      ArrowRight: RIGHT, d: RIGHT, D: RIGHT
+    };
+    var dir = map[dirName];
+    if (!dir) return;
+
+    // Prevent reversing into self
+    if (direction.x + dir.x === 0 && direction.y + dir.y === 0) return;
+
+    nextDirection = dir;
+  }
+
+  document.addEventListener("keydown", function (e) {
+    switch (e.key) {
+      case "ArrowUp":    case "w": case "W": setDirection(e.key); break;
+      case "ArrowDown":  case "s": case "S": setDirection(e.key); break;
+      case "ArrowLeft":  case "a": case "A": setDirection(e.key); break;
+      case "ArrowRight": case "d": case "D": setDirection(e.key); break;
+      case " ":
+        e.preventDefault();
+        if (gameState === "idle") startGame();
+        else if (gameState === "playing" || gameState === "paused") togglePause();
+        break;
+      case "r": case "R":
+        init();
+        break;
+      default: return;
+    }
+    e.preventDefault();
+  });
+
+  btn.addEventListener("click", function () {
+    if (gameState === "idle" || gameState === "dead") startGame();
+    else if (gameState === "playing" || gameState === "paused") togglePause();
+  });
+
+  // ── Overlay helpers ─────────────────────────────────────────
+  var overlayLabels = {
+    "SNAKE": "Press Space or click START to play",
+    "PAUSED": "Press Space or click to resume",
+    "GAME OVER": "Score: <strong>" + "0" + "</strong><br>Click PLAY AGAIN to retry"
+  };
+
+  function showOverlay(title) {
+    oTitle.textContent = title;
+    overlay.className = "visible";
+  }
+
+  function hideOverlay() {
+    // Also clear the title so paused-title check after resume works
+    oTitle.textContent = "";
+    overlay.className = "hidden";
+  }
+
+  // ── Drawing ─────────────────────────────────────────────────
+  var lastDrawTime = Date.now();
+
+  function draw() {
+    var cs = canvas.width / COLS;
+
+    // Background grid (subtle)
+    ctx.fillStyle = "#0f0f23";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (var r = 0; r < ROWS; r++) {
+      for (var c = 0; c < COLS; c++) {
+        if ((r + c) % 2 === 0) {
+          ctx.fillStyle = "#14142a";
+          ctx.fillRect(c * cs, r * cs, cs, cs);
+        }
+      }
+    }
+
+    // Food (pulsing red circle)
+    var fx = food.x * cs + cs / 2;
+    var fy = food.y * cs + cs / 2;
+    var fr = cs * 0.4;
+    var pulse = Math.sin((Date.now() - lastDrawTime) / 300) * 0.15 + 0.85;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(fx, fy, fr * pulse, 0, Math.PI * 2);
+    ctx.fillStyle = "#ff3333";
+    ctx.shadowColor = "#ff3333";
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.restore();
+
+    // Snake body
+    for (var bi = snake.length - 1; bi >= 0; bi--) {
+      var s = snake[bi];
+      var sx = s.x * cs;
+      var sy = s.y * cs;
+      var pad = 1;
+
+      if (bi === 0) {
+        ctx.fillStyle = "#4aff8b";
+        ctx.shadowColor = "#4aff8b";
+        ctx.shadowBlur = 6;
+      } else {
+        var t = bi / snake.length;
+        var r2 = Math.round(30 + 30 * (1 - t));
+        var g = Math.round(200 + 55 * (1 - t));
+        var b = Math.round(60 + 40 * t);
+        ctx.fillStyle = "rgb(" + r2 + "," + g + "," + b + ")";
+        ctx.shadowBlur = 0;
+      }
+
+      roundRect(ctx, sx + pad, sy + pad, cs - pad * 2, cs - pad * 2, 3);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // Eyes on head
+    if (snake.length > 0) {
+      var hx = snake[0].x * cs + cs / 2;
+      var hy = snake[0].y * cs + cs / 2;
+      var es = cs * 0.18;
+
+      var eOff1, eOff2;
+      if (direction === RIGHT) { eOff1 = { dx: 3, dy: -4 }; eOff2 = { dx: 3, dy: 4 }; }
+      else if (direction === LEFT) { eOff1 = { dx: -3, dy: -4 }; eOff2 = { dx: -3, dy: 4 }; }
+      else if (direction === UP) { eOff1 = { dx: -4, dy: -3 }; eOff2 = { dx: 4, dy: -3 }; }
+      else { eOff1 = { dx: -4, dy: 3 }; eOff2 = { dx: 4, dy: 3 }; }
+
+      ctx.fillStyle = "#fff";
+      ctx.beginPath(); ctx.arc(hx + eOff1.dx, hy + eOff1.dy, es, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(hx + eOff2.dx, hy + eOff2.dy, es, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = "#111";
+      ctx.beginPath(); ctx.arc(hx + eOff1.dx * 1.1, hy + eOff1.dy * 1.1, es * 0.55, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(hx + eOff2.dx * 1.1, hy + eOff2.dy * 1.1, es * 0.55, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r);
+    c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y + h, r);
+    c.arcTo(x, y, x + w, y, r);
+    c.closePath();
+  }
+
+  // Redraw loop for pulsing food effect
+  var animFrame = null;
+  function redrawLoop() {
+    if (gameState === "playing" || gameState === "paused") {
+      draw();
+      lastDrawTime = Date.now();
+    }
+    animFrame = requestAnimationFrame(redrawLoop);
+  }
+  redrawLoop();
+
+  // ── Boot ────────────────────────────────────────────────────
+  init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "artifactSHA256": "8052a395a5a8963feaf31a75fa0410b3098a175ab8800e88c741958f7be3a570",
+  "status": "fail",
+  "testsActuallyExerciseBehavior": true,
+  "blockingFindings": [
+    {
+      "description": "food_growth_score check FAILS: driving the snake straight to eat food eats 0 food in the real acceptance run (score stays at 10, expected to rise by POINTS_PER_FOOD*ate). The app does not reliably spawn food ahead of the head along the current heading, so the straight-run heuristic used by the test cannot reach it.",
+      "evidence": ".scratch/acc-full.cjs -> { id: 'food_growth_score', passed: false, evidence: 'Ate 0; after=10; exp=0' } reproduced exactly. Contrast: a FRESH-ONLY load (single food block) passes with ate=9 (see .scratch/acc-run.cjs: 'food_growth_score: ate= 9 after= 90'). Same seed (0.3), same index.html. Also .scratch/cause.cjs prints 'FRESH-only food block: ate= 9'. So behavior depends on execution context — a genuine defect, not a test-environment artifact. Confirmed by controller execution.json exitCode 1, output 'FAILED CHECKS: food_growth_score'.",
+      "file": "index.html placeFood() lines ~190-225; qa/acceptance.cjs food_growth_score block; acceptance-result.json passed:false for food_growth_score"
+    },
+    {
+      "description": "root cause is in placeFood(): the nearest-cell logic is broken. `ahead` is built by iterating the FULL `empty` array (not sorted by distance), and the 'closest ahead' loop compares Manhattan distance to pick `best`, but the comment/expectation that food is always the nearest reachable cell ahead is not guaranteed. When dir came from a prior turn the pool selection yields food that may not lie on the straight path, so a straight drive never eats it.",
+      "evidence": "index.html placeFood(): `var pool = ahead.length ? ahead : empty; food = pool[Math.floor(Math.random() * pool.length)];` then an overwritten `best` loop. Reproduce: reuse one app through the movement check (ArrowUp) then freshStart() then driveStraight -> ate=0 (see .scratch/acc-full.cjs)."
+    },
+    {
+      "description": "Secondary latent defect: R key restart leaves score at 10 instead of 0. In .scratch/repro2.cjs 'EXACT acceptance restart' logs 'afterR (playing && score 0): false', and repro.cjs RESTART shows 'after R: ... score 10'. The app calls start() which calls reset() which sets score=0, but a step timer from the previous game may fire before reset and re-add score; the restart check currently passes only because it never strictly asserts score===0 for the R path in a way that caught it, but the 10 score shows a reset/timing race.",
+      "evidence": ".scratch/repro2.cjs; .scratch/repro.cjs 'after R: overlayHidden? true score 10'"
+    }
+  ],
+  "residualRisks": [
+    "Exact-source VM + linkedom + partial Canvas shim (no browser); gameplay verified through observable game state (score/level/best HUD, overlay visibility, button enabled/disabled, game-over trigger), not through snake/food pixel colors, per runtime.cjs design.",
+    "RNG is a seeded deterministic sequence (Math.random seeded by 0.3); food placement determinism is test-environment specific and cannot be taken as proof of real-browser food behavior.",
+    "Only the shipped index.html was exercised; a single seed was used. A repair must re-run acceptance and confirm food_growth_score (and any restart timing) passes.",
+    "This reviewer made no changes to index.html, acceptance.cjs, or the runtime; the failing state is the current committed artifact."
+  ]
+}

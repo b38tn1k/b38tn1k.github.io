@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Breakout — Level Editor</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f1a;
+    --panel: #1a1a2e;
+    --border: #2a2a4a;
+    --text: #e0e0f0;
+    --accent: #6c63ff;
+    --accent-hover: #5a52d5;
+    --danger: #ff4757;
+    --success: #2ed573;
+    --warning: #ffa502;
+  }
+
+  html, body { height: 100%; overflow-x: hidden; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 960px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    gap: 10px;
+    min-height: 100vh;
+  }
+
+  header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #6c63ff, #e91e8a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .mode-badge {
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all .25s;
+  }
+
+  .mode-badge.editor { background: var(--accent); color: #fff; }
+  .mode-badge.playing { background: var(--warning); color: #000; }
+  .mode-badge.gameover { background: var(--danger); color: #fff; }
+
+  .hud {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 4px;
+    font-size: 15px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .hud-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .hud-icon { font-size: 18px; }
+  .hud-value { min-width: 24px; text-align: center; color: #ffd32a; }
+
+  #game-wrapper {
+    width: 100%;
+    position: relative;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 640 / 480;
+    max-height: calc(100vh - 200px);
+  }
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: default;
+  }
+
+  #overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  #overlay.active { pointer-events: auto; }
+
+  #overlay .msg {
+    font-size: 32px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 16px;
+    text-shadow: 0 0 20px rgba(108,99,255,.6);
+  }
+
+  #overlay .sub {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 20px;
+  }
+
+  .toolbar {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, transform .1s, box-shadow .2s;
+    white-space: nowrap;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-primary   { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(108,99,255,.35); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-success   { background: var(--success); color: #000; }
+  .btn-danger    { background: var(--danger); color: #fff; }
+  .btn-warning   { background: var(--warning); color: #000; }
+  .btn-ghost     { background: var(--border); color: var(--text); }
+  .btn-ghost:hover { background: #3a3a5a; }
+  .btn.active    { box-shadow: inset 0 0 0 2px #fff, 0 2px 12px rgba(108,99,255,.5); }
+
+  .palette {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform .15s, border-color .2s;
+  }
+
+  .swatch:hover { transform: scale(1.15); }
+  .swatch.active { border-color: #fff; transform: scale(1.15); box-shadow: 0 0 8px rgba(255,255,255,.3); }
+
+  .divider { width: 1px; height: 28px; background: var(--border); flex-shrink: 0; }
+
+  #file-input { display: none; }
+
+  footer {
+    font-size: 11px;
+    color: #555;
+    padding: 8px;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    h1 { font-size: 18px; }
+    .btn { padding: 6px 10px; font-size: 12px; }
+    .swatch { width: 22px; height: 22px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <h1>🧱 Breakout Studio</h1>
+    <span class="mode-badge editor" id="mode-badge">Editor</span>
+  </header>
+
+  <div class="hud" id="hud" style="display:none;">
+    <div class="hud-item"><span class="hud-icon">⭐</span> Score: <span class="hud-value" id="score-val">0</span></div>
+    <div class="hud-item"><span class="hud-icon">❤️</span> Lives: <span class="hud-value" id="lives-val">3</span></div>
+    <div class="hud-item"><span class="hud-icon">🧱</span> Bricks: <span class="hud-value" id="bricks-val">0</span></div>
+  </div>
+
+  <div id="game-wrapper">
+    <canvas id="c"></canvas>
+    <div id="overlay">
+      <div class="msg" id="overlay-msg"></div>
+      <div class="sub" id="overlay-sub"></div>
+      <button class="btn btn-primary" id="overlay-btn">Play</button>
+    </div>
+  </div>
+
+  <!-- Toolbar: Editor -->
+  <div class="toolbar" id="editor-toolbar">
+    <div class="palette" id="palette"></div>
+    <div class="divider"></div>
+    <button class="btn btn-ghost active" id="tool-draw">✏️ Draw</button>
+    <button class="btn btn-ghost" id="tool-erase">🧹 Erase</button>
+    <div class="divider"></div>
+    <button class="btn btn-danger" id="btn-clear">🗑 Clear</button>
+    <button class="btn btn-primary" id="btn-save">💾 Save</button>
+    <button class="btn btn-success" id="btn-load-btn">📂 Load</button>
+    <input type="file" id="file-input" accept=".json">
+    <div class="divider"></div>
+    <button class="btn btn-warning" id="btn-play">▶ Play</button>
+  </div>
+
+  <!-- Toolbar: Playing -->
+  <div class="toolbar" id="play-toolbar" style="display:none;">
+    <button class="btn btn-ghost" id="btn-pause">⏸ Pause</button>
+    <button class="btn btn-danger" id="btn-restart">🔄 Restart</button>
+    <button class="btn btn-primary" id="btn-editor">✏️ Editor</button>
+  </div>
+
+  <footer>
+    Keyboard: ← → / A D move paddle &nbsp;|&nbsp; Space launch ball &nbsp;|&nbsp; Mouse drag to draw in editor<br>
+    Touch supported on mobile
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ─── Constants ──────────────────────────────────────
+  const COLS = 14, ROWS = 10;
+  const BRICK_COLORS = [
+    "#ff4757", "#ff6b81", "#ffa502", "#ffd32a",
+    "#7bed9f", "#2ed573", "#1e90ff", "#5352ed",
+    "#6c63ff", "#e91e8a"
+  ];
+
+  // Canvas logical size (scaled to fit)
+  const W = 640, H = 480;
+  const BRICK_W = W / COLS;
+  const BRICK_H = 22;
+  const BRICK_TOP = 50;
+  const BRICK_PAD = 3;
+
+  // Paddle
+  const PADDLE_W = 100, PADDLE_H = 14;
+  const PADDLE_Y = H - 36;
+
+  // Ball
+  const BALL_R = 7;
+  const BALL_SPEED = 5;
+  const MAX_BALL_SPEED = 7.5;
+
+  // ─── DOM refs ───────────────────────────────────────
+  const canvas     = document.getElementById("c");
+  const ctx        = canvas.getContext("2d");
+  const overlay    = document.getElementById("overlay");
+  const overlayMsg = document.getElementById("overlay-msg");
+  const overlaySub = document.getElementById("overlay-sub");
+  const overlayBtn = document.getElementById("overlay-btn");
+  const modeBadge  = document.getElementById("mode-badge");
+  const hud        = document.getElementById("hud");
+  const scoreVal   = document.getElementById("score-val");
+  const livesVal   = document.getElementById("lives-val");
+  const bricksVal  = document.getElementById("bricks-val");
+  const editorTb   = document.getElementById("editor-toolbar");
+  const playTb     = document.getElementById("play-toolbar");
+  const paletteDiv = document.getElementById("palette");
+  const fileInput  = document.getElementById("file-input");
+
+  // ─── State ──────────────────────────────────────────
+  let mode = "editor";          // editor | paused | playing | gameover
+  let grid = [];                 // ROWS x COLS, null or color string
+  let selectedColor = BRICK_COLORS[0];
+  let tool = "draw";            // draw | erase
+
+  let paddleX;
+  let ballX, ballY, ballDX, ballDY, ballSpeed;
+  let ballLaunched = false;
+  let score = 0;
+  let lives = 3;
+  let bricksRemaining = 0;
+  let lastTime = 0;
+  let animId = null;
+
+  // Input state
+  let keysDown = {};
+  let mouseInCanvas = false;
+  let mouseX = W / 2;
+
+  // ─── Init grid ──────────────────────────────────────
+  function initGrid() {
+    grid = [];
+    for (let r = 0; r < ROWS; r++) {
+      grid[r] = new Array(COLS).fill(null);
+    }
+  }
+
+  // ─── Resize canvas to CSS size ──────────────────────
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width  = rect.width * devicePixelRatio;
+    canvas.height = rect.height * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    // Scale draw ops to fit logical size
+    ctx.save();
+    ctx.scale(W / rect.width, H / rect.height);
+    ctx.restore();
+    // Actually we handle scaling per-frame in render
+    canvas.style.width = rect.width + "px";
+    canvas.style.height = rect.height + "px";
+  }
+
+  // Override render to use logical coordinates via a transform
+  function getScale() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    return { sx: W / r.width, sy: H / r.height };
+  }
+
+  // ─── Rendering helpers (logical coords) ─────────────
+  function drawBrick(x, y, color) {
+    const pad = BRICK_PAD;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    roundRect(ctx, x * BRICK_W + pad / 2, BRICK_TOP + y * (BRICK_H + pad / 2),
+              BRICK_W - pad, BRICK_H - pad / 2, 4);
+    ctx.fill();
+    // Highlight
+    const g = ctx.createLinearGradient(x * BRICK_W, BRICK_TOP + y * BRICK_H,
+                                        x * BRICK_W, BRICK_TOP + (y + 1) * BRICK_H);
+    g.addColorStop(0, "rgba(255,255,255,.25)");
+    g.addColorStop(.45, "rgba(255,255,255,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    roundRect(ctx, x * BRICK_W + pad / 2, BRICK_TOP + y * (BRICK_H + pad / 2),
+              BRICK_W - pad, BRICK_H - pad / 2, 4);
+    ctx.fill();
+  }
+
+  function roundRect(c, x, y, w, h, r) {
+    c.moveTo(x + r, y);
+    c.lineTo(x + w - r, y);
+    c.arcTo(x + w, y, x + w, y + r, r);
+    c.lineTo(x + w, y + h - r);
+    c.arcTo(x + w, y + h, x + w - r, y + h, r);
+    c.lineTo(x + r, y + h);
+    c.arcTo(x, y + h, x, y + h - r, r);
+    c.lineTo(x, y + r);
+    c.arcTo(x, y, x + r, y, r);
+    c.closePath();
+  }
+
+  function drawPaddle(cx) {
+    const px = cx - PADDLE_W / 2;
+    ctx.fillStyle = "#6c63ff";
+    ctx.beginPath();
+    roundRect(ctx, px, PADDLE_Y, PADDLE_W, PADDLE_H, 7);
+    ctx.fill();
+    // shine
+    const g = ctx.createLinearGradient(px, PADDLE_Y, px + PADDLE_W, PADDLE_Y);
+    g.addColorStop(0, "rgba(255,255,255,.15)");
+    g.addColorStop(.5, "rgba(255,255,255,.3)");
+    g.addColorStop(1, "rgba(255,255,255,.08)");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    roundRect(ctx, px, PADDLE_Y, PADDLE_W, PADDLE_H / 2, 7);
+    ctx.fill();
+  }
+
+  function drawBall(x, y) {
+    ctx.beginPath();
+    ctx.arc(x, y, BALL_R, 0, Math.PI * 2);
+    const g = ctx.createRadialGradient(x - 2, y - 2, 1, x, y, BALL_R);
+    g.addColorStop(0, "#fff");
+    g.addColorStop(.6, "#e8e8ff");
+    g.addColorStop(1, "#6c63ff");
+    ctx.fillStyle = g;
+    ctx.fill();
+  }
+
+  function drawGrid() {
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,.06)";
+    ctx.lineWidth = .5;
+    for (let c = 0; c <= COLS; c++) {
+      ctx.beginPath();
+      ctx.moveTo(c * BRICK_W, BRICK_TOP - 10);
+      ctx.lineTo(c * BRICK_W, BRICK_TOP + ROWS * BRICK_H + 20);
+      ctx.stroke();
+    }
+    for (let r = 0; r <= ROWS; r++) {
+      ctx.beginPath();
+      ctx.moveTo(0, BRICK_TOP - 10 + r * (BRICK_H + 3));
+      ctx.lineTo(W, BRICK_TOP - 10 + r * (BRICK_H + 3));
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ─── Render frame ───────────────────────────────────
+  function render() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    ctx.clearRect(0, 0, r.width, r.height);
+
+    // Scale logical coords to actual canvas pixels
+    ctx.save();
+    ctx.scale(W / r.width, H / r.height);
+
+    // Background
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, "#141428");
+    bg.addColorStop(1, "#1a1a3a");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    drawGrid();
+
+    // Bricks
+    let brickCount = 0;
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        if (grid[r][c]) {
+          drawBrick(c, r, grid[r][c]);
+          brickCount++;
+        }
+      }
+    }
+
+    // Paddle & ball in play mode
+    if (mode === "playing" || mode === "paused") {
+      drawPaddle(paddleX);
+      drawBall(ballX, ballY);
+
+      // Trail behind ball
+      ctx.globalAlpha = .12;
+      for (let t = 1; t <= 4; t++) {
+        drawBall(ballX - ballDX * t * 3, ballY - ballDY * t * 3);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    // Editor hover preview
+    if (mode === "editor" && mouseInCanvas) {
+      const col = Math.floor(mouseX / BRICK_W);
+      const row = Math.round((mouseY - BRICK_TOP) / (BRICK_H + 3));
+      if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
+        ctx.globalAlpha = .45;
+        const c = tool === "erase" ? null : selectedColor;
+        if (c) drawBrick(col, row, c);
+        else {
+          // Eraser indicator
+          ctx.strokeStyle = "#ff4757";
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 3]);
+          ctx.strokeRect(col * BRICK_W + 1, BRICK_TOP + row * (BRICK_H + 3), BRICK_W - 2, BRICK_H);
+          ctx.setLineDash([]);
+        }
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    ctx.restore();
+  }
+
+  // ─── Game physics loop ──────────────────────────────
+  function update(dt) {
+    if (mode !== "playing") return;
+
+    // Paddle movement via keyboard
+    const paddleSpeed = 8;
+    if (keysDown["ArrowLeft"] || keysDown["KeyA"]) {
+      paddleX -= paddleSpeed * dt * 60;
+    }
+    if (keysDown["ArrowRight"] || keysDown["KeyD"]) {
+      paddleX += paddleSpeed * dt * 60;
+    }
+
+    // Paddle from mouse (only when ball not launched)
+    if (!ballLaunched && mouseInCanvas) {
+      const target = (mouseX - BRICK_PAD / 2);
+      paddleX += (target - paddleX) * .35;
+    }
+
+    // Clamp paddle
+    paddleX = Math.max(PADDLE_W / 2 + 4, Math.min(W - PADDLE_W / 2 - 4, paddleX));
+
+    if (!ballLaunched) {
+      ballX = paddleX;
+      ballY = PADDLE_Y - BALL_R - 1;
+      return;
+    }
+
+    // Move ball
+    const stepX = ballDX * ballSpeed * dt * 60;
+    const stepY = ballDY * ballSpeed * dt * 60;
+    ballX += stepX;
+    ballY += stepY;
+
+    // Wall bounces
+    if (ballX - BALL_R <= 0) { ballX = BALL_R; ballDX = Math.abs(ballDX); }
+    if (ballX + BALL_R >= W) { ballX = W - BALL_R; ballDX = -Math.abs(ballDX); }
+    if (ballY - BALL_R <= 0) { ballY = BALL_R; ballDY = Math.abs(ballDY); }
+
+    // Bottom — lose life
+    if (ballY + BALL_R > H) {
+      lives--;
+      updateHUD();
+      if (lives <= 0) {
+        mode = "gameover";
+        showOverlay("Game Over", "Score: " + score, "Restart");
+        return;
+      }
+      resetBall();
+      return;
+    }
+
+    // Paddle collision
+    if (ballDY > 0 &&
+        ballY + BALL_R >= PADDLE_Y &&
+        ballY + BALL_R <= PADDLE_Y + PADDLE_H + 6 &&
+        ballX >= paddleX - PADDLE_W / 2 - BALL_R &&
+        ballX <= paddleX + PADDLE_W / 2 + BALL_R) {
+      // Calculate bounce angle based on where ball hit paddle
+      const hitPos = (ballX - paddleX) / (PADDLE_W / 2); // -1 to 1
+      const angle = hitPos * Math.PI / 3; // max 60°
+      ballDX = Math.sin(angle);
+      ballDY = -Math.cos(angle);
+
+      // Clamp to avoid too-shallow angles
+      if (Math.abs(ballDY) < .2) {
+        ballDY = ballDY > 0 ? .2 : -.2;
+        const mag = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
+        ballDX /= mag; ballDY /= mag;
+      }
+
+      ballY = PADDLE_Y - BALL_R - 1;
+    }
+
+    // Brick collision
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        if (!grid[r][c]) continue;
+        const bx = c * BRICK_W + BRICK_PAD / 2;
+        const by = BRICK_TOP - 10 + r * (BRICK_H + 3) + BRICK_PAD / 4;
+        const bw = BRICK_W - BRICK_PAD;
+        const bh = BRICK_H - BRICK_PAD / 2 + BRICK_PAD;
+
+        // AABB vs circle
+        const closestX = Math.max(bx, Math.min(ballX, bx + bw));
+        const closestY = Math.max(by, Math.min(ballY, by + bh));
+        const dx = ballX - closestX;
+        const dy = ballY - closestY;
+        if (dx * dx + dy * dy < BALL_R * BALL_R) {
+          // Determine bounce direction
+          const overlapL = ballX + BALL_R - bx;
+          const overlapR = bx + bw - ballX + BALL_R;
+          const overlapT = ballY + BALL_R - by;
+          const overlapB = by + bh - ballY + BALL_R;
+          const minOverlap = Math.min(overlapL, overlapR, overlapT, overlapB);
+
+          if (minOverlap === overlapT || minOverlap === overlapB) {
+            ballDY = -ballDY;
+          } else {
+            ballDX = -ballDX;
+          }
+
+          grid[r][c] = null;
+          score += 10;
+          updateHUD();
+          break; // only one brick per frame
+        }
+      }
+    }
+
+    // Check win
+    let count = 0;
+    for (let r2 = 0; r2 < ROWS; r2++) {
+      for (let c2 = 0; c2 < COLS; c2++) {
+        if (grid[r2][c2]) count++;
+      }
+    }
+    if (count === 0) {
+      mode = "gameover";
+      showOverlay("You Win! 🎉", "All bricks cleared!", "Play Again");
+      return;
+    }
+
+    // Speed cap
+    const spd = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
+    if (spd > MAX_BALL_SPEED) {
+      ballDX = (ballDX / spd) * MAX_BALL_SPEED;
+      ballDY = (ballDY / spd) * MAX_BALL_SPEED;
+    }
+  }
+
+  function resetBall() {
+    ballX = paddleX;
+    ballY = PADDLE_Y - BALL_R - 1;
+    ballDX = 0;
+    ballDY = -1;
+    ballSpeed = BALL_SPEED;
+    ballLaunched = false;
+  }
+
+  function launchBall() {
+    if (!ballLaunched && mode === "playing") {
+      // Launch at angle based on paddle offset
+      const offsetX = (paddleX - W / 2) / (W / 2);
+      ballDX = offsetX * .6;
+      if (Math.abs(ballDX) < .15) ballDX = (ballX > W / 2 ? .3 : -.3);
+      ballDY = -1;
+      const mag = Math.sqrt(ballDX * ballDX + ballDY * ballDY);
+      ballDX /= mag;
+      ballDY /= mag;
+      ballSpeed = BALL_SPEED;
+      ballLaunched = true;
+    } else if (mode === "gameover") {
+      // Restart
+      startGame();
+    }
+  }
+
+  function updateHUD() {
+    scoreVal.textContent = score;
+    livesVal.textContent = lives;
+    let cnt = 0;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (grid[r][c]) cnt++;
+    bricksVal.textContent = cnt;
+  }
+
+  // ─── Overlay management ─────────────────────────────
+  function showOverlay(msg, sub, btnText) {
+    overlayMsg.textContent = msg;
+    overlaySub.textContent = sub || "";
+    overlayBtn.textContent = btnText || "OK";
+    overlay.classList.add("active");
+  }
+
+  function hideOverlay() {
+    overlay.classList.remove("active");
+    overlayMsg.textContent = "";
+    overlaySub.textContent = "";
+  }
+
+  // ─── Mode management ────────────────────────────────
+  function enterPlayMode() {
+    mode = "playing";
+    modeBadge.className = "mode-badge playing";
+    modeBadge.textContent = "Playing";
+    hud.style.display = "flex";
+    editorTb.style.display = "none";
+    playTb.style.display = "flex";
+    hideOverlay();
+    updateHUD();
+    resetBall();
+  }
+
+  function enterEditorMode() {
+    mode = "editor";
+    modeBadge.className = "mode-badge editor";
+    modeBadge.textContent = "Editor";
+    hud.style.display = "none";
+    playTb.style.display = "none";
+    editorTb.style.display = "flex";
+    hideOverlay();
+  }
+
+  function pauseGame() {
+    if (mode === "playing") {
+      mode = "paused";
+      showOverlay("Paused", "Press Resume or hit Play again to continue", "Resume");
+    } else if (mode === "paused") {
+      mode = "playing";
+      hideOverlay();
+    }
+  }
+
+  function restartGame() {
+    score = 0;
+    lives = 3;
+    updateHUD();
+    resetBall();
+    mode = "playing";
+    modeBadge.className = "mode-badge playing";
+    modeBadge.textContent = "Playing";
+    hideOverlay();
+  }
+
+  // ─── Game loop ──────────────────────────────────────
+  function gameLoop(ts) {
+    animId = requestAnimationFrame(gameLoop);
+    if (!lastTime) lastTime = ts;
+    let dt = (ts - lastTime) / 1000;
+    lastTime = ts;
+    // Clamp dt to avoid huge jumps
+    if (dt > .1) dt = .016;
+
+    update(dt);
+    render();
+  }
+
+  // ─── Grid manipulation ──────────────────────────────
+  function setCell(col, row, val) {
+    if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return;
+    grid[row][col] = val;
+    updateHUD();
+  }
+
+  // ─── Palette setup ──────────────────────────────────
+  function buildPalette() {
+    paletteDiv.innerHTML = "";
+    BRICK_COLORS.forEach((color, i) => {
+      const s = document.createElement("div");
+      s.className = "swatch" + (i === 0 ? " active" : "");
+      s.style.background = color;
+      s.dataset.color = color;
+      s.addEventListener("click", () => {
+        paletteDiv.querySelectorAll(".swatch").forEach(x => x.classList.remove("active"));
+        s.classList.add("active");
+        selectedColor = color;
+        tool = "draw";
+        document.getElementById("tool-draw").classList.add("active");
+        document.getElementById("tool-erase").classList.remove("active");
+      });
+      paletteDiv.appendChild(s);
+    });
+  }
+
+  // ─── Save / Load ────────────────────────────────────
+  function saveToLocalStorage() {
+    try {
+      localStorage.setItem("breakout_level", JSON.stringify(grid));
+    } catch (e) { /* quota exceeded or private mode */ }
+  }
+
+  function loadFromLocalStorage() {
+    try {
+      const d = localStorage.getItem("breakout_level");
+      if (d) { grid = JSON.parse(d); return true; }
+    } catch (e) {}
+    return false;
+  }
+
+  function downloadJSON() {
+    saveToLocalStorage();
+    const data = JSON.stringify(grid, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "breakout-level.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function loadFromFile(file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (Array.isArray(data) && data.length === ROWS) {
+          grid = data;
+          updateHUD();
+          saveToLocalStorage();
+        } else {
+          alert("Invalid level format.");
+        }
+      } catch (err) {
+        alert("Failed to parse JSON: " + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // ─── Event handlers ─────────────────────────────────
+
+  // Keyboard
+  window.addEventListener("keydown", e => {
+    keysDown[e.code] = true;
+    if (e.code === "Space" && mode !== "editor") {
+      e.preventDefault();
+      launchBall();
+    }
+  });
+  window.addEventListener("keyup", e => {
+    keysDown[e.code] = false;
+  });
+
+  // Mouse / Touch on canvas
+  function getCanvasPos(clientX, clientY) {
+    const r = canvas.getBoundingClientRect();
+    return { x: (clientX - r.left) * W / r.width, y: (clientY - r.top) * H / r.height };
+  }
+
+  let isDrawing = false;
+
+  canvas.addEventListener("mousedown", e => {
+    const pos = getCanvasPos(e.clientX, e.clientY);
+    mouseX = pos.x; mouseY = pos.y;
+
+    if (mode === "editor") {
+      isDrawing = true;
+      handleEditorClick(pos.x, pos.y);
+    } else if (mode === "playing" || mode === "paused") {
+      // Click to launch / overlay buttons handled separately
+      if (!ballLaunched) launchBall();
+    }
+  });
+
+  canvas.addEventListener("mousemove", e => {
+    const pos = getCanvasPos(e.clientX, e.clientY);
+    mouseX = pos.x; mouseY = pos.y;
+    mouseInCanvas = true;
+
+    if (mode === "editor" && isDrawing) {
+      handleEditorClick(pos.x, pos.y);
+    }
+  });
+
+  canvas.addEventListener("mouseup", () => { isDrawing = false; saveToLocalStorage(); });
+  canvas.addEventListener("mouseleave", () => { mouseInCanvas = false; isDrawing = false; });
+
+  // Touch events
+  canvas.addEventListener("touchstart", e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    const pos = getCanvasPos(t.clientX, t.clientY);
+    mouseX = pos.x; mouseY = pos.y;
+    mouseInCanvas = true;
+
+    if (mode === "editor") { isDrawing = true; handleEditorClick(pos.x, pos.y); }
+    else if (!ballLaunched) launchBall();
+  }, { passive: false });
+
+  canvas.addEventListener("touchmove", e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    const pos = getCanvasPos(t.clientX, t.clientY);
+    mouseX = pos.x; mouseY = pos.y;
+    if (mode === "editor" && isDrawing) handleEditorClick(pos.x, pos.y);
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", () => { isDrawing = false; mouseInCanvas = false; saveToLocalStorage(); });
+
+  function handleEditorClick(x, y) {
+    const col = Math.floor(x / BRICK_W);
+    const row = Math.round((y - BRICK_TOP + 10) / (BRICK_H + 3));
+    if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return;
+    if (tool === "draw") {
+      grid[row][col] = selectedColor;
+    } else {
+      grid[row][col] = null;
+    }
+    updateHUD();
+  }
+
+  // ─── Button wiring ──────────────────────────────────
+
+  // Palette is built after DOM ready
+
+  document.getElementById("tool-draw").addEventListener("click", function () {
+    tool = "draw";
+    this.classList.add("active");
+    document.getElementById("tool-erase").classList.remove("active");
+  });
+
+  document.getElementById("tool-erase").addEventListener("click", function () {
+    tool = "erase";
+    this.classList.add("active");
+    document.getElementById("tool-draw").classList.remove("active");
+  });
+
+  document.getElementById("btn-clear").addEventListener("click", () => {
+    initGrid();
+    updateHUD();
+    saveToLocalStorage();
+  });
+
+  document.getElementById("btn-save").addEventListener("click", downloadJSON);
+
+  document.getElementById("btn-load-btn").addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", (e) => { if (e.target.files[0]) loadFromFile(e.target.files[0]); e.target.value = ""; });
+
+  document.getElementById("btn-play").addEventListener("click", () => enterPlayMode());
+
+  document.getElementById("btn-pause").addEventListener("click", pauseGame);
+  document.getElementById("btn-restart").addEventListener("click", restartGame);
+  document.getElementById("btn-editor").addEventListener("click", () => enterEditorMode());
+
+  overlayBtn.addEventListener("click", () => {
+    if (mode === "paused") {
+      mode = "playing";
+      hideOverlay();
+    } else if (mode === "gameover") {
+      startGame();
+    }
+  });
+
+  function startGame() {
+    score = 0;
+    lives = 3;
+    updateHUD();
+    resetBall();
+    mode = "playing";
+    modeBadge.className = "mode-badge playing";
+    modeBadge.textContent = "Playing";
+    hideOverlay();
+  }
+
+  // ─── Init ───────────────────────────────────────────
+  function init() {
+    buildPalette();
+    initGrid();
+
+    // Try loading from localStorage
+    if (!loadFromLocalStorage()) {
+      // Fill first 3 rows with rainbow colors like classic breakout
+      for (let c = 0; c < COLS; c++) {
+        grid[0][c] = BRICK_COLORS[c % BRICK_COLORS.length];
+        grid[1][c] = BRICK_COLORS[(c + 2) % BRICK_COLORS.length];
+        grid[2][c] = BRICK_COLORS[(c + 4) % BRICK_COLORS.length];
+      }
+    }
+
+    updateHUD();
+    paddleX = W / 2;
+    lastTime = 0;
+
+    enterEditorMode();
+    resizeCanvas();
+    window.addEventListener("resize", () => { /* canvas auto-scales via CSS + getScale */ });
+
+    // Kick off render loop (always running for editor preview)
+    animId = requestAnimationFrame(gameLoop);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

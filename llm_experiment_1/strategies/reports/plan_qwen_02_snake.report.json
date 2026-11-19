@@ -1,0 +1,110 @@
+{
+  "score": 83,
+  "grade": "B provisional - core Snake works; tail/full-board edge cases and speed label defects",
+  "rubricScores": {
+    "functionality": 36,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "breakdown": {
+    "functionality": 36,
+    "artifact_correctness": 24,
+    "usability": 11,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "strengths": [
+    "Actual button/key/RAF checks pass start, movement, reversal prevention, pause/resume and live restart.",
+    "Wall and self collisions end the game. Eating grows the body, increases score and changes the tick interval at the fifth point.",
+    "Single offline HTML; structured plan completion and standard implementation handoff succeeded."
+  ],
+  "defects": [
+    "Self-collision checks include the tail that would vacate on a non-eating move, rejecting the usual legal tail-chase move.",
+    "When the board fills, randomFoodCell returns undefined and draw then throws while accessing food.x; there is no completed-board handling.",
+    "Speed level is incremented after updateHud, so the HUD still shows level 1 while the actual level is 2 and the tick interval has shortened.",
+    "Directional arrow key handlers do not prevent their browser default action, which may scroll an overflowing page; visual impact is unverified."
+  ],
+  "verification": [
+    "Independent exact-source VM with actual controls, deterministic RAF and controlled collision/food fixtures in reports/plan_qwen_02_snake.qa.cjs/.qa.json.",
+    "Final SHA-256 0387f55bd9b0a4bd1e12a5e6d58d7c13dc8e86d2c9a4c145b163bb0d89d8f31d.",
+    "Pi's own checks were syntax/static feature checks rather than behavioral gameplay tests."
+  ],
+  "verificationConcerns": [
+    "Runtime edge cases were missed by static self-verification.",
+    "No independent browser/visual play session."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Structured plan and standard implementation handoff completed without a design hint.",
+  "runStatus": "completed_pending_assessment",
+  "title": "Snake",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "plan",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "The Snake game is complete at `index.html` \u2014 453 lines, fully self-contained with no external dependencies. Here's a summary of everything implemented:\n\n**Features:**\n- **Canvas-based rendering** on a 20\u00d720 grid (500\u00d7500 px) with dark neon theme\n- **Keyboard controls**: Arrow keys + WASD for movement; Space to pause/unpause; R to restart\n- **Direction buffering** prevents missed rapid turns and 180\u00b0 suicides\n- **Food collection**: grows snake, increments score, spawns new food on random empty cell\n- **Wall collision** \u2192 Game Over overlay with final score\n- **Self collision** \u2192 Game Over overlay with final score\n- **Increasing difficulty**: speed increases by 5 ms/tick every 5 points (150ms \u2192 60ms minimum) over ~30 levels\n- **Pause/resume** via Space or Resume button \u2014 exact state preservation\n- **Restart** via R key or button at any time\n- **High score persistence** via `localStorage` \u2014 survives page refresh\n- **HUD** showing live Score, Speed level, and Best score\n- **Three overlay screens**: Start, Pause, Game Over \u2014 all styled with buttons and hints\n\n**How to play:** Double-click the `index.html` file in any browser. Click **START GAME** or press Enter/Space.",
+  "workflowInstructions": "run-suite.py and config/qwen/agents",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 2.65,
+  "wallMinutes": 2.65,
+  "status": "assessed",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 36,
+  "toolCalls": 10,
+  "parentToolCalls": 10,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 2,
+  "modelUsageReported": {
+    "input": 6690,
+    "output": 8338,
+    "cacheRead": 74445,
+    "totalTokens": 89473
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 13407,
+  "parentPeakReportedPromptTokens": 13407,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 6690,
+    "output": 8338,
+    "cacheRead": 74445,
+    "totalTokens": 89473
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 14708,
+  "sha256": "0387f55bd9b0a4bd1e12a5e6d58d7c13dc8e86d2c9a4c145b163bb0d89d8f31d",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 1,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 1,
+    "structuredPlanComplete": true,
+    "implementationHandoff": true,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 0,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": []
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

@@ -1,0 +1,12 @@
+This is an operator-assisted repair of the existing index.html in this project. Preserve working features and keep the final app one self-contained offline HTML file. You implement all code and tests. This is feedback1 of at most3; the same conversation will continue if another revision is needed.
+
+Original brief:
+Build a pixel-art painting tool with an editable canvas size, color palette, brush, eraser, undo/redo, clear, and PNG export. Support mouse and touch. Deliver a single self-contained offline index.html. Work only in this directory, finish autonomously, and verify it works.
+
+Operator feedback:
+Independent real nativeCanvas/DOM checks reproduce two resize failures: draw a colored pixel at (5,5) on32x32, apply48x24: that coordinate loses its pixel because row coordinates are reflowed. Also apply8x10 then Undo: ImageData dimensions mismatch throws. Resize must preserve the two-dimensional coordinates of existing pixels in the retained area; Undo/Redo must restore dimensions and content together. Verify custom-color brush/eraser, multiple history steps, Clear then Undo, resize and actual PNG bytes/dimensions through real controls.
+
+Repair these failures and verify through actual handlers and scheduled callbacks, not source patterns alone. Record exact checks and remaining limitations in VERIFY.md. Stop when required behavior works; do not add unrelated features.
+
+Generic local tools: read the runtime API/limits at /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/preferred-harness/README.md. Native Canvas2D/DOM/clock helper: /Users/jamescarthew/Developer/vibes/local_agent_testing/strategies/qa/native-runtime.cjs. Use bounded Bash timeout 90. Work only in this project. Browser automation is unavailable; do not launch browsers, headless Chromium, Playwright or Puppeteer. Unsupported adapter behavior is an environment limit, not an app defect. The repair budget is 60 minutes across all prompts and tests. No external reviewer or forced proof loop is active.
+

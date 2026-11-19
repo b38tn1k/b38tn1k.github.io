@@ -1,0 +1,112 @@
+{
+  "score": 22,
+  "grade": "F - shared 60-minute deadline reached; numeric inputs and STL export remain broken",
+  "rubricScores": {
+    "functionality": 4,
+    "artifact_correctness": 10,
+    "usability": 4,
+    "self_verification": 4,
+    "autonomy": 0
+  },
+  "breakdown": {
+    "functionality": 4,
+    "artifact_correctness": 10,
+    "usability": 4,
+    "self_verification": 4,
+    "autonomy": 0
+  },
+  "strengths": [
+    "All requested parameter controls and the default 180x120x30, 3x2 values are present in one self-contained HTML file.",
+    "Rotation control events change angle state with a WebGL stub; GPU rendering is not verified.",
+    "Pi's own edge-incidence tests correctly found the initial open meshes, and it repaired an initial binary STL byte-count failure."
+  ],
+  "defects": [
+    "getParams calls clamp with no upper bound, but clamp always applies Math.min to that undefined bound. Length, width, height, wall and floor become NaN even though the input elements contain valid numeric strings.",
+    "The normal UI consequently displays NaN compartment dimensions, depth and volume, and disables Download STL. Neither default nor custom dimensions produce a Blob through the export button.",
+    "Calling the final actual mesh builder/STL encoder with a finite default parameter object also throws: triangle point representations remain inconsistent.",
+    "The attempt reached the shared 60-minute deadline without a working POC or a successful final export."
+  ],
+  "verification": [
+    "Independent final-source control/export check in reports/plan_ornith_05_drawer_tray.qa.cjs/.qa.json. Valid input element values are recorded separately from their invalid parsed results.",
+    "Final SHA-256 a9102be20a6265c7099bfa5680f9d7105aef9fcebb8e94ece0d5e85b4d6a4570.",
+    "WebGL was stubbed solely to reach control and export logic; no shader/GPU rendering claim is made.",
+    "The independent STL checker passes analytic ASCII/binary cuboid and deliberately damaged-mesh sanity checks, but this final app produces no normal UI STL to validate."
+  ],
+  "verificationConcerns": [
+    "Geometry checks operated on direct parameter objects and did not detect the broken numeric-input path.",
+    "Repeated polygon/point shape and test-extraction errors consumed the time budget.",
+    "No real-browser, GPU, slicer or physical printing verification."
+  ],
+  "scopeCompliance": "OS write boundary active. No successful out-of-tree write observed; debugging files stayed within the benchmark project.",
+  "humanOrSupervisorSteering": 0,
+  "workflowNotes": "Plan mode itself completed a structured plan and the implementation handoff. The implementation was stopped by the predefined shared deadline, with no repair hint supplied.",
+  "runStatus": "completed_pending_assessment",
+  "title": "Simple drawer tray generator",
+  "model": "ornith-1.5:35b-256k",
+  "modelLabel": "ornith",
+  "strategy": "plan",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All triangles are well-formed. Let me add explicit length checking to find where the bad one is.",
+  "workflowInstructions": "run-suite.py and config/ornith/agents",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 60.0,
+  "wallMinutes": 60.0,
+  "status": "assessed",
+  "stopReason": "time_limit",
+  "exitCode": 0,
+  "promptWords": 65,
+  "toolCalls": 126,
+  "parentToolCalls": 126,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 33,
+  "modelUsageReported": {
+    "input": 115491,
+    "output": 107598,
+    "cacheRead": 7615042,
+    "totalTokens": 7838131
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 116264,
+  "parentPeakReportedPromptTokens": 116264,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 115491,
+    "output": 107598,
+    "cacheRead": 7615042,
+    "totalTokens": 7838131
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 30754,
+  "sha256": "a9102be20a6265c7099bfa5680f9d7105aef9fcebb8e94ece0d5e85b4d6a4570",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 2,
+    "questionnairesCancelled": 1,
+    "mechanicalPlanHandoffPrompts": 1,
+    "structuredPlanComplete": true,
+    "implementationHandoff": true,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 23,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 16,
+    "delegations": []
+  },
+  "limitations": [
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution."
+  ]
+}

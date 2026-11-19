@@ -1,0 +1,51 @@
+{
+  "method": "Exact final source, actual controls and scheduled timers in independent Node VM/DOM with native Canvas2D. readyState is loading during inline script execution, followed by the helper DOMContentLoaded event; no application algorithm replaced. No browser layout/GPU/default actions or physical testing.",
+  "sha256": "8b79c9909794d419320713dd761ccd1ce8e076970db9b45bfecaa0cab9d89511",
+  "checks": [
+    {
+      "id": "actual_brush_drag_border_eraser_touch_pointer",
+      "pass": true,
+      "evidence": {
+        "drag": true,
+        "border": true,
+        "eraser": true,
+        "touchPointer": true
+      }
+    },
+    {
+      "id": "two_stroke_undo_redo_actual_pixels",
+      "pass": true,
+      "evidence": {
+        "undo": 2,
+        "redo": 2
+      }
+    },
+    {
+      "id": "clear_and_undo",
+      "pass": true,
+      "evidence": {
+        "clear": true,
+        "undoClear": true
+      }
+    },
+    {
+      "id": "resize_preserves_pixels_and_encodes_png",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          48,
+          24
+        ],
+        "bytes": 122
+      }
+    },
+    {
+      "id": "undo_resize_updates_dimension_fields",
+      "pass": false,
+      "error": "Undo restores image dimensions but leaves stale width input",
+      "actual": "8",
+      "expected": "16"
+    }
+  ],
+  "pass": false
+}

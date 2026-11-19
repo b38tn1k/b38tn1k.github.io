@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drawer Tray Maker</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#1a1d23;color:#e6e9ef;display:flex;flex-direction:column;height:100vh}
+header{padding:10px 16px;background:#232833;border-bottom:1px solid #333a48}
+header h1{margin:0;font-size:18px;font-weight:600}
+header p{margin:4px 0 0;font-size:12px;color:#9aa4b2}
+main{flex:1;display:flex;min-height:0}
+#panel{width:320px;padding:14px;background:#20242c;border-right:1px solid #333a48;overflow-y:auto}
+#canvasWrap{flex:1;position:relative;background:#12141a}
+canvas{display:block;width:100%;height:100%;cursor:grab}
+canvas:active{cursor:grabbing}
+.group{margin-bottom:14px}
+.group h3{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#8b94a4}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.row label{flex:0 0 110px;font-size:13px;color:#c7cfd9}
+.row input[type=number]{width:68px;background:#12141a;border:1px solid #3a4150;color:#e6e9ef;border-radius:5px;padding:4px 6px;font-size:13px}
+.row input[type=range]{flex:1}
+.row .unit{width:26px;color:#8b94a4;font-size:12px}
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cell{background:#12141a;border:1px solid #3a4150;border-radius:6px;padding:8px}
+.cell .k{font-size:11px;color:#8b94a4;text-transform:uppercase;letter-spacing:.05em}
+.cell .v{font-size:18px;font-weight:600;color:#6fc9ff}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+button{background:#2f6feb;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:13px;cursor:pointer}
+button:hover{background:#4a83f2}
+button.ghost{background:#333a48}
+button.ghost:hover{background:#3d4556}
+.check{display:flex;align-items:center;gap:6px;font-size:13px;color:#c7cfd9}
+#err{color:#ffb4b4;font-size:12px;min-height:16px;margin-top:6px}
+#hint{position:absolute;bottom:10px;left:12px;font-size:11px;color:#5a6474;pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>Drawer Tray Maker</h1>
+  <p>Rectangular organizer tray • offline • export printable STL</p>
+</header>
+<main>
+  <div id="panel">
+    <div class="group">
+      <h3>Outer dimensions (mm)</h3>
+      <div class="row"><label>Width</label><input type="range" id="w-min"><input type="number" id="w" step="0.1"><span class="unit">mm</span></div>
+      <div class="row"><label>Depth</label><input type="range" id="d-min"><input type="number" id="d" step="0.1"><span class="unit">mm</span></div>
+      <div class="row"><label>Height</label><input type="range" id="h-min"><input type="number" id="h" step="0.1"><span class="unit">mm</span></div>
+    </div>
+    <div class="group">
+      <h3>Thickness (mm)</h3>
+      <div class="row"><label>Wall</label><input type="range" id="wWall-min"><input type="number" id="wWall" step="0.1"><span class="unit">mm</span></div>
+      <div class="row"><label>Floor</label><input type="range" id="fFloor-min"><input type="number" id="fFloor" step="0.1"><span class="unit">mm</span></div>
+    </div>
+    <div class="group">
+      <h3>Grid</h3>
+      <div class="row"><label>Columns</label><input type="range" id="cols-min"><input type="number" id="cols" step="1"><span class="unit">cols</span></div>
+      <div class="row"><label>Rows</label><input type="range" id="rows-min"><input type="number" id="rows" step="1"><span class="unit">rows</span></div>
+    </div>
+    <div class="group">
+      <h3>Clear compartment</h3>
+      <div class="readout">
+        <div class="cell"><div class="k">Width</div><div class="v" id="cw">-</div></div>
+        <div class="cell"><div class="k">Depth</div><div class="v" id="cd">-</div></div>
+        <div class="cell" style="grid-column:span 2"><div class="k">Height</div><div class="v" id="ch">-</div></div>
+      </div>
+    </div>
+    <div class="group">
+      <div class="btns">
+        <button id="export">Export STL</button>
+        <button class="ghost" id="reset">Reset</button>
+        <label class="check"><input type="checkbox" id="autorot" checked> Auto-rotate</label>
+      </div>
+      <div id="err"></div>
+    </div>
+  </div>
+  <div id="canvasWrap">
+    <canvas id="view"></canvas>
+    <div id="hint">drag to orbit · scroll to zoom</div>
+  </div>
+</main>
+<script>
+"use strict";
+// ---------- Vector helpers ----------
+function vec(x,y,z){return {x:x,y:y,z:z};}
+function sub(a,b){return {x:a.x-b.x,y:a.y-b.y,z:a.z-b.z};}
+function add(a,b){return {x:a.x+b.x,y:a.y+b.y,z:a.z+b.z};}
+function cross(a,b){return {x:a.y*b.z-a.z*b.y,y:a.z*b.x-a.x*b.z,z:a.x*b.y-a.y*b.x};}
+function dot(a,b){return a.x*b.x+a.y*b.y+a.z*b.z;}
+function scale(a,s){return {x:a.x*s,y:a.y*s,z:a.z*s};}
+function len(a){return Math.sqrt(dot(a,a));}
+function norm(a){var l=len(a)||1;return {x:a.x/l,y:a.y/l,z:a.z/l};}
+function mid(a,b){return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,z:(a.z+b.z)/2};}
+function cloneP(p){return {x:p.x,y:p.y,z:p.z};}
+function dist3(a,b){var d=sub(a,b);return Math.sqrt(dot(d,d));}
+
+// ---------- Triangle / Plane ----------
+function Triangle(a,b,c){
+  this.a=cloneP(a);this.b=cloneP(b);this.c=cloneP(c);
+  var d=sub(this.b,this.a),e=sub(this.c,this.a);
+  this.normal=norm(cross(d,e));
+  this.plane={d:dot(this.normal,this.a)};
+}
+Triangle.prototype.clone=function(){return new Triangle(this.a,this.b,this.c);};
+Triangle.prototype.containsPoint=function(p){return dist3(p,this.a)+dist3(p,this.b)+dist3(p,this.c)<=dist3(this.a,this.b)+dist3(this.b,this.c)+dist3(this.c,this.a)+1e-6;};
+
+// ---------- Box (6 triangles) ----------
+function box(x0,y0,z0,x1,y1,z1){
+  x0=x0|0;y0=y0|0;z0=z0|0;x1=x1|0;y1=y1|0;z1=z1|0;
+  var v=[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],
+         [x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]].map(function(p){return vec(p[0],p[1],p[2]);});
+  return [
+    new Triangle(v[5],v[4],v[6]),new Triangle(v[6],v[4],v[7]), // top
+    new Triangle(v[4],v[0],v[6]),new Triangle(v[6],v[0],v[7]), // bottom
+    new Triangle(v[1],v[5],v[4]),new Triangle(v[1],v[4],v[0]), // back
+    new Triangle(v[0],v[1],v[2]),new Triangle(v[0],v[2],v[3]), // front
+    new Triangle(v[4],v[5],v[1]),new Triangle(v[4],v[1],v[0]), // left
+    new Triangle(v[1],v[2],v[6]),new Triangle(v[1],v[6],v[5])  // right
+  ];
+}
+
+// ---------- Polygon ops (clip-tree) ----------
+function clipPolygon(poly,plane){
+  var out={n:0},c,d,idx=0,side=0;
+  while(idx<poly.n){
+    c=poly.e[idx].p; d=poly.e[idx+1].p; side=dot(plane.normal,c)-plane.d;
+    if(side>0){
+      out.e[out.n]={p:cloneP(c),v:cloneP(poly.e[idx].v),n:idx}; out.n++;
+      d=dot(plane.normal,d)-plane.d;
+      if(d<0){var t=d/(d-plane.d); out.e[out.n]={p:add(c,scale(sub(c,d),t)),n:idx+1,v:add(scale(poly.e[idx].v,1-t),scale(poly.e[idx+1].v,t))}; out.n++;}
+    }else{
+      if(idx>0) out.e[out.n-1].n=poly.e[idx-1].n;
+      d=dot(plane.normal,d)-plane.d;
+      if(d>0){var t=d/(d-plane.d); out.e[out.n]={p:add(c,scale(sub(c,d),t)),n:idx+1,v:add(scale(poly.e[idx].v,1-t),scale(poly.e[idx+1].v,t))}; out.n++;}
+    }
+    idx++;
+  }
+  return out;
+}
+function outOfPolygon(poly,plane){var c,c2;for(var i=0;i<poly.n;i++){c=plane.normal.dot?0:0;if(dot(plane.normal,poly.e[i].p)>plane.d)return true;}return false;}
+function inOfPolygon(poly,plane){var i,c,d,side;for(i=0;i<poly.n;i++){c=poly.e[i].p;side=dot(plane.normal,c)-plane.d;if(side>0)return true;else if(side<-1e-5){c=poly.e[(i+1)%poly.n].p;if(dot(plane.normal,c)-plane.d>1e-5)return true;}}return false;}
+
+// ---------- BSP Tree ----------
+function BSPTree(nodes){
+  this.nodes=nodes||[];
+}
+BSPTree.prototype.clone=function(){
+  var t=new BSPTree();
+  for(var i=0;i<this.nodes.length;i++){
+    var node=this.nodes[i];
+    var n={};
+    n.poly=node.poly.clone();
+    if(node.front)n.front=node.front.clone();
+    if(node.back)n.back=node.back.clone();
+    n.plane=node.plane;
+    t.nodes.push(n);
+  }
+  return t;
+};
+BSPTree.prototype.inFrontOf=function(plane){
+  for(var i=0;i<this.nodes.length;i++){
+    var node=this.nodes[i], result=outOfPolygon(node.poly,plane);
+    if(result!==BSPTree.C){return result;}
+  }
+  return BSPTree.C;
+};
+BSPTree.C={UNKNOWN:0,FRONT:1,BACK:2,PLANAR:3};
+BSPTree.prototype.splitPlane=function(plane){
+  var front=new BSPTree(), back=new BSPTree();
+  for(var i=0;i<this.nodes.length;i++){
+    var node=this.nodes[i], dist=dot(plane.normal,node.poly.p)-plane.d, idx=i;
+    var c=outOfPolygon(node.poly,plane);
+    if(c===BSPTree.C){
+      back.nodes.push(node);
+    }else if(c===BSPTree.FRONT){
+      front.nodes.push(node);
+    }else if(c===BSPTree.BACK){
+      front.nodes.push(node);
+      back.nodes.push(node);
+    }else{
+      if(dist>0){
+        front.nodes.push(node);
+      }else if(dist<0){
+        back.nodes.push(node);
+      }else{
+        front.nodes.push(node);
+      }
+    }
+  }
+  front._invert();
+  front._invert=BSPTree.prototype._invert; // ensure method
+  var t={front:front,back:back};
+  return t;
+};
+BSPTree.prototype._invert=function(){
+  for(var i=0;i<this.nodes.length;i++){
+    var node=this.nodes[i];
+    node.poly=node.poly.clone();
+    var tmp=node.poly.a;
+    node.poly.a=node.poly.c;
+    node.poly.c=node.poly.a;
+    node.poly.normal=scale(node.poly.normal,-1);
+    node.plane=scale(node.plane,-1);
+  }
+};
+BSPTree.prototype.clipTo=function(tree){
+  tree._invert();
+  this.nodes=clipTreeNodes(this.nodes,tree);
+  tree._invert();
+};
+function clipTreeNodes(nodes,tree){
+  var result=[];
+  var idx=0;
+  while(idx<nodes.length){
+    var node=nodes[idx];
+    var c=outOfPolygon(node.poly,tree.plane);
+    if(c===BSPTree.C){
+      // unknown / planar-ish; rely on back/front split
+      var split=tree.split(node.poly);
+      // fall through to recursion below
+      result.push(node);
+    }
+    idx++;
+  }
+  return result;
+}

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Drawer Organizer Tray Builder</title>
+<style>
+:root{--bg:#1a1a2e;--panel:#16213e;--accent:#0f3460;--hl:#e94560;--txt:#eee;--dim:#888}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column}
+header{background:var(--panel);padding:12px 24px;border-bottom:2px solid var(--hl);display:flex;align-items:center}
+header h1{font-size:1.3rem;color:var(--hl)}
+main{flex:1;display:grid;grid-template-columns:300px 1fr;overflow:hidden}
+.cp{background:var(--panel);padding:20px;overflow-y:auto;border-right:2px solid var(--accent)}
+.cg{margin-bottom:18px;padding:12px;background:var(--accent);border-radius:8px}
+.cg h3{font-size:.85rem;text-transform:uppercase;letter-spacing:1px;color:var(--hl);margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:4px}
+.cr{display:flex;align-items:center;margin-bottom:6px;gap:8px}
+.cr label{font-size:.8rem;min-width:52px;color:var(--dim)}
+.cr input[type=number]{width:72px;padding:4px 6px;background:#0a0a1a;border:1px solid #333;color:var(--txt);border-radius:4px;font-size:.85rem}
+.cr input[type=range]{flex:1;accent-color:var(--hl)}
+.cr .vd{min-width:60px;text-align:right;font-size:.8rem;color:var(--txt);font-family:monospace}
+.ci{background:rgba(233,69,96,.15);border:1px solid rgba(233,69,96,.3);border-radius:8px;padding:14px;margin-bottom:14px}
+.ci h3{font-size:.85rem;text-transform:uppercase;letter-spacing:1px;color:var(--hl);margin-bottom:8px}
+.crl2{display:flex;justify-content:space-between;font-size:.82rem;padding:3px 0}
+.crl2 span:first-child{color:var(--dim)}
+.crl2 span:last-child{font-family:monospace;color:#fff}
+.pa{position:relative;display:flex;flex-direction:column}
+.vtabs{display:flex;background:var(--accent)}
+.vtab{padding:8px 20px;cursor:pointer;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;border:none;background:transparent;color:var(--dim);transition:all .2s}
+.vtab.active{background:var(--hl);color:#fff}
+.cc{flex:1;position:relative;overflow:hidden;background:#0d0d1a}
+canvas{display:block;width:100%;height:100%}
+.ebar{padding:12px 24px;background:var(--panel);border-top:2px solid var(--accent);display:flex;align-items:center;gap:12px}
+.btn{padding:8px 20px;border:none;border-radius:6px;font-size:.85rem;cursor:pointer;font-weight:600;transition:all .2s}
+.bp{background:var(--hl);color:#fff}.bp:hover{background:#c73e54}
+.bs{background:var(--accent);color:var(--txt)}.bs:hover{background:#1a4a80}
+.ibadge{margin-left:auto;font-size:.75rem;color:var(--dim)}
+.rctrl{position:absolute;top:12px;right:12px;display:flex;gap:4px}
+.rb{width:36px;height:36px;border-radius:6px;border:1px solid var(--accent);background:rgba(22,33,62,.9);color:var(--txt);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.rb:hover{background:var(--accent)}
+.dts h3{font-size:.85rem;text-transform:uppercase;letter-spacing:1px;color:var(--hl);margin-bottom:8px;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:4px}
+.dimtbl{width:100%;font-size:.78rem;border-collapse:collapse}
+.dimtbl th{text-align:left;color:var(--hl);padding:3px 6px;border-bottom:1px solid rgba(255,255,255,.15)}
+.dimtbl td{padding:2px 6px;font-family:monospace;color:#ccc;border-bottom:1px solid rgba(255,255,255,.05)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+</style>
+</head>
+<body>
+<header><h1>Drawer Organizer Tray Builder</h1></header>
+<main>
+<div class="cp">
+  <div class="cg"><h3>Outer Dimensions (mm)</h3>
+    <div class="cr"><label>Width</label><input type="range" id="sW" min="50" max="600" step="1" value="180"><input type="number" id="nW" min="50" max="600" step="1" value="180"></div>
+    <div class="cr"><label>Depth</label><input type="range" id="sD" min="30" max="400" step="1" value="120"><input type="number" id="nD" min="30" max="400" step="1" value="120"></div>
+    <div class="cr"><label>Height</label><input type="range" id="sH" min="5" max="100" step="1" value="30"><input type="number" id="nH" min="5" max="100" step="1" value="30"></div>
+  </div>
+  <div class="cg"><h3>Grid Layout</h3>
+    <div class="cr"><label>Columns</label><input type="range" id="sC" min="1" max="20" step="1" value="3"><input type="number" id="nC" min="1" max="20" step="1" value="3"></div>
+    <div class="cr"><label>Rows</label><input type="range" id="sR" min="1" max="15" step="1" value="2"><input type="number" id="nR" min="1" max="15" step="1" value="2"></div>
+  </div>
+  <div class="cg"><h3>Wall &amp; Floor Thickness (mm)</h3>
+    <div class="cr"><label>Wall</label><input type="range" id="sWT" min="1" max="10" step="0.5" value="3"><span class="vd" id="vWT">3.0</span></div>
+    <div class="cr"><label>Floor</label><input type="range" id="sFT" min="1" max="10" step="0.5" value="3"><span class="vd" id="vFT">3.0</span></div>
+  </div>
+  <div class="ci"><h3>Compartment Dimensions</h3><div id="compInfo"></div></div>
+  <div class="dts"><h3>Summary</h3><table class="dimtbl" id="summaryTable"></table></div>
+</div>
+<div class="pa">
+  <div class="vtabs">
+    <button class="vtab active" data-view="3d">3D Preview</button>
+    <button class="vtab" data-view="top">Top View</button>
+    <button class="vtab" data-view="side">Side View</button>
+    <button class="vtab" data-view="front">Front View</button>
+  </div>
+  <div class="cc">
+    <canvas id="cv"></canvas>
+    <div class="rctrl" id="rotCtrl">
+      <button class="rb" data-angle="90">&#8635;</button>
+      <button class="rb" data-angle="-90">&#8634;</button>
+      <button class="rb" data-angle="0">&#9675;</button>
+    </div>
+  </div>
+</div>
+</main>
+<div class="ebar">
+  <button class="btn bp" id="exportStl">&#128231; Export STL</button>
+  <button class="btn bs" id="exportSvg">&#9998; Export SVG Plan</button>
+  <span class="ibadge" id="infoBadge"></span>
+</div>
+<script>
+(function(){
+'use strict';
+
+/* ── Application state ── */
+const S = {
+  w: 180, d: 120, h: 30,    // outer dimensions mm
+  cols: 3, rows: 2,            // grid count
+  wt: 3.0, ft: 3.0,          // wall & floor thickness
+  view: '3d',
+  rx: -25, ry: 35, rz: 0,    // rotation degrees
+  drag: false, lmx: 0, lmy: 0
+};
+
+/* ── DOM helpers ── */
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+/* ── Slider / number sync ── */
+function bind(sl, nm, setter) {
+  sl.addEventListener('input', () => { nm.value = sl.value; setter(+sl.value); });
+  nm.addEventListener('input', () => { const v = +nm.value; if (isNaN(v)) return; sl.value = v; setter(v); });
+}
+
+bind($('#sW'), $('#nW'), v => { S.w = Math.round(v); render(); });
+bind($('#sD'), $('#nD'), v => { S.d = Math.round(v); render(); });
+bind($('#sH'), $('#nH'), v => { S.h = Math.round(v); render(); });
+bind($('#sC'), $('#nC'), v => { S.cols = Math.round(v); render(); });
+bind($('#sR'), $('#nR'), v => { S.rows = Math.round(v); render(); });
+
+$('#sWT').addEventListener('input', () => { S.wt = +$('#sWT').value; $('#vWT').textContent = S.wt.toFixed(1); render(); });
+$('#sFT').addEventListener('input', () => { S.ft = +$('#sFT').value; $('#vFT').textContent = S.ft.toFixed(1); render(); });
+
+/* ── View tabs ── */
+$$('.vtab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    $$('.vtab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    S.view = tab.dataset.view;
+    $('#rotCtrl').style.display = S.view === '3d' ? 'flex' : 'none';
+    render();
+  });
+});
+
+/* ── Rotation controls ── */
+$$('.rb').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const a = +btn.dataset.angle;
+    if (a === 0) { S.rx = -25; S.ry = 35; } else { S.ry += a; }
+    render();
+  });
+});
+
+/* ── Mouse drag rotation on canvas ── */
+const cv = $('#cv'), cx = cv.getContext('2d');
+cv.addEventListener('mousedown', e => { if (S.view !== '3d') return; S.drag = true; S.lmx = e.clientX; S.lmy = e.clientY; });
+window.addEventListener('mousemove', e => {
+  if (!S.drag || S.view !== '3d') return;
+  const dx = e.clientX - S.lmx, dy = e.clientY - S.lmy;
+  S.ry += dx * 0.5; S.rx += dy * 0.5;
+  S.rx = Math.max(-89, Math.min(89, S.rx));
+  S.lmx = e.clientX; S.lmy = e.clientY;
+  render();
+});
+window.addEventListener('mouseup', () => { S.drag = false; });
+cv.addEventListener('touchstart', e => { if (S.view !== '3d' || !e.touches.length) return; S.drag = true; S.lmx = e.touches[0].clientX; S.lmy = e.touches[0].clientY; }, { passive: true });
+cv.addEventListener('touchmove', e => {
+  if (!S.drag || S.view !== '3d' || !e.touches.length) return;
+  const dx = e.touches[0].clientX - S.lmx, dy = e.touches[0].clientY - S.lmy;
+  S.ry += dx * 0.5; S.rx += dy * 0.5;
+  S.rx = Math.max(-89, Math.min(89, S.rx));
+  S.lmx = e.touches[0].clientX; S.lmy = e.touches[0].clientY;
+  render();
+}, { passive: true });
+cv.addEventListener('touchend', () => { S.drag = false; });
+
+/* ── Geometry computation ── */
+function geom() {
+  const w = S.w, d = S.d, h = S.h, c = S.cols, r = S.rows, wt = S.wt, ft = S.ft;
+  const compW = c > 0 ? (w - wt * 2 - (c - 1) * wt) / c : 0;
+  const compD = r > 0 ? (d - wt * 2 - (r - 1) * wt) / r : 0;
+  return {
+    outerW: w, outerD: d, outerH: h, cols: c, rows: r,
+    wallThick: wt, floorThick: ft,
+    compW: Math.max(0, compW), compD: Math.max(0, compD),
+    innerW: Math.max(0, w - wt * 2),
+    innerD: Math.max(0, d - wt * 2),
+    innerH: Math.max(0, h - ft),
+    volume: Math.max(0, (w - wt * 2) * (d - wt * 2) * Math.max(0, h - ft))
+  };
+}
+
+/* ── UI update ── */
+function updateInfo() {
+  const g = geom();
+  let html = '';
+  for (let r = 0; r < g.rows; r++)
+    for (let c = 0; c < g.cols; c++)
+      html += `<div class="crl2"><span>C${r+1}-${c+1}</span><span>${g.compW.toFixed(1)} x ${g.compD.toFixed(1)}</span></div>`;
+  $('#compInfo').innerHTML = html;
+  $('#summaryTable').innerHTML =
+    '<tr><th>Parameter</th><th>Value</th></tr>' +
+    `<tr><td>Outer W x D x H</td><td>${g.outerW} x ${g.outerD} x ${g.outerH} mm</td></tr>` +
+    `<tr><td>Inner cavity</td><td>${g.innerW.toFixed(1)} x ${g.innerD.toFixed(1)} x ${g.innerH.toFixed(1)} mm</td></tr>` +
+    `<tr><td>Grid</td><td>${g.cols} x ${g.rows} (${g.cols * g.rows} compartments)</td></tr>` +
+    `<tr><td>Compartment (WxD)</td><td>${g.compW.toFixed(1)} x ${g.compD.toFixed(1)} mm</td></tr>` +
+    `<tr><td>Wall thickness</td><td>${g.wallThick.toFixed(1)} mm</td></tr>` +
+    `<tr><td>Floor thickness</td><td>${g.floorThick.toFixed(1)} mm</td></tr>` +
+    `<tr><td>Inner volume</td><td>${(g.volume / 1000).toFixed(1)} mL</td></tr>`;
+  $('#infoBadge').textContent = `${g.cols}x${g.rows} grid \u2014 ${g.cols * g.rows} compartments`;
+}
+
+/* ── 3D math helpers ── */
+function rotX(p, a) { const c = Math.cos(a), s = Math.sin(a); return [p[0], p[1]*c - p[2]*s, p[1]*s + p[2]*c]; }
+function rotY(p, a) { const c = Math.cos(a), s = Math.sin(a); return [p[0]*c + p[2]*s, p[1], -p[0]*s + p[2]*c]; }
+function transform(px, py, pz) {
+  let p = [px - S.w/2, py - S.h/2, pz];
+  p = rotX(p, S.rx * Math.PI / 180);
+  p = rotY(p, S.ry * Math.PI / 180);
+  return p;
+}
+function project(px, py, pz) {
+  const fov = 500, p = transform(px, py, pz);
+  p[2] += 400;
+  const sc = fov / (fov + p[2]);
+  return [p[0] * sc, -p[1] * sc, p[2]];
+}
+
+/* ── Build renderable face list ── */
+function buildFaces() {
+  const w=S.w, d=S.d, h=S.h, c=S.cols, r=S.rows, wt=S.wt, ft=S.ft;
+  const compW = (w - wt*2 - (c-1)*wt)/c, compD = (d - wt*2 - (r-1)*wt)/r;
+  const t2 = wt * 2;
+  const faces = [];
+  const wl = [.35,.55,.85], fl = [.65,.40,.25], dv = [.45,.65,.90];
+
+  function mk(v, color) { return { v: v.map(x=>[...x]), c: [...color] }; }
+  function addQuad(v0,v1,v2,v3,color) { faces.push(mk([v0,v1,v2,v3], color)); }
+  function shade(base, f) { return base.map(c => c * f); }
+
+  // Outer shell
+  addQuad([0,0,0],[w,0,0],[w,h,0],[0,h,0], shade(fl, 1.0));    // bottom exterior
+  addQuad([t2,h,d-t2],[w-t2,h,d-t2],[w-t2,h-t2,0],[t2,h-t2,0], shade(wl,.95));  // front rim
+  addQuad([t2,h,0],[w-t2,h,0],[w-t2,h-t2,t2],[t2,h-t2,t2], shade(wl,.85));      // back rim
+  addQuad([t2,h,d-t2],[t2,h,0],[0,h-t2,t2],[0,h-t2,d-t2], [-1,0,0]);            // left rim
+  addQuad([w-t2,h,d-t2],[w-t2,h,0],[w,h-t2,t2],[w,h-t2,d-t2], [1,0,0]);         // right rim
+  addQuad([0,0,0],[0,0,d],[0,h,d],[0,h,0], shade(wl,.5));                        // left exterior
+  addQuad([w,0,0],[w,h,0],[w,h,d],[w,0,d], shade(wl,.8));                        // right exterior
+  addQuad([0,0,0],[w,0,0],[w,h,0],[0,h,0], shade(fl,.6));                        // back exterior
+  addQuad([0,0,d],[w,0,d],[w,h,d],[0,h,d], shade(wl,.65));                       // front exterior
+  addQuad([t2,ft,t2],[w-t2,ft,t2],[w-t2,ft,d-t2],[t2,ft,d-t2], shade(fl,.85));   // floor interior top
+
+  // Interior walls
+  addQuad([t2,0,t2],[w-t2,0,t2],[w-t2,h-ft,t2],[t2,h-ft,t2], shade(wl,.65));
+  addQuad([t2,0,d-t2],[w-t2,0,d-t2],[w-t2,h-ft,d-t2],[t2,h-ft,d-t2], shade(wl,.75));
+  addQuad([t2,0,t2],[t2,0,d-t2],[t2,h-ft,d-t2],[t2,h-ft,t2], [-1,0,0]);
+  addQuad([w-t2,0,d-t2],[w-t2,0,t2],[w-t2,h-ft,t2],[w-t2,h-ft,d-t2], [1,0,0]);
+
+  // X-dividers (between rows)
+  for (let i = 0; i < r-1; i++) {
+    const z = t2 + i*(compD + wt);
+    addQuad([t2,ft,z],[w-t2,ft,z],[w-t2,h-ft,z],[t2,h-ft,z], shade(dv,.8));
+  }
+
+  // Z-dividers (between columns)
+  for (let i = 0; i < c-1; i++) {
+    const x = t2 + i*(compW + wt);
+    addQuad([x,ft,t2],[x,h-ft,t2],[x,h-ft,d-t2],[x,ft,d-t2], shade(dv,.9));
+  }
+
+  return faces;
+}
+
+/* ── Resize canvas ── */
+function resizeCanvas() {
+  const rect = cv.parentElement.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+  cv.width = rect.width * dpr; cv.height = rect.height * dpr;
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+/* ── Render main ── */
+function render() {
+  resizeCanvas();
+  const W = cv.clientWidth, H = cv.clientHeight;
+  cx.clearRect(0, 0, W, H);
+  updateInfo();
+  if (S.view === '3d') draw3D(W, H); else draw2DView(S.view, W, H);
+}
+
+/* ── 3D view ── */
+function draw3D(W, H) {
+  cx.save();
+  cx.translate(W/2, H/2);
+
+  // Reference grid
+  cx.strokeStyle = 'rgba(255,255,255,.04)'; cx.lineWidth = 1;
+  for (let i = -8; i <= 8; i++) {
+    const a1=project(i*30,0,-240), b1=project(i*30,0,240);
+    cx.beginPath(); cx.moveTo(a1[0],a1[1]); cx.lineTo(b1[0],b1[1]); cx.stroke();
+    const a2=project(-240,0,i*30), b2=project(240,0,i*30);
+    cx.beginPath(); cx.moveTo(a2[0],a2[1]); cx.lineTo(b2[0],b2[1]); cx.stroke();
+  }
+
+  const faces = buildFaces();
+  // Project and depth-sort (painter's algorithm)
+  const proj = faces.map(f => {
+    const pv = f.v.map(v => project(v[0], v[1], v[2]));
+    const az = pv.reduce((s, p) => s + p[2], 0) / 4;
+    return { ...f, pv, az };
+  });
+  proj.sort((a, b) => b.az - a.az);
+
+  const lightDir = normalize([.4, .8, .3]);
+
+  for (const f of proj) {
+    cx.beginPath();
+    cx.moveTo(f.pv[0][0], f.pv[0][1]);
+    for (let i = 1; i < 4; i++) cx.lineTo(f.pv[i][0], f.pv[i][1]);
+    cx.closePath();
+
+    // Compute face normal from original vertices (cross product)
+    const a=f.v[0], b=f.v[1], cc=f.v[2];
+    const e1=[b[0]-a[0],b[1]-a[1],b[2]-a[2]];
+    const e2=[cc[0]-a[0],cc[1]-a[1],cc[2]-a[2]];
+    let nx=e1[1]*e2[2]-e1[2]*e2[1];
+    let ny=e1[2]*e2[0]-e1[0]*e2[2];
+    let nz=e1[0]*e2[1]-e1[1]*e2[0];
+    const l = Math.sqrt(nx*nx+ny*ny+nz*nz) || 1;
+    nx/=l; ny/=l; nz/=l;
+
+    // Transform normal to view space
+    let n = rotY([nx,ny,nz], S.ry*Math.PI/180);
+    n = rotX(n, S.rx*Math.PI/180);
+
+    const dot = Math.max(0, n[0]*lightDir[0]+n[1]*lightDir[1]+n[2]*lightDir[2]);
+    const brightness = .3 + .7 * dot;
+    const fc = f.c.map(c => c * Math.max(.15, brightness));
+
+    cx.fillStyle = `rgb(${fc[0]*255|0},${fc[1]*255|0},${fc[2]*255|0})`;
+    cx.strokeStyle = 'rgba(0,0,0,.3)';
+    cx.lineWidth = .5;
+    cx.fill();
+    cx.stroke();
+  }
+
+  // Dimension arrows
+  cx.strokeStyle='#e94560'; cx.fillStyle='#fff'; cx.lineWidth=1.5; cx.font='12px monospace';
+  const pW=project(0,0,S.d), qW=project(S.w,0,S.d);
+  cx.beginPath(); cx.moveTo(pW[0],pW[1]); cx.lineTo(qW[0],qW[1]); cx.stroke();
+  const ph=project(S.w,0,0),qh=project(S.w,S.h,0);
+  cx.beginPath(); cx.moveTo(ph[0],ph[1]); cx.lineTo(qh[0],qh[1]); cx.stroke();
+
+  cx.restore();
+}
+
+function normalize(v) { const l=Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2])||1; return [v[0]/l,v[1]/l,v[2]/l]; }
+
+/* ── 2D view helper ── */
+function drawDimLine(ctx, x1,y1,x2,y2,label) {
+  cx.strokeStyle='#e94560'; cx.fillStyle='#fff'; cx.lineWidth=1; cx.font='11px monospace';
+  cx.beginPath(); cx.moveTo(x1,y1); cx.lineTo(x2,y2); cx.stroke();
+  const mx=(x1+x2)/2, my=(y1+y2)/2;
+  cx.fillText(label, mx-cx.measureText(label).width/2, my+4);
+}
+
+function drawDimLineVertical(ctx, x, y1, y2, label) {
+  cx.strokeStyle='#e94560'; cx.fillStyle='#fff'; cx.lineWidth=1; cx.font='11px monospace';
+  cx.save(); cx.translate(x-cx.measureText(label).width/2-8,(y1+y2)/2);
+  cx.rotate(-Math.PI/2);
+  cx.fillText(label,0,4);
+  cx.restore();
+}
+
+function draw2DView(view, W, H) {
+  const g = geom(), wt = S.wt;
+  const pad = 80;
+  let cw,ch,scale;
+  if (view==='top') { cw=g.outerW; ch=g.outerD; }
+  else if (view==='front') { cw=g.outerW; ch=g.outerH; }
+  else { cw=g.outerD; ch=g.outerH; }
+  scale = Math.min((W-pad*2)/cw, (H-pad*2)/ch);
+
+  cx.save();
+  cx.translate(W/2, H/2);
+  const dx=-cw*scale/2, dy=-ch*scale/2, dw=cw*scale, dh=ch*scale;
+
+  // Outer box
+  cx.fillStyle='#1a3a5c'; cx.strokeStyle='#4a8aca'; cx.lineWidth=2;
+  cx.fillRect(dx,dy,dw,dh); cx.strokeRect(dx,dy,dw,dh);
+
+  if (view==='top') {
+    const sx=dx+wt*scale, sy=dy+wt*scale;
+    const cW=(dw-2*wt*scale)/g.cols, cD=(dh-2*wt*scale)/g.rows;
+    for (let r=0;r<g.rows;r++)
+      for (let c=0;c<g.cols;c++) {
+        const x=sx+c*(cW+wt*scale), y=sy+r*(cD+wt*scale);
+        cx.fillStyle=`hsl(${(c*30+r*45)%360},50%,35%)`;
+        cx.fillRect(x,y,cW,cD);
+        cx.strokeStyle='#2a6aaa'; cx.lineWidth=1; cx.strokeRect(x,y,cW,cD);
+        if (cW>40&&cD>30) {
+          cx.fillStyle='#fff'; cx.font='10px monospace'; cx.textAlign='center';
+          cx.fillText(`${cW.toFixed(1)}`,x+cW/2,y+cD/2-6);
+          cx.fillText(`${cD.toFixed(1)}`,x+cW/2,y+cD/2+8);
+        }
+      }
+  } else if (view==='front') {
+    const cW=(dw-2*wt*scale)/g.cols;
+    for (let i=0;i<=g.cols;i++){const x=dx+wt*scale+i*(cW+wt*scale);cx.strokeStyle='#5a9ae5';cx.lineWidth=Math.max(1,wt);cx.beginPath();cx.moveTo(x,dy);cx.lineTo(x,dy+dh);cx.stroke()}
+    cx.fillStyle='rgba(130,80,40,.6)'; cx.fillRect(dx,dy+dh-S.ft*scale,dw,S.ft*scale);
+    cx.font='10px monospace'; cx.fillStyle='#fff'; cx.textAlign='center';
+    for (let i=0;i<g.cols;i++) cx.fillText(`${cW.toFixed(1)}`,dx+wt*scale+i*(cW+wt*scale)+cW/2,dy+dh/2);
+  } else if (view==='side') {
+    const cD=(dh-2*wt*scale)/g.rows;
+    for (let i=0;i<=g.rows;i++){const y=dy+wt*scale+i*(cD+wt*scale);cx.strokeStyle='#5a9ae5';cx.lineWidth=Math.max(1,wt);cx.beginPath();cx.moveTo(dx,y);cx.lineTo(dx+dw,y);cx.stroke()}
+    cx.fillStyle='rgba(130,80,40,.6)'; cx.fillRect(dx,dy+dh-S.ft*scale,dw,S.ft*scale);
+    cx.font='10px monospace'; cx.fillStyle='#fff'; cx.textAlign='center';
+    for (let i=0;i<g.rows;i++) cx.fillText(`${cD.toFixed(1)}`,dx+dw/2,dy+wt*scale+i*(cD+wt*scale)+cD/2);
+  }
+
+  // Title & dimensions
+  cx.fillStyle='#aaa'; cx.font='13px sans-serif'; cx.textAlign='center';
+  const title={top:'Top View',front:'Front View (Width x Height)',side:'Side View (Depth x Height)'}[view];
+  cx.fillText(title, 0, -ch*scale/2-25);
+
+  cx.strokeStyle='#e94560'; cx.fillStyle='#fff'; cx.lineWidth=1; cx.font='11px monospace';
+  const dimY=-ch*scale/2-12;
+  cx.beginPath(); cx.moveTo(dx,dimY); cx.lineTo(dx+dw,dimY); cx.stroke();
+  cx.fillText(`${cw.toFixed(0)}mm`, dx+dw/2, dimY-5);
+
+  if (view==='top') {
+    const dimX=dx-18;
+    cx.save(); cx.translate(dimX,dy+dh/2); cx.rotate(-Math.PI/2); cx.fillText(`${ch.toFixed(0)}mm`,0,4); cx.restore();
+  } else {
+    const dimX=dx-18;
+    cx.save(); cx.translate(dimX,dy+dh/2); cx.rotate(-Math.PI/2); cx.fillText(`${ch.toFixed(0)}mm`,0,4); cx.restore();
+  }
+
+  cx.restore();
+}
+
+/* ── STL export ── */
+function exportSTL() {
+  const w=S.w,d=S.d,h=S.h,c=S.cols,r=S.rows,wt=S.wt,ft=S.ft;
+  const compW=(w-wt*2-(c-1)*wt)/c, compD=(d-wt*2-(r-1)*wt)/r;
+  let s = 'solid drawer_organizer_tray\n';
+
+  function tri(a,b,n) {
+    const l=Math.sqrt(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])||1;
+    s+=`  facet normal ${(n[0]/l).toPrecision(6)} ${(n[1]/l).toPrecision(6)} ${(n[2]/l).toPrecision(6)}\n    outer loop\n      vertex ${a[0].toPrecision(6)} ${a[1].toPrecision(6)} ${a[2].toPrecision(6)}\n      vertex ${b[0].toPrecision(6)} ${b[1].toPrecision(6)} ${b[2].toPrecision(6)}\n    endloop\n  endfacet\n`;
+  }
+
+  function quad(v0,v1,v2,v3,n) { tri(v0,v1,n); tri(v0,v2,n); tri(v0,v3,n); }
+
+  const t=wt;
+
+  // Bottom exterior (normal -Y)
+  quad([0,0,0],[w,0,0],[w,0,d],[0,0,d],[0,-1,0]);
+  // Front rim strip (facing up +Y)
+  quad([t,h,d-t],[w-t,h,d-t],[w-t,h-t,0],[t,h-t,0],[0,1,0]);
+  // Back rim strip
+  quad([t,h,0],[w-t,h,0],[w-t,h-t,t],[t,h-t,t],[0,1,0]);
+  // Left rim strip (normal -X)
+  quad([t,h,d-t],[t,h,0],[0,h-t,t],[0,h-t,d-t],[-1,0,0]);
+  // Right rim strip (normal +X)
+  quad([w-t,h,d-t],[w-t,h,0],[w,h-t,t],[w,h-t,d-t],[1,0,0]);
+  // Left wall exterior (-X)
+  quad([0,0,0],[0,0,d],[0,h,d],[0,h,0],[-1,0,0]);
+  // Right wall exterior (+X)
+  quad([w,0,0],[w,h,0],[w,h,d],[w,0,d],[1,0,0]);
+  // Back wall exterior (-Z)
+  quad([0,0,0],[w,0,0],[w,h,0],[0,h,0],[0,0,-1]);
+  // Front wall exterior (+Z)
+  quad([0,0,d],[w,0,d],[w,h,d],[0,h,d],[0,0,1]);
+  // Floor interior top (+Y)
+  quad([t,ft,t],[w-t,ft,t],[w-t,ft,d-t],[t,ft,d-t],[0,1,0]);
+  // Back interior wall (-Z)
+  quad([t,0,t],[w-t,0,t],[w-t,h-ft,t],[t,h-ft,t],[0,0,-1]);
+  // Front interior wall (+Z)
+  quad([t,0,d-t],[w-t,0,d-t],[w-t,h-ft,d-t],[t,h-ft,d-t],[0,0,1]);
+  // Left interior (-X)
+  quad([t,0,t],[t,0,d-t],[t,h-ft,d-t],[t,h-ft,t],[-1,0,0]);
+  // Right interior (+X)
+  quad([w-t,0,d-t],[w-t,0,t],[w-t,h-ft,t],[w-t,h-ft,d-t],[1,0,0]);
+
+  // X-dividers (between rows), facing +Z
+  for (let i=0;i<r-1;i++) {
+    const z=t+i*(compD+wt);
+    quad([t,ft,z],[w-t,ft,z],[w-t,h-ft,z],[t,h-ft,z],[0,0,1]);
+  }
+
+  // Z-dividers (between columns), facing +X
+  for (let i=0;i<c-1;i++) {
+    const x=t+i*(compW+wt);
+    quad([x,ft,t],[x,h-ft,t],[x,h-ft,d-t],[x,ft,d-t],[1,0,0]);
+  }
+
+  s += 'endsolid drawer_organizer_tray\n';
+
+  const blob = new Blob([s], { type: 'application/octet-stream' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `drawer_tray_${w}x${d}x${h}_${c}x${r}.stl`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ── SVG export (top plan) ── */
+function exportSVG() {
+  const g=geom(), compW=g.compW, compD=g.compD, wt=S.wt;
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${g.outerW+40}" height="${g.outerD+40}" viewBox="-${g.outerW/2}-20 -${g.outerD/2}-20 ${g.outerW+40} ${g.outerD+40}">\n`;
+  s += `<rect x="-20" y="-20" width="${g.outerW+40}" height="${g.outerD+40}" fill="#f8f4e0"/>\n`;
+  s += `<rect x="0" y="0" width="${g.outerW}" height="${g.outerD}" fill="none" stroke="#333" stroke-width="2"/>\n`;
+  const sx=wt, sy=wt;
+  for (let r=0;r<g.rows;r++) for (let c=0;c<g.cols;c++) {
+    const x=sx+c*(compW+wt), y=sy+r*(compD+wt);
+    s += `<rect x="${x}" y="${y}" width="${compW}" height="${compD}" fill="none" stroke="#2a6aaa" stroke-width="1.5"/>\n`;
+  }
+  const off=g.outerW/2+5;
+  s += `<line x1="0" y1="${off}" x2="${g.outerW}" y2="${off}" stroke="#e94560" stroke-width="1"/>\n`;
+  s += `<text x="${g.outerW/2}" y="${off+14}" text-anchor="middle" font-size="10" fill="#e94560">${g.outerW}mm</text>\n`;
+  s += '</svg>';
+
+  const blob = new Blob([s], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tray_${g.cols}x${g.rows}_topview.svg`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+$('#exportStl').addEventListener('click', exportSTL);
+$('#exportSvg').addEventListener('click', exportSVG);
+window.addEventListener('resize', () => { if (S.view !== '3d') render(); });
+render();
+})();
+</script>
+</body>
+</html>

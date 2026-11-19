@@ -1,0 +1,55 @@
+{
+  "method": "Exact final source in Node VM/DOM/native Canvas2D. Closure instrumentation exposes existing state/functions only for controlled fixtures; no application algorithm replaced. Actual input handlers used for interaction checks. Not browser layout, GPU or default actions.",
+  "sha256": "f2b37e6472e153ae234118b38842bf773101129a2a6ae2a459844dda2dc0d7c0",
+  "checks": [
+    {
+      "id": "brush_updates_real_canvas",
+      "pass": true,
+      "evidence": {
+        "pixel": [
+          255,
+          0,
+          0,
+          255
+        ]
+      }
+    },
+    {
+      "id": "two_stroke_undo_redo",
+      "pass": true,
+      "evidence": {
+        "undo": 2,
+        "redo": 2
+      }
+    },
+    {
+      "id": "clear_undo",
+      "pass": true,
+      "evidence": {
+        "restored": true
+      }
+    },
+    {
+      "id": "touch_paints",
+      "pass": true,
+      "evidence": {
+        "touch": true
+      }
+    },
+    {
+      "id": "resize_preserves_pixels_and_png_download",
+      "pass": true,
+      "evidence": {
+        "pngBytes": 167
+      }
+    },
+    {
+      "id": "undo_resize_restores_dimensions",
+      "pass": false,
+      "error": "Undo puts old ImageData into48x24canvas without restoring dimensions",
+      "actual": 48,
+      "expected": 8
+    }
+  ],
+  "pass": false
+}

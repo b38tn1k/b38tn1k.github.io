@@ -1,0 +1,62 @@
+{
+  "method": "Independent exact-source DOM/partial Canvas runtime, actual editor/toolbar/keyboard/pointer/file-input handlers, virtual timed physics and controlled ball fixtures. Downloaded JSON bytes round-tripped. Browser visual/Canvas rendering unverified.",
+  "sha256": "0295da99cbc8ce80773a7639f3ed0e6f41643ac71e8f432b8341b8bca81b1d81",
+  "checks": [
+    {
+      "id": "startup_editor_draw_drag_erase",
+      "pass": true,
+      "evidence": {
+        "bricks": 3
+      }
+    },
+    {
+      "id": "play_keyboard_mouse_touch",
+      "pass": true,
+      "evidence": {
+        "keyboard": true,
+        "mouse": true,
+        "touch": true
+      }
+    },
+    {
+      "id": "brick_collision_score",
+      "pass": true,
+      "evidence": {
+        "score": 10,
+        "bricks": 1
+      }
+    },
+    {
+      "id": "restart_restores_layout",
+      "pass": false,
+      "error": "Restart should restore the two-brick edited layout"
+    },
+    {
+      "id": "lives_gameover",
+      "pass": true,
+      "evidence": {
+        "lives": [
+          2,
+          1,
+          0
+        ],
+        "gameover": "lose",
+        "running": false
+      }
+    },
+    {
+      "id": "play_reentry_resets_lives",
+      "pass": false,
+      "error": "Re-entering Play leaves exhausted lives"
+    },
+    {
+      "id": "save_load_actual_json_blob",
+      "pass": true,
+      "evidence": {
+        "blobBytes": 188,
+        "bricks": 2
+      }
+    }
+  ],
+  "pass": false
+}

@@ -1,0 +1,214 @@
+{
+  "score": 80,
+  "grade": "B- - normal five-response flow works; false-start retries consume trials",
+  "rubricScores": {
+    "functionality": 32,
+    "artifact_correctness": 25,
+    "usability": 11,
+    "self_verification": 2,
+    "autonomy": 10
+  },
+  "summary": "Five normal measured responses give the correct summary and replay. Trial labels are one ahead, and false-start retry increments the counter, allowing a final summary with fewer than five valid measurements.",
+  "strengths": [
+    "Actual click handlers and random scheduled cues record200/225/250/275/300ms as five rows with mean250,best200,worst300.",
+    "Actual Play Again/New Game reset returns to idle, clears measurements and hides results.",
+    "Self-contained offline HTML and immediate false-start feedback are present."
+  ],
+  "defects": [
+    "Displayed trial labels are Trial2of5 through Trial6of5 for the five normal responses.",
+    "Too-early feedback says Tap to retry this trial, but retry advances currentTrial. After seven false-start retries, a single250ms response ends the session with one result row instead of five valid measurements."
+  ],
+  "verification": [
+    "Independent exact final source0821df522caa98a61d6c58d988145b7828c3002c9f4e86e1e8cb34d306011330 in VM/DOM, actual onclick handlers, actual scheduled cues and deterministic performance clock. Read-only closure exposure; no algorithm replacement.",
+    "Five-response exact summary, trial labels, actual replay buttons, false-start retry state and repeated-false-start final count independently checked."
+  ],
+  "verificationConcerns": [
+    "Model verification checks source/tag/feature-string presence and file structure; it does not execute the timing or retry flow. Partial self-verification credit.",
+    "No browser layout/hit testing, physical latency or visual-polish verification."
+  ],
+  "scopeCompliance": "Single local model authored the product in its isolated directory. No Codex app code, diagnoses, repair prompts or other-model guidance supplied. Independent QA stayed outside candidate directories.",
+  "workflowNotes": "Fresh solo RTFM Qwen, one exact original kickoff, normal autonomous settlement after1.718wall minutes. Frozen author-informed precise-coding recipe and verified transport; no extra prompts or deadline reset.",
+  "humanOrSupervisorSteering": 0,
+  "limitations": [
+    "One trial of a bundled inference/serving configuration with local Q4 weights and32768tokens per response.",
+    "No independent browser/visual testing; earlier browser-origin denial honored. VM/DOM/canvas shims do not establish browser compatibility or visual polish.",
+    "Single trial per task and configuration; sampling variance prevents strong causal attribution.",
+    "RTFM is a fresh solo author-informed settings bundle, not an isolated causal test of reasoning or sampling. Same Q4 weights; common32K local output cap and60min deadline. Actual backend/template evidence is linked separately; this is not a replication of full-precision author benchmarks."
+  ],
+  "title": "Reaction timer",
+  "model": "qwen3.6:35b-a3b",
+  "modelLabel": "qwen",
+  "strategy": "rtfm",
+  "originalBriefUnchanged": true,
+  "workflowSetupAuthoredBySupervisor": true,
+  "lastAssistantText": "All \u2705 checks pass. Here's what was built:\n\n## \u26a1 Reaction Timer \u2014 `index.html`\n\n**Single self-contained offline file** with polished dark UI, no dependencies.\n\n### Features delivered:\n\n| Feature | Details |\n|---|---|\n| **Random wait** | 1.5\u20134.5 seconds before green trigger |\n| **False-start detection** | Clicking during the wait phase triggers a \"Too early!\" animation with retry |\n| **5 trials** | Progress dots track completion; each trial has its own flow |\n| **Results summary** | Average / Best / Worst stats, per-trial table with mini performance bars, emoji ratings, and an overall performance badge |\n| **Polished UI** | Gradient accents, glow effects, shake animation on false starts, pulsing dots, responsive layout |\n| **Performance rating** | Each result shows a category: \ud83d\udd25 Incredible (<200ms), \u26a1 Excellent, \u2728 Great, \ud83d\udc4d Average, \ud83d\udc22 Slow |\n\n### How to use:\nOpen `index.html` in any browser \u2014 tap the screen to start, wait for green, tap fast!",
+  "workflowInstructions": "rtfm-plan.json; run-rtfm.py; research/rtfm-conformance.json",
+  "workflowProtocolRevision": 1,
+  "elapsedMinutes": 1.718,
+  "wallMinutes": 1.718,
+  "status": "assessed",
+  "runStatus": "completed_pending_assessment",
+  "stopReason": "agent_settled",
+  "exitCode": 0,
+  "promptWords": 34,
+  "toolCalls": 4,
+  "parentToolCalls": 4,
+  "childToolCalls": 0,
+  "toolResultsMarkedError": 0,
+  "modelUsageReported": {
+    "input": 9329,
+    "output": 7859,
+    "cacheRead": 24244,
+    "totalTokens": 41432
+  },
+  "assistantTextContainingToolCallMarkup": 0,
+  "peakReportedPromptTokens": 10185,
+  "parentPeakReportedPromptTokens": 10185,
+  "childPeakReportedPromptTokens": 0,
+  "parentModelUsage": {
+    "input": 9329,
+    "output": 7859,
+    "cacheRead": 24244,
+    "totalTokens": 41432
+  },
+  "childModelUsage": {
+    "input": 0,
+    "output": 0,
+    "cacheRead": 0,
+    "totalTokens": 0
+  },
+  "artifactBytes": 19610,
+  "sha256": "0821df522caa98a61d6c58d988145b7828c3002c9f4e86e1e8cb34d306011330",
+  "implementationChangesBySupervisor": 0,
+  "billionContext": {
+    "loadedConfirmed": false
+  },
+  "workflow": {
+    "adhered": true,
+    "automaticUIResponses": 0,
+    "questionnairesCancelled": 0,
+    "mechanicalPlanHandoffPrompts": 0,
+    "structuredPlanComplete": null,
+    "implementationHandoff": null,
+    "rolesAttempted": {},
+    "rolesCompleted": {},
+    "parentArtifactReads": 0,
+    "successfulPostWorkerArtifactReads": 0,
+    "allChildrenUsedParentModel": true,
+    "observedChildModelIDs": [],
+    "delegationCalls": 0,
+    "parentWrites": 1,
+    "delegations": [],
+    "controller": "Fresh single persistent native Pi; exact original kickoff, author-informed inference recipe",
+    "actualPromptCount": 1,
+    "sharedLimitSeconds": 3600,
+    "authorRecipeSource": "research/rtfm-author-recipes.json",
+    "requestedRecipe": {
+      "model": "qwen3.6:35b-a3b",
+      "recipe": "Official thinking-mode precise-coding/WebDev sampling",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "presence_penalty": 0.0,
+      "repeat_penalty": 1.0,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "outputBudgetBasis": "Authors recommend32768 for mostqueries;81920 for difficult competition math/programming benchmarks.",
+      "preserveThinking": true,
+      "preserveThinkingBasis": "Official Preserve Thinking section says retaining prior reasoning helps agent scenarios; verify actual roundtrip/rendered history, not only requested flag."
+    },
+    "appliedRuntimeProfile": {
+      "apiModel": "qwen3.6:35b-a3b-rtfm",
+      "baseUrl": "http://127.0.0.1:11438/v1",
+      "port": 11438,
+      "contextWindow": 262144,
+      "maxOutputTokens": 32768,
+      "weights": "/home/b38tn1k/models/ollama/blobs/sha256-d372de8e934898a59e6ccfabc3368474711384d8f1fd4d22d87a3f0a45400cdc",
+      "templateSHA256": "1b8361565cc35d47551d342214cff341c0f1a9685ce529c7ce31de0ed3616248",
+      "unitSHA256": "1b3c9d76647f0b1644d48486cce062e5bc857c59dedcfce924ed844722e546f5",
+      "thinking": true,
+      "temperature": 0.6,
+      "top_p": 0.95,
+      "top_k": 20,
+      "min_p": 0.0,
+      "repeat_penalty": 1.0,
+      "presence_penalty": 0.0,
+      "gpuLayers": "42/42",
+      "role": "fresh solo",
+      "outputBudgetCaveat": "32768 shared local ceiling; not an Ornith universal author recommendation"
+    },
+    "runtimeConformance": "research/rtfm-conformance.json",
+    "productAuthor": "single local model only",
+    "externalProductGuidance": 0
+  },
+  "nativeCompaction": {
+    "started": 0,
+    "completed": 0,
+    "aborted": 0,
+    "events": [],
+    "reportedUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "totalTokens": 0
+    },
+    "note": "Separate native Pi compaction events and reported usage, not billion-context folds. Assistant message usage is retained separately; after-compaction token counts are estimates."
+  },
+  "humanSteering": false,
+  "modelActiveMinutes": 1.716,
+  "nativeModelCost": {
+    "model": "qwen",
+    "role": "worker",
+    "pid": 43372,
+    "assistantUsage": {
+      "input": 9329,
+      "output": 7859,
+      "cacheRead": 24244,
+      "cacheWrite": 0,
+      "totalTokens": 41432
+    },
+    "recordedCompactionUsage": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0,
+      "totalTokens": 0
+    },
+    "recordedCombinedUsage": {
+      "input": 9329,
+      "output": 7859,
+      "cacheRead": 24244,
+      "cacheWrite": 0,
+      "totalTokens": 41432
+    },
+    "unreportedCompactions": 0,
+    "activeMinutes": 1.716,
+    "promptCount": 1,
+    "streamingWindows": [
+      {
+        "start": 1164855.711294166,
+        "end": 1164859.313121708
+      },
+      {
+        "start": 1164859.373511083,
+        "end": 1164938.752113875
+      },
+      {
+        "start": 1164938.819940083,
+        "end": 1164945.584217583
+      },
+      {
+        "start": 1164945.922303,
+        "end": 1164952.018887458
+      },
+      {
+        "start": 1164952.285886083,
+        "end": 1164956.737182208
+      }
+    ],
+    "exitCode": 0
+  },
+  "rtfmFinalSnapshot": "strategies/reports/rtfm-finals/case111"
+}

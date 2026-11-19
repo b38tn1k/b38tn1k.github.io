@@ -1,0 +1,75 @@
+{
+  "method": "Exact source, actual editor/toolbar/keyboard/mouse/file handlers and scheduled animation callbacks. Controlled ball fixtures test collision/life logic separately from normal launch. Actual JSON Blob bytes saved and fed through the real file-input handler. No browser layout/rendering or physical touch validation.",
+  "sha256": "a1566286ae2c21bf4889513de33835aaa106ea996774fc7966a3b4079c075699",
+  "checks": [
+    {
+      "id": "editor_draw_erase",
+      "pass": true,
+      "evidence": {
+        "draw": 2,
+        "remainingAfterErase": 1
+      }
+    },
+    {
+      "id": "normal_launch_moves_ball",
+      "pass": true,
+      "evidence": {
+        "velocity": "[-0.00039468491068895666,-5.199999985021521]"
+      }
+    },
+    {
+      "id": "launch_hides_ready_overlay",
+      "pass": false,
+      "error": "Get ready overlay remains after launch",
+      "actual": true,
+      "expected": false
+    },
+    {
+      "id": "keyboard_paddle",
+      "pass": true,
+      "evidence": {
+        "before": 195,
+        "after": 209
+      }
+    },
+    {
+      "id": "mouse_paddle_motion",
+      "pass": false,
+      "error": "Mouse motion is ignored",
+      "actual": 195,
+      "expected": 195
+    },
+    {
+      "id": "fixture_collision_score_and_lives",
+      "pass": true,
+      "evidence": {
+        "score": 10,
+        "lives": 0,
+        "note": "Controlled ball fixture checks physics separately from normal launch."
+      }
+    },
+    {
+      "id": "restart_restores_edited_layout",
+      "pass": false,
+      "error": "Restart retains only surviving bricks",
+      "actual": "[[3,0]]",
+      "expected": "[[0,0],[3,0]]"
+    },
+    {
+      "id": "restart_has_one_animation_loop",
+      "pass": false,
+      "error": "Restart schedules an additional live animation loop",
+      "actual": 2,
+      "expected": 1
+    },
+    {
+      "id": "actual_json_download_file_input_roundtrip",
+      "pass": true,
+      "evidence": {
+        "savedBytes": 121,
+        "bricks": 2
+      }
+    }
+  ],
+  "pass": false
+}

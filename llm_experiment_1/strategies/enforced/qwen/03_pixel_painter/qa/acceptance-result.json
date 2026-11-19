@@ -1,0 +1,40 @@
+{
+  "artifactSHA256": "e44c5fac065c5e82d2a8c8dac1672a6bedd4e0ed8ea0be4567d843cd96f5ed34",
+  "checks": [
+    {
+      "id": "resize_rectangular",
+      "passed": true,
+      "evidence": "Resized from 64x64 to 60x40; dims_correct=true; status=\"60 x 40\""
+    },
+    {
+      "id": "palette_brush",
+      "passed": true,
+      "evidence": "Palette has 24 swatches; active color=\"#1d2b53\"; hexDisplay=\"#1d2b53\""
+    },
+    {
+      "id": "eraser",
+      "passed": true,
+      "evidence": "Eraser button exists=true; active tool=\"eraser\""
+    },
+    {
+      "id": "undo_redo",
+      "passed": true,
+      "evidence": "before=\"history: 4/4\"; u1=\"history: 3/4\"; u2=\"history: 2/4\"; r1=\"history: 3/4\"; r2=\"history: 4/4\"; retry-paint=\"history: 5/5\"; retry-u=\"history: 4/5\"; retry-r=\"history: 5/5\""
+    },
+    {
+      "id": "clear",
+      "passed": true,
+      "evidence": "Phase1-nonTransparent=1; clear-blank=true; retry-paint-nonTransparent=1; retry-clear-blank=true"
+    },
+    {
+      "id": "png_export",
+      "passed": true,
+      "evidence": "Export button id=\"btnExport\"; canvas=60x40; toDataURL captured=true; downloadKind=canvasDataURL; dims_match=true. The QA shim simulates Canvas.toDataURL() by recording the call in downloads[] and returning 'data:image/png;base64,QA_NOT_REAL_PNG'; actual PNG encoding does not occur in this test environment."
+    },
+    {
+      "id": "mouse_touch",
+      "passed": true,
+      "evidence": "Mouse drawing painted 1 non-transparent pixels at clientX=0,clientY=0; canvas=60x40; mouse_handlers=true; touch_handlers=true."
+    }
+  ]
+}

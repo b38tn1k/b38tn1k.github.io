@@ -1,0 +1,34 @@
+{
+  "method": "Independent exact-source nativeCanvas pixels, actual DOM controls and scaled coordinates, encoded PNG bytes. No browser layout/hit testing.",
+  "sha256": "2fc29e49c54349c33be2f0b95f401deaae31ddfc9dd4ed90308e98d3e04705d7",
+  "checks": [
+    {
+      "id": "actual_brush_eraser_clear",
+      "pass": true,
+      "evidence": {
+        "paint": true,
+        "erase": true,
+        "clear": true
+      }
+    },
+    {
+      "id": "two_stroke_undo_redo_and_clear_undo",
+      "pass": false,
+      "error": "255 == 0",
+      "actual": 255,
+      "expected": 0
+    },
+    {
+      "id": "real_native_PNG_export_at_selected_size",
+      "pass": true,
+      "evidence": {
+        "dimensions": [
+          48,
+          24
+        ],
+        "bytes": 114
+      }
+    }
+  ],
+  "pass": false
+}

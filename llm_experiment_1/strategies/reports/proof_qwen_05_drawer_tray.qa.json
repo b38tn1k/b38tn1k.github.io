@@ -1,0 +1,43 @@
+{
+  "method": "Independent exact-source Node VM/DOM and native Canvas2D checks of actual controls/timers/download bytes. Explicit fixtures observe private game state without replacing algorithms. No browser layout, GPU, focus/default action or physical print verification.",
+  "sha256": "705204113adad738125108d4ce3c7286fab375bf21b206a19568e6c6246ceca8",
+  "checks": [
+    {
+      "id": "startup_dimensions_and_live_input",
+      "pass": true,
+      "evidence": {
+        "params": {
+          "W": 240,
+          "D": 120,
+          "H": 30,
+          "rows": 3,
+          "cols": 2,
+          "wallT": 3,
+          "floorT": 3,
+          "rotX": -0.55,
+          "rotY": 0.75,
+          "scale": 1.8
+        },
+        "compartments": 6
+      }
+    },
+    {
+      "id": "actual_preview_drag",
+      "pass": true,
+      "evidence": {
+        "rotationChanged": true
+      }
+    },
+    {
+      "id": "actual_ascii_button_export",
+      "pass": false,
+      "error": "floorT is not defined"
+    },
+    {
+      "id": "actual_binary_button_export",
+      "pass": false,
+      "error": "floorT is not defined"
+    }
+  ],
+  "pass": false
+}

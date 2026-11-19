@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pixel Painter</title>
+<style>
+  :root {
+    --bg: #1e1e24;
+    --panel: #2a2a33;
+    --panel2: #33333f;
+    --accent: #6c8cff;
+    --text: #e6e6ea;
+    --muted: #9a9aa6;
+    --border: #3d3d4a;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    touch-action: none;
+  }
+  #app { display: flex; flex-direction: column; height: 100%; }
+  header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; background: var(--panel);
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  header h1 { font-size: 16px; margin: 0; font-weight: 600; letter-spacing: .5px; }
+  header h1 span { color: var(--accent); }
+  .spacer { flex: 1; }
+  .group { display: flex; align-items: center; gap: 6px; background: var(--panel2); padding: 4px 8px; border-radius: 8px; }
+  .group label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .group input[type=number] {
+    width: 52px; background: #1c1c22; color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 6px; font-size: 13px; text-align: center;
+  }
+  button {
+    background: var(--panel2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer;
+    transition: background .12s, border-color .12s, transform .05s;
+  }
+  button:hover { background: #3c3c48; }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  button.primary:hover { background: #5a7bff; }
+  button:disabled { opacity: .4; cursor: not-allowed; }
+  .tool-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  #canvas-wrap {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative; padding: 12px;
+  }
+  #canvas-container { position: relative; box-shadow: 0 6px 30px rgba(0,0,0,.5); }
+  canvas { display: block; image-rendering: pixelated; touch-action: none; }
+  #checker {
+    position: absolute; inset: 0; pointer-events: none; opacity: .15;
+  }
+
+  footer {
+    background: var(--panel); border-top: 1px solid var(--border);
+    padding: 8px 12px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .palette-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .palette-row label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .swatches { display: flex; gap: 5px; flex-wrap: wrap; }
+  .swatch {
+    width: 24px; height: 24px; border-radius: 6px; cursor: pointer;
+    border: 2px solid transparent; overflow: hidden; padding: 0;
+  }
+  .swatch:hover { border-color: var(--muted); }
+  .swatch.active { border-color: #fff; box-shadow: 0 0 0 2px var(--accent); }
+  .picker-wrap { display: flex; align-items: center; gap: 6px; }
+  input[type=color] {
+    width: 34px; height: 30px; border: 1px solid var(--border); border-radius: 6px;
+    background: none; cursor: pointer; padding: 2px;
+  }
+  .current-color {
+    width: 30px; height: 30px; border-radius: 8px; border: 2px solid var(--border);
+  }
+  #hex { font-family: ui-monospace, monospace; font-size: 13px; width: 82px; }
+
+  .toolbar-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .hint { font-size: 11px; color: var(--muted); }
+
+  @media (max-width: 720px) {
+    header { padding: 6px 8px; }
+    .group { padding: 3px 6px; }
+    button { padding: 6px 8px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Pixel<span>Painter</span></h1>
+    <div class="group">
+      <label>Width</label>
+      <input type="number" id="width" min="1" max="512" value="32">
+    </div>
+    <div class="group">
+      <label>Height</label>
+      <input type="number" id="height" min="1" max="512" value="32">
+    </div>
+    <button id="resize">Apply Size</button>
+    <div class="spacer"></div>
+    <div class="toolbar-row">
+      <button id="tool-brush" class="tool-btn active">🖌 Brush</button>
+      <button id="tool-eraser" class="tool-btn">🧽 Eraser</button>
+      <button id="undo">↶ Undo</button>
+      <button id="redo">↷ Redo</button>
+      <button id="clear">🗑 Clear</button>
+      <button id="export" class="primary">⬇ Export PNG</button>
+    </div>
+  </header>
+
+  <div id="canvas-wrap">
+    <div id="canvas-container">
+      <canvas id="canvas"></canvas>
+      <canvas id="checker"></canvas>
+    </div>
+  </div>
+
+  <footer>
+    <div class="palette-row">
+      <label>Palette</label>
+      <div class="swatches" id="swatches"></div>
+      <div class="picker-wrap">
+        <label>Custom</label>
+        <input type="color" id="colorpicker" value="#6c8cff">
+        <div class="current-color" id="currentColor"></div>
+        <input type="text" id="hex" value="#6c8cff" spellcheck="false" autocomplete="off">
+      </div>
+    </div>
+    <div class="toolbar-row">
+      <span class="hint">Click or drag to paint. Right-click drag erases. Ctrl/Cmd+Z undo, Ctrl/Cmd+Shift+Z redo.</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d", { preserveDrawingBuffer: true });
+  const checker = document.getElementById("checker");
+  const checkerCtx = checker.getContext("2d");
+
+  const els = {
+    width: document.getElementById("width"),
+    height: document.getElementById("height"),
+    resize: document.getElementById("resize"),
+    undo: document.getElementById("undo"),
+    redo: document.getElementById("redo"),
+    clear: document.getElementById("clear"),
+    export: document.getElementById("export"),
+    toolBrush: document.getElementById("tool-brush"),
+    toolEraser: document.getElementById("tool-eraser"),
+    swatches: document.getElementById("swatches"),
+    colorpicker: document.getElementById("colorpicker"),
+    hex: document.getElementById("hex"),
+    currentColor: document.getElementById("currentColor"),
+  };
+
+  // ---- State ----
+  let cols = 32, rows = 32;
+  let imageData, undoStack, redoStack;
+  let tool = "brush";
+  let color = "#6c8cff";
+  let painting = false;
+  let lastCell = null;
+
+  const PALETTE = [
+    "#000000", "#1d2b53", "#7e2553", "#008751",
+    "#ff5f49", "#ff904a", "#ffd94a", "#f7f7f7",
+    "#a7ffeb", "#48cfad", "#4d9089", "#004d6f",
+    "#0fbc9b", "#e4572e", "#f7b267", "#3742da",
+    "#576574", "#201f4d", "#8c7870", "#ffffff",
+  ];
+
+  // ---- Setup canvas buffer ----
+  function initCanvas(c, r, keep) {
+    const origCols = cols, origRows = rows;
+    cols = c; rows = r;
+    canvas.width = c; canvas.height = r;
+    canvas.style.width = (c * PIXEL_SIZE) + "px";
+    canvas.style.height = (r * PIXEL_SIZE) + "px";
+    checker.width = c; checker.height = r;
+    checker.style.width = canvas.style.width;
+    checker.style.height = canvas.style.height;
+    drawChecker();
+    if (keep && imageData) {
+      // Preserve the two-dimensional coordinates of existing pixels in the
+      // retained (top-left) area. No scaling: a pixel at (x,y) stays at (x,y).
+      // Copy each retained row using its ORIGINAL stride so coordinates don't
+      // reflow, and clamp the copied columns to the smaller width.
+      const src = imageData.data;
+      const dst = ctx.createImageData(cols, rows).data;
+      const minCols = Math.min(cols, origCols);
+      const minRows = Math.min(rows, origRows);
+      for (let y = 0; y < minRows; y++) {
+        const sBase = (origCols * y) * 4;       // source stride = OLD width
+        const dBase = (cols * y) * 4;            // dest   stride = NEW width
+        dst.set(src.subarray(sBase, sBase + minCols * 4), dBase);
+      }
+      imageData = ctx.createImageData(cols, rows);
+      imageData.data.set(dst);
+    } else {
+      imageData = ctx.createImageData(cols, rows);
+    }
+    render();
+  }
+
+  let PIXEL_SIZE = 18; // display scale (individual pixels)
+  function computePixelSize() {
+    const wrap = document.getElementById("canvas-wrap");
+    const avail = Math.min(wrap.clientWidth - 24, wrap.clientHeight - 24);
+    const s = Math.max(4, Math.floor(avail / Math.max(cols, rows)));
+    PIXEL_SIZE = Math.min(s, 32);
+  }
+
+  function drawChecker() {
+    checkerCtx.clearRect(0, 0, checker.width, checker.height);
+    const size = 8;
+    checkerCtx.fillStyle = "#888";
+    for (let y = 0; y < checker.height; y += size) {
+      for (let x = 0; x < checker.width; x += size) {
+        if ((Math.floor(x / size) + Math.floor(y / size)) % 2 === 0) {
+          checkerCtx.fillRect(x, y, size, size);
+        }
+      }
+    }
+  }
+
+  function render() {
+    ctx.putImageData(imageData, 0, 0);
+  }
+
+  // ---- Pixel helpers ----
+  function colorToRGBA(hex) {
+    const n = parseInt(hex.slice(1), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255, 255];
+  }
+
+  function setPixel(x, y, rgba) {
+    const i = (y * cols + x) * 4;
+    imageData.data[i] = rgba[0];
+    imageData.data[i + 1] = rgba[1];
+    imageData.data[i + 2] = rgba[2];
+    imageData.data[i + 3] = rgba[3];
+  }
+
+  function eraserRGBA(x, y) {
+    setPixel(x, y, [0, 0, 0, 0]);
+  }
+
+  // Bresenham line so fast drags are smooth
+  function drawLine(x0, y0, x1, y1) {
+    x0 |= 0; y0 |= 0; x1 |= 0; y1 |= 0;
+    const dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
+    const sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1;
+    let err = dx - dy;
+    while (true) {
+      if (tool === "eraser") erasePixel(x0, y0);
+      else setPixel(x0, y0, colorToRGBA(color));
+      if (x0 === x1 && y0 === y1) break;
+      const e2 = 2 * err;
+      if (e2 > -dy) { err -= dy; x0 += sx; }
+      if (e2 < dx) { err += dx; y0 += sy; }
+    }
+  }
+
+  function erasePixel(x, y) {
+    if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+    eraserRGBA(x, y);
+  }
+
+  function atPixel(x, y) {
+    if (x < 0 || y < 0 || x >= cols || y >= rows) return;
+    if (tool === "eraser") erasePixel(x, y);
+    else setPixel(x, y, colorToRGBA(color));
+  }
+
+  // ---- History ----
+  // Each history entry stores the pixel bytes AND the canvas dims they belong to,
+  // so undo/redo can restore dimensions and content together (cross-dimension
+  // snapshots no longer throw or mismatch).
+  function snapshot() {
+    undoStack.push({ data: new Uint8ClampedList(imageData.data), cols, rows });
+    if (undoStack.length > 100) undoStack.shift();
+    redoStack = [];
+    updateHistoryButtons();
+  }
+
+  function restore(entry) {
+    if (entry.cols !== cols || entry.rows !== rows) {
+      // restore dimensions first so putImageData/getImageData match
+      cols = entry.cols;
+      rows = entry.rows;
+      canvas.width = cols;
+      canvas.height = rows;
+      canvas.style.width = (cols * PIXEL_SIZE) + "px";
+      canvas.style.height = (rows * PIXEL_SIZE) + "px";
+      checker.width = cols;
+      checker.height = rows;
+      checker.style.width = canvas.style.width;
+      checker.style.height = canvas.style.height;
+      imageData = ctx.createImageData(cols, rows);
+    }
+    imageData = new ImageData(new Uint8ClampedList(entry.data), cols, rows);
+    render();
+    updateHistoryButtons();
+  }
+
+  // ---- Pointer handling ----
+  function getCellFromEvent(e) {
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = Math.floor((clientX - rect.left) * scaleX);
+    const y = Math.floor((clientY - rect.top) * scaleY);
+    return { x, y };
+  }
+
+  function pointerDown(e) {
+    if (e.type === "contextmenu") return;
+    e.preventDefault();
+    if (!undoStack.length || !equal(imageData.data, undoStack[undoStack.length - 1])) {
+      snapshot();
+    }
+    painting = true;
+    const { x, y } = getCellFromEvent(e);
+    lastCell = { x, y };
+    atPixel(x, y);
+    render();
+  }
+
+  function pointerMove(e) {
+    if (!painting) return;
+    e.preventDefault();
+    const { x, y } = getCellFromEvent(e);
+    if (x !== lastCell.x || y !== lastCell.y) {
+      drawLine(lastCell.x, lastCell.y, x, y);
+      lastCell = { x, y };
+      render();
+    }
+  }
+
+  function pointerUp(e) {
+    if (!painting) return;
+    painting = false;
+    lastCell = null;
+  }
+
+  // ---- History equality helper ----
+  function equal(a, b) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+    return true;
+  }
+
+  // Simple copy constructor (Uint8ClampedArray)
+  function Uint8ClampedList(arr) { return arr.slice(); }
+
+  // ---- Tools ----
+  function setTool(t) {
+    tool = t;
+    els.toolBrush.classList.toggle("active", t === "brush");
+    els.toolEraser.classList.toggle("active", t === "eraser");
+    document.body.style.cursor = t === "eraser" ? "cell" : "crosshair";
+  }
+
+  function updateHistoryButtons() {
+    els.undo.disabled = undoStack.length === 0;
+    els.redo.disabled = redoStack.length === 0;
+  }
+
+  function undo() {
+    if (!undoStack.length) return;
+    const current = { data: imageData.data.slice(), cols, rows };
+    redoStack.push(current);
+    restore(undoStack.pop());
+  }
+
+  function redo() {
+    if (!redoStack.length) return;
+    const current = { data: imageData.data.slice(), cols, rows };
+    undoStack.push(current);
+    restore(redoStack.pop());
+  }
+
+  function clearCanvas() {
+    snapshot();
+    imageData = ctx.createImageData(cols, rows);
+    render();
+  }
+
+  // ---- Palette ----
+  function buildPalette() {
+    els.swatches.innerHTML = "";
+    PALETTE.forEach((c) => {
+      const b = document.createElement("button");
+      b.className = "swatch";
+      b.style.background = c;
+      b.setAttribute("aria-label", c);
+      if (c.toLowerCase() === color.toLowerCase()) b.classList.add("active");
+      b.addEventListener("click", () => setColor(c));
+      els.swatches.appendChild(b);
+    });
+  }
+
+  function setColor(c) {
+    color = c;
+    els.colorpicker.value = c;
+    els.hex.value = c;
+    els.currentColor.style.background = c;
+    buildPalette();
+    if (tool === "eraser") setTool("brush");
+  }
+
+  // ---- Export ----
+  function exportPNG() {
+    // Render at native resolution
+    const out = document.createElement("canvas");
+    out.width = cols; out.height = rows;
+    out.getContext("2d").putImageData(imageData, 0, 0);
+    const link = document.createElement("a");
+    link.download = "pixel-art.png";
+    link.href = out.toDataURL("image/png");
+    link.click();
+  }
+
+  // ---- Size resize ----
+  function applySize() {
+    let w = parseInt(els.width.value, 10);
+    let h = parseInt(els.height.value, 10);
+    if (isNaN(w) || w < 1) w = 1;
+    if (w > 512) w = 512;
+    if (isNaN(h) || h < 1) h = 1;
+    if (h > 512) h = 512;
+    els.width.value = w; els.height.value = h;
+    snapshot();
+    computePixelSize();
+    initCanvas(w, h, true);
+  }
+
+  // ---- Events ----
+  function bind(el, ev, fn) { el.addEventListener(ev, fn); }
+
+  bind(canvas, "mousedown", pointerDown);
+  bind(canvas, "mousemove", pointerMove);
+  window.addEventListener("mouseup", pointerUp);
+  canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
+  canvas.addEventListener("touchstart", pointerDown, { passive: false });
+  canvas.addEventListener("touchmove", pointerMove, { passive: false });
+  canvas.addEventListener("touchend", pointerUp);
+
+  els.resize.addEventListener("click", applySize);
+  els.toolBrush.addEventListener("click", () => setTool("brush"));
+  els.toolEraser.addEventListener("click", () => setTool("eraser"));
+  els.undo.addEventListener("click", undo);
+  els.redo.addEventListener("click", redo);
+  els.clear.addEventListener("click", clearCanvas);
+  els.export.addEventListener("click", exportPNG);
+
+  els.colorpicker.addEventListener("input", (e) => setColor(e.target.value));
+  els.hex.addEventListener("change", (e) => {
+    let v = e.target.value.trim();
+    if (/^#[0-9a-fA-F]{6}$/.test(v)) setColor(v);
+    else e.target.value = color;
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT") return;
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "z") { e.preventDefault(); redo(); }
+    else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z") { e.preventDefault(); undo(); }
+    else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "y") { e.preventDefault(); redo(); }
+    else if (e.key === "b") setTool("brush");
+    else if (e.key === "e") setTool("eraser");
+    else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
+      e.preventDefault(); setTool("brush");
+    }
+  });
+
+  window.addEventListener("resize", () => { computePixelSize(); resizeCanvasDisplay(); });
+
+  function resizeCanvasDisplay() {
+    canvas.style.width = (cols * PIXEL_SIZE) + "px";
+    canvas.style.height = (rows * PIXEL_SIZE) + "px";
+    checker.style.width = canvas.style.width;
+    checker.style.height = canvas.style.height;
+  }
+
+  // ---- Init ----
+  function init() {
+    undoStack = [];
+    redoStack = [];
+    computePixelSize();
+    initCanvas(cols, rows, false);
+    buildPalette();
+    setColor(PALETTE[15]);
+    setTool("brush");
+    updateHistoryButtons();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
